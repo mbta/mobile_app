@@ -89,10 +89,13 @@
     <string name="dock_closure">碼頭關閉</string>
     <string name="dock_issue">停靠區域問題</string>
     <string name="dock_issue_sentence_case">停靠區域問題</string>
+    <string name="done">完畢</string>
     <string name="drag_handle">拖曳控制柄</string>
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="drawbridge_being_raised_lowercase">吊橋升起</string>
     <string name="eastbound">東行</string>
+    <string name="edit">編輯</string>
+    <string name="edit_favorites">編輯收藏夾</string>
     <string name="effect_ahead">提前&lt;b>%1$s&lt;/b></string>
     <string name="electrical_work">電力作業</string>
     <string name="electrical_work_lowercase">電力作業</string>

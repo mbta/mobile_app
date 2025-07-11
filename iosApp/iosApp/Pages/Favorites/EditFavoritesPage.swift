@@ -25,7 +25,7 @@ struct EditFavoritesPage: View {
                 onClose: onClose,
                 closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
             )
-            Text("TODO")
+            Text(verbatim: "TODO")
             Spacer()
         }
         .background(Color.fill2)

@@ -91,10 +91,13 @@
     <string name="dock_closure">Fechamento de doca</string>
     <string name="dock_issue">Problema na doca</string>
     <string name="dock_issue_sentence_case">Problema na doca</string>
+    <string name="done">Feito</string>
     <string name="drag_handle">Alça para arrastar</string>
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="drawbridge_being_raised_lowercase">ponte levadiça sendo levantada</string>
     <string name="eastbound">Sentido leste</string>
+    <string name="edit">Editar</string>
+    <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à frente</string>
     <string name="electrical_work">Obra elétrica</string>
     <string name="electrical_work_lowercase">serviço elétrico</string>

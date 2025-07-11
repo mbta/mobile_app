@@ -91,10 +91,13 @@
     <string name="dock_closure">Fermeture du quai</string>
     <string name="dock_issue">Problème de quai</string>
     <string name="dock_issue_sentence_case">Problème de quai</string>
+    <string name="done">Fait</string>
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="drawbridge_being_raised">Élévation du pont</string>
     <string name="drawbridge_being_raised_lowercase">le pont est relevé</string>
     <string name="eastbound">En direction de l’est</string>
+    <string name="edit">Modifier</string>
+    <string name="edit_favorites">Modifier les favoris</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à venir</string>
     <string name="electrical_work">Travaux électriques</string>
     <string name="electrical_work_lowercase">travaux électriques</string>

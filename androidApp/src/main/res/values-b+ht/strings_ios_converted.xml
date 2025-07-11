@@ -94,10 +94,13 @@
     <string name="dock_closure">Waf la Fèmen</string>
     <string name="dock_issue">Pwoblèm Waf</string>
     <string name="dock_issue_sentence_case">Pwoblèm waf</string>
+    <string name="done">Fè</string>
     <string name="drag_handle">Kontwolè deplasman</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
     <string name="eastbound">Pran direksyon lès</string>
+    <string name="edit">Edit</string>
+    <string name="edit_favorites">Edit Favorites</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <string name="electrical_work_lowercase">travay elektrik</string>

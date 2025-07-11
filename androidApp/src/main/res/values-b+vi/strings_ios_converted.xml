@@ -89,10 +89,13 @@
     <string name="dock_closure">Đóng bến tàu</string>
     <string name="dock_issue">Vấn đề về bến tàu</string>
     <string name="dock_issue_sentence_case">Vấn đề về bến tàu</string>
+    <string name="done">Xong</string>
     <string name="drag_handle">Tay kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
     <string name="eastbound">Về hướng đông</string>
+    <string name="edit">Biên tập</string>
+    <string name="edit_favorites">Chỉnh sửa mục ưa thích</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <string name="electrical_work_lowercase">công việc về điện</string>
