@@ -6,6 +6,7 @@
     <string name="accident_lowercase">acidente</string>
     <string name="add_confirmation_button">Adicionar</string>
     <string name="add_favorite">adicionar favorito</string>
+    <string name="add_stops">Adicionar paradas</string>
     <string name="add_to_favorites_title">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> aos favoritos</string>
     <string name="additional_service">Serviço adicional</string>
@@ -73,6 +74,7 @@
     <string name="delay">Atraso</string>
     <string name="delays_due_to_cause">Atrasos devido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Atrasos&lt;/b></string>
+    <string name="delete">Excluir</string>
     <string name="demonstration">Manifestação</string>
     <string name="demonstration_lowercase">manifestação</string>
     <string name="departure_tile_on_click_label">exibir mais informações sobre esta viagem</string>
@@ -91,10 +93,13 @@
     <string name="dock_closure">Fechamento de doca</string>
     <string name="dock_issue">Problema na doca</string>
     <string name="dock_issue_sentence_case">Problema na doca</string>
+    <string name="done">Feito</string>
     <string name="drag_handle">Alça para arrastar</string>
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="drawbridge_being_raised_lowercase">ponte levadiça sendo levantada</string>
     <string name="eastbound">Sentido leste</string>
+    <string name="edit">Editar</string>
+    <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à frente</string>
     <string name="electrical_work">Obra elétrica</string>
     <string name="electrical_work_lowercase">serviço elétrico</string>

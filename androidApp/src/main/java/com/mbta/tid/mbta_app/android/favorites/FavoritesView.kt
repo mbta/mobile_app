@@ -3,11 +3,7 @@ package com.mbta.tid.mbta_app.android.favorites
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -15,8 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
@@ -24,11 +18,11 @@ import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.NavTextButton
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
@@ -85,31 +79,23 @@ fun FavoritesView(
     val routeCardData = favoritesViewModel.routeCardData
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(
-            Modifier.fillMaxWidth().heightIn(min = 48.dp).padding(horizontal = 16.dp).semantics {
-                heading()
-            },
-            Arrangement.SpaceBetween,
-            Alignment.CenterVertically,
-        ) {
-            Text(
-                text = stringResource(R.string.favorites_link),
-                modifier = Modifier.padding(start = 8.dp).weight(1f),
-                style = Typography.title2Bold,
-            )
-            Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
-                if (!routeCardData.isNullOrEmpty()) {
-                    ActionButton(
-                        ActionButtonKind.Plus,
-                        colors = ButtonDefaults.contrastTranslucent(),
-                        action = ::onAddFavorites,
-                    )
-                    NavTextButton(stringResource(R.string.edit)) {
-                        openSheetRoute(SheetRoutes.EditFavorites)
+        SheetHeader(
+            title = stringResource(R.string.favorites_link),
+            rightActionContents = {
+                Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
+                    if (!routeCardData.isNullOrEmpty()) {
+                        ActionButton(
+                            ActionButtonKind.Plus,
+                            colors = ButtonDefaults.contrastTranslucent(),
+                            action = ::onAddFavorites,
+                        )
+                        NavTextButton(stringResource(R.string.edit)) {
+                            openSheetRoute(SheetRoutes.EditFavorites)
+                        }
                     }
                 }
-            }
-        }
+            },
+        )
 
         ErrorBanner(errorBannerViewModel)
         RouteCardList(

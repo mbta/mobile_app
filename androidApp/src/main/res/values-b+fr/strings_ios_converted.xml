@@ -6,6 +6,7 @@
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Ajouter</string>
     <string name="add_favorite">ajouter aux favoris</string>
+    <string name="add_stops">Ajouter des arrêts</string>
     <string name="add_to_favorites_title">Ajoutez &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux favoris</string>
     <string name="additional_service">Service supplémentaire</string>
@@ -73,6 +74,7 @@
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">Retards dus à &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retards&lt;/b></string>
+    <string name="delete">Supprimer</string>
     <string name="demonstration">Manifestation</string>
     <string name="demonstration_lowercase">manifestation</string>
     <string name="departure_tile_on_click_label">afficher plus d’informations sur ce trajet</string>
@@ -91,10 +93,13 @@
     <string name="dock_closure">Fermeture du quai</string>
     <string name="dock_issue">Problème de quai</string>
     <string name="dock_issue_sentence_case">Problème de quai</string>
+    <string name="done">Fait</string>
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="drawbridge_being_raised">Élévation du pont</string>
     <string name="drawbridge_being_raised_lowercase">le pont est relevé</string>
     <string name="eastbound">En direction de l’est</string>
+    <string name="edit">Modifier</string>
+    <string name="edit_favorites">Modifier les favoris</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à venir</string>
     <string name="electrical_work">Travaux électriques</string>
     <string name="electrical_work_lowercase">travaux électriques</string>

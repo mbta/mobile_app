@@ -34,4 +34,9 @@ final class SheetHeaderTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
         XCTAssertThrowsError(try sut.inspect().find(ActionButton.self))
     }
+
+    func testIncludesRightActionContents() throws {
+        let sut = SheetHeader(title: "Header Text", rightActionContents: { Text("Hello") })
+        XCTAssertNotNil(try sut.inspect().find(text: "Hello"))
+    }
 }
