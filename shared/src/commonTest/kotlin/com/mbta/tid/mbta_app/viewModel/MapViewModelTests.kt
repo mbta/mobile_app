@@ -149,6 +149,12 @@ class MapViewModelTests : KoinTest {
             assertEquals(MapViewModel.State.VehicleSelected(vehicle, null, null), awaitItem())
             delay(10)
             assertEquals(1, timesVehicleOverViewCalled)
+            viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
+            delay(10)
+            assertEquals(2, timesVehicleOverViewCalled)
+            viewModel.recenter(MapViewModel.Event.RecenterType.CurrentLocation)
+            delay(10)
+            assertEquals(3, timesFollowCalled)
         }
     }
 

@@ -173,25 +173,27 @@ fun MapAndSheetPage(
         )
     }
 
+    val filters =
+        (when (currentNavEntry) {
+            is SheetRoutes.StopDetails ->
+                StopDetailsPageFilters(
+                    currentNavEntry.stopId,
+                    currentNavEntry.stopFilter,
+                    currentNavEntry.tripFilter,
+                )
+            else -> null
+        })
     val stopDetailsVM =
         stopDetailsManagedVM(
-            filters =
-                (when (currentNavEntry) {
-                    is SheetRoutes.StopDetails ->
-                        StopDetailsPageFilters(
-                            currentNavEntry.stopId,
-                            currentNavEntry.stopFilter,
-                            currentNavEntry.tripFilter,
-                        )
-                    else -> null
-                }),
+            filters = filters,
             globalResponse = nearbyTransit.globalResponse,
             alertData = nearbyTransit.alertData,
             pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = { vehicle ->
-                vehicle?.let { mapViewModel.selectedVehicle(it, null, null) }
+                val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
+                vehicle?.let { mapViewModel.selectedVehicle(it, stop, filters?.stopFilter) }
             },
             now = now,
         )
