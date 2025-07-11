@@ -112,8 +112,9 @@ struct ContentView: View {
             }
         }
         .onReceive(mapVM.lastMapboxErrorSubject
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task { await contentVM.loadConfig() }
+            .debounce(for: .seconds(1), scheduler: DispatchQueue.main))
+        { _ in
+            Task { await contentVM.loadConfig() }
         }
     }
 
@@ -168,13 +169,15 @@ struct ContentView: View {
                         if !searchObserver.isSearching {
                             VStack(alignment: .trailing, spacing: 20) {
                                 if !viewportProvider.viewport.isFollowing,
-                                   locationDataManager.currentLocation != nil {
+                                   locationDataManager.currentLocation != nil
+                                {
                                     RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
                                         viewportProvider.follow()
                                     }
                                 }
                                 if !viewportProvider.viewport.isOverview,
-                                   let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                                   let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo()
+                                {
                                     RecenterButton(icon: routeIconResource(routeType), size: 32) {
                                         viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
                                     }
@@ -286,11 +289,16 @@ struct ContentView: View {
         let navEntry = nearbyVM.navigationStack.lastSafe()
         VStack {
             if case .editFavorites = navEntry {
-                EditFavoritesPage(
-                    viewModel: favoritesVM,
-                    onClose: { nearbyVM.popToEntrypoint() },
-                    errorBannerVM: errorBannerVM
-                )
+                // Wrapping in a TabView helps the page to animate in as a single unit
+                // Otherwise only the header animates
+                TabView {
+                    EditFavoritesPage(
+                        viewModel: favoritesVM,
+                        onClose: { nearbyVM.popToEntrypoint() },
+                        errorBannerVM: errorBannerVM
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                }
                 .transition(transition)
             } else {
                 FavoritesPage(
