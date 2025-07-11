@@ -152,7 +152,7 @@ class FavoritesViewModel(
             }
         }
 
-        LaunchedEffect(stopIds, globalData, favorites) {
+        LaunchedEffect(stopIds, globalData, favorites, location) {
             if (stopIds == null || globalData == null) {
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
@@ -165,6 +165,7 @@ class FavoritesViewModel(
                         RouteCardData.Context.Favorites,
                         // not depending on now because it only matters for testing
                         now,
+                        location,
                         coroutineDispatcher,
                     )
                 staticRouteCardData =

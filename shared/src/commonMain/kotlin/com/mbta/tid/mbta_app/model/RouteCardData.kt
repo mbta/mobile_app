@@ -696,7 +696,8 @@ data class RouteCardData(
          *
          * Routes are sorted in the following order
          * 1. subway routes
-         * 2. route pattern sort order
+         * 2. routes by distance
+         * 3. route pattern sort order
          */
         @DefaultArgumentInterop.Enabled
         suspend fun routeCardsForStaticStopList(
@@ -704,6 +705,7 @@ data class RouteCardData(
             globalData: GlobalResponse?,
             context: Context,
             now: Instant = Clock.System.now(),
+            sortByDistanceFrom: Position? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
@@ -720,7 +722,8 @@ data class RouteCardData(
                         filterAtTime = now,
                         globalData = globalData,
                     )
-                    .build(null)
+                    .build(sortByDistanceFrom)
+                    .sort(sortByDistanceFrom, emptySet())
             }
 
         fun filterStopsByPatterns(
