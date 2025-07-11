@@ -18453,9 +18453,6 @@
         }
       }
     },
-    "TODO: show favorites here" : {
-
-    },
     "Track %@" : {
       "comment" : "The platform that a commuter rail train is boarding at, ex. \"Track 1\", \"Track 8\" etc",
       "localizations" : {
