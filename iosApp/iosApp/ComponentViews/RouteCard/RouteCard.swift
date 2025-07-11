@@ -9,20 +9,16 @@
 import Shared
 import SwiftUI
 
-struct RouteCard: View {
+struct RouteCardContainer<Content: View>: View {
     let cardData: RouteCardData
-    let global: GlobalResponse?
-    let now: Date
     let onPin: (String) -> Void
     let pinned: Bool
-    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
+    let departureContent: (RouteCardData.RouteStopData) -> Content
 
     @EnvironmentObject var settingsCache: SettingsCache
     var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
     var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
-
-    @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
         VStack(spacing: 0) {
@@ -51,13 +47,7 @@ struct RouteCard: View {
                         showStationAccessibility: showStationAccessibility
                     )
                 }
-                RouteCardDepartures(
-                    stopData: stopData,
-                    global: global,
-                    now: now,
-                    pinned: pinned,
-                    pushNavEntry: pushNavEntry
-                )
+                departureContent(stopData)
 
                 if index < cardData.stopData.count - 1 {
                     HaloSeparator()
@@ -66,6 +56,37 @@ struct RouteCard: View {
         }
         .background(Color.fill3)
         .withRoundedBorder()
+    }
+}
+
+struct RouteCard: View {
+    let cardData: RouteCardData
+    let global: GlobalResponse?
+    let now: Date
+    let onPin: (String) -> Void
+    let pinned: Bool
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
+    let showStopHeader: Bool
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
+    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+
+    @ScaledMetric private var modeIconHeight: CGFloat = 24
+
+    var body: some View {
+        RouteCardContainer(cardData: cardData,
+                           onPin: onPin,
+                           pinned: pinned,
+                           showStopHeader: showStopHeader) { stopData in
+            RouteCardDepartures(
+                stopData: stopData,
+                global: global,
+                now: now,
+                pinned: pinned,
+                pushNavEntry: pushNavEntry
+            )
+        }
     }
 }
 

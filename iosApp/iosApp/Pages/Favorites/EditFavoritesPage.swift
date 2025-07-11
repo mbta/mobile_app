@@ -87,7 +87,16 @@ struct EditFavoritesList: View {
 
     var body: some View {
         if let routeCardData, !routeCardData.isEmpty {
-            Text("TODO: show favorites here")
+            ScrollView {
+                VStack {
+                    ForEach(routeCardData) { cardData in
+                        RouteCardContainer(cardData: cardData, onPin: { _ in
+                        }, pinned: false, showStopHeader: true) { _ in
+                            Text(verbatim: "TODO Add delete functionality")
+                        }
+                    }
+                }
+            }
         }
 
         else if routeCardData != nil {
