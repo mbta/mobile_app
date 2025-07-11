@@ -35,6 +35,8 @@ interface IFavoritesViewModel {
     fun setLocation(location: Position?)
 
     fun setNow(now: Instant)
+
+    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>)
 }
 
 class FavoritesViewModel(
@@ -52,6 +54,8 @@ class FavoritesViewModel(
         data class SetLocation(val location: Position?) : Event
 
         data class SetNow(val now: Instant) : Event
+
+        data class UpdateFavorites(val updatedFavorites: Map<RouteStopDirection, Boolean>) : Event
     }
 
     data class State(
@@ -108,6 +112,10 @@ class FavoritesViewModel(
                     is Event.SetAlerts -> alerts = event.alerts
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
+                    is Event.UpdateFavorites -> {
+                        favoritesUsecases.updateRouteStopDirections(event.updatedFavorites)
+                        reloadFavorites()
+                    }
                 }
             }
         }
@@ -186,6 +194,10 @@ class FavoritesViewModel(
 
     override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
 
+    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+        fireEvent(Event.UpdateFavorites(updatedFavorites))
+    }
+
     companion object {
         fun filterRouteAndDirection(
             routeCardData: List<RouteCardData>?,
@@ -226,6 +238,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onSetAlerts = { _: AlertsStreamDataResponse? -> }
     var onSetLocation = { _: Position? -> }
     var onSetNow = { _: Instant -> }
+    var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
 
     override val models = MutableStateFlow(initialState)
 
@@ -247,5 +260,9 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
 
     override fun setNow(now: Instant) {
         onSetNow(now)
+    }
+
+    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+        onUpdateFavorites(updatedFavorites)
     }
 }
