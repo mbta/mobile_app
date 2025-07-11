@@ -28,11 +28,13 @@ struct FavoritesView: View {
             SheetHeader(
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 rightActionContents: {
-                    NavTextButton(string: NSLocalizedString("Edit",
-                                                            comment: "Button text to enter edit favorites flow"),
-                                  backgroundColor: Color.text.opacity(0.6),
-                                  textColor: Color.fill2) {
-                        nearbyVM.pushNavEntry(.editFavorites)
+                    if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
+                        NavTextButton(string: NSLocalizedString("Edit",
+                                                                comment: "Button text to enter edit favorites flow"),
+                                      backgroundColor: Color.text.opacity(0.6),
+                                      textColor: Color.fill2) {
+                            nearbyVM.pushNavEntry(.editFavorites)
+                        }
                     }
                 }
             )

@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct EditFavoritesPage: View {
-    let viewModel: FavoritesViewModel
+    let viewModel: IFavoritesViewModel
     let onClose: () -> Void
 
     @State var globalResponse: GlobalResponse?
