@@ -6,6 +6,7 @@
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Ajouter</string>
     <string name="add_favorite">ajouter aux favoris</string>
+    <string name="add_stops">Ajouter des arrêts</string>
     <string name="add_to_favorites_title">Ajoutez &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux favoris</string>
     <string name="additional_service">Service supplémentaire</string>

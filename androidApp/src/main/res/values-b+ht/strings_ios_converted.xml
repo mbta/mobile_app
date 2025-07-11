@@ -6,6 +6,7 @@
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
     <string name="add_favorite">ajoute nan favori</string>
+    <string name="add_stops">Ajoute arè</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>

@@ -6,6 +6,7 @@
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_confirmation_button">Thêm vào</string>
     <string name="add_favorite">thêm mục yêu thích</string>
+    <string name="add_stops">Thêm điểm dừng</string>
     <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> vào &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
