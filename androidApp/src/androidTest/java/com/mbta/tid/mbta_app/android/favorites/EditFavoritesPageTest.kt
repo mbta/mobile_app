@@ -5,6 +5,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
@@ -16,8 +17,12 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
+import dev.mokkery.spy
+import dev.mokkery.verify.VerifyMode
+import dev.mokkery.verifySuspend
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -206,7 +211,8 @@ class EditFavoritesPageTest : KoinTest {
                 RouteStopDirection("line-Green", "stop_2", 0),
             )
         val repository = MockFavoritesRepository(Favorites(favorites))
-        val usecase = FavoritesUsecases(repository)
+        val spiedRepo = spy<IFavoritesRepository>(repository)
+        val usecase = FavoritesUsecases(spiedRepo)
         val viewModel = FavoritesViewModel(usecase)
         viewModel.favorites = favorites
 
@@ -216,10 +222,16 @@ class EditFavoritesPageTest : KoinTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed().performClick()
+        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed()
 
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
+
+        composeTestRule.onAllNodesWithTag("trashCan")[1].performClick()
+        composeTestRule.awaitIdle()
+        verifySuspend(VerifyMode.exactly(1)) {
+            spiedRepo.setFavorites(Favorites(setOf(RouteStopDirection("line-Green", "stop_2", 0))))
+        }
 
         // Should be deleted
         composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
