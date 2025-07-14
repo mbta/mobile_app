@@ -14,14 +14,8 @@ struct EditFavoritesPage: View {
     let onClose: () -> Void
 
     @State var globalResponse: GlobalResponse?
-<<<<<<< HEAD
-=======
     @State var favoritesVMState: FavoritesViewModel.State = .init()
-
     @State var favoritesState: [RouteStopDirection: Bool] = [:]
-
-    @State var routeCardData: [RouteCardData]?
->>>>>>> 56bee737e (wip(ios.EditFavoritesPage): Add the requisite data)
 
     let errorBannerVM: ErrorBannerViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
@@ -47,7 +41,6 @@ struct EditFavoritesPage: View {
             }
             .onAppear {
                 loadGlobal()
-                routeCardData = favoritesVMState.staticRouteCardData
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task {
