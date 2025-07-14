@@ -12,7 +12,7 @@ androidx-navigationCompose = "2.9.0"
 androidx-test-monitor = "1.7.2"
 androidx-test-rules = "1.6.1"
 # changelog: https://developer.android.com/build/releases/past-releases
-agp = "8.7.2"
+agp = "8.11.1"
 # bom: https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # changelog: https://developer.android.com/jetpack/androidx/releases/compose
 compose-bom = "2025.06.01"
