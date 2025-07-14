@@ -204,9 +204,6 @@ fun HomeMapView(
                 MapEffect(true) { map ->
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
-                            globalData?.getStop(it)?.let { stop ->
-                                viewModel.selectedStop(stop, null)
-                            }
                             handleStopNavigation(it)
                             analytics.tappedOnStop(it)
                         }

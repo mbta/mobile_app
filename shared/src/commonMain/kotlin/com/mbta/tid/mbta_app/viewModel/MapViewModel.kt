@@ -114,14 +114,23 @@ class MapViewModel(
 
     sealed class State {
 
-        data object Overview : State()
+        abstract val stop: Stop?
+        abstract val stopFilter: StopDetailsFilter?
 
-        data class StopSelected(val stop: Stop, val stopFilter: StopDetailsFilter?) : State()
+        data object Overview : State() {
+            override val stop: Stop? = null
+            override val stopFilter: StopDetailsFilter? = null
+        }
+
+        data class StopSelected(
+            override val stop: Stop,
+            override val stopFilter: StopDetailsFilter?,
+        ) : State()
 
         data class VehicleSelected(
             val vehicle: Vehicle,
-            val stop: Stop?,
-            val stopFilter: StopDetailsFilter?,
+            override val stop: Stop?,
+            override val stopFilter: StopDetailsFilter?,
         ) : State()
     }
 
@@ -152,18 +161,8 @@ class MapViewModel(
         var density by remember { mutableStateOf<Float?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
         var state by remember { mutableStateOf<State>(State.Overview) }
-        val (stopId: String?, stopFilter: StopDetailsFilter?) =
-            when (state) {
-                is State.StopSelected -> {
-                    val currentState = (state as State.StopSelected)
-                    currentState.stop.id to currentState.stopFilter
-                }
-                is State.Overview -> null to null
-                is State.VehicleSelected -> {
-                    val currentState = (state as State.VehicleSelected)
-                    currentState.stop?.id to currentState.stopFilter
-                }
-            }
+        val (stopId: String?, stopFilter: StopDetailsFilter?) = state.stop?.id to state.stopFilter
+
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
         LaunchedEffect(now, globalData, alerts) {
@@ -230,7 +229,6 @@ class MapViewModel(
                     }
                     is Event.SelectedStop -> {
                         viewportManager.saveNearbyTransitViewport()
-                        viewportManager.stopCenter(event.stop)
                         state = State.StopSelected(event.stop, event.stopFilter)
                     }
                     is Event.SelectedVehicle -> {
@@ -266,6 +264,8 @@ class MapViewModel(
                 }
             }
         }
+
+        LaunchedEffect(state.stop) { state.stop?.let { viewportManager.stopCenter(it) } }
 
         LaunchedEffect(stopId, stopFilter, allRailRouteShapes, globalData, globalMapData) {
             if (stopId != null) {
@@ -361,7 +361,7 @@ class MapViewModel(
         val newState =
             if (routePickerOrDetails && currentState is State.VehicleSelected) {
                 if (currentState.stop != null) {
-                    State.StopSelected(currentState.stop, currentState.stopFilter)
+                    State.StopSelected(currentState.stop!!, currentState.stopFilter)
                 } else {
                     State.Overview
                 }
