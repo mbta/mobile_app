@@ -33,15 +33,13 @@ struct EditFavoritesPage: View {
                 SheetHeader(
                     title: NSLocalizedString("Edit Favorites", comment: "Title for flow to edit favorites"),
                     onClose: {
-                        viewModel
-                            .updateFavorites(updatedFavorites: favoritesState.mapValues { KotlinBoolean(bool: $0) })
                         onClose()
                     },
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
                 EditFavoritesList(routeCardData: favoritesVMState.staticRouteCardData,
                                   global: globalResponse, deleteFavorite: { rsd in
-                                      favoritesState[rsd] = false
+                                      viewModel.updateFavorites(updatedFavorites: [rsd: false])
                                   })
                 Spacer()
             }
@@ -156,7 +154,7 @@ struct FavoriteDepartures: View {
                                     pillDecoration: pillDecoration
                                 )
                                 Spacer()
-                                DeleteIcon()
+                                DeleteButton { onClick(leaf) }
                             }
                         }
                     case let .branched(branched):
@@ -166,7 +164,7 @@ struct FavoriteDepartures: View {
                                 BranchRows(formatted: branched)
                             }
                             Spacer()
-                            DeleteIcon()
+                            DeleteButton { onClick(leaf) }
                         }
                     }
                 }
@@ -204,9 +202,28 @@ struct BranchRows: View {
     }
 }
 
-struct DeleteIcon: View {
+struct DeleteButton: View {
+    let action: () -> Void
+    @ScaledMetric private var imageHeight = 16
+    @ScaledMetric private var imageWidth = 14
+    @ScaledMetric private var buttonSize = 44
     var body: some View {
-        // TODO: Circle & color
-        Image(.trashCan)
+        Button(action: { action()
+            print("Clicked")
+        }) {
+            ZStack {
+                Circle()
+                    .fill(Color.fill2)
+                    .frame(width: buttonSize, height: buttonSize)
+
+                Image(.trashCan)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: imageWidth, height: imageHeight)
+                    .foregroundColor(Color.error)
+                    .accessibilityLabel(Text("Delete",
+                                             comment: "Content description for a button that removes a favorited route/stop/direction"))
+            }
+        }
     }
 }
