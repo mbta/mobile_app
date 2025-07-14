@@ -228,7 +228,6 @@ class MapViewModel(
                         }
                     }
                     is Event.SelectedStop -> {
-                        viewportManager.saveNearbyTransitViewport()
                         state = State.StopSelected(event.stop, event.stopFilter)
                     }
                     is Event.SelectedVehicle -> {
@@ -265,7 +264,10 @@ class MapViewModel(
             }
         }
 
-        LaunchedEffect(state.stop) { state.stop?.let { viewportManager.stopCenter(it) } }
+        LaunchedEffect(state.stop) {
+            viewportManager.saveNearbyTransitViewport()
+            state.stop?.let { viewportManager.stopCenter(it) }
+        }
 
         LaunchedEffect(stopId, stopFilter, allRailRouteShapes, globalData, globalMapData) {
             if (stopId != null) {
