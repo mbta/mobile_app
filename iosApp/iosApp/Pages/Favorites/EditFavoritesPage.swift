@@ -26,6 +26,8 @@ struct EditFavoritesPage: View {
     let errorBannerVM: ErrorBannerViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
+    let inspection = Inspection<Self>()
+
     var body: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
@@ -47,6 +49,7 @@ struct EditFavoritesPage: View {
                 loadGlobal()
                 routeCardData = favoritesVMState.staticRouteCardData
             }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task {
                 for await model in viewModel.models {
                     favoritesVMState = model
@@ -209,7 +212,6 @@ struct DeleteButton: View {
     @ScaledMetric private var buttonSize = 44
     var body: some View {
         Button(action: { action()
-            print("Clicked")
         }) {
             ZStack {
                 Circle()
