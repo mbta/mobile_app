@@ -216,7 +216,7 @@ class MapViewModel(
                                     RecenterType.CurrentLocation -> viewportManager.follow(null)
                                     RecenterType.Trip -> {
                                         val currentState = state as State.VehicleSelected
-                                        handleViewortCentering(currentState, density)
+                                        handleViewportCentering(currentState, density)
                                     }
                                 }
                             }
@@ -225,7 +225,7 @@ class MapViewModel(
                     is Event.SelectedStop -> {
                         viewportManager.saveNearbyTransitViewport()
                         val newState = State.StopSelected(event.stop, event.stopFilter)
-                        handleViewortCentering(newState, density)
+                        handleViewportCentering(newState, density)
                         state = newState
                     }
                     is Event.SelectedVehicle -> {
@@ -233,7 +233,7 @@ class MapViewModel(
                         val newState =
                             State.VehicleSelected(event.vehicle, event.stop, event.stopFilter)
                         if (currentState?.vehicle?.id != newState.vehicle.id) {
-                            handleViewortCentering(newState, density)
+                            handleViewportCentering(newState, density)
                         }
                         state = newState
                     }
@@ -370,14 +370,13 @@ class MapViewModel(
             }
         // If we're already in this state, there's no need to perform these actions again
         if (newState == currentState) return currentState
-        //  handleViewportRestoration(currentNavEntry, previousNavEntry)
-        handleViewortCentering(newState, density)
+        handleViewportRestoration(currentNavEntry, previousNavEntry)
+        handleViewportCentering(newState, density)
 
         return newState
     }
 
-    private suspend fun handleViewortCentering(state: State, density: Float?) {
-
+    private suspend fun handleViewportCentering(state: State, density: Float?) {
         when (state) {
             State.Overview -> {}
             is State.StopSelected -> viewportManager.stopCenter(state.stop)
