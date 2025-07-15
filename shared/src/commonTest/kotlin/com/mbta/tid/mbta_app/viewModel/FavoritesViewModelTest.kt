@@ -11,8 +11,15 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
+import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import dev.mokkery.MockMode
+import dev.mokkery.answering.repeat
+import dev.mokkery.answering.returns
+import dev.mokkery.answering.sequentially
+import dev.mokkery.everySuspend
+import dev.mokkery.mock
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -437,6 +444,83 @@ class FavoritesViewModelTest : KoinTest {
                 ),
                 awaitItem(),
             )
+        }
+    }
+
+    @Test
+    fun `updates favorites`() = runTest {
+        val now = Clock.System.now()
+
+        val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
+        val favoritesAfter = Favorites(setOf())
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+
+        everySuspend { favoritesRepo.getFavorites() } sequentially
+            {
+                returns(favoritesBefore)
+                repeat { returns(favoritesAfter) }
+            }
+
+        val globalData = GlobalResponse(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        val expectedStaticDataBefore =
+            listOf(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route1),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route1,
+                            stop1,
+                            listOf(
+                                RouteCardData.Leaf(
+                                    RouteCardData.LineOrRoute.Route(route1),
+                                    stop1,
+                                    0,
+                                    listOf(patterns.getValue(route1).getValue(0)),
+                                    setOf(stop1.id),
+                                    upcomingTrips = emptyList(),
+                                    alertsHere = emptyList(),
+                                    allDataLoaded = true,
+                                    hasSchedulesToday = false,
+                                    alertsDownstream = emptyList(),
+                                    RouteCardData.Context.Favorites,
+                                )
+                            ),
+                            globalData,
+                        )
+                    ),
+                    now,
+                )
+            )
+        val expectedStaticDataAfter: List<RouteCardData> = listOf()
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
+                    favorites = favoritesBefore.routeStopDirection,
+                    routeCardData = emptyList(),
+                    staticRouteCardData = expectedStaticDataBefore,
+                ),
+                awaitItemSatisfying {
+                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
+                },
+            )
+            viewModel.updateFavorites(mapOf(RouteStopDirection(route1.id, stop1.id, 0) to false))
+            awaitItemSatisfying {
+                it.routeCardData != null &&
+                    it.staticRouteCardData == expectedStaticDataAfter &&
+                    (it.favorites == favoritesAfter.routeStopDirection)
+            }
         }
     }
 

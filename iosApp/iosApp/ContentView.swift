@@ -286,11 +286,16 @@ struct ContentView: View {
         let navEntry = nearbyVM.navigationStack.lastSafe()
         VStack {
             if case .editFavorites = navEntry {
-                EditFavoritesPage(
-                    viewModel: favoritesVM,
-                    onClose: { nearbyVM.popToEntrypoint() },
-                    errorBannerVM: errorBannerVM
-                )
+                // Wrapping in a TabView helps the page to animate in as a single unit
+                // Otherwise only the header animates
+                TabView {
+                    EditFavoritesPage(
+                        viewModel: favoritesVM,
+                        onClose: { nearbyVM.popToEntrypoint() },
+                        errorBannerVM: errorBannerVM
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                }
                 .transition(transition)
             } else {
                 FavoritesPage(

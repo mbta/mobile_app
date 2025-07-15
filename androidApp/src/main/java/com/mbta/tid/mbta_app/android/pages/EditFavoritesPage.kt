@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -74,11 +75,10 @@ fun EditFavoritesPage(
             title = stringResource(R.string.edit_favorites),
             closeText = stringResource(R.string.done),
             buttonColors = ButtonDefaults.key(),
-            onClose = {
-                favoritesViewModel.updateFavorites(favoritesState.toMap(), onFinish = onClose)
-            },
+            onClose = onClose,
         )
         EditFavoritesList(routeCardData, showStationAccessibility, global) {
+            favoritesViewModel.updateFavorites(mapOf(it to false))
             favoritesState[it] = false
             if (global == null) return@EditFavoritesList
             routeCardData =
@@ -151,12 +151,7 @@ private fun FavoriteDepartures(
             val formatted = leaf.format(Clock.System.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
-            Row(
-                modifier =
-                    Modifier.padding(vertical = 10.dp, horizontal = 16.dp).clickable {
-                        onClick(leaf)
-                    }
-            ) {
+            Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
                 when (formatted) {
                     is LeafFormat.Single -> {
                         Column(
@@ -173,7 +168,7 @@ private fun FavoriteDepartures(
                                         },
                                 )
                                 Spacer(Modifier.weight(1f))
-                                DeleteIcon()
+                                DeleteIcon(action = { onClick(leaf) })
                             }
                         }
                     }
@@ -189,7 +184,7 @@ private fun FavoriteDepartures(
                                 BranchRows(formatted)
                             }
                             Spacer(Modifier.weight(1f))
-                            DeleteIcon()
+                            DeleteIcon(action = { onClick(leaf) })
                         }
                     }
                 }
@@ -228,9 +223,14 @@ private fun BranchRows(formatted: LeafFormat.Branched) {
 }
 
 @Composable
-private fun DeleteIcon() {
+private fun DeleteIcon(action: () -> Unit) {
     Box(
-        modifier = Modifier.size(44.dp).clip(CircleShape).background(colorResource(R.color.fill2)),
+        modifier =
+            Modifier.size(44.dp)
+                .clip(CircleShape)
+                .background(colorResource(R.color.fill2))
+                .clickable { action() }
+                .testTag("trashCan"),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

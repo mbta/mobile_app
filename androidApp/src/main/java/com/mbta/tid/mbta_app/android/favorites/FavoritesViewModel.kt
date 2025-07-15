@@ -104,7 +104,7 @@ class FavoritesViewModel(
             ?.filter { it.stopData.any { it.data.isNotEmpty() } }
     }
 
-    fun updateFavorites(favorites: Map<RouteStopDirection, Boolean>?, onFinish: () -> Unit) {
+    fun updateFavorites(favorites: Map<RouteStopDirection, Boolean>?, onFinish: () -> Unit = {}) {
         if (favorites == null) return
         viewModelScope.launch {
             favoritesUsecases.updateRouteStopDirections(favorites)
