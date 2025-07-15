@@ -40,7 +40,7 @@ struct FormattedAlert: Equatable {
                 text: NSLocalizedString("Suspension", comment: "Possible alert effect"),
                 accessibilityLabel: NSLocalizedString("Service suspended", comment: "Suspension alert VoiceOver text")
             )
-        default: .init(text: effect, accessibilityLabel: nil)
+        default: .init(text: alert.effectString, accessibilityLabel: nil)
         }
         self.alertSummary = alertSummary
     }
