@@ -676,7 +676,6 @@ fun MapAndSheetPage(
                         vehiclesData = vehiclesData,
                         routeCardData = routeCardData,
                         viewModel = mapViewModel,
-                        isSearchExpanded = searchExpanded,
                         mapboxConfigManager = mapboxConfigManager,
                     )
                 }

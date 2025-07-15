@@ -88,7 +88,6 @@ fun HomeMapView(
     vehiclesData: List<Vehicle>,
     routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
-    isSearchExpanded: Boolean,
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
     globalRepository: IGlobalRepository = RepositoryDI().global,
 ) {
@@ -131,7 +130,7 @@ fun HomeMapView(
         when (state) {
             is State.StopSelected,
             is State.Overview -> false
-            is State.VehicleSelected -> !viewportProvider.isVehicleOverview && !isSearchExpanded
+            is State.VehicleSelected -> !viewportProvider.isVehicleOverview
         }
 
     val analytics: Analytics = koinInject()
