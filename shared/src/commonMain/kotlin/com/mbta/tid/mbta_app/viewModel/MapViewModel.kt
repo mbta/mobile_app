@@ -199,6 +199,7 @@ class MapViewModel(
                                 event.currentNavEntry,
                                 previousNavEntry,
                                 globalData,
+                                density,
                             )
                         previousNavEntry = event.currentNavEntry
                     }
@@ -215,31 +216,26 @@ class MapViewModel(
                                     RecenterType.CurrentLocation -> viewportManager.follow(null)
                                     RecenterType.Trip -> {
                                         val currentState = state as State.VehicleSelected
-                                        density?.let {
-                                            viewportManager.vehicleOverview(
-                                                vehicle = currentState.vehicle,
-                                                stop = currentState.stop,
-                                                density = it,
-                                            )
-                                        }
+                                        handleViewortCentering(currentState, density)
                                     }
                                 }
                             }
                         }
                     }
                     is Event.SelectedStop -> {
-                        state = State.StopSelected(event.stop, event.stopFilter)
+                        viewportManager.saveNearbyTransitViewport()
+                        val newState = State.StopSelected(event.stop, event.stopFilter)
+                        handleViewortCentering(newState, density)
+                        state = newState
                     }
                     is Event.SelectedVehicle -> {
                         val currentState = (state as? State.VehicleSelected)
-                        if (currentState?.vehicle?.id != event.vehicle.id && density != null) {
-                            viewportManager.vehicleOverview(
-                                vehicle = event.vehicle,
-                                stop = event.stop,
-                                density = density!!,
-                            )
+                        val newState =
+                            State.VehicleSelected(event.vehicle, event.stop, event.stopFilter)
+                        if (currentState?.vehicle?.id != newState.vehicle.id) {
+                            handleViewortCentering(newState, density)
                         }
-                        state = State.VehicleSelected(event.vehicle, event.stop, event.stopFilter)
+                        state = newState
                     }
                     is Event.MapStyleLoaded -> {
                         layerManager?.run {
@@ -262,11 +258,6 @@ class MapViewModel(
                     }
                 }
             }
-        }
-
-        LaunchedEffect(state.stop) {
-            viewportManager.saveNearbyTransitViewport()
-            state.stop?.let { viewportManager.stopCenter(it) }
         }
 
         LaunchedEffect(stopId, stopFilter, allRailRouteShapes, globalData, globalMapData) {
@@ -350,6 +341,7 @@ class MapViewModel(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
+        density: Float?,
     ): State {
         val stopDetails =
             when (currentNavEntry) {
@@ -378,8 +370,20 @@ class MapViewModel(
             }
         // If we're already in this state, there's no need to perform these actions again
         if (newState == currentState) return currentState
-        handleViewportRestoration(currentNavEntry, previousNavEntry)
+        //  handleViewportRestoration(currentNavEntry, previousNavEntry)
+        handleViewortCentering(newState, density)
+
         return newState
+    }
+
+    private suspend fun handleViewortCentering(state: State, density: Float?) {
+
+        when (state) {
+            State.Overview -> {}
+            is State.StopSelected -> viewportManager.stopCenter(state.stop)
+            is State.VehicleSelected ->
+                density?.let { viewportManager.vehicleOverview(state.vehicle, state.stop, it) }
+        }
     }
 
     private suspend fun handleViewportRestoration(
