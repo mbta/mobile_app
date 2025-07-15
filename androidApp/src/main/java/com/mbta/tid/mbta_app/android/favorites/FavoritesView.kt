@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.favorites
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -100,7 +101,10 @@ fun FavoritesView(
         ErrorBanner(errorBannerViewModel)
         RouteCardList(
             routeCardData = routeCardData,
-            emptyView = { NoFavoritesView(::onAddFavorites) },
+            emptyView = {
+                NoFavoritesView(::onAddFavorites)
+                Spacer(Modifier.weight(1f))
+            },
             global = globalResponse,
             now = now,
             isFavorite = { favoriteBridge ->

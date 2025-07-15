@@ -76,7 +76,7 @@ fun StopDetailsUnfilteredRoutesView(
     ) {
         Column(Modifier.heightIn(min = 48.dp)) {
             SheetHeader(
-                if (!multiRoute) Modifier.padding(bottom = 16.dp) else Modifier,
+                if (!multiRoute) Modifier.padding(bottom = 8.dp) else Modifier,
                 title = stop.name,
                 onClose = onClose,
             )
