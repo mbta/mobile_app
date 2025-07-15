@@ -64,8 +64,6 @@ import com.mbta.tid.mbta_app.dependencyInjection.RepositoryDI
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SheetRoutes
-import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
@@ -111,20 +109,6 @@ fun HomeMapView(
     val isNearbyNotFollowing = !following && isNearby
 
     val selectedVehicle = (state as? State.VehicleSelected)?.vehicle
-
-    val (stop: Stop?, stopFilter: StopDetailsFilter?) =
-        when (state) {
-            is State.StopSelected -> {
-                val state = (state as State.StopSelected)
-                state.stop to state.stopFilter
-            }
-            is State.Overview -> null to null
-
-            is State.VehicleSelected -> {
-                val state = (state as State.VehicleSelected)
-                state.stop to null
-            }
-        }
 
     val showTripRecenterButton =
         when (state) {
@@ -312,7 +296,11 @@ fun HomeMapView(
                             onClick =
                                 if (vehicle.tripId != null) {
                                     {
-                                        viewModel.selectedVehicle(vehicle, stop, stopFilter)
+                                        viewModel.selectedVehicle(
+                                            vehicle,
+                                            state.stop,
+                                            state.stopFilter,
+                                        )
                                         handleVehicleTap(vehicle)
                                     }
                                 } else {
