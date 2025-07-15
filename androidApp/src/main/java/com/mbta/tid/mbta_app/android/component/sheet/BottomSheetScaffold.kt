@@ -18,13 +18,14 @@
 package com.mbta.tid.mbta_app.android.component.sheet
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.requiredHeightIn
@@ -38,13 +39,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment.Companion.CenterHorizontally
+import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -72,7 +75,7 @@ import kotlinx.coroutines.launch
 @Composable
 @ExperimentalMaterial3Api
 fun BottomSheetScaffold(
-    sheetContent: @Composable ColumnScope.() -> Unit,
+    sheetContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     scaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     sheetSmallHeight: Dp = 200.dp,
@@ -189,7 +192,7 @@ private fun StandardBottomSheet(
     tonalElevation: Dp,
     shadowElevation: Dp,
     dragHandle: @Composable (() -> Unit)?,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val orientation = Orientation.Vertical
@@ -244,14 +247,19 @@ private fun StandardBottomSheet(
         tonalElevation = tonalElevation,
         shadowElevation = shadowElevation,
     ) {
-        Column(Modifier.fillMaxWidth()) {
+        Box(Modifier.fillMaxWidth()) {
+            content()
             if (dragHandle != null) {
+                var handleVisible by remember { mutableStateOf(true) }
+                LaunchedEffect(state.currentValue) {
+                    handleVisible = state.currentValue != SheetValue.Large
+                }
                 val collapseActionLabel =
                     stringResource(MaterialR.string.m3c_bottom_sheet_collapse_description)
                 val expandActionLabel =
                     stringResource(MaterialR.string.m3c_bottom_sheet_expand_description)
                 Box(
-                    Modifier.align(CenterHorizontally).semantics(mergeDescendants = true) {
+                    Modifier.align(TopCenter).semantics(mergeDescendants = true) {
                         with(state) {
                             // Provides semantics to interact with the bottomsheet if there is more
                             // than one anchor to swipe to and swiping is enabled.
@@ -285,10 +293,11 @@ private fun StandardBottomSheet(
                         }
                     }
                 ) {
-                    dragHandle()
+                    AnimatedVisibility(handleVisible, enter = fadeIn(), exit = fadeOut()) {
+                        dragHandle()
+                    }
                 }
             }
-            content()
         }
     }
 }

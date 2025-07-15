@@ -57,6 +57,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -189,6 +190,7 @@ fun RouteStopListView(
     Column {
         SheetHeader(
             title = lineOrRoute.name,
+            titleColor = Color.fromHex(lineOrRoute.textColor),
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)
                 else null,
@@ -210,7 +212,7 @@ fun RouteStopListView(
             lineOrRoute.sortRoute,
             selectedDirection,
             updateDirectionId = { selectedDirection = it },
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp),
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp).padding(top = 2.dp),
         )
 
         if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
@@ -249,11 +251,20 @@ private fun RouteStops(
         return
     }
 
+    val haloColor =
+        if (lineOrRoute.type == RouteType.BUS) colorResource(R.color.halo_light)
+        else colorResource(R.color.halo_dark)
+
     ScrollSeparatorColumn(
         Modifier.padding(horizontal = 14.dp)
             .padding(top = 8.dp, bottom = 40.dp)
-            .haloContainer(2.dp, backgroundColor = colorResource(R.color.fill2))
+            .haloContainer(
+                2.dp,
+                outlineColor = haloColor,
+                backgroundColor = colorResource(R.color.fill2),
+            )
             .then(if (loading) Modifier.loadingShimmer() else Modifier),
+        haloColor = haloColor,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
         scrollEnabled = !loading,

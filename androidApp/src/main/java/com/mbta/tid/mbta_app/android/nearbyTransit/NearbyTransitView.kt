@@ -82,7 +82,7 @@ fun NearbyTransitView(
         }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(title = stringResource(R.string.nearby_transit))
         ErrorBanner(errorBannerViewModel)
         LaunchedEffect(
