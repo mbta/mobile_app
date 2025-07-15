@@ -380,10 +380,7 @@ class MapViewModel(
 
         when (state) {
             State.Overview -> {}
-            is State.StopSelected ->
-                if (state.stopFilter == null) {
-                    viewportManager.stopCenter(state.stop)
-                }
+            is State.StopSelected -> viewportManager.stopCenter(state.stop)
             is State.VehicleSelected ->
                 density?.let { viewportManager.vehicleOverview(state.vehicle, state.stop, it) }
         }
