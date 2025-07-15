@@ -27,9 +27,8 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 stop: stop,
                 directions: [],
                 data: []
-            ),
-            showStationAccessibility: false
-        )
+            )
+        ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: stop.name))
     }
 
@@ -48,9 +47,8 @@ final class RouteCardStopHeaderTests: XCTestCase {
                 stop: stop,
                 directions: [],
                 data: []
-            ),
-            showStationAccessibility: true
-        )
+            )
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Not accessible"))
     }
 
@@ -83,9 +81,8 @@ final class RouteCardStopHeaderTests: XCTestCase {
                     alertsHere: [alert], allDataLoaded: true, hasSchedulesToday: true, alertsDownstream: [],
                     context: .stopDetailsFiltered
                 )]
-            ),
-            showStationAccessibility: true
-        )
+            )
+        ).withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "1 elevator closed"))
     }
 }

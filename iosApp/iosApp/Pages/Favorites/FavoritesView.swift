@@ -21,7 +21,6 @@ struct FavoritesView: View {
     var globalRepository = RepositoryDI().global
     let inspection = Inspection<Self>()
     @State var now = Date.now
-    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -47,7 +46,6 @@ struct FavoritesView: View {
                 now: now,
                 isPinned: { _ in false },
                 onPin: { _ in },
-                showStationAccessibility: settingsCache.get(.stationAccessibility),
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )

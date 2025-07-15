@@ -22,7 +22,6 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
@@ -31,7 +30,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
-import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -46,7 +44,6 @@ fun FavoritesView(
 ) {
     val now by timer(updateInterval = 5.seconds)
     val stopIds = favoritesViewModel.favorites?.map { it.stop }
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val schedules = getSchedule(stopIds, "FavoritesView.getSchedule")
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
@@ -110,7 +107,6 @@ fun FavoritesView(
                     )
             },
             togglePinnedRoute = {},
-            showStationAccessibility = showStationAccessibility,
             onOpenStopDetails = { stopId, filter ->
                 openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
             },

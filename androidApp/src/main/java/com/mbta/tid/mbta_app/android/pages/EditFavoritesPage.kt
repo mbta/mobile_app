@@ -45,7 +45,6 @@ import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -53,7 +52,6 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Clock
 
 @Composable
@@ -62,7 +60,6 @@ fun EditFavoritesPage(
     favoritesViewModel: FavoritesViewModel,
     onClose: () -> Unit,
 ) {
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val initialState = favoritesViewModel.favorites.orEmpty()
     val favoritesState = remember {
         mutableStateMapOf(*initialState.map { it to true }.toTypedArray())
@@ -77,7 +74,7 @@ fun EditFavoritesPage(
             buttonColors = ButtonDefaults.key(),
             onClose = onClose,
         )
-        EditFavoritesList(routeCardData, showStationAccessibility, global) {
+        EditFavoritesList(routeCardData, global) {
             favoritesViewModel.updateFavorites(mapOf(it to false))
             favoritesState[it] = false
             if (global == null) return@EditFavoritesList
@@ -94,7 +91,6 @@ fun EditFavoritesPage(
 @Composable
 private fun EditFavoritesList(
     routeCardData: List<RouteCardData>?,
-    showStationAccessibility: Boolean,
     global: GlobalResponse?,
     deleteFavorite: (RouteStopDirection) -> Unit,
 ) {
@@ -126,8 +122,6 @@ private fun EditFavoritesList(
                     isFavorite = { _ -> true },
                     onPin = {},
                     showStopHeader = true,
-                    showStationAccessibility = showStationAccessibility,
-                    enhancedFavorites = true,
                 ) { stopData ->
                     FavoriteDepartures(stopData, global) {
                         val favToDelete =

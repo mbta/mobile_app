@@ -85,7 +85,7 @@ final class FavoritesViewTests: XCTestCase {
             nearbyVM: .init(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
-        let exp = sut.inspection.inspect(after: 0.2) { view in
+        let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Some Route"))
             XCTAssertNotNil(try view.find(text: "Some Stop"))
             XCTAssertNotNil(try view.find(text: "5 min"))

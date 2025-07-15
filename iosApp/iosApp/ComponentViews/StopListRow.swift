@@ -40,11 +40,13 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var stopPlacement: StopPlacement
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var showDownstreamAlert: Bool
-    var showStationAccessibility: Bool
     var targeted: Bool
     var trackNumber: String?
     var descriptor: () -> Descriptor
     var rightSideContent: () -> RightSideContent
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     init(
         stop: Stop,
@@ -60,7 +62,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         stopPlacement: StopPlacement = .init(),
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void = { _ in },
         showDownstreamAlert: Bool = false,
-        showStationAccessibility: Bool = false,
         targeted: Bool = false,
         trackNumber: String? = nil,
         descriptor: @escaping () -> Descriptor,
@@ -79,7 +80,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         self.stopPlacement = stopPlacement
         self.onOpenAlertDetails = onOpenAlertDetails
         self.showDownstreamAlert = showDownstreamAlert
-        self.showStationAccessibility = showStationAccessibility
         self.targeted = targeted
         self.trackNumber = trackNumber
         self.descriptor = descriptor

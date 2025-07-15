@@ -16,7 +16,6 @@ struct RouteCardList<EmptyView: View>: View {
     let now: Date
     let isPinned: (String) -> Bool
     let onPin: (String) -> Void
-    let showStationAccessibility: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
 

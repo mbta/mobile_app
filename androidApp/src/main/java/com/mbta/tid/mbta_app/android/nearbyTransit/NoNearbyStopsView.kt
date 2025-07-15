@@ -28,15 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.coroutines.launch
 
 @Composable
-fun NoNearbyStopsView(
-    hideMaps: Boolean,
-    onOpenSearch: () -> Unit,
-    onPanToDefaultCenter: suspend () -> Unit,
-) {
+fun NoNearbyStopsView(onOpenSearch: () -> Unit, onPanToDefaultCenter: suspend () -> Unit) {
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
     val coroutineScope = rememberCoroutineScope()
     Column(
         modifier =
@@ -112,5 +111,5 @@ fun NoNearbyStopsView(
 @Preview
 @Composable
 private fun NoNearbyStopsViewPreview() {
-    MyApplicationTheme { NoNearbyStopsView(hideMaps = false, {}, {}) }
+    MyApplicationTheme { NoNearbyStopsView({}, {}) }
 }

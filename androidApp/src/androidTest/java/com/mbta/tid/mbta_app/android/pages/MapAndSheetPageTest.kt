@@ -82,7 +82,6 @@ class MapAndSheetPageTest {
                         NearbyTransit(
                             alertData = alertData,
                             globalResponse = globalResponse,
-                            hideMaps = true,
                             lastNearbyTransitLocationState = remember { mutableStateOf(null) },
                             nearbyTransitSelectingLocationState =
                                 remember { mutableStateOf(false) },

@@ -43,6 +43,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import dev.mokkery.MockMode
@@ -196,7 +198,7 @@ class MapAndSheetPageTest : KoinTest {
             ),
         )
 
-    val koinApplication =
+    fun koinApplication(hideMaps: Boolean = false) =
         testKoinApplication(
             builder,
             repositoryOverrides = {
@@ -205,6 +207,7 @@ class MapAndSheetPageTest : KoinTest {
                         stopIds = listOf(sampleStop.id, greenLineStop.id),
                         response = NearbyResponse(builder),
                     )
+                settings = MockSettingsRepository(mapOf(Settings.HideMaps to hideMaps))
             },
         )
 
@@ -219,6 +222,7 @@ class MapAndSheetPageTest : KoinTest {
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        val koinApplication = koinApplication()
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -229,7 +233,6 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            hideMaps = false,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =
@@ -290,6 +293,7 @@ class MapAndSheetPageTest : KoinTest {
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val mockConfigManager = MockConfigManager()
 
+        val koinApplication = koinApplication()
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -300,7 +304,6 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            hideMaps = false,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =
@@ -335,6 +338,7 @@ class MapAndSheetPageTest : KoinTest {
     fun testHidesMap() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        val koinApplication = koinApplication(hideMaps = true)
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 CompositionLocalProvider(
@@ -345,7 +349,6 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            hideMaps = true,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =
@@ -427,7 +430,6 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            hideMaps = false,
                             lastNearbyTransitLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
                             nearbyTransitSelectingLocationState =

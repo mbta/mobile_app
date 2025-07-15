@@ -59,7 +59,6 @@ fun ContentView(
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val locationDataManager = rememberLocationDataManager()
@@ -113,7 +112,6 @@ fun ContentView(
                 NearbyTransit(
                     alertData = alertData,
                     globalResponse = globalResponse,
-                    hideMaps = hideMaps,
                     lastNearbyTransitLocationState = lastNearbyTransitLocationState,
                     nearbyTransitSelectingLocationState = nearbyTransitSelectingLocationState,
                     scaffoldState = scaffoldState,
@@ -134,7 +132,6 @@ fun ContentView(
                             navigateToFavorites = { sheetNavEntrypoint = SheetRoutes.Favorites },
                             navigateToNearby = { sheetNavEntrypoint = SheetRoutes.NearbyTransit },
                             navigateToMore = { navController.navigate(Routes.More) },
-                            enhancedFavorites = enhancedFavorites,
                         )
                     }
                 },
@@ -157,7 +154,6 @@ fun ContentView(
                             sheetNavEntrypoint = SheetRoutes.NearbyTransit
                         },
                         navigateToMore = {},
-                        enhancedFavorites = enhancedFavorites,
                     )
                 }
             )

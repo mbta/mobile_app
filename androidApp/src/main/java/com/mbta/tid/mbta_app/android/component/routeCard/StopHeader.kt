@@ -23,13 +23,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
-fun StopHeader(data: RouteCardData.RouteStopData, showStationAccessibility: Boolean) {
-
+fun StopHeader(data: RouteCardData.RouteStopData) {
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val isWheelchairAccessible = data.stop.isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible
     val showElevatorAlerts = showStationAccessibility && data.hasElevatorAlerts
