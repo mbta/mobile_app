@@ -161,7 +161,7 @@ class MapViewModel(
                 is State.Overview -> null to null
                 is State.VehicleSelected -> {
                     val currentState = (state as State.VehicleSelected)
-                    currentState.stop?.id to null
+                    currentState.stop?.id to currentState.stopFilter
                 }
             }
         LaunchedEffect(null) { globalRepository.getGlobalData() }
