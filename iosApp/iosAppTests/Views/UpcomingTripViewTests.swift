@@ -237,6 +237,17 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Service suspended"))
     }
 
+    func testDetourLabel() throws {
+        let sut = UpcomingTripView(
+            prediction: .disruption(
+                .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .detour }),
+                iconName: "alert-large-red-issue"
+            ),
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Detour"))
+    }
+
     func testDisruptionIconName() throws {
         let alert = ObjectCollectionBuilder.Single.shared.alert { $0.effect = .snowRoute }
         let disruption = UpcomingFormat.Disruption(alert: alert, mapStopRoute: .bus)
