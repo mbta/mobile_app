@@ -30,6 +30,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
 import kotlin.time.Instant
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,6 +50,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         val configManager = MapboxConfigManager()
@@ -85,6 +88,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
@@ -127,6 +132,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider =
             ViewportProvider(
@@ -169,6 +176,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
@@ -203,6 +212,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
@@ -238,6 +249,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
@@ -273,6 +286,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)
@@ -351,6 +366,8 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockStopRepository(),
+                Dispatchers.Default,
+                Dispatchers.IO,
             )
         val viewportProvider = ViewportProvider(MapViewportState())
         viewModel.setViewportManager(viewportProvider)

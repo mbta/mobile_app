@@ -6,6 +6,7 @@
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
     <string name="add_favorite">添加收藏</string>
+    <string name="add_stops">添加停靠点</string>
     <string name="add_to_favorites_title">在 &lt;b>%2$s&lt;/b> 添加 &lt;b>%1$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
@@ -71,6 +72,7 @@
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
     <string name="delays_unknown_reason">&lt;b>延误&lt;/b></string>
+    <string name="delete">删除</string>
     <string name="demonstration">示威</string>
     <string name="demonstration_lowercase">示威</string>
     <string name="departure_tile_on_click_label">显示有关此行程的更多信息</string>
@@ -89,10 +91,13 @@
     <string name="dock_closure">码头关闭</string>
     <string name="dock_issue">停靠区域问题</string>
     <string name="dock_issue_sentence_case">停靠区域问题</string>
+    <string name="done">完毕</string>
     <string name="drag_handle">拖动手柄</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="drawbridge_being_raised_lowercase">吊桥升起</string>
     <string name="eastbound">东行</string>
+    <string name="edit">编辑</string>
+    <string name="edit_favorites">编辑收藏夹</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b>提前到站</string>
     <string name="electrical_work">电力作业</string>
     <string name="electrical_work_lowercase">电力作业</string>

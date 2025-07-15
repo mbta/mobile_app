@@ -6,7 +6,7 @@
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Add</string>
     <string name="add_favorite">add favorite</string>
-    <string name="add_stops" tools:ignore="MissingTranslation">Add stops</string>
+    <string name="add_stops">Add stops</string>
     <string name="add_to_favorites_title">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt;</string>
     <string name="add_to_favorites_title_stop_details">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
@@ -73,7 +73,7 @@
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
-    <string name="delete" tools:ignore="MissingTranslation">Delete</string>
+    <string name="delete">Delete</string>
     <string name="demonstration">Demonstration</string>
     <string name="demonstration_lowercase">demonstration</string>
     <string name="departure_tile_on_click_label">display more information about this trip</string>
@@ -92,13 +92,13 @@
     <string name="dock_closure">Dock Closure</string>
     <string name="dock_issue">Dock Issue</string>
     <string name="dock_issue_sentence_case">Dock issue</string>
-    <string name="done" tools:ignore="MissingTranslation">Done</string>
+    <string name="done">Done</string>
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
     <string name="eastbound">Eastbound</string>
-    <string name="edit" tools:ignore="MissingTranslation">Edit</string>
-    <string name="edit_favorites" tools:ignore="MissingTranslation">Edit Favorites</string>
+    <string name="edit">Edit</string>
+    <string name="edit_favorites">Edit Favorites</string>
     <string name="effect" translatable="false">&lt;b&gt;%1$s&lt;/b&gt;</string>
     <string name="effect_ahead">&lt;b&gt;%1$s&lt;/b&gt; ahead</string>
     <string name="electrical_work">Electrical Work</string>
@@ -327,10 +327,10 @@
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
-    <string name="stop_moved" tools:ignore="MissingTranslation">Stop Moved</string>
-    <string name="stop_moved_sentence_case" tools:ignore="MissingTranslation">Stop moved</string>
-    <string name="stop_shoveling" tools:ignore="MissingTranslation">Stop Shoveling</string>
-    <string name="stop_shoveling_sentence_case" tools:ignore="MissingTranslation">Stop shoveling</string>
+    <string name="stop_moved">Stop Moved</string>
+    <string name="stop_moved_sentence_case">Stop moved</string>
+    <string name="stop_shoveling">Stop Shoveling</string>
+    <string name="stop_shoveling_sentence_case">Stop shoveling</string>
     <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
@@ -341,7 +341,7 @@
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
     <string name="subway">Subway</string>
-    <string name="summary" tools:ignore="MissingTranslation">Summary</string>
+    <string name="summary">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>
     <string name="switch_issue_lowercase">switch issue</string>
@@ -352,9 +352,9 @@
     <string name="technical_problem_lowercase">technical problem</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
-    <string name="track_change" tools:ignore="MissingTranslation">Track Change</string>
-    <string name="track_change_sentence_case" tools:ignore="MissingTranslation">Track change</string>
-    <string name="track_number" tools:ignore="MissingTranslation">Track %1$s</string>
+    <string name="track_change">Track Change</string>
+    <string name="track_change_sentence_case">Track change</string>
+    <string name="track_number">Track %1$s</string>
     <string name="track_problem">Track Problem</string>
     <string name="track_problem_lowercase">track problem</string>
     <string name="track_work">Track Work</string>

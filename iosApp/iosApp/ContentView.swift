@@ -199,7 +199,7 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 switch navEntry {
-                case .favorites, .nearby:
+                case .editFavorites, .favorites, .nearby:
                     tabbedSheetContents.transition(transition)
 
                 case let .routeDetails(navEntry):
@@ -283,12 +283,30 @@ struct ContentView: View {
 
     @ViewBuilder
     var favoritesPage: some View {
-        FavoritesPage(
-            errorBannerVM: errorBannerVM,
-            favoritesVM: favoritesVM,
-            nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider
-        )
+        let navEntry = nearbyVM.navigationStack.lastSafe()
+        VStack {
+            if case .editFavorites = navEntry {
+                // Wrapping in a TabView helps the page to animate in as a single unit
+                // Otherwise only the header animates
+                TabView {
+                    EditFavoritesPage(
+                        viewModel: favoritesVM,
+                        onClose: { nearbyVM.popToEntrypoint() },
+                        errorBannerVM: errorBannerVM
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                }
+                .transition(transition)
+            } else {
+                FavoritesPage(
+                    errorBannerVM: errorBannerVM,
+                    favoritesVM: favoritesVM,
+                    nearbyVM: nearbyVM,
+                    viewportProvider: viewportProvider
+                )
+                .transition(transition)
+            }
+        }.animation(.easeOut, value: navEntry.sheetItemIdentifiable()?.id)
     }
 
     @ViewBuilder

@@ -44,6 +44,7 @@ fun SheetHeader(
     closeText: String? = null,
     onBack: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
+    rightActionContents: @Composable () -> Unit = {},
     buttonColors: ButtonColors = ButtonDefaults.contrast(),
 ) {
     val context = LocalContext.current
@@ -98,6 +99,8 @@ fun SheetHeader(
         } else {
             Spacer(Modifier.weight(1f))
         }
+
+        Row(modifier = Modifier.padding(top = buttonPadding)) { rightActionContents() }
 
         if (onClose != null) {
             if (closeText != null)

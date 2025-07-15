@@ -6,6 +6,7 @@
     <string name="accident_lowercase">tai nạn</string>
     <string name="add_confirmation_button">Thêm vào</string>
     <string name="add_favorite">thêm mục yêu thích</string>
+    <string name="add_stops">Thêm điểm dừng</string>
     <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> vào &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
@@ -71,6 +72,7 @@
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
+    <string name="delete">Xóa bỏ</string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>
@@ -89,10 +91,13 @@
     <string name="dock_closure">Đóng bến tàu</string>
     <string name="dock_issue">Vấn đề về bến tàu</string>
     <string name="dock_issue_sentence_case">Vấn đề về bến tàu</string>
+    <string name="done">Xong</string>
     <string name="drag_handle">Tay kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
     <string name="eastbound">Về hướng đông</string>
+    <string name="edit">Biên tập</string>
+    <string name="edit_favorites">Chỉnh sửa mục ưa thích</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <string name="electrical_work_lowercase">công việc về điện</string>

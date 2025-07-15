@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
@@ -27,21 +26,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
-import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
@@ -70,8 +68,14 @@ fun EditFavoritesPage(
     LaunchedEffect(Unit) { routeCardData = favoritesViewModel.loadStaticRouteCardData(global) }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Header(favoritesViewModel, favoritesState, onClose)
+        SheetHeader(
+            title = stringResource(R.string.edit_favorites),
+            closeText = stringResource(R.string.done),
+            buttonColors = ButtonDefaults.key(),
+            onClose = onClose,
+        )
         EditFavoritesList(routeCardData, global) {
+            favoritesViewModel.updateFavorites(mapOf(it to false))
             favoritesState[it] = false
             if (global == null) return@EditFavoritesList
             routeCardData =
@@ -80,24 +84,6 @@ fun EditFavoritesPage(
                     global,
                     favoritesState.filter { it.value }.keys,
                 )
-        }
-    }
-}
-
-@Composable
-private fun Header(
-    viewModel: FavoritesViewModel,
-    currentState: MutableMap<RouteStopDirection, Boolean>?,
-    onClose: () -> Unit,
-) {
-    Row(
-        Modifier.semantics { heading() }.padding(horizontal = 16.dp).fillMaxWidth(),
-        Arrangement.SpaceBetween,
-        Alignment.CenterVertically,
-    ) {
-        Text(text = stringResource(R.string.edit_favorites), style = Typography.title2Bold)
-        NavTextButton(stringResource(R.string.done), colors = ButtonDefaults.key()) {
-            viewModel.updateFavorites(currentState?.toMap(), onFinish = onClose)
         }
     }
 }
@@ -159,12 +145,7 @@ private fun FavoriteDepartures(
             val formatted = leaf.format(Clock.System.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
-            Row(
-                modifier =
-                    Modifier.padding(vertical = 10.dp, horizontal = 16.dp).clickable {
-                        onClick(leaf)
-                    }
-            ) {
+            Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
                 when (formatted) {
                     is LeafFormat.Single -> {
                         Column(
@@ -181,7 +162,7 @@ private fun FavoriteDepartures(
                                         },
                                 )
                                 Spacer(Modifier.weight(1f))
-                                DeleteIcon()
+                                DeleteIcon(action = { onClick(leaf) })
                             }
                         }
                     }
@@ -197,7 +178,7 @@ private fun FavoriteDepartures(
                                 BranchRows(formatted)
                             }
                             Spacer(Modifier.weight(1f))
-                            DeleteIcon()
+                            DeleteIcon(action = { onClick(leaf) })
                         }
                     }
                 }
@@ -236,9 +217,14 @@ private fun BranchRows(formatted: LeafFormat.Branched) {
 }
 
 @Composable
-private fun DeleteIcon() {
+private fun DeleteIcon(action: () -> Unit) {
     Box(
-        modifier = Modifier.size(44.dp).clip(CircleShape).background(colorResource(R.color.fill2)),
+        modifier =
+            Modifier.size(44.dp)
+                .clip(CircleShape)
+                .background(colorResource(R.color.fill2))
+                .clickable { action() }
+                .testTag("trashCan"),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

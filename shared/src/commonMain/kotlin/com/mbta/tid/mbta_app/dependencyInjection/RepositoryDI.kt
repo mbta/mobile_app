@@ -59,10 +59,12 @@ import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.MockStopRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -201,7 +203,9 @@ class MockRepositories : IRepositories {
         nearby = MockNearbyRepository(NearbyResponse(objects))
         predictions =
             MockPredictionsRepository(connectV2Response = PredictionsByStopJoinResponse(objects))
+        railRouteShapes = MockRailRouteShapeRepository(objects)
         schedules = MockScheduleRepository(ScheduleResponse(objects))
+        stop = MockStopRepository(objects)
         trip =
             MockTripRepository(
                 TripSchedulesResponse.Schedules(objects.schedules.values.toList()),

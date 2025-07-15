@@ -221,7 +221,7 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val koinApplication = koinApplication()
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -290,7 +290,7 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val mockConfigManager = MockConfigManager()
 
         val koinApplication = koinApplication()
@@ -337,7 +337,7 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testHidesMap() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val koinApplication = koinApplication(hideMaps = true)
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -388,7 +388,7 @@ class MapAndSheetPageTest : KoinTest {
         val startLocation = Position(0.0, 0.0)
         val locationDataManager = MockLocationDataManager(startLocation)
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Unfiltered)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val viewportProvider =
             spy<IViewportProvider>(
                 ViewportProvider(

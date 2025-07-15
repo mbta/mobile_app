@@ -1,6 +1,11 @@
 package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.SegmentedRouteShape
+import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.call.body
@@ -30,9 +35,37 @@ class StopRepository : IStopRepository, KoinComponent {
         }
 }
 
-class MockStopRepository : IStopRepository {
+class MockStopRepository(val objects: ObjectCollectionBuilder? = null) : IStopRepository {
     override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> {
-        return ApiResult.Ok(StopMapResponse(routeShapes = listOf(), childStops = mapOf()))
+
+        if (objects == null) {
+            ApiResult.Ok(StopMapResponse(listOf(), mapOf()))
+        }
+
+        val asGlobal = GlobalResponse(objects!!)
+
+        return ApiResult.Ok(
+            StopMapResponse(
+                asGlobal.getPatternsFor(stopId).map {
+                    MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                        it.routeId,
+                        listOf(
+                            SegmentedRouteShape(
+                                it.id,
+                                it.routeId,
+                                it.directionId,
+                                listOf(),
+                                Shape("fake-shape${it.id}"),
+                            )
+                        ),
+                    )
+                },
+                childStops =
+                    objects.getStop(stopId).childStopIds.associateWith { childId ->
+                        objects.getStop(childId)
+                    },
+            )
+        )
     }
 }
 
