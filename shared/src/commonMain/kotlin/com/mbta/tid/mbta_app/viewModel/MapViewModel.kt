@@ -370,11 +370,8 @@ class MapViewModel(
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
         val newState =
             if (routePickerOrDetails && currentState is State.TripSelected) {
-                if (currentState.stop != null) {
-                    State.StopSelected(currentState.stop!!, currentState.stopFilter)
-                } else {
-                    State.Overview
-                }
+                currentState.stop?.let { State.StopSelected(it, currentState.stopFilter) }
+                    ?: State.Overview
             } else if (currentNavEntryStopDetails == null) {
                 State.Overview
             } else {
