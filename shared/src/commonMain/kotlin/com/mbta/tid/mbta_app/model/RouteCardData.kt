@@ -688,7 +688,7 @@ data class RouteCardData(
                         globalData,
                     )
                     .build(sortByDistanceFrom)
-                    .sort(sortByDistanceFrom, pinnedRoutes)
+                    .sort(sortByDistanceFrom, pinnedRoutes, context)
             }
 
         /**
@@ -723,7 +723,7 @@ data class RouteCardData(
                         globalData = globalData,
                     )
                     .build(sortByDistanceFrom)
-                    .sort(sortByDistanceFrom, emptySet())
+                    .sort(sortByDistanceFrom, emptySet(), context)
             }
 
         fun filterStopsByPatterns(
@@ -1226,8 +1226,9 @@ fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boolean =
 fun List<RouteCardData>.sort(
     distanceFrom: Position?,
     pinnedRoutes: Set<String>,
+    context: RouteCardData.Context,
 ): List<RouteCardData> =
-    this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom))
+    this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom, context))
 
 fun List<RouteCardData.RouteStopData>.sort(
     distanceFrom: Position?
