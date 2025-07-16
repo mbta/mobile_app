@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -130,6 +131,9 @@ class MapViewModelTests : KoinTest {
                 followCalled = { timesFollowCalled += 1 },
             )
         val viewModel: MapViewModel = get()
+
+        val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val tripDetailsFilter = TripDetailsFilter("trip", vehicle.id, null, false)
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
@@ -144,9 +148,11 @@ class MapViewModelTests : KoinTest {
             viewModel.recenter()
             delay(10)
             assertEquals(2, timesFollowCalled)
-            val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
-            viewModel.selectedVehicle(vehicle, null, null)
-            assertEquals(MapViewModel.State.VehicleSelected(vehicle, null, null), awaitItem())
+            viewModel.selectedTrip(null, null, tripDetailsFilter, vehicle)
+            assertEquals(
+                MapViewModel.State.TripSelected(null, null, tripDetailsFilter, vehicle),
+                awaitItem(),
+            )
             delay(10)
             assertEquals(1, timesVehicleOverViewCalled)
             viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
@@ -164,14 +170,18 @@ class MapViewModelTests : KoinTest {
         setUpKoin(dispatcher)
         val viewportProvider = MockViewportManager()
         val viewModel: MapViewModel = get()
+        val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val tripDetailsFilter = TripDetailsFilter("trip", vehicle.id, null, false)
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
             assertEquals(MapViewModel.State.Overview, awaitItem())
-            val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
             val stop = TestData.stops["70113"]!!
-            viewModel.selectedVehicle(vehicle, stop, null)
-            assertEquals(MapViewModel.State.VehicleSelected(vehicle, stop, null), awaitItem())
+            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle)
+            assertEquals(
+                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle),
+                awaitItem(),
+            )
             viewModel.navChanged(SheetRoutes.RouteDetails("", RouteDetailsContext.Details))
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
         }

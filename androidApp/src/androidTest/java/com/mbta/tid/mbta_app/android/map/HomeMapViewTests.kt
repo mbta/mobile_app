@@ -70,7 +70,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -109,7 +108,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -159,7 +157,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -197,7 +194,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -233,7 +229,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -270,7 +265,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -307,7 +301,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -350,7 +343,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = mapVM,
-                isSearchExpanded = false,
                 configManager,
             )
         }
@@ -395,7 +387,6 @@ class HomeMapViewTests {
                 vehiclesData = emptyList(),
                 routeCardData = null,
                 viewModel = viewModel,
-                isSearchExpanded = false,
                 configManager,
             )
         }
