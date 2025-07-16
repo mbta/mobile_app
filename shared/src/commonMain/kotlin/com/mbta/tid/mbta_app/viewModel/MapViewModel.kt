@@ -406,12 +406,9 @@ class MapViewModel(
         when (state) {
             State.Overview -> {}
             is State.StopSelected -> {
-                println("KB: handleViewportCentering Stop")
                 viewportManager.stopCenter(state.stop)
             }
             is State.TripSelected -> {
-                println("KB: handleViewportCentering Vehicle")
-
                 // there is no vehicle associated with the trip, so just center on the stop
                 // if there is one
                 if (state.tripFilter.vehicleId == null) {
@@ -421,7 +418,6 @@ class MapViewModel(
                     // isn't a vehicle yet, wait for one to load before centering
                     state.vehicle?.let {
                         if (density != null) {
-                            println("KB: calling center for vehicle ${it.id}")
                             viewportManager.vehicleOverview(it, state.stop, density)
                         }
                     }
