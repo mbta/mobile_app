@@ -227,7 +227,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
 
-        composeTestRule.onAllNodesWithTag("trashCan")[1].performClick()
+        composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
         verifySuspend(VerifyMode.exactly(1)) {
             spiedRepo.setFavorites(Favorites(setOf(RouteStopDirection("line-Green", "stop_2", 0))))
