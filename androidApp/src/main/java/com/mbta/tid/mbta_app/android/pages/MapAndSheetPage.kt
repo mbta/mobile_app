@@ -197,7 +197,9 @@ fun MapAndSheetPage(
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = { vehicle ->
                 val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
-                vehicle?.let { mapViewModel.selectedVehicle(it, stop, filters?.stopFilter) }
+                filters?.tripFilter?.let {
+                    mapViewModel.selectedTrip(filters.stopFilter, stop, it, vehicle)
+                }
             },
             now = now,
         )
@@ -321,7 +323,15 @@ fun MapAndSheetPage(
         val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id
 
         if (routeId != null) analytics.tappedVehicle(routeId)
-        updateTripFilter(stopId, TripDetailsFilter(tripId, vehicle.id, stopSequence, true))
+
+        val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence, true)
+
+        updateTripFilter(stopId, newTripFilter)
+        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
+
+        // We know the exact vehicle, so set that now rather than waiting for the next vehicle
+        // data update to set it
+        mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle)
     }
 
     val popUp: NavOptionsBuilder.() -> Unit = {

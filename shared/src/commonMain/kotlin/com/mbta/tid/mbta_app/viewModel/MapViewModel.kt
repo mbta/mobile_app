@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -45,7 +46,12 @@ interface IMapViewModel {
 
     fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?)
 
-    fun selectedVehicle(vehicle: Vehicle, stop: Stop?, stopFilter: StopDetailsFilter?)
+    fun selectedTrip(
+        stopFilter: StopDetailsFilter?,
+        stop: Stop?,
+        tripFilter: TripDetailsFilter,
+        vehicle: Vehicle?,
+    )
 
     fun navChanged(currentNavEntry: SheetRoutes?)
 
@@ -87,10 +93,11 @@ class MapViewModel(
 
         data class SelectedStop(val stop: Stop, val stopFilter: StopDetailsFilter?) : Event
 
-        data class SelectedVehicle(
-            val vehicle: Vehicle,
+        data class SelectedTrip(
             val stop: Stop?,
             val stopFilter: StopDetailsFilter?,
+            val tripFilter: TripDetailsFilter,
+            val vehicle: Vehicle?,
         ) : Event
 
         data class NavChanged(val currentNavEntry: SheetRoutes?) : Event
@@ -127,10 +134,11 @@ class MapViewModel(
             override val stopFilter: StopDetailsFilter?,
         ) : State()
 
-        data class VehicleSelected(
-            val vehicle: Vehicle,
+        data class TripSelected(
             override val stop: Stop?,
             override val stopFilter: StopDetailsFilter?,
+            val tripFilter: TripDetailsFilter,
+            val vehicle: Vehicle?,
         ) : State()
     }
 
@@ -211,11 +219,11 @@ class MapViewModel(
                             is State.Overview -> {
                                 viewportManager.follow(null)
                             }
-                            is State.VehicleSelected -> {
+                            is State.TripSelected -> {
                                 when (event.type) {
                                     RecenterType.CurrentLocation -> viewportManager.follow(null)
                                     RecenterType.Trip -> {
-                                        val currentState = state as State.VehicleSelected
+                                        val currentState = state as State.TripSelected
                                         handleViewportCentering(currentState, density)
                                     }
                                 }
@@ -228,11 +236,16 @@ class MapViewModel(
                         handleViewportCentering(newState, density)
                         state = newState
                     }
-                    is Event.SelectedVehicle -> {
-                        val currentState = (state as? State.VehicleSelected)
+                    is Event.SelectedTrip -> {
+                        val currentState = (state as? State.TripSelected)
                         val newState =
-                            State.VehicleSelected(event.vehicle, event.stop, event.stopFilter)
-                        if (currentState?.vehicle?.id != newState.vehicle.id) {
+                            State.TripSelected(
+                                event.stop,
+                                event.stopFilter,
+                                event.tripFilter,
+                                event.vehicle,
+                            )
+                        if (currentState?.vehicle?.id != newState.vehicle?.id) {
                             handleViewportCentering(newState, density)
                         }
                         state = newState
@@ -305,8 +318,12 @@ class MapViewModel(
     override fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?) =
         fireEvent(Event.SelectedStop(stop, stopFilter))
 
-    override fun selectedVehicle(vehicle: Vehicle, stop: Stop?, stopFilter: StopDetailsFilter?) =
-        fireEvent(Event.SelectedVehicle(vehicle, stop, stopFilter))
+    override fun selectedTrip(
+        stopFilter: StopDetailsFilter?,
+        stop: Stop?,
+        tripFilter: TripDetailsFilter,
+        vehicle: Vehicle?,
+    ) = fireEvent(Event.SelectedTrip(stop, stopFilter, tripFilter, vehicle))
 
     override fun navChanged(currentNavEntry: SheetRoutes?) =
         fireEvent(Event.NavChanged(currentNavEntry))
@@ -338,39 +355,48 @@ class MapViewModel(
 
     private suspend fun handleNavChange(
         currentState: State,
-        currentNavEntry: SheetRoutes?,
+        newNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
         density: Float?,
     ): State {
-        val stopDetails =
-            when (currentNavEntry) {
-                is SheetRoutes.StopDetails -> currentNavEntry
+        val currentNavEntryStopDetails =
+            when (newNavEntry) {
+                is SheetRoutes.StopDetails -> newNavEntry
                 else -> null
             }
-        val stop = globalResponse?.getStop(stopDetails?.stopId)
+        val stop = globalResponse?.getStop(currentNavEntryStopDetails?.stopId)
         val routePickerOrDetails =
-            currentNavEntry is SheetRoutes.RoutePicker ||
-                currentNavEntry is SheetRoutes.RouteDetails
+            newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
         val newState =
-            if (routePickerOrDetails && currentState is State.VehicleSelected) {
+            if (routePickerOrDetails && currentState is State.TripSelected) {
                 if (currentState.stop != null) {
                     State.StopSelected(currentState.stop!!, currentState.stopFilter)
                 } else {
                     State.Overview
                 }
-            } else if (stopDetails == null) {
+            } else if (currentNavEntryStopDetails == null) {
                 State.Overview
             } else {
                 if (stop == null) {
                     State.Overview
                 } else {
-                    State.StopSelected(stop, stopDetails.stopFilter)
+                    if (currentNavEntryStopDetails.tripFilter != null) {
+                        State.TripSelected(
+                            stop,
+                            currentNavEntryStopDetails.stopFilter,
+                            currentNavEntryStopDetails.tripFilter,
+                            null,
+                        )
+                    } else {
+
+                        State.StopSelected(stop, currentNavEntryStopDetails.stopFilter)
+                    }
                 }
             }
         // If we're already in this state, there's no need to perform these actions again
         if (newState == currentState) return currentState
-        handleViewportRestoration(currentNavEntry, previousNavEntry)
+        handleViewportRestoration(newNavEntry, previousNavEntry)
         handleViewportCentering(newState, density)
 
         return newState
@@ -379,9 +405,28 @@ class MapViewModel(
     private suspend fun handleViewportCentering(state: State, density: Float?) {
         when (state) {
             State.Overview -> {}
-            is State.StopSelected -> viewportManager.stopCenter(state.stop)
-            is State.VehicleSelected ->
-                density?.let { viewportManager.vehicleOverview(state.vehicle, state.stop, it) }
+            is State.StopSelected -> {
+                println("KB: handleViewportCentering Stop")
+                viewportManager.stopCenter(state.stop)
+            }
+            is State.TripSelected -> {
+                println("KB: handleViewportCentering Vehicle")
+
+                // there is no vehicle associated with the trip, so just center on the stop
+                // if there is one
+                if (state.tripFilter.vehicleId == null) {
+                    state.stop?.let { viewportManager.stopCenter(it) }
+                } else {
+                    // if there is a vehicle id associated with the trip but there
+                    // isn't a vehicle yet, wait for one to load before centering
+                    state.vehicle?.let {
+                        if (density != null) {
+                            println("KB: calling center for vehicle ${it.id}")
+                            viewportManager.vehicleOverview(it, state.stop, density)
+                        }
+                    }
+                }
+            }
         }
     }
 

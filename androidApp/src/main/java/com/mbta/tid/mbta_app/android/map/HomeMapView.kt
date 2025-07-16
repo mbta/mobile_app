@@ -103,18 +103,18 @@ fun HomeMapView(
         when (state) {
             is State.StopSelected,
             is State.Overview -> viewportProvider.isFollowingPuck
-            is State.VehicleSelected -> false
+            is State.TripSelected -> false
         }
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
     val isNearbyNotFollowing = !following && isNearby
 
-    val selectedVehicle = (state as? State.VehicleSelected)?.vehicle
+    val selectedVehicle = (state as? State.TripSelected)?.vehicle
 
     val showTripRecenterButton =
         when (state) {
             is State.StopSelected,
             is State.Overview -> false
-            is State.VehicleSelected -> !viewportProvider.isVehicleOverview
+            is State.TripSelected -> !viewportProvider.isVehicleOverview
         }
 
     val analytics: Analytics = koinInject()
@@ -293,19 +293,7 @@ fun HomeMapView(
                             vehicle = vehicle,
                             route = route,
                             selected = isSelected,
-                            onClick =
-                                if (vehicle.tripId != null) {
-                                    {
-                                        viewModel.selectedVehicle(
-                                            vehicle,
-                                            state.stop,
-                                            state.stopFilter,
-                                        )
-                                        handleVehicleTap(vehicle)
-                                    }
-                                } else {
-                                    null
-                                },
+                            onClick = { handleVehicleTap(vehicle) },
                         )
                     }
                 }
