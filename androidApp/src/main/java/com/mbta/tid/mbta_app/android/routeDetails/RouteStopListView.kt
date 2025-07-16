@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
@@ -24,13 +26,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
@@ -53,6 +58,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
@@ -97,6 +103,9 @@ fun RouteStopListView(
         mutableIntStateOf(parameters.availableDirections.firstOrNull() ?: 0)
     }
     var selectedRouteId by rememberSaveable {
+        println(
+            "KB: defaultSelectedRouteId=${defaultSelectedRouteId} routeIds=${routeIds} routes=${lineOrRoute.allRoutes}"
+        )
         mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
     }
 
@@ -105,6 +114,9 @@ fun RouteStopListView(
 
     val stopList =
         rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
+            println(
+                "KB: Calculating stopList ${selectedRouteId}, ${selectedDirection}, ${routeStops}"
+            )
             RouteDetailsStopList.fromPieces(
                 selectedRouteId,
                 selectedDirection,
@@ -113,6 +125,95 @@ fun RouteStopListView(
             )
         }
 
+    RouteStopListView(
+        lineOrRoute = lineOrRoute,
+        parameters = parameters,
+        selectedDirection = selectedDirection,
+        setDirection = { selectedDirection = it },
+        selectedRouteId = selectedRouteId,
+        setRouteId = { selectedRouteId = it },
+        routes = routes,
+        stopList = stopList,
+        context = context,
+        globalData = globalData,
+        onClick = onClick,
+        onClickLabel = onClickLabel,
+        onBack = onBack,
+        onClose = onClose,
+        errorBannerViewModel = errorBannerViewModel,
+        toastViewModel = toastViewModel,
+        rightSideContent = rightSideContent,
+    )
+}
+
+@Composable
+fun LoadingRouteStopListView(
+    context: RouteDetailsContext,
+    errorBannerViewModel: ErrorBannerViewModel,
+    toastViewModel: IToastViewModel = koinInject(),
+) {
+    CompositionLocalProvider(IsLoadingSheetContents provides true) {
+        val objects = ObjectCollectionBuilder()
+        val mockRoute = RouteCardData.LineOrRoute.Route(objects.route {})
+
+        RouteStopListView(
+            lineOrRoute = mockRoute,
+            parameters = RouteDetailsStopList.RouteParameters(mockRoute, GlobalResponse(objects)),
+            selectedDirection = 0,
+            setDirection = {},
+            selectedRouteId = mockRoute.id,
+            setRouteId = {},
+            routes = listOf(mockRoute.route),
+            stopList = RouteDetailsStopList(0, listOf()),
+            context = context,
+            globalData = GlobalResponse(objects),
+            onClick = {},
+            onClickLabel = { null },
+            onBack = {},
+            onClose = {},
+            errorBannerViewModel = errorBannerViewModel,
+            toastViewModel = toastViewModel,
+            rightSideContent = { rowContext, modifier ->
+                when (rowContext) {
+                    is RouteDetailsRowContext.Details ->
+                        Image(
+                            painterResource(id = R.drawable.baseline_chevron_right_24),
+                            contentDescription = null,
+                            modifier = modifier.width(8.dp),
+                            colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
+                        )
+                    is RouteDetailsRowContext.Favorites ->
+                        PinButton(
+                            rowContext.isFavorited,
+                            colorResource(R.color.text),
+                            rowContext.onTapStar,
+                        )
+                }
+            },
+        )
+    }
+}
+
+@Composable
+fun RouteStopListView(
+    lineOrRoute: RouteCardData.LineOrRoute,
+    parameters: RouteDetailsStopList.RouteParameters,
+    selectedDirection: Int,
+    setDirection: (Int) -> Unit,
+    selectedRouteId: String,
+    setRouteId: (String) -> Unit,
+    routes: List<Route>,
+    stopList: RouteDetailsStopList?,
+    context: RouteDetailsContext,
+    globalData: GlobalResponse,
+    onClick: (RouteDetailsRowContext) -> Unit,
+    onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
+    onBack: () -> Unit,
+    onClose: () -> Unit,
+    errorBannerViewModel: ErrorBannerViewModel,
+    toastViewModel: IToastViewModel = koinInject(),
+    rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
+) {
     val managedFavorites = manageFavorites()
     val favorites = managedFavorites.favoriteRoutes
     val updateFavorites = managedFavorites.updateFavorites
@@ -211,13 +312,13 @@ fun RouteStopListView(
             parameters.directions,
             lineOrRoute.sortRoute,
             selectedDirection,
-            updateDirectionId = { selectedDirection = it },
+            updateDirectionId = { setDirection(it) },
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp).padding(top = 2.dp),
         )
 
         if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
             LineRoutePicker(lineOrRoute.line, routes, selectedRouteId, selectedDirection) {
-                selectedRouteId = it
+                setRouteId(it)
             }
         }
 
@@ -247,6 +348,9 @@ private fun RouteStops(
     loading: Boolean = false,
 ) {
     if (stopList == null || stopList.directionId != selectedDirection) {
+        println(
+            "KB: Loading route stops stopList=null:${stopList == null} directionId mismatch: ${stopList?.directionId != selectedDirection}"
+        )
         LoadingRouteStops(lineOrRoute, selectedDirection, context, rightSideContent)
         return
     }

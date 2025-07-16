@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
@@ -14,14 +13,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 
 @Composable
@@ -34,8 +28,13 @@ fun RouteDetailsView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView.globalData")
-    val lineOrRoute = globalData?.let { RouteDetailsStopList.getLineOrRoute(selectionId, it) }
+    val lineOrRoute =
+        globalData?.let {
+            println("KB: selectionId ${selectionId}")
+            RouteDetailsStopList.getLineOrRoute(selectionId, it)
+        }
     if (lineOrRoute == null) {
+        println("KB: lineOrRoute is null for some reason")
         LoadingRouteStopListView(context, errorBannerViewModel)
         return
     }
@@ -87,42 +86,4 @@ fun RouteDetailsView(
             }
         },
     )
-}
-
-@Composable
-private fun LoadingRouteStopListView(
-    context: RouteDetailsContext,
-    errorBannerViewModel: ErrorBannerViewModel,
-) {
-    CompositionLocalProvider(IsLoadingSheetContents provides true) {
-        val mockRoute = RouteCardData.LineOrRoute.Route(ObjectCollectionBuilder.Single.route {})
-        RouteStopListView(
-            mockRoute,
-            context,
-            GlobalResponse(ObjectCollectionBuilder()),
-            onClick = {},
-            onClickLabel = { null },
-            onBack = {},
-            onClose = {},
-            errorBannerViewModel,
-            rightSideContent = { rowContext, modifier ->
-                when (rowContext) {
-                    is RouteDetailsRowContext.Details ->
-                        Image(
-                            painterResource(id = R.drawable.baseline_chevron_right_24),
-                            contentDescription = null,
-                            modifier = modifier.width(8.dp),
-                            colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
-                        )
-
-                    is RouteDetailsRowContext.Favorites ->
-                        PinButton(
-                            rowContext.isFavorited,
-                            colorResource(R.color.text),
-                            rowContext.onTapStar,
-                        )
-                }
-            },
-        )
-    }
 }

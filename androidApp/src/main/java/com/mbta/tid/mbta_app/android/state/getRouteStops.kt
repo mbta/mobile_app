@@ -77,7 +77,11 @@ fun getRouteStops(
             factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository)
         )
 
-    LaunchedEffect(routeId, directionId) { viewModel.getRouteStops(routeId, directionId, errorKey) }
+    LaunchedEffect(routeId, directionId) {
+        println("KB: Getting route stops ${routeId} ${directionId}")
+
+        viewModel.getRouteStops(routeId, directionId, errorKey)
+    }
 
     return viewModel.routeStops.collectAsState(initial = null).value
 }
