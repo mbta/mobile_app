@@ -28,11 +28,16 @@ object PatternSorting {
     fun compareRouteCards(
         pinnedRoutes: Set<String>,
         sortByDistanceFrom: Position?,
+        context: RouteCardData.Context,
     ): Comparator<RouteCardData> =
         compareBy(
             { pinnedRouteBucket(it.lineOrRoute.sortRoute, pinnedRoutes) },
             { patternServiceBucket(it.stopData.first().data.first()) },
-            { subwayBucket(it.lineOrRoute.sortRoute) },
+            if (context != RouteCardData.Context.Favorites) {
+                { subwayBucket(it.lineOrRoute.sortRoute) }
+            } else {
+                { 0 }
+            },
             if (sortByDistanceFrom != null) {
                 { it.distanceFrom(sortByDistanceFrom) }
             } else {
