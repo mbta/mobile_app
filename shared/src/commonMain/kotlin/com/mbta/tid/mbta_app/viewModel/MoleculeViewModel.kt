@@ -24,8 +24,8 @@ expect abstract class MoleculeScopeViewModel() {
 abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel() {
     private val events =
         MutableSharedFlow<Event>(
-            replay = 10,
-            extraBufferCapacity = 10,
+            replay = 20,
+            extraBufferCapacity = 20,
             onBufferOverflow = BufferOverflow.SUSPEND,
         )
 
