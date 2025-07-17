@@ -213,10 +213,8 @@ class MapViewModel(
                     }
                     is Event.Recenter -> {
                         when (state) {
+                            is State.Overview,
                             is State.StopSelected -> {
-                                viewportManager.follow(null)
-                            }
-                            is State.Overview -> {
                                 viewportManager.follow(null)
                             }
                             is State.TripSelected -> {
