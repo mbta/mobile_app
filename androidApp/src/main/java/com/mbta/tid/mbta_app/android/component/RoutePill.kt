@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -128,17 +131,22 @@ fun RoutePill(
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}
         is RoutePillSpec.Content.Text ->
-            Text(
+            BasicText(
                 if (route?.type == RouteType.COMMUTER_RAIL) pillContent.text
                 else pillContent.text.uppercase(),
                 modifier = finalModifier,
-                color = if (isActive) textColor else Color.Unspecified,
-                fontSize = fontSize,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-                textAlign = TextAlign.Center,
                 maxLines = 1,
+                autoSize = TextAutoSize.StepBased(8.sp, fontSize, 0.25.sp),
+                style =
+                    TextStyle(
+                        color = if (isActive) textColor else Color.Unspecified,
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp,
+                        textAlign = TextAlign.Center,
+                    ),
             )
+
         is RoutePillSpec.Content.ModeImage -> {
             val (painter, contentDescription) = routeIcon(routeType = pillContent.mode)
             Icon(
