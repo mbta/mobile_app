@@ -29,6 +29,7 @@ enum RouteDetailsRowContext: Equatable {
 
 struct RouteStopListView<RightSideContent: View>: View {
     let lineOrRoute: RouteCardData.LineOrRoute
+    let parameters: RouteDetailsStopList.RouteParameters
     let context: RouteDetailsContext
     let globalData: GlobalResponse
     let onClick: (RouteDetailsRowContext) -> Void
@@ -76,6 +77,7 @@ struct RouteStopListView<RightSideContent: View>: View {
 
         selectedRouteId = defaultSelectedRouteId ?? lineOrRoute.sortRoute.id
         let parameters = RouteDetailsStopList.RouteParameters(lineOrRoute: lineOrRoute, globalData: globalData)
+        self.parameters = parameters
         selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
     }
 
@@ -92,9 +94,159 @@ struct RouteStopListView<RightSideContent: View>: View {
     }
 
     var body: some View {
-        let routes = lineOrRoute.allRoutes.sorted(by: { $0.sortOrder <= $1.sortOrder })
-        let parameters = RouteDetailsStopList.RouteParameters(lineOrRoute: lineOrRoute, globalData: globalData)
+        RouteStopListContentView(lineOrRoute: lineOrRoute,
+                                 parameters: parameters,
+                                 selectedDirection: selectedDirection,
+                                 setSelectedDirection: { selectedDirection = $0 },
+                                 selectedRouteId: selectedRouteId, setSelectedRouteId: { selectedRouteId = $0 },
+                                 stopList: stopList,
+                                 context: context,
+                                 globalData: globalData,
+                                 onClick: onClick,
+                                 onBack: onBack,
+                                 onClose: onClose,
+                                 errorBannerVM: errorBannerVM,
+                                 rightSideContent: rightSideContent,
+                                 favoritesUsecases: favoritesUsecases)
+            .onAppear {
+                loadEverything()
+                if !parameters.availableDirections.contains(where: { $0.intValue == selectedDirection }) {
+                    selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
+                }
+            }
+            .onChange(of: RouteStopsParams(routeId: selectedRouteId, directionId: selectedDirection)) {
+                loadRouteStops(routeId: $0.routeId, directionId: $0.directionId)
+            }
+            .onChange(of: RouteStopListParams(
+                routeId: selectedRouteId,
+                directionId: selectedDirection,
+                routeStops: routeStops,
+                globalData: globalData
+            )) {
+                loadStopList(
+                    routeId: $0.routeId,
+                    directionId: $0.directionId,
+                    routeStops: $0.routeStops,
+                    globalData: $0.globalData
+                )
+            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
 
+    private func loadEverything() {
+        loadRouteStops(routeId: selectedRouteId, directionId: selectedDirection)
+        if let routeStops {
+            loadStopList(
+                routeId: selectedRouteId,
+                directionId: selectedDirection,
+                routeStops: routeStops,
+                globalData: globalData
+            )
+        }
+    }
+
+    private func loadRouteStops(routeId: String, directionId: Int32) {
+        Task {
+            await fetchApi(
+                errorBannerVM.errorRepository,
+                errorKey: "RouteStopListView.loadRouteStops",
+                getData: { try await routeStopsRepository.getRouteStops(
+                    routeId: routeId,
+                    directionId: directionId
+                ) },
+                onSuccess: { routeStops = $0 },
+                onRefreshAfterError: loadEverything
+            )
+        }
+    }
+
+    private func loadStopList(
+        routeId: String,
+        directionId: Int32,
+        routeStops: RouteStopsResult?,
+        globalData: GlobalResponse
+    ) {
+        Task {
+            stopList = try? await RouteDetailsStopList.companion.fromPieces(
+                routeId: routeId,
+                directionId: directionId,
+                routeStops: routeStops,
+                globalData: globalData
+            )
+        }
+    }
+}
+
+struct RouteStopListContentView<RightSideContent: View>: View {
+    let lineOrRoute: RouteCardData.LineOrRoute
+    let parameters: RouteDetailsStopList.RouteParameters
+    let selectedDirection: Int32
+    let setSelectedDirection: (Int32) -> Void
+    let selectedRouteId: String
+    let setSelectedRouteId: (String) -> Void
+    let routes: [Route]
+    let stopList: RouteDetailsStopList?
+    let context: RouteDetailsContext
+    let globalData: GlobalResponse
+    let onClick: (RouteDetailsRowContext) -> Void
+    let onBack: () -> Void
+    let onClose: () -> Void
+    let errorBannerVM: ErrorBannerViewModel
+    let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
+
+    let favoritesUsecases: FavoritesUsecases
+    @State var favorites: Set<RouteStopDirection>?
+
+    let inspection = Inspection<Self>()
+
+    init(
+        lineOrRoute: RouteCardData.LineOrRoute,
+        parameters: RouteDetailsStopList.RouteParameters,
+        selectedDirection: Int32,
+        setSelectedDirection: @escaping (Int32) -> Void,
+        selectedRouteId: String,
+        setSelectedRouteId: @escaping (String) -> Void,
+        stopList: RouteDetailsStopList?,
+        context: RouteDetailsContext,
+        globalData: GlobalResponse,
+        onClick: @escaping (RouteDetailsRowContext) -> Void,
+        onBack: @escaping () -> Void,
+        onClose: @escaping () -> Void,
+        errorBannerVM: ErrorBannerViewModel,
+        rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
+        favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
+    ) {
+        self.lineOrRoute = lineOrRoute
+        self.parameters = parameters
+        self.selectedDirection = selectedDirection
+        self.setSelectedDirection = setSelectedDirection
+        self.selectedRouteId = selectedRouteId
+        self.setSelectedRouteId = setSelectedRouteId
+        routes = lineOrRoute.allRoutes.sorted(by: { $0.sortOrder <= $1.sortOrder })
+        self.stopList = stopList
+        self.context = context
+        self.globalData = globalData
+        self.onClick = onClick
+        self.onBack = onBack
+        self.onClose = onClose
+        self.errorBannerVM = errorBannerVM
+        self.rightSideContent = rightSideContent
+        self.favoritesUsecases = favoritesUsecases
+    }
+
+    private struct RouteStopsParams: Equatable {
+        let routeId: String
+        let directionId: Int32
+    }
+
+    private struct RouteStopListParams: Equatable {
+        let routeId: String
+        let directionId: Int32
+        let routeStops: RouteStopsResult?
+        let globalData: GlobalResponse
+    }
+
+    var body: some View {
         VStack {
             SheetHeader(title: lineOrRoute.name, onBack: onBack, onClose: onClose)
             ErrorBanner(errorBannerVM)
@@ -103,7 +255,7 @@ struct RouteStopListView<RightSideContent: View>: View {
                 directions: parameters.directions,
                 route: lineOrRoute.sortRoute,
                 selectedDirectionId: selectedDirection,
-                updateDirectionId: { selectedDirection = $0 }
+                updateDirectionId: { setSelectedDirection($0) }
             )
             .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 14).padding(.vertical, 8)
             if case let .line(lineOrRoute) = onEnum(of: lineOrRoute), routes.count > 1 {
@@ -112,32 +264,15 @@ struct RouteStopListView<RightSideContent: View>: View {
             routeStopList(stopList: stopList, onTapStop: onClick)
         }
         .onAppear {
-            loadEverything()
-            if !parameters.availableDirections.contains(where: { $0.intValue == selectedDirection }) {
-                selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
-            }
-        }
-        .onChange(of: RouteStopsParams(routeId: selectedRouteId, directionId: selectedDirection)) {
-            loadRouteStops(routeId: $0.routeId, directionId: $0.directionId)
-        }
-        .onChange(of: RouteStopListParams(
-            routeId: selectedRouteId,
-            directionId: selectedDirection,
-            routeStops: routeStops,
-            globalData: globalData
-        )) {
-            loadStopList(
-                routeId: $0.routeId,
-                directionId: $0.directionId,
-                routeStops: $0.routeStops,
-                globalData: $0.globalData
-            )
+            loadFavorites()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
-    @ViewBuilder private func routeStopList(stopList: RouteDetailsStopList?,
-                                            onTapStop: @escaping (RouteDetailsRowContext) -> Void) -> some View {
+    @ViewBuilder private func routeStopList(
+        stopList: RouteDetailsStopList?,
+        onTapStop: @escaping (RouteDetailsRowContext) -> Void
+    ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
             ScrollView {
                 VStack {
@@ -189,7 +324,7 @@ struct RouteStopListView<RightSideContent: View>: View {
                 let rowColor = selected ? Color.fill3 : Color.clear
                 let textColor = selected ? Color.text : Color(hex: line.textColor)
                 Button {
-                    selectedRouteId = route.id
+                    setSelectedRouteId(route.id)
                 } label: {
                     HStack(alignment: .center, spacing: 8) {
                         RoutePill(route: route, line: line, type: .fixed)
@@ -216,53 +351,9 @@ struct RouteStopListView<RightSideContent: View>: View {
         routeStopList(stopList: loadingStops, onTapStop: { _ in }).loadingPlaceholder()
     }
 
-    private func loadEverything() {
-        loadFavorites()
-        loadRouteStops(routeId: selectedRouteId, directionId: selectedDirection)
-        if let routeStops {
-            loadStopList(
-                routeId: selectedRouteId,
-                directionId: selectedDirection,
-                routeStops: routeStops,
-                globalData: globalData
-            )
-        }
-    }
-
     private func loadFavorites() {
         Task {
             favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
-        }
-    }
-
-    private func loadRouteStops(routeId: String, directionId: Int32) {
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "RouteStopListView.loadRouteStops",
-                getData: { try await routeStopsRepository.getRouteStops(
-                    routeId: routeId,
-                    directionId: directionId
-                ) },
-                onSuccess: { routeStops = $0 },
-                onRefreshAfterError: loadEverything
-            )
-        }
-    }
-
-    private func loadStopList(
-        routeId: String,
-        directionId: Int32,
-        routeStops: RouteStopsResult?,
-        globalData: GlobalResponse
-    ) {
-        Task {
-            stopList = try? await RouteDetailsStopList.companion.fromPieces(
-                routeId: routeId,
-                directionId: directionId,
-                routeStops: routeStops,
-                globalData: globalData
-            )
         }
     }
 

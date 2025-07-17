@@ -74,9 +74,17 @@ struct RouteDetailsView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        let mockRoute = RouteCardData.LineOrRouteRoute(route: ObjectCollectionBuilder.Single.shared.route { _ in })
-        RouteStopListView(
+        let objects = ObjectCollectionBuilder()
+        let mockRoute = RouteCardData.LineOrRouteRoute(route: objects.route { _ in })
+        let mockGlobal = GlobalResponse(objects: objects)
+        RouteStopListContentView(
             lineOrRoute: mockRoute,
+            parameters: .init(lineOrRoute: mockRoute, globalData: mockGlobal),
+            selectedDirection: 0,
+            setSelectedDirection: { _ in },
+            selectedRouteId: mockRoute.id,
+            setSelectedRouteId: { _ in },
+            stopList: .none,
             context: context,
             globalData: globalData ?? GlobalResponse(objects: .init()),
             onClick: { _ in },
