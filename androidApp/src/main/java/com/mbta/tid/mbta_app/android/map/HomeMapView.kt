@@ -99,14 +99,7 @@ fun HomeMapView(
     val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
     val isDarkMode = isSystemInDarkTheme()
 
-    val following =
-        when (state) {
-            is State.StopSelected,
-            is State.Overview -> viewportProvider.isFollowingPuck
-            is State.TripSelected -> false
-        }
     val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
-    val isNearbyNotFollowing = !following && isNearby
 
     val selectedVehicle = (state as? State.TripSelected)?.vehicle
 
@@ -215,8 +208,8 @@ fun HomeMapView(
                             locationProvider.sendLocation(
                                 Point.fromLngLat(location.longitude, location.latitude)
                             )
-                            if (following) {
-                                viewportProvider.follow()
+                            if (viewportProvider.isFollowingPuck) {
+                                viewModel.recenter(MapViewModel.Event.RecenterType.CurrentLocation)
                             }
                         }
                     }
@@ -247,7 +240,8 @@ fun HomeMapView(
                 }
 
                 if (
-                    isNearbyNotFollowing &&
+                    !viewportProvider.isFollowingPuck &&
+                        isNearby &&
                         lastNearbyTransitLocation != null &&
                         !nearbyTransitSelectingLocation
                 ) {
@@ -303,7 +297,7 @@ fun HomeMapView(
                 !locationDataManager.hasPermission &&
                     isNearby &&
                     currentLocation == null &&
-                    !following
+                    !viewportProvider.isFollowingPuck
             ) {
                 LocationAuthButton(
                     locationDataManager,
@@ -318,7 +312,7 @@ fun HomeMapView(
                 else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
 
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
-                if (!following && locationDataManager.hasPermission) {
+                if (!viewportProvider.isFollowingPuck && locationDataManager.hasPermission) {
                     RecenterButton(
                         Icons.Default.LocationOn,
                         modifier = Modifier.padding(horizontal = 16.dp).testTag("recenterButton"),
