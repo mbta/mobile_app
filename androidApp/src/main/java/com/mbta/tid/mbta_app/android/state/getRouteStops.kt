@@ -51,7 +51,10 @@ class RouteStopsViewModel(
 
     fun getRouteStops(routeId: String, directionId: Int, errorKey: String) {
         _routeStops.value = null
-        routeStopsFetcher.getRouteStops(routeId, directionId, errorKey) { _routeStops.value = it }
+        routeStopsFetcher.getRouteStops(routeId, directionId, errorKey) {
+            _routeStops.value = it
+            println("KB: routeStops set ${routeId} ${directionId} ${this.hashCode()}")
+        }
     }
 
     class Factory(
@@ -77,11 +80,7 @@ fun getRouteStops(
             factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository)
         )
 
-    LaunchedEffect(routeId, directionId) {
-        println("KB: Getting route stops ${routeId} ${directionId}")
-
-        viewModel.getRouteStops(routeId, directionId, errorKey)
-    }
+    LaunchedEffect(routeId, directionId) { viewModel.getRouteStops(routeId, directionId, errorKey) }
 
     return viewModel.routeStops.collectAsState(initial = null).value
 }

@@ -28,13 +28,8 @@ fun RouteDetailsView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView.globalData")
-    val lineOrRoute =
-        globalData?.let {
-            println("KB: selectionId ${selectionId}")
-            RouteDetailsStopList.getLineOrRoute(selectionId, it)
-        }
+    val lineOrRoute = globalData?.let { RouteDetailsStopList.getLineOrRoute(selectionId, it) }
     if (lineOrRoute == null) {
-        println("KB: lineOrRoute is null for some reason")
         LoadingRouteStopListView(context, errorBannerViewModel)
         return
     }
