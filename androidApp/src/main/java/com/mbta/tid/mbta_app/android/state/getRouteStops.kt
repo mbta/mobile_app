@@ -51,10 +51,7 @@ class RouteStopsViewModel(
 
     fun getRouteStops(routeId: String, directionId: Int, errorKey: String) {
         _routeStops.value = null
-        routeStopsFetcher.getRouteStops(routeId, directionId, errorKey) {
-            _routeStops.value = it
-            println("KB: routeStops set ${routeId} ${directionId} ${this.hashCode()}")
-        }
+        routeStopsFetcher.getRouteStops(routeId, directionId, errorKey) { _routeStops.value = it }
     }
 
     class Factory(

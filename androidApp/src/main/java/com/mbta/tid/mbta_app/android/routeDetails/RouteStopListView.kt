@@ -103,9 +103,6 @@ fun RouteStopListView(
         mutableIntStateOf(parameters.availableDirections.firstOrNull() ?: 0)
     }
     var selectedRouteId by rememberSaveable {
-        println(
-            "KB: defaultSelectedRouteId=${defaultSelectedRouteId} routeIds=${routeIds} routes=${lineOrRoute.allRoutes}"
-        )
         mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
     }
 
@@ -114,9 +111,6 @@ fun RouteStopListView(
 
     val stopList =
         rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
-            println(
-                "KB: Calculating stopList ${selectedRouteId}, ${selectedDirection}, ${routeStops}"
-            )
             RouteDetailsStopList.fromPieces(
                 selectedRouteId,
                 selectedDirection,
@@ -348,9 +342,6 @@ private fun RouteStops(
     loading: Boolean = false,
 ) {
     if (stopList == null || stopList.directionId != selectedDirection) {
-        println(
-            "KB: Loading route stops stopList=null:${stopList == null} directionId mismatch: ${stopList?.directionId != selectedDirection}"
-        )
         LoadingRouteStops(lineOrRoute, selectedDirection, context, rightSideContent)
         return
     }
