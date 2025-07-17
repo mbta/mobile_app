@@ -346,6 +346,8 @@ struct ContentView: View {
         if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
+                    // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                    if hideMaps == false { return }
                     switch nearbyVM.navigationStack.last {
                     case .alertDetails, .more: nearbyVM.goBack()
                     default: break
@@ -378,6 +380,8 @@ struct ContentView: View {
                         .fullScreenCover(
                             item: .constant(nav.coverItemIdentifiable()),
                             onDismiss: {
+                                // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                                if hideMaps { return }
                                 switch nearbyVM.navigationStack.last {
                                 case .alertDetails, .more: nearbyVM.goBack()
                                 default: break
