@@ -175,6 +175,7 @@ class GlobalRepositoryTest : KoinTest {
                     color = "FFC72C",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Bowdoin", "Wonderland"),
+                    isListedRoute = true,
                     longName = "Airport - Government Center (Local)",
                     shortName = "Blue Line Shuttle",
                     sortOrder = 60208,
