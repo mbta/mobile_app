@@ -105,8 +105,9 @@ struct EditFavoritesList: View {
 
         else if routeCardData != nil {
             ScrollView {
-                // TODO: Separate NoStopsView
-                Text("No stops added", comment: "Indicates the absence of favorites")
+                NoFavoritesView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
             }
         }
 

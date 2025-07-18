@@ -41,7 +41,22 @@ struct FavoritesView: View {
             ErrorBanner(errorBannerVM)
             RouteCardList(
                 routeCardData: favoritesVMState.routeCardData,
-                emptyView: { Text("No stops added", comment: "Indicates the absence of favorites") },
+                emptyView: {
+                    NoFavoritesView(
+                        onAddStops: {
+                            nearbyVM.pushNavEntry(
+                                SheetNavigationStackEntry.routePicker(
+                                    SheetRoutes.RoutePicker(
+                                        path: RoutePickerPath.Root(),
+                                        context: RouteDetailsContext.Favorites()
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
+                },
                 global: globalData,
                 now: now,
                 isPinned: { _ in false },

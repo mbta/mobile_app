@@ -47,6 +47,7 @@ struct RouteStopListView<RightSideContent: View>: View {
 
     @State var selectedRouteId: String
     @State var selectedDirection: Int32
+    @State var showFavoritesStopConfirmation: Stop? = nil
 
     let inspection = Inspection<Self>()
 
@@ -131,6 +132,11 @@ struct RouteStopListView<RightSideContent: View>: View {
                 )
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .overlay {
+                if let showFavoritesStopConfirmation {
+                    favoriteDialog(stop: showFavoritesStopConfirmation)
+                }
+            }
     }
 
     private func loadEverything() {
@@ -351,8 +357,49 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         routeStopList(stopList: loadingStops, onTapStop: { _ in }).loadingPlaceholder()
     }
 
+    @ViewBuilder private func favoriteDialog(stop: Stop) -> some View {
+        let allPatternsForStop = globalData.getPatternsFor(stopId: stop.id, lineOrRoute: lineOrRoute)
+        let stopDirections = lineOrRoute.directions(
+            globalData: globalData,
+            stop: stop,
+            patterns: allPatternsForStop.filter { $0.isTypical() }
+        )
+        SaveFavoritesFlow(
+            lineOrRoute: lineOrRoute,
+            stop: stop,
+            directions: stopDirections.filter { direction in
+                parameters.availableDirections.map { Int32(truncating: $0) }.contains { $0 == direction.id } &&
+                    !stop.isLastStopForAllPatterns(
+                        directionId: direction.id,
+                        patterns: allPatternsForStop,
+                        global: globalData
+                    )
+            },
+            selectedDirection: selectedDirection,
+            context: .favorites,
+            isFavorite: { rsd in
+                isFavorite(rsd)
+            },
+            updateFavorites: { newFavorites in
+                confirmFavorites(updatedValues: newFavorites)
+            },
+            onClose: {
+                showFavoritesStopConfirmation = nil
+            }
+        )
+    }
+
     private func loadFavorites() {
         Task {
+            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+        }
+    }
+
+    func confirmFavorites(updatedValues: [RouteStopDirection: Bool]) {
+        Task {
+            try? await favoritesUsecases.updateRouteStopDirections(
+                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) }
+            )
             favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
         }
     }
@@ -370,7 +417,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                     stop: stop.id,
                     direction: selectedDirection
                 )),
-                onTapStar: {}
+                onTapStar: {
+                    showFavoritesStopConfirmation = stop
+                }
             )
         }
     }
