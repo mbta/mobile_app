@@ -21,6 +21,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case more
     case nearby
     case routeDetails(SheetRoutes.RouteDetails)
+    case routePicker(SheetRoutes.RoutePicker)
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
 
     var id: Int {
@@ -53,6 +54,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .more: "more"
         case .nearby: "nearby"
         case .routeDetails: "routeDetails"
+        case .routePicker: "routePicker"
         case .stopDetails: "stopDetails"
         }
     }
@@ -93,6 +95,7 @@ struct SheetItem: Identifiable {
         case .editFavorites: "editFavorites"
         case .nearby: "nearby"
         case .routeDetails: "routeDetails"
+        case .routePicker: "routePicker"
         case let .stopDetails(stopId, _, _): stopId
         default: ""
         }
