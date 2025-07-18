@@ -10,6 +10,7 @@ data class Route(
     val color: String,
     @SerialName("direction_names") val directionNames: List<String?>,
     @SerialName("direction_destinations") val directionDestinations: List<String?>,
+    @SerialName("listed_route") val isListedRoute: Boolean = true,
     @SerialName("long_name") val longName: String,
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,

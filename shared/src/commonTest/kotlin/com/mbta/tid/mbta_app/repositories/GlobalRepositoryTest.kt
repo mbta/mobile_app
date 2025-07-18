@@ -77,6 +77,7 @@ class GlobalRepositoryTest : KoinTest {
         "Bowdoin",
         "Wonderland"
       ],
+      "listed_route" : false,
       "long_name": "Airport - Government Center (Local)",
       "short_name": "Blue Line Shuttle",
       "sort_order": 60208,
@@ -175,6 +176,7 @@ class GlobalRepositoryTest : KoinTest {
                     color = "FFC72C",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Bowdoin", "Wonderland"),
+                    isListedRoute = false,
                     longName = "Airport - Government Center (Local)",
                     shortName = "Blue Line Shuttle",
                     sortOrder = 60208,

@@ -240,6 +240,7 @@ private constructor(
         var color = "FFFFFF"
         var directionNames = listOf("", "")
         var directionDestinations = listOf("", "")
+        var isListedRoute = true
         var longName = ""
         var shortName = ""
         var sortOrder = 0
@@ -254,6 +255,7 @@ private constructor(
                 color,
                 directionNames,
                 directionDestinations,
+                isListedRoute,
                 longName,
                 shortName,
                 sortOrder,
