@@ -226,8 +226,9 @@ final class NearbyTransitViewTests: XCTestCase {
         let testData = Shared.TestData.clone()
 
         objects.put(object: testData.getRoute(id: "15"))
-        objects.put(object: testData.getRoutePattern(id: "15-2-0"))
-        objects.put(object: testData.getTrip(id: "68166816"))
+        let routePattern = testData.getRoutePattern(id: "15-2-0")
+        objects.put(object: routePattern)
+        objects.put(object: testData.getTrip(id: routePattern.representativeTripId))
         objects.put(object: testData.getStop(id: "17863"))
 
         let sut = setUpSut(objects, loadPublisher, ["52"])
@@ -250,8 +251,9 @@ final class NearbyTransitViewTests: XCTestCase {
         let testData = Shared.TestData.clone()
 
         objects.put(object: testData.getRoute(id: "15"))
-        objects.put(object: testData.getRoutePattern(id: "15-2-0"))
-        objects.put(object: testData.getTrip(id: "68166816"))
+        let routePattern = testData.getRoutePattern(id: "15-2-0")
+        objects.put(object: routePattern)
+        objects.put(object: testData.getTrip(id: routePattern.representativeTripId))
         objects.put(object: testData.getStop(id: "17863"))
 
         let sut = setUpSut(objects, loadPublisher, ["52"])

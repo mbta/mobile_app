@@ -15,6 +15,7 @@ fastlane/report.xml
 fastlane/test_output
 
 /component-graphs
+/route-branching
 /iosApp/secrets/*
 /iosApp/Pods/*
 /androidApp/src/main/res/values/secrets*.xml
