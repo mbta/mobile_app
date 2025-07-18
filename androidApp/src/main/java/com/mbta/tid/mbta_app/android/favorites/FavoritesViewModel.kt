@@ -59,7 +59,10 @@ class FavoritesViewModel(
         routeCardData = filterRouteAndDirection(loadedRouteCardData, global, favorites)
     }
 
-    suspend fun loadStaticRouteCardData(global: GlobalResponse?): List<RouteCardData>? {
+    suspend fun loadStaticRouteCardData(
+        global: GlobalResponse?,
+        position: Position?,
+    ): List<RouteCardData>? {
         val stopIds = stopIds(global)
         if (stopIds.isEmpty()) {
             return emptyList()
@@ -72,6 +75,7 @@ class FavoritesViewModel(
                 stopIds,
                 global,
                 RouteCardData.Context.Favorites,
+                sortByDistanceFrom = position,
             )
         return filterRouteAndDirection(loadedRouteCardData, global, favorites)
     }
