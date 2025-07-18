@@ -274,10 +274,11 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         onTapStop: @escaping (RouteDetailsRowContext) -> Void
     ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
+            let hasTypicalSegment = stopList.segments.contains(where: \.isTypical)
             ScrollView {
                 VStack {
                     ForEach(Array(stopList.segments.enumerated()), id: \.offset) { segmentIndex, segment in
-                        if segment.isTypical {
+                        if segment.isTypical || !hasTypicalSegment {
                             ForEach(Array(segment.stops.enumerated()), id: \.offset) { stopIndex, stop in
                                 let stopPlacement = StopPlacement(
                                     isFirst: segmentIndex == stopList.segments.startIndex && stopIndex == segment.stops
