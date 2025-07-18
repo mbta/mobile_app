@@ -47,7 +47,6 @@ struct RouteStopListView<RightSideContent: View>: View {
 
     @State var selectedRouteId: String
     @State var selectedDirection: Int32
-    @State var showFavoritesStopConfirmation: Stop? = nil
 
     let inspection = Inspection<Self>()
 
@@ -132,11 +131,6 @@ struct RouteStopListView<RightSideContent: View>: View {
                 )
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .overlay {
-                if let showFavoritesStopConfirmation {
-                    favoriteDialog(stop: showFavoritesStopConfirmation)
-                }
-            }
     }
 
     private func loadEverything() {
@@ -202,6 +196,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     let favoritesUsecases: FavoritesUsecases
     @State var favorites: Set<RouteStopDirection>?
+
+    @State var showFavoritesStopConfirmation: Stop? = nil
 
     let inspection = Inspection<Self>()
 
@@ -273,6 +269,11 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             loadFavorites()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .overlay {
+            if let showFavoritesStopConfirmation {
+                favoriteDialog(stop: showFavoritesStopConfirmation)
+            }
+        }
     }
 
     @ViewBuilder private func routeStopList(
@@ -389,13 +390,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         )
     }
 
-    private func loadFavorites() {
-        Task {
-            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
-        }
-    }
-
-    func confirmFavorites(updatedValues: [RouteStopDirection: Bool]) {
+    private func confirmFavorites(updatedValues: [RouteStopDirection: Bool]) {
         Task {
             try? await favoritesUsecases.updateRouteStopDirections(
                 newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) }
@@ -406,6 +401,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     private func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
         favorites?.contains(routeStopDirection) ?? false
+    }
+
+    private func loadFavorites() {
+        Task {
+            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+        }
     }
 
     private func stopRowContext(_ stop: Stop) -> RouteDetailsRowContext {
