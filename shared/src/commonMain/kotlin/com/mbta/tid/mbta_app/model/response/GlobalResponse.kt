@@ -81,22 +81,18 @@ data class GlobalResponse(
     fun getRoute(routeId: String?) = routes[routeId]
 
     fun getRoutesForPicker(path: RoutePickerPath) =
-        when (path) {
-                is RoutePickerPath.Root ->
-                    routes.values.filter {
-                        it.type in setOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) &&
-                            it.isListedRoute
+        routes.values
+            .filter {
+                it.isListedRoute &&
+                    when (path) {
+                        is RoutePickerPath.Root ->
+                            it.type in setOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL)
+
+                        is RoutePickerPath.Bus -> it.type == RouteType.BUS && !it.isShuttle
+                        is RoutePickerPath.Silver -> it.id in silverRoutes
+                        is RoutePickerPath.CommuterRail -> it.type == RouteType.COMMUTER_RAIL
+                        is RoutePickerPath.Ferry -> it.type == RouteType.FERRY
                     }
-                is RoutePickerPath.Bus ->
-                    routes.values.filter {
-                        it.type == RouteType.BUS && !it.isShuttle && it.isListedRoute
-                    }
-                is RoutePickerPath.Silver ->
-                    routes.values.filter { it.id in silverRoutes && it.isListedRoute }
-                is RoutePickerPath.CommuterRail ->
-                    routes.values.filter { it.type == RouteType.COMMUTER_RAIL && it.isListedRoute }
-                is RoutePickerPath.Ferry ->
-                    routes.values.filter { it.type == RouteType.FERRY && it.isListedRoute }
             }
             .sortedBy {
                 // We want to include silver line routes on the bus picker page so that they show
