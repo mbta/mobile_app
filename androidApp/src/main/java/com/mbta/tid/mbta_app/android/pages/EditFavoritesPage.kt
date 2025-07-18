@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
@@ -153,31 +152,37 @@ private fun FavoriteDepartures(
                             verticalArrangement =
                                 Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
                                 DirectionLabel(
                                     direction,
                                     pillDecoration =
                                         formatted.route?.let {
                                             PillDecoration.OnDirectionDestination(it)
                                         },
+                                    modifier = Modifier.weight(1f),
                                 )
-                                Spacer(Modifier.weight(1f))
                                 DeleteIcon(action = { onClick(leaf) })
                             }
                         }
                     }
 
                     is LeafFormat.Branched -> {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
                             Column(
                                 horizontalAlignment = Alignment.Start,
                                 verticalArrangement =
                                     Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                                modifier = Modifier.weight(1f),
                             ) {
                                 DirectionLabel(direction, showDestination = false)
                                 BranchRows(formatted)
                             }
-                            Spacer(Modifier.weight(1f))
                             DeleteIcon(action = { onClick(leaf) })
                         }
                     }
