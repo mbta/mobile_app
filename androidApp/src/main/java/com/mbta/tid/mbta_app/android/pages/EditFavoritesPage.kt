@@ -52,11 +52,13 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Clock
 
 @Composable
 fun EditFavoritesPage(
     global: GlobalResponse?,
+    targetLocation: Position?,
     favoritesViewModel: FavoritesViewModel,
     onClose: () -> Unit,
 ) {
@@ -65,7 +67,10 @@ fun EditFavoritesPage(
         mutableStateMapOf(*initialState.map { it to true }.toTypedArray())
     }
     var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
-    LaunchedEffect(Unit) { routeCardData = favoritesViewModel.loadStaticRouteCardData(global) }
+    LaunchedEffect(Unit) {
+        // Don't update when global/target location changes to prevent reorders while editing
+        routeCardData = favoritesViewModel.loadStaticRouteCardData(global, targetLocation)
+    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(
