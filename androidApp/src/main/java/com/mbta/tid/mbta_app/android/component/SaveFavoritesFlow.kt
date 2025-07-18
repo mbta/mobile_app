@@ -153,6 +153,22 @@ fun FavoriteConfirmationDialog(
                         Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp).fillMaxWidth(),
                 )
             }
+
+            if (directions.isEmpty()) {
+                Column {
+                    Text(
+                        // TODO: Update copy, make resource, port to iOS & translate
+                        "This stop has no departures",
+                        textAlign = TextAlign.Center,
+                        style = Typography.footnoteSemibold,
+                        modifier =
+                            Modifier.padding(horizontal = 16.dp)
+                                .padding(bottom = 8.dp)
+                                .fillMaxWidth(),
+                    )
+                    HaloSeparator()
+                }
+            }
             Column() {
                 HaloSeparator()
                 directions.mapIndexed { idx, direction ->
