@@ -1,34 +1,33 @@
 package com.mbta.tid.mbta_app.android.favorites
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
-import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
-import dev.mokkery.spy
+import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -57,6 +56,7 @@ class EditFavoritesPageTest : KoinTest {
             lineId = line.id
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
+    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -141,6 +141,7 @@ class EditFavoritesPageTest : KoinTest {
             lineId = greenLine.id
             routePatternIds = mutableListOf("pattern_gl")
         }
+    val greenLineOrRoute = RouteCardData.LineOrRoute.Line(greenLine, setOf(greenLineRoute))
     val greenLineRoutePatternOne =
         builder.routePattern(greenLineRoute) {
             id = "pattern_gl"
@@ -179,6 +180,66 @@ class EditFavoritesPageTest : KoinTest {
             departureTime = now.plus(5.5.minutes)
         }
 
+    val routeCard =
+        RouteCardData(
+            lineOrRoute,
+            listOf(
+                RouteCardData.RouteStopData(
+                    lineOrRoute,
+                    sampleStop,
+                    listOf(Direction(0, route)),
+                    listOf(
+                        RouteCardData.Leaf(
+                            lineOrRoute,
+                            sampleStop,
+                            0,
+                            listOf(routePatternOne),
+                            setOf(sampleStop.id),
+                            listOf(UpcomingTrip(trip1, prediction)),
+                            emptyList(),
+                            true,
+                            true,
+                            emptyList(),
+                            RouteCardData.Context.Favorites,
+                        )
+                    ),
+                )
+            ),
+            now,
+        )
+
+    val greenLineRouteCard =
+        RouteCardData(
+            greenLineOrRoute,
+            listOf(
+                RouteCardData.RouteStopData(
+                    greenLineOrRoute,
+                    greenLineStop,
+                    listOf(Direction(0, greenLineRoute)),
+                    listOf(
+                        RouteCardData.Leaf(
+                            greenLineOrRoute,
+                            greenLineStop,
+                            0,
+                            listOf(greenLineRoutePatternOne),
+                            setOf(greenLineStop.id),
+                            listOf(UpcomingTrip(greenLineTrip, greenLinePrediction)),
+                            emptyList(),
+                            true,
+                            true,
+                            emptyList(),
+                            RouteCardData.Context.Favorites,
+                        )
+                    ),
+                )
+            ),
+            now,
+        )
+
+    val routeCardData = listOf(routeCard)
+    val greenLineRouteCardData = listOf(greenLineRouteCard)
+    val combinedRouteCardData = listOf(routeCard, greenLineRouteCard)
+
     val globalResponse = GlobalResponse(builder)
 
     val koinApplication = testKoinApplication(builder)
@@ -189,15 +250,13 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testFavoritesDisplayCorrectly(): Unit = runBlocking {
         val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
-        val repository = MockFavoritesRepository(Favorites(favorites))
-        val usecase = FavoritesUsecases(repository)
-        val viewModel = FavoritesViewModel(usecase)
-        viewModel.favorites = favorites
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(false, favorites, routeCardData, routeCardData)
+            )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                EditFavoritesPage(globalResponse, null, viewModel) {}
-            }
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
@@ -213,13 +272,13 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testShowsEmptyView() {
         val repository = MockFavoritesRepository(Favorites(emptySet()))
-        val usecase = FavoritesUsecases(repository)
-        val viewModel = FavoritesViewModel(usecase)
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(false, emptySet(), emptyList(), emptyList())
+            )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                EditFavoritesPage(globalResponse, null, viewModel) {}
-            }
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
         composeTestRule.waitForIdle()
@@ -235,16 +294,32 @@ class EditFavoritesPageTest : KoinTest {
                 RouteStopDirection(route.id, sampleStop.id, 0),
                 RouteStopDirection(greenLine.id, greenLineStop.id, 0),
             )
-        val repository = MockFavoritesRepository(Favorites(favorites))
-        val spiedRepo = spy<IFavoritesRepository>(repository)
-        val usecase = FavoritesUsecases(spiedRepo)
-        val viewModel = FavoritesViewModel(usecase)
-        viewModel.favorites = favorites
+        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(
+                    false,
+                    favorites,
+                    combinedRouteCardData,
+                    combinedRouteCardData,
+                )
+            )
+
+        viewModel.onUpdateFavorites = { update ->
+            viewModel.models.update {
+                FavoritesViewModel.State(
+                    false,
+                    setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)),
+                    greenLineRouteCardData,
+                    greenLineRouteCardData,
+                )
+            }
+            updatedWith = update
+        }
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                EditFavoritesPage(globalResponse, null, viewModel) {}
-            }
+            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
@@ -256,11 +331,11 @@ class EditFavoritesPageTest : KoinTest {
 
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
-        verifySuspend(VerifyMode.exactly(1)) {
-            spiedRepo.setFavorites(
-                Favorites(setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)))
-            )
-        }
+
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        verifySuspend(VerifyMode.exactly(1)) { viewModel.updateFavorites(update) }
+
+        composeTestRule.waitUntil { update == updatedWith }
 
         // Should be deleted
         composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
@@ -269,32 +344,5 @@ class EditFavoritesPageTest : KoinTest {
         // Should remain
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun testFavoritesOrderStopsBasedOnPosition(): Unit = runBlocking {
-        val favorites =
-            setOf(
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
-                RouteStopDirection(route.id, farStop.id, 1),
-                RouteStopDirection(route.id, sampleStop.id, 0),
-            )
-        val repository = MockFavoritesRepository(Favorites(favorites))
-        val usecase = FavoritesUsecases(repository)
-        val viewModel = FavoritesViewModel(usecase)
-        viewModel.favorites = favorites
-
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                EditFavoritesPage(globalResponse, Position(0.0, 0.0), viewModel) {}
-            }
-        }
-
-        val stops = composeTestRule.onAllNodesWithText("Stop", substring = true)
-        stops[0].assertTextEquals("Sample Stop 1")
-        stops[1].assertTextEquals("Sample Stop 2")
-        stops[2].assertTextEquals("Green Line Stop")
-        stops.assertCountEquals(3)
     }
 }
