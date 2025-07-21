@@ -35,7 +35,8 @@ struct EditFavoritesPage: View {
                 )
                 EditFavoritesList(routeCardData: favoritesVMState.staticRouteCardData,
                                   global: globalResponse, deleteFavorite: { rsd in
-                                      viewModel.updateFavorites(updatedFavorites: [rsd: false])
+                                      viewModel.updateFavorites(updatedFavorites: [rsd: false],
+                                                                context: .favorites, defaultDirection: rsd.direction)
                                   })
                 Spacer()
             }
