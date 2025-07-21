@@ -53,7 +53,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
-import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -72,7 +71,6 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.popBackStackFrom
@@ -93,6 +91,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
@@ -135,7 +134,7 @@ fun MapAndSheetPage(
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
-    favoritesViewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory()),
+    favoritesViewModel: IFavoritesViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
@@ -152,7 +151,6 @@ fun MapAndSheetPage(
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
-    val favoritesLocation by managedTargetLocation(nearbyTransit)
     val (pinnedRoutes) = managePinnedRoutes()
 
     val density = LocalDensity.current
@@ -471,7 +469,6 @@ fun MapAndSheetPage(
                 SheetPage {
                     FavoritesPage(
                         openSheetRoute = ::navigate,
-                        targetLocation = favoritesLocation,
                         favoritesViewModel = favoritesViewModel,
                         errorBannerViewModel = errorBannerViewModel,
                         nearbyTransit = nearbyTransit,
@@ -482,7 +479,6 @@ fun MapAndSheetPage(
                 SheetPage {
                     EditFavoritesPage(
                         global = nearbyTransit.globalResponse,
-                        targetLocation = favoritesLocation,
                         favoritesViewModel = favoritesViewModel,
                         onClose = {
                             navController.popBackStackFrom(SheetRoutes.EditFavorites::class)

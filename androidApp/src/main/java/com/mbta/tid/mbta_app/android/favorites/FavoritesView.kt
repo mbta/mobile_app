@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
@@ -21,8 +22,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
-import com.mbta.tid.mbta_app.android.state.getSchedule
-import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
@@ -31,50 +30,47 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun FavoritesView(
     openSheetRoute: (SheetRoutes) -> Unit,
-    favoritesViewModel: FavoritesViewModel,
+    favoritesViewModel: IFavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
 ) {
     val now by timer(updateInterval = 5.seconds)
-    val stopIds = favoritesViewModel.favorites?.map { it.stop }
-    val schedules = getSchedule(stopIds, "FavoritesView.getSchedule")
-    val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
-    val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
+    val state by favoritesViewModel.models.collectAsState()
 
     fun onAddFavorites() {
         openSheetRoute(SheetRoutes.RoutePicker(RoutePickerPath.Root, RouteDetailsContext.Favorites))
     }
 
-    LaunchedEffect(Unit) { favoritesViewModel.loadFavorites() }
+    LaunchedEffect(now) { favoritesViewModel.setNow(now) }
+    LaunchedEffect(alertData) { favoritesViewModel.setAlerts(alertData) }
+    LaunchedEffect(targetLocation) { favoritesViewModel.setLocation(targetLocation) }
 
-    LaunchedEffect(
-        globalResponse,
-        schedules,
-        predictions,
-        alertData,
-        now,
-        stopIds,
-        targetLocation,
-    ) {
-        favoritesViewModel.loadRealtimeRouteCardData(
-            globalResponse,
-            targetLocation,
-            schedules,
-            predictions,
-            alertData,
-            now,
-        )
+    LaunchedEffect(Unit) {
+        favoritesViewModel.setActive(active = true, wasSentToBackground = false)
+        favoritesViewModel.reloadFavorites()
     }
 
-    val routeCardData = favoritesViewModel.routeCardData
+    LifecycleResumeEffect(Unit) {
+        favoritesViewModel.setActive(active = true, wasSentToBackground = false)
+        onPauseOrDispose {
+            favoritesViewModel.setActive(active = false, wasSentToBackground = true)
+        }
+    }
+
+    LaunchedEffect(state.awaitingPredictionsAfterBackground) {
+        errorBannerViewModel.loadingWhenPredictionsStale = state.awaitingPredictionsAfterBackground
+    }
+
+    val routeCardData = state.routeCardData
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(
@@ -106,9 +102,7 @@ fun FavoritesView(
             now = now,
             isFavorite = { favoriteBridge ->
                 favoriteBridge is FavoriteBridge.Favorite &&
-                    (favoritesViewModel.favorites ?: emptySet()).contains(
-                        favoriteBridge.routeStopDirection
-                    )
+                    (state.favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
             },
             togglePinnedRoute = {},
             onOpenStopDetails = { stopId, filter ->
