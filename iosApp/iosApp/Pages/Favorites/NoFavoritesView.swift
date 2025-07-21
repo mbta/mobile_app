@@ -25,7 +25,7 @@ struct NoFavoritesView: View {
                     action: onAddStops,
                     label: {
                         HStack(alignment: .center, spacing: 16) {
-                            Text("Add Stops")
+                            Text("Add stops")
                                 .font(Typography.bodySemibold)
                                 .foregroundColor(.fill3)
                             Image(.plus)
