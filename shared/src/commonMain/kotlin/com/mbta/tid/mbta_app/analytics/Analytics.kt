@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.analytics
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -14,6 +16,30 @@ abstract class Analytics {
     private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
         val paramsMap = mutableMapOf(*parameters)
         logEvent(name, paramsMap)
+    }
+
+    fun favoritesUpdated(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
+
+        updatedFavorites.entries
+            .groupBy { Pair(it.key.route, it.key.stop) }
+            .forEach { (_routeStop, routeStopFavorites) ->
+                routeStopFavorites.forEach { (rsd, isFavorited) ->
+                    logEvent(
+                        "updated_favorites",
+                        "action" to if (isFavorited) "add" else "remove",
+                        "route_id" to rsd.route,
+                        "stop_id" to rsd.stop,
+                        "direction_id" to "${rsd.direction}",
+                        "is_default_direction" to "${rsd.direction == defaultDirection}",
+                        "context" to context.name,
+                        "updated_both_directions_at_once" to "${routeStopFavorites.size == 2}",
+                    )
+                }
+            }
     }
 
     fun performedSearch(query: String) {

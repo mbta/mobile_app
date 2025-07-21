@@ -24,6 +24,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+enum class EditFavoritesContext {
+    Favorites,
+    StopDetails,
+}
+
 interface IFavoritesViewModel {
     val models: StateFlow<FavoritesViewModel.State>
 
@@ -37,7 +42,11 @@ interface IFavoritesViewModel {
 
     fun setNow(now: Instant)
 
-    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>)
+    fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    )
 }
 
 class FavoritesViewModel(
@@ -57,7 +66,11 @@ class FavoritesViewModel(
 
         data class SetNow(val now: Instant) : Event
 
-        data class UpdateFavorites(val updatedFavorites: Map<RouteStopDirection, Boolean>) : Event
+        data class UpdateFavorites(
+            val updatedFavorites: Map<RouteStopDirection, Boolean>,
+            val context: EditFavoritesContext,
+            val defaultDirection: Int,
+        ) : Event
     }
 
     data class State(
@@ -119,6 +132,23 @@ class FavoritesViewModel(
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
                     is Event.UpdateFavorites -> {
+                        val existingFavorites = favorites
+                        val changedFavorites =
+                            if (existingFavorites == null) {
+                                event.updatedFavorites
+                            } else {
+                                event.updatedFavorites.filter {
+                                    (!it.value && existingFavorites.contains(it.key)) ||
+                                        (it.value && !(existingFavorites.contains(it.key)))
+                                }
+                            }
+
+                        analytics.favoritesUpdated(
+                            changedFavorites,
+                            event.context,
+                            event.defaultDirection,
+                        )
+
                         favoritesUsecases.updateRouteStopDirections(event.updatedFavorites)
                         reloadFavorites()
                     }
@@ -201,8 +231,12 @@ class FavoritesViewModel(
 
     override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
 
-    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
-        fireEvent(Event.UpdateFavorites(updatedFavorites))
+    override fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
+        fireEvent(Event.UpdateFavorites(updatedFavorites, context, defaultDirection))
     }
 
     companion object {
@@ -269,7 +303,11 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetNow(now)
     }
 
-    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+    override fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
         onUpdateFavorites(updatedFavorites)
     }
 }

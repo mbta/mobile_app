@@ -27,7 +27,6 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -44,6 +43,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
 import kotlin.time.Instant
 
 @Composable
@@ -96,7 +96,7 @@ fun StopDetailsFilteredPickerView(
                 stop,
                 directions.filter { it.id in availableDirections },
                 selectedDirection = stopFilter.directionId,
-                context = SaveFavoritesContext.StopDetails,
+                context = EditFavoritesContext.StopDetails,
                 updateFavorites = { newValues ->
                     updateFavorites(FavoriteUpdateBridge.Favorites(newValues))
                 },
