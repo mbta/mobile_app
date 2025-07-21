@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import dev.mokkery.verify.VerifyMode
@@ -271,7 +270,6 @@ class EditFavoritesPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsEmptyView() {
-        val repository = MockFavoritesRepository(Favorites(emptySet()))
         val viewModel =
             MockFavoritesViewModel(
                 FavoritesViewModel.State(false, emptySet(), emptyList(), emptyList())
