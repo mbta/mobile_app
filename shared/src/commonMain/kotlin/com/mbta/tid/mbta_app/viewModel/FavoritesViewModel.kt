@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -42,6 +43,7 @@ interface IFavoritesViewModel {
 class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val coroutineDispatcher: CoroutineDispatcher,
+    private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
 
     sealed interface Event {
@@ -96,7 +98,11 @@ class FavoritesViewModel(
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
-        LaunchedEffect(Unit) { favorites = favoritesUsecases.getRouteStopDirectionFavorites() }
+        LaunchedEffect(Unit) {
+            val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
+            favorites = fetchedFavorites
+            analytics.recordSession(fetchedFavorites.count())
+        }
 
         LaunchedEffect(Unit) {
             events.collect { event ->

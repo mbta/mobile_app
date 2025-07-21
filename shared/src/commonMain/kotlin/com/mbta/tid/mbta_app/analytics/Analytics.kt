@@ -32,6 +32,10 @@ abstract class Analytics {
         setUserProperty("location_access", locationAccess.recordedValue)
     }
 
+    fun recordSession(favoritesCount: Int) {
+        setUserProperty("favorites_count", "$favoritesCount")
+    }
+
     @OptIn(ExperimentalObjCName::class)
     @ObjCName(swiftName = "recordSession")
     fun recordSessionHideMaps(hideMaps: Boolean) {

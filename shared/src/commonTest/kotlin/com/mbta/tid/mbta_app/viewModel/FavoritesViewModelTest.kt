@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
@@ -78,6 +80,7 @@ class FavoritesViewModelTest : KoinTest {
     private fun setUpKoin(
         objects: ObjectCollectionBuilder = this.objects,
         coroutineDispatcher: CoroutineDispatcher,
+        analytics: Analytics = MockAnalytics(),
         repositoriesBlock: MockRepositories.() -> Unit = {},
     ) {
         startKoin {
@@ -86,6 +89,7 @@ class FavoritesViewModelTest : KoinTest {
                     single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         coroutineDispatcher
                     }
+                    single<Analytics> { analytics }
                 },
                 repositoriesModule(
                     MockRepositories().apply {
@@ -680,5 +684,35 @@ class FavoritesViewModelTest : KoinTest {
                 it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
             }
         }
+    }
+
+    @Test
+    fun `analytics event when favorites first loaded`() = runTest {
+        val now = Clock.System.now()
+        val later = now + 2.minutes
+        val objects = objects.clone()
+        predictionsEverywhere(objects, now)
+
+        var analyticsLogged: Pair<String, String>? = null
+        val mockAnalytics =
+            MockAnalytics(
+                onSetUserProperty = { event, count -> analyticsLogged = Pair(event, count) }
+            )
+
+        val initialFavorites = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+        everySuspend { favoritesRepo.getFavorites() } returns (initialFavorites)
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher, mockAnalytics) { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == initialFavorites.routeStopDirection }
+        }
+
+        advanceUntilIdle()
+        assertEquals(analyticsLogged, Pair("favorites_count", "1"))
     }
 }
