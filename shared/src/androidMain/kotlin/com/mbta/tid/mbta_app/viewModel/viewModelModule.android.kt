@@ -8,9 +8,8 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 
 actual fun viewModelModule() = module {
-    // can’t `viewModel<IFavoritesViewModel>` since `IFavoritesViewModel` might not be a real
-    // Android ViewModel
-    viewModel { FavoritesViewModel(get(), get(named("coroutineDispatcherDefault"))) }
+    single { FavoritesViewModel(get(), get(named("coroutineDispatcherDefault"))) }
+        .bind(IFavoritesViewModel::class)
     viewModel {
         MapViewModel(
             get(),
