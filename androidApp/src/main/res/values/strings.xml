@@ -235,6 +235,7 @@
     <string name="onboarding_map_display_header">Set map display preference</string>
     <string name="onboarding_station_accessibility_body">By opting in, we can show you which stations are inaccessible or have elevator closures.</string>
     <string name="onboarding_station_accessibility_header">Set station accessibility info preference</string>
+    <string name="okay">Okay</string>
     <string name="only_served_at_certain_times">Only served at certain times of day</string>
     <string name="open_for_more_arrivals">Open for more arrivals</string>
     <string name="other_link_privacy_policy">Privacy Policy</string>
@@ -350,6 +351,7 @@
     <string name="tap_favorites_hint">Tap stars to add to Favorites</string>
     <string name="technical_problem">Technical Problem</string>
     <string name="technical_problem_lowercase">technical problem</string>
+    <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
     <string name="track_change">Track Change</string>

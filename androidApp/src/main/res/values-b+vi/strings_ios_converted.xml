@@ -219,6 +219,7 @@
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
+    <string name="okay">Đồng ý</string>
     <string name="onboarding_continue">Tiếp tục</string>
     <string name="onboarding_feedback_advance">Bắt đầu</string>
     <string name="onboarding_feedback_body">MBTA Go đang trong giai đoạn đầu! Chúng tôi muốn nghe ý kiến đóng góp của bạn để tiếp tục cải thiện và bổ sung các tính năng mới.</string>
@@ -344,6 +345,7 @@
     <string name="tap_favorites_hint">Nhấn vào các ngôi sao để thêm vào mục Yêu thích</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
+    <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ dành cho việc trả khách</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
     <string name="track_change">Thay đổi đường ray</string>

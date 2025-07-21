@@ -234,6 +234,7 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="now">Kounye a</string>
     <string name="now_at">Kounye a li nan</string>
+    <string name="okay">Oke</string>
     <string name="onboarding_continue">Kontinye</string>
     <string name="onboarding_feedback_advance">Kòmanse</string>
     <string name="onboarding_feedback_body">MBTA Go nan etap kòmansman yo! Nou vle kòmantè w pandan n ap kontinye fè amelyorasyon epi ajoute nouvo opsyon.</string>
@@ -364,6 +365,7 @@
     <string name="tap_favorites_hint">Tape zetwal yo pou ajoute nan Favori yo</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
+    <string name="this_stop_is_drop_off_only">Estasyon sa a se depoze sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="track_change">Suiv Chanjman</string>
