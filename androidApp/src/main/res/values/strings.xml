@@ -409,4 +409,6 @@
     <string name="weather">Weather</string>
     <string name="weather_lowercase">weather</string>
     <string name="westbound">Westbound</string>
+    <string name="okay">Okay</string>
+    <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
 </resources>

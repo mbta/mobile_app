@@ -157,8 +157,7 @@ fun FavoriteConfirmationDialog(
             if (directions.isEmpty()) {
                 Column {
                     Text(
-                        // TODO: Update copy, make resource, port to iOS & translate
-                        "This stop has no departures",
+                        stringResource(R.string.this_stop_is_drop_off_only),
                         textAlign = TextAlign.Center,
                         style = Typography.footnoteSemibold,
                         modifier =
@@ -167,52 +166,58 @@ fun FavoriteConfirmationDialog(
                                 .fillMaxWidth(),
                     )
                     HaloSeparator()
-                }
-            }
-            Column() {
-                HaloSeparator()
-                directions.mapIndexed { idx, direction ->
-                    Button(
-                        onClick = {
-                            favoritesToSave =
-                                favoritesToSave.plus(
-                                    direction.id to
-                                        !favoritesToSave.getOrDefault(direction.id, false)
-                                )
-                        },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = colorResource(R.color.fill3),
-                                contentColor = colorResource(R.color.text),
-                            ),
-                        shape = RectangleShape,
-                        modifier =
-                            Modifier.background(color = colorResource(R.color.fill3)).semantics {
-                                selected = favoritesToSave.getOrDefault(direction.id, false)
-                            },
-                    ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            DirectionLabel(direction, Modifier.weight(1f))
-                            StarIcon(
-                                favoritesToSave.getOrDefault(direction.id, false),
-                                color = Color.fromHex(lineOrRoute.backgroundColor),
-                                Modifier.padding(start = 16.dp),
-                            )
-                        }
+                    Row(modifier = Modifier.padding(16.dp)) {
+                        Spacer(Modifier.weight(1F))
+                        TextButton(onClose) { Text(stringResource(R.string.okay)) }
                     }
-                    HaloSeparator()
                 }
-            }
+            } else {
+                Column() {
+                    HaloSeparator()
+                    directions.mapIndexed { idx, direction ->
+                        Button(
+                            onClick = {
+                                favoritesToSave =
+                                    favoritesToSave.plus(
+                                        direction.id to
+                                            !favoritesToSave.getOrDefault(direction.id, false)
+                                    )
+                            },
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(R.color.fill3),
+                                    contentColor = colorResource(R.color.text),
+                                ),
+                            shape = RectangleShape,
+                            modifier =
+                                Modifier.background(color = colorResource(R.color.fill3))
+                                    .semantics {
+                                        selected = favoritesToSave.getOrDefault(direction.id, false)
+                                    },
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                DirectionLabel(direction, Modifier.weight(1f))
+                                StarIcon(
+                                    favoritesToSave.getOrDefault(direction.id, false),
+                                    color = Color.fromHex(lineOrRoute.backgroundColor),
+                                    Modifier.padding(start = 16.dp),
+                                )
+                            }
+                        }
+                        HaloSeparator()
+                    }
+                }
 
-            Row(modifier = Modifier.padding(16.dp)) {
-                Spacer(Modifier.weight(1F))
-                TextButton(onClose) { Text("Cancel") }
-                TextButton({ saveAndClose() }, enabled = favoritesToSave.values.any { it }) {
-                    Text(stringResource(R.string.add_confirmation_button))
+                Row(modifier = Modifier.padding(16.dp)) {
+                    Spacer(Modifier.weight(1F))
+                    TextButton(onClose) { Text(stringResource(R.string.cancel)) }
+                    TextButton({ saveAndClose() }, enabled = favoritesToSave.values.any { it }) {
+                        Text(stringResource(R.string.add_confirmation_button))
+                    }
                 }
             }
         }
