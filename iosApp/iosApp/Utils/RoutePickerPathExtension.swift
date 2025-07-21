@@ -46,7 +46,7 @@ extension RoutePickerPath {
                 .foregroundColor(textColor)
         case is RoutePickerPath.Silver:
             HStack(spacing: 8) {
-                Text("Silver Line")
+                Text(verbatim: "Silver Line")
                     .font(Typography.headlineBold)
                     .foregroundColor(textColor)
                 Text("Bus")
@@ -54,7 +54,7 @@ extension RoutePickerPath {
                     .foregroundColor(textColor)
             }
         case is RoutePickerPath.CommuterRail:
-            Text("Commuter Rail")
+            Text(verbatim: "Commuter Rail")
                 .font(Typography.headlineBold)
                 .foregroundColor(textColor)
         case is RoutePickerPath.Ferry:
