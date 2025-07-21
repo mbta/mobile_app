@@ -225,6 +225,7 @@
     <string name="not_accessible_stop_card">Esta parada no es accesible</string>
     <string name="now">Ahora</string>
     <string name="now_at">Ahora en</string>
+    <string name="okay">Bueno</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_feedback_advance">Empezar</string>
     <string name="onboarding_feedback_body">MBTA Go está en su etapa inicial. Queremos recibir sus comentarios mientras seguimos realizando mejoras y agregando nuevas características.</string>
@@ -352,6 +353,7 @@
     <string name="tap_favorites_hint">Toca las estrellas para añadirlas a Favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
+    <string name="this_stop_is_drop_off_only">Esta parada es solo para dejar pasajeros.</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
     <string name="track_change">Cambio de pista</string>
