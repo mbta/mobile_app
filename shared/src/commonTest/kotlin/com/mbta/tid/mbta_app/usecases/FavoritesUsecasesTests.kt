@@ -26,4 +26,28 @@ class FavoritesUsecasesTests : KoinTest {
         val usecase = FavoritesUsecases(repository, MockAnalytics())
         assertEquals(usecase.getRouteStopDirectionFavorites(), emptySet())
     }
+
+    @Test
+    fun testUpdateFavoritesRecordsAnalytics() = runBlocking {
+        val repository =
+            MockFavoritesRepository(Favorites(setOf(RouteStopDirection("route_1", "stop_1", 0))))
+
+        var eventLogged: String? = null
+        val useCase =
+            FavoritesUsecases(
+                repository,
+                MockAnalytics(onLogEvent = { event, attrs -> eventLogged = event }),
+            )
+
+        useCase.updateRouteStopDirections(
+            mapOf(
+                RouteStopDirection("route_1", "stop_1", 0) to false,
+                RouteStopDirection("route_1", "stop_1", 1) to true,
+            ),
+            EditFavoritesContext.Favorites,
+            0,
+        )
+
+        assertEquals("updated_favorites", eventLogged)
+    }
 }

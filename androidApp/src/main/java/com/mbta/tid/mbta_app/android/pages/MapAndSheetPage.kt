@@ -463,9 +463,12 @@ fun MapAndSheetPage(
             },
         ) {
             composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
+                LaunchedEffect(Unit) { analytics.track(AnalyticsScreen.Favorites) }
+
                 fun navigate(route: SheetRoutes) {
                     navController.navigateFrom(SheetRoutes.Favorites::class, route)
                 }
+
                 SheetPage {
                     FavoritesPage(
                         openSheetRoute = ::navigate,
