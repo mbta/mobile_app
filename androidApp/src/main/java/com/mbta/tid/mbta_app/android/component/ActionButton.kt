@@ -43,7 +43,7 @@ fun ActionButton(
         modifier = modifier.sizeIn(minWidth = size, minHeight = size),
         shape = CircleShape,
         colors = colors,
-        contentPadding = PaddingValues(5.dp),
+        contentPadding = PaddingValues(if (kind != ActionButtonKind.Plus) 5.dp else 4.dp),
     ) {
         Icon(
             painterResource(kind.image),
