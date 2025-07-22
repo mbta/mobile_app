@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
@@ -23,11 +24,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-enum class EditFavoritesContext {
-    Favorites,
-    StopDetails,
-}
 
 interface IFavoritesViewModel {
     val models: StateFlow<FavoritesViewModel.State>
@@ -132,24 +128,11 @@ class FavoritesViewModel(
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
                     is Event.UpdateFavorites -> {
-                        val existingFavorites = favorites
-                        val changedFavorites =
-                            if (existingFavorites == null) {
-                                event.updatedFavorites
-                            } else {
-                                event.updatedFavorites.filter {
-                                    (!it.value && existingFavorites.contains(it.key)) ||
-                                        (it.value && !(existingFavorites.contains(it.key)))
-                                }
-                            }
-
-                        analytics.favoritesUpdated(
-                            changedFavorites,
+                        favoritesUsecases.updateRouteStopDirections(
+                            event.updatedFavorites,
                             event.context,
                             event.defaultDirection,
                         )
-
-                        favoritesUsecases.updateRouteStopDirections(event.updatedFavorites)
                         reloadFavorites()
                     }
                 }

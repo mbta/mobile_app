@@ -12,8 +12,8 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
-import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

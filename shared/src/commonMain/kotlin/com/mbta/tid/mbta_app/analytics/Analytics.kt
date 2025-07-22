@@ -4,7 +4,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
-import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 

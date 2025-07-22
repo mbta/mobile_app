@@ -43,7 +43,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
-import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.time.Instant
 
 @Composable

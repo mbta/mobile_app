@@ -41,8 +41,8 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
-import com.mbta.tid.mbta_app.viewModel.EditFavoritesContext
 
 @Composable
 fun SaveFavoritesFlow(
