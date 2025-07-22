@@ -2909,9 +2909,6 @@
         }
       }
     },
-    "Add Stops" : {
-
-    },
     "Additional service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
