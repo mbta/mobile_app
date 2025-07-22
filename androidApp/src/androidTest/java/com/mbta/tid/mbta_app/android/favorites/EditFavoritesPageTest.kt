@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import dev.mokkery.verify.VerifyMode
@@ -331,7 +332,9 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.awaitIdle()
 
         val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
-        verifySuspend(VerifyMode.exactly(1)) { viewModel.updateFavorites(update) }
+        verifySuspend(VerifyMode.exactly(1)) {
+            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
+        }
 
         composeTestRule.waitUntil { update == updatedWith }
 

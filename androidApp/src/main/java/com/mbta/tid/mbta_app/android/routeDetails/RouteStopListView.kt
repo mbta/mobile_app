@@ -217,7 +217,14 @@ fun RouteStopListView(
 
     val coroutineScope = rememberCoroutineScope()
     fun confirmFavorites(updatedValues: Map<RouteStopDirection, Boolean>) {
-        coroutineScope.launch { updateFavorites(updatedValues) }
+        coroutineScope.launch {
+            updateFavorites(
+                updatedValues,
+                if (context == RouteDetailsContext.Favorites) EditFavoritesContext.Favorites
+                else EditFavoritesContext.RouteDetails,
+                selectedDirection,
+            )
+        }
     }
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)

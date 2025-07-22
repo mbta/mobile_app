@@ -89,7 +89,10 @@ struct StopDetailsFilteredView: View {
 
     var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
         if enhancedFavorites {
-            .Favorites(updatedValues: [routeStopDirection: .init(bool: !isFavorite)])
+            .Favorites(
+                updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
+                defaultDirection: stopFilter.directionId
+            )
         } else {
             .Pinned(routeId: stopFilter.routeId)
         }
@@ -164,7 +167,8 @@ struct StopDetailsFilteredView: View {
                                       Task {
                                           await stopDetailsVM.updateFavorites(
                                               .Favorites(updatedValues: newFavorites
-                                                  .mapValues { KotlinBoolean(bool: $0) }),
+                                                  .mapValues { KotlinBoolean(bool: $0) },
+                                                  defaultDirection: stopFilter.directionId),
                                               enhancedFavorites: true
                                           )
                                       }

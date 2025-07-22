@@ -47,6 +47,7 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import kotlin.time.Clock
 
@@ -66,7 +67,11 @@ fun EditFavoritesPage(
             onClose = onClose,
         )
         EditFavoritesList(state.routeCardData, global) {
-            favoritesViewModel.updateFavorites(mapOf(it to false))
+            favoritesViewModel.updateFavorites(
+                mapOf(it to false),
+                EditFavoritesContext.Favorites,
+                it.direction,
+            )
         }
     }
 }

@@ -70,6 +70,8 @@ class StopDetailsViewModel: ObservableObject {
     private let favoritesUsecases: FavoritesUsecases
     private let togglePinnedUsecase: TogglePinnedRouteUsecase
 
+    let analytics: Analytics = AnalyticsProvider.shared
+
     init(
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         favoritesRepository: IFavoritesRepository = RepositoryDI().favorites,
@@ -91,7 +93,7 @@ class StopDetailsViewModel: ObservableObject {
         self.tripRepository = tripRepository
         self.vehicleRepository = vehicleRepository
 
-        favoritesUsecases = .init(repository: favoritesRepository)
+        favoritesUsecases = .init(repository: favoritesRepository, analytics: analytics)
         togglePinnedUsecase = .init(repository: pinnedRoutesRepository)
     }
 
@@ -509,7 +511,11 @@ class StopDetailsViewModel: ObservableObject {
                     self.loadPinnedRoutes()
                     return newValue
                 case let .favorites(favorite) where enhancedFavorites:
-                    try await self.favoritesUsecases.updateRouteStopDirections(newValues: favorite.updatedValues)
+                    try await self.favoritesUsecases.updateRouteStopDirections(
+                        newValues: favorite.updatedValues,
+                        context: .stopDetails,
+                        defaultDirection: favorite.defaultDirection
+                    )
                     self.loadFavorites()
                     return false
                 default:

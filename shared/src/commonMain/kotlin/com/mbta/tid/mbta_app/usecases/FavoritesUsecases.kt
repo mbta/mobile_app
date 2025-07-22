@@ -45,4 +45,5 @@ class FavoritesUsecases(
 enum class EditFavoritesContext {
     Favorites,
     StopDetails,
+    RouteDetails,
 }

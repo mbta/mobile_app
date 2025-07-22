@@ -289,7 +289,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(),
                 selectedDirection = 0,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = {},
                 onClose = { onCloseCalled = true },
             )

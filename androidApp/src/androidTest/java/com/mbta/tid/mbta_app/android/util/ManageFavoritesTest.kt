@@ -6,9 +6,11 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +29,7 @@ class ManageFavoritesTest {
         val rsd0 = RouteStopDirection("route1", "stop1", 0)
         val rsd1 = RouteStopDirection("route1", "stop1", 1)
         val favoritesRepo = MockFavoritesRepository(Favorites(routeStopDirection = setOf(rsd0)))
-        val favoritesUseCases = FavoritesUsecases(favoritesRepo)
+        val favoritesUseCases = FavoritesUsecases(favoritesRepo, MockAnalytics())
 
         var managedFavorites: ManagedFavorites? = null
         composeTestRule.setContent {
@@ -36,7 +38,11 @@ class ManageFavoritesTest {
                 Button(
                     onClick = {
                         CoroutineScope(Dispatchers.Default).launch {
-                            managedFavorites!!.updateFavorites(mapOf(rsd0 to false, rsd1 to true))
+                            managedFavorites!!.updateFavorites(
+                                mapOf(rsd0 to false, rsd1 to true),
+                                EditFavoritesContext.Favorites,
+                                1,
+                            )
                         }
                     }
                 ) {

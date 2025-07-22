@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import dev.mokkery.MockMode
 import dev.mokkery.answering.repeat
 import dev.mokkery.answering.returns
@@ -519,7 +520,11 @@ class FavoritesViewModelTest : KoinTest {
                     it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
                 },
             )
-            viewModel.updateFavorites(mapOf(RouteStopDirection(route1.id, stop1.id, 0) to false))
+            viewModel.updateFavorites(
+                mapOf(RouteStopDirection(route1.id, stop1.id, 0) to false),
+                EditFavoritesContext.Favorites,
+                0,
+            )
             awaitItemSatisfying {
                 it.routeCardData != null &&
                     it.staticRouteCardData == expectedStaticDataAfter &&

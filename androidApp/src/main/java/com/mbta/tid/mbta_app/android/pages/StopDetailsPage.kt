@@ -24,6 +24,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -71,7 +72,11 @@ fun StopDetailsPage(
             }
 
             if (favoritesUpdate is FavoriteUpdateBridge.Favorites && enhancedFavorites) {
-                updateFavorites(favoritesUpdate.updatedValues)
+                updateFavorites(
+                    favoritesUpdate.updatedValues,
+                    EditFavoritesContext.StopDetails,
+                    favoritesUpdate.defaultDirection,
+                )
             }
         }
     }
