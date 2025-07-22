@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -25,7 +26,7 @@ fun NavTextButton(
         action,
         colors = colors,
         contentPadding = PaddingValues(horizontal = 12.dp),
-        modifier = modifier.heightIn(min = height),
+        modifier = modifier.heightIn(min = height).widthIn(min = 64.dp),
     ) {
         Text(string, style = Typography.callout, maxLines = 1)
     }
