@@ -219,6 +219,30 @@ struct ContentView: View {
                     }
                     .transition(transition)
 
+                case let .routePicker(navEntry):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        RoutePickerView(
+                            context: navEntry.context,
+                            path: navEntry.path,
+                            errorBannerVM: errorBannerVM,
+                            onOpenRouteDetails: { routeId, context in
+                                nearbyVM.pushNavEntry(
+                                    SheetNavigationStackEntry.routeDetails(
+                                        SheetRoutes.RouteDetails(routeId: routeId, context: context)
+                                    )
+                                )
+                            },
+                            onClose: { nearbyVM.popToEntrypoint() }
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    .transition(transition)
+                    // This achieves the initial desired transition but going back performs the same transition which is
+                    // odd
+                    // .transition(.asymmetric(insertion: .push(from: .trailing), removal: .opacity))
+
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
                     // Otherwise only the header animates
