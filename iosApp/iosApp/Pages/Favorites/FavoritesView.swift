@@ -53,6 +53,7 @@ struct FavoritesView: View {
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
+            favoritesVM.setContext(context: FavoritesViewModel.ContextFavorites())
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toKotlinInstant())
             favoritesVM.reloadFavorites()

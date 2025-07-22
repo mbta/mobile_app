@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
@@ -55,6 +56,7 @@ fun FavoritesView(
     LaunchedEffect(targetLocation) { favoritesViewModel.setLocation(targetLocation) }
 
     LaunchedEffect(Unit) {
+        favoritesViewModel.setContext(FavoritesViewModel.Context.Favorites)
         favoritesViewModel.setActive(active = true, wasSentToBackground = false)
         favoritesViewModel.reloadFavorites()
     }

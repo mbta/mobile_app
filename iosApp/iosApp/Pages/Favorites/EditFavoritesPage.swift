@@ -40,6 +40,7 @@ struct EditFavoritesPage: View {
                 Spacer()
             }
             .onAppear {
+                viewModel.setContext(context: FavoritesViewModel.ContextEdit())
                 loadGlobal()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
