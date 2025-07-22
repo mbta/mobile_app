@@ -12568,6 +12568,52 @@
         }
       }
     },
+    "Okay" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bueno"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "D’accord"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oke"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "OK"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đồng ý"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "好的"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "好的"
+          }
+        }
+      }
+    },
     "On time" : {
       "comment" : "Status for a commuter rail train",
       "extractionState" : "manual",
@@ -18442,6 +18488,52 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "This stop is drop-off only" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta parada es solo para dejar pasajeros."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cet arrêt est uniquement destiné au dépôt"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estasyon sa a se depoze sèlman"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Esta parada é somente para desembarque"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Điểm dừng này chỉ dành cho việc trả khách"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此站仅供下客"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此站僅供下客"
           }
         }
       }

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.items
@@ -17,11 +16,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +38,6 @@ import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
-import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
@@ -52,20 +47,16 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import kotlin.time.Clock
 
 @Composable
 fun EditFavoritesPage(
     global: GlobalResponse?,
-    favoritesViewModel: FavoritesViewModel,
+    favoritesViewModel: IFavoritesViewModel,
     onClose: () -> Unit,
 ) {
-    val initialState = favoritesViewModel.favorites.orEmpty()
-    val favoritesState = remember {
-        mutableStateMapOf(*initialState.map { it to true }.toTypedArray())
-    }
-    var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
-    LaunchedEffect(Unit) { routeCardData = favoritesViewModel.loadStaticRouteCardData(global) }
+    val state by favoritesViewModel.models.collectAsState()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(
@@ -74,16 +65,8 @@ fun EditFavoritesPage(
             buttonColors = ButtonDefaults.key(),
             onClose = onClose,
         )
-        EditFavoritesList(routeCardData, global) {
+        EditFavoritesList(state.routeCardData, global) {
             favoritesViewModel.updateFavorites(mapOf(it to false))
-            favoritesState[it] = false
-            if (global == null) return@EditFavoritesList
-            routeCardData =
-                favoritesViewModel.filterRouteAndDirection(
-                    routeCardData,
-                    global,
-                    favoritesState.filter { it.value }.keys,
-                )
         }
     }
 }
@@ -153,31 +136,37 @@ private fun FavoriteDepartures(
                             verticalArrangement =
                                 Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                         ) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                            ) {
                                 DirectionLabel(
                                     direction,
                                     pillDecoration =
                                         formatted.route?.let {
                                             PillDecoration.OnDirectionDestination(it)
                                         },
+                                    modifier = Modifier.weight(1f),
                                 )
-                                Spacer(Modifier.weight(1f))
                                 DeleteIcon(action = { onClick(leaf) })
                             }
                         }
                     }
 
                     is LeafFormat.Branched -> {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
                             Column(
                                 horizontalAlignment = Alignment.Start,
                                 verticalArrangement =
                                     Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                                modifier = Modifier.weight(1f),
                             ) {
                                 DirectionLabel(direction, showDestination = false)
                                 BranchRows(formatted)
                             }
-                            Spacer(Modifier.weight(1f))
                             DeleteIcon(action = { onClick(leaf) })
                         }
                     }

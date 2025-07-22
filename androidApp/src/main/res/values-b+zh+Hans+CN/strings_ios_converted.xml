@@ -219,6 +219,7 @@
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
     <string name="now">现在</string>
     <string name="now_at">现在停靠</string>
+    <string name="okay">好的</string>
     <string name="onboarding_continue">继续</string>
     <string name="onboarding_feedback_advance">开始</string>
     <string name="onboarding_feedback_body">MBTA Go尚处于试运行阶段！我们希望收到您的反馈，以便我们继续改进和新增功能。</string>
@@ -344,6 +345,7 @@
     <string name="tap_favorites_hint">点按星星即可添加到收藏夹</string>
     <string name="technical_problem">技术故障</string>
     <string name="technical_problem_lowercase">技术故障</string>
+    <string name="this_stop_is_drop_off_only">此站仅供下客</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
     <string name="track_change">轨道变更</string>

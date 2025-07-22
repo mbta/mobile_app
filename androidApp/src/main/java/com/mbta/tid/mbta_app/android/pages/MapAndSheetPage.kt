@@ -53,7 +53,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
-import com.mbta.tid.mbta_app.android.favorites.FavoritesViewModel
 import com.mbta.tid.mbta_app.android.fromNavBackStackEntry
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
@@ -92,6 +91,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
@@ -134,7 +134,7 @@ fun MapAndSheetPage(
         viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
-    favoritesViewModel: FavoritesViewModel = viewModel(factory = FavoritesViewModel.Factory()),
+    favoritesViewModel: IFavoritesViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
     LaunchedEffect(Unit) { errorBannerViewModel.activate() }
@@ -478,15 +478,14 @@ fun MapAndSheetPage(
             composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
                 SheetPage {
                     EditFavoritesPage(
+                        global = nearbyTransit.globalResponse,
+                        favoritesViewModel = favoritesViewModel,
                         onClose = {
                             navController.popBackStackFrom(SheetRoutes.EditFavorites::class)
                         },
-                        global = nearbyTransit.globalResponse,
-                        favoritesViewModel = favoritesViewModel,
                     )
                 }
             }
-
             composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                 val filters =

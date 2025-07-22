@@ -278,6 +278,31 @@ class SaveFavoritesFlowTest {
     }
 
     @Test
+    fun testFavoritingWhenDropOffOnlyPresentsDialog() {
+        var onCloseCalled = false
+
+        composeTestRule.setContent {
+            SaveFavoritesFlow(
+                lineOrRoute = line,
+                stop = stop,
+                directions = listOf(),
+                selectedDirection = 0,
+                isFavorite = { false },
+                context = SaveFavoritesContext.Favorites,
+                updateFavorites = {},
+                onClose = { onCloseCalled = true },
+            )
+        }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("This stop is drop-off only").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Okay").performClick()
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilDefaultTimeout { onCloseCalled }
+        assertTrue(onCloseCalled)
+    }
+
+    @Test
     fun testDialogTitleFavoritesContext() {
         composeTestRule.setContent {
             SaveFavoritesFlow(

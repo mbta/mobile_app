@@ -225,6 +225,7 @@
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
     <string name="now">Maintenant</string>
     <string name="now_at">Maintenant à</string>
+    <string name="okay">D’accord</string>
     <string name="onboarding_continue">Continuer</string>
     <string name="onboarding_feedback_advance">Commencer</string>
     <string name="onboarding_feedback_body">MBTA Go est encore en développement ! Votre avis est précieux pour continuer à l’améliorer et ajouter de nouvelles fonctionnalités.</string>
@@ -352,6 +353,7 @@
     <string name="tap_favorites_hint">Appuyez sur les étoiles pour ajouter aux favoris</string>
     <string name="technical_problem">Problème technique</string>
     <string name="technical_problem_lowercase">problème technique</string>
+    <string name="this_stop_is_drop_off_only">Cet arrêt est uniquement destiné au dépôt</string>
     <string name="tie_replacement">Remplacement de traverses</string>
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
     <string name="track_change">Changement de voie</string>

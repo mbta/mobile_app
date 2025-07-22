@@ -218,4 +218,18 @@ final class SaveFavoritesFlowTest: XCTestCase {
 
         try XCTAssertNotNil(sut.inspect().find(text: "Westbound service only"))
     }
+
+    func testFavoritingWhenDropOffOnlyHasDisclaimer() throws {
+        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+
+        let sut = FavoriteConfirmationDialogContents(lineOrRoute: line,
+                                                     stop: stop,
+                                                     directions: [],
+                                                     selectedDirection: 0,
+                                                     context: .favorites,
+                                                     favoritesToSave: [direction0: false],
+                                                     updateLocalFavorite: { _, _ in })
+
+        try XCTAssertNotNil(sut.inspect().find(text: "This stop is drop-off only"))
+    }
 }

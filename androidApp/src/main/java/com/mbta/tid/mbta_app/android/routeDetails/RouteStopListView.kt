@@ -364,8 +364,10 @@ private fun RouteStops(
         horizontalAlignment = Alignment.Start,
         scrollEnabled = !loading,
     ) {
+        val hasTypicalSegment = stopList.segments.any { it.isTypical }
+
         stopList.segments.forEachIndexed { segmentIndex, segment ->
-            if (segment.isTypical) {
+            if (segment.isTypical || !hasTypicalSegment) {
                 segment.stops.forEachIndexed { stopIndex, stop ->
                     val stopPlacement =
                         StopPlacement(

@@ -271,6 +271,58 @@ class RouteStopListViewTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
+    fun testDoesntCollapseWhenOnlyNonTypical() {
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop { name = "Stop 1" }
+        val stop2 = objects.stop { name = "Stop 2" }
+
+        val mainRoute =
+            objects.route {
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Here", "There")
+                longName = "Mauve Line"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val deviationPattern =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { stopIds = listOf(stop1.id, stop2.id) }
+            }
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf(stop1.id, stop2.id), routeId = mainRoute.id)
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = MockToastViewModel(),
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
+
+        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText("2 less common stops").assertIsNotDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
     fun testFavoritesWithConfirmationDialog() {
         val objects = TestData.clone()
         val route = RouteCardData.LineOrRoute.Route(objects.getRoute("Red"))
