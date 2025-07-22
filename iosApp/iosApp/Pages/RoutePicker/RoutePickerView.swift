@@ -15,7 +15,9 @@ struct RoutePickerView: View {
     let path: RoutePickerPath
     let errorBannerVM: ErrorBannerViewModel
     let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
+    let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
     let onClose: () -> Void
+    let onBack: () -> Void
 
     @State var globalData: GlobalResponse?
     @State var routes: [RouteCardData.LineOrRoute] = []
@@ -24,36 +26,51 @@ struct RoutePickerView: View {
 
     let inspection = Inspection<Self>()
 
+    private let modes = [
+        RoutePickerPath.Bus(),
+        RoutePickerPath.Silver(),
+        RoutePickerPath.CommuterRail(),
+        RoutePickerPath.Ferry(),
+    ]
+
+    private var headerTitle: String {
+        switch path {
+        case is RoutePickerPath.Root:
+            switch context {
+            case is RouteDetailsContext.Favorites:
+                NSLocalizedString("Add favorite stops", comment: "Header for add favorites flow")
+            default: "" // TODO: Implement details header
+            }
+        case is RoutePickerPath.Bus: NSLocalizedString("Bus", comment: "bus")
+        case is RoutePickerPath.Silver: "Silver Line"
+        case is RoutePickerPath.CommuterRail: "Commuter Rail"
+        case is RoutePickerPath.Ferry: NSLocalizedString("Ferry", comment: "ferry")
+        default: ""
+        }
+    }
+
     var body: some View {
         ZStack {
-            Color.fill2.edgesIgnoringSafeArea(.all)
+            path.backgroundColor.edgesIgnoringSafeArea(.all)
             VStack {
-                SheetHeader(
-                    title: NSLocalizedString("Add favorite stops", comment: "Header for add favorites flow"),
-                    rightActionContents: {
-                        NavTextButton(
-                            string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                            backgroundColor: Color.text.opacity(0.6),
-                            textColor: Color.fill3,
-                            action: onClose
-                        )
-                    }
-                )
+                header
                 ErrorBanner(errorBannerVM)
                 ScrollView {
-                    VStack(alignment: .leading) {
-                        Text("Subway")
-                            .font(Typography.subheadlineSemibold)
-                            .padding(.leading, 16)
-                            .padding(.top, 22)
-                            .padding(.bottom, 2)
-                        ForEach(routes, id: \.self) { route in
-                            RoutePickerRootRow(
-                                route: route,
-                                onTap: {
-                                    onOpenRouteDetails(route.id, context)
+                    Group {
+                        if path is RoutePickerPath.Root {
+                            rootContent
+                        } else {
+                            let displayedRoutes = routes // TODO: Search result state
+                            VStack(spacing: 0) {
+                                if !displayedRoutes.isEmpty {
+                                    ForEach(displayedRoutes, id: \.self) { route in
+                                        RoutePickerRow(route: route, onTap: { onOpenRouteDetails(route.id, context) })
+                                        if route != displayedRoutes.last { HaloSeparator() }
+                                    }
                                 }
-                            )
+                            }
+                            .background(Color.fill3)
+                            .withRoundedBorder(color: path.haloColor, width: 2)
                         }
                     }
                     .padding(.horizontal, 14)
@@ -65,7 +82,49 @@ struct RoutePickerView: View {
         .onChange(of: globalData) { globalData in
             routes = globalData?.getRoutesForPicker(path: path) ?? []
         }
+        .onChange(of: path) { newPath in
+            withAnimation {
+                routes = globalData?.getRoutesForPicker(path: newPath) ?? []
+            }
+        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+    }
+
+    private var header: some View {
+        SheetHeader(
+            title: headerTitle,
+            titleColor: path.textColor,
+            onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
+            rightActionContents: {
+                NavTextButton(
+                    string: NSLocalizedString("Done", comment: "Button text for closing flow"),
+                    backgroundColor: Color.text.opacity(0.6),
+                    textColor: Color.fill3,
+                    action: onClose
+                )
+            }
+        )
+    }
+
+    private var rootContent: some View {
+        VStack(alignment: .leading) {
+            ForEach(modes, id: \.self) { mode in
+                RoutePickerRootRow(path: mode, onTap: { onOpenPickerPath(mode, context) })
+            }
+            Text("Subway")
+                .font(Typography.subheadlineSemibold)
+                .padding(.leading, 16)
+                .padding(.top, 22)
+                .padding(.bottom, 2)
+            ForEach(routes, id: \.self) { route in
+                RoutePickerRootRow(
+                    route: route,
+                    onTap: {
+                        onOpenRouteDetails(route.id, context)
+                    }
+                )
+            }
+        }
     }
 
     @MainActor

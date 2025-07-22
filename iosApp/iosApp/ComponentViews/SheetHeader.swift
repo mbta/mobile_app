@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SheetHeader<Content: View>: View {
     let title: String?
+    let titleColor: Color
     let onBack: (() -> Void)?
     let onClose: (() -> Void)?
     let closeText: String?
@@ -18,12 +19,14 @@ struct SheetHeader<Content: View>: View {
 
     init(
         title: String?,
+        titleColor: Color = Color.text,
         onBack: (() -> Void)? = nil,
         onClose: (() -> Void)? = nil,
         closeText: String? = nil,
         @ViewBuilder rightActionContents: @escaping () -> Content = { EmptyView() }
     ) {
         self.title = title
+        self.titleColor = titleColor
         self.onBack = onBack
         self.onClose = onClose
         self.closeText = closeText
@@ -40,6 +43,7 @@ struct SheetHeader<Content: View>: View {
                     .font(Typography.title3Semibold)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
+                    .foregroundColor(titleColor)
             }
             Spacer()
             rightActionContents()
