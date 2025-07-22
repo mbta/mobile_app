@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.analytics
 
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -77,6 +78,44 @@ class AnalyticsTest {
                         "context" to "Favorites",
                         "updated_both_directions_at_once" to "true",
                     ),
+                ),
+            ),
+        )
+    }
+
+    @Test
+    fun testTrack() {
+        var loggedEvent: Pair<String, Map<String, String>>? = null
+        val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
+        analytics.track(AnalyticsScreen.Favorites)
+        assertEquals(
+            loggedEvent,
+            Pair(
+                Analytics.ANALYTICS_EVENT_SCREEN_VIEW,
+                mapOf(Analytics.ANALYTICS_PARAMETER_SCREEN_NAME to "FavoritesPage"),
+            ),
+        )
+        assertEquals(analytics.lastTrackedScreen, AnalyticsScreen.Favorites)
+    }
+
+    @Test
+    fun testTappedDeparture() {
+        var loggedEvent: Pair<String, Map<String, String>>? = null
+        val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
+        analytics.track(AnalyticsScreen.Favorites)
+        analytics.tappedDeparture("route_1", "stop_1", false, false, RouteType.BUS, null)
+        assertEquals(
+            loggedEvent,
+            Pair(
+                "tapped_departure",
+                mapOf(
+                    "route_id" to "route_1",
+                    "stop_id" to "stop_1",
+                    "pinned" to "false",
+                    "alert" to "false",
+                    "mode" to "bus",
+                    "no_trips" to "",
+                    "context" to "FavoritesPage",
                 ),
             ),
         )

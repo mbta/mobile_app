@@ -13,6 +13,9 @@ abstract class Analytics {
 
     protected abstract fun setUserProperty(name: String, value: String)
 
+    var lastTrackedScreen: AnalyticsScreen? = null
+        private set
+
     private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
         val paramsMap = mutableMapOf(*parameters)
         logEvent(name, paramsMap)
@@ -143,6 +146,7 @@ abstract class Analytics {
             "alert" to alert.toString(),
             "mode" to mode,
             "no_trips" to noTrips,
+            "context" to (lastTrackedScreen?.pageName ?: "unknown"),
         )
     }
 
@@ -191,6 +195,7 @@ abstract class Analytics {
     }
 
     fun track(screen: AnalyticsScreen) {
+        lastTrackedScreen = screen
         logEvent(ANALYTICS_EVENT_SCREEN_VIEW, ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName)
     }
 
