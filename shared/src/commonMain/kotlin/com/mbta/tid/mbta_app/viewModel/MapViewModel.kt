@@ -37,6 +37,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
@@ -83,6 +84,7 @@ class MapViewModel(
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
+    private val routeCardDataUpdates = MutableStateFlow<List<RouteCardData>?>(null)
 
     sealed interface Event {
 
@@ -109,8 +111,6 @@ class MapViewModel(
         data class ColorPaletteChanged(val isDarkMode: Boolean) : Event
 
         data class DensityChanged(val density: Float) : Event
-
-        data class RouteCardDataChanged(val data: List<RouteCardData>?) : Event
 
         data object MapStyleLoaded : Event
 
@@ -147,6 +147,7 @@ class MapViewModel(
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
+        val routeCardData by routeCardDataUpdates.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -164,7 +165,6 @@ class MapViewModel(
 
         var alerts by remember { mutableStateOf<AlertsStreamDataResponse?>(null) }
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
-        var routeCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
         var isDarkMode by remember { mutableStateOf<Boolean?>(null) }
         var density by remember { mutableStateOf<Float?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
@@ -199,7 +199,6 @@ class MapViewModel(
                     is Event.AlertsChanged -> alerts = event.alerts
                     is Event.ColorPaletteChanged -> isDarkMode = event.isDarkMode
                     is Event.DensityChanged -> density = event.density
-                    is Event.RouteCardDataChanged -> routeCardData = event.data
                     is Event.NavChanged -> {
                         state =
                             handleNavChange(
@@ -331,8 +330,11 @@ class MapViewModel(
     override fun alertsChanged(alerts: AlertsStreamDataResponse?) =
         fireEvent(Event.AlertsChanged(alerts))
 
-    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) =
-        fireEvent(Event.RouteCardDataChanged(routeCardData))
+    // Route card data is sent through a separate StateFlow rather than the event flow because
+    // frequent updates were causing buffer overflows, and we only care about the latest value.
+    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
+        routeCardDataUpdates.tryEmit(routeCardData)
+    }
 
     override fun colorPaletteChanged(isDarkMode: Boolean) =
         fireEvent(Event.ColorPaletteChanged(isDarkMode))
