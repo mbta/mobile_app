@@ -33,6 +33,7 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
+    autoInstallation { sentryVersion = "8.17.0" }
 }
 
 android {
