@@ -39,7 +39,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.withContext
 
 interface IMapViewModel {
@@ -148,6 +147,7 @@ class MapViewModel(
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
+        val routeCardData by routeCardDataUpdates.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -165,7 +165,6 @@ class MapViewModel(
 
         var alerts by remember { mutableStateOf<AlertsStreamDataResponse?>(null) }
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
-        var routeCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
         var isDarkMode by remember { mutableStateOf<Boolean?>(null) }
         var density by remember { mutableStateOf<Float?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
@@ -192,12 +191,6 @@ class MapViewModel(
                 routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
             }
-        }
-
-        LaunchedEffect(Unit) {
-            // Route card data is sent through a separate StateFlow rather than the event flow
-            // because frequent updates were causing buffer overflows.
-            routeCardDataUpdates.collectLatest { routeCardData = it }
         }
 
         LaunchedEffect(null) {
@@ -337,6 +330,8 @@ class MapViewModel(
     override fun alertsChanged(alerts: AlertsStreamDataResponse?) =
         fireEvent(Event.AlertsChanged(alerts))
 
+    // Route card data is sent through a separate StateFlow rather than the event flow because
+    // frequent updates were causing buffer overflows, and we only care about the latest value.
     override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
         routeCardDataUpdates.tryEmit(routeCardData)
     }
