@@ -9,10 +9,26 @@
 import Foundation
 import SwiftUI
 
-struct SheetHeader: View {
-    var title: String?
-    var onBack: (() -> Void)?
-    var onClose: (() -> Void)?
+struct SheetHeader<Content: View>: View {
+    let title: String?
+    let onBack: (() -> Void)?
+    let onClose: (() -> Void)?
+    let closeText: String?
+    let rightActionContents: () -> Content
+
+    init(
+        title: String?,
+        onBack: (() -> Void)? = nil,
+        onClose: (() -> Void)? = nil,
+        closeText: String? = nil,
+        @ViewBuilder rightActionContents: @escaping () -> Content = { EmptyView() }
+    ) {
+        self.title = title
+        self.onBack = onBack
+        self.onClose = onClose
+        self.closeText = closeText
+        self.rightActionContents = rightActionContents
+    }
 
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
@@ -25,9 +41,16 @@ struct SheetHeader: View {
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
             }
+            Spacer()
+            rightActionContents()
             if let onClose {
-                Spacer()
-                ActionButton(kind: .close, action: { onClose() })
+                if let closeText {
+                    NavTextButton(string: closeText, backgroundColor: Color.key, textColor: Color.fill3) {
+                        onClose()
+                    }
+                } else {
+                    ActionButton(kind: .close, action: { onClose() })
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

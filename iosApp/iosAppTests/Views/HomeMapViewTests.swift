@@ -176,7 +176,10 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let mapVM: MapViewModel = .init(layerManager: MockLayerManager(), globalData: .init(objects: objectCollection))
+        let mapVM: iosApp.MapViewModel = .init(
+            layerManager: MockLayerManager(),
+            globalData: .init(objects: objectCollection)
+        )
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
@@ -227,7 +230,7 @@ final class HomeMapViewTests: XCTestCase {
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
 
-        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
@@ -283,7 +286,7 @@ final class HomeMapViewTests: XCTestCase {
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
 
-        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
@@ -350,7 +353,7 @@ final class HomeMapViewTests: XCTestCase {
         repositories.stop = FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() })
         HelpersKt.loadKoinMocks(repositories: repositories)
 
-        let mapVM: MapViewModel = .init(layerManager: MockLayerManager())
+        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
         mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
 
         let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
@@ -527,7 +530,7 @@ final class HomeMapViewTests: XCTestCase {
             stop.longitude = 1
         }
 
-        let mapVM: MapViewModel = .init(
+        let mapVM: iosApp.MapViewModel = .init(
             allRailSourceData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
             layerManager: MockLayerManager()
         )
@@ -837,7 +840,7 @@ final class HomeMapViewTests: XCTestCase {
         class FakeLocationFetcher: LocationFetcher {
             var didRequestAuthorization = false
 
-            var locationFetcherDelegate: (any iosApp.LocationFetcherDelegate)?
+            var locationFetcherDelegate: (any LocationFetcherDelegate)?
 
             var authorizationStatus: CLAuthorizationStatus = .notDetermined
 

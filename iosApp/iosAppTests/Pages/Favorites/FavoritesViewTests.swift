@@ -78,19 +78,101 @@ final class FavoritesViewTests: XCTestCase {
                 at: now.toKotlinInstant()
             )]
         ))
+
         let sut = FavoritesView(
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
-        let exp = sut.inspection.inspect(after: 0.2) { view in
+        let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Some Route"))
             XCTAssertNotNil(try view.find(text: "Some Stop"))
             XCTAssertNotNil(try view.find(text: "5 min"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
+    }
+
+    @MainActor func testEditButtonWhenHasFavorites() {
+        let now = Date.now
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.longName = "Some Route"
+        }
+        let stop = objects.stop { stop in
+            stop.name = "Some Stop"
+        }
+        let routePattern = objects.routePattern(route: route) { _ in }
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePattern)
+            prediction.stopId = stop.id
+            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+        })
+        let globalData = GlobalResponse(objects: objects)
+        let favoritesVM = MockFavoritesViewModel(initialState: .init(
+            awaitingPredictionsAfterBackground: false,
+            favorites: [.init(route: route.id, stop: stop.id, direction: 0)],
+            routeCardData: [.init(
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    route: route,
+                    stop: stop,
+                    data: [.init(
+                        lineOrRoute: .route(route),
+                        stop: stop,
+                        directionId: 0,
+                        routePatterns: [routePattern],
+                        stopIds: [stop.id],
+                        upcomingTrips: [trip],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: [],
+                        context: .favorites
+                    )],
+                    globalData: globalData
+                )],
+                at: now.toKotlinInstant()
+            )],
+            staticRouteCardData: [.init(
+                lineOrRoute: .route(route),
+                stopData: [.init(
+                    route: route,
+                    stop: stop,
+                    data: [.init(
+                        lineOrRoute: .route(route),
+                        stop: stop,
+                        directionId: 0,
+                        routePatterns: [routePattern],
+                        stopIds: [stop.id],
+                        upcomingTrips: [],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: false,
+                        alertsDownstream: [],
+                        context: .favorites
+                    )],
+                    globalData: globalData
+                )],
+                at: now.toKotlinInstant()
+            )]
+        ))
+
+        let nearbyVM: NearbyViewModel = .init()
+        let sut = FavoritesView(
+            errorBannerVM: .init(),
+            favoritesVM: favoritesVM,
+            nearbyVM: nearbyVM,
+            location: .constant(.init(latitude: 0, longitude: 0))
+        )
+        let exp = sut.inspection.inspect(after: 0.2) { view in
+            try view.find(button: "Edit").tap()
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+
+        XCTAssertEqual(nearbyVM.navigationStack, [.editFavorites])
     }
 
     @MainActor func testShowsEmpty() {
@@ -108,6 +190,7 @@ final class FavoritesViewTests: XCTestCase {
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
             XCTAssertNotNil(try view.find(text: "No stops added"))
+            XCTAssertThrowsError(try view.find(button: "Edit"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
@@ -228,7 +311,7 @@ final class FavoritesViewTests: XCTestCase {
 
     @MainActor func testSetsNow() throws {
         let setFirstExp = expectation(description: "sets a time")
-        var firstTime: Instant?
+        var firstTime: KotlinInstant?
         let setSecondExp = expectation(description: "sets a different time later")
         setSecondExp.assertForOverFulfill = false
         let favoritesVM = MockFavoritesViewModel()

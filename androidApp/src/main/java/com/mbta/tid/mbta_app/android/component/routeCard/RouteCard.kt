@@ -20,7 +20,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.RouteCardPreviewData
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -32,10 +32,9 @@ fun RouteCardContainer(
     isFavorite: (FavoriteBridge) -> Boolean,
     onPin: (String) -> Unit,
     showStopHeader: Boolean,
-    showStationAccessibility: Boolean = false,
-    enhancedFavorites: Boolean = false,
     departureContent: @Composable (RouteCardData.RouteStopData) -> Unit,
 ) {
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
         TransitHeader(data.lineOrRoute) { color ->
             if (!enhancedFavorites) {
@@ -50,7 +49,7 @@ fun RouteCardContainer(
 
         data.stopData.forEach {
             if (showStopHeader) {
-                StopHeader(it, showStationAccessibility)
+                StopHeader(it)
             }
 
             departureContent(it)
@@ -66,7 +65,6 @@ fun RouteCard(
     isFavorite: (FavoriteBridge) -> Boolean,
     onPin: (String) -> Unit,
     showStopHeader: Boolean,
-    showStationAccessibility: Boolean = false,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
     val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
@@ -75,8 +73,6 @@ fun RouteCard(
         isFavorite = isFavorite,
         onPin = onPin,
         showStopHeader = showStopHeader,
-        showStationAccessibility = showStationAccessibility,
-        enhancedFavorites = enhancedFavorites,
     ) {
         Departures(
             it,
@@ -110,7 +106,6 @@ class Previews() {
                     { false },
                     onPin = {},
                     showStopHeader = true,
-                    showStationAccessibility = true,
                     onOpenStopDetails = { _, _ -> },
                 )
             }

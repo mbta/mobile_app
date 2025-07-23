@@ -28,9 +28,13 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testPending() throws {
-        let sut = SearchResultsView(state: SearchViewModel.StateLoading.shared, handleStopTap: { _ in })
-            .withFixedSettings([:])
-        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResults.self))
+        let sut = SearchResultsView(
+            state: SearchViewModel.StateLoading.shared,
+            handleStopTap: { _ in },
+            handleRouteTap: { _ in }
+        )
+        .withFixedSettings([:])
+        XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResultsView.self))
     }
 
     @MainActor func testResultLoad() throws {
@@ -138,15 +142,23 @@ final class SearchResultViewTests: XCTestCase {
     }
 
     @MainActor func testNoResults() throws {
-        let sut = SearchResultsView(state: SearchViewModel.StateResults(stops: [], routes: []), handleStopTap: { _ in })
-            .withFixedSettings([:])
+        let sut = SearchResultsView(
+            state: SearchViewModel.StateResults(stops: [], routes: []),
+            handleStopTap: { _ in },
+            handleRouteTap: { _ in }
+        )
+        .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "No results found 🤔"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try a different spelling or name."))
     }
 
     @MainActor func testError() throws {
-        let sut = SearchResultsView(state: SearchViewModel.StateError.shared, handleStopTap: { _ in })
-            .withFixedSettings([:])
+        let sut = SearchResultsView(
+            state: SearchViewModel.StateError.shared,
+            handleStopTap: { _ in },
+            handleRouteTap: { _ in }
+        )
+        .withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Results failed to load ☹️"))
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(text: "Try your search again."))
     }
@@ -163,7 +175,7 @@ final class SearchResultViewTests: XCTestCase {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in }, handleRouteTap: { _ in }
         ).withFixedSettings([:])
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
@@ -189,7 +201,7 @@ final class SearchResultViewTests: XCTestCase {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in }, handleRouteTap: { _ in }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
@@ -212,7 +224,7 @@ final class SearchResultViewTests: XCTestCase {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in }, handleRouteTap: { _ in }
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.searchRouteResults: true]))
@@ -235,7 +247,7 @@ final class SearchResultViewTests: XCTestCase {
                     ),
                 ]
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in }, handleRouteTap: { _ in }
         )
 
         XCTAssertThrowsError(
@@ -256,7 +268,7 @@ final class SearchResultViewTests: XCTestCase {
                 ],
                 routes: []
             ),
-            handleStopTap: { _ in }
+            handleStopTap: { _ in }, handleRouteTap: { _ in }
         ).withFixedSettings([:])
 
         XCTAssertNoThrow(try sut.inspect().find(text: "Haymarket"))
@@ -281,7 +293,7 @@ final class SearchResultViewTests: XCTestCase {
             handleStopTap: { stopId in
                 XCTAssertEqual("place-haecl", stopId)
                 tapStopExpectation.fulfill()
-            }
+            }, handleRouteTap: { _ in }
         ).withFixedSettings([:])
 
         XCTAssertNoThrow(
@@ -290,5 +302,40 @@ final class SearchResultViewTests: XCTestCase {
                 .tap()
         )
         await fulfillment(of: [tapStopExpectation], timeout: 1)
+    }
+
+    @MainActor func testRouteTapping() async throws {
+        let tapRouteExpectation = expectation(description: "route was tapped")
+
+        let sut = SearchResultsView(
+            state: SearchViewModel.StateResults(
+                stops: [],
+                routes: [
+                    .init(
+                        id: "Orange",
+                        name: "Orange",
+                        routePill: .init(
+                            textColor: "000000",
+                            routeColor: "000000",
+                            content: RoutePillSpecContentEmpty.shared,
+                            size: .circle,
+                            shape: .capsule,
+                            contentDescription: nil
+                        )
+                    ),
+                ]
+            ),
+            handleStopTap: { _ in }, handleRouteTap: { routeId in
+                XCTAssertEqual("Orange", routeId)
+                tapRouteExpectation.fulfill()
+            }
+        ).withFixedSettings([.searchRouteResults: true])
+
+        XCTAssertNoThrow(
+            try sut.inspect()
+                .find(button: "Orange")
+                .tap()
+        )
+        await fulfillment(of: [tapRouteExpectation], timeout: 1)
     }
 }

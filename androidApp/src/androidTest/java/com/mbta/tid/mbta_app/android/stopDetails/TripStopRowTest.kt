@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -19,15 +20,18 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class TripStopRowTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -264,38 +268,49 @@ class TripStopRowTest {
                 elevatorAlerts = elevatorAlerts,
             )
 
-        var testEntry by mutableStateOf(entry(inaccessibleStop))
-        composeTestRule.setContent {
-            TripStopRow(
-                testEntry,
-                trip,
-                now,
-                onTapLink = {},
-                onOpenAlertDetails = {},
-                TripRouteAccents(route),
-                alertSummaries = emptyMap(),
-                showStationAccessibility = true,
-            )
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
 
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertIsDisplayed()
+        var testEntry by mutableStateOf(entry(inaccessibleStop))
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                TripStopRow(
+                    testEntry,
+                    trip,
+                    now,
+                    onTapLink = {},
+                    onOpenAlertDetails = {},
+                    TripRouteAccents(route),
+                    alertSummaries = emptyMap(),
+                )
+            }
+        }
+
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop is not accessible", useUnmergedTree = true)
             .assertIsDisplayed()
 
-        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertDoesNotExist()
 
         testEntry = entry(accessibleStop)
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("elevator_alert").assertDoesNotExist()
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertDoesNotExist()
 
         testEntry =
             entry(
                 accessibleStop,
                 listOf(objects.alert { activePeriod(now.minus(20.minutes), now.plus(20.minutes)) }),
             )
-        composeTestRule.onNodeWithTag("wheelchair_not_accessible").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("elevator_alert").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("wheelchair_not_accessible", useUnmergedTree = true)
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithTag("elevator_alert", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("This stop has 1 elevator closed", useUnmergedTree = true)
             .assertIsDisplayed()

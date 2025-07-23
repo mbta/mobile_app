@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.SheetRoutes
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -39,6 +38,7 @@ import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -46,8 +46,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.Settings
+import kotlin.time.Instant
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
 import org.koin.compose.koinInject
 
 @Composable
@@ -78,7 +78,6 @@ fun StopDetailsFilteredDeparturesView(
 
     val alertSummaries by viewModel.alertSummaries.collectAsState()
 
-    val hideMaps = SettingsCache.get(Settings.HideMaps)
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val (elevatorAlerts, alertsHere) =
@@ -239,7 +238,6 @@ fun StopDetailsFilteredDeparturesView(
                     status = noPredictionsStatus,
                     accentColor = routeColor,
                     routeType = routeType,
-                    hideMaps = hideMaps,
                 )
             }
         } else if (selectedTripIsCancelled) {

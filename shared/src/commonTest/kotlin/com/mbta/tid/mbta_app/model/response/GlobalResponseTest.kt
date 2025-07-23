@@ -19,7 +19,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class GlobalResponseTest {
     @Test
@@ -480,8 +480,13 @@ class GlobalResponseTest {
     }
 
     @Test
-    fun `getRoutesForPicker returns bus routes`() {
+    fun `getRoutesForPicker returns only listed bus routes`() {
         val objects = TestData.clone()
+        objects.route {
+            id = "unlisted"
+            type = RouteType.BUS
+            isListedRoute = false
+        }
         val global = GlobalResponse(objects)
 
         val busRoutes = global.getRoutesForPicker(RoutePickerPath.Bus)
@@ -494,8 +499,13 @@ class GlobalResponseTest {
     }
 
     @Test
-    fun `getRoutesForPicker returns silver line routes`() {
+    fun `getRoutesForPicker returns only listed silver line routes`() {
         val objects = TestData.clone()
+        objects.route {
+            id = "unlisted"
+            type = RouteType.BUS
+            isListedRoute = false
+        }
         val global = GlobalResponse(objects)
 
         val slRoutes = global.getRoutesForPicker(RoutePickerPath.Silver)
@@ -504,8 +514,13 @@ class GlobalResponseTest {
     }
 
     @Test
-    fun `getRoutesForPicker returns commuter routes`() {
+    fun `getRoutesForPicker returns only listed commuter routes`() {
         val objects = TestData.clone()
+        objects.route {
+            id = "unlisted"
+            type = RouteType.COMMUTER_RAIL
+            isListedRoute = false
+        }
         val global = GlobalResponse(objects)
 
         val crRoutes = global.getRoutesForPicker(RoutePickerPath.CommuterRail)
@@ -514,9 +529,14 @@ class GlobalResponseTest {
     }
 
     @Test
-    fun `getRoutesForPicker returns ferry routes`() {
+    fun `getRoutesForPicker returns only listed ferry routes`() {
         val objects = TestData.clone()
         objects.route { type = RouteType.FERRY }
+        objects.route {
+            id = "unlisted"
+            type = RouteType.FERRY
+            isListedRoute = false
+        }
         val global = GlobalResponse(objects)
 
         val ferryRoutes = global.getRoutesForPicker(RoutePickerPath.Ferry)

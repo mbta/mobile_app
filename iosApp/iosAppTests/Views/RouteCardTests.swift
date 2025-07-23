@@ -38,9 +38,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "66"))
-        XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
-            try image.actualImage().name() == "mode-bus"
-        })
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "mode-bus"))
     }
 
     func testLineHeader() throws {
@@ -70,9 +68,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
-        XCTAssertNotNil(try? sut.inspect().find(ViewType.Image.self) { image in
-            try image.actualImage().name() == "mode-subway"
-        })
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "mode-subway"))
     }
 
     func testPinRoute() throws {
@@ -101,13 +97,40 @@ final class RouteCardTests: XCTestCase {
             pinned: false,
             pushNavEntry: { _ in },
             showStopHeader: true
-        ).withFixedSettings([:])
+        ).withFixedSettings([.enhancedFavorites: false])
 
         let button =
             try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton").button()
 
         try button.tap()
         wait(for: [pinRouteExp], timeout: 1)
+    }
+
+    func testPinHiddenWhenEnhanced() throws {
+        let objects = ObjectCollectionBuilder()
+        let route = objects.route { route in
+            route.longName = "Red"
+        }
+
+        let routeCardData = RouteCardData(
+            lineOrRoute: .route(route),
+            stopData: [],
+            at: Date.now.toKotlinInstant()
+        )
+
+        let sut = RouteCard(
+            cardData: routeCardData,
+            global: .init(objects: objects),
+            now: Date.now,
+            onPin: { _ in },
+            pinned: false,
+            pushNavEntry: { _ in },
+            showStopHeader: true
+        ).withFixedSettings([.enhancedFavorites: true])
+
+        XCTAssertThrowsError(
+            try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton")
+        )
     }
 
     func testStopHeader() throws {

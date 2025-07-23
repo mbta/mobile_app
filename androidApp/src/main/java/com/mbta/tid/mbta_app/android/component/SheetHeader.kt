@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -44,6 +45,7 @@ fun SheetHeader(
     closeText: String? = null,
     onBack: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
+    rightActionContents: @Composable () -> Unit = {},
     buttonColors: ButtonColors = ButtonDefaults.contrast(),
 ) {
     val context = LocalContext.current
@@ -69,7 +71,7 @@ fun SheetHeader(
     }
 
     Row(
-        modifier.padding(horizontal = 16.dp),
+        modifier.padding(horizontal = 16.dp).heightIn(min = touchTarget),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.Top,
     ) {
@@ -98,6 +100,8 @@ fun SheetHeader(
         } else {
             Spacer(Modifier.weight(1f))
         }
+
+        Row(modifier = Modifier.padding(top = buttonPadding)) { rightActionContents() }
 
         if (onClose != null) {
             if (closeText != null)

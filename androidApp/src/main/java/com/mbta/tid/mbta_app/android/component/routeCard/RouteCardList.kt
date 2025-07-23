@@ -19,7 +19,7 @@ import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun ColumnScope.RouteCardList(
@@ -29,7 +29,6 @@ fun ColumnScope.RouteCardList(
     now: Instant,
     isFavorite: (FavoriteBridge) -> Boolean,
     togglePinnedRoute: (String) -> Unit,
-    showStationAccessibility: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)
@@ -67,7 +66,6 @@ fun ColumnScope.RouteCardList(
                     isFavorite,
                     togglePinnedRoute,
                     showStopHeader = true,
-                    showStationAccessibility,
                     onOpenStopDetails,
                 )
             }

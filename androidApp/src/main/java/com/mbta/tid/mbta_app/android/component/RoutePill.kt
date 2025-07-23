@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
@@ -22,6 +24,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -128,17 +131,22 @@ fun RoutePill(
     when (pillContent) {
         RoutePillSpec.Content.Empty -> {}
         is RoutePillSpec.Content.Text ->
-            Text(
+            BasicText(
                 if (route?.type == RouteType.COMMUTER_RAIL) pillContent.text
                 else pillContent.text.uppercase(),
                 modifier = finalModifier,
-                color = if (isActive) textColor else Color.Unspecified,
-                fontSize = fontSize,
-                fontWeight = FontWeight.Bold,
-                letterSpacing = 0.5.sp,
-                textAlign = TextAlign.Center,
                 maxLines = 1,
+                autoSize = TextAutoSize.StepBased(8.sp, fontSize, 0.25.sp),
+                style =
+                    TextStyle(
+                        color = if (isActive) textColor else Color.Unspecified,
+                        fontSize = fontSize,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.5.sp,
+                        textAlign = TextAlign.Center,
+                    ),
             )
+
         is RoutePillSpec.Content.ModeImage -> {
             val (painter, contentDescription) = routeIcon(routeType = pillContent.mode)
             Icon(
@@ -191,6 +199,7 @@ private fun RoutePillPreviews() {
                     color = "DA291C",
                     directionNames = listOf("South", "North"),
                     directionDestinations = listOf("Ashmont/Braintree", "Alewife"),
+                    isListedRoute = true,
                     longName = "Red Line",
                     shortName = "",
                     sortOrder = 10010,
@@ -206,6 +215,7 @@ private fun RoutePillPreviews() {
                     color = "ED8B00",
                     directionNames = listOf("South", "North"),
                     directionDestinations = listOf("Forest Hills", "Oak Grove"),
+                    isListedRoute = true,
                     longName = "Orange Line",
                     shortName = "",
                     sortOrder = 10020,
@@ -221,6 +231,7 @@ private fun RoutePillPreviews() {
                     color = "003DA5",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Bowdoin", "Wonderland"),
+                    isListedRoute = true,
                     longName = "Blue Line",
                     shortName = "",
                     sortOrder = 10040,
@@ -236,6 +247,7 @@ private fun RoutePillPreviews() {
                     color = "DA291C",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Mattapan", "Ashmont"),
+                    isListedRoute = true,
                     longName = "Mattapan Trolley",
                     shortName = "",
                     sortOrder = 10011,
@@ -251,6 +263,7 @@ private fun RoutePillPreviews() {
                     color = "00843D",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Boston College", "Government Center"),
+                    isListedRoute = true,
                     longName = "Green Line B",
                     shortName = "B",
                     sortOrder = 10032,
@@ -266,6 +279,7 @@ private fun RoutePillPreviews() {
                     color = "00843D",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Cleveland Circle", "Government Center"),
+                    isListedRoute = true,
                     longName = "Green Line C",
                     shortName = "C",
                     sortOrder = 10033,
@@ -281,6 +295,7 @@ private fun RoutePillPreviews() {
                     color = "00843D",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Riverside", "Union Square"),
+                    isListedRoute = true,
                     longName = "Green Line D",
                     shortName = "D",
                     sortOrder = 10034,
@@ -296,6 +311,7 @@ private fun RoutePillPreviews() {
                     color = "00843D",
                     directionNames = listOf("West", "East"),
                     directionDestinations = listOf("Heath Street", "Medford/Tufts"),
+                    isListedRoute = true,
                     longName = "Green Line E",
                     shortName = "E",
                     sortOrder = 10035,
@@ -311,6 +327,7 @@ private fun RoutePillPreviews() {
                     color = "80276C",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Wachusett", "North Station"),
+                    isListedRoute = true,
                     longName = "Fitchburg Line",
                     shortName = "",
                     sortOrder = 20012,
@@ -326,6 +343,7 @@ private fun RoutePillPreviews() {
                     color = "FFC72C",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Houghs Neck", "Quincy Center Station"),
+                    isListedRoute = true,
                     longName = "Houghs Neck - Quincy Center Station via Germantown",
                     shortName = "216",
                     sortOrder = 52160,
@@ -341,6 +359,7 @@ private fun RoutePillPreviews() {
                     color = "FFC72C",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Bedford VA Hospital", "Alewife Station"),
+                    isListedRoute = true,
                     longName = "Bedford VA Hospital - Alewife Station via Hanscom Airport",
                     shortName = "62/76",
                     sortOrder = 50621,
@@ -356,6 +375,7 @@ private fun RoutePillPreviews() {
                     color = "7C878E",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Logan Airport Terminals", "South Station"),
+                    isListedRoute = true,
                     longName = "Logan Airport Terminals - South Station",
                     shortName = "SL1",
                     sortOrder = 10051,
@@ -371,6 +391,7 @@ private fun RoutePillPreviews() {
                     color = "008EAA",
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Hingham or Hull", "Long Wharf or Rowes Wharf"),
+                    isListedRoute = true,
                     longName = "Hingham/Hull Ferry",
                     shortName = "",
                     sortOrder = 30002,
@@ -386,6 +407,7 @@ private fun RoutePillPreviews() {
                     color = "FFC72C",
                     directionNames = listOf("South", "North"),
                     directionDestinations = listOf("Ashmont/Braintree", "Alewife"),
+                    isListedRoute = true,
                     longName = "Kendall/MIT - Broadway via Downtown Crossing",
                     shortName = "Red Line Shuttle",
                     sortOrder = 61050,

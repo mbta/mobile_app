@@ -27,6 +27,7 @@ class SettingsCache: ObservableObject {
     }
 
     /// Loads the cache from the settings repository. Should be called by `SettingsCacheProvider` in the full app.
+    @MainActor
     func load() async throws {
         cache = try await settingsRepo.getSettings().mapValues { $0.boolValue }
     }

@@ -12,7 +12,7 @@ import Foundation
 import Shared
 import SwiftUI
 
-class MockLayerManager: IMapLayerManager {
+class MockLayerManager: iosApp.IMapLayerManager {
     var currentScheme: ColorScheme?
     private let addIconsCallback: () -> Void
     private let addLayersCallback: () -> Void

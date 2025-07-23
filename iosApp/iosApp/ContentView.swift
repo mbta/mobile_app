@@ -24,7 +24,7 @@ struct ContentView: View {
     @StateObject var errorBannerVM = ErrorBannerViewModel()
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
-    @StateObject var mapVM = MapViewModel()
+    @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
 
@@ -199,8 +199,49 @@ struct ContentView: View {
         NavigationStack {
             VStack {
                 switch navEntry {
-                case .favorites, .nearby:
+                case .editFavorites, .favorites, .nearby:
                     tabbedSheetContents.transition(transition)
+
+                case let .routeDetails(navEntry):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        RouteDetailsView(
+                            selectionId: navEntry.routeId, context: navEntry.context,
+                            onOpenStopDetails: { nearbyVM.pushNavEntry(.stopDetails(
+                                stopId: $0,
+                                stopFilter: nil,
+                                tripFilter: nil
+                            )) }, onBack: { nearbyVM.goBack() }, onClose: { nearbyVM.popToEntrypoint() },
+                            errorBannerVM: errorBannerVM
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    .transition(transition)
+
+                case let .routePicker(navEntry):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        RoutePickerView(
+                            context: navEntry.context,
+                            path: navEntry.path,
+                            errorBannerVM: errorBannerVM,
+                            onOpenRouteDetails: { routeId, context in
+                                nearbyVM.pushNavEntry(
+                                    SheetNavigationStackEntry.routeDetails(
+                                        SheetRoutes.RouteDetails(routeId: routeId, context: context)
+                                    )
+                                )
+                            },
+                            onClose: { nearbyVM.popToEntrypoint() }
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    .transition(transition)
+                    // This achieves the initial desired transition but going back performs the same transition which is
+                    // odd
+                    // .transition(.asymmetric(insertion: .push(from: .trailing), removal: .opacity))
 
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
@@ -266,12 +307,30 @@ struct ContentView: View {
 
     @ViewBuilder
     var favoritesPage: some View {
-        FavoritesPage(
-            errorBannerVM: errorBannerVM,
-            favoritesVM: favoritesVM,
-            nearbyVM: nearbyVM,
-            viewportProvider: viewportProvider
-        )
+        let navEntry = nearbyVM.navigationStack.lastSafe()
+        VStack {
+            if case .editFavorites = navEntry {
+                // Wrapping in a TabView helps the page to animate in as a single unit
+                // Otherwise only the header animates
+                TabView {
+                    EditFavoritesPage(
+                        viewModel: favoritesVM,
+                        onClose: { nearbyVM.popToEntrypoint() },
+                        errorBannerVM: errorBannerVM
+                    )
+                    .toolbar(.hidden, for: .tabBar)
+                }
+                .transition(transition)
+            } else {
+                FavoritesPage(
+                    errorBannerVM: errorBannerVM,
+                    favoritesVM: favoritesVM,
+                    nearbyVM: nearbyVM,
+                    viewportProvider: viewportProvider
+                )
+                .transition(transition)
+            }
+        }.animation(.easeOut, value: navEntry.sheetItemIdentifiable()?.id)
     }
 
     @ViewBuilder
@@ -311,6 +370,8 @@ struct ContentView: View {
         if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
+                    // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                    if hideMaps == false { return }
                     switch nearbyVM.navigationStack.last {
                     case .alertDetails, .more: nearbyVM.goBack()
                     default: break
@@ -343,6 +404,8 @@ struct ContentView: View {
                         .fullScreenCover(
                             item: .constant(nav.coverItemIdentifiable()),
                             onDismiss: {
+                                // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                                if hideMaps { return }
                                 switch nearbyVM.navigationStack.last {
                                 case .alertDetails, .more: nearbyVM.goBack()
                                 default: break

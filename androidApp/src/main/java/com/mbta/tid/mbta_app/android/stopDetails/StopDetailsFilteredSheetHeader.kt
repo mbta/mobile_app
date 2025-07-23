@@ -44,14 +44,16 @@ fun StopDetailsFilteredHeader(
     onClose: (() -> Unit)? = null,
 ) {
     Row(
-        Modifier.padding(horizontal = 16.dp).padding(bottom = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp),
+        Arrangement.spacedBy(8.dp),
+        Alignment.CenterVertically,
     ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1F).semantics(mergeDescendants = true) { heading() },
+            Modifier.weight(1f).padding(top = 4.dp).semantics(mergeDescendants = true) {
+                heading()
+            },
+            Arrangement.spacedBy(8.dp),
+            Alignment.CenterVertically,
         ) {
             if (line != null) {
                 RoutePill(

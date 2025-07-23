@@ -62,8 +62,6 @@ fun NearbyTransitView(
     val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
-
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
@@ -84,7 +82,7 @@ fun NearbyTransitView(
         }
     }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(title = stringResource(R.string.nearby_transit))
         ErrorBanner(errorBannerViewModel)
         LaunchedEffect(
@@ -135,7 +133,6 @@ fun NearbyTransitView(
                 }
             },
             togglePinnedRoute = ::togglePinnedRoute,
-            showStationAccessibility = showStationAccessibility,
             onOpenStopDetails = onOpenStopDetails,
         )
     }

@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -18,11 +19,14 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
+import org.koin.compose.KoinContext
 
 class StopDetailsUnfilteredRoutesViewTest {
     val builder = ObjectCollectionBuilder()
@@ -128,24 +132,28 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            StopDetailsUnfilteredRoutesView(
-                stop = stop,
-                routeCardData = routeCardData,
-                servedRoutes = emptyList(),
-                errorBannerViewModel = errorBannerViewModel,
-                showStationAccessibility = true,
-                now = now,
-                globalData = globalResponse,
-                isPinned = { false },
-                pinRoute = {},
-                onClose = {},
-                onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            KoinContext(koin.koin) {
+                StopDetailsUnfilteredRoutesView(
+                    stop = stop,
+                    routeCardData = routeCardData,
+                    servedRoutes = emptyList(),
+                    errorBannerViewModel = errorBannerViewModel,
+                    now = now,
+                    globalData = globalResponse,
+                    isPinned = { false },
+                    pinRoute = {},
+                    onClose = {},
+                    onTapRoutePill = {},
+                    updateStopFilter = filterState::value::set,
+                    openModal = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
@@ -171,24 +179,28 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            StopDetailsUnfilteredRoutesView(
-                stop = inaccessibleStop,
-                routeCardData = routeCardData,
-                servedRoutes = emptyList(),
-                errorBannerViewModel = errorBannerViewModel,
-                showStationAccessibility = true,
-                now = now,
-                globalData = globalResponse,
-                isPinned = { false },
-                pinRoute = {},
-                onClose = {},
-                onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            KoinContext(koin.koin) {
+                StopDetailsUnfilteredRoutesView(
+                    stop = inaccessibleStop,
+                    routeCardData = routeCardData,
+                    servedRoutes = emptyList(),
+                    errorBannerViewModel = errorBannerViewModel,
+                    now = now,
+                    globalData = globalResponse,
+                    isPinned = { false },
+                    pinRoute = {},
+                    onClose = {},
+                    onTapRoutePill = {},
+                    updateStopFilter = filterState::value::set,
+                    openModal = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
@@ -221,24 +233,28 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
+        val koin = testKoinApplication {
+            settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
+        }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            StopDetailsUnfilteredRoutesView(
-                stop = stop,
-                routeCardData = routeCardData,
-                servedRoutes = emptyList(),
-                errorBannerViewModel = errorBannerViewModel,
-                showStationAccessibility = true,
-                now = now,
-                globalData = globalResponse,
-                isPinned = { false },
-                pinRoute = {},
-                onClose = {},
-                onTapRoutePill = {},
-                updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            KoinContext(koin.koin) {
+                StopDetailsUnfilteredRoutesView(
+                    stop = stop,
+                    routeCardData = routeCardData,
+                    servedRoutes = emptyList(),
+                    errorBannerViewModel = errorBannerViewModel,
+                    now = now,
+                    globalData = globalResponse,
+                    isPinned = { false },
+                    pinRoute = {},
+                    onClose = {},
+                    onTapRoutePill = {},
+                    updateStopFilter = filterState::value::set,
+                    openModal = {},
+                )
+            }
         }
 
         composeTestRule.onNodeWithText("Elevator alert").assertIsDisplayed()

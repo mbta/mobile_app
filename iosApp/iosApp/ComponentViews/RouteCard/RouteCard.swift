@@ -9,6 +9,54 @@
 import Shared
 import SwiftUI
 
+struct RouteCardContainer<Content: View>: View {
+    let cardData: RouteCardData
+    let onPin: (String) -> Void
+    let pinned: Bool
+    let showStopHeader: Bool
+    let departureContent: (RouteCardData.RouteStopData) -> Content
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            TransitHeader(
+                name: cardData.lineOrRoute.name,
+                routeType: cardData.lineOrRoute.type,
+                backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
+                textColor: Color(hex: cardData.lineOrRoute.textColor),
+                rightContent: {
+                    HStack {
+                        if !enhancedFavorites {
+                            PinButton(
+                                pinned: pinned,
+                                color: Color(hex: cardData.lineOrRoute.textColor),
+                                action: { onPin(cardData.lineOrRoute.id) }
+                            )
+                        }
+                    }
+                }
+            )
+            .accessibilityElement(children: .contain)
+            ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
+                if showStopHeader {
+                    RouteCardStopHeader(
+                        data: stopData
+                    )
+                }
+                departureContent(stopData)
+
+                if index < cardData.stopData.count - 1 {
+                    HaloSeparator()
+                }
+            }
+        }
+        .background(Color.fill3)
+        .withRoundedBorder()
+    }
+}
+
 struct RouteCard: View {
     let cardData: RouteCardData
     let global: GlobalResponse?
@@ -19,43 +67,24 @@ struct RouteCard: View {
     let showStopHeader: Bool
 
     @EnvironmentObject var settingsCache: SettingsCache
+    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
+    var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
-        VStack(spacing: 0) {
-            TransitHeader(
-                name: cardData.lineOrRoute.name,
-                routeType: cardData.lineOrRoute.type,
-                backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
-                textColor: Color(hex: cardData.lineOrRoute.textColor),
-                rightContent: { PinButton(pinned: pinned,
-                                          color: Color(hex: cardData.lineOrRoute.textColor),
-                                          action: { onPin(cardData.lineOrRoute.id) }) }
+        RouteCardContainer(cardData: cardData,
+                           onPin: onPin,
+                           pinned: pinned,
+                           showStopHeader: showStopHeader) { stopData in
+            RouteCardDepartures(
+                stopData: stopData,
+                global: global,
+                now: now,
+                pinned: pinned,
+                pushNavEntry: pushNavEntry
             )
-            .accessibilityElement(children: .contain)
-            ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
-                if showStopHeader {
-                    RouteCardStopHeader(
-                        data: stopData,
-                        showStationAccessibility: settingsCache.get(.stationAccessibility)
-                    )
-                }
-                RouteCardDepartures(
-                    stopData: stopData,
-                    global: global,
-                    now: now,
-                    pinned: pinned,
-                    pushNavEntry: pushNavEntry
-                )
-
-                if index < cardData.stopData.count - 1 {
-                    HaloSeparator()
-                }
-            }
         }
-        .background(Color.fill3)
-        .withRoundedBorder()
     }
 }
 

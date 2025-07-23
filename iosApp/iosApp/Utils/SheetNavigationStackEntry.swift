@@ -16,9 +16,12 @@ struct TripDetailsTarget: Hashable {
 
 enum SheetNavigationStackEntry: Hashable, Identifiable {
     case alertDetails(alertId: String, line: Line?, routes: [Route]?, stop: Stop?)
+    case editFavorites
     case favorites
     case more
     case nearby
+    case routeDetails(SheetRoutes.RouteDetails)
+    case routePicker(SheetRoutes.RoutePicker)
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
 
     var id: Int {
@@ -37,6 +40,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .favorites: .favorites
         case .more: .settings
         case .nearby: .nearbyTransit
+        case .routeDetails: .routeDetails
         case let .stopDetails(_, stopFilter, _): stopFilter == nil ? .stopDetailsUnfiltered : .stopDetailsFiltered
         default: nil
         }
@@ -45,9 +49,12 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     private var caseId: String {
         switch self {
         case .alertDetails: "alertDetails"
+        case .editFavorites: "editFavorites"
         case .favorites: "favorites"
         case .more: "more"
         case .nearby: "nearby"
+        case .routeDetails: "routeDetails"
+        case .routePicker: "routePicker"
         case .stopDetails: "stopDetails"
         }
     }
@@ -63,8 +70,8 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         }
     }
 
-    func sheetItemIdentifiable() -> NearbySheetItem? {
-        let item = NearbySheetItem(stackEntry: self)
+    func sheetItemIdentifiable() -> SheetItem? {
+        let item = SheetItem(stackEntry: self)
         return item.id == "" ? nil : item
     }
 
@@ -75,17 +82,20 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
 }
 
 /// Struct that holds a SheetNavigationStackEntry. To be used with `sheet(item:onDismiss:content:)`
-/// the ids of two `NearbySheetItem`s will differ only if a new sheet should be opened when switching from one to
+/// the ids of two `SheetItem`s will differ only if a new sheet should be opened when switching from one to
 /// the other.
 /// For example, if switching between two `.stopDetails` entries, a new sheet should only be opened if the stop ID
 /// changes.
-struct NearbySheetItem: Identifiable {
+struct SheetItem: Identifiable {
     let stackEntry: SheetNavigationStackEntry
 
     var id: String {
         switch stackEntry {
         case .favorites: "favorites"
+        case .editFavorites: "editFavorites"
         case .nearby: "nearby"
+        case .routeDetails: "routeDetails"
+        case .routePicker: "routePicker"
         case let .stopDetails(stopId, _, _): stopId
         default: ""
         }

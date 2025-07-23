@@ -15,7 +15,7 @@ import SwiftUI
 struct HomeMapView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
-    @ObservedObject var mapVM: MapViewModel
+    @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -53,7 +53,7 @@ struct HomeMapView: View {
     init(
         globalRepository: IGlobalRepository = RepositoryDI().global,
         contentVM: ContentViewModel,
-        mapVM: MapViewModel,
+        mapVM: iosApp.MapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,

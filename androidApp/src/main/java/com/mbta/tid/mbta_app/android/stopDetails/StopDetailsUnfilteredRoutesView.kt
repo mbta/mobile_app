@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -42,9 +43,10 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.Settings
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -55,7 +57,6 @@ fun StopDetailsUnfilteredRoutesView(
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    showStationAccessibility: Boolean,
     now: Instant,
     globalData: GlobalResponse?,
     isPinned: (String) -> Boolean,
@@ -65,6 +66,7 @@ fun StopDetailsUnfilteredRoutesView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
 ) {
+    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val elevatorAlerts =
         routeCardData.flatMap { it.stopData.flatMap { it.elevatorAlerts } }.distinct()
     val hasAccessibilityWarning = elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible
@@ -76,7 +78,7 @@ fun StopDetailsUnfilteredRoutesView(
     ) {
         Column(Modifier.heightIn(min = 48.dp)) {
             SheetHeader(
-                if (!multiRoute) Modifier.padding(bottom = 16.dp) else Modifier,
+                if (!multiRoute) Modifier.padding(bottom = 8.dp) else Modifier,
                 title = stop.name,
                 onClose = onClose,
             )
@@ -137,7 +139,6 @@ fun StopDetailsUnfilteredRoutesView(
                         },
                         onPin = pinRoute,
                         showStopHeader = false,
-                        showStationAccessibility,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
                         },
@@ -289,7 +290,6 @@ private fun StopDetailsRoutesViewPreview() {
                 routeCardData,
                 listOf(PillFilter.ByRoute(route1, null), PillFilter.ByRoute(route2, null)),
                 errorBannerVM,
-                showStationAccessibility = true,
                 now = now,
                 globalData,
                 isPinned = { false },

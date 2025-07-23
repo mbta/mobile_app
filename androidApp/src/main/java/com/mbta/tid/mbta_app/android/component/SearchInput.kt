@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.colorResource
@@ -30,6 +31,7 @@ fun SearchInput(
     onExpandedChange: (Boolean) -> Unit,
     inputFieldFocusRequester: FocusRequester,
     modifier: Modifier = Modifier,
+    haloColor: Color = colorResource(R.color.halo),
     onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
     placeholder: @Composable () -> Unit,
 ) {
@@ -65,7 +67,7 @@ fun SearchInput(
                     borderRadius = 10.dp,
                     outlineColor =
                         if (expanded) colorResource(R.color.key_inverse).copy(alpha = 0.4f)
-                        else colorResource(R.color.halo),
+                        else haloColor,
                     backgroundColor = colorResource(R.color.fill3),
                 )
                 .fillMaxWidth()

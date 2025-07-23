@@ -10,15 +10,13 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.Settings
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import org.koin.compose.koinInject
 
 @Composable
@@ -34,7 +32,6 @@ fun StopDetailsUnfilteredView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalResponse = viewModel.globalResponse.collectAsState().value
-    val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     val stop: Stop? = globalResponse?.getStop(stopId)
 
@@ -79,7 +76,6 @@ fun StopDetailsUnfilteredView(
                 routeCardData,
                 servedRoutes,
                 errorBannerViewModel,
-                showStationAccessibility,
                 now,
                 globalResponse,
                 isPinned,
@@ -106,7 +102,6 @@ fun StopDetailsUnfilteredView(
                     placeholderData,
                     filterRoutes,
                     errorBannerViewModel,
-                    showStationAccessibility,
                     now,
                     globalResponse,
                     { false },

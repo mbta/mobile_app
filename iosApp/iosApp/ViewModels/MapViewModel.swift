@@ -24,14 +24,14 @@ class MapViewModel: ObservableObject {
 
     var lastMapboxErrorSubject: PassthroughSubject<Date?, Never>
 
-    var layerManager: IMapLayerManager?
+    var layerManager: iosApp.IMapLayerManager?
     var mapboxHttpInterceptor: MapHttpInterceptor?
 
     private var subscriptions = Set<AnyCancellable>()
 
     init(
         allRailSourceData: [MapFriendlyRouteResponse.RouteWithSegmentedShapes] = [],
-        layerManager: IMapLayerManager? = nil,
+        layerManager: iosApp.IMapLayerManager? = nil,
         setHttpInterceptor: @escaping (_ interceptor: MapHttpInterceptor?) -> Void = { interceptor in
             HttpServiceFactory.setHttpServiceInterceptorForInterceptor(interceptor)
         },

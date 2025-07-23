@@ -22,6 +22,8 @@ plugins {
     id("check-mapbox-bridge")
 }
 
+kotlin { compilerOptions { optIn.add("kotlin.time.ExperimentalTime") } }
+
 sentry {
     // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
     // This enables source context, allowing you to see your source
@@ -42,7 +44,7 @@ android {
         targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "1.2.5"
+        versionName = "1.2.6"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {

@@ -10,24 +10,38 @@ import Shared
 import SwiftUI
 
 struct DirectionPicker: View {
-    var filter: StopDetailsFilter?
-    var setFilter: (StopDetailsFilter?) -> Void
-    let availableDirections: [Int32]
-    let directions: [Direction]
+    var availableDirections: [Int32]
+    var directions: [Direction]
     let route: Route
-    let line: Line?
+    let selectedDirectionId: Int32?
+    let updateDirectionId: (Int32) -> Void
 
     init(stopData: RouteCardData.RouteStopData, filter: StopDetailsFilter?,
          setFilter: @escaping (StopDetailsFilter?) -> Void) {
-        self.filter = filter
-        self.setFilter = setFilter
         availableDirections = Set(stopData.data.map(\.directionId)).sorted()
         directions = stopData.directions
-        route = stopData.lineOrRoute.sortRoute
-        line = switch onEnum(of: stopData.lineOrRoute) {
+        let route = stopData.lineOrRoute.sortRoute
+        self.route = route
+        let line: Line? = switch onEnum(of: stopData.lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
+        selectedDirectionId = filter?.directionId
+        updateDirectionId = { setFilter(.init(routeId: line?.id ?? route.id, directionId: $0)) }
+    }
+
+    init(
+        availableDirections: [Int32],
+        directions: [Direction],
+        route: Route,
+        selectedDirectionId: Int32?,
+        updateDirectionId: @escaping (Int32) -> Void
+    ) {
+        self.availableDirections = availableDirections
+        self.directions = directions
+        self.route = route
+        self.selectedDirectionId = selectedDirectionId
+        self.updateDirectionId = updateDirectionId
     }
 
     var body: some View {
@@ -35,8 +49,8 @@ struct DirectionPicker: View {
             let deselectedBackroundColor = Color.deselectedToggle2.opacity(0.6)
             HStack(alignment: .center, spacing: 2) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
-                    let isSelected = filter?.directionId == direction
-                    let action = { setFilter(.init(routeId: line?.id ?? route.id, directionId: direction)) }
+                    let isSelected = selectedDirectionId == direction
+                    let action = { updateDirectionId(direction) }
 
                     Button(action: action) {
                         DirectionLabel(direction: directions[Int(direction)])

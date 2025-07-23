@@ -2,20 +2,13 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import io.github.dellisd.spatialk.geojson.Position
-import kotlinx.coroutines.FlowPreview
 
-@OptIn(FlowPreview::class)
 @Composable
 fun NearbyTransitPage(
     nearbyTransit: NearbyTransit,
@@ -24,20 +17,7 @@ fun NearbyTransitPage(
     nearbyViewModel: NearbyTransitViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
-    var targetLocation by remember { mutableStateOf<Position?>(null) }
-    managedTargetLocation(
-        nearbyTransit = nearbyTransit,
-        updateTargetLocation = { targetLocation = it },
-        reset = { nearbyViewModel.reset() },
-    )
-    suspend fun panToDefaultCenter() {
-        nearbyTransit.viewportProvider.isManuallyCentering = true
-        nearbyTransit.viewportProvider.isFollowingPuck = false
-        nearbyTransit.viewportProvider.animateTo(
-            ViewportProvider.Companion.Defaults.center,
-            zoom = 13.75,
-        )
-    }
+    val targetLocation by managedTargetLocation(nearbyTransit) { nearbyViewModel.reset() }
 
     NearbyTransitView(
         alertData = nearbyTransit.alertData,
@@ -47,7 +27,7 @@ fun NearbyTransitPage(
         setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
         onOpenStopDetails = onOpenStopDetails,
         noNearbyStopsView = {
-            NoNearbyStopsView(nearbyTransit.hideMaps, openSearch, ::panToDefaultCenter)
+            NoNearbyStopsView(openSearch, nearbyTransit.viewportProvider::panToDefaultCenter)
         },
         errorBannerViewModel = errorBannerViewModel,
     )

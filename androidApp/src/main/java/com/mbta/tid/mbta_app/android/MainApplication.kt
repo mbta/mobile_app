@@ -5,6 +5,8 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
+import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
+import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
@@ -44,6 +46,7 @@ class MainApplication : Application() {
 
     companion object {
         fun koinViewModelModule() = module {
+            single<IMapboxConfigManager> { MapboxConfigManager(get()) }
             single { SettingsCache(get()) }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)

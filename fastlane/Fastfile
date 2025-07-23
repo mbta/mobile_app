@@ -177,7 +177,7 @@ platform :ios do
       %w[Invalid Expired].include?(profile.status) and profile.name.include?('com.mbta.tid.mbtaapp')
     end
 
-    if broken_profiles.count.zero?
+    if broken_profiles.none?
       UI.success('All provisioning profiles are valid, nothing to do')
     else
       UI.success("Going to repair #{broken_profiles.count} provisioning profiles")
@@ -199,6 +199,7 @@ platform :ios do
       device: 'iPhone 15 (17.5)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
+      include_simulator_logs: true,
       xcodebuild_formatter: options[:xcodebuild_formatter],
       number_of_retries: 3
     )

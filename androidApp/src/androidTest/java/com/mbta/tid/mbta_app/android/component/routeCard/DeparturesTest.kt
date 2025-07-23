@@ -17,8 +17,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext

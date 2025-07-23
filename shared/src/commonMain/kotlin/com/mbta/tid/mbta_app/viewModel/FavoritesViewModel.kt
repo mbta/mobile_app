@@ -16,11 +16,12 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.time.Clock
+import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 
 interface IFavoritesViewModel {
     val models: StateFlow<FavoritesViewModel.State>
@@ -31,13 +32,26 @@ interface IFavoritesViewModel {
 
     fun setAlerts(alerts: AlertsStreamDataResponse?)
 
+    fun setContext(context: FavoritesViewModel.Context)
+
     fun setLocation(location: Position?)
 
     fun setNow(now: Instant)
+
+    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>)
 }
 
-class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
-    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+class FavoritesViewModel(
+    private val favoritesUsecases: FavoritesUsecases,
+    private val coroutineDispatcher: CoroutineDispatcher,
+) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
+
+    sealed class Context {
+        data object Favorites : Context()
+
+        data object Edit : Context()
+    }
+
     sealed interface Event {
         data object ReloadFavorites : Event
 
@@ -45,9 +59,13 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
 
         data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event
 
+        data class SetContext(val context: Context) : Event
+
         data class SetLocation(val location: Position?) : Event
 
         data class SetNow(val now: Instant) : Event
+
+        data class UpdateFavorites(val updatedFavorites: Map<RouteStopDirection, Boolean>) : Event
     }
 
     data class State(
@@ -68,6 +86,7 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
 
         var active: Boolean by remember { mutableStateOf(true) }
         var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
+        var context: Context? by remember { mutableStateOf(null) }
         var location: Position? by remember { mutableStateOf(null) }
         var now: Instant by remember { mutableStateOf(Clock.System.now()) }
 
@@ -102,8 +121,13 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         }
                     }
                     is Event.SetAlerts -> alerts = event.alerts
+                    is Event.SetContext -> context = event.context
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
+                    is Event.UpdateFavorites -> {
+                        favoritesUsecases.updateRouteStopDirections(event.updatedFavorites)
+                        reloadFavorites()
+                    }
                 }
             }
         }
@@ -122,6 +146,9 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
                 routeCardData = emptyList()
+            } else if (context == Context.Edit) {
+                // When editing, only filter the existing route card data, to preserve route order
+                routeCardData = filterRouteAndDirection(routeCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStopList(
@@ -134,16 +161,21 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         now,
                         emptySet(),
                         RouteCardData.Context.Favorites,
+                        coroutineDispatcher,
                     )
                 routeCardData = filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
         }
 
-        LaunchedEffect(stopIds, globalData, favorites) {
+        LaunchedEffect(stopIds, globalData, favorites, location) {
             if (stopIds == null || globalData == null) {
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
                 staticRouteCardData = emptyList()
+            } else if (context == Context.Edit) {
+                // When editing, only filter the existing route card data, to preserve route order
+                staticRouteCardData =
+                    filterRouteAndDirection(staticRouteCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStaticStopList(
@@ -152,6 +184,8 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
                         RouteCardData.Context.Favorites,
                         // not depending on now because it only matters for testing
                         now,
+                        location,
+                        coroutineDispatcher,
                     )
                 staticRouteCardData =
                     filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
@@ -176,9 +210,15 @@ class FavoritesViewModel(private val favoritesUsecases: FavoritesUsecases) :
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
 
+    override fun setContext(context: Context) = fireEvent(Event.SetContext(context))
+
     override fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
 
     override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
+
+    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+        fireEvent(Event.UpdateFavorites(updatedFavorites))
+    }
 
     companion object {
         fun filterRouteAndDirection(
@@ -218,8 +258,10 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onReloadFavorites = {}
     var onSetActive = { _: Boolean, _: Boolean -> }
     var onSetAlerts = { _: AlertsStreamDataResponse? -> }
+    var onSetContext = { _: FavoritesViewModel.Context -> }
     var onSetLocation = { _: Position? -> }
     var onSetNow = { _: Instant -> }
+    var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
 
     override val models = MutableStateFlow(initialState)
 
@@ -235,11 +277,19 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetAlerts(alerts)
     }
 
+    override fun setContext(context: FavoritesViewModel.Context) {
+        onSetContext(context)
+    }
+
     override fun setLocation(location: Position?) {
         onSetLocation(location)
     }
 
     override fun setNow(now: Instant) {
         onSetNow(now)
+    }
+
+    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+        onUpdateFavorites(updatedFavorites)
     }
 }

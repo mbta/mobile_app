@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 object StopDetailsUtils {
     /**

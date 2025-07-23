@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 class LeafFormatTest {
     @Test

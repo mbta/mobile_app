@@ -5,8 +5,8 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
 
 class PatternSortingTest {
     var objects = ObjectCollectionBuilder()
@@ -268,11 +268,17 @@ class PatternSortingTest {
 
         assertEquals(
             0,
-            PatternSorting.compareRouteCards(emptySet(), null).compare(routeCard1, routeCard3),
+            PatternSorting.compareRouteCards(emptySet(), null, RouteCardData.Context.NearbyTransit)
+                .compare(routeCard1, routeCard3),
         )
         assertEquals(
             0,
-            PatternSorting.compareRouteCards(emptySet(), position).compare(routeCard1, routeCard7),
+            PatternSorting.compareRouteCards(
+                    emptySet(),
+                    position,
+                    RouteCardData.Context.NearbyTransit,
+                )
+                .compare(routeCard1, routeCard7),
         )
 
         val expected =
@@ -287,7 +293,80 @@ class PatternSortingTest {
             )
         assertEquals(
             expected,
-            expected.reversed().sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, position)),
+            expected
+                .reversed()
+                .sortedWith(
+                    PatternSorting.compareRouteCards(
+                        pinnedRoutes,
+                        position,
+                        RouteCardData.Context.NearbyTransit,
+                    )
+                ),
+        )
+    }
+
+    @Test
+    fun compareRouteCardsOnFavoritesIgnoresRouteType() {
+        val position = Position(latitude = 0.0, longitude = 0.0)
+        val nearStop =
+            objects.stop {
+                latitude = 0.1
+                longitude = 0.1
+            }
+        val farStop =
+            objects.stop {
+                latitude = 2.0
+                longitude = 2.0
+            }
+        fun routeCard(subway: Boolean, near: Boolean, sortOrder: Int): RouteCardData {
+            val route =
+                objects.route {
+                    type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
+                    this.sortOrder = sortOrder
+                }
+            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val stop = if (near) nearStop else farStop
+            return routeCard(
+                route,
+                stopData(
+                    stop,
+                    RouteCardData.LineOrRoute.Route(route),
+                    leaf(
+                        lineOrRoute,
+                        stop,
+                        pattern(route, 0, 0),
+                        trips = 1,
+                        hasSchedulesToday = true,
+                    ),
+                ),
+            )
+        }
+        val routeCard1 = routeCard(subway = false, near = true, sortOrder = 10)
+        val routeCard2 = routeCard(subway = true, near = false, sortOrder = 1)
+
+        val expected = listOf(routeCard1, routeCard2)
+        assertEquals(
+            expected,
+            expected
+                .reversed()
+                .sortedWith(
+                    PatternSorting.compareRouteCards(
+                        emptySet(),
+                        position,
+                        RouteCardData.Context.Favorites,
+                    )
+                ),
+        )
+
+        assertEquals(
+            expected.reversed(),
+            expected.sortedWith(
+                PatternSorting.compareRouteCards(
+                    emptySet(),
+                    position,
+                    RouteCardData.Context.NearbyTransit,
+                )
+            ),
         )
     }
 }

@@ -5,6 +5,8 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
+    <string name="add_favorite">ajoute nan favori</string>
+    <string name="add_stops">Ajoute arè</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> nan Favorites</string>
     <string name="additional_service">Plis Sèvis</string>
@@ -75,6 +77,7 @@
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Reta&lt;/b></string>
+    <string name="delete">Efase</string>
     <string name="demonstration">Demonstrasyon</string>
     <string name="demonstration_lowercase">manifestasyon</string>
     <string name="departure_tile_on_click_label">montre plis enfòmasyon sou vwayaj sa a</string>
@@ -93,10 +96,13 @@
     <string name="dock_closure">Waf la Fèmen</string>
     <string name="dock_issue">Pwoblèm Waf</string>
     <string name="dock_issue_sentence_case">Pwoblèm waf</string>
+    <string name="done">Fè</string>
     <string name="drag_handle">Kontwolè deplasman</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
     <string name="eastbound">Pran direksyon lès</string>
+    <string name="edit">Edit</string>
+    <string name="edit_favorites">Edit Favorites</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <string name="electrical_work_lowercase">travay elektrik</string>
@@ -136,6 +142,7 @@
     <string name="extra_service_sentence_case">Sèvis anplis</string>
     <string name="facility_issue">Pwoblèm Lokal</string>
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
+    <string name="favorite_stop">arè pi renmen</string>
     <string name="favorites_link">Favori</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
@@ -213,6 +220,7 @@
     <string name="next_stop">Pwochen arè</string>
     <string name="no_matching_routes">Pa gen wout %1$s ki matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
+    <string name="no_results_found">Pa jwenn rezilta 🤔</string>
     <string name="no_service">Pa gen Sèvis</string>
     <string name="no_service_sentence_case">Pa gen sèvis</string>
     <string name="no_service_today">Pa gen sèvis jodi a</string>
@@ -226,6 +234,7 @@
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="now">Kounye a</string>
     <string name="now_at">Kounye a li nan</string>
+    <string name="okay">Oke</string>
     <string name="onboarding_continue">Kontinye</string>
     <string name="onboarding_feedback_advance">Kòmanse</string>
     <string name="onboarding_feedback_body">MBTA Go nan etap kòmansman yo! Nou vle kòmantè w pandan n ap kontinye fè amelyorasyon epi ajoute nouvo opsyon.</string>
@@ -267,10 +276,12 @@
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
+    <string name="remove_favorite">retire favori</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
     <string name="resources_link_trip_planner">Zouti pou planifye vwayaj</string>
+    <string name="results_failed_to_load">Rezilta yo pa t chaje ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Ajoute arè ou pi renmen yo</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -351,8 +362,10 @@
     <string name="switch_issue_lowercase">pwoblèm nan switch ray</string>
     <string name="switch_problem">Pann nan switch ray</string>
     <string name="switch_problem_lowercase">pann nan switch ray</string>
+    <string name="tap_favorites_hint">Tape zetwal yo pou ajoute nan Favori yo</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
+    <string name="this_stop_is_drop_off_only">Estasyon sa a se depoze sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="track_change">Suiv Chanjman</string>
@@ -370,6 +383,8 @@
     <string name="trains">tren yo</string>
     <string name="trip_cancelled">Vwayaj la anile</string>
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>
+    <string name="try_a_different_spelling_or_name">Eseye yon lòt òtograf oswa non.</string>
+    <string name="try_your_search_again">Eseye rechèch ou an ankò.</string>
     <string name="unable_to_connect">Pa ka konekte</string>
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unruly_passenger_lowercase">pasaje ap fè dezòd</string>

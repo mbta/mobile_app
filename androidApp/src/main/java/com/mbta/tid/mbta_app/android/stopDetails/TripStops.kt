@@ -42,6 +42,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -55,9 +56,9 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun TripStops(
@@ -71,7 +72,6 @@ fun TripStops(
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
-    showStationAccessibility: Boolean = false,
 ) {
     val context = LocalContext.current
 
@@ -135,7 +135,6 @@ fun TripStops(
                         onOpenAlertDetails,
                         routeAccents,
                         alertSummaries,
-                        showStationAccessibility = showStationAccessibility,
                         firstStop = true,
                     )
                 }
@@ -218,7 +217,6 @@ fun TripStops(
                             onOpenAlertDetails,
                             routeAccents,
                             alertSummaries,
-                            showStationAccessibility,
                         )
                     }
                 }
@@ -248,7 +246,6 @@ fun TripStops(
                     targeted = true,
                     firstStop = showFirstStopSeparately && target == stops.startTerminalEntry,
                     modifier = Modifier.background(colorResource(R.color.fill3)),
-                    showStationAccessibility = showStationAccessibility,
                 )
 
                 HaloUnderRouteLine(routeAccents.color)
@@ -263,7 +260,6 @@ fun TripStops(
                 onOpenAlertDetails,
                 routeAccents,
                 alertSummaries,
-                showStationAccessibility,
                 showDownstreamAlerts = true,
             )
         }
@@ -290,7 +286,6 @@ private fun StopList(
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
-    showStationAccessibility: Boolean,
     showDownstreamAlerts: Boolean = false,
 ) {
     for (stop in list) {
@@ -302,7 +297,6 @@ private fun StopList(
             onOpenAlertDetails,
             routeAccents,
             alertSummaries,
-            showStationAccessibility = showStationAccessibility,
             showDownstreamAlert = showDownstreamAlerts,
             lastStop = stop.stopSequence == lastStopSequence,
         )
@@ -350,18 +344,19 @@ private fun TripStopsPreview() {
             },
         )
     MyApplicationTheme {
-        TripStops(
-            targetId = stops[4].id,
-            stopList,
-            4,
-            TripHeaderSpec.NoVehicle,
-            Clock.System.now(),
-            emptyMap(),
-            GlobalResponse(objects),
-            onTapLink = {},
-            onOpenAlertDetails = {},
-            TripRouteAccents(route),
-            showStationAccessibility = true,
-        )
+        Column(Modifier.background(Color.fromHex(route.color))) {
+            TripStops(
+                targetId = stops[4].id,
+                stopList,
+                4,
+                TripHeaderSpec.NoVehicle,
+                Clock.System.now(),
+                emptyMap(),
+                GlobalResponse(objects),
+                onTapLink = {},
+                onOpenAlertDetails = {},
+                TripRouteAccents(route),
+            )
+        }
     }
 }

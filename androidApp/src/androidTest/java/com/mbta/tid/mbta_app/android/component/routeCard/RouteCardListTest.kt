@@ -21,8 +21,8 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -187,7 +187,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -219,7 +218,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -260,7 +258,6 @@ class RouteCardListTest : KoinTest {
                         now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
-                        showStationAccessibility = false,
                         onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
                     )
                 }

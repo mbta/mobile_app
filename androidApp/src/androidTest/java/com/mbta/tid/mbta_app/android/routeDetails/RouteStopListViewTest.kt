@@ -1,14 +1,13 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
-import androidx.compose.foundation.clickable
 import androidx.compose.material3.Text
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -18,7 +17,6 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -26,9 +24,12 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 import kotlin.test.fail
+import kotlinx.coroutines.flow.update
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -70,9 +71,7 @@ class RouteStopListViewTest {
             representativeTrip { stopIds = listOf(stop2.id) }
         }
 
-        val clicks = mutableListOf<RouteDetailsStopList.Entry>()
-        var backTapped = false
-        var closeTapped = false
+        val clicks = mutableListOf<RouteDetailsRowContext>()
 
         val koin =
             testKoinApplication(objects) {
@@ -91,9 +90,10 @@ class RouteStopListViewTest {
                     RouteDetailsContext.Details,
                     GlobalResponse(objects),
                     onClick = clicks::add,
-                    onBack = { backTapped = true },
-                    onClose = { closeTapped = true },
+                    onBack = {},
+                    onClose = {},
                     errorBannerViewModel = errorBannerVM,
+                    toastViewModel = MockToastViewModel(),
                     rightSideContent = { context, _ ->
                         when (context) {
                             is RouteDetailsRowContext.Details ->
@@ -127,16 +127,10 @@ class RouteStopListViewTest {
             .assertIsDisplayed()
 
         composeTestRule.onNodeWithText(stop2.name).performClick()
-        assertEquals(
-            listOf(RouteDetailsStopList.Entry(stop2, listOf(pattern0), listOf(connectingRoute))),
+        assertEquals<List<RouteDetailsRowContext>>(
+            listOf(RouteDetailsRowContext.Details(stop2)),
             clicks,
         )
-
-        composeTestRule.onNodeWithContentDescription("Back").performClick()
-        assertTrue(backTapped)
-
-        composeTestRule.onNodeWithContentDescription("Close").performClick()
-        assertTrue(closeTapped)
     }
 
     @Test
@@ -188,6 +182,7 @@ class RouteStopListViewTest {
                     onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
+                    toastViewModel = MockToastViewModel(),
                     defaultSelectedRouteId = route2.id,
                     rightSideContent = { _, _ -> },
                 )
@@ -258,6 +253,7 @@ class RouteStopListViewTest {
                     onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
+                    toastViewModel = MockToastViewModel(),
                     rightSideContent = { _, _ -> },
                 )
             }
@@ -271,6 +267,58 @@ class RouteStopListViewTest {
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop3NonTypical.name))
         composeTestRule.onNodeWithText(stop4NonTypical.name).assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testDoesntCollapseWhenOnlyNonTypical() {
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop { name = "Stop 1" }
+        val stop2 = objects.stop { name = "Stop 2" }
+
+        val mainRoute =
+            objects.route {
+                directionNames = listOf("West", "East")
+                directionDestinations = listOf("Here", "There")
+                longName = "Mauve Line"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val deviationPattern =
+            objects.routePattern(mainRoute) {
+                directionId = 0
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip { stopIds = listOf(stop1.id, stop2.id) }
+            }
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf(stop1.id, stop2.id), routeId = mainRoute.id)
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(mainRoute),
+                    RouteDetailsContext.Details,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = MockToastViewModel(),
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
+
+        composeTestRule.onNodeWithText(stop1.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
+        composeTestRule.onNodeWithText("2 less common stops").assertIsNotDisplayed()
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -295,23 +343,17 @@ class RouteStopListViewTest {
                     route,
                     RouteDetailsContext.Favorites,
                     GlobalResponse(objects),
-                    onClick = {},
+                    onClick = {
+                        when (it) {
+                            is RouteDetailsRowContext.Details -> {}
+                            is RouteDetailsRowContext.Favorites -> it.onTapStar()
+                        }
+                    },
                     onBack = {},
                     onClose = {},
                     errorBannerViewModel = errorBannerVM,
-                    rightSideContent = { rowContext, _ ->
-                        Text(
-                            "Tap me",
-                            modifier =
-                                Modifier.clickable {
-                                    when (rowContext) {
-                                        is RouteDetailsRowContext.Details -> {}
-                                        is RouteDetailsRowContext.Favorites ->
-                                            rowContext.onTapStar()
-                                    }
-                                },
-                        )
-                    },
+                    toastViewModel = MockToastViewModel(),
+                    rightSideContent = { _, _ -> },
                 )
             }
         }
@@ -321,12 +363,141 @@ class RouteStopListViewTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Southbound to"))
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Ashmont/Braintree"))
 
-        composeTestRule.onAllNodesWithText("Tap me")[1].performClick()
+        composeTestRule.onNodeWithText("Davis").performClick()
 
         // 2 sets of direction labels - one on toggle, and one in favorites confirmation modal
         composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Southbound to"), 2)
         composeTestRule.waitUntilNodeCountDefaultTimeout(hasText("Ashmont/Braintree"), 2)
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
+    }
+
+    @Test
+    fun testTriggersHintToast() {
+        val objects = TestData.clone()
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        val toastVM = MockToastViewModel()
+        var toastShown = false
+        toastVM.onShowToast = { toast ->
+            toastVM.models.update { ToastViewModel.State.Visible(toast) }
+            toastShown = true
+        }
+
+        var toastState: State<ToastViewModel.State>? = null
+
+        composeTestRule.setContent {
+            toastState = toastVM.models.collectAsState()
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    RouteDetailsContext.Favorites,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = toastVM,
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assert(toastShown)
+        when (val state = toastState?.value) {
+            is ToastViewModel.State.Visible ->
+                assertEquals("Tap stars to add to Favorites", state.toast.message)
+            else -> fail("Toast should not be hidden")
+        }
+    }
+
+    @Test
+    fun testBackButton() {
+        val objects = TestData.clone()
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        val toastVM = MockToastViewModel()
+        var toastShown = false
+        toastVM.onShowToast = { _ -> toastShown = true }
+        toastVM.onHideToast = { toastShown = false }
+
+        var backTapped = false
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    RouteDetailsContext.Favorites,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onBack = { backTapped = true },
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = toastVM,
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assert(toastShown)
+
+        composeTestRule.onNodeWithContentDescription("Back").performClick()
+        composeTestRule.waitForIdle()
+        assert(backTapped)
+        assertFalse(toastShown)
+    }
+
+    @Test
+    fun testCloseButton() {
+        val objects = TestData.clone()
+
+        val koin =
+            testKoinApplication(objects) {
+                routeStops =
+                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+            }
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        val toastVM = MockToastViewModel()
+        var toastShown = false
+        toastVM.onShowToast = { _ -> toastShown = true }
+        toastVM.onHideToast = { toastShown = false }
+
+        var closeTapped = false
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RouteStopListView(
+                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                    RouteDetailsContext.Favorites,
+                    GlobalResponse(objects),
+                    onClick = {},
+                    onBack = {},
+                    onClose = { closeTapped = true },
+                    errorBannerViewModel = errorBannerVM,
+                    toastViewModel = toastVM,
+                    rightSideContent = { _, _ -> },
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assert(toastShown)
+
+        composeTestRule.onNodeWithText("Done").performClick()
+        composeTestRule.waitForIdle()
+        assert(closeTapped)
+        assertFalse(toastShown)
     }
 }

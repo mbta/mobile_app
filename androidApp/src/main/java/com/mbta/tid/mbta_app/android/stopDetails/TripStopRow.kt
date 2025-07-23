@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
@@ -31,9 +32,9 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 
 @Composable
 fun TripStopRow(
@@ -45,7 +46,6 @@ fun TripStopRow(
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
     modifier: Modifier = Modifier,
-    showStationAccessibility: Boolean = false,
     showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
     firstStop: Boolean = false,
@@ -59,16 +59,16 @@ fun TripStopRow(
         stop = stop.stop,
         onClick = { onTapLink(stop) },
         routeAccents = routeAccents,
+        stopListContext = StopListContext.Trip,
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
         alertSummaries = alertSummaries,
         connectingRoutes = stop.routes,
         disruption = disruption,
-        stopPlacement = StopPlacement(firstStop, lastStop, true),
         isTruncating = stop.isTruncating,
+        stopPlacement = StopPlacement(firstStop, lastStop, true),
         onOpenAlertDetails = onOpenAlertDetails,
         showDownstreamAlert = showDownstreamAlert,
-        showStationAccessibility = showStationAccessibility,
         targeted = targeted,
         trackNumber = stop.trackNumber,
         rightSideContent = { rightSideModifier ->
@@ -153,7 +153,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -187,7 +186,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
             TripStopRow(
                 stop =
@@ -216,7 +214,6 @@ private fun TripStopRowPreview() {
                     color = Color.fromHex("DA291C"),
                 ),
                 alertSummaries = emptyMap(),
-                showStationAccessibility = true,
             )
         }
     }

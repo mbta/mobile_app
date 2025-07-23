@@ -21,20 +21,46 @@ struct FavoritesView: View {
     var globalRepository = RepositoryDI().global
     let inspection = Inspection<Self>()
     @State var now = Date.now
-    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SheetHeader(title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"))
+            SheetHeader(
+                title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
+                rightActionContents: {
+                    if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
+                        NavTextButton(string: NSLocalizedString("Edit",
+                                                                comment: "Button text to enter edit favorites flow"),
+                                      backgroundColor: Color.text.opacity(0.6),
+                                      textColor: Color.fill2) {
+                            nearbyVM.pushNavEntry(.editFavorites)
+                        }
+                    }
+                }
+            )
+
             ErrorBanner(errorBannerVM)
             RouteCardList(
                 routeCardData: favoritesVMState.routeCardData,
-                emptyView: { Text("No stops added", comment: "Indicates the absence of favorites") },
+                emptyView: {
+                    NoFavoritesView(
+                        onAddStops: {
+                            nearbyVM.pushNavEntry(
+                                SheetNavigationStackEntry.routePicker(
+                                    SheetRoutes.RoutePicker(
+                                        path: RoutePickerPath.Root(),
+                                        context: RouteDetailsContext.Favorites()
+                                    )
+                                )
+                            )
+                        }
+                    )
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
+                },
                 global: globalData,
                 now: now,
                 isPinned: { _ in false },
                 onPin: { _ in },
-                showStationAccessibility: settingsCache.get(.stationAccessibility),
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )
@@ -42,6 +68,7 @@ struct FavoritesView: View {
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
+            favoritesVM.setContext(context: FavoritesViewModel.ContextFavorites())
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toKotlinInstant())
             favoritesVM.reloadFavorites()

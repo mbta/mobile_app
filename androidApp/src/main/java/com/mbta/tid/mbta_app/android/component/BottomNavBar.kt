@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
-import com.mbta.tid.mbta_app.android.SheetRoutes
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.SheetRoutes
+import com.mbta.tid.mbta_app.repositories.Settings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,8 +35,8 @@ fun BottomNavBar(
     navigateToFavorites: () -> Unit,
     navigateToNearby: () -> Unit,
     navigateToMore: () -> Unit,
-    enhancedFavorites: Boolean = false,
 ) {
+    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
 
     val selectedTabIndex =
         if (enhancedFavorites) {

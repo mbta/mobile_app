@@ -107,9 +107,7 @@ final class TripStopsTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "2 stops away"))
-        XCTAssertNotNil(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "stop-pin-indicator"))
         XCTAssertNotNil(try sut.inspect().find(text: stop3Target.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop5.name))
     }
@@ -188,9 +186,7 @@ final class TripStopsTests: XCTestCase {
             global: .init(objects: objects)
         ).withFixedSettings([:])
 
-        XCTAssertThrowsError(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertThrowsError(try sut.inspect().find(imageName: "stop-pin-indicator"))
         XCTAssertNotNil(try sut.inspect().find(text: stop1.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop2.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop3.name))
@@ -267,9 +263,7 @@ final class TripStopsTests: XCTestCase {
         ).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(text: stop1.name))
-        XCTAssertThrowsError(try sut.inspect().find(ViewType.Image.self, where: { image in
-            try image.actualImage().name() == "stop-pin-indicator"
-        }))
+        XCTAssertThrowsError(try sut.inspect().find(imageName: "stop-pin-indicator"))
     }
 
     func testFirstStopSeparated() throws {

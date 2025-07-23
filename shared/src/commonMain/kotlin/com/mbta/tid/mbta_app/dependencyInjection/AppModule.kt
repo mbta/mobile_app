@@ -32,9 +32,13 @@ import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import okio.FileSystem
 import okio.SYSTEM
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /** Define the koin module with the resources to use in dependency injection */
@@ -42,6 +46,10 @@ fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
+        module {
+            single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
+        },
+        module { single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO } },
         repositoriesModule(RealRepositories()),
     )
 }

@@ -5,6 +5,8 @@
     <string name="accident">Accidente</string>
     <string name="accident_lowercase">accidente</string>
     <string name="add_confirmation_button">Agregar</string>
+    <string name="add_favorite">añadir favorito</string>
+    <string name="add_stops">Añadir paradas</string>
     <string name="add_to_favorites_title">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Añadir &lt;b>%1$s&lt;/b> en &lt;b>%2$s&lt;/b> a Favoritos</string>
     <string name="additional_service">Servicio adicional</string>
@@ -72,6 +74,7 @@
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retrasos&lt;/b></string>
+    <string name="delete">Borrar</string>
     <string name="demonstration">Demostración</string>
     <string name="demonstration_lowercase">demostración</string>
     <string name="departure_tile_on_click_label">mostrar más información sobre este viaje</string>
@@ -90,10 +93,13 @@
     <string name="dock_closure">Cierre del muelle</string>
     <string name="dock_issue">Problema con dársena</string>
     <string name="dock_issue_sentence_case">Problema con dársena</string>
+    <string name="done">Hecho</string>
     <string name="drag_handle">Palanca de arrastre</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="drawbridge_being_raised_lowercase">puente levadizo levantado</string>
     <string name="eastbound">En dirección este</string>
+    <string name="edit">Editar</string>
+    <string name="edit_favorites">Editar favoritos</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> adelantado</string>
     <string name="electrical_work">Trabajo eléctrico</string>
     <string name="electrical_work_lowercase">trabajo eléctrico</string>
@@ -127,6 +133,7 @@
     <string name="extra_service_sentence_case">Servicio extra</string>
     <string name="facility_issue">Problema en las instalaciones</string>
     <string name="facility_issue_sentence_case">Problema en las instalaciones</string>
+    <string name="favorite_stop">parada favorita</string>
     <string name="favorites_link">Favoritos</string>
     <string name="feature_flag_debug_mode">Modo de depuración</string>
     <string name="feature_flag_route_search">Buscador de rutas</string>
@@ -204,6 +211,7 @@
     <string name="next_stop">Próxima parada</string>
     <string name="no_matching_routes">No hay rutas de %1$s que coincidan</string>
     <string name="no_predictions">Las predicciones no están disponibles</string>
+    <string name="no_results_found">No se encontraron resultados 🤔</string>
     <string name="no_service">Sin servicio</string>
     <string name="no_service_sentence_case">Sin servicio</string>
     <string name="no_service_today">No hay servicio hoy</string>
@@ -217,6 +225,7 @@
     <string name="not_accessible_stop_card">Esta parada no es accesible</string>
     <string name="now">Ahora</string>
     <string name="now_at">Ahora en</string>
+    <string name="okay">Bueno</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_feedback_advance">Empezar</string>
     <string name="onboarding_feedback_body">MBTA Go está en su etapa inicial. Queremos recibir sus comentarios mientras seguimos realizando mejoras y agregando nuevas características.</string>
@@ -258,10 +267,12 @@
     <string name="refresh">Refrescar</string>
     <string name="refresh_predictions">Refrescar predicciones</string>
     <string name="reload_data">Recargar datos</string>
+    <string name="remove_favorite">eliminar favorito</string>
     <string name="resources_link_fare_info">Información de tarifas</string>
     <string name="resources_link_mticket">Billetes de tren de cercanías y ferri</string>
     <string name="resources_link_mticket_note">mTicket App</string>
     <string name="resources_link_trip_planner">Planificador de viaje</string>
+    <string name="results_failed_to_load">Los resultados no se pudieron cargar ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Añadir paradas favoritas</string>
     <string name="route_with_type">%1$s %2$s</string>
@@ -339,8 +350,10 @@
     <string name="switch_issue_lowercase">problema de cambio de carril</string>
     <string name="switch_problem">Problema de cambio de carril</string>
     <string name="switch_problem_lowercase">problema del interruptor</string>
+    <string name="tap_favorites_hint">Toca las estrellas para añadirlas a Favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
+    <string name="this_stop_is_drop_off_only">Esta parada es solo para dejar pasajeros.</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
     <string name="track_change">Cambio de pista</string>
@@ -358,6 +371,8 @@
     <string name="trains">trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
+    <string name="try_a_different_spelling_or_name">Pruebe con una ortografía o un nombre diferente.</string>
+    <string name="try_your_search_again">Intente su búsqueda nuevamente.</string>
     <string name="unable_to_connect">No se puede conectar</string>
     <string name="unruly_passenger">Pasajero indisciplinado</string>
     <string name="unruly_passenger_lowercase">pasajero rebelde</string>
