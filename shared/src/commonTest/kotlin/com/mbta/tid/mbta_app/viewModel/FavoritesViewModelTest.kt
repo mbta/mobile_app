@@ -726,6 +726,7 @@ class FavoritesViewModelTest : KoinTest {
         advanceUntilIdle()
         assertEquals(analyticsLogged, Pair("favorites_count", "1"))
     }
+
     fun `does not load new route card data when editing`() = runTest {
         val now = Clock.System.now()
 
