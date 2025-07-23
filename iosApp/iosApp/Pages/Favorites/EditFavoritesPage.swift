@@ -41,6 +41,7 @@ struct EditFavoritesPage: View {
                 Spacer()
             }
             .onAppear {
+                viewModel.setContext(context: FavoritesViewModel.ContextEdit())
                 loadGlobal()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -106,8 +107,9 @@ struct EditFavoritesList: View {
 
         else if routeCardData != nil {
             ScrollView {
-                // TODO: Separate NoStopsView
-                Text("No stops added", comment: "Indicates the absence of favorites")
+                NoFavoritesView()
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
             }
         }
 

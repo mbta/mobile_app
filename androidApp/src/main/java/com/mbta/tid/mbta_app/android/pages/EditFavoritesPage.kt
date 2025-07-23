@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -48,6 +49,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import kotlin.time.Clock
 
@@ -59,6 +61,8 @@ fun EditFavoritesPage(
 ) {
     val state by favoritesViewModel.models.collectAsState()
 
+    LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(
             title = stringResource(R.string.edit_favorites),
@@ -66,7 +70,7 @@ fun EditFavoritesPage(
             buttonColors = ButtonDefaults.key(),
             onClose = onClose,
         )
-        EditFavoritesList(state.routeCardData, global) {
+        EditFavoritesList(state.staticRouteCardData, global) {
             favoritesViewModel.updateFavorites(
                 mapOf(it to false),
                 EditFavoritesContext.Favorites,

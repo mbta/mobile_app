@@ -34,6 +34,8 @@ interface IFavoritesViewModel {
 
     fun setAlerts(alerts: AlertsStreamDataResponse?)
 
+    fun setContext(context: FavoritesViewModel.Context)
+
     fun setLocation(location: Position?)
 
     fun setNow(now: Instant)
@@ -51,12 +53,20 @@ class FavoritesViewModel(
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
 
+    sealed class Context {
+        data object Favorites : Context()
+
+        data object Edit : Context()
+    }
+
     sealed interface Event {
         data object ReloadFavorites : Event
 
         data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
 
         data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event
+
+        data class SetContext(val context: Context) : Event
 
         data class SetLocation(val location: Position?) : Event
 
@@ -87,6 +97,7 @@ class FavoritesViewModel(
 
         var active: Boolean by remember { mutableStateOf(true) }
         var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
+        var context: Context? by remember { mutableStateOf(null) }
         var location: Position? by remember { mutableStateOf(null) }
         var now: Instant by remember { mutableStateOf(Clock.System.now()) }
 
@@ -125,6 +136,7 @@ class FavoritesViewModel(
                         }
                     }
                     is Event.SetAlerts -> alerts = event.alerts
+                    is Event.SetContext -> context = event.context
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
                     is Event.UpdateFavorites -> {
@@ -153,6 +165,9 @@ class FavoritesViewModel(
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
                 routeCardData = emptyList()
+            } else if (context == Context.Edit) {
+                // When editing, only filter the existing route card data, to preserve route order
+                routeCardData = filterRouteAndDirection(routeCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStopList(
@@ -176,6 +191,10 @@ class FavoritesViewModel(
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
                 staticRouteCardData = emptyList()
+            } else if (context == Context.Edit) {
+                // When editing, only filter the existing route card data, to preserve route order
+                staticRouteCardData =
+                    filterRouteAndDirection(staticRouteCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStaticStopList(
@@ -209,6 +228,8 @@ class FavoritesViewModel(
         fireEvent(Event.SetActive(active, wasSentToBackground))
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
+
+    override fun setContext(context: Context) = fireEvent(Event.SetContext(context))
 
     override fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
 
@@ -260,6 +281,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onReloadFavorites = {}
     var onSetActive = { _: Boolean, _: Boolean -> }
     var onSetAlerts = { _: AlertsStreamDataResponse? -> }
+    var onSetContext = { _: FavoritesViewModel.Context -> }
     var onSetLocation = { _: Position? -> }
     var onSetNow = { _: Instant -> }
     var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
@@ -276,6 +298,10 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) {
         onSetAlerts(alerts)
+    }
+
+    override fun setContext(context: FavoritesViewModel.Context) {
+        onSetContext(context)
     }
 
     override fun setLocation(location: Position?) {
