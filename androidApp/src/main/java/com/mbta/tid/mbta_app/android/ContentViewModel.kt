@@ -3,6 +3,8 @@ package com.mbta.tid.mbta_app.android
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
+import com.mbta.tid.mbta_app.repositories.DefaultTab
+import com.mbta.tid.mbta_app.repositories.IDefaultTabRepository
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import kotlinx.coroutines.CoroutineScope
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 class ContentViewModel(
     private val featurePromoUseCase: IFeaturePromoUseCase,
     private val onboardingRepository: IOnboardingRepository,
+    private val defaultTabRepository: IDefaultTabRepository,
 ) : ViewModel() {
     private val _pendingFeaturePromos: MutableStateFlow<List<FeaturePromo>?> =
         MutableStateFlow(null)
@@ -22,7 +25,11 @@ class ContentViewModel(
         MutableStateFlow(null)
     val pendingOnboarding: StateFlow<List<OnboardingScreen>?> = _pendingOnboarding
 
+    private val _defaultTab: MutableStateFlow<DefaultTab?> = MutableStateFlow(null)
+    val defaultTab: StateFlow<DefaultTab?> = _defaultTab
+
     init {
+        loadDefaultTabState()
         loadPendingFeaturePromos()
         loadPendingOnboarding()
     }
@@ -39,6 +46,17 @@ class ContentViewModel(
             val data = onboardingRepository.getPendingOnboarding()
             _pendingOnboarding.value = data
         }
+    }
+
+    fun loadDefaultTabState() {
+        CoroutineScope(Dispatchers.IO).launch {
+            _defaultTab.value = defaultTabRepository.getDefaultTab()
+        }
+    }
+
+    suspend fun setDefaultTab(tab: DefaultTab) {
+        defaultTabRepository.setDefaultTab(tab)
+        loadDefaultTabState()
     }
 
     fun clearPendingOnboarding() {
