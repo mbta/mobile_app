@@ -79,7 +79,6 @@ import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
-import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -565,10 +564,7 @@ fun MapAndSheetPage(
             composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
 
-                val lineOrRoute =
-                    nearbyTransit.globalResponse?.let {
-                        RouteDetailsStopList.getLineOrRoute(navRoute.routeId, it)
-                    }
+                val lineOrRoute = nearbyTransit.globalResponse?.getLineOrRoute(navRoute.routeId)
                 LaunchedEffect(Unit) {
                     if (navBarVisible) hideNavBar()
                     analytics.track(AnalyticsScreen.RouteDetails)

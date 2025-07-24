@@ -53,23 +53,6 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
     }
 
     companion object {
-        fun getLineOrRoute(
-            selectionId: String,
-            globalData: GlobalResponse,
-        ): RouteCardData.LineOrRoute? {
-            val route = globalData.getRoute(selectionId)
-            val line = globalData.getLine(selectionId) ?: globalData.getLine(route?.lineId)
-            return when {
-                line != null && line.isGrouped ->
-                    RouteCardData.LineOrRoute.Line(
-                        line,
-                        globalData.routesByLineId[line.id].orEmpty().toSet(),
-                    )
-
-                route != null -> RouteCardData.LineOrRoute.Route(route)
-                else -> null
-            }
-        }
 
         suspend fun fromPieces(
             routeId: String,
