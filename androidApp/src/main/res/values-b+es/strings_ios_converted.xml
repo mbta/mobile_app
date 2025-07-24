@@ -157,6 +157,7 @@
     <string name="freight_train_interference">Interferencia con trenes de carga</string>
     <string name="freight_train_interference_lowercase">interferencia del tren de mercancías</string>
     <string name="full_description">Descripción completa</string>
+    <string name="got_it">Entendido</string>
     <string name="hazmat_condition">Condición de materiales peligrosos</string>
     <string name="hazmat_condition_lowercase">condición de materiales peligrosos</string>
     <string name="header_at_stop">en &lt;b>%1$s&lt;/b></string>

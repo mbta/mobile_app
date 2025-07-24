@@ -157,6 +157,7 @@
     <string name="freight_train_interference">Interférence avec un train de marchandises</string>
     <string name="freight_train_interference_lowercase">interférence des trains de marchandises</string>
     <string name="full_description">Description complète</string>
+    <string name="got_it">J’ai compris</string>
     <string name="hazmat_condition">Présence de matières dangereuses</string>
     <string name="hazmat_condition_lowercase">incident impliquant des matières dangereuses</string>
     <string name="header_at_stop">à &lt;b>%1$s&lt;/b></string>

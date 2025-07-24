@@ -151,6 +151,7 @@
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
     <string name="freight_train_interference_lowercase">ảnh hưởng của tàu hàng</string>
     <string name="full_description">Mô tả đầy đủ</string>
+    <string name="got_it">Đã hiểu</string>
     <string name="hazmat_condition">Tình trạng có vật liệu nguy hiểm</string>
     <string name="hazmat_condition_lowercase">tình trạng nguy hiểm</string>
     <string name="header_at_stop">tại &lt;b>%1$s&lt;/b></string>

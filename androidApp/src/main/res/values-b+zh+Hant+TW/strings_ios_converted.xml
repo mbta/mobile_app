@@ -151,6 +151,7 @@
     <string name="freight_train_interference">貨運列車干擾</string>
     <string name="freight_train_interference_lowercase">貨運列車干擾</string>
     <string name="full_description">完整說明</string>
+    <string name="got_it">知道了</string>
     <string name="hazmat_condition">危險物質</string>
     <string name="hazmat_condition_lowercase">危險物質</string>
     <string name="header_at_stop">在&lt;b>%1$s&lt;/b></string>
