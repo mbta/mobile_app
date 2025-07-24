@@ -27,25 +27,24 @@ struct RoutePickerView: View {
     let inspection = Inspection<Self>()
 
     private let modes = [
-        RoutePickerPath.Bus(),
-        RoutePickerPath.Silver(),
-        RoutePickerPath.CommuterRail(),
-        RoutePickerPath.Ferry(),
+        RoutePickerPath.Bus.shared,
+        RoutePickerPath.Silver.shared,
+        RoutePickerPath.CommuterRail.shared,
+        RoutePickerPath.Ferry.shared,
     ]
 
     private var headerTitle: String {
-        switch path {
-        case is RoutePickerPath.Root:
-            switch context {
-            case is RouteDetailsContext.Favorites:
+        switch onEnum(of: path) {
+        case .root:
+            switch onEnum(of: context) {
+            case .favorites:
                 NSLocalizedString("Add favorite stops", comment: "Header for add favorites flow")
-            default: "" // TODO: Implement details header
+            case .details: "" // TODO: Implement details header
             }
-        case is RoutePickerPath.Bus: NSLocalizedString("Bus", comment: "bus")
-        case is RoutePickerPath.Silver: "Silver Line"
-        case is RoutePickerPath.CommuterRail: "Commuter Rail"
-        case is RoutePickerPath.Ferry: NSLocalizedString("Ferry", comment: "ferry")
-        default: ""
+        case .bus: NSLocalizedString("Bus", comment: "bus")
+        case .silver: "Silver Line"
+        case .commuterRail: "Commuter Rail"
+        case .ferry: NSLocalizedString("Ferry", comment: "ferry")
         }
     }
 
