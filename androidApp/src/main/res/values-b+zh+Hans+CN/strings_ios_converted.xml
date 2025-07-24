@@ -254,6 +254,8 @@
     <string name="power_problem_lowercase">电力故障</string>
     <string name="predictions_unavailable_details">服务运行中，暂无预计到达时间。请查看地图获取%1$s当前的位置信息。</string>
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
+    <string name="promo_favorites_body">现在将您经常使用的站点保存到&lt;b>一个简单的地方&lt;/b>。</string>
+    <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="rail_defect">轨道缺陷</string>
     <string name="rail_defect_lowercase">轨道缺陷</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>

@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mbta.tid.mbta_app.model.FeaturePromo
 
 @Composable
-fun PromoPage(screens: List<FeaturePromo>, onFinish: () -> Unit, onAdvance: () -> Unit) {
+fun PromoPage(screens: List<FeaturePromo>, onFinish: () -> Unit, onAdvance: () -> Unit = {}) {
 
     var selectedIndex by rememberSaveable { mutableIntStateOf(0) }
 

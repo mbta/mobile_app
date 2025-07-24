@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
-import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
+import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ContentViewModel(
-    private val featurePromoUseCase: FeaturePromoUseCase,
+    private val featurePromoUseCase: IFeaturePromoUseCase,
     private val onboardingRepository: IOnboardingRepository,
 ) : ViewModel() {
     private val _pendingFeaturePromos: MutableStateFlow<List<FeaturePromo>?> =
@@ -43,5 +43,9 @@ class ContentViewModel(
 
     fun clearPendingOnboarding() {
         _pendingOnboarding.value = emptyList()
+    }
+
+    fun clearPendingFeaturePromos() {
+        _pendingFeaturePromos.value = emptyList()
     }
 }

@@ -16,12 +16,12 @@ class ContentViewModel: ObservableObject {
     @Published var onboardingScreensPending: [OnboardingScreen]?
 
     var configUseCase: ConfigUseCase
-    var featurePromoUseCase: FeaturePromoUseCase
+    var featurePromoUseCase: IFeaturePromoUseCase
     var onboardingRepository: IOnboardingRepository
 
     init(configUseCase: ConfigUseCase = UsecaseDI().configUsecase,
          configResponse: ApiResult<ConfigResponse>? = nil,
-         featurePromoUseCase: FeaturePromoUseCase = UsecaseDI().featurePromoUsecase,
+         featurePromoUseCase: IFeaturePromoUseCase = UsecaseDI().featurePromoUsecase,
          featurePromosPending: [FeaturePromo]? = nil,
          onboardingRepository: IOnboardingRepository = RepositoryDI().onboarding,
          onboardingScreensPending: [OnboardingScreen]? = nil) {
