@@ -315,6 +315,7 @@ class DeparturesTest {
                     "alert" to "false",
                     "mode" to "subway",
                     "no_trips" to "",
+                    "context" to "unknown",
                 ),
             ),
         )

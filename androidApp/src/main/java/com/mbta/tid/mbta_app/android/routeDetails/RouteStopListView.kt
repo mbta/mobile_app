@@ -38,7 +38,6 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
-import com.mbta.tid.mbta_app.android.component.SaveFavoritesContext
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
@@ -67,6 +66,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.launch
@@ -217,7 +217,14 @@ fun RouteStopListView(
 
     val coroutineScope = rememberCoroutineScope()
     fun confirmFavorites(updatedValues: Map<RouteStopDirection, Boolean>) {
-        coroutineScope.launch { updateFavorites(updatedValues) }
+        coroutineScope.launch {
+            updateFavorites(
+                updatedValues,
+                if (context == RouteDetailsContext.Favorites) EditFavoritesContext.Favorites
+                else EditFavoritesContext.RouteDetails,
+                selectedDirection,
+            )
+        }
     }
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
@@ -273,7 +280,7 @@ fun RouteStopListView(
                         !stop.isLastStopForAllPatterns(it.id, allPatternsForStop, globalData)
                 },
                 selectedDirection = selectedDirection,
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {

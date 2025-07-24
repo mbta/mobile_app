@@ -7,10 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
@@ -38,12 +40,17 @@ interface IFavoritesViewModel {
 
     fun setNow(now: Instant)
 
-    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>)
+    fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    )
 }
 
 class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val coroutineDispatcher: CoroutineDispatcher,
+    private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
 
     sealed class Context {
@@ -65,7 +72,11 @@ class FavoritesViewModel(
 
         data class SetNow(val now: Instant) : Event
 
-        data class UpdateFavorites(val updatedFavorites: Map<RouteStopDirection, Boolean>) : Event
+        data class UpdateFavorites(
+            val updatedFavorites: Map<RouteStopDirection, Boolean>,
+            val context: EditFavoritesContext,
+            val defaultDirection: Int,
+        ) : Event
     }
 
     data class State(
@@ -107,7 +118,11 @@ class FavoritesViewModel(
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
-        LaunchedEffect(Unit) { favorites = favoritesUsecases.getRouteStopDirectionFavorites() }
+        LaunchedEffect(Unit) {
+            val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
+            favorites = fetchedFavorites
+            analytics.recordSession(fetchedFavorites.count())
+        }
 
         LaunchedEffect(Unit) {
             events.collect { event ->
@@ -125,7 +140,11 @@ class FavoritesViewModel(
                     is Event.SetLocation -> location = event.location
                     is Event.SetNow -> now = event.now
                     is Event.UpdateFavorites -> {
-                        favoritesUsecases.updateRouteStopDirections(event.updatedFavorites)
+                        favoritesUsecases.updateRouteStopDirections(
+                            event.updatedFavorites,
+                            event.context,
+                            event.defaultDirection,
+                        )
                         reloadFavorites()
                     }
                 }
@@ -216,8 +235,12 @@ class FavoritesViewModel(
 
     override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
 
-    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
-        fireEvent(Event.UpdateFavorites(updatedFavorites))
+    override fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
+        fireEvent(Event.UpdateFavorites(updatedFavorites, context, defaultDirection))
     }
 
     companion object {
@@ -289,7 +312,11 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetNow(now)
     }
 
-    override fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>) {
+    override fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
         onUpdateFavorites(updatedFavorites)
     }
 }

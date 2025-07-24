@@ -93,6 +93,6 @@ fun repositoriesModule(repositories: IRepositories): Module {
         single { FeaturePromoUseCase(get(), get()) }
         single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
-        single { FavoritesUsecases(get()) }
+        single { FavoritesUsecases(get(), get()) }
     }
 }

@@ -393,8 +393,14 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     private func confirmFavorites(updatedValues: [RouteStopDirection: Bool]) {
         Task {
+            let editContext = switch onEnum(of: context) {
+            case .favorites: EditFavoritesContext.favorites
+            case .details: EditFavoritesContext.routeDetails
+            }
+
             try? await favoritesUsecases.updateRouteStopDirections(
-                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) }
+                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
+                context: editContext, defaultDirection: selectedDirection
             )
             favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
         }

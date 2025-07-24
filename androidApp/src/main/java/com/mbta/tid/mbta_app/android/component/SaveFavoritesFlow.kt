@@ -41,12 +41,8 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
-
-enum class SaveFavoritesContext {
-    Favorites,
-    StopDetails,
-}
 
 @Composable
 fun SaveFavoritesFlow(
@@ -54,7 +50,7 @@ fun SaveFavoritesFlow(
     stop: Stop,
     directions: List<Direction>,
     selectedDirection: Int,
-    context: SaveFavoritesContext,
+    context: EditFavoritesContext,
     isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
     onClose: () -> Unit,
@@ -102,7 +98,7 @@ fun FavoriteConfirmationDialog(
     stop: Stop,
     directions: List<Direction>,
     selectedDirection: Int,
-    context: SaveFavoritesContext,
+    context: EditFavoritesContext,
     proposedFavorites: Map<Int, Boolean>,
     updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
     onClose: () -> Unit,
@@ -125,7 +121,7 @@ fun FavoriteConfirmationDialog(
                 Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
         ) {
             val headerText =
-                if (context == SaveFavoritesContext.Favorites) {
+                if (context == EditFavoritesContext.Favorites) {
                     stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
                 } else {
                     stringResource(
@@ -241,7 +237,7 @@ class Previews() {
                             Direction(id = 1, name = "East", destination = "Park St & North"),
                         ),
                     selectedDirection = 0,
-                    context = SaveFavoritesContext.StopDetails,
+                    context = EditFavoritesContext.StopDetails,
                     proposedFavorites = mapOf(0 to true, 1 to false),
                     updateFavorites = {},
                     onClose = {},
@@ -261,7 +257,7 @@ class Previews() {
                     directions =
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 0,
-                    context = SaveFavoritesContext.StopDetails,
+                    context = EditFavoritesContext.StopDetails,
                     proposedFavorites = mapOf(0 to true),
                     updateFavorites = {},
                     onClose = {},
@@ -281,7 +277,7 @@ class Previews() {
                     directions =
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 1,
-                    context = SaveFavoritesContext.Favorites,
+                    context = EditFavoritesContext.Favorites,
                     proposedFavorites = mapOf(0 to true),
                     updateFavorites = {},
                     onClose = {},
@@ -304,7 +300,7 @@ class Previews() {
                             Direction(id = 1, name = "East", destination = "Park St & North"),
                         ),
                     selectedDirection = 1,
-                    context = SaveFavoritesContext.Favorites,
+                    context = EditFavoritesContext.Favorites,
                     proposedFavorites = mapOf(0 to false, 1 to false),
                     updateFavorites = {},
                     onClose = {},

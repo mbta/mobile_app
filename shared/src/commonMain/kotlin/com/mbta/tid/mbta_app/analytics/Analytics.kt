@@ -1,8 +1,10 @@
 package com.mbta.tid.mbta_app.analytics
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
@@ -11,9 +13,36 @@ abstract class Analytics {
 
     protected abstract fun setUserProperty(name: String, value: String)
 
+    var lastTrackedScreen: AnalyticsScreen? = null
+        private set
+
     private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
         val paramsMap = mutableMapOf(*parameters)
         logEvent(name, paramsMap)
+    }
+
+    fun favoritesUpdated(
+        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        context: EditFavoritesContext,
+        defaultDirection: Int,
+    ) {
+
+        updatedFavorites.entries
+            .groupBy { Pair(it.key.route, it.key.stop) }
+            .forEach { (_routeStop, routeStopFavorites) ->
+                routeStopFavorites.forEach { (rsd, isFavorited) ->
+                    logEvent(
+                        "updated_favorites",
+                        "action" to if (isFavorited) "add" else "remove",
+                        "route_id" to rsd.route,
+                        "stop_id" to rsd.stop,
+                        "direction_id" to "${rsd.direction}",
+                        "is_default_direction" to "${rsd.direction == defaultDirection}",
+                        "context" to context.name,
+                        "updated_both_directions_at_once" to "${routeStopFavorites.size == 2}",
+                    )
+                }
+            }
     }
 
     fun performedSearch(query: String) {
@@ -30,6 +59,10 @@ abstract class Analytics {
 
     fun recordSession(locationAccess: AnalyticsLocationAccess) {
         setUserProperty("location_access", locationAccess.recordedValue)
+    }
+
+    fun recordSession(favoritesCount: Int) {
+        setUserProperty("favorites_count", "$favoritesCount")
     }
 
     @OptIn(ExperimentalObjCName::class)
@@ -113,6 +146,7 @@ abstract class Analytics {
             "alert" to alert.toString(),
             "mode" to mode,
             "no_trips" to noTrips,
+            "context" to (lastTrackedScreen?.pageName ?: "unknown"),
         )
     }
 
@@ -161,6 +195,7 @@ abstract class Analytics {
     }
 
     fun track(screen: AnalyticsScreen) {
+        lastTrackedScreen = screen
         logEvent(ANALYTICS_EVENT_SCREEN_VIEW, ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName)
     }
 
