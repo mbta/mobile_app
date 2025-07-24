@@ -4,13 +4,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
-import com.mbta.tid.mbta_app.repositories.RouteStopsResult
+import com.mbta.tid.mbta_app.repositories.NewRouteStopsResult
+import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -26,8 +28,8 @@ class GetRouteStopsTest {
     fun testRouteStops() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route {}
-        fun buildSomeRouteStops(directionId: Int): RouteStopsResult {
-            return RouteStopsResult(
+        fun buildSomeRouteStops(directionId: Int): OldRouteStopsResult {
+            return OldRouteStopsResult(
                 route.id,
                 directionId,
                 listOf(objects.stop().id, objects.stop().id),
@@ -38,17 +40,24 @@ class GetRouteStopsTest {
 
         val routeStopsRepo =
             object : IRouteStopsRepository {
-                override suspend fun getRouteStops(
+                override suspend fun getOldRouteStops(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<RouteStopsResult> {
+                ): ApiResult<OldRouteStopsResult> {
                     return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
                     else ApiResult.Ok(expectedRouteStops2)
+                }
+
+                override suspend fun getNewRouteSegments(
+                    routeId: String,
+                    directionId: Int,
+                ): ApiResult<NewRouteStopsResult> {
+                    TODO("Not yet implemented")
                 }
             }
 
         var directionId by mutableIntStateOf(0)
-        var actualRouteStops: RouteStopsResult? = expectedRouteStops1
+        var actualRouteStops: OldRouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
             actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
         }
@@ -68,15 +77,22 @@ class GetRouteStopsTest {
         val sync = Channel<Unit>(capacity = Channel.RENDEZVOUS)
         val routeStopsRepo =
             object : IRouteStopsRepository {
-                override suspend fun getRouteStops(
+                override suspend fun getOldRouteStops(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<RouteStopsResult> {
+                ): ApiResult<OldRouteStopsResult> {
                     sync.receive()
-                    return ApiResult.Ok(RouteStopsResult(routeId, directionId, emptyList()))
+                    return ApiResult.Ok(OldRouteStopsResult(routeId, directionId, emptyList()))
+                }
+
+                override suspend fun getNewRouteSegments(
+                    routeId: String,
+                    directionId: Int,
+                ): ApiResult<NewRouteStopsResult> {
+                    TODO("Not yet implemented")
                 }
             }
-        var actualRouteStops: RouteStopsResult? = null
+        var actualRouteStops: OldRouteStopsResult? = null
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {
@@ -84,21 +100,21 @@ class GetRouteStopsTest {
         }
 
         sync.send(Unit)
-        composeTestRule.waitUntil { actualRouteStops != null }
+        composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
         assertNotNull(actualRouteStops)
 
         directionId = 1
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilDefaultTimeout { actualRouteStops == null }
         assertNull(actualRouteStops)
 
         sync.send(Unit)
-        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
         assertNotNull(actualRouteStops)
     }
 
     @Test
     fun testErrorCase() {
-        val schedulesRepo = MockRouteStopsRepository(ApiResult.Error(500, "oops"))
+        val schedulesRepo = MockRouteStopsRepository(ApiResult.Error(500, "oops"), null)
 
         val errorRepo = MockErrorBannerStateRepository()
 

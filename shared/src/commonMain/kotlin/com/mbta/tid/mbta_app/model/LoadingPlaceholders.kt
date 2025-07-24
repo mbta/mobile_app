@@ -106,16 +106,16 @@ object LoadingPlaceholders {
 
         return RouteDetailsStopList(
             directionId = directionId,
-            segments =
+            oldSegments =
                 listOf(
-                    RouteDetailsStopList.Segment(
+                    RouteDetailsStopList.OldSegment(
                         (1..20).map {
                             val stopName = randString(15, 30)
                             val transferRoutes =
                                 (0..fixedRand.nextInt(0, 7)).map {
                                     objects.route { shortName = randString(2, 5) }
                                 }
-                            RouteDetailsStopList.Entry(
+                            RouteDetailsStopList.OldEntry(
                                 objects.stop { name = stopName },
                                 listOf(
                                     objects.routePattern(lineOrRoute.sortRoute) {
@@ -126,6 +126,30 @@ object LoadingPlaceholders {
                             )
                         },
                         hasRouteLine = true,
+                    )
+                ),
+            newSegments =
+                listOf(
+                    RouteDetailsStopList.NewSegment(
+                        (1..20).map { number ->
+                            val stopName = randString(15, 30)
+                            val transferRoutes =
+                                (0..fixedRand.nextInt(0, 7)).map {
+                                    objects.route { shortName = randString(2, 5) }
+                                }
+                            RouteDetailsStopList.NewEntry(
+                                objects.stop { name = stopName },
+                                RouteBranchSegment.Lane.Center,
+                                RouteBranchSegment.StickConnection.forward(
+                                    stopBefore = "".takeUnless { number == 1 },
+                                    stop = "",
+                                    stopAfter = "".takeUnless { number == 20 },
+                                    lane = RouteBranchSegment.Lane.Center,
+                                ),
+                                transferRoutes,
+                            )
+                        },
+                        isTypical = true,
                     )
                 ),
         )

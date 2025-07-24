@@ -1,18 +1,74 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.RouteStopsResult
+import com.mbta.tid.mbta_app.repositories.NewRouteStopsResult
+import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment>) {
+data class RouteDetailsStopList(
+    val directionId: Int,
+    val oldSegments: List<OldSegment>?,
+    val newSegments: List<NewSegment>?,
+) {
 
     /** A subset of consecutive stops that are all typical or all non-typical. */
-    data class Segment(val stops: List<Entry>, val hasRouteLine: Boolean) {
+    data class OldSegment(val stops: List<OldEntry>, val hasRouteLine: Boolean) {
         val isTypical = stops.all { it.isTypical }
     }
 
-    data class Entry(
+    /** A subset of consecutive stops that are all typical or all non-typical. */
+    data class NewSegment(val stops: List<NewEntry>, val isTypical: Boolean) {
+        /**
+         * Assuming that this segment will be collapsed, returns the connections that should be
+         * drawn in the toggle, and whether or not they should be twisted because they contain
+         * stops.
+         */
+        fun twistedConnections(): List<Pair<RouteBranchSegment.StickConnection, Boolean>> {
+            val lanesWithStops = stops.map { it.stopLane }.toSet()
+            val connectionsBefore =
+                stops.first().stickConnections.filter { it.fromVPos == RouteBranchSegment.VPos.Top }
+            val connectionsAfter =
+                stops.last().stickConnections.filter { it.toVPos == RouteBranchSegment.VPos.Bottom }
+            val connectionsTransitive =
+                connectionsBefore.mapNotNull { first ->
+                    val second =
+                        connectionsAfter.find { second ->
+                            first.toLane == second.fromLane && first.toVPos == second.fromVPos
+                        }
+                    if (second != null) {
+                        Triple(
+                            first,
+                            second,
+                            RouteBranchSegment.StickConnection(
+                                fromStop = first.fromStop,
+                                toStop = second.toStop,
+                                fromLane = first.fromLane,
+                                toLane = second.toLane,
+                                fromVPos = first.fromVPos,
+                                toVPos = second.toVPos,
+                            ),
+                        )
+                    } else {
+                        null
+                    }
+                }
+            val connections =
+                (connectionsBefore.filter { first ->
+                        !connectionsTransitive.any { it.first == first }
+                    } +
+                        connectionsAfter.filter { second ->
+                            !connectionsTransitive.any { it.second == second }
+                        } +
+                        connectionsTransitive.map { it.third })
+                    .distinct()
+            return connections.map {
+                it to (lanesWithStops.contains(it.fromLane) && lanesWithStops.contains(it.toLane))
+            }
+        }
+    }
+
+    data class OldEntry(
         val stop: Stop,
         val patterns: List<RoutePattern>,
         val connectingRoutes: List<Route>,
@@ -20,6 +76,13 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
         val patternIds = patterns.map { it.id }.toSet()
         val isTypical = patterns.any { it.isTypical() }
     }
+
+    data class NewEntry(
+        val stop: Stop,
+        val stopLane: RouteBranchSegment.Lane,
+        val stickConnections: List<RouteBranchSegment.StickConnection>,
+        val connectingRoutes: List<Route>,
+    )
 
     data class RouteParameters(
         val availableDirections: List<Int>,
@@ -71,10 +134,10 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
             }
         }
 
-        suspend fun fromPieces(
+        suspend fun fromOldPieces(
             routeId: String,
             directionId: Int,
-            routeStops: RouteStopsResult?,
+            routeStops: OldRouteStopsResult?,
             globalData: GlobalResponse,
         ): RouteDetailsStopList? =
             withContext(Dispatchers.Default) {
@@ -96,26 +159,84 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
                             }
                         val transferRoutes =
                             TripDetailsStopList.getTransferRoutes(stopId, routeId, globalData)
-                        Entry(stop, patterns, transferRoutes)
+                        OldEntry(stop, patterns, transferRoutes)
                     }
 
-                val segments = splitIntoSegments(stops)
+                val segments = splitIntoOldSegments(stops)
 
-                RouteDetailsStopList(directionId, segments)
+                RouteDetailsStopList(directionId, segments, null)
+            }
+
+        suspend fun fromNewPieces(
+            routeId: String,
+            directionId: Int,
+            routeStops: NewRouteStopsResult?,
+            globalData: GlobalResponse,
+        ): RouteDetailsStopList? =
+            withContext(Dispatchers.Default) {
+                if (
+                    routeStops == null ||
+                        routeStops.routeId != routeId ||
+                        routeStops.directionId != directionId
+                )
+                    return@withContext null
+
+                val segments =
+                    routeStops.segments
+                        .mapNotNull { segment ->
+                            NewSegment(
+                                    segment.stops.mapNotNull { branchStop ->
+                                        val stopId = branchStop.stopId
+                                        val stop =
+                                            globalData
+                                                .getStop(branchStop.stopId)
+                                                ?.resolveParent(globalData)
+                                                ?: return@mapNotNull null
+                                        val transferRoutes =
+                                            TripDetailsStopList.getTransferRoutes(
+                                                stopId,
+                                                routeId,
+                                                globalData,
+                                            )
+
+                                        NewEntry(
+                                            stop,
+                                            branchStop.stopLane,
+                                            branchStop.connections,
+                                            transferRoutes,
+                                        )
+                                    },
+                                    segment.isTypical,
+                                )
+                                .takeUnless { it.stops.isEmpty() }
+                        }
+                        .fold(mutableListOf<NewSegment>()) { acc, segment ->
+                            if (acc.lastOrNull()?.isTypical == false && !segment.isTypical) {
+                                val priorSegment = acc.removeLast()
+                                acc.add(
+                                    priorSegment.copy(stops = priorSegment.stops + segment.stops)
+                                )
+                            } else {
+                                acc.add(segment)
+                            }
+                            acc
+                        }
+
+                RouteDetailsStopList(directionId, null, segments)
             }
 
         /**
          * Split the list of entries into segments based on whether the stop serves a typical route
          * pattern.
          */
-        private fun splitIntoSegments(entries: List<Entry>): List<Segment> {
+        private fun splitIntoOldSegments(entries: List<OldEntry>): List<OldSegment> {
             val authoritativePatternId =
                 entries
                     .flatMapTo(mutableSetOf()) { it.patterns.filter(RoutePattern::isTypical) }
                     .minOrNull()
                     ?.id
 
-            val segments: MutableList<MutableList<Entry>> = mutableListOf()
+            val segments: MutableList<MutableList<OldEntry>> = mutableListOf()
 
             entries.forEach { entry ->
                 if (segments.isEmpty()) {
@@ -136,7 +257,7 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
             }
 
             return segments.map {
-                Segment(
+                OldSegment(
                     it,
                     hasRouteLine =
                         authoritativePatternId == null ||
