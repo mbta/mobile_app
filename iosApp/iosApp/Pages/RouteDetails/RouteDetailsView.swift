@@ -76,6 +76,7 @@ struct RouteDetailsView: View {
         let objects = ObjectCollectionBuilder()
         let mockRoute = RouteCardData.LineOrRouteRoute(route: objects.route { _ in })
         let mockGlobal = GlobalResponse(objects: objects)
+        let toastVM = MockToastViewModel(initialState: ToastViewModel.StateHidden())
         RouteStopListContentView(
             lineOrRoute: mockRoute,
             parameters: .init(lineOrRoute: mockRoute, globalData: mockGlobal),
@@ -90,7 +91,8 @@ struct RouteDetailsView: View {
             onBack: {},
             onClose: {},
             errorBannerVM: errorBannerVM,
-            rightSideContent: rightSideContent
+            rightSideContent: rightSideContent,
+            toastVM: toastVM
         )
         .loadingPlaceholder()
     }
