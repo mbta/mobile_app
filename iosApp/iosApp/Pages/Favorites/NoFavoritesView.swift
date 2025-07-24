@@ -31,7 +31,7 @@ struct NoFavoritesView: View {
                             Image(.plus)
                                 .resizable()
                                 .frame(width: 13, height: 13)
-                                .foregroundColor(.fill3)
+                                .tint(.fill3)
                         }
                         .padding(.horizontal, 16)
                         .padding(.vertical, 10)

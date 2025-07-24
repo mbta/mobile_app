@@ -19,6 +19,8 @@ extension Color {
     static let fill2 = Color("Fill 2")
     static let fill3 = Color("Fill 3")
     static let halo = Color("Halo")
+    static let haloLight = Color("Halo Light")
+    static let haloDark = Color("Halo Dark")
     static let key = Color("Key")
     static let keyInverse = Color("Key Inverse")
     static let sheetBackground = Color("Sheet Background")

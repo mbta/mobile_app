@@ -32,8 +32,9 @@ extension RoutePickerPath {
     var haloColor: Color {
         switch self {
         case is RoutePickerPath.Root: Color.halo
-        case is RoutePickerPath.Bus: Color(hex: "1A192026")
-        default: Color(hex: "26FFFFFF")
+        // Halos are drawn over static route colors, they should not be responsive to theme
+        case is RoutePickerPath.Bus: Color.haloLight
+        default: Color.haloDark
         }
     }
 
