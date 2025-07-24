@@ -62,6 +62,9 @@ struct SettingsCacheProvider<Content: View>: View {
 extension View {
     /// Sets the settings within this view to some fixed value.
     func withFixedSettings(_ settings: [Settings: Bool]) -> some View {
-        environmentObject(SettingsCache(cache: settings))
+        environmentObject(SettingsCache(
+            settingsRepo: MockSettingsRepository(settings: settings.mapValues { KotlinBoolean(bool: $0) }),
+            cache: settings
+        ))
     }
 }

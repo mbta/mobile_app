@@ -259,4 +259,5 @@ struct TripStops: View {
     }
     .padding(12)
     .font(Typography.body)
+    .withFixedSettings([:])
 }
