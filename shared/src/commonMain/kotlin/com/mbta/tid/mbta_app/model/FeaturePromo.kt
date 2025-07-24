@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.model
 
 enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVersion: AppVersion) {
 
-    CombinedStopAndTrip(AppVersion(0u, 0u, 0u), AppVersion(1u, 2u, 0u));
+    CombinedStopAndTrip(AppVersion(0u, 0u, 0u), AppVersion(1u, 2u, 0u)),
+    // TODO: Verify version
+    EnhancedFavorites(AppVersion(2u, 0u, 0u), AppVersion(2u, 0u, 0u));
 
     constructor(addedInVersion: AppVersion) : this(addedInVersion, addedInVersion)
 

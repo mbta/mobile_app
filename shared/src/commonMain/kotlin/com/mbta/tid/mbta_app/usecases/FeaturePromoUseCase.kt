@@ -10,15 +10,15 @@ class FeaturePromoUseCase(
     private val lastLaunchedAppVersionRepository: ILastLaunchedAppVersionRepository,
 ) : KoinComponent {
     suspend fun getFeaturePromos(): List<FeaturePromo> {
-        val currentVersion =
+        /*  val currentVersion =
             currentAppVersionRepository.getCurrentAppVersion() ?: return emptyList()
         val lastLaunchedVersion = lastLaunchedAppVersionRepository.getLastLaunchedAppVersion()
         if (lastLaunchedVersion == currentVersion) return emptyList()
         lastLaunchedAppVersionRepository.setLastLaunchedAppVersion(currentVersion)
         if (lastLaunchedVersion == null) return emptyList()
         val newFeatures = FeaturePromo.featuresBetween(lastLaunchedVersion, currentVersion)
-        if (newFeatures.size > MAX_PROMOS) return emptyList()
-        return newFeatures
+        if (newFeatures.size > MAX_PROMOS) return emptyList()*/
+        return FeaturePromo.entries
     }
 
     companion object {

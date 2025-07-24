@@ -2909,6 +2909,9 @@
         }
       }
     },
+    "Add your favorites" : {
+      "comment" : "Promo text header that describes the value of a new feature to favorite stops"
+    },
     "Additional service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -12564,6 +12567,9 @@
           }
         }
       }
+    },
+    "Now save your frequently used stops to **one easy place**." : {
+      "comment" : "Promo text that describes the value of a new feature to favorite stops"
     },
     "Okay" : {
       "localizations" : {
