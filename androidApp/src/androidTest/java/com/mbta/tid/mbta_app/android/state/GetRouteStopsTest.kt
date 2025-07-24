@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
@@ -28,11 +29,11 @@ class GetRouteStopsTest {
     fun testRouteStops() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route {}
-        fun buildSomeRouteStops(directionId: Int): OldRouteStopsResult {
-            return OldRouteStopsResult(
+        fun buildSomeRouteStops(directionId: Int): NewRouteStopsResult {
+            return NewRouteStopsResult(
                 route.id,
                 directionId,
-                listOf(objects.stop().id, objects.stop().id),
+                listOf(RouteBranchSegment.of(listOf(objects.stop().id, objects.stop().id))),
             )
         }
         val expectedRouteStops1 = buildSomeRouteStops(0)
@@ -44,20 +45,20 @@ class GetRouteStopsTest {
                     routeId: String,
                     directionId: Int,
                 ): ApiResult<OldRouteStopsResult> {
-                    return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
-                    else ApiResult.Ok(expectedRouteStops2)
+                    TODO("Not yet implemented")
                 }
 
                 override suspend fun getNewRouteSegments(
                     routeId: String,
                     directionId: Int,
                 ): ApiResult<NewRouteStopsResult> {
-                    TODO("Not yet implemented")
+                    return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
+                    else ApiResult.Ok(expectedRouteStops2)
                 }
             }
 
         var directionId by mutableIntStateOf(0)
-        var actualRouteStops: OldRouteStopsResult? = expectedRouteStops1
+        var actualRouteStops: NewRouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
             actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
         }
@@ -81,18 +82,18 @@ class GetRouteStopsTest {
                     routeId: String,
                     directionId: Int,
                 ): ApiResult<OldRouteStopsResult> {
-                    sync.receive()
-                    return ApiResult.Ok(OldRouteStopsResult(routeId, directionId, emptyList()))
+                    TODO("Not yet implemented")
                 }
 
                 override suspend fun getNewRouteSegments(
                     routeId: String,
                     directionId: Int,
                 ): ApiResult<NewRouteStopsResult> {
-                    TODO("Not yet implemented")
+                    sync.receive()
+                    return ApiResult.Ok(NewRouteStopsResult(routeId, directionId, emptyList()))
                 }
             }
-        var actualRouteStops: OldRouteStopsResult? = null
+        var actualRouteStops: NewRouteStopsResult? = null
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {

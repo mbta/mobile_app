@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
@@ -48,6 +49,7 @@ import com.mbta.tid.mbta_app.android.state.getRouteStops
 import com.mbta.tid.mbta_app.android.stopDetails.DirectionPicker
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -59,6 +61,7 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -66,11 +69,15 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
 sealed class RouteDetailsRowContext {
     data class Details(val stop: Stop) : RouteDetailsRowContext()
@@ -111,7 +118,7 @@ fun RouteStopListView(
 
     val stopList =
         rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
-            RouteDetailsStopList.fromOldPieces(
+            RouteDetailsStopList.fromNewPieces(
                 selectedRouteId,
                 selectedDirection,
                 routeStops,
@@ -371,7 +378,7 @@ private fun RouteStops(
         horizontalAlignment = Alignment.Start,
         scrollEnabled = !loading,
     ) {
-        val segments = stopList.oldSegments.orEmpty()
+        val segments = stopList.newSegments.orEmpty()
         val hasTypicalSegment = segments.any { it.isTypical }
 
         segments.forEachIndexed { segmentIndex, segment ->
@@ -383,12 +390,13 @@ private fun RouteStops(
                             isLast =
                                 segmentIndex == segments.lastIndex &&
                                     stopIndex == segment.stops.lastIndex,
-                            includeLineDiagram = segment.hasRouteLine,
                         )
 
                     val stopRowContext = stopRowContext(stop.stop)
                     StopListRow(
                         stop.stop,
+                        stop.stopLane,
+                        stop.stickConnections,
                         onClick = { onTapStop(stopRowContext) },
                         routeAccents = TripRouteAccents(lineOrRoute.sortRoute),
                         stopListContext = StopListContext.RouteDetails,
@@ -491,4 +499,112 @@ private fun LoadingRouteStops(
             loading = true,
         )
     }
+}
+
+@Preview
+@Composable
+private fun RouteStopsPreview() {
+    startKoin {
+        modules(module { single<SettingsCache> { SettingsCache(MockSettingsRepository()) } })
+    }
+    RouteStops(
+        RouteCardData.LineOrRoute.Route(TestData.getRoute("Red")),
+        RouteDetailsStopList(
+            0,
+            null,
+            listOf(
+                RouteDetailsStopList.NewSegment(
+                    listOf(
+                        RouteDetailsStopList.NewEntry(
+                            TestData.getStop("place-alfcl"),
+                            RouteBranchSegment.Lane.Center,
+                            RouteBranchSegment.StickConnection.forward(
+                                null,
+                                "place-alfcl",
+                                "place-jfk",
+                                RouteBranchSegment.Lane.Center,
+                            ),
+                            emptyList(),
+                        ),
+                        RouteDetailsStopList.NewEntry(
+                            TestData.getStop("place-jfk"),
+                            RouteBranchSegment.Lane.Center,
+                            listOf(
+                                RouteBranchSegment.StickConnection(
+                                    fromStop = "place-alfcl",
+                                    fromLane = RouteBranchSegment.Lane.Center,
+                                    fromVPos = RouteBranchSegment.VPos.Top,
+                                    toStop = "place-jfk",
+                                    toLane = RouteBranchSegment.Lane.Center,
+                                    toVPos = RouteBranchSegment.VPos.Center,
+                                ),
+                                RouteBranchSegment.StickConnection(
+                                    fromStop = "place-jfk",
+                                    fromLane = RouteBranchSegment.Lane.Center,
+                                    fromVPos = RouteBranchSegment.VPos.Center,
+                                    toStop = "place-asmnl",
+                                    toLane = RouteBranchSegment.Lane.Left,
+                                    toVPos = RouteBranchSegment.VPos.Bottom,
+                                ),
+                                RouteBranchSegment.StickConnection(
+                                    fromStop = "place-jfk",
+                                    fromLane = RouteBranchSegment.Lane.Center,
+                                    fromVPos = RouteBranchSegment.VPos.Center,
+                                    toStop = "place-brntn",
+                                    toLane = RouteBranchSegment.Lane.Right,
+                                    toVPos = RouteBranchSegment.VPos.Bottom,
+                                ),
+                            ),
+                            emptyList(),
+                        ),
+                    ),
+                    isTypical = true,
+                ),
+                RouteDetailsStopList.NewSegment(
+                    listOf(
+                        RouteDetailsStopList.NewEntry(
+                            TestData.getStop("place-asmnl"),
+                            RouteBranchSegment.Lane.Left,
+                            RouteBranchSegment.StickConnection.forward(
+                                "place-jfk",
+                                "place-asmnl",
+                                null,
+                                RouteBranchSegment.Lane.Left,
+                            ) +
+                                RouteBranchSegment.StickConnection.forward(
+                                    "place-jfk",
+                                    null,
+                                    "place-brntn",
+                                    RouteBranchSegment.Lane.Right,
+                                ),
+                            emptyList(),
+                        )
+                    ),
+                    isTypical = true,
+                ),
+                RouteDetailsStopList.NewSegment(
+                    listOf(
+                        RouteDetailsStopList.NewEntry(
+                            TestData.getStop("place-brntn"),
+                            RouteBranchSegment.Lane.Right,
+                            RouteBranchSegment.StickConnection.forward(
+                                "place-jfk",
+                                "place-brntn",
+                                null,
+                                RouteBranchSegment.Lane.Right,
+                            ),
+                            emptyList(),
+                        )
+                    ),
+                    isTypical = true,
+                ),
+            ),
+        ),
+        selectedDirection = 0,
+        RouteDetailsContext.Details,
+        onTapStop = {},
+        onClickLabel = { null },
+        stopRowContext = { RouteDetailsRowContext.Details(it) },
+        rightSideContent = { _, _ -> },
+    )
 }

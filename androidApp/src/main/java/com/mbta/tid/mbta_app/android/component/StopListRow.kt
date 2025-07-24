@@ -16,14 +16,13 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -33,13 +32,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCard
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
-import com.mbta.tid.mbta_app.android.stopDetails.ColoredRouteLine
-import com.mbta.tid.mbta_app.android.stopDetails.RouteLineState
 import com.mbta.tid.mbta_app.android.stopDetails.StopDot
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -49,19 +45,15 @@ import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
-import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
+import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlinx.serialization.Serializable
 
-class StopPlacement(
-    val isFirst: Boolean = false,
-    val isLast: Boolean = false,
-    val includeLineDiagram: Boolean = true,
-)
+class StopPlacement(val isFirst: Boolean = false, val isLast: Boolean = false)
 
 @Serializable
 sealed class StopListContext {
@@ -73,6 +65,8 @@ sealed class StopListContext {
 @Composable
 fun StopListRow(
     stop: Stop,
+    stopLane: RouteBranchSegment.Lane,
+    stickConnections: List<RouteBranchSegment.StickConnection>,
     onClick: () -> Unit,
     routeAccents: TripRouteAccents,
     stopListContext: StopListContext,
@@ -81,11 +75,12 @@ fun StopListRow(
     alertSummaries: Map<String, AlertSummary?> = emptyMap(),
     connectingRoutes: List<Route>? = null,
     disruption: UpcomingFormat.Disruption? = null,
-    isTruncating: Boolean = false,
+    getAlertState: (fromStop: String, toStop: String) -> SegmentAlertState = { _, _ ->
+        SegmentAlertState.Normal
+    },
     onClickLabel: String? = null,
     stopPlacement: StopPlacement = StopPlacement(),
     onOpenAlertDetails: (Alert) -> Unit = {},
-    showDownstreamAlert: Boolean = false,
     targeted: Boolean = false,
     trackNumber: String? = null,
     descriptor: @Composable () -> Unit = {},
@@ -93,22 +88,6 @@ fun StopListRow(
 ) {
     val context = LocalContext.current
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
-
-    val lineStateBefore =
-        when {
-            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
-            stopPlacement.isFirst -> RouteLineState.Empty
-            else -> RouteLineState.Regular
-        }
-
-    val lineStateAfter =
-        when {
-            !stopPlacement.includeLineDiagram -> RouteLineState.Empty
-            stopPlacement.isLast -> RouteLineState.Empty
-            showDownstreamAlert && disruption?.alert?.effect == Alert.Effect.Shuttle ->
-                RouteLineState.Shuttle
-            else -> RouteLineState.Regular
-        }
 
     Column {
         Box(
@@ -124,43 +103,49 @@ fun StopListRow(
             }
             Row(
                 Modifier.fillMaxHeight()
+                    .padding(start = 8.dp)
                     .semantics(mergeDescendants = true) {}
                     .clickable(onClickLabel = onClickLabel) { onClick() },
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row(
-                    Modifier.padding(start = 6.dp).width(28.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    if (showStationAccessibility && activeElevatorAlerts > 0) {
-                        Image(
-                            modifier = Modifier.height(18.dp).testTag("elevator_alert"),
-                            painter = painterResource(R.drawable.accessibility_icon_alert),
-                            contentDescription = null,
-                        )
-                    } else if (showStationAccessibility && !stop.isWheelchairAccessible) {
-                        Image(
-                            modifier =
-                                Modifier.height(18.dp)
-                                    .testTag("wheelchair_not_accessible")
-                                    .placeholderIfLoading(),
-                            painter = painterResource(R.drawable.accessibility_icon_not_accessible),
-                            contentDescription = null,
-                        )
-                    }
-                }
-                if (stopPlacement.includeLineDiagram) {
-                    RouteLine(routeAccents, lineStateBefore, lineStateAfter, targeted)
-                } else {
-                    StandaloneStopIcon(stop, routeAccents)
-                }
-                Column(Modifier.padding(vertical = 12.dp).padding(start = 16.dp)) {
+                RouteLine(routeAccents, stopLane, stickConnections, targeted, getAlertState)
+                Column(Modifier.padding(vertical = 12.dp).padding(start = 8.dp)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
+                        if (
+                            showStationAccessibility &&
+                                (activeElevatorAlerts > 0 || !stop.isWheelchairAccessible)
+                        ) {
+                            Row(
+                                Modifier.padding(start = 6.dp).widthIn(max = 28.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                            ) {
+                                if (activeElevatorAlerts > 0) {
+                                    Image(
+                                        modifier = Modifier.height(18.dp).testTag("elevator_alert"),
+                                        painter =
+                                            painterResource(R.drawable.accessibility_icon_alert),
+                                        contentDescription = null,
+                                    )
+                                } else {
+                                    Image(
+                                        modifier =
+                                            Modifier.height(18.dp)
+                                                .testTag("wheelchair_not_accessible")
+                                                .placeholderIfLoading(),
+                                        painter =
+                                            painterResource(
+                                                R.drawable.accessibility_icon_not_accessible
+                                            ),
+                                        contentDescription = null,
+                                    )
+                                }
+                            }
+                        }
                         Column(
                             DestinationPredictionBalance.destinationWidth(),
                             horizontalAlignment = Alignment.Start,
@@ -249,24 +234,6 @@ fun StopListRow(
         }
         if (disruption != null) {
             Box(Modifier.height(IntrinsicSize.Min)) {
-                // Trying to get this spacing to look right in Android Studio previews at any device
-                // DPI requires both layers of padding; moving all 40 DP to one side or the other
-                // makes things stop lining up properly. Causality is a superstition.
-                Row(Modifier.padding(start = 6.dp).height(IntrinsicSize.Min).matchParentSize()) {
-                    Column(
-                        Modifier.fillMaxHeight().padding(start = 34.dp).width(20.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        ColoredRouteLine(routeAccents.color, Modifier.weight(1f), lineStateAfter)
-                        if (isTruncating) {
-                            ColoredRouteLine(
-                                routeAccents.color,
-                                Modifier.weight(1f),
-                                RouteLineState.Empty,
-                            )
-                        }
-                    }
-                }
                 AlertCard(
                     disruption.alert,
                     alertSummaries[disruption.alert.id],
@@ -274,7 +241,7 @@ fun StopListRow(
                     routeAccents.color,
                     routeAccents.textColor,
                     onViewDetails = { onOpenAlertDetails(disruption.alert) },
-                    interiorPadding = PaddingValues(start = 26.dp),
+                    interiorPadding = PaddingValues(start = 10.dp),
                 )
             }
         }
@@ -344,38 +311,28 @@ private fun stopAccessibilityLabel(
 @Composable
 private fun RouteLine(
     routeAccents: TripRouteAccents,
-    stateBefore: RouteLineState,
-    stateAfter: RouteLineState,
+    stopLane: RouteBranchSegment.Lane,
+    stickConnections: List<RouteBranchSegment.StickConnection>,
     targeted: Boolean,
+    getAlertState: (fromStop: String, toStop: String) -> SegmentAlertState,
 ) {
-    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().width(20.dp)) {
+    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxHeight().width(40.dp)) {
         Column(Modifier.fillMaxHeight()) {
-            ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateBefore)
-            ColoredRouteLine(routeAccents.color, Modifier.weight(1f), stateAfter)
-        }
-        StopDot(routeAccents, targeted)
-    }
-}
-
-@Composable
-private fun StandaloneStopIcon(stop: Stop, routeAccents: TripRouteAccents) {
-    Row(modifier = Modifier.width(20.dp)) {
-        if (stop.locationType == LocationType.STATION) {
-            Icon(
-                painter = painterResource(R.drawable.mbta_logo),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier.semantics { testTag = "mbta_logo" },
+            StickDiagram(
+                routeAccents.color,
+                stickConnections,
+                Modifier.weight(1f),
+                getAlertState = getAlertState,
             )
-        } else if (stop.vehicleType == RouteType.BUS) {
-            Icon(
-                painter = painterResource(R.drawable.stop_bus),
-                contentDescription = null,
-                modifier = Modifier.semantics { testTag = "stop_bus" },
-                tint = Color.Unspecified,
-            )
-        } else {
-            StopDot(routeAccents, false)
         }
+        StopDot(
+            routeAccents,
+            targeted,
+            when (stopLane) {
+                RouteBranchSegment.Lane.Left -> Modifier.padding(end = 20.dp)
+                RouteBranchSegment.Lane.Center -> Modifier
+                RouteBranchSegment.Lane.Right -> Modifier.padding(start = 20.dp)
+            },
+        )
     }
 }

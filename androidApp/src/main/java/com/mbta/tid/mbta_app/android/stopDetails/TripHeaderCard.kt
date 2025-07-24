@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -47,6 +46,7 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.component.StickDiagram
 import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
@@ -60,6 +60,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
@@ -101,12 +102,10 @@ fun TripHeaderCard(
             Row(modifier.haloContainer(2.dp).semantics(mergeDescendants = true) {}) {
                 Box(Modifier.height(IntrinsicSize.Min)) {
                     Row(
-                        Modifier.padding(start = 30.dp, end = 16.dp)
-                            .heightIn(min = 56.dp)
-                            .semantics {
-                                heading()
-                                liveRegion = LiveRegionMode.Polite
-                            },
+                        Modifier.padding(horizontal = 14.dp).heightIn(min = 56.dp).semantics {
+                            heading()
+                            liveRegion = LiveRegionMode.Polite
+                        },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
@@ -126,13 +125,20 @@ fun TripHeaderCard(
                     when (spec) {
                         is TripHeaderSpec.Scheduled,
                         is TripHeaderSpec.VehicleOnTrip ->
-                            Column(
-                                Modifier.zIndex(-1f).padding(start = 46.dp).fillMaxHeight(),
-                                verticalArrangement = Arrangement.spacedBy(0.dp),
-                            ) {
-                                ColoredRouteLine(Color.Unspecified, Modifier.weight(1f))
-                                ColoredRouteLine(routeAccents.color, Modifier.weight(1f))
-                            }
+                            StickDiagram(
+                                routeAccents.color,
+                                listOf(
+                                    RouteBranchSegment.StickConnection(
+                                        fromStop = "",
+                                        toStop = "",
+                                        fromLane = RouteBranchSegment.Lane.Center,
+                                        toLane = RouteBranchSegment.Lane.Center,
+                                        fromVPos = RouteBranchSegment.VPos.Center,
+                                        toVPos = RouteBranchSegment.VPos.Bottom,
+                                    )
+                                ),
+                                Modifier.zIndex(-1f).padding(start = 12.dp).fillMaxHeight(),
+                            )
                         else -> {}
                     }
                 }
@@ -141,9 +147,19 @@ fun TripHeaderCard(
                 is TripHeaderSpec.Scheduled,
                 is TripHeaderSpec.VehicleOnTrip ->
                     // Small 2x4 dp portion of route line over the outer card border
-                    ColoredRouteLine(
+                    StickDiagram(
                         routeAccents.color,
-                        Modifier.zIndex(1f).padding(start = 48.dp).height(2.dp),
+                        listOf(
+                            RouteBranchSegment.StickConnection(
+                                fromStop = "",
+                                toStop = "",
+                                fromLane = RouteBranchSegment.Lane.Center,
+                                toLane = RouteBranchSegment.Lane.Center,
+                                fromVPos = RouteBranchSegment.VPos.Top,
+                                toVPos = RouteBranchSegment.VPos.Bottom,
+                            )
+                        ),
+                        Modifier.zIndex(1f).padding(start = 14.dp).height(2.dp),
                     )
                 else -> {}
             }
