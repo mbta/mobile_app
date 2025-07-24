@@ -7,12 +7,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import org.koin.compose.koinInject
 
 data class ManagedFavorites(
     val favoriteRoutes: Set<RouteStopDirection>?,
-    val updateFavorites: suspend (Map<RouteStopDirection, Boolean>) -> Unit,
+    val updateFavorites:
+        suspend (Map<RouteStopDirection, Boolean>, EditFavoritesContext, Int) -> Unit,
 )
 
 @Composable
@@ -21,10 +23,12 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
 
     LaunchedEffect(null) { favorites = favoritesUseCases.getRouteStopDirectionFavorites() }
 
-    val updateFavorites: suspend (Map<RouteStopDirection, Boolean>) -> Unit = { newValues ->
-        favoritesUseCases.updateRouteStopDirections(newValues)
-        favorites = favoritesUseCases.getRouteStopDirectionFavorites()
-    }
+    val updateFavorites:
+        suspend (Map<RouteStopDirection, Boolean>, EditFavoritesContext, Int) -> Unit =
+        { newValues, context, defaultDirection ->
+            favoritesUseCases.updateRouteStopDirections(newValues, context, defaultDirection)
+            favorites = favoritesUseCases.getRouteStopDirectionFavorites()
+        }
 
     return ManagedFavorites(favorites, updateFavorites)
 }

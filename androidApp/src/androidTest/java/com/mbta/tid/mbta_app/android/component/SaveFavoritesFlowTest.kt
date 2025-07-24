@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -51,7 +52,7 @@ class SaveFavoritesFlowTest {
                 selectedDirection = 0,
                 directions = directions,
                 proposedFavorites = mapOf(0 to true),
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = (it) },
             ) {
                 onCloseCalled = true
@@ -79,7 +80,7 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 proposedFavorites = mapOf(0 to true),
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalled = true },
             ) {
                 onCloseCalled = true
@@ -103,7 +104,7 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 proposedFavorites = mapOf(0 to true),
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
         }
@@ -131,7 +132,7 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 proposedFavorites = mapOf(0 to true, 1 to true),
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
         }
@@ -160,7 +161,7 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 proposedFavorites = mapOf(0 to true),
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {
                 onCloseCalled = true
@@ -183,7 +184,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
             )
@@ -208,7 +209,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
             )
@@ -234,7 +235,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 isFavorite = { true },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
             )
@@ -260,7 +261,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 0,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
             )
@@ -288,7 +289,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(),
                 selectedDirection = 0,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = {},
                 onClose = { onCloseCalled = true },
             )
@@ -311,7 +312,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 1,
                 isFavorite = { false },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = {},
                 onClose = {},
             )
@@ -329,7 +330,7 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 1,
                 isFavorite = { false },
-                context = SaveFavoritesContext.StopDetails,
+                context = EditFavoritesContext.StopDetails,
                 updateFavorites = {},
                 onClose = {},
             )
@@ -352,7 +353,7 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 isFavorite = { rsd -> rsd.direction == 1 },
-                context = SaveFavoritesContext.Favorites,
+                context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
             )

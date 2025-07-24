@@ -422,7 +422,8 @@ class StopDetailsFilteredPickerViewTest {
                     mapOf(
                         RouteStopDirection(route.id, stop.id, 0) to true,
                         RouteStopDirection(route.id, stop.id, 1) to false,
-                    )
+                    ),
+                    0,
                 )
         }
     }
@@ -488,7 +489,8 @@ class StopDetailsFilteredPickerViewTest {
         composeTestRule.waitUntil {
             updatedFavorites ==
                 FavoriteUpdateBridge.Favorites(
-                    mapOf(RouteStopDirection(route.id, stop.id, 0) to false)
+                    mapOf(RouteStopDirection(route.id, stop.id, 0) to false),
+                    0,
                 )
         }
     }
