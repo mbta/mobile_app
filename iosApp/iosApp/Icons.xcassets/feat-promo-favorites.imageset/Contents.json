@@ -1,7 +1,7 @@
 {
   "images": [
     {
-      "filename": "feat-promo-favorites-light.png",
+      "filename": "promo-favorites-light.png",
       "idiom": "universal"
     },
     {
@@ -11,7 +11,7 @@
           "value": "dark"
         }
       ],
-      "filename": "new-combo-dark(2).png",
+      "filename": "promo-favorites-dark.png",
       "idiom": "universal"
     }
   ],
