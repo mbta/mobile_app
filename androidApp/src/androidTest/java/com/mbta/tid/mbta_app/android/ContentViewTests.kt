@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -10,13 +12,22 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
+import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
+import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
+import dev.mokkery.MockMode
+import dev.mokkery.answering.returns
+import dev.mokkery.everySuspend
+import dev.mokkery.mock
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
+@OptIn(ExperimentalTestApi::class)
 class ContentViewTests : KoinTest {
 
     @get:Rule
@@ -43,6 +54,36 @@ class ContentViewTests : KoinTest {
 
         composeTestRule.onNodeWithText("Nearby").performClick()
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsPromos() {
+
+        val mockFeaturePromos = mock<IFeaturePromoUseCase>(MockMode.autofill)
+
+        everySuspend { mockFeaturePromos.getFeaturePromos() } returns
+            listOf(FeaturePromo.EnhancedFavorites)
+
+        val vm =
+            ContentViewModel(
+                featurePromoUseCase = mockFeaturePromos,
+                onboardingRepository = MockOnboardingRepository(),
+            )
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalLocationClient provides MockFusedLocationProviderClient()
+                ) {
+                    ContentView(viewModel = vm)
+                }
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add your favorites"))
+        composeTestRule
+            .onNodeWithText("Now save your frequently used stops", substring = true)
+            .assertIsDisplayed()
     }
 
     @Test

@@ -74,4 +74,5 @@ struct NoNearbyStopsView: View {
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color.fill2)
     .ignoresSafeArea()
+    .withFixedSettings([:])
 }

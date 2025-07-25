@@ -32,7 +32,9 @@ final class RoutePickerViewTests: XCTestCase {
             path: RoutePickerPath.Root(),
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
-            onClose: {}
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Add favorite stops"))
@@ -59,11 +61,67 @@ final class RoutePickerViewTests: XCTestCase {
             path: RoutePickerPath.Root(),
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
-            onClose: { closeCalled = true }
+            onOpenPickerPath: { _, _ in },
+            onClose: { closeCalled = true },
+            onBack: {}
         )
 
         try sut.inspect().find(button: "Done").tap()
         XCTAssertTrue(closeCalled)
+    }
+
+    func testBackButton() throws {
+        let objects = ObjectCollectionBuilder()
+        objects.route { route in
+            route.longName = " Bus"
+            route.type = RouteType.bus
+        }
+
+        var backCalled = false
+
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Bus(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: { backCalled = true }
+        )
+
+        try sut.inspect().find(viewWithAccessibilityLabel: "Back").implicitAnyView().button().tap()
+        XCTAssertTrue(backCalled)
+    }
+
+    func testDisplaysModePaths() {
+        let objects = ObjectCollectionBuilder()
+
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Root(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Bus"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Silver Line"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Commuter Rail"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Ferry"))
     }
 
     func testDisplaysSubwayHeader() {
@@ -84,10 +142,175 @@ final class RoutePickerViewTests: XCTestCase {
             path: RoutePickerPath.Root(),
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
-            onClose: {}
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Subway"))
+    }
+
+    @MainActor func testDisplaysBus() {
+        let objects = ObjectCollectionBuilder()
+        objects.route { route in
+            route.shortName = "1"
+            route.longName = "Harvard Square - Nubian Station"
+            route.type = RouteType.bus
+        }
+        objects.route { route in
+            route.shortName = "71"
+            route.longName = "Watertown Square - Harvard Station"
+            route.type = RouteType.bus
+        }
+        objects.route { route in
+            route.id = "741"
+            route.shortName = "SL1"
+            route.longName = "Logan Airport Terminals - South Station"
+            route.type = RouteType.bus
+        }
+        objects.route { route in
+            route.longName = "Mattapan Trolley"
+            route.type = RouteType.lightRail
+        }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Bus(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "Harvard Square - Nubian Station"))
+            XCTAssertNotNil(try view.find(text: "Watertown Square - Harvard Station"))
+            XCTAssertNotNil(try view.find(text: "Logan Airport Terminals - South Station"))
+            XCTAssertThrowsError(try view.find(text: "Mattapan Trolley"))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
+
+    @MainActor func testDisplaysSilverLineRoutes() {
+        let objects = ObjectCollectionBuilder()
+        objects.route { route in
+            route.shortName = "66"
+            route.longName = "Harvard Square - Nubian Station"
+            route.type = RouteType.bus
+        }
+        objects.route { route in
+            route.id = "741"
+            route.shortName = "SL1"
+            route.longName = "Logan Airport Terminals - South Station"
+            route.type = RouteType.bus
+        }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Silver(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertThrowsError(try view.find(text: "Harvard Square - Nubian Station"))
+            XCTAssertNotNil(try view.find(text: "Logan Airport Terminals - South Station"))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
+
+    @MainActor func testDisplaysCommuterRailRoutes() {
+        let objects = ObjectCollectionBuilder()
+        objects.route { route in
+            route.longName = "Providence/Stoughton Line"
+            route.type = RouteType.commuterRail
+        }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.CommuterRail(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "Providence/Stoughton Line"))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
+
+    @MainActor func testDisplaysFerryRoutes() {
+        let objects = ObjectCollectionBuilder()
+        objects.route { route in
+            route.longName = "Lynn Ferry"
+            route.type = RouteType.ferry
+        }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Ferry(),
+            errorBannerVM: errorBannerVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "Lynn Ferry"))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
     }
 
     @MainActor func testDisplaysSubwayRoutes() {
@@ -117,7 +340,9 @@ final class RoutePickerViewTests: XCTestCase {
             path: RoutePickerPath.Root(),
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
-            onClose: {}
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -157,7 +382,9 @@ final class RoutePickerViewTests: XCTestCase {
                 selectedRouteId = routeId
                 selectedContext = context
             },
-            onClose: {}
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in

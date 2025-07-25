@@ -37,6 +37,7 @@ struct PromoScreenView: View {
         VStack(spacing: 0) {
             switch screen {
             case .combinedStopAndTrip: combinedStopAndTrip
+            case .enhancedFavorites: enhancedFavorites
             default: EmptyView()
             }
         }
@@ -60,12 +61,7 @@ struct PromoScreenView: View {
             AttributedString.tryMarkdown(promoDetailsKey)
         }
         OnboardingPieces.PageColumn(content: {
-            if typeSize < .accessibility2 {
-                Image(.featPromoComboStopTrip)
-                    .resizable()
-                    .scaledToFill()
-                    .accessibilityHidden(true)
-            }
+            Spacer()
             OnboardingPieces.PageDescription(
                 headerText: Text(
                     "Check out the new stop view",
@@ -91,13 +87,68 @@ struct PromoScreenView: View {
                 action: advance
             )
         }, background: {
-            colorScheme == .dark ? Color.fill1 : Color.fill2
+            if typeSize < .accessibility2 {
+                OnboardingPieces.PromoImage(.featPromoComboStopTrip)
+                    .background(colorScheme == .dark ? Color.fill1 : Color.fill2)
+            } else {
+                colorScheme == .dark ? Color.fill1 : Color.fill2
+            }
         })
         .foregroundStyle(Color.text)
-        .frame(maxWidth: .infinity)
+        .frame(maxHeight: .infinity)
+    }
+
+    @ViewBuilder
+    var enhancedFavorites: some View {
+        let promoDetailsKey = NSLocalizedString(
+            "Now save your frequently used stops to **one easy place**.",
+            comment: "Promo text that describes the value of a new feature to favorite stops"
+        )
+
+        var promoDetailsString: AttributedString {
+            AttributedString.tryMarkdown(promoDetailsKey)
+        }
+        OnboardingPieces.PageColumn(content: {
+            Spacer()
+            OnboardingPieces.PageDescription(
+                headerText: Text(
+                    "Add your favorites",
+                    comment: """
+                    Promo text header that describes the value of a new feature to favorite stops
+                    """
+                ),
+                bodyText: Text(promoDetailsString),
+                focusBinding: $focusHeader,
+                focusValue: .enhancedFavorites,
+                bodyDynamicTypeSize: .accessibility3
+            )
+            .padding(.bottom, 16)
+            if typeSize >= .accessibility2, typeSize < .accessibility5 {
+                Spacer()
+            }
+
+            OnboardingPieces.KeyButton(
+                text: Text(
+                    "Got it",
+                    comment: "The continue button text on a page displaying new features since last update"
+                ),
+                action: advance
+            )
+        }, background: {
+            if typeSize < .accessibility2 {
+                OnboardingPieces.PromoImage(.featPromoFavorites)
+                    .background(colorScheme == .dark ? Color.fill1 : Color.fill2)
+            } else {
+                colorScheme == .dark ? Color.fill1 : Color.fill2
+            }
+
+        })
+        .foregroundStyle(Color.text)
+        .frame(maxHeight: .infinity)
     }
 }
 
 #Preview {
     PromoScreenView(screen: .combinedStopAndTrip, advance: {})
+    PromoScreenView(screen: .enhancedFavorites, advance: {})
 }

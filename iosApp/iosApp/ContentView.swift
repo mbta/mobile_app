@@ -234,7 +234,17 @@ struct ContentView: View {
                                     )
                                 )
                             },
-                            onClose: { nearbyVM.popToEntrypoint() }
+                            onOpenPickerPath: { path, context in
+                                if navEntry.path != path {
+                                    nearbyVM.pushNavEntry(
+                                        SheetNavigationStackEntry.routePicker(
+                                            SheetRoutes.RoutePicker(path: path, context: context)
+                                        )
+                                    )
+                                }
+                            },
+                            onClose: { nearbyVM.popToEntrypoint() },
+                            onBack: { nearbyVM.goBack() }
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }

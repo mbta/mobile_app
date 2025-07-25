@@ -161,6 +161,7 @@
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="freight_train_interference_lowercase">freight train interference</string>
     <string name="full_description">Full Description</string>
+    <string name="got_it">Got it</string>
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
     <string name="hazmat_condition_lowercase">hazmat condition</string>
@@ -264,6 +265,8 @@
     <string name="power_problem_lowercase">power problem</string>
     <string name="predictions_unavailable_details">Service is running, but predicted arrival times aren’t available. Check the map to see where %1$s are right now.</string>
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
+    <string name="promo_favorites_body">Now save your frequently used stops to &lt;b>one easy place&lt;/b>.</string>
+    <string name="promo_favorites_header">Add your favorites</string>
     <string name="rail_defect">Rail Defect</string>
     <string name="rail_defect_lowercase">rail defect</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>

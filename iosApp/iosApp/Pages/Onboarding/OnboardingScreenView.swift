@@ -243,16 +243,20 @@ struct OnboardingScreenView: View {
 
 #Preview("Feedback") {
     OnboardingScreenView(screen: .feedback, advance: {})
+        .withFixedSettings([:])
 }
 
 #Preview("Map Display") {
     OnboardingScreenView(screen: .hideMaps, advance: {})
+        .withFixedSettings([:])
 }
 
 #Preview("Location") {
     OnboardingScreenView(screen: .location, advance: {})
+        .withFixedSettings([:])
 }
 
 #Preview("Station Accessibility") {
     OnboardingScreenView(screen: .stationAccessibility, advance: {})
+        .withFixedSettings([:])
 }

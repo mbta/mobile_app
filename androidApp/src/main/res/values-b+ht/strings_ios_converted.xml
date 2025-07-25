@@ -172,6 +172,7 @@
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
     <string name="freight_train_interference_lowercase">entèferans tren machandiz</string>
     <string name="full_description">Deskripsyon Konplè</string>
+    <string name="got_it">Mwen konprann</string>
     <string name="hazmat_condition">Eta Matyè Danjere</string>
     <string name="hazmat_condition_lowercase">kondisyon danje</string>
     <string name="header_at_stop">nan &lt;b>%1$s&lt;/b></string>
@@ -274,6 +275,8 @@
     <string name="power_problem_lowercase">pwoblèm kouran</string>
     <string name="predictions_unavailable_details">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib. Verifye kat la pou wè ki kote %1$s yo ye kounye a.</string>
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
+    <string name="promo_favorites_body">Koulye a, sove arè yo itilize souvan nan &lt;b>yon kote ki fasil&lt;/b>.</string>
+    <string name="promo_favorites_header">Ajoute pi renmen ou yo</string>
     <string name="rail_defect">Defo nan ray tren yo</string>
     <string name="rail_defect_lowercase">defo nan ray</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>

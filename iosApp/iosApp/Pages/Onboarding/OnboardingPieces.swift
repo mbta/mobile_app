@@ -81,6 +81,7 @@ enum OnboardingPieces {
             VStack(alignment: .leading, spacing: 16) {
                 content()
             }
+            .frame(maxHeight: .infinity)
             .padding(.horizontal, 32)
             .padding(.bottom, bottomPadding)
             .background {
@@ -127,6 +128,25 @@ enum OnboardingPieces {
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.all)
                 .accessibilityHidden(true)
+        }
+    }
+
+    struct PromoImage: View {
+        let image: ImageResource
+
+        init(_ image: ImageResource) {
+            self.image = image
+        }
+
+        var body: some View {
+            VStack {
+                Image(image)
+                    .resizable()
+                    .scaledToFit()
+                    .edgesIgnoringSafeArea(.all)
+                    .accessibilityHidden(true)
+                Spacer()
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 

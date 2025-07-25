@@ -56,5 +56,6 @@ struct OnboardingPage: View {
 }
 
 #Preview {
-    OnboardingPage(screens: OnboardingScreen.allCases, onFinish: {})
+    OnboardingPage(screens: OnboardingScreen.allCases, onFinish: {}, onboardingRepository: MockOnboardingRepository())
+        .withFixedSettings([:])
 }

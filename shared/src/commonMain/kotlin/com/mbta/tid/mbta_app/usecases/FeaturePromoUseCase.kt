@@ -5,11 +5,15 @@ import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import org.koin.core.component.KoinComponent
 
+interface IFeaturePromoUseCase {
+    suspend fun getFeaturePromos(): List<FeaturePromo>
+}
+
 class FeaturePromoUseCase(
     private val currentAppVersionRepository: ICurrentAppVersionRepository,
     private val lastLaunchedAppVersionRepository: ILastLaunchedAppVersionRepository,
-) : KoinComponent {
-    suspend fun getFeaturePromos(): List<FeaturePromo> {
+) : IFeaturePromoUseCase, KoinComponent {
+    override suspend fun getFeaturePromos(): List<FeaturePromo> {
         val currentVersion =
             currentAppVersionRepository.getCurrentAppVersion() ?: return emptyList()
         val lastLaunchedVersion = lastLaunchedAppVersionRepository.getLastLaunchedAppVersion()

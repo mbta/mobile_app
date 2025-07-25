@@ -157,6 +157,7 @@
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
     <string name="freight_train_interference_lowercase">ảnh hưởng của tàu hàng</string>
     <string name="full_description">Mô tả đầy đủ</string>
+    <string name="got_it">Đã hiểu</string>
     <string name="hazmat_condition">Tình trạng có vật liệu nguy hiểm</string>
     <string name="hazmat_condition_lowercase">tình trạng nguy hiểm</string>
     <string name="header_at_stop">tại &lt;b>%1$s&lt;/b></string>
@@ -259,6 +260,8 @@
     <string name="power_problem_lowercase">vấn đề về điện</string>
     <string name="predictions_unavailable_details">Dịch vụ đang hoạt động, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
+    <string name="promo_favorites_body">Bây giờ hãy lưu những điểm dừng chân thường xuyên của bạn vào &lt;b>một nơi dễ dàng&lt;/b>.</string>
+    <string name="promo_favorites_header">Thêm mục yêu thích của bạn</string>
     <string name="rail_defect">Lỗi đường sắt</string>
     <string name="rail_defect_lowercase">lỗi đường sắt</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
