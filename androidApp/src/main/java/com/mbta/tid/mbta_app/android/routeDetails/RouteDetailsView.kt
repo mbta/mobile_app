@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 
 @Composable
@@ -28,7 +27,7 @@ fun RouteDetailsView(
     errorBannerViewModel: ErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView.globalData")
-    val lineOrRoute = globalData?.let { RouteDetailsStopList.getLineOrRoute(selectionId, it) }
+    val lineOrRoute = globalData?.getLineOrRoute(selectionId)
     if (lineOrRoute == null) {
         LoadingRouteStopListView(context, errorBannerViewModel)
         return

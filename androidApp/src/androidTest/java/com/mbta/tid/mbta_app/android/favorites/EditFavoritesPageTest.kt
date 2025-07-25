@@ -23,8 +23,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.flow.update
@@ -345,5 +349,84 @@ class EditFavoritesPageTest : KoinTest {
         // Should remain
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testToastUndoDeleteFavorite(): Unit = runBlocking {
+        val favorites =
+            setOf(
+                RouteStopDirection(route.id, sampleStop.id, 0),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
+            )
+        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(
+                    false,
+                    favorites,
+                    combinedRouteCardData,
+                    combinedRouteCardData,
+                )
+            )
+
+        viewModel.onUpdateFavorites = { update ->
+            val updatedFavorites = favorites.filter { update[it] != false }.toSet()
+            viewModel.models.update {
+                FavoritesViewModel.State(
+                    false,
+                    updatedFavorites,
+                    if (updatedFavorites.size == 1) greenLineRouteCardData
+                    else combinedRouteCardData,
+                    if (updatedFavorites.size == 1) greenLineRouteCardData
+                    else combinedRouteCardData,
+                )
+            }
+            updatedWith = update
+        }
+
+        val toastVM = MockToastViewModel()
+        var displayedToast: ToastViewModel.Toast? = null
+        toastVM.onHideToast = { displayedToast = null }
+        toastVM.onShowToast = { displayedToast = it }
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                EditFavoritesPage(globalResponse, viewModel, toastVM) {}
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+
+        composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
+        composeTestRule.awaitIdle()
+
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        verifySuspend(VerifyMode.exactly(1)) {
+            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
+        }
+
+        composeTestRule.waitUntil { update == updatedWith }
+
+        composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+        assertEquals(
+            "<b>Northbound Sample Route bus</b> at <b>Sample Stop 1</b> removed from Favorites",
+            displayedToast?.message,
+        )
+        assertEquals("Undo", displayedToast?.actionLabel)
+        displayedToast?.onAction?.let { it() }
+
+        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to true)
+        verifySuspend(VerifyMode.exactly(1)) {
+            viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0)
+        }
+        composeTestRule.waitUntil { undo == updatedWith }
+
+        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+        assertNull(displayedToast)
     }
 }

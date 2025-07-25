@@ -126,6 +126,18 @@ data class GlobalResponse(
             null
         }
 
+    fun getLineOrRoute(lineOrRouteId: String): RouteCardData.LineOrRoute? {
+        val route = this.getRoute(lineOrRouteId)
+        val line = this.getLine(lineOrRouteId) ?: this.getLine(route?.lineId)
+        return when {
+            line != null && line.isGrouped ->
+                RouteCardData.LineOrRoute.Line(line, this.routesByLineId[line.id].orEmpty().toSet())
+
+            route != null -> RouteCardData.LineOrRoute.Route(route)
+            else -> null
+        }
+    }
+
     fun getPatternsFor(stopId: String): List<RoutePattern> {
         val stop = stops[stopId] ?: return emptyList()
         val stopIds = stop.childStopIds + listOf(stopId)

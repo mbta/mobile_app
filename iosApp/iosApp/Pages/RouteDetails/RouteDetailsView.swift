@@ -23,9 +23,8 @@ struct RouteDetailsView: View {
 
     var body: some View {
         Group {
-            if let globalData, let lineOrRoute = RouteDetailsStopList.companion.getLineOrRoute(
-                selectionId: selectionId,
-                globalData: globalData
+            if let globalData, let lineOrRoute = globalData.getLineOrRoute(
+                lineOrRouteId: selectionId
             ) {
                 RouteStopListView(
                     lineOrRoute: lineOrRoute,

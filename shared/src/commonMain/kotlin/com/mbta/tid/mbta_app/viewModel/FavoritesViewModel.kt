@@ -165,9 +165,6 @@ class FavoritesViewModel(
                 routeCardData = null
             } else if (stopIds.isEmpty()) {
                 routeCardData = emptyList()
-            } else if (context == Context.Edit) {
-                // When editing, only filter the existing route card data, to preserve route order
-                routeCardData = filterRouteAndDirection(routeCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStopList(
@@ -191,10 +188,6 @@ class FavoritesViewModel(
                 staticRouteCardData = null
             } else if (stopIds.isEmpty()) {
                 staticRouteCardData = emptyList()
-            } else if (context == Context.Edit) {
-                // When editing, only filter the existing route card data, to preserve route order
-                staticRouteCardData =
-                    filterRouteAndDirection(staticRouteCardData, globalData, favorites)
             } else {
                 val loadedRouteCardData =
                     RouteCardData.routeCardsForStaticStopList(

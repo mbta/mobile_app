@@ -354,6 +354,150 @@
         }
       }
     },
+    "**%1$@ %2$@** at **%3$@** added to Favorites" : {
+      "comment" : "Favorite added toast text, the first value is the direction (southbound, inbound, etc), the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Southbound] [Red Line] at [Alewife] added to Favorites\"",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** en **%3$@** añadido a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** à **%3$@** ajouté aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** nan **%3$@** ajoute nan Favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** em **%3$@** adicionado aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** tại **%3$@** đã được thêm vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** 位于 **%3$@** 已添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** 位於 **%3$@** 已新增至收藏夾"
+          }
+        }
+      }
+    },
+    "**%1$@ %2$@** at **%3$@** removed from Favorites" : {
+      "comment" : "Favorite removed toast text, the first value is the direction (southbound, inbound, etc), the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** en **%3$@** eliminado de Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** à **%3$@** supprimé des favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** nan **%3$@** retire nan Favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** em **%3$@** removido dos Favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** tại **%3$@** đã bị xóa khỏi mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** 位于 **%3$@** 已从收藏夹中移除"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@ %2$@** 位於 **%3$@** 已從收藏夾移除"
+          }
+        }
+      }
+    },
+    "**%1$@** at **%2$@** added to Favorites" : {
+      "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus), and the second is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** en **%2$@** añadido a Favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** à **%2$@** ajouté aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** nan **%2$@** ajoute nan Favoris"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** em **%2$@** adicionado aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** tại **%2$@** đã được thêm vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** 位于 **%2$@** 已添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** 位於 **%2$@** 已新增至收藏夾"
+          }
+        }
+      }
+    },
     "**%1$@**%2$@%3$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
       "extractionState" : "manual",
@@ -863,7 +1007,7 @@
       "localizations" : {
         "en" : {
           "stringUnit" : {
-            "state" : "new",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
@@ -1965,6 +2109,54 @@
         }
       }
     },
+    "%1$@ bus" : {
+      "comment" : "Bus route name label, with the value being the route number, ex. \"1 bus\", \"66 bus\"",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ autobús"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ bis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ ônibus"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ xe buýt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 巴士"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 巴士"
+          }
+        }
+      }
+    },
     "%1$@ has departed %2$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] has departed [Central]\", \"[bus] has departed [Harvard]\"",
       "localizations" : {
@@ -2952,6 +3144,54 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "添加您的收藏夾"
+          }
+        }
+      }
+    },
+    "Added to Favorites" : {
+      "comment" : "Favorites added toast fallback text when more details are unavailable",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añadido a favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajouté aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Te ajoute nan Favoris"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionado aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đã thêm vào mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已加入到收藏夾"
           }
         }
       }
@@ -14309,6 +14549,54 @@
         }
       }
     },
+    "Removed from Favorites" : {
+      "comment" : "Favorite removed toast fallback text when more details are unavailable",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Eliminado de favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Supprimé des favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire nan Favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Removido dos Favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đã xóa khỏi mục Yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已从收藏夹中移除"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已從收藏夾中移除"
+          }
+        }
+      }
+    },
     "Removes selected filter so that arrivals from all routes are displayed" : {
       "comment" : "VoiceOver hint for the button to\nclear selected route to display all routes at a station",
       "localizations" : {
@@ -19755,6 +20043,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "無法連接"
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "comment" : "Button label to undo an action that was just performed",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Défaire"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Defèt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Desfazer"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hoàn tác"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "撤消"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "撤銷"
           }
         }
       }
