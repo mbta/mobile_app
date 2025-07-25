@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -72,7 +74,11 @@ fun BarAndToastScaffold(
                     actionContentColor = Color.Transparent,
                     dismissActionContentColor = Color.Transparent,
                 ) {
-                    Text(it.visuals.message, color = colorResource(R.color.fill3))
+                    Text(
+                        AnnotatedString.fromHtml(it.visuals.message),
+                        Modifier.padding(vertical = 8.dp),
+                        colorResource(R.color.fill3),
+                    )
                 }
             }
         },

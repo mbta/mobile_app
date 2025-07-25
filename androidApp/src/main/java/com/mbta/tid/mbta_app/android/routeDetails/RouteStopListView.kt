@@ -281,6 +281,7 @@ fun RouteStopListView(
                 },
                 selectedDirection = selectedDirection,
                 context = EditFavoritesContext.Favorites,
+                global = globalData,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {

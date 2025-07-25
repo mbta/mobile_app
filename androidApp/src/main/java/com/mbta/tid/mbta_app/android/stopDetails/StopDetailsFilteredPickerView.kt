@@ -97,6 +97,7 @@ fun StopDetailsFilteredPickerView(
                 directions.filter { it.id in availableDirections },
                 selectedDirection = stopFilter.directionId,
                 context = EditFavoritesContext.StopDetails,
+                global = global,
                 updateFavorites = { newValues ->
                     updateFavorites(
                         FavoriteUpdateBridge.Favorites(newValues, stopFilter.directionId)

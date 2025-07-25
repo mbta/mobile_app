@@ -50,6 +50,7 @@
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
     <string name="bus">Bus</string>
+    <string name="bus_label">%1$s bus</string>
     <string name="bus_lowercase">bus</string>
     <string name="buses">buses</string>
     <string name="cancel">Cancel</string>
@@ -133,6 +134,11 @@
     <string name="facility_issue_sentence_case">Facility issue</string>
     <string name="favorite_stop">favorite stop</string>
     <string name="favorites_link">Favorites</string>
+    <string name="favorites_toast_add">&lt;b&gt;%1$s %2$s&lt;/b&gt; at &lt;b&gt;%3$s&lt;/b&gt; added to Favorites</string>
+    <string name="favorites_toast_add_fallback">Added to Favorites</string>
+    <string name="favorites_toast_add_multi">&lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; added to Favorites</string>
+    <string name="favorites_toast_remove">&lt;b&gt;%1$s %2$s&lt;/b&gt; at &lt;b&gt;%3$s&lt;/b&gt; removed from Favorites</string>
+    <string name="favorites_toast_remove_fallback">Removed from Favorites</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
     <string name="feedback_link_form">Send App Feedback</string>
@@ -372,6 +378,7 @@
     <string name="try_a_different_spelling_or_name">Try a different spelling or name.</string>
     <string name="try_your_search_again">Try your search again.</string>
     <string name="unable_to_connect">Unable to connect</string>
+    <string name="undo">Undo</string>
     <string name="unruly_passenger">Unruly Passenger</string>
     <string name="unruly_passenger_lowercase">unruly passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
