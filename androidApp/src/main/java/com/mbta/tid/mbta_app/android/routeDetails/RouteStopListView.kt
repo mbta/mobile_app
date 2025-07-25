@@ -111,7 +111,7 @@ fun RouteStopListView(
 
     val stopList =
         rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
-            RouteDetailsStopList.fromPieces(
+            RouteDetailsStopList.fromOldPieces(
                 selectedRouteId,
                 selectedDirection,
                 routeStops,
@@ -158,7 +158,7 @@ fun LoadingRouteStopListView(
             selectedRouteId = mockRoute.id,
             setRouteId = {},
             routes = listOf(mockRoute.route),
-            stopList = RouteDetailsStopList(0, listOf()),
+            stopList = RouteDetailsStopList(0, listOf(), null),
             context = context,
             globalData = GlobalResponse(objects),
             onClick = {},
@@ -372,16 +372,17 @@ private fun RouteStops(
         horizontalAlignment = Alignment.Start,
         scrollEnabled = !loading,
     ) {
-        val hasTypicalSegment = stopList.segments.any { it.isTypical }
+        val segments = stopList.oldSegments.orEmpty()
+        val hasTypicalSegment = segments.any { it.isTypical }
 
-        stopList.segments.forEachIndexed { segmentIndex, segment ->
+        segments.forEachIndexed { segmentIndex, segment ->
             if (segment.isTypical || !hasTypicalSegment) {
                 segment.stops.forEachIndexed { stopIndex, stop ->
                     val stopPlacement =
                         StopPlacement(
                             isFirst = segmentIndex == 0 && stopIndex == 0,
                             isLast =
-                                segmentIndex == stopList.segments.lastIndex &&
+                                segmentIndex == segments.lastIndex &&
                                     stopIndex == segment.stops.lastIndex,
                             includeLineDiagram = segment.hasRouteLine,
                         )
@@ -408,7 +409,7 @@ private fun RouteStops(
                     onClick = { onTapStop(stopRowContext(it.stop)) },
                     onClickLabel = { onClickLabel(stopRowContext(it.stop)) },
                     segmentIndex == 0,
-                    segmentIndex == stopList.segments.lastIndex,
+                    segmentIndex == segments.lastIndex,
                 ) { stop, modifier ->
                     rightSideContent(stopRowContext(stop.stop), modifier)
                 }

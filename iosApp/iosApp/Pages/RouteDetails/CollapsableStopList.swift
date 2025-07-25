@@ -11,11 +11,11 @@ import SwiftUI
 
 struct CollapsableStopList<RightSideContent: View>: View {
     let lineOrRoute: RouteCardData.LineOrRoute
-    let segment: RouteDetailsStopList.Segment
-    let onClick: (RouteDetailsStopList.Entry) -> Void
+    let segment: RouteDetailsStopList.OldSegment
+    let onClick: (RouteDetailsStopList.OldEntry) -> Void
     let isFirstSegment: Bool
     let isLastSegment: Bool
-    let rightSideContent: (RouteDetailsStopList.Entry) -> RightSideContent
+    let rightSideContent: (RouteDetailsStopList.OldEntry) -> RightSideContent
 
     @State var stopsExpanded = false
 
@@ -23,11 +23,11 @@ struct CollapsableStopList<RightSideContent: View>: View {
 
     init(
         lineOrRoute: RouteCardData.LineOrRoute,
-        segment: RouteDetailsStopList.Segment,
-        onClick: @escaping (RouteDetailsStopList.Entry) -> Void,
+        segment: RouteDetailsStopList.OldSegment,
+        onClick: @escaping (RouteDetailsStopList.OldEntry) -> Void,
         isFirstSegment: Bool = false,
         isLastSegment: Bool = false,
-        rightSideContent: @escaping (RouteDetailsStopList.Entry) -> RightSideContent
+        rightSideContent: @escaping (RouteDetailsStopList.OldEntry) -> RightSideContent
     ) {
         self.lineOrRoute = lineOrRoute
         self.segment = segment
