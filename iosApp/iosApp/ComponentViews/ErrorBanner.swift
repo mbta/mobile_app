@@ -96,4 +96,5 @@ struct ErrorBanner: View {
             initialLoadingWhenPredictionsStale: true
         ))
     }
+    .withFixedSettings([:])
 }

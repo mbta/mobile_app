@@ -94,7 +94,8 @@ struct DepartureTile: View {
         route.textColor = "FFFFFF"
         route.type = .lightRail
     }
-    let upcomingTrip = objects.upcomingTrip()
+    let trip = objects.trip { _ in }
+    let upcomingTrip = UpcomingTrip(trip: trip)
 
     HStack {
         DepartureTile(

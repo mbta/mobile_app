@@ -165,4 +165,5 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         }
         .padding()
     }
+    .withFixedSettings([:])
 }

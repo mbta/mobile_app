@@ -103,4 +103,5 @@ struct MorePage: View {
 #Preview {
     MorePage()
         .font(Typography.body)
+        .withFixedSettings([:])
 }
