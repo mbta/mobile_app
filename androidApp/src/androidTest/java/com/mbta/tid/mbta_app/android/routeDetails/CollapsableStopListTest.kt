@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasClickActionLabel
@@ -13,6 +12,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeo
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteType
@@ -45,9 +45,16 @@ class CollapsableStopListTest {
             CollapsableStopList(
                 RouteCardData.LineOrRoute.Route(mainRoute),
                 segment =
-                    RouteDetailsStopList.OldSegment(
-                        listOf(RouteDetailsStopList.OldEntry(stop1, listOf(), listOf())),
-                        hasRouteLine = false,
+                    RouteDetailsStopList.NewSegment(
+                        listOf(
+                            RouteDetailsStopList.NewEntry(
+                                stop1,
+                                RouteBranchSegment.Lane.Center,
+                                stickConnections = emptyList(),
+                                connectingRoutes = emptyList(),
+                            )
+                        ),
+                        isTypical = false,
                     ),
                 onClick = { clicked = true },
                 isFirstSegment = false,
@@ -58,7 +65,6 @@ class CollapsableStopListTest {
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNodeWithText("Less common stop").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("mbta_logo", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop1.name).performClick()
         assertTrue(clicked)
     }
@@ -88,12 +94,22 @@ class CollapsableStopListTest {
             CollapsableStopList(
                 RouteCardData.LineOrRoute.Route(mainRoute),
                 segment =
-                    RouteDetailsStopList.OldSegment(
+                    RouteDetailsStopList.NewSegment(
                         listOf(
-                            RouteDetailsStopList.OldEntry(stop1, listOf(), listOf()),
-                            RouteDetailsStopList.OldEntry(stop2, listOf(), listOf()),
+                            RouteDetailsStopList.NewEntry(
+                                stop1,
+                                RouteBranchSegment.Lane.Center,
+                                stickConnections = emptyList(),
+                                connectingRoutes = emptyList(),
+                            ),
+                            RouteDetailsStopList.NewEntry(
+                                stop2,
+                                RouteBranchSegment.Lane.Center,
+                                stickConnections = emptyList(),
+                                connectingRoutes = emptyList(),
+                            ),
                         ),
-                        hasRouteLine = false,
+                        isTypical = false,
                     ),
                 onClick = {},
                 isFirstSegment = false,
@@ -107,8 +123,6 @@ class CollapsableStopListTest {
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
         composeTestRule.onNode(hasClickActionLabel("collapse stops")).assertExists()
-        composeTestRule.onNodeWithTag("mbta_logo", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("stop_bus", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText(stop2.name).assertIsDisplayed()
 
         composeTestRule.onNodeWithText("2 less common stops").assertIsDisplayed().performClick()

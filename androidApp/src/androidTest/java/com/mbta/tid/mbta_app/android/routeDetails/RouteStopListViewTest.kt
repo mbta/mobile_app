@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
@@ -51,12 +52,11 @@ class RouteStopListViewTest {
                 longName = "Mauve Line"
                 type = RouteType.HEAVY_RAIL
             }
-        val pattern0 =
-            objects.routePattern(mainRoute) {
-                directionId = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(stop1.id, stop2.id, stop3.id) }
-            }
+        objects.routePattern(mainRoute) {
+            directionId = 0
+            typicality = RoutePattern.Typicality.Typical
+            representativeTrip { stopIds = listOf(stop1.id, stop2.id, stop3.id) }
+        }
         objects.routePattern(mainRoute) {
             directionId = 1
             typicality = RoutePattern.Typicality.Typical
@@ -77,7 +77,30 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf(stop1.id, stop2.id, stop3.id),
+                        segments =
+                            listOf(
+                                RouteBranchSegment(
+                                    listOf(
+                                        RouteBranchSegment.BranchStop(
+                                            stop1.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                        RouteBranchSegment.BranchStop(
+                                            stop2.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                        RouteBranchSegment.BranchStop(
+                                            stop3.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                    ),
+                                    name = null,
+                                    isTypical = true,
+                                )
+                            ),
                         routeId = mainRoute.id,
                     )
             }
@@ -166,7 +189,7 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf(),
+                        segments = listOf(),
                         onGet = { routeId, _ -> lastSelectedRoute = routeId },
                     )
             }
@@ -237,7 +260,41 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf(stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id),
+                        segments =
+                            listOf(
+                                RouteBranchSegment(
+                                    listOf(
+                                        RouteBranchSegment.BranchStop(
+                                            stop1.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                        RouteBranchSegment.BranchStop(
+                                            stop2.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                    ),
+                                    name = null,
+                                    isTypical = true,
+                                ),
+                                RouteBranchSegment(
+                                    listOf(
+                                        RouteBranchSegment.BranchStop(
+                                            stop3NonTypical.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                        RouteBranchSegment.BranchStop(
+                                            stop4NonTypical.id,
+                                            RouteBranchSegment.Lane.Center,
+                                            emptyList(),
+                                        ),
+                                    ),
+                                    name = null,
+                                    isTypical = false,
+                                ),
+                            ),
                         routeId = mainRoute.id,
                     )
             }
@@ -294,7 +351,10 @@ class RouteStopListViewTest {
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf(stop1.id, stop2.id), routeId = mainRoute.id)
+                    MockRouteStopsRepository(
+                        segments = listOf(RouteBranchSegment.of(listOf(stop1.id, stop2.id))),
+                        routeId = mainRoute.id,
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
@@ -331,7 +391,12 @@ class RouteStopListViewTest {
             testKoinApplication(objects) {
                 routeStops =
                     MockRouteStopsRepository(
-                        listOf("place-alfcl", "place-davis", "place-portr"),
+                        segments =
+                            listOf(
+                                RouteBranchSegment.of(
+                                    listOf("place-alfcl", "place-davis", "place-portr")
+                                )
+                            ),
                         routeId = route.id,
                     )
             }
@@ -379,7 +444,14 @@ class RouteStopListViewTest {
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+                    MockRouteStopsRepository(
+                        segments =
+                            listOf(
+                                RouteBranchSegment.of(
+                                    listOf("place-alfcl", "place-davis", "place-portr")
+                                )
+                            )
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
@@ -424,7 +496,14 @@ class RouteStopListViewTest {
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+                    MockRouteStopsRepository(
+                        segments =
+                            listOf(
+                                RouteBranchSegment.of(
+                                    listOf("place-alfcl", "place-davis", "place-portr")
+                                )
+                            )
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
@@ -466,7 +545,14 @@ class RouteStopListViewTest {
         val koin =
             testKoinApplication(objects) {
                 routeStops =
-                    MockRouteStopsRepository(listOf("place-alfcl", "place-davis", "place-portr"))
+                    MockRouteStopsRepository(
+                        segments =
+                            listOf(
+                                RouteBranchSegment.of(
+                                    listOf("place-alfcl", "place-davis", "place-portr")
+                                )
+                            )
+                    )
             }
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()

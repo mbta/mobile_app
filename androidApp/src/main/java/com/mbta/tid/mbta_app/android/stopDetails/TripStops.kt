@@ -1,23 +1,13 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,20 +17,20 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
+import com.mbta.tid.mbta_app.android.component.StickDiagram
+import com.mbta.tid.mbta_app.android.component.StopListGroupToggle
+import com.mbta.tid.mbta_app.android.component.StopListToggleGroup
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
@@ -49,6 +39,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
@@ -56,9 +47,12 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
 
 @Composable
 fun TripStops(
@@ -140,85 +134,42 @@ fun TripStops(
                 }
             }
             if (!collapsedStops.isNullOrEmpty() && stopsAway != null && target != null) {
-                Row(
-                    Modifier.height(IntrinsicSize.Min)
-                        .clickable(
-                            onClickLabel =
-                                if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
-                                else stringResource(R.string.expand_remaining_stops)
-                        ) {
-                            stopsExpanded = !stopsExpanded
-                        }
-                        .clearAndSetSemantics {
-                            contentDescription =
-                                context.getString(
-                                    R.string.is_stops_away_from,
-                                    routeTypeText,
-                                    stopsAway,
-                                    target.stop.name,
-                                )
-                        }
-                        .padding(horizontal = 12.dp)
-                        .defaultMinSize(minHeight = 48.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    AnimatedContent(
-                        stopsExpanded,
-                        transitionSpec = {
-                            fadeIn(animationSpec = tween(500)) togetherWith
-                                fadeOut(animationSpec = tween(500))
-                        },
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                        ) {
-                            if (it) {
-                                Icon(
-                                    painterResource(R.drawable.fa_caret_right),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(12.dp).rotate(90f),
-                                    tint = colorResource(R.color.deemphasized),
-                                )
-                                ColoredRouteLine(
-                                    routeAccents.color,
-                                    Modifier.padding(start = 16.dp, end = 18.dp).fillMaxHeight(),
-                                )
-                            } else {
-                                Icon(
-                                    painterResource(R.drawable.fa_caret_right),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(12.dp),
-                                    tint = colorResource(R.color.deemphasized),
-                                )
-                                RouteLineTwist(
-                                    routeAccents.color,
-                                    Modifier.padding(start = 6.dp, end = 6.dp),
-                                )
-                            }
-                        }
-                    }
-                    Text(
-                        pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
-                        color = colorResource(R.color.text),
-                        style = Typography.body,
-                        modifier = Modifier.weight(1f),
-                    )
-                }
-                if (stopsExpanded) {
-                    Column {
-                        HaloUnderRouteLine(routeAccents.color)
-                        StopList(
-                            list = collapsedStops,
-                            trip,
-                            lastStopSequence,
-                            now,
-                            onTapLink,
-                            onOpenAlertDetails,
-                            routeAccents,
-                            alertSummaries,
+                StopListGroupToggle(
+                    stopsExpanded = stopsExpanded,
+                    setStopsExpanded = { stopsExpanded = it },
+                    contentDescription =
+                        stringResource(
+                            R.string.is_stops_away_from,
+                            routeTypeText,
+                            stopsAway,
+                            target.stop.name,
+                        ),
+                    onClickLabel =
+                        if (stopsExpanded) stringResource(R.string.collapse_remaining_stops)
+                        else stringResource(R.string.expand_remaining_stops),
+                    routeAccents = routeAccents,
+                    modifier = Modifier.padding(start = 6.dp),
+                    label = {
+                        Text(
+                            pluralStringResource(R.plurals.stops_away, stopsAway, stopsAway),
+                            color = colorResource(R.color.text),
+                            style = Typography.body,
+                            modifier = Modifier.weight(1f).padding(horizontal = 8.dp),
                         )
-                    }
+                    },
+                )
+                StopListToggleGroup(stopsExpanded) {
+                    HaloUnderRouteLine(routeAccents.color)
+                    StopList(
+                        list = collapsedStops,
+                        trip,
+                        lastStopSequence,
+                        now,
+                        onTapLink,
+                        onOpenAlertDetails,
+                        routeAccents,
+                        alertSummaries,
+                    )
                 }
             }
             // If the target is the first stop and there's no vehicle, it's already displayed in the
@@ -272,7 +223,16 @@ private fun HaloUnderRouteLine(color: Color) {
         HaloSeparator()
         // Lil 1x4 pt route color bar to maintain an unbroken route color line
         // over the separator
-        ColoredRouteLine(color, Modifier.padding(start = 42.dp).fillMaxHeight())
+        StickDiagram(
+            color,
+            RouteBranchSegment.StickConnection.forward(
+                "",
+                null,
+                "",
+                RouteBranchSegment.Lane.Center,
+            ),
+            Modifier.padding(start = 8.dp).fillMaxHeight(),
+        )
     }
 }
 
@@ -343,6 +303,7 @@ private fun TripStopsPreview() {
                 )
             },
         )
+    startKoin { modules(module { single { SettingsCache(MockSettingsRepository()) } }) }
     MyApplicationTheme {
         Column(Modifier.background(Color.fromHex(route.color))) {
             TripStops(
