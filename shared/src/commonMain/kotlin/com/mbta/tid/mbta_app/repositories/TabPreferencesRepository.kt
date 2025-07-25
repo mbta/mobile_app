@@ -14,7 +14,7 @@ enum class DefaultTab {
     Nearby,
 }
 
-interface IDefaultTabRepository {
+interface ITabPreferencesRepository {
 
     suspend fun getDefaultTab(): DefaultTab
 
@@ -25,7 +25,7 @@ interface IDefaultTabRepository {
     suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean)
 }
 
-class DefaultTabRepository : IDefaultTabRepository, KoinComponent {
+class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val defaultTabKey = stringPreferencesKey("default_tab")
@@ -49,7 +49,7 @@ class DefaultTabRepository : IDefaultTabRepository, KoinComponent {
     }
 }
 
-class MockDefaultTabRepository : IDefaultTabRepository {
+class MockTabPreferencesRepository : ITabPreferencesRepository {
     override suspend fun getDefaultTab(): DefaultTab {
         return DefaultTab.Nearby
     }

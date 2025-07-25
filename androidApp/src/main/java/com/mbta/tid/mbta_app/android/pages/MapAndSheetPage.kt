@@ -6,6 +6,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,11 +16,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -34,6 +35,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,7 +52,10 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.BarAndToastScaffold
 import com.mbta.tid.mbta_app.android.component.DragHandle
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.component.SheetHeader
+import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.component.sheet.SheetValue
@@ -68,10 +73,12 @@ import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.typeMap
+import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
+import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.popBackStackFrom
@@ -434,7 +441,27 @@ fun MapAndSheetPage(
     @Composable
     fun SheetContent(modifier: Modifier = Modifier) {
         if (sheetNavEntrypoint == null) {
-            CircularProgressIndicator()
+            CompositionLocalProvider(IsLoadingSheetContents provides true) {
+                SheetPage {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.loadingShimmer(),
+                    ) {
+                        SheetHeader(title = stringResource(R.string.got_it))
+
+                        ErrorBanner(errorBannerViewModel)
+                        RouteCardList(
+                            routeCardData = null,
+                            emptyView = {},
+                            global = null,
+                            now = now,
+                            isFavorite = { false },
+                            togglePinnedRoute = {},
+                            onOpenStopDetails = { _, _ -> },
+                        )
+                    }
+                }
+            }
         } else {
             NavHost(
                 navController,
@@ -466,6 +493,10 @@ fun MapAndSheetPage(
                         initialStopId == targetStopId &&
                         initialStopFilter?.routeId == targetStopFilter?.routeId
                     ) {
+                        EnterTransition.None
+                    }
+
+                    if (initialRoute == targetRoute) {
                         EnterTransition.None
                     } else {
                         slideIntoContainer(

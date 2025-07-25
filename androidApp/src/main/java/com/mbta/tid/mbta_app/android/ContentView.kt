@@ -76,6 +76,8 @@ fun ContentView(
                         DefaultTab.Nearby -> SheetRoutes.NearbyTransit
                     }
                 }
+        } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
+            sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }
         Log.i("KB", "New sheetNavEntrypoint ${sheetNavEntrypoint}")
     }

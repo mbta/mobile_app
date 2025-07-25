@@ -13,7 +13,6 @@ import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
-import com.mbta.tid.mbta_app.repositories.DefaultTabRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.FavoritesRepository
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
@@ -21,7 +20,6 @@ import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
-import com.mbta.tid.mbta_app.repositories.IDefaultTabRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -37,6 +35,7 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
@@ -54,7 +53,6 @@ import com.mbta.tid.mbta_app.repositories.MockAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
-import com.mbta.tid.mbta_app.repositories.MockDefaultTabRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
@@ -68,6 +66,7 @@ import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockStopRepository
+import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
@@ -82,6 +81,7 @@ import com.mbta.tid.mbta_app.repositories.SearchResultRepository
 import com.mbta.tid.mbta_app.repositories.SentryRepository
 import com.mbta.tid.mbta_app.repositories.SettingsRepository
 import com.mbta.tid.mbta_app.repositories.StopRepository
+import com.mbta.tid.mbta_app.repositories.TabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.TripRepository
 import com.mbta.tid.mbta_app.repositories.VisitHistoryRepository
 import org.koin.core.component.KoinComponent
@@ -91,7 +91,7 @@ interface IRepositories {
     val accessibilityStatus: IAccessibilityStatusRepository?
     val alerts: IAlertsRepository?
     val config: IConfigRepository
-    val defaultTab: IDefaultTabRepository
+    val defaultTab: ITabPreferencesRepository
     val currentAppVersion: ICurrentAppVersionRepository?
     val errorBanner: IErrorBannerStateRepository
     val global: IGlobalRepository
@@ -120,7 +120,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val alerts: IAlertsRepository by inject()
     override val config: IConfigRepository by inject()
     override val currentAppVersion: ICurrentAppVersionRepository by inject()
-    override val defaultTab: IDefaultTabRepository by inject()
+    override val defaultTab: ITabPreferencesRepository by inject()
     override val errorBanner: IErrorBannerStateRepository by inject()
     override val global: IGlobalRepository by inject()
     override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository by inject()
@@ -151,7 +151,7 @@ class RealRepositories : IRepositories {
     override val alerts = null
     override val config = ConfigRepository()
     override val currentAppVersion = null
-    override val defaultTab = DefaultTabRepository()
+    override val defaultTab = TabPreferencesRepository()
     override val errorBanner = ErrorBannerStateRepository()
     override val global = GlobalRepository()
     override val lastLaunchedAppVersion = LastLaunchedAppVersionRepository()
@@ -181,7 +181,7 @@ class MockRepositories : IRepositories {
     override var config: IConfigRepository = MockConfigRepository()
     override var currentAppVersion: ICurrentAppVersionRepository =
         MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u))
-    override var defaultTab: IDefaultTabRepository = MockDefaultTabRepository()
+    override var defaultTab: ITabPreferencesRepository = MockTabPreferencesRepository()
     override var errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository()
     override var global: IGlobalRepository = IdleGlobalRepository()
     override var lastLaunchedAppVersion: ILastLaunchedAppVersionRepository =
