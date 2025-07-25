@@ -48,3 +48,17 @@ class DefaultTabRepository : IDefaultTabRepository, KoinComponent {
         dataStore.edit { it[hasSeenFavoritesKey] = hasSeenFavorites.toString() }
     }
 }
+
+class MockDefaultTabRepository : IDefaultTabRepository {
+    override suspend fun getDefaultTab(): DefaultTab {
+        return DefaultTab.Nearby
+    }
+
+    override suspend fun setDefaultTab(defaultTab: DefaultTab) {}
+
+    override suspend fun hasSeenFavorites(): Boolean {
+        return true
+    }
+
+    override suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean) {}
+}

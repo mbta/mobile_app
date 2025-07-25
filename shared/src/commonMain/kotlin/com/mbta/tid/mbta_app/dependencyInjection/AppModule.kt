@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
+import com.mbta.tid.mbta_app.repositories.IDefaultTabRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -58,6 +59,7 @@ fun appModule(appVariant: AppVariant) = module {
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
         single<IConfigRepository> { repositories.config }
+        single<IDefaultTabRepository> { repositories.defaultTab }
         single<IErrorBannerStateRepository> { repositories.errorBanner }
         single<IGlobalRepository> { repositories.global }
         single<ILastLaunchedAppVersionRepository> { repositories.lastLaunchedAppVersion }

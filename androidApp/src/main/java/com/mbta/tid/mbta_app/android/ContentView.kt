@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,6 +38,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -52,11 +54,31 @@ fun ContentView(
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
+
+    val defaultTab by viewModel.defaultTab.collectAsState()
     val navController = rememberNavController()
-    var sheetNavEntrypoint: SheetRoutes.Entrypoint by
+    val enhancedFavorites = SettingsCache.getNullable(Settings.EnhancedFavorites)
+
+    var sheetNavEntrypoint: SheetRoutes.Entrypoint? by
         rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
-            mutableStateOf(SheetRoutes.NearbyTransit)
+            mutableStateOf(if (enhancedFavorites == false) SheetRoutes.NearbyTransit else null)
         }
+
+    LaunchedEffect(defaultTab, enhancedFavorites) {
+        Log.i("KB", "Default Tab changed ${defaultTab} ${enhancedFavorites} ${sheetNavEntrypoint}")
+        if (sheetNavEntrypoint == null && enhancedFavorites == true) {
+            Log.i("KB", "Sheetnav entrypoint setting ${defaultTab}")
+
+            sheetNavEntrypoint =
+                defaultTab?.let {
+                    when (it) {
+                        DefaultTab.Favorites -> SheetRoutes.Favorites
+                        DefaultTab.Nearby -> SheetRoutes.NearbyTransit
+                    }
+                }
+        }
+        Log.i("KB", "New sheetNavEntrypoint ${sheetNavEntrypoint}")
+    }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")
@@ -152,7 +174,7 @@ fun ContentView(
                     BottomNavBar(
                         currentDestination =
                             Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
-                        sheetNavEntrypoint = sheetNavEntrypoint,
+                        sheetNavEntrypoint = sheetNavEntrypoint ?: SheetRoutes.NearbyTransit,
                         navigateToFavorites = {
                             navController.popBackStack()
                             sheetNavEntrypoint = SheetRoutes.Favorites
