@@ -48,12 +48,12 @@ import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 @Composable
 fun CollapsableStopList(
     lineOrRoute: RouteCardData.LineOrRoute,
-    segment: RouteDetailsStopList.Segment,
-    onClick: (RouteDetailsStopList.Entry) -> Unit,
-    onClickLabel: @Composable (RouteDetailsStopList.Entry) -> String? = { null },
+    segment: RouteDetailsStopList.OldSegment,
+    onClick: (RouteDetailsStopList.OldEntry) -> Unit,
+    onClickLabel: @Composable (RouteDetailsStopList.OldEntry) -> String? = { null },
     isFirstSegment: Boolean = false,
     isLastSegment: Boolean = false,
-    rightSideContent: @Composable RowScope.(RouteDetailsStopList.Entry, Modifier) -> Unit,
+    rightSideContent: @Composable RowScope.(RouteDetailsStopList.OldEntry, Modifier) -> Unit,
 ) {
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }

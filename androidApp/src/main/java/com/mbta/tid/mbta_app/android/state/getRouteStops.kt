@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
-import com.mbta.tid.mbta_app.repositories.RouteStopsResult
+import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,13 +26,13 @@ class RouteStopsFetcher(
         routeId: String,
         directionId: Int,
         errorKey: String,
-        onSuccess: (RouteStopsResult) -> Unit,
+        onSuccess: (OldRouteStopsResult) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
                 errorKey = errorKey,
-                getData = { routeStopsRepository.getRouteStops(routeId, directionId) },
+                getData = { routeStopsRepository.getOldRouteStops(routeId, directionId) },
                 onSuccess = { onSuccess(it) },
                 onRefreshAfterError = { getRouteStops(routeId, directionId, errorKey, onSuccess) },
             )
@@ -46,8 +46,8 @@ class RouteStopsViewModel(
 ) : ViewModel() {
 
     private val routeStopsFetcher = RouteStopsFetcher(routeStopsRepository, errorBannerRepository)
-    private val _routeStops = MutableStateFlow<RouteStopsResult?>(null)
-    val routeStops: StateFlow<RouteStopsResult?> = _routeStops
+    private val _routeStops = MutableStateFlow<OldRouteStopsResult?>(null)
+    val routeStops: StateFlow<OldRouteStopsResult?> = _routeStops
 
     fun getRouteStops(routeId: String, directionId: Int, errorKey: String) {
         _routeStops.value = null
@@ -71,7 +71,7 @@ fun getRouteStops(
     errorKey: String,
     routeStopsRepository: IRouteStopsRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
-): RouteStopsResult? {
+): OldRouteStopsResult? {
     val viewModel: RouteStopsViewModel =
         viewModel(
             factory = RouteStopsViewModel.Factory(routeStopsRepository, errorBannerRepository)
