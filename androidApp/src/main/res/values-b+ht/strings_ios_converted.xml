@@ -54,6 +54,7 @@
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Monte sou vwa a %1$s</string>
     <string name="bus">Bis</string>
+    <string name="bus_label">%1$s bis</string>
     <string name="bus_lowercase">bis</string>
     <string name="buses">bis yo</string>
     <string name="cancel">Anile</string>
@@ -144,6 +145,11 @@
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
     <string name="favorite_stop">arè pi renmen</string>
     <string name="favorites_link">Favori</string>
+    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> nan &lt;b>%3$s&lt;/b> ajoute nan Favorites</string>
+    <string name="favorites_toast_add_fallback">Te ajoute nan Favoris</string>
+    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> ajoute nan Favoris</string>
+    <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b> nan &lt;b>%3$s&lt;/b> retire nan Favorites</string>
+    <string name="favorites_toast_remove_fallback">Retire nan Favorites</string>
     <string name="feature_flag_debug_mode">Mòd Debogaj</string>
     <string name="feature_flag_route_search">Rechèch Wout</string>
     <string name="feedback_link_form">Voye Feedback sou aplikasyon an</string>
@@ -386,6 +392,7 @@
     <string name="try_a_different_spelling_or_name">Eseye yon lòt òtograf oswa non.</string>
     <string name="try_your_search_again">Eseye rechèch ou an ankò.</string>
     <string name="unable_to_connect">Pa ka konekte</string>
+    <string name="undo">Defèt</string>
     <string name="unruly_passenger">Pasaje Ki Pa Respekte Règ</string>
     <string name="unruly_passenger_lowercase">pasaje ap fè dezòd</string>
     <string name="unstar_route_hint">detache wout la soti nan tèt lis la</string>

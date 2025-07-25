@@ -49,6 +49,7 @@
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在轨道%1$s登车</string>
     <string name="bus">巴士</string>
+    <string name="bus_label">%1$s 巴士</string>
     <string name="bus_lowercase">巴士</string>
     <string name="buses">巴士</string>
     <string name="cancel">取消</string>
@@ -129,6 +130,11 @@
     <string name="facility_issue_sentence_case">设施问题</string>
     <string name="favorite_stop">最喜欢的一站</string>
     <string name="favorites_link">收藏夹</string>
+    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> 位于 &lt;b>%3$s&lt;/b> 已添加到收藏夹</string>
+    <string name="favorites_toast_add_fallback">已添加到收藏夹</string>
+    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> 位于 &lt;b>%2$s&lt;/b> 已添加到收藏夹</string>
+    <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b> 位于 &lt;b>%3$s&lt;/b> 已从收藏夹中移除</string>
+    <string name="favorites_toast_remove_fallback">已从收藏夹中移除</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
     <string name="feedback_link_form">发送应用程序反馈</string>
@@ -366,6 +372,7 @@
     <string name="try_a_different_spelling_or_name">尝试不同的拼写或名称。</string>
     <string name="try_your_search_again">再次尝试搜索。</string>
     <string name="unable_to_connect">无法连接</string>
+    <string name="undo">撤消</string>
     <string name="unruly_passenger">乘客干扰</string>
     <string name="unruly_passenger_lowercase">乘客干扰</string>
     <string name="unstar_route_hint">在列表中取消置顶路线</string>
