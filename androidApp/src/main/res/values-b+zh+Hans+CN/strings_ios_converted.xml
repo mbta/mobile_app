@@ -151,6 +151,7 @@
     <string name="freight_train_interference">货运列车干扰</string>
     <string name="freight_train_interference_lowercase">货运列车干扰</string>
     <string name="full_description">完整说明</string>
+    <string name="got_it">明白了</string>
     <string name="hazmat_condition">危险物质</string>
     <string name="hazmat_condition_lowercase">危险物质</string>
     <string name="header_at_stop">于&lt;b>%1$s&lt;/b>到站</string>
@@ -253,6 +254,8 @@
     <string name="power_problem_lowercase">电力故障</string>
     <string name="predictions_unavailable_details">服务运行中，暂无预计到达时间。请查看地图获取%1$s当前的位置信息。</string>
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
+    <string name="promo_favorites_body">现在将您经常使用的站点保存到&lt;b>一个简单的地方&lt;/b>。</string>
+    <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="rail_defect">轨道缺陷</string>
     <string name="rail_defect_lowercase">轨道缺陷</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>

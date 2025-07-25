@@ -31,4 +31,22 @@ final class PromoScreenViewTests: XCTestCase {
         ViewHosting.host(view: sut)
         wait(for: [exp], timeout: 5)
     }
+
+    @MainActor func testEnhancedFavorites() throws {
+        let advanceExp = expectation(description: "calls advance()")
+        let sut = PromoScreenView(
+            screen: .enhancedFavorites,
+            advance: { advanceExp.fulfill() }
+        )
+        let exp = sut.inspection.inspect { view in
+            XCTAssertNotNil(try view.find(text: "Add your favorites"))
+            XCTAssertNotNil(try view.find(
+                text: "Now save your frequently used stops to one easy place."
+            ))
+            try view.find(button: "Got it").tap()
+            await self.fulfillment(of: [advanceExp], timeout: 1)
+        }
+        ViewHosting.host(view: sut)
+        wait(for: [exp], timeout: 5)
+    }
 }

@@ -157,6 +157,7 @@
     <string name="freight_train_interference">Interferência de trem de carga</string>
     <string name="freight_train_interference_lowercase">interferência de trem de carga</string>
     <string name="full_description">Descrição completa</string>
+    <string name="got_it">Entendi</string>
     <string name="hazmat_condition">Condição de material perigoso</string>
     <string name="hazmat_condition_lowercase">condição de materiais perigosos</string>
     <string name="header_at_stop">em &lt;b>%1$s&lt;/b></string>
@@ -259,6 +260,8 @@
     <string name="power_problem_lowercase">problema de energia</string>
     <string name="predictions_unavailable_details">O serviço está funcionando, mas os horários de chegada previstos não estão disponíveis. Verifique no mapa onde %1$s estão no momento.</string>
     <string name="predictions_unavailable_details_hide_maps">O serviço está funcionando, mas os horários previstos de chegada não estão disponíveis.</string>
+    <string name="promo_favorites_body">Agora salve suas paradas usadas com frequência em &lt;b>um lugar fácil&lt;/b>.</string>
+    <string name="promo_favorites_header">Adicione seus favoritos</string>
     <string name="rail_defect">Defeito nos trilhos</string>
     <string name="rail_defect_lowercase">defeito nos trilhos</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>

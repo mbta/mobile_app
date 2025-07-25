@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.android.pages.MorePage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
 import com.mbta.tid.mbta_app.android.pages.OnboardingPage
 import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
+import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -61,6 +62,8 @@ fun ContentView(
     val globalResponse = getGlobalData("ContentView.getGlobalData")
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
+    val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
+
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {
@@ -101,6 +104,11 @@ fun ContentView(
             onFinish = { viewModel.clearPendingOnboarding() },
             locationDataManager = locationDataManager,
         )
+        return
+    }
+
+    if (!pendingFeaturePromos.isNullOrEmpty()) {
+        PromoPage(pendingFeaturePromos, onFinish = { viewModel.clearPendingFeaturePromos() })
         return
     }
 

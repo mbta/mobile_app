@@ -210,6 +210,15 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
     }
 
+    func testShowsPromo() throws {
+        let contentVM = ContentViewModel(featurePromosPending: [.enhancedFavorites], onboardingScreensPending: [])
+        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: contentVM))
+
+        XCTAssertNotNil(try sut.inspect().find(PromoPage.self))
+        XCTAssertThrowsError(try sut.inspect().find(HomeMapView.self))
+        XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
+    }
+
     class FakeContentVM: ContentViewModel {
         let loadConfigCallback: () -> Void
         let configMapboxCallback: () -> Void

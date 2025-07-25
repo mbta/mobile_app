@@ -157,6 +157,7 @@
     <string name="freight_train_interference">Interférence avec un train de marchandises</string>
     <string name="freight_train_interference_lowercase">interférence des trains de marchandises</string>
     <string name="full_description">Description complète</string>
+    <string name="got_it">J’ai compris</string>
     <string name="hazmat_condition">Présence de matières dangereuses</string>
     <string name="hazmat_condition_lowercase">incident impliquant des matières dangereuses</string>
     <string name="header_at_stop">à &lt;b>%1$s&lt;/b></string>
@@ -259,6 +260,8 @@
     <string name="power_problem_lowercase">problème d’alimentation</string>
     <string name="predictions_unavailable_details">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles. Consulter la carte pour afficher la position actuelle de %1$s.</string>
     <string name="predictions_unavailable_details_hide_maps">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles.</string>
+    <string name="promo_favorites_body">Enregistrez désormais vos arrêts fréquemment utilisés dans &lt;b>un seul endroit facile&lt;/b>.</string>
+    <string name="promo_favorites_header">Ajoutez vos favoris</string>
     <string name="rail_defect">Défaut sur les rails</string>
     <string name="rail_defect_lowercase">défaut sur les rails</string>
     <string name="real_time_arrivals_updating_live">Arrivées en temps réel et mises à jour en direct</string>

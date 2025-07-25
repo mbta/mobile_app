@@ -34,6 +34,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,7 +64,7 @@ object OnboardingPieces {
                 modifier = Modifier.semantics { heading() },
                 style = Typography.title1Bold,
             )
-            Text(stringResource(bodyId), style = Typography.title3)
+            Text(AnnotatedString.fromHtml(stringResource(bodyId)), style = Typography.title3)
         }
     }
 
@@ -159,6 +161,16 @@ fun BoxScope.OnboardingImage(@DrawableRes drawableId: Int, size: Dp?, offsetY: D
                 .offset(y = offsetY)
                 .then(if (size != null) Modifier.size(size) else Modifier.fillMaxSize()),
         contentScale = ContentScale.Crop,
+    )
+}
+
+@Composable
+fun BoxScope.PromoImage(@DrawableRes drawableId: Int) {
+    Image(
+        painterResource(drawableId),
+        contentDescription = null,
+        modifier = Modifier.align(Alignment.TopCenter),
+        contentScale = ContentScale.Fit,
     )
 }
 

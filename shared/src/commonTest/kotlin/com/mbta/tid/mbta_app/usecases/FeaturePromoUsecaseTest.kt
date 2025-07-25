@@ -38,12 +38,16 @@ class FeaturePromoUsecaseTest {
         // instead of an @Ignore we may forget, skip the test if there are no features
         if (FeaturePromo.entries.all { it.addedInVersion == AppVersion(0u, 0u, 0u) })
             return@runBlocking
+
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
                 MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u)),
             )
-        assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
+
+        val expectedPromos =
+            FeaturePromo.entries.filter { it.addedInVersion > AppVersion(0u, 0u, 0u) }
+        assertEquals(expectedPromos, useCase.getFeaturePromos())
     }
 
     @Test
@@ -55,6 +59,9 @@ class FeaturePromoUsecaseTest {
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
                 MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u)),
             )
-        assertEquals(listOf(FeaturePromo.CombinedStopAndTrip), useCase.getFeaturePromos())
+        assertEquals(
+            listOf(FeaturePromo.CombinedStopAndTrip, FeaturePromo.EnhancedFavorites),
+            useCase.getFeaturePromos(),
+        )
     }
 }

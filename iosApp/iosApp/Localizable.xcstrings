@@ -2909,6 +2909,53 @@
         }
       }
     },
+    "Add your favorites" : {
+      "comment" : "Promo text header that describes the value of a new feature to favorite stops",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade tus favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoutez vos favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute pi renmen ou yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicione seus favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm mục yêu thích của bạn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加您的收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加您的收藏夾"
+          }
+        }
+      }
+    },
     "Additional service" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -12561,6 +12608,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "正在上車"
+          }
+        }
+      }
+    },
+    "Now save your frequently used stops to **one easy place**." : {
+      "comment" : "Promo text that describes the value of a new feature to favorite stops",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ahora guarda tus paradas utilizadas frecuentemente en **un solo lugar fácil**."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Enregistrez désormais vos arrêts fréquemment utilisés dans **un seul endroit facile**."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Koulye a, sove arè yo itilize souvan nan **yon kote ki fasil**."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agora salve suas paradas usadas com frequência em **um lugar fácil**."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bây giờ hãy lưu những điểm dừng chân thường xuyên của bạn vào **một nơi dễ dàng**."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "现在将您经常使用的站点保存到**一个简单的地方**。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "現在將您經常使用的網站儲存到**一個簡單的地方**。"
           }
         }
       }
