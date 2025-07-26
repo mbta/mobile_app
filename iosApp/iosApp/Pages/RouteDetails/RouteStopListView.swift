@@ -38,6 +38,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let errorBannerVM: ErrorBannerViewModel
     let defaultSelectedRouteId: String?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
+    let toastVM: IToastViewModel
 
     let favoritesUsecases: FavoritesUsecases
     @State var favorites: Set<RouteStopDirection>?
@@ -62,6 +63,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         routeStopsRepository: IRouteStopsRepository = RepositoryDI().routeStops,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
+        toastVM: IToastViewModel = ViewModelDI().toast
     ) {
         self.lineOrRoute = lineOrRoute
         self.context = context
@@ -74,6 +76,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         self.rightSideContent = rightSideContent
         self.routeStopsRepository = routeStopsRepository
         self.favoritesUsecases = favoritesUsecases
+        self.toastVM = toastVM
 
         selectedRouteId = defaultSelectedRouteId ?? lineOrRoute.sortRoute.id
         let parameters = RouteDetailsStopList.RouteParameters(lineOrRoute: lineOrRoute, globalData: globalData)
@@ -94,43 +97,46 @@ struct RouteStopListView<RightSideContent: View>: View {
     }
 
     var body: some View {
-        RouteStopListContentView(lineOrRoute: lineOrRoute,
-                                 parameters: parameters,
-                                 selectedDirection: selectedDirection,
-                                 setSelectedDirection: { selectedDirection = $0 },
-                                 selectedRouteId: selectedRouteId, setSelectedRouteId: { selectedRouteId = $0 },
-                                 stopList: stopList,
-                                 context: context,
-                                 globalData: globalData,
-                                 onClick: onClick,
-                                 onBack: onBack,
-                                 onClose: onClose,
-                                 errorBannerVM: errorBannerVM,
-                                 rightSideContent: rightSideContent,
-                                 favoritesUsecases: favoritesUsecases)
-            .onAppear {
-                loadEverything()
-                if !parameters.availableDirections.contains(where: { $0.intValue == selectedDirection }) {
-                    selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
-                }
+        RouteStopListContentView(
+            lineOrRoute: lineOrRoute,
+            parameters: parameters,
+            selectedDirection: selectedDirection,
+            setSelectedDirection: { selectedDirection = $0 },
+            selectedRouteId: selectedRouteId, setSelectedRouteId: { selectedRouteId = $0 },
+            stopList: stopList,
+            context: context,
+            globalData: globalData,
+            onClick: onClick,
+            onBack: onBack,
+            onClose: onClose,
+            errorBannerVM: errorBannerVM,
+            rightSideContent: rightSideContent,
+            favoritesUsecases: favoritesUsecases,
+            toastVM: toastVM
+        )
+        .onAppear {
+            loadEverything()
+            if !parameters.availableDirections.contains(where: { $0.intValue == selectedDirection }) {
+                selectedDirection = Int32(truncating: parameters.availableDirections.first ?? 0)
             }
-            .onChange(of: RouteStopsParams(routeId: selectedRouteId, directionId: selectedDirection)) {
-                loadRouteStops(routeId: $0.routeId, directionId: $0.directionId)
-            }
-            .onChange(of: RouteStopListParams(
-                routeId: selectedRouteId,
-                directionId: selectedDirection,
-                routeStops: routeStops,
-                globalData: globalData
-            )) {
-                loadStopList(
-                    routeId: $0.routeId,
-                    directionId: $0.directionId,
-                    routeStops: $0.routeStops,
-                    globalData: $0.globalData
-                )
-            }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        }
+        .onChange(of: RouteStopsParams(routeId: selectedRouteId, directionId: selectedDirection)) {
+            loadRouteStops(routeId: $0.routeId, directionId: $0.directionId)
+        }
+        .onChange(of: RouteStopListParams(
+            routeId: selectedRouteId,
+            directionId: selectedDirection,
+            routeStops: routeStops,
+            globalData: globalData
+        )) {
+            loadStopList(
+                routeId: $0.routeId,
+                directionId: $0.directionId,
+                routeStops: $0.routeStops,
+                globalData: $0.globalData
+            )
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     private func loadEverything() {
@@ -193,11 +199,13 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let onClose: () -> Void
     let errorBannerVM: ErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
+    let toastVM: IToastViewModel
 
     let favoritesUsecases: FavoritesUsecases
     @State var favorites: Set<RouteStopDirection>?
 
     @State var showFavoritesStopConfirmation: Stop? = nil
+    @State var showFirstTimeFavoritesToast: Bool = false
 
     let inspection = Inspection<Self>()
 
@@ -217,6 +225,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         errorBannerVM: ErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
+        toastVM: IToastViewModel = ViewModelDI().toast
     ) {
         self.lineOrRoute = lineOrRoute
         self.parameters = parameters
@@ -234,6 +243,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         self.errorBannerVM = errorBannerVM
         self.rightSideContent = rightSideContent
         self.favoritesUsecases = favoritesUsecases
+        self.toastVM = toastVM
     }
 
     private struct RouteStopsParams: Equatable {
@@ -274,6 +284,26 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 favoriteDialog(stop: showFavoritesStopConfirmation)
             }
         }
+        .onChange(of: favorites) { _ in
+            showFirstTimeFavoritesToast = context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+        }
+        .onChange(of: showFirstTimeFavoritesToast) { _ in
+            if showFirstTimeFavoritesToast {
+                toastVM.showToast(
+                    toast:
+                    ToastState(
+                        message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
+                        duration: .indefinite,
+                        onClose: { showFirstTimeFavoritesToast = false },
+                        actionLabel: nil,
+                        onAction: nil
+                    )
+                )
+            } else {
+                toastVM.hideToast()
+            }
+        }
+        .toast(vm: toastVM)
     }
 
     @ViewBuilder private func routeStopList(

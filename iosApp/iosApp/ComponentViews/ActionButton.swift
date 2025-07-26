@@ -37,6 +37,8 @@ struct ActionButton: View {
     }
 
     let kind: Kind
+    var circleColorOverride: Color? = nil
+    var iconColorOverride: Color? = nil
     let action: () -> Void
 
     @ScaledMetric private var circleSize: CGFloat = 32
@@ -56,20 +58,28 @@ struct ActionButton: View {
     }
 
     var circleColor: Color {
-        switch kind {
-        case .back, .close:
-            Color.contrast
-        case .clear:
-            Color.deemphasized
+        if let circleColorOverride {
+            circleColorOverride
+        } else {
+            switch kind {
+            case .back, .close:
+                Color.contrast
+            case .clear:
+                Color.deemphasized
+            }
         }
     }
 
     var iconColor: Color {
-        switch kind {
-        case .back, .close:
-            Color.fill2
-        case .clear:
-            Color.fill3
+        if let iconColorOverride {
+            iconColorOverride
+        } else {
+            switch kind {
+            case .back, .close:
+                Color.fill2
+            case .clear:
+                Color.fill3
+            }
         }
     }
 
