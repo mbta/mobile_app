@@ -6,7 +6,6 @@ import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 
 class RouteDetailsStopListTest {
@@ -112,70 +111,6 @@ class RouteDetailsStopListTest {
                     globalData,
                 )
                 .directions,
-        )
-    }
-
-    @Test
-    fun `getLineOrRoute gets route`() {
-        val objects = ObjectCollectionBuilder()
-        val ungroupedLine = objects.line()
-        val route1 = objects.route()
-        val route2 = objects.route()
-        val route3 = objects.route { lineId = ungroupedLine.id }
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteCardData.LineOrRoute.Route(route1),
-            RouteDetailsStopList.getLineOrRoute(route1.id, globalData),
-        )
-        assertEquals(
-            RouteCardData.LineOrRoute.Route(route2),
-            RouteDetailsStopList.getLineOrRoute(route2.id, globalData),
-        )
-        assertEquals(
-            RouteCardData.LineOrRoute.Route(route3),
-            RouteDetailsStopList.getLineOrRoute(route3.id, globalData),
-        )
-    }
-
-    @Test
-    fun `getLineOrRoute gets line excluding shuttles`() {
-        val objects = ObjectCollectionBuilder()
-        val line = objects.line { id = "line-Green" }
-        val route1 = objects.route { lineId = line.id }
-        val route2 = objects.route { lineId = line.id }
-        val shuttleRoute =
-            objects.route {
-                id = "Shuttle-$id"
-                lineId = line.id
-            }
-        assertTrue(shuttleRoute.isShuttle)
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
-            RouteDetailsStopList.getLineOrRoute(line.id, globalData),
-        )
-    }
-
-    @Test
-    fun `getLineOrRoute gets line if route in grouped line`() {
-        val objects = ObjectCollectionBuilder()
-        val line = objects.line { id = "line-Green" }
-        val route1 = objects.route { lineId = line.id }
-        val route2 = objects.route { lineId = line.id }
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
-            RouteDetailsStopList.getLineOrRoute(route1.id, globalData),
-        )
-        assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
-            RouteDetailsStopList.getLineOrRoute(route2.id, globalData),
         )
     }
 

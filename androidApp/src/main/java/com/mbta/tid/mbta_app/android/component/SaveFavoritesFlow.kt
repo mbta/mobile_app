@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -36,13 +37,18 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun SaveFavoritesFlow(
@@ -51,6 +57,8 @@ fun SaveFavoritesFlow(
     directions: List<Direction>,
     selectedDirection: Int,
     context: EditFavoritesContext,
+    global: GlobalResponse?,
+    toastViewModel: IToastViewModel = koinInject(),
     isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
     onClose: () -> Unit,
@@ -61,15 +69,52 @@ fun SaveFavoritesFlow(
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))
 
     val isBusOneDirection = directions.size == 1 && lineOrRoute.sortRoute.type == RouteType.BUS
+    val localContext = LocalContext.current
+
+    fun updateAndToast(update: Map<RouteStopDirection, Boolean>) {
+        updateFavorites(update)
+        val favorited = update.filter { it.value }
+        val firstFavorite = favorited.entries.firstOrNull() ?: return
+        val labels = firstFavorite.key.getLabels(global, localContext)
+        var toastText: String? = null
+
+        // If there's only a single favorite, show direction, route, and stop in the toast
+        if (favorited.size == 1 && firstFavorite.value) {
+            toastText =
+                labels?.let {
+                    localContext.getString(
+                        R.string.favorites_toast_add,
+                        it.direction,
+                        it.route,
+                        it.stop,
+                    )
+                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
+        }
+        // If there are two favorites and they both have the same route and stop, omit direction
+        else if (
+            favorited.size == 2 &&
+                favorited.keys.all {
+                    it.route == firstFavorite.key.route && it.stop == firstFavorite.key.stop
+                }
+        ) {
+            toastText =
+                labels?.let {
+                    localContext.getString(R.string.favorites_toast_add_multi, it.route, it.stop)
+                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
+        }
+
+        toastText?.let {
+            toastViewModel.showToast(ToastViewModel.Toast(it, ToastViewModel.Duration.Short))
+        }
+    }
 
     // Save automatically without confirmation modal
     if (isUnFavoriting || isBusOneDirection && directions.any { it.id == selectedDirection }) {
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)
-        updateFavorites(mapOf(rsd to !isFavorite(rsd)))
+        updateAndToast(mapOf(rsd to !isFavorite(rsd)))
 
         onClose()
     } else {
-
         FavoriteConfirmationDialog(
             lineOrRoute,
             stop,
@@ -86,7 +131,7 @@ fun SaveFavoritesFlow(
                         // whether or not it already is
                         (directions.size == 1 && it.id != selectedDirection)
                 },
-            updateFavorites = updateFavorites,
+            updateFavorites = ::updateAndToast,
             onClose = onClose,
         )
     }

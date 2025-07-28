@@ -19,10 +19,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -42,6 +42,7 @@ import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
@@ -51,15 +52,28 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.time.Clock
+import org.koin.compose.koinInject
 
 @Composable
 fun EditFavoritesPage(
     global: GlobalResponse?,
     favoritesViewModel: IFavoritesViewModel,
+    toastViewModel: IToastViewModel = koinInject(),
     onClose: () -> Unit,
 ) {
     val state by favoritesViewModel.models.collectAsState()
+    val context = LocalContext.current
+    fun getToastLabel(routeStopDirection: RouteStopDirection): String {
+        val labels = routeStopDirection.getLabels(global, context)
+
+        return labels?.let {
+            context.getString(R.string.favorites_toast_remove, it.direction, it.route, it.stop)
+        } ?: context.getString(R.string.favorites_toast_remove_fallback)
+    }
+    val toastUndoLabel = stringResource(R.string.undo)
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
 
@@ -75,6 +89,22 @@ fun EditFavoritesPage(
                 mapOf(it to false),
                 EditFavoritesContext.Favorites,
                 it.direction,
+            )
+
+            toastViewModel.showToast(
+                ToastViewModel.Toast(
+                    getToastLabel(it),
+                    duration = ToastViewModel.Duration.Short,
+                    actionLabel = toastUndoLabel,
+                    onAction = {
+                        favoritesViewModel.updateFavorites(
+                            mapOf(it to true),
+                            EditFavoritesContext.Favorites,
+                            it.direction,
+                        )
+                        toastViewModel.hideToast()
+                    },
+                )
             )
         }
     }

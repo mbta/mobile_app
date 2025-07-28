@@ -579,4 +579,59 @@ class GlobalResponseTest {
             )
         assertTrue(greenPatterns.map { it.routeId }.all { it.startsWith("Green-") })
     }
+
+    @Test
+    fun `getLineOrRoute gets route`() {
+        val objects = ObjectCollectionBuilder()
+        val ungroupedLine = objects.line()
+        val route1 = objects.route()
+        val route2 = objects.route()
+        val route3 = objects.route { lineId = ungroupedLine.id }
+
+        val globalData = GlobalResponse(objects)
+
+        assertEquals(RouteCardData.LineOrRoute.Route(route1), globalData.getLineOrRoute(route1.id))
+        assertEquals(RouteCardData.LineOrRoute.Route(route2), globalData.getLineOrRoute(route2.id))
+        assertEquals(RouteCardData.LineOrRoute.Route(route3), globalData.getLineOrRoute(route3.id))
+    }
+
+    @Test
+    fun `getLineOrRoute gets line excluding shuttles`() {
+        val objects = ObjectCollectionBuilder()
+        val line = objects.line { id = "line-Green" }
+        val route1 = objects.route { lineId = line.id }
+        val route2 = objects.route { lineId = line.id }
+        val shuttleRoute =
+            objects.route {
+                id = "Shuttle-$id"
+                lineId = line.id
+            }
+        assertTrue(shuttleRoute.isShuttle)
+
+        val globalData = GlobalResponse(objects)
+
+        assertEquals(
+            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            globalData.getLineOrRoute(line.id),
+        )
+    }
+
+    @Test
+    fun `getLineOrRoute gets line if route in grouped line`() {
+        val objects = ObjectCollectionBuilder()
+        val line = objects.line { id = "line-Green" }
+        val route1 = objects.route { lineId = line.id }
+        val route2 = objects.route { lineId = line.id }
+
+        val globalData = GlobalResponse(objects)
+
+        assertEquals(
+            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            globalData.getLineOrRoute(route1.id),
+        )
+        assertEquals(
+            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            globalData.getLineOrRoute(route2.id),
+        )
+    }
 }
