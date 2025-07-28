@@ -405,6 +405,10 @@
     <string name="vehicle_prediction_schedule_status_early_other">下一趟%1$s%2$s提前</string>
     <string name="vehicle_prediction_time_first">%1$s於%2$s到站</string>
     <string name="vehicle_prediction_time_other">下一趟車將於%1$s到站</string>
+    <string name="vehicle_schedule_hours_first">%1$s預定將於%2$d小時內到站</string>
+    <string name="vehicle_schedule_hours_minutes_first">%1$s預定將於%2$d小時%3$d分鐘內到站</string>
+    <string name="vehicle_schedule_hours_minutes_other">下一趟車預定將在%1$d小時%2$d分鐘內抵達</string>
+    <string name="vehicle_schedule_hours_other">下一趟車預定將在%1$d小時內抵達</string>
     <string name="vehicle_schedule_minutes_first">%1$s預定將於%2$d分鐘內到站</string>
     <string name="vehicle_schedule_minutes_other">下一趟車預定將在%1$d分鐘內抵達</string>
     <string name="vehicle_schedule_time_first">%1$s預定於%2$s到站</string>

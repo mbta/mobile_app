@@ -103,13 +103,15 @@ sealed class TripInstantDisplay {
                 ) {
                     Hidden
                 } else {
-                    val scheduleTimeRemaining = scheduleTime.minus(now)
-                    if (scheduleTimeRemaining > SCHEDULE_CLOCK_CUTOFF || forceAsTime) {
+                    val scheduleMinutesRemaining =
+                        scheduleTime.minus(now).toDouble(DurationUnit.MINUTES).roundToInt()
+                    if (
+                        scheduleMinutesRemaining >=
+                            SCHEDULE_CLOCK_CUTOFF.toDouble(DurationUnit.MINUTES) || forceAsTime
+                    ) {
                         ScheduleTime(scheduleTime, headline = showTimeAsHeadline)
                     } else {
-                        val scheduleMinutes =
-                            scheduleTimeRemaining.toDouble(DurationUnit.MINUTES).roundToInt()
-                        ScheduleMinutes(scheduleMinutes)
+                        ScheduleMinutes(scheduleMinutesRemaining)
                     }
                 }
             }

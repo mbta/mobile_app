@@ -6,7 +6,6 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.formatTime
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.utils.MinutesFormat
-import io.sentry.Sentry
 import kotlin.time.Instant
 
 @Composable
@@ -28,15 +27,38 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
         }
         is TripInstantDisplay.ScheduleMinutes -> {
             val format = MinutesFormat.from(this.minutes)
-            if (format !is MinutesFormat.Minute) {
-                Sentry.captureMessage(
-                    "Schedules displayed as minutes should never be over 1 hour, " +
-                        "content description text is not supported for this case"
-                )
-                ""
-            } else if (isFirst)
-                stringResource(R.string.vehicle_schedule_minutes_first, vehicleType, format.minutes)
-            else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
+            when (format) {
+                is MinutesFormat.Hour ->
+                    if (isFirst)
+                        stringResource(
+                            R.string.vehicle_schedule_hours_first,
+                            vehicleType,
+                            format.hours,
+                        )
+                    else stringResource(R.string.vehicle_schedule_hours_other, format.hours)
+                is MinutesFormat.HourMinute ->
+                    if (isFirst)
+                        stringResource(
+                            R.string.vehicle_schedule_hours_minutes_first,
+                            vehicleType,
+                            format.hours,
+                            format.minutes,
+                        )
+                    else
+                        stringResource(
+                            R.string.vehicle_schedule_hours_minutes_other,
+                            format.hours,
+                            format.minutes,
+                        )
+                is MinutesFormat.Minute ->
+                    if (isFirst)
+                        stringResource(
+                            R.string.vehicle_schedule_minutes_first,
+                            vehicleType,
+                            format.minutes,
+                        )
+                    else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
+            }
         }
         is TripInstantDisplay.ScheduleTime -> {
             val time = formatTime(this.scheduledTime)
