@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android
 
-import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -65,10 +64,7 @@ fun ContentView(
         }
 
     LaunchedEffect(defaultTab, enhancedFavorites) {
-        Log.i("KB", "Default Tab changed ${defaultTab} ${enhancedFavorites} ${sheetNavEntrypoint}")
         if (sheetNavEntrypoint == null && enhancedFavorites == true) {
-            Log.i("KB", "Sheetnav entrypoint setting ${defaultTab}")
-
             sheetNavEntrypoint =
                 defaultTab?.let {
                     when (it) {
@@ -79,7 +75,6 @@ fun ContentView(
         } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
             sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }
-        Log.i("KB", "New sheetNavEntrypoint ${sheetNavEntrypoint}")
     }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()

@@ -192,7 +192,6 @@ fun MapAndSheetPage(
                     currentNavEntry.stopFilter,
                     currentNavEntry.tripFilter,
                 )
-
             else -> null
         })
     val stopDetailsVM =
@@ -315,7 +314,6 @@ fun MapAndSheetPage(
                         currentNavEntry.stopFilter,
                         currentNavEntry.tripFilter,
                     )
-
                 else -> null
             } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
@@ -349,7 +347,6 @@ fun MapAndSheetPage(
 
     fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
         try {
-            Log.i("KB", "navigateToEntrypoint ${entrypoint}")
             navController.navigate(entrypoint, popUp)
         } catch (e: IllegalStateException) {
             // This should only happen in tests when the navigation graph hasn't been initialized
@@ -377,7 +374,6 @@ fun MapAndSheetPage(
         backgroundTimestamp?.let {
             val timeSinceBackground = clock.now().minus(Instant.fromEpochMilliseconds(it))
             if (timeSinceBackground > 1.hours && sheetNavEntrypoint != null) {
-                Log.i("KB", "lifeCycleResume navigateToEntrypoint")
                 navigateToEntrypoint(sheetNavEntrypoint)
                 if (nearbyTransit.locationDataManager.hasPermission) {
                     coroutineScope.launch { nearbyTransit.viewportProvider.follow() }
@@ -397,8 +393,6 @@ fun MapAndSheetPage(
 
     LaunchedEffect(sheetNavEntrypoint) {
         if (sheetNavEntrypoint != null && previousNavEntry != null) {
-            Log.i("KB", "sheetNavEntrypoint changed navigateToEntrypoint")
-
             navigateToEntrypoint(sheetNavEntrypoint)
         }
     }
