@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
@@ -29,7 +30,7 @@ class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val defaultTabKey = stringPreferencesKey("default_tab")
-    private val hasSeenFavoritesKey = stringPreferencesKey("has_seen_favoirtes")
+    private val hasSeenFavoritesKey = booleanPreferencesKey("has_seen_favorites")
 
     override suspend fun getDefaultTab(): DefaultTab {
         return dataStore.data.map { it[defaultTabKey] }.first()?.let { DefaultTab.valueOf(it) }
@@ -41,11 +42,11 @@ class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     }
 
     override suspend fun hasSeenFavorites(): Boolean {
-        return dataStore.data.map { it[hasSeenFavoritesKey] }.first()?.let { it == "true" } ?: false
+        return dataStore.data.map { it[hasSeenFavoritesKey] }.first() ?: false
     }
 
     override suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean) {
-        dataStore.edit { it[hasSeenFavoritesKey] = hasSeenFavorites.toString() }
+        dataStore.edit { it[hasSeenFavoritesKey] = hasSeenFavorites }
     }
 }
 

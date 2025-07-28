@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
+import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
@@ -68,6 +69,7 @@ class ContentViewTests : KoinTest {
             ContentViewModel(
                 featurePromoUseCase = mockFeaturePromos,
                 onboardingRepository = MockOnboardingRepository(),
+                tabPreferencesRepository = MockTabPreferencesRepository(),
             )
 
         composeTestRule.setContent {
