@@ -12,7 +12,12 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+<<<<<<< HEAD
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+=======
+import com.mbta.tid.mbta_app.repositories.DefaultTab
+import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
+>>>>>>> aae8ab3f1 (refactor: Move recording hasSeenFavorites into FavoritesVM)
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
@@ -49,6 +54,7 @@ interface IFavoritesViewModel {
 
 class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
+    private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
@@ -122,6 +128,12 @@ class FavoritesViewModel(
             val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
+            val hasSeenFavoritesPrior = tabPreferencesRepository.hasSeenFavorites()
+            if (!hasSeenFavoritesPrior) {
+                // first time seeing favorites, default to nearby going forward
+                tabPreferencesRepository.setHasSeenFavorites(true)
+                tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
+            }
         }
 
         LaunchedEffect(Unit) {

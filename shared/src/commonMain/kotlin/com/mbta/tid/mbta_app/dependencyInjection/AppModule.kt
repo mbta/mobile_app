@@ -59,7 +59,7 @@ fun appModule(appVariant: AppVariant) = module {
 fun repositoriesModule(repositories: IRepositories): Module {
     return module {
         single<IConfigRepository> { repositories.config }
-        single<ITabPreferencesRepository> { repositories.defaultTab }
+        single<ITabPreferencesRepository> { repositories.tabPreferences }
         single<IErrorBannerStateRepository> { repositories.errorBanner }
         single<IGlobalRepository> { repositories.global }
         single<ILastLaunchedAppVersionRepository> { repositories.lastLaunchedAppVersion }

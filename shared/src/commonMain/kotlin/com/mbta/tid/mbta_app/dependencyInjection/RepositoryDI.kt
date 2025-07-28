@@ -91,7 +91,7 @@ interface IRepositories {
     val accessibilityStatus: IAccessibilityStatusRepository?
     val alerts: IAlertsRepository?
     val config: IConfigRepository
-    val defaultTab: ITabPreferencesRepository
+    val tabPreferences: ITabPreferencesRepository
     val currentAppVersion: ICurrentAppVersionRepository?
     val errorBanner: IErrorBannerStateRepository
     val global: IGlobalRepository
@@ -120,7 +120,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val alerts: IAlertsRepository by inject()
     override val config: IConfigRepository by inject()
     override val currentAppVersion: ICurrentAppVersionRepository by inject()
-    override val defaultTab: ITabPreferencesRepository by inject()
+    override val tabPreferences: ITabPreferencesRepository by inject()
     override val errorBanner: IErrorBannerStateRepository by inject()
     override val global: IGlobalRepository by inject()
     override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository by inject()
@@ -151,7 +151,7 @@ class RealRepositories : IRepositories {
     override val alerts = null
     override val config = ConfigRepository()
     override val currentAppVersion = null
-    override val defaultTab = TabPreferencesRepository()
+    override val tabPreferences = TabPreferencesRepository()
     override val errorBanner = ErrorBannerStateRepository()
     override val global = GlobalRepository()
     override val lastLaunchedAppVersion = LastLaunchedAppVersionRepository()
@@ -181,7 +181,7 @@ class MockRepositories : IRepositories {
     override var config: IConfigRepository = MockConfigRepository()
     override var currentAppVersion: ICurrentAppVersionRepository =
         MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u))
-    override var defaultTab: ITabPreferencesRepository = MockTabPreferencesRepository()
+    override var tabPreferences: ITabPreferencesRepository = MockTabPreferencesRepository()
     override var errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository()
     override var global: IGlobalRepository = IdleGlobalRepository()
     override var lastLaunchedAppVersion: ILastLaunchedAppVersionRepository =

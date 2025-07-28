@@ -51,10 +51,6 @@ class ContentViewModel(
     fun loadDefaultTabState() {
         CoroutineScope(Dispatchers.IO).launch {
             val defaultTab = tabPreferencesRepository.getDefaultTab()
-            val hasSeenFavorites = tabPreferencesRepository.hasSeenFavorites()
-            if (!hasSeenFavorites && defaultTab == DefaultTab.Favorites) {
-                tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
-            }
             _defaultTab.value = defaultTab
         }
     }
