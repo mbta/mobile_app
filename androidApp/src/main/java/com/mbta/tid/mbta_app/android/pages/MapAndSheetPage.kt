@@ -669,21 +669,47 @@ fun MapAndSheetPage(
                 }
             }
         }
+    }
 
-        // setting WindowInsets top to 0 to prevent the sheet from having extra padding on top even
-        // when not fully expanded https://stackoverflow.com/a/77361483
-        BarAndToastScaffold(
-            bottomBar = bottomBar,
-            contentWindowInsets = WindowInsets(top = 0.dp),
-        ) { outerSheetPadding ->
-            val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
-            if (hideMaps) {
-                LaunchedEffect(null) {
-                    nearbyTransit.locationDataManager.currentLocation.collect { location ->
-                        nearbyTransit.viewportProvider.updateCameraState(location)
-                    }
+    // setting WindowInsets top to 0 to prevent the sheet from having extra padding on top even
+    // when not fully expanded https://stackoverflow.com/a/77361483
+    BarAndToastScaffold(bottomBar = bottomBar, contentWindowInsets = WindowInsets(top = 0.dp)) {
+        outerSheetPadding ->
+        val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
+        if (hideMaps) {
+            LaunchedEffect(null) {
+                nearbyTransit.locationDataManager.currentLocation.collect { location ->
+                    nearbyTransit.viewportProvider.updateCameraState(location)
                 }
+            }
 
+            SearchBarOverlay(
+                searchExpanded,
+                showSearchBar,
+                ::handleSearchExpandedChange,
+                ::handleStopNavigation,
+                ::handleRouteNavigation,
+                searchFocusRequester,
+                onBarGloballyPositioned = {},
+            ) {
+                SheetContent(
+                    Modifier.background(colorResource(R.color.sheet_background))
+                        .padding(top = if (showSearchBar) 64.dp else 0.dp)
+                        .statusBarsPadding()
+                        .fillMaxSize()
+                )
+            }
+        } else {
+            BottomSheetScaffold(
+                sheetDragHandle = { DragHandle() },
+                sheetContent = {
+                    Box(Modifier.fillMaxSize()) {
+                        SheetContent(Modifier.padding(outerSheetPadding))
+                    }
+                },
+                sheetContainerColor = colorResource(R.color.sheet_background),
+                scaffoldState = nearbyTransit.scaffoldState,
+            ) { sheetPadding ->
                 SearchBarOverlay(
                     searchExpanded,
                     showSearchBar,
@@ -691,89 +717,61 @@ fun MapAndSheetPage(
                     ::handleStopNavigation,
                     ::handleRouteNavigation,
                     searchFocusRequester,
-                    onBarGloballyPositioned = {},
-                ) {
-                    SheetContent(
-                        Modifier.background(colorResource(R.color.sheet_background))
-                            .padding(top = if (showSearchBar) 64.dp else 0.dp)
-                            .statusBarsPadding()
-                            .fillMaxSize()
-                    )
-                }
-            } else {
-                BottomSheetScaffold(
-                    sheetDragHandle = { DragHandle() },
-                    sheetContent = {
-                        Box(Modifier.fillMaxSize()) {
-                            SheetContent(Modifier.padding(outerSheetPadding))
+                    onBarGloballyPositioned = { layoutCoordinates ->
+                        with(density) {
+                            viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
                         }
                     },
-                    sheetContainerColor = colorResource(R.color.sheet_background),
-                    scaffoldState = nearbyTransit.scaffoldState,
-                ) { sheetPadding ->
-                    SearchBarOverlay(
-                        searchExpanded,
-                        showSearchBar,
-                        ::handleSearchExpandedChange,
-                        ::handleStopNavigation,
-                        ::handleRouteNavigation,
-                        searchFocusRequester,
-                        onBarGloballyPositioned = { layoutCoordinates ->
-                            with(density) {
-                                viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
-                            }
-                        },
-                    ) {
-                        HomeMapView(
-                            sheetPadding =
-                                sheetPadding.plus(
-                                    PaddingValues(
-                                        start = 0.dp,
-                                        end = 0.dp,
-                                        top = (viewModel.searchBarHeight.value ?: 0.dp),
-                                        bottom = 0.dp,
-                                    )
-                                ),
-                            lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
-                            nearbyTransitSelectingLocationState =
-                                nearbyTransit.nearbyTransitSelectingLocationState,
-                            locationDataManager = nearbyTransit.locationDataManager,
-                            viewportProvider = nearbyTransit.viewportProvider,
-                            currentNavEntry = currentNavEntry,
-                            handleStopNavigation = ::handleStopNavigation,
-                            handleVehicleTap = ::handleVehicleTap,
-                            vehiclesData = vehiclesData,
-                            routeCardData = routeCardData,
-                            viewModel = mapViewModel,
-                            mapboxConfigManager = mapboxConfigManager,
-                        )
-                    }
+                ) {
+                    HomeMapView(
+                        sheetPadding =
+                            sheetPadding.plus(
+                                PaddingValues(
+                                    start = 0.dp,
+                                    end = 0.dp,
+                                    top = (viewModel.searchBarHeight.value ?: 0.dp),
+                                    bottom = 0.dp,
+                                )
+                            ),
+                        lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
+                        nearbyTransitSelectingLocationState =
+                            nearbyTransit.nearbyTransitSelectingLocationState,
+                        locationDataManager = nearbyTransit.locationDataManager,
+                        viewportProvider = nearbyTransit.viewportProvider,
+                        currentNavEntry = currentNavEntry,
+                        handleStopNavigation = ::handleStopNavigation,
+                        handleVehicleTap = ::handleVehicleTap,
+                        vehiclesData = vehiclesData,
+                        routeCardData = routeCardData,
+                        viewModel = mapViewModel,
+                        mapboxConfigManager = mapboxConfigManager,
+                    )
                 }
             }
         }
-        if (currentModal != null) {
-            ModalBottomSheet(
-                onDismissRequest = { closeModal() },
-                sheetState = modalSheetState,
-                dragHandle = null,
-            ) {
-                Column {
-                    when (val modal = currentModal) {
-                        is ModalRoutes.AlertDetails ->
-                            AlertDetailsPage(
-                                modal.alertId,
-                                modal.lineId,
-                                modal.routeIds,
-                                modal.stopId,
-                                nearbyTransit.alertData,
-                                goBack = { closeModal() },
-                            )
+    }
+    if (currentModal != null) {
+        ModalBottomSheet(
+            onDismissRequest = { closeModal() },
+            sheetState = modalSheetState,
+            dragHandle = null,
+        ) {
+            Column {
+                when (val modal = currentModal) {
+                    is ModalRoutes.AlertDetails ->
+                        AlertDetailsPage(
+                            modal.alertId,
+                            modal.lineId,
+                            modal.routeIds,
+                            modal.stopId,
+                            nearbyTransit.alertData,
+                            goBack = { closeModal() },
+                        )
 
-                        is ModalRoutes.Explainer ->
-                            ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
+                    is ModalRoutes.Explainer ->
+                        ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
 
-                        null -> {}
-                    }
+                    null -> {}
                 }
             }
         }
