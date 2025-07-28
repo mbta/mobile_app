@@ -349,6 +349,7 @@ fun MapAndSheetPage(
 
     fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
         try {
+            Log.i("KB", "navigateToEntrypoint ${entrypoint}")
             navController.navigate(entrypoint, popUp)
         } catch (e: IllegalStateException) {
             // This should only happen in tests when the navigation graph hasn't been initialized
@@ -376,6 +377,7 @@ fun MapAndSheetPage(
         backgroundTimestamp?.let {
             val timeSinceBackground = clock.now().minus(Instant.fromEpochMilliseconds(it))
             if (timeSinceBackground > 1.hours && sheetNavEntrypoint != null) {
+                Log.i("KB", "lifeCycleResume navigateToEntrypoint")
                 navigateToEntrypoint(sheetNavEntrypoint)
                 if (nearbyTransit.locationDataManager.hasPermission) {
                     coroutineScope.launch { nearbyTransit.viewportProvider.follow() }
@@ -394,7 +396,9 @@ fun MapAndSheetPage(
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) {
-        if (sheetNavEntrypoint != null) {
+        if (sheetNavEntrypoint != null && previousNavEntry != null) {
+            Log.i("KB", "sheetNavEntrypoint changed navigateToEntrypoint")
+
             navigateToEntrypoint(sheetNavEntrypoint)
         }
     }
@@ -439,29 +443,33 @@ fun MapAndSheetPage(
     }
 
     @Composable
-    fun SheetContent(modifier: Modifier = Modifier) {
-        if (sheetNavEntrypoint == null) {
-            CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                SheetPage {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.loadingShimmer(),
-                    ) {
-                        SheetHeader(title = stringResource(R.string.got_it))
-
-                        ErrorBanner(errorBannerViewModel)
-                        RouteCardList(
-                            routeCardData = null,
-                            emptyView = {},
-                            global = null,
-                            now = now,
-                            isFavorite = { false },
-                            togglePinnedRoute = {},
-                            onOpenStopDetails = { _, _ -> },
-                        )
-                    }
+    fun LoadingSheetContents() {
+        CompositionLocalProvider(IsLoadingSheetContents provides true) {
+            SheetPage {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.loadingShimmer(),
+                ) {
+                    SheetHeader(title = stringResource(R.string.got_it))
+                    ErrorBanner(errorBannerViewModel)
+                    RouteCardList(
+                        routeCardData = null,
+                        emptyView = {},
+                        global = null,
+                        now = now,
+                        isFavorite = { false },
+                        togglePinnedRoute = {},
+                        onOpenStopDetails = { _, _ -> },
+                    )
                 }
             }
+        }
+    }
+
+    @Composable
+    fun SheetContent(modifier: Modifier = Modifier) {
+        if (sheetNavEntrypoint == null) {
+            LoadingSheetContents()
         } else {
             NavHost(
                 navController,
