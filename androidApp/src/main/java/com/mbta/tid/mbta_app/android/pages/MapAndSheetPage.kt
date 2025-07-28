@@ -153,7 +153,7 @@ fun MapAndSheetPage(
     val hideMaps = SettingsCache.get(Settings.HideMaps)
 
     val currentNavBackStackEntry by
-    navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
+        navController.currentBackStackEntryFlow.collectAsStateWithLifecycle(initialValue = null)
 
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
@@ -219,8 +219,8 @@ fun MapAndSheetPage(
     LaunchedEffect(currentNavEntry) {
         if (
             previousNavEntry is SheetRoutes.StopDetails &&
-            currentNavEntry is SheetRoutes.StopDetails &&
-            (previousNavEntry.stopId != currentNavEntry.stopId ||
+                currentNavEntry is SheetRoutes.StopDetails &&
+                (previousNavEntry.stopId != currentNavEntry.stopId ||
                     previousNavEntry.stopFilter != currentNavEntry.stopFilter)
         ) {
             tileScrollState.scrollTo(0)
@@ -405,7 +405,7 @@ fun MapAndSheetPage(
     LaunchedEffect(currentNavEntry) {
         if (
             !SheetRoutes.retainSheetSize(previousNavEntry, currentNavEntry) &&
-            SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
+                SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
         ) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
@@ -413,7 +413,7 @@ fun MapAndSheetPage(
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentModal by
-    rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
+        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
 
     fun openModal(modal: ModalRoutes) {
         currentModal = modal
@@ -497,9 +497,9 @@ fun MapAndSheetPage(
                     // Skip animation if navigating within a single stop
                     if (
                         initialStopId != null &&
-                        targetStopId != null &&
-                        initialStopId == targetStopId &&
-                        initialStopFilter?.routeId == targetStopFilter?.routeId
+                            targetStopId != null &&
+                            initialStopId == targetStopId &&
+                            initialStopFilter?.routeId == targetStopFilter?.routeId
                     ) {
                         EnterTransition.None
                     }
@@ -541,7 +541,8 @@ fun MapAndSheetPage(
                         )
                     }
                 }
-                composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry
+                    ->
                     val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
                     val filters =
                         StopDetailsPageFilters(
@@ -579,7 +580,8 @@ fun MapAndSheetPage(
                     }
                 }
 
-                composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry
+                    ->
                     val navRoute: SheetRoutes.RoutePicker = backStackEntry.toRoute()
 
                     LaunchedEffect(Unit) {
@@ -594,32 +596,34 @@ fun MapAndSheetPage(
                             onOpenPickerPath = { newPath, context ->
                                 val currentPickerRoute =
                                     navController.currentRouteAs(SheetRoutes.RoutePicker::class)
-                                if (currentPickerRoute == null || currentPickerRoute.path != newPath) {
+                                if (
+                                    currentPickerRoute == null || currentPickerRoute.path != newPath
+                                ) {
                                     navController.navigate(
-                                        SheetRoutes.RoutePicker(
-                                            newPath,
-                                            context
-                                        )
+                                        SheetRoutes.RoutePicker(newPath, context)
                                     )
                                 }
                             },
                             onOpenRouteDetails = ::handlePickRouteNavigation,
                             onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
                             onBack = onBack@{
-                                val currentPickerRoute =
-                                    navController.currentRouteAs(SheetRoutes.RoutePicker::class)
-                                        ?: return@onBack
-                                if (currentPickerRoute.path != RoutePickerPath.Root) {
-                                    navController.popBackStackFrom(SheetRoutes.RoutePicker::class)
-                                }
-                            },
+                                    val currentPickerRoute =
+                                        navController.currentRouteAs(SheetRoutes.RoutePicker::class)
+                                            ?: return@onBack
+                                    if (currentPickerRoute.path != RoutePickerPath.Root) {
+                                        navController.popBackStackFrom(
+                                            SheetRoutes.RoutePicker::class
+                                        )
+                                    }
+                                },
                             onClose = { navigateToEntrypointFrom(SheetRoutes.RoutePicker::class) },
                             errorBannerViewModel = errorBannerViewModel,
                         )
                     }
                 }
 
-                composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry
+                    ->
                     val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
 
                     val lineOrRoute = nearbyTransit.globalResponse?.getLineOrRoute(navRoute.routeId)
@@ -646,7 +650,8 @@ fun MapAndSheetPage(
                 }
 
                 composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
-                    // for ViewModel reasons, must be within the `composable` to be the same instance
+                    // for ViewModel reasons, must be within the `composable` to be the same
+                    // instance
                     val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
                     LaunchedEffect(Unit) {
                         if (!navBarVisible && !searchExpanded) showNavBar()
@@ -659,11 +664,7 @@ fun MapAndSheetPage(
                             onOpenStopDetails = { stopId, filter ->
                                 updateVisitHistory(stopId)
                                 navController.navigate(
-                                    SheetRoutes.StopDetails(
-                                        stopId,
-                                        filter,
-                                        null
-                                    )
+                                    SheetRoutes.StopDetails(stopId, filter, null)
                                 )
                             },
                             openSearch = ::openSearch,
@@ -679,7 +680,7 @@ fun MapAndSheetPage(
         // when not fully expanded https://stackoverflow.com/a/77361483
         BarAndToastScaffold(
             bottomBar = bottomBar,
-            contentWindowInsets = WindowInsets(top = 0.dp)
+            contentWindowInsets = WindowInsets(top = 0.dp),
         ) { outerSheetPadding ->
             val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
             if (hideMaps) {
