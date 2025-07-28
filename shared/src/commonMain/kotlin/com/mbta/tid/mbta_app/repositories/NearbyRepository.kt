@@ -40,7 +40,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
             nearbyLeafStops = findLeafStops()
         }
 
-        var allNearbyStops =
+        val allNearbyStops =
             nearbyLeafStops
                 .flatMapTo(mutableSetOf()) { (stopId, distance) ->
                     val stop = global.stops[stopId] ?: return@flatMapTo emptyList()
@@ -71,6 +71,8 @@ class NearbyRepository : KoinComponent, INearbyRepository {
         globalData: GlobalResponse,
     ): List<String> {
         val originalStopIdSet = stopIds.toSet()
+        val originalStopOrder = stopIds.mapIndexed { index, id -> Pair(id, index) }.toMap()
+
         val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
 
         return RoutePattern.patternsGroupedByLineOrRouteAndStop(
@@ -84,6 +86,7 @@ class NearbyRepository : KoinComponent, INearbyRepository {
                 }
             }
             .distinct()
+            .sortedBy { originalStopOrder[it] }
     }
 }
 
