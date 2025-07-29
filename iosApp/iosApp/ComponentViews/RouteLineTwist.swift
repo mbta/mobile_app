@@ -11,217 +11,124 @@ import SwiftUI
 
 struct RouteLineTwist: View {
     let color: Color
-    let proportionClosed: Double
+    let proportionClosed: Float
     let connections: [(RouteBranchSegment.StickConnection, Bool)]
 
     // according to https://swiftui-lab.com/swiftui-animations-part1/ this is how you get animated paths in SwiftUI
 
     struct TwistShadowShape: SwiftUI.Shape {
-        var proportionClosed: Double
+        var proportionClosed: Float
         let connection: RouteBranchSegment.StickConnection
 
-        var animatableData: Double {
+        var animatableData: Float {
             get { proportionClosed }
             set { proportionClosed = newValue }
         }
 
-        func path(in rect: CGRect) -> Path {
-            let openFromVPos = connection.fromVPos == .center ? .bottom : connection.fromVPos
-            let openToVPos = connection.toVPos == .center ? .bottom : connection.toVPos
-            let opensToNothing = openFromVPos == openToVPos
-            if opensToNothing, proportionClosed == 0 { return Path() }
-            let topY = RouteLineTwist.lerp(
-                StickDiagram.y(openFromVPos, size: rect.size),
-                StickDiagram.y(connection.fromVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let bottomY = RouteLineTwist.lerp(
-                StickDiagram.y(openToVPos, size: rect.size),
-                StickDiagram.y(connection.toVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let centerY = (topY + bottomY) / 2
-            let topCenterX = StickDiagram.x(connection.fromLane, size: rect.size)
-            // when the twist is untwisted, we want to keep using the from lane so that the segment below the toggle
-            // lines up right
-            let bottomCenterX = lerp(
-                topCenterX,
-                StickDiagram.x(connection.toLane, size: rect.size),
-                t: proportionClosed
-            )
-            let height = bottomY - topY
-            let twistSlantDY = height / 32 * proportionClosed
-            let centerCenterX = (topCenterX + bottomCenterX) / 2
-            let twistSlantDX = rect.width / 8 * proportionClosed
+        func path(in rect: CGRect) -> SwiftUI.Path {
+            guard let shape = StickDiagramShapes.shared.twisted(
+                connection: connection,
+                rect: rect.into(),
+                proportionClosed: proportionClosed
+            ) else { return .init() }
             return Path {
-                $0.move(to: .init(x: centerCenterX + twistSlantDX, y: centerY + twistSlantDY))
-                $0.addLine(to: .init(x: centerCenterX - twistSlantDX, y: centerY - twistSlantDY))
+                $0.move(to: shape.shadow.start.into())
+                $0.addLine(to: shape.shadow.end.into())
             }
         }
     }
 
     struct TwistCurvesShape: SwiftUI.Shape {
-        var proportionClosed: Double
+        var proportionClosed: Float
         let connection: RouteBranchSegment.StickConnection
 
-        var animatableData: Double {
+        var animatableData: Float {
             get { proportionClosed }
             set { proportionClosed = newValue }
         }
 
-        func path(in rect: CGRect) -> Path {
-            let openFromVPos = connection.fromVPos == .center ? .bottom : connection.fromVPos
-            let openToVPos = connection.toVPos == .center ? .bottom : connection.toVPos
-            let opensToNothing = openFromVPos == openToVPos
-            if opensToNothing, proportionClosed == 0 { return Path() }
-            let topY = lerp(
-                StickDiagram.y(openFromVPos, size: rect.size),
-                StickDiagram.y(connection.fromVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let bottomY = lerp(
-                StickDiagram.y(openToVPos, size: rect.size),
-                StickDiagram.y(connection.toVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let centerY = (topY + bottomY) / 2
-            let topCenterX = StickDiagram.x(connection.fromLane, size: rect.size)
-            // when the twist is untwisted, we want to keep using the from lane so that the segment below the toggle
-            // lines up right
-            let bottomCenterX = lerp(
-                topCenterX,
-                StickDiagram.x(connection.toLane, size: rect.size),
-                t: proportionClosed
-            )
-            let height = bottomY - topY
-            let twistSlantDY = height / 32 * proportionClosed
-            let nearTwistDY = height / 9 * proportionClosed
-            let curveStartDY = height / 5
-            let curveStartControlDY = rect.height / 13
-            let curveEndControlDY = rect.height / 20
-            let centerCenterX = (topCenterX + bottomCenterX) / 2
-            let twistSlantDX = rect.width / 8 * proportionClosed
-            let nearTwistDX = rect.width / 12 * proportionClosed
-            let curveEndControlDX = rect.width / 15 * proportionClosed
+        func path(in rect: CGRect) -> SwiftUI.Path {
+            guard let shape = StickDiagramShapes.shared.twisted(
+                connection: connection,
+                rect: rect.into(),
+                proportionClosed: proportionClosed
+            ) else { return .init() }
             return Path {
-                if bottomY != rect.maxY {
-                    $0.move(to: .init(x: bottomCenterX, y: bottomY))
-                    $0.addLine(to: .init(x: bottomCenterX, y: bottomY - curveStartDY))
+                if let bottom = shape.curves.bottom {
+                    $0.move(to: bottom.into())
+                    $0.addLine(to: shape.curves.bottomCurveStart.into())
                 } else {
-                    $0.move(to: .init(x: bottomCenterX, y: bottomY - curveStartDY))
+                    $0.move(to: shape.curves.bottomCurveStart.into())
                 }
                 $0.addCurve(
-                    to: .init(x: centerCenterX + nearTwistDX, y: centerY + nearTwistDY),
-                    control1: .init(x: bottomCenterX, y: bottomY - curveStartDY - curveStartControlDY),
-                    control2: .init(
-                        x: centerCenterX + nearTwistDX - curveEndControlDX,
-                        y: centerY + nearTwistDY + curveEndControlDY
-                    )
+                    to: shape.curves.bottomNearTwist.into(),
+                    control1: shape.curves.bottomCurveStartControl.into(),
+                    control2: shape.curves.bottomNearTwistControl.into()
                 )
-                $0.addLine(to: .init(x: centerCenterX + twistSlantDX, y: centerY + twistSlantDY))
-                $0.move(to: .init(x: centerCenterX - twistSlantDX, y: centerY - twistSlantDY))
-                $0.addLine(to: .init(x: centerCenterX - nearTwistDX, y: centerY - nearTwistDY))
+                $0.addLine(to: shape.curves.shadowStart.into())
+                $0.move(to: shape.curves.shadowEnd.into())
+                $0.addLine(to: shape.curves.topNearTwist.into())
                 $0.addCurve(
-                    to: .init(x: topCenterX, y: topY + curveStartDY),
-                    control1: .init(
-                        x: centerCenterX - nearTwistDX + curveEndControlDX,
-                        y: centerY - nearTwistDY - curveEndControlDY
-                    ),
-                    control2: .init(x: topCenterX, y: topY + curveStartDY + curveStartControlDY)
+                    to: shape.curves.topCurveStart.into(),
+                    control1: shape.curves.topNearTwistControl.into(),
+                    control2: shape.curves.topCurveStartControl.into()
                 )
-                if topY != rect.minY {
-                    $0.addLine(to: .init(x: topCenterX, y: topY))
+                if let top = shape.curves.top {
+                    $0.addLine(to: top.into())
                 }
             }
         }
     }
 
     struct TwistEndsShape: SwiftUI.Shape {
-        var proportionClosed: Double
+        var proportionClosed: Float
         let connection: RouteBranchSegment.StickConnection
 
-        var animatableData: Double {
+        var animatableData: Float {
             get { proportionClosed }
             set { proportionClosed = newValue }
         }
 
-        func path(in rect: CGRect) -> Path {
-            let openFromVPos = connection.fromVPos == .center ? .bottom : connection.fromVPos
-            let openToVPos = connection.toVPos == .center ? .bottom : connection.toVPos
-            let opensToNothing = openFromVPos == openToVPos
-            if opensToNothing, proportionClosed == 0 { return Path() }
-            let topY = lerp(
-                StickDiagram.y(openFromVPos, size: rect.size),
-                StickDiagram.y(connection.fromVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let bottomY = lerp(
-                StickDiagram.y(openToVPos, size: rect.size),
-                StickDiagram.y(connection.toVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let topCenterX = StickDiagram.x(connection.fromLane, size: rect.size)
-            // when the twist is untwisted, we want to keep using the from lane so that the segment below the toggle
-            // lines up right
-            let bottomCenterX = lerp(
-                topCenterX,
-                StickDiagram.x(connection.toLane, size: rect.size),
-                t: proportionClosed
-            )
-            let height = bottomY - topY
-            let curveStartDY = height / 5
+        func path(in rect: CGRect) -> SwiftUI.Path {
+            guard let shape = StickDiagramShapes.shared.twisted(
+                connection: connection,
+                rect: rect.into(),
+                proportionClosed: proportionClosed
+            ) else { return .init() }
             return Path {
-                if bottomY == rect.maxY {
-                    $0.move(to: .init(x: bottomCenterX, y: bottomY))
-                    $0.addLine(to: .init(x: bottomCenterX, y: bottomY - curveStartDY))
+                if let bottom = shape.ends.bottom {
+                    $0.move(to: bottom.into())
+                    $0.addLine(to: shape.ends.bottomCurveStart.into())
                 }
-                if topY == rect.minY {
-                    $0.move(to: .init(x: topCenterX, y: topY + curveStartDY))
-                    $0.addLine(to: .init(x: topCenterX, y: topY))
+                if let top = shape.ends.top {
+                    $0.move(to: shape.ends.topCurveStart.into())
+                    $0.addLine(to: top.into())
                 }
             }
         }
     }
 
     struct NonTwistShape: SwiftUI.Shape {
-        var proportionClosed: Double
+        var proportionClosed: Float
         let connection: RouteBranchSegment.StickConnection
 
-        var animatableData: Double {
+        var animatableData: Float {
             get { proportionClosed }
             set { proportionClosed = newValue }
         }
 
-        func path(in rect: CGRect) -> Path {
-            let openFromVPos = connection.fromVPos == .center ? .bottom : connection.fromVPos
-            let openToVPos = connection.toVPos == .center ? .bottom : connection.toVPos
-            let opensToNothing = openFromVPos == openToVPos
-            if opensToNothing, proportionClosed == 0 { return Path() }
-            let topY = lerp(
-                StickDiagram.y(openFromVPos, size: rect.size),
-                StickDiagram.y(connection.fromVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let bottomY = lerp(
-                StickDiagram.y(openToVPos, size: rect.size),
-                StickDiagram.y(connection.toVPos, size: rect.size),
-                t: proportionClosed
-            )
-            let centerY = (topY + bottomY) / 2
-            let topCenterX = StickDiagram.x(connection.fromLane, size: rect.size)
-            // when the twist is untwisted, we want to keep using the from lane so that the segment below the toggle
-            // lines up right
-            let bottomCenterX = lerp(
-                topCenterX,
-                StickDiagram.x(connection.toLane, size: rect.size),
-                t: proportionClosed
-            )
+        func path(in rect: CGRect) -> SwiftUI.Path {
+            guard let shape = StickDiagramShapes.shared.nonTwisted(
+                connection: connection,
+                rect: rect.into(),
+                proportionClosed: proportionClosed
+            ) else { return .init() }
             return Path {
-                $0.move(to: .init(x: topCenterX, y: topY))
+                $0.move(to: shape.start.into())
                 $0.addCurve(
-                    to: .init(x: bottomCenterX, y: bottomY),
-                    control1: .init(x: topCenterX, y: centerY),
-                    control2: .init(x: bottomCenterX, y: centerY)
+                    to: shape.end.into(),
+                    control1: shape.startControl.into(),
+                    control2: shape.endControl.into()
                 )
             }
         }
@@ -240,7 +147,7 @@ struct RouteLineTwist: View {
                     let openFromVPos = connection.fromVPos == .center ? .bottom : connection.fromVPos
                     let openToVPos = connection.toVPos == .center ? .bottom : connection.toVPos
                     let opensToNothing = openFromVPos == openToVPos
-                    let stickWidth = opensToNothing ? 4 * proportionClosed : 4
+                    let stickWidth = opensToNothing ? 4 * CGFloat(proportionClosed) : 4
                     TwistShadowShape(proportionClosed: proportionClosed, connection: connection)
                         .stroke(shadowColor, style: .init(lineWidth: stickWidth, lineCap: .round))
                     if #unavailable(iOS 18.0) {
@@ -258,11 +165,6 @@ struct RouteLineTwist: View {
             })
         }
         .frame(width: 40)
-    }
-
-    // swiftlint:disable:next identifier_name
-    private static func lerp(_ x1: CGFloat, _ x2: CGFloat, t: Double) -> CGFloat {
-        x1 * (1 - t) + x2 * t
     }
 }
 

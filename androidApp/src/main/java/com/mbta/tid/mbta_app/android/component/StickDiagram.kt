@@ -17,10 +17,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
+import com.mbta.tid.mbta_app.shape.Path as SharedPath
+import com.mbta.tid.mbta_app.shape.StickDiagramShapes
 
 @Composable
 fun StickDiagram(
@@ -57,8 +58,12 @@ fun StickDiagram(
                                     ),
                                 )
                         }
+                    val shape = StickDiagramShapes.connection(connection, rect)
                     drawPath(
-                        connectionPath(connection),
+                        Path().apply {
+                            moveTo(shape.start)
+                            cubicTo(shape.startControl, shape.endControl, shape.end)
+                        },
                         color,
                         style = Stroke(stickWidth, pathEffect = pathEffect),
                     )
@@ -68,33 +73,24 @@ fun StickDiagram(
     )
 }
 
-private fun DrawScope.connectionPath(connection: RouteBranchSegment.StickConnection) =
-    Path().apply {
-        val fromX = x(connection.fromLane)
-        val toX = x(connection.toLane)
-        val controlY = yMidpoint(connection.fromVPos, connection.toVPos)
-        moveTo(fromX, y(connection.fromVPos))
-        cubicTo(fromX, controlY, toX, controlY, toX, y(connection.toVPos))
-    }
+private val DrawScope.rect: SharedPath.Rect
+    get() = SharedPath.Rect(0f, size.width, 0f, size.height)
 
-private fun DrawScope.x(lane: RouteBranchSegment.Lane) =
-    when (lane) {
-        RouteBranchSegment.Lane.Left -> 10 * density
-        RouteBranchSegment.Lane.Center -> size.width / 2
-        RouteBranchSegment.Lane.Right -> size.width - 10 * density
-    }
+private fun Path.moveTo(point: SharedPath.Point) {
+    moveTo(point.x, point.y)
+}
 
-private fun DrawScope.y(vPos: RouteBranchSegment.VPos) =
-    when (vPos) {
-        RouteBranchSegment.VPos.Top -> 0f
-        RouteBranchSegment.VPos.Center -> size.height / 2
-        RouteBranchSegment.VPos.Bottom -> size.height
-    }
+private fun Path.lineTo(point: SharedPath.Point) {
+    lineTo(point.x, point.y)
+}
 
-private fun DrawScope.yMidpoint(
-    fromVPos: RouteBranchSegment.VPos,
-    toVPos: RouteBranchSegment.VPos,
-) = (y(fromVPos) + y(toVPos)) / 2
+private fun Path.cubicTo(
+    control1: SharedPath.Point,
+    control2: SharedPath.Point,
+    to: SharedPath.Point,
+) {
+    cubicTo(control1.x, control1.y, control2.x, control2.y, to.x, to.y)
+}
 
 private val DrawScope.stickWidth
     get() = 4 * density
@@ -111,44 +107,18 @@ fun RouteLineTwist(
             onDrawBehind {
                 val shadowColor = lerp(color, Color.Companion.Black, 0.15f)
                 for ((connection, isTwisted) in connections) {
-                    // when the twist is untwisted, we want to copy the top half and ignore the
-                    // bottom half
-                    val openFromVPos =
-                        if (connection.fromVPos == RouteBranchSegment.VPos.Center)
-                            RouteBranchSegment.VPos.Bottom
-                        else connection.fromVPos
-                    val openToVPos =
-                        if (connection.toVPos == RouteBranchSegment.VPos.Center)
-                            RouteBranchSegment.VPos.Bottom
-                        else connection.toVPos
-                    val opensToNothing = openFromVPos == openToVPos
-                    if (opensToNothing && proportionClosed == 0f) continue
-                    val topY = lerp(y(openFromVPos), y(connection.fromVPos), proportionClosed)
-                    val bottomY = lerp(y(openToVPos), y(connection.toVPos), proportionClosed)
-                    val centerY = (topY + bottomY) / 2
-                    val topCenterX = x(connection.fromLane)
-                    // when the twist is untwisted, we want to keep using the from lane so that
-                    // the segment below the toggle lines up right
-                    val bottomCenterX = lerp(topCenterX, x(connection.toLane), proportionClosed)
                     if (isTwisted) {
                         // we need to draw the shadow, then the curves with round caps, then the
                         // lines with default caps
-                        val height = bottomY - topY
-                        val twistSlantDY = height / 32 * proportionClosed
-                        val nearTwistDY = height / 9 * proportionClosed
-                        val curveStartDY = height / 5
-                        val curveStartControlDY = size.height / 13
-                        val curveEndControlDY = size.height / 20
-                        val centerCenterX = (topCenterX + bottomCenterX) / 2
-                        val twistSlantDX = size.width / 8 * proportionClosed
-                        val nearTwistDX = size.width / 12 * proportionClosed
-                        val curveEndControlDX = size.width / 15 * proportionClosed
+                        val shape =
+                            StickDiagramShapes.twisted(connection, rect, proportionClosed)
+                                ?: continue
                         val stickWidth =
-                            if (opensToNothing) stickWidth * proportionClosed else stickWidth
+                            if (shape.opensToNothing) stickWidth * proportionClosed else stickWidth
                         drawPath(
                             Path().apply {
-                                moveTo(centerCenterX + twistSlantDX, centerY + twistSlantDY)
-                                lineTo(centerCenterX - twistSlantDX, centerY - twistSlantDY)
+                                moveTo(shape.shadow.start)
+                                lineTo(shape.shadow.end)
                             },
                             shadowColor,
                             style =
@@ -161,33 +131,29 @@ fun RouteLineTwist(
                         )
                         drawPath(
                             Path().apply {
-                                if (bottomY != size.height) {
-                                    moveTo(bottomCenterX, bottomY)
-                                    lineTo(bottomCenterX, bottomY - curveStartDY)
-                                } else {
-                                    moveTo(bottomCenterX, bottomY - curveStartDY)
+                                when (val bottom = shape.curves.bottom) {
+                                    null -> moveTo(shape.curves.bottomCurveStart)
+                                    else -> {
+                                        moveTo(bottom)
+                                        lineTo(shape.curves.bottomCurveStart)
+                                    }
                                 }
                                 cubicTo(
-                                    bottomCenterX,
-                                    bottomY - curveStartDY - curveStartControlDY,
-                                    centerCenterX + nearTwistDX - curveEndControlDX,
-                                    centerY + nearTwistDY + curveEndControlDY,
-                                    centerCenterX + nearTwistDX,
-                                    centerY + nearTwistDY,
+                                    shape.curves.bottomCurveStartControl,
+                                    shape.curves.bottomNearTwistControl,
+                                    shape.curves.bottomNearTwist,
                                 )
-                                lineTo(centerCenterX + twistSlantDX, centerY + twistSlantDY)
-                                moveTo(centerCenterX - twistSlantDX, centerY - twistSlantDY)
-                                lineTo(centerCenterX - nearTwistDX, centerY - nearTwistDY)
+                                lineTo(shape.curves.shadowStart)
+                                moveTo(shape.curves.shadowEnd)
+                                lineTo(shape.curves.topNearTwist)
                                 cubicTo(
-                                    centerCenterX - nearTwistDX + curveEndControlDX,
-                                    centerY - nearTwistDY - curveEndControlDY,
-                                    topCenterX,
-                                    topY + curveStartDY + curveStartControlDY,
-                                    topCenterX,
-                                    topY + curveStartDY,
+                                    shape.curves.topNearTwistControl,
+                                    shape.curves.topCurveStartControl,
+                                    shape.curves.topCurveStart,
                                 )
-                                if (topY != 0f) {
-                                    lineTo(topCenterX, topY)
+                                when (val top = shape.curves.top) {
+                                    null -> {}
+                                    else -> lineTo(top)
                                 }
                             },
                             color,
@@ -201,30 +167,32 @@ fun RouteLineTwist(
                         )
                         drawPath(
                             Path().apply {
-                                if (bottomY == size.height) {
-                                    moveTo(bottomCenterX, bottomY)
-                                    lineTo(bottomCenterX, bottomY - curveStartDY)
+                                when (val bottom = shape.ends.bottom) {
+                                    null -> {}
+                                    else -> {
+                                        moveTo(bottom)
+                                        lineTo(shape.ends.bottomCurveStart)
+                                    }
                                 }
-                                if (topY == 0f) {
-                                    moveTo(topCenterX, topY + curveStartDY)
-                                    lineTo(topCenterX, topY)
+                                when (val top = shape.ends.top) {
+                                    null -> {}
+                                    else -> {
+                                        moveTo(shape.ends.topCurveStart)
+                                        lineTo(top)
+                                    }
                                 }
                             },
                             color,
                             style = Stroke(stickWidth, pathEffect = null),
                         )
                     } else {
+                        val shape =
+                            StickDiagramShapes.nonTwisted(connection, rect, proportionClosed)
+                                ?: continue
                         drawPath(
                             Path().apply {
-                                moveTo(topCenterX, topY)
-                                cubicTo(
-                                    topCenterX,
-                                    centerY,
-                                    bottomCenterX,
-                                    centerY,
-                                    bottomCenterX,
-                                    bottomY,
-                                )
+                                moveTo(shape.start)
+                                cubicTo(shape.startControl, shape.endControl, shape.end)
                             },
                             color,
                             style = Stroke(stickWidth, pathEffect = null),

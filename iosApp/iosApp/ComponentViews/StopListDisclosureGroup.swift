@@ -14,7 +14,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
 
     @State var caretRotation: Angle = .zero
-    @State var twistFactor: Double = 1
+    @State var twistFactor: Float = 1
 
     func makeBody(configuration: Configuration) -> some View {
         VStack(spacing: 0) {
