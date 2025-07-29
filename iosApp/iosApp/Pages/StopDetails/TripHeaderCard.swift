@@ -29,22 +29,30 @@ struct TripHeaderCard: View {
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
-                // Use a clear rectangle as a spacer, the Spacer() view doesn't
-                // take up enough space, this is always exactly half
-                ColoredRouteLine(Color.clear)
                 switch spec {
-                case .vehicle, .scheduled: ColoredRouteLine(routeAccents.color)
+                case .vehicle, .scheduled:
+                    StickDiagram(
+                        routeAccents.color,
+                        [.init(
+                            fromStop: "",
+                            toStop: "",
+                            fromLane: .center,
+                            toLane: .center,
+                            fromVPos: .center,
+                            toVPos: .bottom
+                        )]
+                    )
                 default: EmptyView()
                 }
-            }.padding(.leading, 46)
+            }.padding(.leading, 12)
             HStack(spacing: 8) {
                 tripMarker
                 description
                 Spacer()
                 tripIndicator
             }
-            .padding([.trailing, .vertical], 16)
-            .padding(.leading, 30)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 14)
             .frame(maxWidth: .infinity, minHeight: 56, alignment: .leading)
         }
         .background(Color.fill3)
@@ -358,6 +366,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
                 now: now
             )
         }
+        .withFixedSettings([:])
         .previewDisplayName("VehicleCard")
     }
 }

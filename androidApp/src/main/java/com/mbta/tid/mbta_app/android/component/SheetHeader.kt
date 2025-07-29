@@ -45,12 +45,13 @@ fun SheetHeader(
     closeText: String? = null,
     onBack: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
-    rightActionContents: @Composable () -> Unit = {},
+    rightActionContents: @Composable (() -> Unit)? = null,
     buttonColors: ButtonColors = ButtonDefaults.contrast(),
 ) {
     val context = LocalContext.current
     val buttonSize = 32.dp
     val touchTarget = 48.dp
+    var hasButtons = onBack != null || onClose != null || rightActionContents != null
     var buttonPadding by remember { mutableStateOf(0.dp) }
     var textPadding by remember { mutableStateOf(0.dp) }
 
@@ -59,21 +60,23 @@ fun SheetHeader(
      * always aligned with the first line of text, even if the text breaks to multiple lines.
      */
     fun alignButtons(layout: TextLayoutResult) {
-        val lineHeight = (layout.getLineBottom(0) - layout.getLineTop(0)).toDp(context)
-        val padding = (lineHeight / 2) - (touchTarget / 2)
-        if (padding < 0.dp) {
-            buttonPadding = 0.dp
-            textPadding = abs(padding.value).dp
-        } else {
-            buttonPadding = padding + layout.getLineTop(0).toDp(context)
-            textPadding = 0.dp
+        if (hasButtons) {
+            val lineHeight = (layout.getLineBottom(0) - layout.getLineTop(0)).toDp(context)
+            val padding = (lineHeight / 2) - (touchTarget / 2)
+            if (padding < 0.dp) {
+                buttonPadding = 0.dp
+                textPadding = abs(padding.value).dp
+            } else {
+                buttonPadding = padding + layout.getLineTop(0).toDp(context)
+                textPadding = 0.dp
+            }
         }
     }
 
     Row(
         modifier.padding(horizontal = 16.dp).heightIn(min = touchTarget),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = if (hasButtons) Alignment.Top else Alignment.CenterVertically,
     ) {
         if (onBack != null) {
             ActionButton(
@@ -101,7 +104,9 @@ fun SheetHeader(
             Spacer(Modifier.weight(1f))
         }
 
-        Row(modifier = Modifier.padding(top = buttonPadding)) { rightActionContents() }
+        if (rightActionContents != null) {
+            Row(modifier = Modifier.padding(top = buttonPadding)) { rightActionContents() }
+        }
 
         if (onClose != null) {
             if (closeText != null)

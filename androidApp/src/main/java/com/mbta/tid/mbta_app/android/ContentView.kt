@@ -52,11 +52,23 @@ fun ContentView(
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
+
+    val defaultTab by viewModel.defaultTab.collectAsState()
     val navController = rememberNavController()
-    var sheetNavEntrypoint: SheetRoutes.Entrypoint by
+    val enhancedFavorites = SettingsCache.getNullable(Settings.EnhancedFavorites)
+
+    var sheetNavEntrypoint: SheetRoutes.Entrypoint? by
         rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
-            mutableStateOf(SheetRoutes.NearbyTransit)
+            mutableStateOf(if (enhancedFavorites == false) SheetRoutes.NearbyTransit else null)
         }
+
+    LaunchedEffect(defaultTab, enhancedFavorites) {
+        if (sheetNavEntrypoint == null && enhancedFavorites == true) {
+            sheetNavEntrypoint = defaultTab?.entrypoint
+        } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
+            sheetNavEntrypoint = SheetRoutes.NearbyTransit
+        }
+    }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView.getGlobalData")

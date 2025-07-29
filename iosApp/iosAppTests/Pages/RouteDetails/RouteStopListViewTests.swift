@@ -50,7 +50,7 @@ final class RouteStopListViewTests: XCTestCase {
         let repositories = MockRepositories()
         repositories.useObjects(objects: objects)
         repositories.routeStops = MockRouteStopsRepository(
-            stopIds: [stop1.id, stop2.id, stop3.id],
+            segments: [RouteBranchSegment.companion.of(stopIds: [stop1.id, stop2.id, stop3.id])],
             routeId: mainRoute.id,
             onGet: { _, _ in gotRouteStops.send() }
         )
@@ -132,7 +132,7 @@ final class RouteStopListViewTests: XCTestCase {
         let repositories = MockRepositories()
         repositories.useObjects(objects: objects)
         repositories.routeStops = MockRouteStopsRepository(
-            stopIds: [],
+            segments: [],
             onGet: { routeId, _ in lastSelectedRoute = routeId; getRouteStopsSubject.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
@@ -193,7 +193,13 @@ final class RouteStopListViewTests: XCTestCase {
         let repositories = MockRepositories()
         repositories.useObjects(objects: objects)
         repositories.routeStops = MockRouteStopsRepository(
-            stopIds: [stop1.id, stop2.id, stop3NonTypical.id, stop4NonTypical.id],
+            segments: [
+                RouteBranchSegment.companion.of(stopIds: [stop1.id, stop2.id]),
+                RouteBranchSegment.companion.of(
+                    stopIds: [stop3NonTypical.id, stop4NonTypical.id],
+                    isTypical: false
+                ),
+            ],
             routeId: mainRoute.id,
             onGet: { _, _ in gotRouteStops.send() }
         )
@@ -253,7 +259,7 @@ final class RouteStopListViewTests: XCTestCase {
         let repositories = MockRepositories()
         repositories.useObjects(objects: objects)
         repositories.routeStops = MockRouteStopsRepository(
-            stopIds: [stop1.id, stop2.id],
+            segments: [.companion.of(stopIds: [stop1.id, stop2.id], isTypical: false)],
             routeId: mainRoute.id,
             onGet: { _, _ in gotRouteStops.send() }
         )
