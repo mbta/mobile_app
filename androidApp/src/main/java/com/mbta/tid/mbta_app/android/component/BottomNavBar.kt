@@ -31,7 +31,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 @Composable
 fun BottomNavBar(
     currentDestination: Routes,
-    sheetNavEntrypoint: SheetRoutes.Entrypoint,
+    sheetNavEntrypoint: SheetRoutes.Entrypoint?,
     navigateToFavorites: () -> Unit,
     navigateToNearby: () -> Unit,
     navigateToMore: () -> Unit,
@@ -45,6 +45,7 @@ fun BottomNavBar(
                     when (sheetNavEntrypoint) {
                         SheetRoutes.Favorites -> 0
                         SheetRoutes.NearbyTransit -> 1
+                        null -> -1
                     }
                 is Routes.More -> 2
             }
