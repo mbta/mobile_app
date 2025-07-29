@@ -23,21 +23,22 @@ class ContentViewModel(
     val pendingFeaturePromos: StateFlow<List<FeaturePromo>?> = _pendingFeaturePromos
     private val _pendingOnboarding: MutableStateFlow<List<OnboardingScreen>?> =
         MutableStateFlow(null)
+
     val pendingOnboarding: StateFlow<List<OnboardingScreen>?> = _pendingOnboarding
 
     private val _defaultTab: MutableStateFlow<DefaultTab?> = MutableStateFlow(null)
     val defaultTab: StateFlow<DefaultTab?> = _defaultTab
 
     init {
-        loadDefaultTabState()
-        loadPendingFeaturePromos()
+        loadPendingFeaturePromosAndTabPreferences()
         loadPendingOnboarding()
     }
 
-    fun loadPendingFeaturePromos() {
+    fun loadPendingFeaturePromosAndTabPreferences() {
         CoroutineScope(Dispatchers.IO).launch {
             val data = featurePromoUseCase.getFeaturePromos()
             _pendingFeaturePromos.value = data
+            loadTabPreferences(data.contains(FeaturePromo.EnhancedFavorites))
         }
     }
 
@@ -48,10 +49,14 @@ class ContentViewModel(
         }
     }
 
-    fun loadDefaultTabState() {
+    fun loadTabPreferences(hasPendingFavoritesPromo: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            val defaultTab = tabPreferencesRepository.getDefaultTab()
-            _defaultTab.value = defaultTab
+            if (hasPendingFavoritesPromo) {
+                _defaultTab.value = DefaultTab.Favorites
+                tabPreferencesRepository.setDefaultTab(DefaultTab.Favorites)
+            } else {
+                _defaultTab.value = tabPreferencesRepository.getDefaultTab()
+            }
         }
     }
 

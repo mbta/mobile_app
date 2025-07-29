@@ -125,12 +125,8 @@ class FavoritesViewModel(
             val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
-            val hasSeenFavoritesPrior = tabPreferencesRepository.hasSeenFavorites()
-            if (!hasSeenFavoritesPrior) {
-                // first time seeing favorites, default to nearby going forward
-                tabPreferencesRepository.setHasSeenFavorites(true)
-                tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
-            }
+            // first time seeing favorites, default to nearby going forward
+            tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
         }
 
         LaunchedEffect(Unit) {

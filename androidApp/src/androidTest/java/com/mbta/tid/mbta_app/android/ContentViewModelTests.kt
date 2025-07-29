@@ -8,10 +8,10 @@ import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
+import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
-import dev.mokkery.verifySuspend
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -22,16 +22,40 @@ class ContentViewModelTests : KoinTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testDefaultTabLoaded() = runBlocking {
-        val tabPreferencesRepository = mock<ITabPreferencesRepository>()
-        everySuspend { tabPreferencesRepository.getDefaultTab() } returns DefaultTab.Favorites
+    fun testDefaultTabNearbyIfNotShownPromo() = runBlocking {
+        val tabPreferencesRepository = mock<ITabPreferencesRepository>(MockMode.autofill)
+        everySuspend { tabPreferencesRepository.getDefaultTab() } returns DefaultTab.Nearby
 
+        lateinit var vm: ContentViewModel
         composeTestRule.setContent {
-            val vm =
+            vm =
                 ContentViewModel(
                     featurePromoUseCase =
                         FeaturePromoUseCase(
-                            MockCurrentAppVersionRepository(AppVersion(3u, 0u, 0u)),
+                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                            // Favorites promo in version 2.0.0
+                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
+                        ),
+                    onboardingRepository = MockOnboardingRepository(),
+                    tabPreferencesRepository = tabPreferencesRepository,
+                )
+        }
+
+        composeTestRule.waitUntil { vm.defaultTab.value == DefaultTab.Nearby }
+    }
+
+    @Test
+    fun testDefaultTabFavoritesIfShownPromo() = runBlocking {
+        val tabPreferencesRepository = mock<ITabPreferencesRepository>(MockMode.autofill)
+        everySuspend { tabPreferencesRepository.getDefaultTab() } returns DefaultTab.Nearby
+
+        lateinit var vm: ContentViewModel
+        composeTestRule.setContent {
+            vm =
+                ContentViewModel(
+                    featurePromoUseCase =
+                        FeaturePromoUseCase(
+                            MockCurrentAppVersionRepository(AppVersion(2u, 0u, 0u)),
                             MockLastLaunchedAppVersionRepository(AppVersion(1u, 0u, 0u)),
                         ),
                     onboardingRepository = MockOnboardingRepository(),
@@ -39,6 +63,6 @@ class ContentViewModelTests : KoinTest {
                 )
         }
 
-        verifySuspend { tabPreferencesRepository.getDefaultTab() }
+        composeTestRule.waitUntil { vm.defaultTab.value == DefaultTab.Favorites }
     }
 }

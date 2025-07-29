@@ -175,9 +175,8 @@ class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
-    fun `sets default tab to nearby if first time seeing favorites`() = runTest {
+    fun `sets default tab to nearby`() = runTest {
         val mockTabPreferencesRepo = mock<ITabPreferencesRepository>(MockMode.autofill)
-        everySuspend { mockTabPreferencesRepo.hasSeenFavorites() } returns false
 
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) {
@@ -201,10 +200,7 @@ class FavoritesViewModelTest : KoinTest {
             }
         }
 
-        verifySuspend {
-            mockTabPreferencesRepo.setHasSeenFavorites(true)
-            mockTabPreferencesRepo.setDefaultTab(DefaultTab.Nearby)
-        }
+        verifySuspend { mockTabPreferencesRepo.setDefaultTab(DefaultTab.Nearby) }
     }
 
     @Test

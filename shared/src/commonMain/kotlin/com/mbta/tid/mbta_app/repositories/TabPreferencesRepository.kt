@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mbta.tid.mbta_app.model.SheetRoutes
@@ -28,33 +27,20 @@ interface ITabPreferencesRepository {
     suspend fun getDefaultTab(): DefaultTab
 
     suspend fun setDefaultTab(defaultTab: DefaultTab)
-
-    suspend fun hasSeenFavorites(): Boolean
-
-    suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean)
 }
 
 class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val defaultTabKey = stringPreferencesKey("default_tab")
-    private val hasSeenFavoritesKey = booleanPreferencesKey("has_seen_favorites")
 
     override suspend fun getDefaultTab(): DefaultTab {
         return dataStore.data.map { it[defaultTabKey] }.first()?.let { DefaultTab.valueOf(it) }
-            ?: DefaultTab.Favorites
+            ?: DefaultTab.Nearby
     }
 
     override suspend fun setDefaultTab(defaultTab: DefaultTab) {
         dataStore.edit { it[defaultTabKey] = defaultTab.name }
-    }
-
-    override suspend fun hasSeenFavorites(): Boolean {
-        return dataStore.data.map { it[hasSeenFavoritesKey] }.first() ?: false
-    }
-
-    override suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean) {
-        dataStore.edit { it[hasSeenFavoritesKey] = hasSeenFavorites }
     }
 }
 
@@ -64,10 +50,4 @@ class MockTabPreferencesRepository : ITabPreferencesRepository {
     }
 
     override suspend fun setDefaultTab(defaultTab: DefaultTab) {}
-
-    override suspend fun hasSeenFavorites(): Boolean {
-        return true
-    }
-
-    override suspend fun setHasSeenFavorites(hasSeenFavorites: Boolean) {}
 }

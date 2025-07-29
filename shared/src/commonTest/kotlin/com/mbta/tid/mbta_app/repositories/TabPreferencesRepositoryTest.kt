@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.repositories
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mbta.tid.mbta_app.mocks.MockDatastoreStorage
@@ -46,13 +45,6 @@ class TabPreferencesRepositoryTest {
         val repo = TabPreferencesRepository()
         repo.setDefaultTab(DefaultTab.Favorites)
         assertEquals(DefaultTab.Favorites, repo.getDefaultTab())
-    }
-
-    @Test
-    fun testHasSeenFavorites() = runBlocking {
-        startKoinWithPreferences(preferencesOf(booleanPreferencesKey("has_seen_favorites") to true))
-        val repo = TabPreferencesRepository()
-        assertEquals(true, repo.hasSeenFavorites())
     }
 
     fun startKoinWithPreferences(preferences: Preferences) {
