@@ -319,7 +319,7 @@ class RouteCardDataTest {
                     RouteStopDirection(route1.id, stop3.id, 0),
                     RouteStopDirection(route2.id, stop1.id, 1),
                 )
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
@@ -455,7 +455,7 @@ class RouteCardDataTest {
                     RouteStopDirection(route1.id, stop3.id, 0),
                     RouteStopDirection(route2.id, stop1.id, 1),
                 )
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)

@@ -206,7 +206,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `schedule rounding`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.ScheduleMinutes(59),
             TripInstantDisplay.from(
