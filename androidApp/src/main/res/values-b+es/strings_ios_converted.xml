@@ -415,6 +415,10 @@
     <string name="vehicle_prediction_schedule_status_early_other">y %1$s %2$s temprano</string>
     <string name="vehicle_prediction_time_first">%1$s llegará a la(s) %2$s</string>
     <string name="vehicle_prediction_time_other">y a la(s) %1$s</string>
+    <string name="vehicle_schedule_hours_first">%1$s llegando en %2$d h programado</string>
+    <string name="vehicle_schedule_hours_minutes_first">%1$s llegando en %2$d h %3$d min programado</string>
+    <string name="vehicle_schedule_hours_minutes_other">y en %1$d h %2$d min programado</string>
+    <string name="vehicle_schedule_hours_other">y en %1$d h programado</string>
     <string name="vehicle_schedule_minutes_first">%1$s llegará en %2$d min programado</string>
     <string name="vehicle_schedule_minutes_other">y en %1$d min programado</string>
     <string name="vehicle_schedule_time_first">%1$s llegará a la(s) %2$s como se programó</string>

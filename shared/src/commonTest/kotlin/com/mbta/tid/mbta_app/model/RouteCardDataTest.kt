@@ -74,7 +74,7 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context)
+                    .addStaticStopsData(nearby.stopIds, global, context, null)
                     .data,
             )
         }
@@ -167,7 +167,7 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context)
+                    .addStaticStopsData(nearby.stopIds, global, context, null)
                     .data,
             )
         }
@@ -246,10 +246,302 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context)
+                .addStaticStopsData(nearby.stopIds, global, context, null)
                 .data,
         )
     }
+
+    @Test
+    fun `ListBuilder addStaticStopsData filters for only favorites when context is favorites`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+
+            val stop1 = objects.stop()
+            val stop2 = objects.stop()
+            val stop3 = objects.stop()
+
+            val route1 = objects.route()
+            val route2 = objects.route()
+
+            val route1rp1 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Harvard" }
+                    directionId = 0
+                }
+            val route1rp2 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Harvard v2" }
+                    directionId = 0
+                }
+            val route1rp3 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Nubian" }
+                    directionId = 1
+                }
+
+            val route2rp1 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Harvard" }
+                    directionId = 0
+                }
+            val route2rp2 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Harvard v2" }
+                    directionId = 0
+                }
+            val route2rp3 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Alewife" }
+                    directionId = 1
+                }
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop =
+                        mapOf(
+                            stop1.id to
+                                listOf(
+                                    route1rp1.id,
+                                    route1rp2.id,
+                                    route1rp3.id,
+                                    route2rp1.id,
+                                    route2rp2.id,
+                                    route2rp3.id,
+                                ),
+                            stop2.id to listOf(route2rp1.id, route2rp2.id, route2rp3.id),
+                            stop3.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
+                        ),
+                )
+            val context = RouteCardData.Context.Favorites
+            val favorites =
+                setOf(
+                    RouteStopDirection(route1.id, stop3.id, 0),
+                    RouteStopDirection(route2.id, stop1.id, 1),
+                )
+            val now = Clock.System.now()
+
+            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            assertEquals(
+                mapOf(
+                    route2.id to
+                        RouteCardData.Builder(
+                            lineOrRoute2,
+                            mapOf(
+                                stop1.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route2,
+                                        stop1,
+                                        mapOf(
+                                            1 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute2,
+                                                    stop = stop1,
+                                                    directionId = 1,
+                                                    routePatterns = listOf(route2rp3),
+                                                    stopIds = setOf(stop1.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                )
+                                        ),
+                                        global,
+                                    )
+                            ),
+                            now,
+                        ),
+                    route1.id to
+                        RouteCardData.Builder(
+                            lineOrRoute1,
+                            mapOf(
+                                stop3.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route1,
+                                        stop3,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute1,
+                                                    stop = stop3,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(route1rp1, route1rp2),
+                                                    stopIds = setOf(stop3.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                )
+                                        ),
+                                        global,
+                                    )
+                            ),
+                            now,
+                        ),
+                ),
+                RouteCardData.ListBuilder(false, context, now)
+                    .addStaticStopsData(
+                        listOf(stop1.id, stop2.id, stop3.id),
+                        global,
+                        context,
+                        favorites,
+                    )
+                    .data,
+            )
+        }
+
+    @Test
+    fun `ListBuilder addStaticStopsData does not filter for favorites when context is not favorites`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+
+            val stop1 = objects.stop()
+            val stop2 = objects.stop()
+            val stop3 = objects.stop()
+
+            val route1 = objects.route()
+            val route2 = objects.route()
+
+            val route1rp1 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Harvard" }
+                    directionId = 0
+                }
+            val route1rp2 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Harvard v2" }
+                    directionId = 0
+                }
+            val route1rp3 =
+                objects.routePattern(route1) {
+                    representativeTrip { headsign = "Nubian" }
+                    directionId = 1
+                }
+
+            val route2rp1 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Harvard" }
+                    directionId = 0
+                }
+            val route2rp2 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Harvard v2" }
+                    directionId = 0
+                }
+            val route2rp3 =
+                objects.routePattern(route2) {
+                    representativeTrip { headsign = "Alewife" }
+                    directionId = 1
+                }
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop =
+                        mapOf(
+                            stop1.id to
+                                listOf(
+                                    route1rp1.id,
+                                    route1rp2.id,
+                                    route1rp3.id,
+                                    route2rp1.id,
+                                    route2rp2.id,
+                                    route2rp3.id,
+                                ),
+                            stop2.id to listOf(route2rp1.id, route2rp2.id, route2rp3.id),
+                            stop3.id to listOf(route1rp1.id, route1rp2.id, route1rp3.id),
+                        ),
+                )
+            val context = RouteCardData.Context.NearbyTransit
+            val favorites =
+                setOf(
+                    RouteStopDirection(route1.id, stop3.id, 0),
+                    RouteStopDirection(route2.id, stop1.id, 1),
+                )
+            val now = Clock.System.now()
+
+            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            assertEquals(
+                mapOf(
+                    route1.id to
+                        RouteCardData.Builder(
+                            lineOrRoute1,
+                            mapOf(
+                                stop1.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route1,
+                                        stop1,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute1,
+                                                    stop = stop1,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(route1rp1, route1rp2),
+                                                    stopIds = setOf(stop1.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                ),
+                                            1 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute1,
+                                                    stop = stop1,
+                                                    directionId = 1,
+                                                    routePatterns = listOf(route1rp3),
+                                                    stopIds = setOf(stop1.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                ),
+                                        ),
+                                        global,
+                                    )
+                            ),
+                            now,
+                        ),
+                    route2.id to
+                        RouteCardData.Builder(
+                            lineOrRoute2,
+                            mapOf(
+                                stop1.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route2,
+                                        stop1,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute2,
+                                                    stop = stop1,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(route2rp1, route2rp2),
+                                                    stopIds = setOf(stop1.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                ),
+                                            1 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute2,
+                                                    stop = stop1,
+                                                    directionId = 1,
+                                                    routePatterns = listOf(route2rp3),
+                                                    stopIds = setOf(stop1.id),
+                                                    allDataLoaded = false,
+                                                    context = context,
+                                                ),
+                                        ),
+                                        global,
+                                    )
+                            ),
+                            now,
+                        ),
+                ),
+                RouteCardData.ListBuilder(false, context, now)
+                    .addStaticStopsData(
+                        listOf(stop1.id, stop2.id, stop3.id),
+                        global,
+                        context,
+                        favorites,
+                    )
+                    .data,
+            )
+        }
 
     @Test
     fun `ListBuilder addStaticStopsData when a stop is served by multiple routes it is included for each route`() =
@@ -337,7 +629,7 @@ class RouteCardDataTest {
                         ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context)
+                    .addStaticStopsData(nearby.stopIds, global, context, null)
                     .data,
             )
         }
@@ -446,7 +738,7 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context)
+                .addStaticStopsData(nearby.stopIds, global, context, null)
                 .data,
         )
     }
@@ -517,7 +809,7 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context)
+                .addStaticStopsData(nearby.stopIds, global, context, null)
                 .data,
         )
     }
@@ -627,7 +919,7 @@ class RouteCardDataTest {
                         ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context)
+                    .addStaticStopsData(nearby.stopIds, global, context, null)
                     .data,
             )
         }
@@ -762,7 +1054,7 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context)
+                .addStaticStopsData(nearby.stopIds, global, context, null)
                 .data,
         )
     }
@@ -966,7 +1258,7 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context)
+                    .addStaticStopsData(nearby.stopIds, global, context, null)
                     .data,
             )
         }
@@ -1114,7 +1406,7 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, time)
-                    .addStaticStopsData(listOf(stop1.id, stop2.id), global, context)
+                    .addStaticStopsData(listOf(stop1.id, stop2.id), global, context, null)
                     .addUpcomingTrips(
                         null,
                         PredictionsStreamDataResponse(objects),
@@ -1252,7 +1544,7 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(true, context, now)
-                .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global, context)
+                .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global, context, null)
                 .addUpcomingTrips(
                     ScheduleResponse(objects),
                     PredictionsStreamDataResponse(objects),
