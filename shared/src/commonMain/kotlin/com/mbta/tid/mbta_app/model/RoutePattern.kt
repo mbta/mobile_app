@@ -49,9 +49,17 @@ data class RoutePattern(
             parentToAllStops: Map<Stop, Set<String>>,
             globalData: GlobalResponse,
             context: RouteCardData.Context,
+            favorites: Set<RouteStopDirection>? = null,
         ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
             val usedPatternIds = mutableSetOf<String>()
             val patternsGrouped = mutableMapOf<LineOrRoute, MutableMap<Stop, PatternsForStop>>()
+
+            val inFavorites = context == RouteCardData.Context.Favorites
+            val favoriteRouteStops = favorites?.map { Pair(it.route, it.stop) }?.toSet()
+            fun skipNonFavorite(lineOrRoute: LineOrRoute, stop: Stop) =
+                inFavorites && favoriteRouteStops?.contains(Pair(lineOrRoute.id, stop.id)) == false
+            fun rsd(lineOrRoute: LineOrRoute, stop: Stop, pattern: RoutePattern) =
+                RouteStopDirection(lineOrRoute.id, stop.id, pattern.directionId)
 
             globalData.run {
                 parentToAllStops.forEach { (parentStop, allStopsForParent) ->
@@ -62,18 +70,27 @@ data class RoutePattern(
                                 usedPatternIds.containsAll(routePatterns.map { it.id }.toSet())
                             }
                     for ((lineOrRoute, routePatterns) in patternsByRouteOrLine) {
+                        if (skipNonFavorite(lineOrRoute, parentStop)) continue
+
                         val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
                         val patternsNotSeenAtEarlierStops =
                             routePatterns.map { it.id }.toSet().minus(usedPatternIds)
 
+                        fun skipNonFavorite(pattern: RoutePattern): Boolean =
+                            inFavorites &&
+                                favorites?.contains(rsd(lineOrRoute, parentStop, pattern)) == false
+
                         routeStops.getOrPut(parentStop) {
                             PatternsForStop(
-                                allPatterns = routePatterns,
+                                allPatterns =
+                                    routePatterns.mapNotNull {
+                                        if (skipNonFavorite(it)) null else it
+                                    },
                                 patternsNotSeenAtEarlierStops = patternsNotSeenAtEarlierStops,
                             )
                         }
                         // We need stops from the same route pattern to show up for favorites
-                        if (context != RouteCardData.Context.Favorites) {
+                        if (!inFavorites) {
                             usedPatternIds.addAll(routePatterns.map { it.id })
                         }
                     }
