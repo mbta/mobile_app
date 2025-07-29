@@ -205,6 +205,37 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `schedule rounding`() = parametricTest {
+        val now = Clock.System.now()
+        assertEquals(
+            TripInstantDisplay.ScheduleMinutes(59),
+            TripInstantDisplay.from(
+                prediction = null,
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule {
+                        departureTime = now + 59.4999.minutes
+                    },
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = nonTripDetails(),
+            ),
+        )
+        assertEquals(
+            TripInstantDisplay.ScheduleTime(now + 59.5.minutes),
+            TripInstantDisplay.from(
+                prediction = null,
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule { departureTime = now + 59.5.minutes },
+                vehicle = null,
+                routeType = RouteType.BUS,
+                now = now,
+                context = nonTripDetails(),
+            ),
+        )
+    }
+
+    @Test
     fun `departure_time in the past`() = parametricTest {
         val now = Clock.System.now()
         assertEquals(

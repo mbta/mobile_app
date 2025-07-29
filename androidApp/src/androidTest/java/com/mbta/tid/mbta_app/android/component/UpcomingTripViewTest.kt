@@ -395,6 +395,19 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeScheduleMinutesOver60() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(75)))
+        }
+        composeTestRule
+            .onNodeWithText("1 hr 15 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 hr 15 min scheduled", substring = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeMinutesOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
