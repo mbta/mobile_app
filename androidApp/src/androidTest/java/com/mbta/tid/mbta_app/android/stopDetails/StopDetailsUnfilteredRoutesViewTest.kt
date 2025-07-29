@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -30,7 +31,7 @@ import org.koin.compose.KoinContext
 
 class StopDetailsUnfilteredRoutesViewTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"
@@ -211,7 +212,7 @@ class StopDetailsUnfilteredRoutesViewTest {
         val alert =
             Single.alert {
                 header = "Elevator alert"
-                activePeriod(start = Instant.DISTANT_PAST, end = null)
+                activePeriod(start = EasternTimeInstant(Instant.DISTANT_PAST), end = null)
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.UsingWheelchair),

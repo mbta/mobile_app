@@ -15,7 +15,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +25,7 @@ class TripStopsTest {
 
     @Test
     fun testDisplaysSplitStops() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -146,7 +146,7 @@ class TripStopsTest {
 
     @Test
     fun testDisplaysUnsplitStops() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -244,7 +244,7 @@ class TripStopsTest {
 
     @Test
     fun testTargetHidden() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -330,7 +330,7 @@ class TripStopsTest {
 
     @Test
     fun testFirstStopSeparated() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -429,7 +429,7 @@ class TripStopsTest {
 
     @Test
     fun testDownstreamShuttleAlert() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -536,7 +536,7 @@ class TripStopsTest {
 
     @Test
     fun testDownstreamClosureAlert() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)
@@ -643,7 +643,7 @@ class TripStopsTest {
 
     @Test
     fun testUpstreamAlert() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val pattern = objects.routePattern(route)

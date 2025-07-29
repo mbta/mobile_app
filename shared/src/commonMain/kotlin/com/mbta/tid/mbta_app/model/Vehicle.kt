@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,7 +14,7 @@ data class Vehicle(
     @SerialName("direction_id") val directionId: Int,
     val latitude: Double,
     val longitude: Double,
-    @SerialName("updated_at") val updatedAt: Instant,
+    @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     @SerialName("route_id") val routeId: String?,
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,

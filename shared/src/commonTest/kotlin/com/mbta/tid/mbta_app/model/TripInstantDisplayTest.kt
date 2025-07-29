@@ -2,10 +2,10 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -31,7 +31,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 routeType = anyEnumValueExcept(RouteType.COMMUTER_RAIL),
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
                 context = anyEnumValue(),
             ),
         )
@@ -39,7 +39,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `scheduled trip skipped`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Skipped(now + 15.minutes),
             TripInstantDisplay.from(
@@ -69,7 +69,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 routeType = null,
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
                 context = anyEnumValue(),
             ),
         )
@@ -88,7 +88,7 @@ class TripInstantDisplayTest {
                 schedule = null,
                 vehicle = null,
                 routeType = null,
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
                 context = anyEnumValue(),
             ),
         )
@@ -103,7 +103,7 @@ class TripInstantDisplayTest {
                     },
                 vehicle = null,
                 routeType = null,
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
                 context = anyEnumValue(),
             ),
         )
@@ -111,7 +111,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `departure_time is null but arrival_time exists`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -176,7 +176,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `schedule instead of prediction`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.ScheduleMinutes(15),
             TripInstantDisplay.from(
@@ -206,7 +206,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `departure_time in the past`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -226,7 +226,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `seconds less than 0`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Arriving,
             TripInstantDisplay.from(
@@ -246,7 +246,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun boarding() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val vehicle =
             ObjectCollectionBuilder.Single.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -274,7 +274,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `still boarding if prediction in past`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val vehicle =
             ObjectCollectionBuilder.Single.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -303,7 +303,7 @@ class TripInstantDisplayTest {
     @Test
     fun `not boarding when stopped at stop but more than 90 seconds until departure`() =
         parametricTest {
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             val vehicle =
                 ObjectCollectionBuilder.Single.vehicle {
                     currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -332,7 +332,7 @@ class TripInstantDisplayTest {
     @Test
     fun `boarding when subway stopped at stop but arrival is in the past and more than 90 seconds until departure`() =
         parametricTest {
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             val vehicle =
                 ObjectCollectionBuilder.Single.vehicle {
                     currentStatus = Vehicle.CurrentStatus.StoppedAt
@@ -361,7 +361,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `not boarding`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         // wrong vehicle status
         var vehicle =
             ObjectCollectionBuilder.Single.vehicle {
@@ -438,7 +438,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `seconds less than 30`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Arriving,
             TripInstantDisplay.from(
@@ -473,7 +473,7 @@ class TripInstantDisplayTest {
     @Test
     fun `arriving when prediction arrival in the past and departure more than 30 seconds away`() =
         parametricTest {
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             assertEquals(
                 TripInstantDisplay.Arriving,
                 TripInstantDisplay.from(
@@ -493,7 +493,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `seconds less than 60 outside trip details`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Approaching,
             TripInstantDisplay.from(
@@ -527,7 +527,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `seconds less than 60 in trip details`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Time(now + 45.seconds),
             TripInstantDisplay.from(
@@ -561,7 +561,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `minutes in the distant future`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val context = nonTripDetails()
 
         val futureMinutes = 61
@@ -614,7 +614,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `time with status`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val predictionTime = now + 2.minutes
         val prediction =
             ObjectCollectionBuilder.Single.prediction {
@@ -637,7 +637,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `time with schedule early`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val predictionTime = now + 2.minutes
         val scheduleTime = now + 5.minutes
         val prediction =
@@ -660,7 +660,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `time with schedule late`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val predictionTime = now + 2.minutes
         val scheduleTime = now - 5.minutes
         val prediction =
@@ -683,7 +683,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `minutes less than 20 outside trip details`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val context = nonTripDetails()
         assertEquals(
             TripInstantDisplay.Minutes(1),
@@ -788,7 +788,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `minutes less than 20 in trip details`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Time(now + 90.seconds),
             TripInstantDisplay.from(
@@ -835,7 +835,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `scheduled trip cancelled`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Cancelled(now + 15.minutes),
             TripInstantDisplay.from(
@@ -857,7 +857,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `scheduled trip cancelled in past is hidden`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -879,7 +879,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `cancelled subway trip is hidden`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(
@@ -901,7 +901,7 @@ class TripInstantDisplayTest {
 
     @Test
     fun `cancelled trip is hidden in other contexts`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         assertEquals(
             TripInstantDisplay.Hidden,
             TripInstantDisplay.from(

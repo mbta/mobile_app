@@ -11,14 +11,14 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
-import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 
 class StopDetailsFilteredSheetHeaderTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"

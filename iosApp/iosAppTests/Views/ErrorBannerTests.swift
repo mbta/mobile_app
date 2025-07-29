@@ -26,8 +26,9 @@ final class ErrorBannerTests: XCTestCase {
 
         XCTAssertNil(try? sut.inspect().find(ViewType.Text.self))
 
+        let now = EasternTimeInstant.now()
         let minutesAgo = 2
-        let predictionsLastUpdated = Date.now.addingTimeInterval(TimeInterval(-minutesAgo * 60)).toKotlinInstant()
+        let predictionsLastUpdated = now.minus(minutes: Int32(minutesAgo))
         let callsAction = expectation(description: "calls action when button pressed")
 
         let stateSetPublisher = PassthroughSubject<Void, Never>()
@@ -60,7 +61,7 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor func testLoadingWhenPredictionsStale() throws {
         let sut = ErrorBanner(.init(
             errorRepository: MockErrorBannerStateRepository(state: .StalePredictions(
-                lastUpdated: Date.distantPast.toKotlinInstant(),
+                lastUpdated: Date.distantPast.toEasternInstant(),
                 action: {}
             )),
             initialLoadingWhenPredictionsStale: true

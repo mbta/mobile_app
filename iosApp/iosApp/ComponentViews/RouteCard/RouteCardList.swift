@@ -27,7 +27,7 @@ struct RouteCardList<EmptyView: View>: View {
                         RouteCard(
                             cardData: routeCardData,
                             global: global,
-                            now: now,
+                            now: now.toEasternInstant(),
                             onPin: onPin,
                             pinned: isPinned(routeCardData.lineOrRoute.id),
                             pushNavEntry: pushNavEntry,

@@ -7,7 +7,6 @@ import androidx.compose.runtime.remember
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,15 +20,15 @@ import org.koin.compose.koinInject
 
 class ClockTickHandler {
     companion object {
-        private val _clockFlow = MutableSharedFlow<Instant>(replay = 0)
+        private val _clockFlow = MutableSharedFlow<EasternTimeInstant>(replay = 0)
         var job: Job? = null
 
-        fun getClockFlow(clock: Clock): SharedFlow<Instant> {
+        fun getClockFlow(clock: Clock): SharedFlow<EasternTimeInstant> {
             if (job == null) {
                 job =
                     CoroutineScope(Dispatchers.IO).launch {
                         while (true) {
-                            _clockFlow.emit(clock.now())
+                            _clockFlow.emit(EasternTimeInstant.now(clock))
                             delay(500)
                         }
                     }
@@ -40,11 +39,14 @@ class ClockTickHandler {
 }
 
 @Composable
-fun timer(updateInterval: Duration = 5.seconds, clock: Clock = koinInject()): State<Instant> {
+fun timer(
+    updateInterval: Duration = 5.seconds,
+    clock: Clock = koinInject(),
+): State<EasternTimeInstant> {
     val timerFlow = remember {
         ClockTickHandler.getClockFlow(clock).filter {
-            it.toEpochMilliseconds().seconds.inWholeSeconds % updateInterval.inWholeSeconds == 0L
+            it.secondsHasDivisor(updateInterval.inWholeSeconds)
         }
     }
-    return timerFlow.collectAsState(initial = clock.now())
+    return timerFlow.collectAsState(initial = EasternTimeInstant.now(clock))
 }

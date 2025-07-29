@@ -11,8 +11,8 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertNotNull
-import kotlin.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -38,7 +38,7 @@ class GetScheduleTest {
             object : ISchedulesRepository {
                 override suspend fun getSchedule(
                     stopIds: List<String>,
-                    now: Instant,
+                    now: EasternTimeInstant,
                 ): ApiResult<ScheduleResponse> {
                     return if (stopIds == stops1) ApiResult.Ok(expectedSchedules1)
                     else ApiResult.Ok(expectedSchedules2)

@@ -3,11 +3,10 @@ package com.mbta.tid.mbta_app.android.util
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.formatTime
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.MinutesFormat
 import io.sentry.Sentry
-import kotlin.time.Instant
 
 @Composable
 fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String): String =
@@ -22,7 +21,7 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
             if (isFirst) stringResource(R.string.vehicle_boarding_first, vehicleType)
             else stringResource(R.string.vehicle_boarding_other)
         is TripInstantDisplay.Cancelled -> {
-            val time = formatTime(this.scheduledTime)
+            val time = this.scheduledTime.formattedTime()
             if (isFirst) stringResource(R.string.vehicle_cancelled_first, vehicleType, time)
             else stringResource(R.string.vehicle_cancelled_other, time)
         }
@@ -39,7 +38,7 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
             else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
         }
         is TripInstantDisplay.ScheduleTime -> {
-            val time = formatTime(this.scheduledTime)
+            val time = this.scheduledTime.formattedTime()
             if (isFirst) stringResource(R.string.vehicle_schedule_time_first, vehicleType, time)
             else stringResource(R.string.vehicle_schedule_time_other, time)
         }
@@ -52,11 +51,11 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
 
 @Composable
 private fun delayDescription(
-    scheduledInstant: Instant,
+    scheduledInstant: EasternTimeInstant,
     isFirst: Boolean,
     vehicleType: String,
 ): String {
-    val scheduledTime = formatTime(scheduledInstant)
+    val scheduledTime = scheduledInstant.formattedTime()
     return if (isFirst)
         stringResource(
             R.string.vehicle_prediction_schedule_status_delay_first,
@@ -130,13 +129,11 @@ private fun predictedTimeDescription(
         return delayDescription(trip.predictionTime, isFirst, vehicleType)
 
     val predictionTime =
-        formatTime(
-            when (trip) {
-                is TripInstantDisplay.Time -> trip.predictionTime
-                is TripInstantDisplay.TimeWithStatus -> trip.predictionTime
-                else -> return ""
-            }
-        )
+        when (trip) {
+            is TripInstantDisplay.Time -> trip.predictionTime
+            is TripInstantDisplay.TimeWithStatus -> trip.predictionTime
+            else -> return ""
+        }.formattedTime()
     val timeString =
         if (isFirst)
             stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
@@ -155,7 +152,7 @@ private fun predictedWithScheduleDescription(
         if (trip.predictionTime >= trip.scheduledTime)
             delayDescription(trip.scheduledTime, isFirst, vehicleType)
         else {
-            val scheduledTime = formatTime(trip.scheduledTime)
+            val scheduledTime = trip.scheduledTime.formattedTime()
             if (isFirst)
                 stringResource(
                     R.string.vehicle_prediction_schedule_status_early_first,
@@ -169,7 +166,7 @@ private fun predictedWithScheduleDescription(
                     vehicleType,
                 )
         }
-    val predictionTime = formatTime(trip.predictionTime)
+    val predictionTime = trip.predictionTime.formattedTime()
     val actualArrival = stringResource(R.string.vehicle_prediction_actual_arrival, predictionTime)
     return "$scheduleStatus, $actualArrival"
 }

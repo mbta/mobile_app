@@ -189,7 +189,7 @@ struct StopDetailsPage: View {
             routeCardData: internalRouteCardData,
             stopFilter: filters.stopFilter,
             currentTripFilter: filters.tripFilter,
-            filterAtTime: now.toKotlinInstant(),
+            filterAtTime: now.toEasternInstant(),
             globalData: stopDetailsVM.global
         )
 
@@ -208,7 +208,7 @@ struct StopDetailsPage: View {
             let nextRouteCardData = await stopDetailsVM.getRouteCardData(
                 stopId: routeCardParams.stopId,
                 alerts: routeCardParams.alerts,
-                now: routeCardParams.now,
+                now: routeCardParams.now.toEasternInstant(),
                 isFiltered: routeCardParams.stopFilter != nil
             )
             Task { @MainActor in

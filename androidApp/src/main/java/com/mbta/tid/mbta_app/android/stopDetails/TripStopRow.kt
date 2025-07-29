@@ -36,9 +36,8 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -47,7 +46,7 @@ import org.koin.dsl.module
 fun TripStopRow(
     stop: TripDetailsStopList.Entry,
     trip: Trip,
-    now: Instant,
+    now: EasternTimeInstant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
@@ -116,7 +115,7 @@ fun TripStopRow(
 private fun upcomingTripViewState(
     stop: TripDetailsStopList.Entry,
     trip: Trip,
-    now: Instant,
+    now: EasternTimeInstant,
     routeAccents: TripRouteAccents,
 ): UpcomingTripViewState? {
     return when (val formatted = stop.format(trip, now, routeAccents.type)) {
@@ -139,7 +138,7 @@ private fun TripStopRowPreview() {
     }
     val objects = ObjectCollectionBuilder()
     val trip = objects.trip()
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
@@ -253,7 +252,7 @@ private fun TripStopRowDisruptionsPreview() {
     }
     val objects = ObjectCollectionBuilder()
     val trip = objects.trip()
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Box {

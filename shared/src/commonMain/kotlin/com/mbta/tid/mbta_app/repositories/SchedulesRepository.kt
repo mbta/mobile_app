@@ -4,16 +4,18 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.ktor.client.call.body
 import io.ktor.http.path
-import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 interface ISchedulesRepository {
-    suspend fun getSchedule(stopIds: List<String>, now: Instant): ApiResult<ScheduleResponse>
+    suspend fun getSchedule(
+        stopIds: List<String>,
+        now: EasternTimeInstant,
+    ): ApiResult<ScheduleResponse>
 
     suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse>
 }
@@ -24,7 +26,7 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
 
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant,
+        now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> =
         ApiResult.runCatching {
             mobileBackendClient
@@ -39,7 +41,7 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
         }
 
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
-        return getSchedule(stopIds, Clock.System.now())
+        return getSchedule(stopIds, EasternTimeInstant.now())
     }
 }
 
@@ -62,7 +64,7 @@ class MockScheduleRepository(
 
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant,
+        now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> {
         callback(stopIds)
         return response
@@ -77,7 +79,7 @@ class MockScheduleRepository(
 class IdleScheduleRepository : ISchedulesRepository {
     override suspend fun getSchedule(
         stopIds: List<String>,
-        now: Instant,
+        now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> {
         return suspendCancellableCoroutine {}
     }

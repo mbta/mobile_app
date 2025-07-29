@@ -44,9 +44,8 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
@@ -57,7 +56,7 @@ fun StopDetailsUnfilteredRoutesView(
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
     errorBannerViewModel: ErrorBannerViewModel,
-    now: Instant,
+    now: EasternTimeInstant,
     globalData: GlobalResponse?,
     isPinned: (String) -> Boolean,
     pinRoute: (String) -> Unit,
@@ -152,7 +151,7 @@ fun StopDetailsUnfilteredRoutesView(
 @Preview
 @Composable
 private fun StopDetailsRoutesViewPreview() {
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder()
 
     val route1 =

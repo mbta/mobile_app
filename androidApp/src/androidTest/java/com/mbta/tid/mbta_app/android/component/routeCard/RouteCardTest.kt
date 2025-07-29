@@ -12,7 +12,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +23,7 @@ class RouteCardTest {
 
     @Test
     fun testNearbyCard() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =
@@ -61,7 +61,7 @@ class RouteCardTest {
 
     @Test
     fun testPinRoute() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =
@@ -104,7 +104,7 @@ class RouteCardTest {
 
     @Test
     fun testNoPinRouteButtonWhenEnhancedFavorites() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =
@@ -150,7 +150,7 @@ class RouteCardTest {
 
     @Test
     fun testStopDetailsCard() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =

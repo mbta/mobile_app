@@ -1,9 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.utils.toBostonTime
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.math.roundToInt
 import kotlin.time.DurationUnit
-import kotlin.time.Instant
 
 /**
  * The state in which a prediction/schedule should be shown.
@@ -23,31 +22,31 @@ sealed class TripInstantDisplay {
 
     data object Now : TripInstantDisplay()
 
-    data class Time(val predictionTime: Instant, val headline: Boolean = false) :
+    data class Time(val predictionTime: EasternTimeInstant, val headline: Boolean = false) :
         TripInstantDisplay()
 
     data class TimeWithStatus(
-        val predictionTime: Instant,
+        val predictionTime: EasternTimeInstant,
         val status: String,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
     data class TimeWithSchedule(
-        val predictionTime: Instant,
-        val scheduledTime: Instant,
+        val predictionTime: EasternTimeInstant,
+        val scheduledTime: EasternTimeInstant,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
     data class Minutes(val minutes: Int) : TripInstantDisplay()
 
-    data class ScheduleTime(val scheduledTime: Instant, val headline: Boolean = false) :
+    data class ScheduleTime(val scheduledTime: EasternTimeInstant, val headline: Boolean = false) :
         TripInstantDisplay()
 
     data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
 
-    data class Skipped(val scheduledTime: Instant?) : TripInstantDisplay()
+    data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
 
-    data class Cancelled(val scheduledTime: Instant) : TripInstantDisplay()
+    data class Cancelled(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
 
     enum class Context {
         NearbyTransit,
@@ -64,7 +63,7 @@ sealed class TripInstantDisplay {
             schedule: Schedule?,
             vehicle: Vehicle?,
             routeType: RouteType?,
-            now: Instant,
+            now: EasternTimeInstant,
             context: Context,
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
@@ -122,12 +121,11 @@ sealed class TripInstantDisplay {
 
             if (forceAsTime) {
                 val scheduleTime = schedule?.stopTimeAfter(now)
-                val scheduleZoned = scheduleTime?.toBostonTime()
-                val predictionZoned = predictionTime.toBostonTime()
                 val showDelayedSchedule =
                     context == Context.StopDetailsFiltered &&
-                        scheduleZoned?.let {
-                            it.minute != predictionZoned.minute || it.hour != predictionZoned.hour
+                        scheduleTime?.let {
+                            it.local.minute != predictionTime.local.minute ||
+                                it.local.hour != predictionTime.local.hour
                         } == true
 
                 return if (timeRemaining.isNegative()) {

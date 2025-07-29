@@ -18,7 +18,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     func testDisplaysVehicleCard() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -38,7 +38,7 @@ final class TripDetailsViewTests: XCTestCase {
             schedule.trip = trip
         }
         objects.prediction(schedule: schedule) { prediction in
-            prediction.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 5)
             prediction.vehicleId = vehicle.id
         }
 
@@ -92,7 +92,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     func testDisplaysScheduleCard() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -160,7 +160,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     func testDisplaysStopList() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -180,7 +180,7 @@ final class TripDetailsViewTests: XCTestCase {
             schedule.trip = trip
         }
         objects.prediction(schedule: schedule) { prediction in
-            prediction.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 5)
             prediction.vehicleId = vehicle.id
         }
 
@@ -238,7 +238,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     func testTappingDownstreamStopAppendsToNavStack() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -258,7 +258,7 @@ final class TripDetailsViewTests: XCTestCase {
             schedule.trip = trip
         }
         objects.prediction(schedule: schedule) { prediction in
-            prediction.departureTime = now.addingTimeInterval(5).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 5)
             prediction.vehicleId = vehicle.id
         }
         let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)

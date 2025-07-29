@@ -3,8 +3,8 @@ package com.mbta.tid.mbta_app.model
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.resolveParentId
-import kotlin.time.Instant
 
 /**
  * Conceptually, an [UpcomingTrip] represents a trip's future arrival and departure at a stop.
@@ -76,12 +76,13 @@ constructor(
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
      * left this stop.
      */
-    fun isUpcomingWithin(currentTime: Instant, cutoffTime: Instant): Boolean =
+    fun isUpcomingWithin(currentTime: EasternTimeInstant, cutoffTime: EasternTimeInstant): Boolean =
         time != null &&
             time < cutoffTime &&
             (time >= currentTime || (prediction != null && prediction.stopId == vehicle?.stopId))
 
-    override fun compareTo(other: UpcomingTrip) = nullsLast<Instant>().compare(time, other.time)
+    override fun compareTo(other: UpcomingTrip) =
+        nullsLast<EasternTimeInstant>().compare(time, other.time)
 
     /**
      * Checks whether this upcoming trip will depart its station or only arrive there.
@@ -110,14 +111,17 @@ constructor(
         } else !hasDeparture
     }
 
-    fun display(now: Instant, routeType: RouteType?, context: TripInstantDisplay.Context) =
-        TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
+    fun display(
+        now: EasternTimeInstant,
+        routeType: RouteType?,
+        context: TripInstantDisplay.Context,
+    ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
 
-    fun format(now: Instant, routeType: RouteType, context: TripInstantDisplay.Context) =
+    fun format(now: EasternTimeInstant, routeType: RouteType, context: TripInstantDisplay.Context) =
         format(now, routeType, context, routeType.isSubway())
 
     fun format(
-        now: Instant,
+        now: EasternTimeInstant,
         routeType: RouteType,
         context: TripInstantDisplay.Context,
         isSubway: Boolean,
@@ -139,7 +143,7 @@ constructor(
             predictions: PredictionsStreamDataResponse?,
             scheduleKey: (Schedule, ScheduleResponse) -> Key?,
             predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key?,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
         ): Map<Key, List<UpcomingTrip>>? {
 
             val schedulesMap =
@@ -186,7 +190,7 @@ constructor(
             predictions: List<Prediction>,
             trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
@@ -235,14 +239,14 @@ constructor(
         }
 
         fun formatUpcomingTrip(
-            now: Instant,
+            now: EasternTimeInstant,
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
             context: TripInstantDisplay.Context,
         ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
 
         fun formatUpcomingTrip(
-            now: Instant,
+            now: EasternTimeInstant,
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
             context: TripInstantDisplay.Context,
@@ -280,7 +284,7 @@ fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
  * Associate each upcoming trip with its format. Omits any upcoming trip that shouldn't be shown.
  */
 fun List<UpcomingTrip>.withFormat(
-    now: Instant,
+    now: EasternTimeInstant,
     routeType: RouteType,
     context: TripInstantDisplay.Context,
     limit: Int?,

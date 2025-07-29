@@ -175,7 +175,7 @@ final class NearbyTransitViewTests: XCTestCase {
     func setUpSut(
         _ objects: ObjectCollectionBuilder,
         _ loadPublisher: PassthroughSubject<LoadedStops, Never>,
-        now: Date? = nil,
+        now: EasternTimeInstant? = nil,
         _ pinnedRoutes: Set<String> = []
     ) -> NearbyTransitView {
         let nearbyVM = NearbyViewModel()
@@ -210,7 +210,7 @@ final class NearbyTransitViewTests: XCTestCase {
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
-            now: now ?? Date.now,
+            now: now?.toNSDateLosingTimeZone() ?? Date.now,
             predictionsByStop: .init(objects: objects),
             noNearbyStops: noNearbyStops
         )
@@ -293,12 +293,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
     @MainActor func testWithSchedules() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let objects = route52Objects()
 
         // schedule, no prediction
-        let time1 = now.addingTimeInterval(45 * 60).toKotlinInstant()
+        let time1 = now.plus(minutes: 45)
         let trip1 = objects.trip {
             $0.headsign = "Dedham Mall"
             $0.routePatternId = "52-5-0"
@@ -313,8 +313,8 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         // schedule & prediction
-        let notTime2 = now.addingTimeInterval(9 * 60).toKotlinInstant()
-        let time2 = now.addingTimeInterval(10 * 60).toKotlinInstant()
+        let notTime2 = now.plus(minutes: 9)
+        let time2 = now.plus(minutes: 10)
         let trip2 = objects.trip {
             $0.headsign = "Charles River Loop"
             $0.routePatternId = "52-4-0"
@@ -333,7 +333,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
 
         // schedule & cancellation
-        let notTime3 = now.addingTimeInterval(15 * 60).toKotlinInstant()
+        let notTime3 = now.plus(minutes: 15)
         let trip3 = objects.trip {
             $0.headsign = "Watertown Yard"
             $0.routePatternId = "52-4-1"
@@ -407,32 +407,32 @@ final class NearbyTransitViewTests: XCTestCase {
 
     @MainActor func testWithPredictions() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let now = Date.now
-        let distantMinutes: Double = 10
-        let distantInstant = now.addingTimeInterval(distantMinutes * 60).toKotlinInstant()
+        let now = EasternTimeInstant.now()
+        let distantMinutes = 10
+        let distantInstant = now.plus(minutes: Int32(distantMinutes))
         let objects = route52Objects()
 
         let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
         let rp2 = objects.routePatterns["52-4-1"] as? RoutePattern
 
         objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(distantMinutes * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval((distantMinutes + 2) * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: Int32(distantMinutes))
+            prediction.departureTime = now.plus(minutes: Int32(distantMinutes + 2))
             prediction.routeId = "52"
             prediction.stopId = "8552"
             prediction.tripId = objects.trip(routePattern: rp1!).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval((distantMinutes + 1) * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval((distantMinutes + 5) * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: Int32(distantMinutes + 1))
+            prediction.departureTime = now.plus(minutes: Int32(distantMinutes + 5))
             prediction.status = "Overridden"
             prediction.routeId = "52"
             prediction.stopId = "8552"
             prediction.tripId = objects.trip(routePattern: rp1!).id
         }
         objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 1).plus(seconds: 1)
+            prediction.departureTime = now.plus(minutes: 2)
             prediction.routeId = "52"
             prediction.stopId = "84791"
             prediction.tripId = objects.trip(routePattern: rp2!).id
@@ -573,12 +573,12 @@ final class NearbyTransitViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        func prediction(minutesAway: Double) -> PredictionsByStopJoinResponse {
+        func prediction(minutesAway: Int32) -> PredictionsByStopJoinResponse {
             let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
             objects.prediction { prediction in
                 prediction.id = "prediction"
-                prediction.arrivalTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
-                prediction.departureTime = Date.now.addingTimeInterval(minutesAway * 60).toKotlinInstant()
+                prediction.arrivalTime = EasternTimeInstant.now().plus(minutes: minutesAway)
+                prediction.departureTime = EasternTimeInstant.now().plus(minutes: minutesAway)
                 prediction.routeId = "52"
                 prediction.stopId = "8552"
                 prediction.tripId = objects.trip(routePattern: rp1!).id
@@ -768,7 +768,7 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testNoService() throws {
         let objects = route52Objects()
         objects.alert { alert in
-            alert.activePeriod(start: Date.now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 1), end: nil)
             alert.effect = .suspension
             alert.informedEntity(
                 activities: [.board],
@@ -795,7 +795,7 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testElevatorClosed() throws {
         let objects = route52Objects()
         objects.alert { alert in
-            alert.activePeriod(start: Date.now.addingTimeInterval(-1).toKotlinInstant(), end: nil)
+            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 1), end: nil)
             alert.effect = .elevatorClosure
             alert.informedEntity(
                 activities: [.usingWheelchair],

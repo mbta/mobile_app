@@ -11,7 +11,10 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onParent
 import androidx.compose.ui.test.onRoot
+import com.mbta.tid.mbta_app.android.assertContentDescriptionMatches
 import com.mbta.tid.mbta_app.android.assertHasColor
+import com.mbta.tid.mbta_app.android.hasContentDescriptionMatching
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
@@ -20,8 +23,8 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
-import kotlin.time.Clock
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
@@ -50,7 +53,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeSkipped() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Skipped(Clock.System.now()))
+                UpcomingTripViewState.Some(TripInstantDisplay.Skipped(EasternTimeInstant.now()))
             )
         }
         composeTestRule.onNodeWithText("Test").assertDoesNotExist()
@@ -59,8 +62,7 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithCancelled() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Cancelled(instant)))
         }
@@ -68,7 +70,7 @@ class UpcomingTripViewTest {
             .onNodeWithText("Cancelled", substring = true)
             .onParent()
             .assertExists()
-            .assertContentDescriptionContains("arriving at $shortTime cancelled", substring = true)
+            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM cancelled"))
     }
 
     @Test
@@ -124,23 +126,21 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithSomeAsTime() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant)))
         }
         composeTestRule
-            .onNodeWithText(formatTime(instant))
+            .onNode(hasTextMatching(Regex("2:03\\sPM")))
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $shortTime", substring = true)
+            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM"))
             .assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithStatus() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -151,10 +151,10 @@ class UpcomingTripViewTest {
         }
 
         composeTestRule
-            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithContentDescription("train arriving at $shortTime, All aboard")
+            .onNode(hasContentDescriptionMatching(Regex("train arriving at 2:03\\sPM, All aboard")))
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
@@ -164,8 +164,7 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithStatusDelay() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Delay")),
@@ -173,9 +172,11 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasContentDescriptionMatching(Regex("2:03\\sPM train delayed")))
+            .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
@@ -183,8 +184,7 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithStatusLate() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Late")),
@@ -192,9 +192,11 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(instant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
-        composeTestRule.onNodeWithContentDescription("$shortTime train delayed").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasContentDescriptionMatching(Regex("2:03\\sPM train delayed")))
+            .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
@@ -202,11 +204,8 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelay() {
-        val predictionInstant = Instant.fromEpochSeconds(1722535784)
-        val predictionShortTime = formatTime(predictionInstant)
-
-        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
-        val scheduleShortTime = formatTime(scheduleInstant)
+        val predictionInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 9, 44)
+        val scheduleInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -216,28 +215,27 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithContentDescription(
-                "$scheduleShortTime train delayed, arriving at $predictionShortTime"
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("2:03\\sPM train delayed, arriving at 2:09\\sPM")
+                )
             )
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarly() {
-        val predictionInstant = Instant.fromEpochSeconds(1722535384)
-        val predictionShortTime = formatTime(predictionInstant)
-
-        val scheduleInstant = Instant.fromEpochSeconds(1722535784)
-        val scheduleShortTime = formatTime(scheduleInstant)
+        val predictionInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
+        val scheduleInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 9, 44)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -247,28 +245,25 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithContentDescription(
-                "$scheduleShortTime train early, arriving at $predictionShortTime"
+            .onNode(
+                hasContentDescriptionMatching(Regex("2:09\\sPM train early, arriving at 2:03\\sPM"))
             )
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithScheduleDelayOther() {
-        val predictionInstant = Instant.fromEpochSeconds(1722535784)
-        val predictionShortTime = formatTime(predictionInstant)
-
-        val scheduleInstant = Instant.fromEpochSeconds(1722535384)
-        val scheduleShortTime = formatTime(scheduleInstant)
+        val predictionInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 9, 44)
+        val scheduleInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -280,28 +275,27 @@ class UpcomingTripViewTest {
         }
 
         composeTestRule
-            .onNodeWithContentDescription(
-                "and $scheduleShortTime train delayed, arriving at $predictionShortTime"
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("and 2:03\\sPM train delayed, arriving at 2:09\\sPM")
+                )
             )
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(predictionShortTime, useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(scheduleShortTime, useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeAsTimeWithScheduleEarlyOther() {
-        val predictionInstant = Instant.fromEpochSeconds(1722535384)
-        val predictionShortTime = formatTime(predictionInstant)
-
-        val scheduleInstant = Instant.fromEpochSeconds(1722535784)
-        val scheduleShortTime = formatTime(scheduleInstant)
+        val predictionInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
+        val scheduleInstant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 9, 44)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
@@ -312,33 +306,34 @@ class UpcomingTripViewTest {
             )
         }
         composeTestRule
-            .onNodeWithText(formatTime(predictionInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithContentDescription(
-                "and $scheduleShortTime train early, arriving at $predictionShortTime"
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("and 2:09\\sPM train early, arriving at 2:03\\sPM")
+                )
             )
             .assertIsDisplayed()
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(formatTime(scheduleInstant), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("2:09\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
     @Test
     fun testUpcomingTripViewWithSomeScheduleTime() {
-        val instant = Instant.fromEpochSeconds(1722535384)
-        val shortTime = formatTime(instant)
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
 
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant)))
         }
         composeTestRule
-            .onNodeWithText(formatTime(instant))
+            .onNode(hasTextMatching(Regex("2:03\\sPM")))
             .assertIsDisplayed()
-            .assertContentDescriptionContains("arriving at $shortTime scheduled", substring = true)
+            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM scheduled"))
             .assertIsDisplayed()
         composeTestRule.onNodeWithTag("realtimeIndicator").assertDoesNotExist()
     }
@@ -382,7 +377,6 @@ class UpcomingTripViewTest {
 
     @Test
     fun testUpcomingTripViewWithSomeScheduleMinutes() {
-        val instant = Instant.fromEpochSeconds(1722535384)
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5)))
         }

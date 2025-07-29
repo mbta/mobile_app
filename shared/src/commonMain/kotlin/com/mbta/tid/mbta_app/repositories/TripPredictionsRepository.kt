@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
@@ -17,7 +17,7 @@ import org.koin.core.component.KoinComponent
 interface ITripPredictionsRepository {
     fun connect(tripId: String, onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit)
 
-    var lastUpdated: Instant?
+    var lastUpdated: EasternTimeInstant?
 
     fun shouldForgetPredictions(predictionCount: Int): Boolean
 
@@ -29,11 +29,11 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
 
     var channel: PhoenixChannel? = null
 
-    override var lastUpdated: Instant? = null
+    override var lastUpdated: EasternTimeInstant? = null
 
     override fun shouldForgetPredictions(predictionCount: Int) =
-        (Clock.System.now() - (lastUpdated ?: Instant.DISTANT_FUTURE)) > 10.minutes &&
-            predictionCount > 0
+        (EasternTimeInstant.now() - (lastUpdated ?: EasternTimeInstant(Instant.DISTANT_FUTURE))) >
+            10.minutes && predictionCount > 0
 
     override fun connect(
         tripId: String,
@@ -79,7 +79,7 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
-            lastUpdated = Clock.System.now()
+            lastUpdated = EasternTimeInstant.now()
             onReceive(ApiResult.Ok(newPredictions))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -104,7 +104,7 @@ constructor(
         onConnect()
     }
 
-    override var lastUpdated: Instant? = null
+    override var lastUpdated: EasternTimeInstant? = null
 
     override fun shouldForgetPredictions(predictionCount: Int) = false
 

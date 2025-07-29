@@ -14,10 +14,10 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -28,7 +28,7 @@ class DeparturesTest {
 
     @Test
     fun testDepartures() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
 
         val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
@@ -105,7 +105,7 @@ class DeparturesTest {
 
     @Test
     fun testStopHeadsign() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =
@@ -177,7 +177,7 @@ class DeparturesTest {
 
     @Test
     fun testSinglePill() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = TestData.clone()
 
         val stop = objects.getStop("place-rsmnl")
@@ -226,7 +226,7 @@ class DeparturesTest {
 
     @Test
     fun testTapAnalytics() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route =

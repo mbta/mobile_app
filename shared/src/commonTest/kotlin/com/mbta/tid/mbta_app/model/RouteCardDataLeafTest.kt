@@ -3,13 +3,11 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.parametric.ParametricTest
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
-import com.mbta.tid.mbta_app.utils.fromBostonTime
-import com.mbta.tid.mbta_app.utils.toBostonTime
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.atTime
@@ -37,7 +35,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as alert with no trips and major alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route =
@@ -73,7 +71,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as ended with no trips but schedules and secondary alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
 
@@ -124,7 +122,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as alert with trip and major alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route =
@@ -168,7 +166,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `preserves trip alongside secondary alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.BUS }
@@ -217,7 +215,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `includes downstream alert as secondary alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = RouteType.BUS }
@@ -266,7 +264,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as ended with no trips but schedules and no alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyNonScheduleBasedRouteType() }
@@ -296,7 +294,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as none with subway schedules but no predictions and no alert`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
@@ -331,7 +329,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `formats as loading if empty trips but still loading`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyEnumValue() }
@@ -357,7 +355,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `skips trips that should be hidden`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyNonScheduleBasedRouteType() }
@@ -412,7 +410,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `format skips schedules on subway but keeps on non-subway`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val subwayRoute = objects.route { type = RouteType.LIGHT_RAIL }
@@ -504,7 +502,7 @@ class RouteCardDataLeafTest {
 
     @Test
     fun `format handles no schedules all day`() = parametricTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyEnumValue() }
@@ -561,7 +559,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Red Line southbound as branching showing next 3 trips`() = parametricTest {
         val objects = RedLine.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val prediction1 =
             objects.prediction {
                 arrivalTime = now + 1.minutes
@@ -657,7 +655,7 @@ class RouteCardDataLeafTest {
     fun `formats Red Line southbound as branching showing next 3 trips with one secondary alert`() =
         parametricTest {
             val objects = RedLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val downstreamAlert = objects.alert { effect = Alert.Effect.Shuttle }
             val prediction1 =
@@ -756,7 +754,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Red Line northbound as non-branching showing next 2 trips`() = parametricTest {
         val objects = RedLine.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val prediction1 =
             objects.prediction {
                 arrivalTime = now + 3.minutes
@@ -823,7 +821,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Red Line southbound as branching even if next trips all match`() = parametricTest {
         val objects = RedLine.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val prediction1 =
             objects.prediction {
                 arrivalTime = now + 2.minutes
@@ -912,7 +910,7 @@ class RouteCardDataLeafTest {
         parametricTest {
             // ⚠ Southbound to Ashmont 3 min 12 min
             val objects = RedLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val prediction1 =
                 objects.prediction {
@@ -1044,7 +1042,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Green Line westbound at Boylston as branching`() = parametricTest {
         val objects = GreenLine.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val prediction1 =
             objects.prediction {
@@ -1140,7 +1138,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Green Line westbound at Reservoir as single`() = parametricTest {
         val objects = GreenLine.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val prediction1 =
             objects.prediction {
@@ -1245,23 +1243,23 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Providence Stoughton Line outbound at Ruggles as branching`() = parametricTest {
         val objects = ProvidenceStoughtonLine.objects()
-        val today = Clock.System.now().toBostonTime().date
+        val today = EasternTimeInstant.now().serviceDate
         val thisTime = LocalTime(hour = 10, minute = 0)
-        val now = today.atTime(thisTime).fromBostonTime()
+        val now = EasternTimeInstant(today.atTime(thisTime))
 
         val prediction1 =
             objects.prediction {
-                departureTime = today.atTime(hour = 12, minute = 5).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12, minute = 5))
                 trip = objects.trip(ProvidenceStoughtonLine.toStoughton)
             }
         val schedule2 =
             objects.schedule {
-                departureTime = today.atTime(hour = 12 + 3, minute = 28).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 28))
                 trip = objects.trip(ProvidenceStoughtonLine.toProvidence)
             }
         val schedule3 =
             objects.schedule {
-                departureTime = today.atTime(hour = 12 + 4, minute = 1).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 1))
                 trip = objects.trip(ProvidenceStoughtonLine.toWickford)
             }
 
@@ -1333,23 +1331,23 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats Providence Stoughton Line inbound at Ruggles as non-branching`() = parametricTest {
         val objects = ProvidenceStoughtonLine.objects()
-        val today = Clock.System.now().toBostonTime().date
+        val today = EasternTimeInstant.now().serviceDate
         val thisTime = LocalTime(hour = 10, minute = 0)
-        val now = today.atTime(thisTime).fromBostonTime()
+        val now = EasternTimeInstant(today.atTime(thisTime))
 
         val prediction1 =
             objects.prediction {
-                departureTime = today.atTime(hour = 12 + 3, minute = 31).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 31))
                 trip = objects.trip(ProvidenceStoughtonLine.fromStoughton)
             }
         val prediction2 =
             objects.prediction {
-                departureTime = today.atTime(hour = 12 + 3, minute = 53).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 3, minute = 53))
                 trip = objects.trip(ProvidenceStoughtonLine.fromProvidence)
             }
         val schedule3 =
             objects.schedule {
-                departureTime = today.atTime(hour = 12 + 4, minute = 14).fromBostonTime()
+                departureTime = EasternTimeInstant(today.atTime(hour = 12 + 4, minute = 14))
                 trip = objects.trip(ProvidenceStoughtonLine.fromWickford)
             }
 
@@ -1419,7 +1417,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats bus as non-branching if next two trips match`() = parametricTest {
         val objects = `87`.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val prediction1 =
             objects.prediction {
@@ -1481,7 +1479,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats bus as non-branching in StopDetailsFiltered even if next two trips match`() {
         val objects = `87`.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val prediction1 =
             objects.prediction {
@@ -1570,7 +1568,7 @@ class RouteCardDataLeafTest {
     @Test
     fun `formats bus as branching if next trips differ and only shows 2 trips`() = parametricTest {
         val objects = `87`.objects()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val prediction1 =
             objects.prediction {
@@ -1643,7 +1641,7 @@ class RouteCardDataLeafTest {
     fun `formats Red Line southbound as branching if service ended on one branch`() =
         parametricTest {
             val objects = RedLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val prediction1 =
                 objects.prediction {
@@ -1709,7 +1707,7 @@ class RouteCardDataLeafTest {
     fun `formats Red Line southbound as non-branching if service ended on all branches`() =
         parametricTest {
             val objects = RedLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             assertEquals(
                 LeafFormat.Single(
@@ -1738,7 +1736,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Boylston as branching hiding no trips if predictions unavailable on one branch`() =
         parametricTest {
             val objects = GreenLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val prediction1 =
                 objects.prediction {
@@ -1829,7 +1827,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Boylston as non-branching showing no trips if predictions unavailable on all branches`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val schedule1 =
                 objects.schedule {
@@ -1874,7 +1872,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Kenmore as branching showing alert if disruption on one branch`() =
         parametricTest {
             val objects = GreenLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val prediction1 =
                 objects.prediction {
@@ -1976,7 +1974,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Kenmore as branching showing alerts if disruption on 2 branches`() =
         parametricTest {
             val objects = GreenLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val prediction1 =
                 objects.prediction {
@@ -2073,7 +2071,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Boylston as branching showing no trips if disruption and predictions unavailable`() =
         parametricTest {
             val objects = GreenLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val alert =
                 objects.alert {
@@ -2183,7 +2181,7 @@ class RouteCardDataLeafTest {
     fun `formats Green Line westbound at Boylston as non-branching if disruption on all branches`() =
         parametricTest {
             val objects = GreenLine.objects()
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Shuttle
@@ -2294,7 +2292,7 @@ class RouteCardDataLeafTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTripId = representativeTrip.id
                 }
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Suspension

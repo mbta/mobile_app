@@ -5,9 +5,8 @@ import com.mapbox.common.MapboxOptions
 import com.mbta.tid.mbta_app.dependencyInjection.UsecaseDI
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,7 @@ import org.koin.core.component.KoinComponent
 
 interface IMapboxConfigManager {
     val configLoadAttempted: StateFlow<Boolean>
-    var lastMapboxErrorTimestamp: Flow<Instant?>
+    var lastMapboxErrorTimestamp: Flow<EasternTimeInstant?>
 
     suspend fun loadConfig()
 }
@@ -33,12 +32,12 @@ open class MapboxConfigManager(
 
     private val _configLoadAttempted = MutableStateFlow(false)
     override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
-    private val _lastMapboxErrorTimestamp = MutableStateFlow<Instant?>(null)
+    private val _lastMapboxErrorTimestamp = MutableStateFlow<EasternTimeInstant?>(null)
     override var lastMapboxErrorTimestamp = _lastMapboxErrorTimestamp.debounce(1.seconds)
 
     init {
         setHttpInterceptor(
-            MapHttpInterceptor { _lastMapboxErrorTimestamp.value = Clock.System.now() }
+            MapHttpInterceptor { _lastMapboxErrorTimestamp.value = EasternTimeInstant.now() }
         )
     }
 

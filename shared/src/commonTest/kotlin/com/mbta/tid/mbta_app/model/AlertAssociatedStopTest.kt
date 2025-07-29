@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Instant
@@ -20,7 +21,7 @@ class AlertAssociatedStopTest {
             }
         val alert =
             objects.alert {
-                activePeriod(Instant.DISTANT_PAST, null)
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                 effect = Alert.Effect.Shuttle
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),

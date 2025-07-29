@@ -1,27 +1,19 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
-import android.icu.text.DateFormat
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import androidx.test.core.app.ApplicationProvider
 import com.mbta.tid.mbta_app.android.hasTextMatching
-import com.mbta.tid.mbta_app.android.util.toJavaDate
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
-import java.util.Calendar
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.toKotlinInstant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
@@ -42,7 +34,7 @@ class AlertDetailsTest {
                 longName = "Red Line"
             }
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 40)
 
         val alert =
             objects.alert {
@@ -52,9 +44,7 @@ class AlertDetailsTest {
                 effect = Alert.Effect.StopClosure
                 effectName = "Closure"
                 header = "Alert header"
-                updatedAt =
-                    LocalDateTime.parse("2025-01-22T10:36:13")
-                        .toInstant(TimeZone.currentSystemDefault())
+                updatedAt = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 36, 13)
             }
 
         composeTestRule.setContent {
@@ -71,9 +61,7 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Red Line Stop Closure").assertIsDisplayed()
         composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(
-                alert.activePeriod[0].formatStart(ApplicationProvider.getApplicationContext()).text
-            )
+            .onNode(hasTextMatching(Regex("Wednesday, Jan 22, 10:35\\sAM")))
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()
@@ -95,7 +83,7 @@ class AlertDetailsTest {
     fun testCurrentActivePeriod() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 30)
 
         val alert =
             objects.alert {
@@ -117,9 +105,7 @@ class AlertDetailsTest {
         }
 
         composeTestRule
-            .onNodeWithText(
-                alert.activePeriod[1].formatStart(ApplicationProvider.getApplicationContext()).text
-            )
+            .onNode(hasTextMatching(Regex("Tuesday, Jul 29, 9:25\\sAM")))
             .assertIsDisplayed()
     }
 
@@ -127,23 +113,10 @@ class AlertDetailsTest {
     fun testServiceStartAndEndActivePeriod() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 10)
 
-        val calendar = Calendar.getInstance()
-        calendar.time = now.toJavaDate()
-        calendar.timeZone = java.util.TimeZone.getTimeZone("America/New_York")
-
-        val startCalendar = calendar.clone() as Calendar
-        startCalendar.set(Calendar.HOUR_OF_DAY, 3)
-        startCalendar.set(Calendar.MINUTE, 0)
-
-        val endCalendar = calendar.clone() as Calendar
-        endCalendar.set(Calendar.HOUR_OF_DAY, 2)
-        endCalendar.set(Calendar.MINUTE, 59)
-        endCalendar.add(Calendar.DAY_OF_YEAR, 1)
-
-        val start = startCalendar.toInstant().toKotlinInstant()
-        val end = endCalendar.toInstant().toKotlinInstant()
+        val start = EasternTimeInstant(2025, Month.JULY, 29, 3, 0)
+        val end = EasternTimeInstant(2025, Month.JULY, 30, 2, 59)
         val alert =
             objects.alert {
                 activePeriod(start, end)
@@ -161,32 +134,17 @@ class AlertDetailsTest {
             )
         }
 
-        val time = DateFormat.getInstanceForSkeleton(DateFormat.HOUR_MINUTE)
-        composeTestRule
-            .onNode(
-                hasText("start of service", substring = true) and
-                    hasText(" ${calendar.get(Calendar.DAY_OF_MONTH)},", substring = true)
-            )
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText(time.format(start.toJavaDate()), substring = true)
-            .assertDoesNotExist()
-        composeTestRule
-            .onNode(
-                hasText("end of service", substring = true) and
-                    hasText(" ${calendar.get(Calendar.DAY_OF_MONTH)},", substring = true)
-            )
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText(time.format(end.toJavaDate()), substring = true)
-            .assertDoesNotExist()
+        composeTestRule.onNodeWithText("Tuesday, Jul 29, start of service").assertIsDisplayed()
+        composeTestRule.onNodeWithText("3:00", substring = true).assertDoesNotExist()
+        composeTestRule.onNodeWithText("Tuesday, Jul 29, end of service").assertIsDisplayed()
+        composeTestRule.onNodeWithText("2:59", substring = true).assertDoesNotExist()
     }
 
     @Test
     fun testLaterTodayActivePeriod() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 30)
         val start = now - 20.minutes
         val end = now + 2.hours
 
@@ -208,13 +166,8 @@ class AlertDetailsTest {
             )
         }
 
-        val time = DateFormat.getInstanceForSkeleton(DateFormat.HOUR_MINUTE)
-        composeTestRule
-            .onNodeWithText(time.format(start.toJavaDate()), substring = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText(time.format(end.toJavaDate()), substring = true)
-            .assertDoesNotExist()
+        composeTestRule.onNodeWithText("9:10", substring = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("11:30", substring = true).assertDoesNotExist()
         composeTestRule.onNodeWithText("later today", substring = true).assertIsDisplayed()
     }
 
@@ -222,7 +175,7 @@ class AlertDetailsTest {
     fun testNoCurrentActivePeriod() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val alert =
             objects.alert {
@@ -253,7 +206,7 @@ class AlertDetailsTest {
     fun testNoDescription() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val alert =
             objects.alert {
@@ -282,7 +235,7 @@ class AlertDetailsTest {
     fun testStopsInDescription() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val stop1 = objects.stop { name = "Stop 1" }
         val stop2 = objects.stop { name = "Stop 2" }
@@ -335,7 +288,7 @@ class AlertDetailsTest {
     fun testStopHeader() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val stop = objects.stop { name = "Stop" }
 
@@ -368,7 +321,7 @@ class AlertDetailsTest {
     fun testElevatorAlert() {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val stop = objects.stop { name = "Stop" }
 

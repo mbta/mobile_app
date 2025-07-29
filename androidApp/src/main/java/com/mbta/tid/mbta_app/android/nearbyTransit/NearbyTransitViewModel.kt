@@ -10,8 +10,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -49,7 +49,7 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
         schedules: ScheduleResponse?,
         predictions: PredictionsStreamDataResponse?,
         alerts: AlertsStreamDataResponse?,
-        now: Instant,
+        now: EasternTimeInstant,
         pinnedRoutes: Set<String>?,
     ) {
         val stopIds = nearbyStopIds

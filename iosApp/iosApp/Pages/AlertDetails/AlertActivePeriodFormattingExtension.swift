@@ -20,11 +20,10 @@ import Shared
  - Returns: A localized and formatted string describing the active period.
   */
 extension Shared.Alert.ActivePeriod {
-    private func format(instant: KotlinInstant, isStart: Bool) -> AttributedString {
-        let date = instant.toNSDate()
-        let dateFormat = Date.FormatStyle().weekday(.wide).month().day()
-        var formattedDate = date.formatted(dateFormat)
-        var formattedTime = date.formatted(date: .omitted, time: .shortened)
+    private func format(instant: EasternTimeInstant, isStart: Bool) -> AttributedString {
+        let dateFormat = EasternTimeInstant.FormatStyle().weekday(.wide).month().day()
+        var formattedDate = instant.formatted(dateFormat)
+        var formattedTime = instant.formatted(date: .omitted, time: .shortened)
 
         if isStart, fromStartOfService {
             formattedTime = NSLocalizedString(
@@ -36,7 +35,7 @@ extension Shared.Alert.ActivePeriod {
                 "end of service",
                 comment: "Used when an alert ends at the end of a service day"
             )
-            let previousDate = date - (60 * 60 * 24)
+            let previousDate = instant.minus(hours: 24)
             formattedDate = previousDate.formatted(dateFormat)
         } else if !isStart, endingLaterToday {
             formattedTime = NSLocalizedString(

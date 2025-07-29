@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -19,7 +20,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.time.Instant
+import kotlinx.datetime.Month
 
 class GlobalResponseTest {
     @Test
@@ -30,13 +31,13 @@ class GlobalResponseTest {
         val routePattern = objects.routePattern(route) { id = "rp1" }
         val routeType = MapStopRoute.matching(route)
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         val alert =
             objects.alert {
                 activePeriod(
-                    Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00"),
+                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
@@ -72,12 +73,12 @@ class GlobalResponseTest {
         val route = objects.route()
         val routePattern = objects.routePattern(route) { id = "rp1" }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         objects.alert {
             activePeriod(
-                Instant.parse("2024-03-18T04:30:00-04:00"),
-                Instant.parse("2024-03-22T02:30:00-04:00"),
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
             )
             effect = Alert.Effect.Suspension
             informedEntity(
@@ -120,13 +121,13 @@ class GlobalResponseTest {
         val routePattern = objects.routePattern(route) { id = "rp1" }
         val routeType = MapStopRoute.matching(route)
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         val alert =
             objects.alert {
                 activePeriod(
-                    Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00"),
+                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
@@ -183,13 +184,13 @@ class GlobalResponseTest {
         val routePattern2 = objects.routePattern(route) { id = "rp2" }
         val routeType = MapStopRoute.matching(route)
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         val alert1 =
             objects.alert {
                 activePeriod(
-                    Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00"),
+                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
@@ -206,8 +207,8 @@ class GlobalResponseTest {
         val alert2 =
             objects.alert {
                 activePeriod(
-                    Instant.parse("2024-03-18T04:30:00-04:00"),
-                    Instant.parse("2024-03-22T02:30:00-04:00"),
+                    EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                    EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
@@ -293,12 +294,12 @@ class GlobalResponseTest {
         }
         val routeType = MapStopRoute.matching(route)
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         objects.alert {
             activePeriod(
-                Instant.parse("2024-03-18T04:30:00-04:00"),
-                Instant.parse("2024-03-22T02:30:00-04:00"),
+                EasternTimeInstant(2024, Month.MARCH, 18, 4, 30, 0),
+                EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
             )
             effect = Alert.Effect.Suspension
             informedEntity(

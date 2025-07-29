@@ -70,7 +70,7 @@ struct FavoritesView: View {
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
             favoritesVM.setContext(context: FavoritesViewModel.ContextFavorites())
             favoritesVM.setLocation(location: location?.positionKt)
-            favoritesVM.setNow(now: now.toKotlinInstant())
+            favoritesVM.setNow(now: now.toEasternInstant())
             favoritesVM.reloadFavorites()
             loadEverything()
         }
@@ -91,7 +91,7 @@ struct FavoritesView: View {
         }
         .onChange(of: nearbyVM.alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
-        .onChange(of: now) { favoritesVM.setNow(now: $0.toKotlinInstant()) }
+        .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }
         .withScenePhaseHandlers(
             onActive: { favoritesVM.setActive(active: true, wasSentToBackground: false) },
             onInactive: { favoritesVM.setActive(active: false, wasSentToBackground: false) },

@@ -13,7 +13,7 @@ struct RouteCardDepartures: View {
     var analytics: Analytics = AnalyticsProvider.shared
     let stopData: RouteCardData.RouteStopData
     let global: GlobalResponse?
-    let now: Date
+    let now: EasternTimeInstant
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
@@ -21,7 +21,7 @@ struct RouteCardDepartures: View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(Array(stopData.data.enumerated()), id: \.element) { index, leaf in
                 if let direction = stopData.directions.first(where: { $0.id == leaf.directionId }) {
-                    let formatted = leaf.format(now: now.toKotlinInstant(), globalData: global)
+                    let formatted = leaf.format(now: now, globalData: global)
                     SheetNavigationLink(
                         value: .stopDetails(
                             stopId: stopData.stop.id,

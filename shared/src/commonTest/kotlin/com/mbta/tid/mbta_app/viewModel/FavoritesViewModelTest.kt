@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
 import dev.mokkery.answering.repeat
 import dev.mokkery.answering.returns
@@ -29,9 +30,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -110,7 +109,7 @@ class FavoritesViewModelTest : KoinTest {
         }
     }
 
-    private fun predictionsEverywhere(objects: ObjectCollectionBuilder, now: Instant) =
+    private fun predictionsEverywhere(objects: ObjectCollectionBuilder, now: EasternTimeInstant) =
         listOf(stop1, stop2).associateWith { stop ->
             listOf(route1, route2).associateWith { route ->
                 listOf(0, 1).associateWith { directionId ->
@@ -137,7 +136,7 @@ class FavoritesViewModelTest : KoinTest {
         }
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(Clock.System.now())
+        viewModel.setNow(EasternTimeInstant.now())
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
@@ -173,7 +172,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `loads full favorites with filtered predictions`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = objects.clone()
         val predictions = predictionsEverywhere(objects, now)
 
@@ -347,7 +346,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `reloads favorites`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
         val favoritesAfter = Favorites(setOf(RouteStopDirection(route2.id, stop2.id, 1)))
@@ -460,7 +459,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `updates favorites`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
         val favoritesAfter = Favorites(setOf())
@@ -581,7 +580,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `updates alerts`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
@@ -638,7 +637,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `updates location`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
 
@@ -668,7 +667,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `updates now`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val later = now + 2.minutes
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
@@ -699,7 +698,7 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `analytics event when favorites first loaded`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val later = now + 2.minutes
         val objects = objects.clone()
         predictionsEverywhere(objects, now)
@@ -728,7 +727,7 @@ class FavoritesViewModelTest : KoinTest {
     }
 
     fun `does not load new route card data when editing`() = runTest {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val favoritesBefore =
             Favorites(

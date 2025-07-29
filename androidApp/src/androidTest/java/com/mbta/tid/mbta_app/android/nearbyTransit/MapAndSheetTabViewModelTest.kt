@@ -5,11 +5,11 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.time.Clock
 import org.junit.Test
 
 class MapAndSheetTabViewModelTest {
@@ -117,7 +117,7 @@ class MapAndSheetTabViewModelTest {
                             GlobalResponse(objectCollectionBuilder),
                         )
                     ),
-                    Clock.System.now(),
+                    EasternTimeInstant.now(),
                 )
             )
 

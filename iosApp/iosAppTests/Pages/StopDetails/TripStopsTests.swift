@@ -18,7 +18,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testDisplaysSplitStops() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -47,9 +47,9 @@ final class TripStopsTests: XCTestCase {
 
         var predictionTime = now
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime = predictionTime.addingTimeInterval(5)
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -113,7 +113,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testDisplaysUnsplitStops() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -141,9 +141,9 @@ final class TripStopsTests: XCTestCase {
 
         var predictionTime = now
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime = predictionTime.addingTimeInterval(5)
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -193,7 +193,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testTargetHidden() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -219,9 +219,9 @@ final class TripStopsTests: XCTestCase {
 
         var predictionTime = now
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime = predictionTime.addingTimeInterval(5)
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -267,7 +267,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testFirstStopSeparated() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
         let pattern = objects.routePattern(route: route) { _ in }
@@ -294,9 +294,9 @@ final class TripStopsTests: XCTestCase {
 
         var predictionTime = now
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime = predictionTime.addingTimeInterval(5)
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -351,7 +351,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testDownstreamShuttleAlert() {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let pattern = objects.routePattern(route: route) { _ in }
@@ -381,9 +381,9 @@ final class TripStopsTests: XCTestCase {
         var predictionTime = now
 
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime += 5
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -446,7 +446,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testDownstreamClosureAlert() {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let pattern = objects.routePattern(route: route) { _ in }
@@ -476,9 +476,9 @@ final class TripStopsTests: XCTestCase {
         var predictionTime = now
 
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime += 5
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }
@@ -541,7 +541,7 @@ final class TripStopsTests: XCTestCase {
     }
 
     func testUpstreamAlert() {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let pattern = objects.routePattern(route: route) { _ in }
@@ -571,9 +571,9 @@ final class TripStopsTests: XCTestCase {
         var predictionTime = now
 
         func makePrediction(schedule: Schedule) -> Prediction {
-            predictionTime += 5
+            predictionTime = predictionTime.plus(seconds: 5)
             return objects.prediction(schedule: schedule) { prediction in
-                prediction.departureTime = predictionTime.toKotlinInstant()
+                prediction.departureTime = predictionTime
                 prediction.vehicleId = vehicle.id
             }
         }

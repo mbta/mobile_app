@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 data class TileData(
     val route: Route?,
@@ -22,7 +22,7 @@ data class TileData(
             } ?: true
 
     companion object {
-        fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: Instant): TileData? {
+        fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: EasternTimeInstant): TileData? {
             val formattedUpcomingTrip =
                 upcoming.format(
                     now,

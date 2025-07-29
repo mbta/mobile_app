@@ -34,10 +34,10 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -1073,7 +1073,7 @@ class StopDetailsViewModelTest {
         val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
         val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
 
-        predictionsRepo.lastUpdated = Clock.System.now()
+        predictionsRepo.lastUpdated = EasternTimeInstant.now()
 
         val stopFilters = mutableStateOf(StopDetailsPageFilters("stop1", null, null))
 
@@ -1112,7 +1112,7 @@ class StopDetailsViewModelTest {
     fun testManagersAppliesStopFilterAutomaticallyOnDepartureChange() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val route = objects.route {}
         val stop = objects.stop {}
@@ -1182,7 +1182,7 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val route = objects.route {}
 
@@ -1254,7 +1254,7 @@ class StopDetailsViewModelTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val route = objects.route {}
 
@@ -1336,7 +1336,7 @@ class StopDetailsViewModelTest {
         val trip = objects.trip(routePattern)
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
         val stopSequence = 10
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val globalResponse = GlobalResponse(objects)
         val alertData = AlertsStreamDataResponse(objects)

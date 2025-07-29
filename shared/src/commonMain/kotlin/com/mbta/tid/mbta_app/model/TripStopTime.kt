@@ -1,24 +1,25 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 interface TripStopTime : Comparable<TripStopTime> {
-    val arrivalTime: Instant?
-    val departureTime: Instant?
+    val arrivalTime: EasternTimeInstant?
+    val departureTime: EasternTimeInstant?
 
     val stopTime
         get() = arrivalTime ?: departureTime
 
-    fun stopTimeAfter(now: Instant) = arrivalTime?.takeUnless { it < now } ?: departureTime
+    fun stopTimeAfter(now: EasternTimeInstant) =
+        arrivalTime?.takeUnless { it < now } ?: departureTime
 
     /**
      * Is the current time between the arrival & departure times for this prediction (inclusive)?
      */
-    fun hasArrivedButNotDeparted(now: Instant): Boolean {
+    fun hasArrivedButNotDeparted(now: EasternTimeInstant): Boolean {
         return (arrivalTime?.let { it <= now } ?: false) &&
             (departureTime?.let { it >= now } ?: false)
     }
 
     override fun compareTo(other: TripStopTime): Int =
-        nullsLast<Instant>().compare(stopTime, other.stopTime)
+        nullsLast<EasternTimeInstant>().compare(stopTime, other.stopTime)
 }

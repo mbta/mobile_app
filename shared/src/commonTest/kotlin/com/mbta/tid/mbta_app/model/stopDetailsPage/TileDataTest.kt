@@ -5,12 +5,12 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -37,7 +37,7 @@ class TileDataTest {
 
     @Test
     fun `fromUpcoming keeps arriving trip`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip { headsign = "Headsign" }
@@ -68,7 +68,7 @@ class TileDataTest {
 
     @Test
     fun `fromUpcoming drops hidden trip`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()
@@ -84,7 +84,7 @@ class TileDataTest {
 
     @Test
     fun `isSelected is true when the filter matches`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val route = objects.route()
         val trip = objects.trip()

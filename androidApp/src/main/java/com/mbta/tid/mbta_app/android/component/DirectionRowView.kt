@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -37,7 +37,7 @@ fun DirectionRowView(
 private fun DirectionRowViewPreview() {
     MyApplicationTheme {
         Column {
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
             val objects = ObjectCollectionBuilder()
             val trip1 = objects.trip()
             val prediction1 =

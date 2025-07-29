@@ -222,7 +222,7 @@ class NearbyViewModel: ObservableObject {
                 schedules: schedules,
                 predictions: predictions?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
-                now: now.toKotlinInstant(),
+                now: now.toEasternInstant(),
                 pinnedRoutes: pinnedRoutes,
                 context: .nearbyTransit
             )

@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import dev.mokkery.MockMode
@@ -61,7 +62,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -74,7 +74,7 @@ import org.koin.test.KoinTest
 @OptIn(ExperimentalMaterial3Api::class)
 class MapAndSheetPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"
@@ -280,8 +280,9 @@ class MapAndSheetPageTest : KoinTest {
     fun testReloadsMapboxConfigOnError() {
 
         open class MockConfigManager : IMapboxConfigManager {
-            var mutableLastErrorTimestamp = MutableStateFlow<Instant?>(null)
-            override var lastMapboxErrorTimestamp: Flow<Instant?> = mutableLastErrorTimestamp
+            var mutableLastErrorTimestamp = MutableStateFlow<EasternTimeInstant?>(null)
+            override var lastMapboxErrorTimestamp: Flow<EasternTimeInstant?> =
+                mutableLastErrorTimestamp
             override val configLoadAttempted: StateFlow<Boolean> = MutableStateFlow(value = false)
             var loadConfigCalledCount = 0
 
@@ -329,7 +330,7 @@ class MapAndSheetPageTest : KoinTest {
         )
 
         composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 1 }
-        mockConfigManager.mutableLastErrorTimestamp.value = Clock.System.now()
+        mockConfigManager.mutableLastErrorTimestamp.value = EasternTimeInstant.now()
 
         composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 2 }
     }
@@ -376,13 +377,13 @@ class MapAndSheetPageTest : KoinTest {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
         val mockClock =
             object : Clock {
-                var time: Instant = Clock.System.now()
+                var time = Clock.System.now()
 
                 fun plus(duration: Duration) {
                     time = time.plus(duration)
                 }
 
-                override fun now(): Instant = time
+                override fun now() = time
             }
 
         val startLocation = Position(0.0, 0.0)

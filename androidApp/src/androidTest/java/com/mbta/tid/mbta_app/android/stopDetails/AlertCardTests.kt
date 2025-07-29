@@ -6,23 +6,15 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.util.formattedServiceDay
-import com.mbta.tid.mbta_app.android.util.formattedTime
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.utils.serviceDate
-import com.mbta.tid.mbta_app.utils.toBostonTime
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
-import kotlin.time.Instant
-import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atTime
-import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
@@ -219,12 +211,8 @@ class AlertCardTests {
                 effect = Alert.Effect.Suspension
             }
 
-        // Fixed time so we can have a specific day of the week (wed)
-        val now = Instant.fromEpochMilliseconds(1743598800000)
-
-        val saturday = now.toBostonTime().serviceDate.plus(DatePeriod(days = 3))
-        val serviceEndTime = LocalTime(hour = 5, minute = 0)
-        val endTime = saturday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        // Fixed time so we can have a specific day of the week (sat)
+        val endTime = EasternTimeInstant(2025, Month.APRIL, 5, 3, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -237,9 +225,7 @@ class AlertCardTests {
         }
 
         composeTestRule.onNodeWithText("Suspension").assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText("Service suspended through ${endTime.formattedServiceDay()}")
-            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Service suspended through Saturday").assertIsDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertDoesNotExist()
         composeTestRule.onNodeWithText("View details").performClick()
     }
@@ -251,7 +237,7 @@ class AlertCardTests {
                 header = "Alert header"
                 effect = Alert.Effect.Detour
             }
-        val endTime = Instant.fromEpochMilliseconds(1743629400000)
+        val endTime = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,
@@ -264,7 +250,7 @@ class AlertCardTests {
         }
 
         composeTestRule
-            .onNodeWithText("Detour through ${endTime.formattedTime()}")
+            .onNode(hasTextMatching(Regex("Detour through 9:00\\sAM")))
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
     }

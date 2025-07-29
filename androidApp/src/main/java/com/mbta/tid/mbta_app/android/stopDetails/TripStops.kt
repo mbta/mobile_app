@@ -48,9 +48,8 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
@@ -60,7 +59,7 @@ fun TripStops(
     stops: TripDetailsStopList,
     stopSequence: Int?,
     headerSpec: TripHeaderSpec?,
-    now: Instant,
+    now: EasternTimeInstant,
     alertSummaries: Map<String, AlertSummary?>,
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
@@ -241,7 +240,7 @@ private fun StopList(
     list: List<TripDetailsStopList.Entry>,
     trip: Trip,
     lastStopSequence: Int?,
-    now: Instant,
+    now: EasternTimeInstant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
@@ -282,7 +281,7 @@ private fun TripStopsPreview() {
             }
         }
     val trip = objects.trip()
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     val alertStartIndex = 7
     val alert = objects.alert { effect = Alert.Effect.Shuttle }
     val stopList =
@@ -311,7 +310,7 @@ private fun TripStopsPreview() {
                 stopList,
                 4,
                 TripHeaderSpec.NoVehicle,
-                Clock.System.now(),
+                EasternTimeInstant.now(),
                 emptyMap(),
                 GlobalResponse(objects),
                 onTapLink = {},

@@ -14,12 +14,11 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +37,7 @@ interface IFavoritesViewModel {
 
     fun setLocation(location: Position?)
 
-    fun setNow(now: Instant)
+    fun setNow(now: EasternTimeInstant)
 
     fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
@@ -70,7 +69,7 @@ class FavoritesViewModel(
 
         data class SetLocation(val location: Position?) : Event
 
-        data class SetNow(val now: Instant) : Event
+        data class SetNow(val now: EasternTimeInstant) : Event
 
         data class UpdateFavorites(
             val updatedFavorites: Map<RouteStopDirection, Boolean>,
@@ -99,7 +98,7 @@ class FavoritesViewModel(
         var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
         var context: Context? by remember { mutableStateOf(null) }
         var location: Position? by remember { mutableStateOf(null) }
-        var now: Instant by remember { mutableStateOf(Clock.System.now()) }
+        var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
         val globalData = getGlobalData("FavoritesViewModel.getGlobalData")
         val stopIds =
@@ -226,7 +225,7 @@ class FavoritesViewModel(
 
     override fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
 
-    override fun setNow(now: Instant) = fireEvent(Event.SetNow(now))
+    override fun setNow(now: EasternTimeInstant) = fireEvent(Event.SetNow(now))
 
     override fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
@@ -276,7 +275,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onSetAlerts = { _: AlertsStreamDataResponse? -> }
     var onSetContext = { _: FavoritesViewModel.Context -> }
     var onSetLocation = { _: Position? -> }
-    var onSetNow = { _: Instant -> }
+    var onSetNow = { _: EasternTimeInstant -> }
     var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
 
     override val models = MutableStateFlow(initialState)
@@ -301,7 +300,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetLocation(location)
     }
 
-    override fun setNow(now: Instant) {
+    override fun setNow(now: EasternTimeInstant) {
         onSetNow(now)
     }
 

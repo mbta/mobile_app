@@ -41,7 +41,7 @@ extension HomeMapView {
             let newMapData = GlobalMapData(
                 globalData: globalData,
                 alerts: nearbyVM.alerts,
-                filterAtTime: now.toKotlinInstant()
+                filterAtTime: now.toEasternInstant()
             )
             DispatchQueue.main.async { globalMapData = newMapData }
         }

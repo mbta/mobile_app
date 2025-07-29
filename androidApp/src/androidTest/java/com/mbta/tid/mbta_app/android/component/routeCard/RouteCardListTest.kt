@@ -18,10 +18,10 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +30,7 @@ import org.koin.test.KoinTest
 
 class RouteCardListTest : KoinTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"
@@ -184,7 +184,7 @@ class RouteCardListTest : KoinTest {
                         routeCardData = routeCardData,
                         emptyView = { Text("This would be the empty view") },
                         global = globalResponse,
-                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        now = EasternTimeInstant.now(),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { _, _ -> },
@@ -215,7 +215,7 @@ class RouteCardListTest : KoinTest {
                         routeCardData = emptyList(),
                         emptyView = { Text("This would be the empty view") },
                         global = globalResponse,
-                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        now = EasternTimeInstant.now(),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { _, _ -> },
@@ -255,7 +255,7 @@ class RouteCardListTest : KoinTest {
                         routeCardData = routeCardData,
                         emptyView = { Text("This would be the empty view") },
                         global = globalResponse,
-                        now = Instant.fromEpochMilliseconds(System.currentTimeMillis()),
+                        now = EasternTimeInstant.now(),
                         isFavorite = { false },
                         togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },

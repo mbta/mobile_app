@@ -88,7 +88,7 @@ struct AlertDetailsPage: View {
                     stop: stop,
                     affectedStops: affectedStops,
                     stopId: nearbyVM.navigationStack.lastStopId,
-                    now: now
+                    now: now.toEasternInstant()
                 )
             } else {
                 ProgressView()

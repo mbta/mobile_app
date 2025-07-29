@@ -60,7 +60,7 @@ struct RouteCardContainer<Content: View>: View {
 struct RouteCard: View {
     let cardData: RouteCardData
     let global: GlobalResponse?
-    let now: Date
+    let now: EasternTimeInstant
     let onPin: (String) -> Void
     let pinned: Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
@@ -92,7 +92,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
     RouteCard(
         cardData: card,
         global: previewData.global,
-        now: previewData.now.toNSDate(),
+        now: previewData.now,
         onPin: { _ in },
         pinned: false,
         pushNavEntry: { _ in },

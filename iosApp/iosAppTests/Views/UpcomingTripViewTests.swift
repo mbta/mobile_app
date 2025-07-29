@@ -55,9 +55,9 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testFirstPredictionTimeAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.Time(predictionTime: date.toKotlinInstant(), headline: true)),
+            prediction: .some(.Time(predictionTime: date, headline: true)),
             routeType: .commuterRail,
             isFirst: true
         )
@@ -65,9 +65,9 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testPredictionTimeAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.Time(predictionTime: date.toKotlinInstant(), headline: true)),
+            prediction: .some(.Time(predictionTime: date, headline: true)),
             routeType: .commuterRail,
             isFirst: false
         )
@@ -75,10 +75,10 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testTimeWithStatus() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
             prediction: .some(.TimeWithStatus(
-                predictionTime: date.toKotlinInstant(),
+                predictionTime: date,
                 status: "All aboard",
                 headline: true
             )),
@@ -91,10 +91,10 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testTimeWithStatusLate() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
             prediction: .some(.TimeWithStatus(
-                predictionTime: date.toKotlinInstant(),
+                predictionTime: date,
                 status: "Late",
                 headline: true
             )),
@@ -104,10 +104,10 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testTimeWithStatusDelayed() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
             prediction: .some(.TimeWithStatus(
-                predictionTime: date.toKotlinInstant(),
+                predictionTime: date,
                 status: "Delay",
                 headline: true
             )),
@@ -117,12 +117,12 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testTimeWithScheduleEarly() throws {
-        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T19:55:00Z")!
+        let scheduleDate = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let predictionDate = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 15, minute: 55, second: 0)
         let sut = UpcomingTripView(
             prediction: .some(.TimeWithSchedule(
-                predictionTime: predictionDate.toKotlinInstant(),
-                scheduledTime: scheduleDate.toKotlinInstant(),
+                predictionTime: predictionDate,
+                scheduledTime: scheduleDate,
                 headline: true
             )),
             routeType: .commuterRail
@@ -133,12 +133,12 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testTimeWithScheduleDelayed() throws {
-        let scheduleDate = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
-        let predictionDate = ISO8601DateFormatter().date(from: "2024-05-01T20:05:00Z")!
+        let scheduleDate = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let predictionDate = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 5, second: 0)
         let sut = UpcomingTripView(
             prediction: .some(.TimeWithSchedule(
-                predictionTime: predictionDate.toKotlinInstant(),
-                scheduledTime: scheduleDate.toKotlinInstant(),
+                predictionTime: predictionDate,
+                scheduledTime: scheduleDate,
                 headline: true
             )),
             routeType: .commuterRail
@@ -149,9 +149,9 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testFirstScheduledAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.ScheduleTime(scheduledTime: date.toKotlinInstant(), headline: true)),
+            prediction: .some(.ScheduleTime(scheduledTime: date, headline: true)),
             routeType: .bus,
             isFirst: true,
             isOnly: false
@@ -161,9 +161,9 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testScheduledAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.ScheduleTime(scheduledTime: date.toKotlinInstant(), headline: true)),
+            prediction: .some(.ScheduleTime(scheduledTime: date, headline: true)),
             routeType: .bus,
             isFirst: false
         )
@@ -206,7 +206,7 @@ final class UpcomingTripViewTests: XCTestCase {
     }
 
     func testCancelledAccessibilityLabel() throws {
-        let date = ISO8601DateFormatter().date(from: "2024-05-01T20:00:00Z")!.toKotlinInstant()
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
                                    routeType: .heavyRail,
                                    isFirst: false)

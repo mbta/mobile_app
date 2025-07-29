@@ -34,9 +34,8 @@ import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.util.Typography
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -47,11 +46,11 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
 
     val context = LocalContext.current
 
-    var lastRequestStart: Instant? by remember { mutableStateOf(null) }
+    var lastRequestStart: EasternTimeInstant? by remember { mutableStateOf(null) }
 
     val requestPermissionLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-            val currentTime = Clock.System.now()
+            val currentTime = EasternTimeInstant.now()
 
             showSettingsPrompt =
                 shouldShowSettingsPrompt(
@@ -67,7 +66,7 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
         Button(
             modifier = modifier,
             onClick = {
-                lastRequestStart = Clock.System.now()
+                lastRequestStart = EasternTimeInstant.now()
                 requestPermissionLauncher.launch(
                     arrayOf(
                         android.Manifest.permission.ACCESS_FINE_LOCATION,
@@ -146,8 +145,8 @@ fun LocationAuthButton(locationDataManager: LocationDataManager, modifier: Modif
  */
 fun shouldShowSettingsPrompt(
     shouldShowRationale: Boolean,
-    startPermissionRequest: Instant?,
-    endPermissionRequest: Instant,
+    startPermissionRequest: EasternTimeInstant?,
+    endPermissionRequest: EasternTimeInstant,
 ): Boolean {
     return !shouldShowRationale &&
         startPermissionRequest != null &&

@@ -39,7 +39,7 @@ import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
@@ -192,7 +192,7 @@ private fun ErrorBannerPreviews() {
         MockErrorBannerStateRepository(
             state =
                 ErrorBannerState.StalePredictions(
-                    lastUpdated = Clock.System.now().minus(2.minutes),
+                    lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                     action = {},
                 )
         )

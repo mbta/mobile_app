@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -32,7 +32,7 @@ class ErrorBannerTests {
 
         errorRepo.mutableFlow.tryEmit(
             ErrorBannerState.StalePredictions(
-                lastUpdated = Clock.System.now().minus(2.minutes),
+                lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                 action = {},
             )
         )
@@ -75,7 +75,7 @@ class ErrorBannerTests {
             MockErrorBannerStateRepository(
                 state =
                     ErrorBannerState.StalePredictions(
-                        lastUpdated = Clock.System.now().minus(2.minutes),
+                        lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                         action = {},
                     )
             )
@@ -94,7 +94,7 @@ class ErrorBannerTests {
             MockErrorBannerStateRepository(
                 state =
                     ErrorBannerState.StalePredictions(
-                        lastUpdated = Clock.System.now().minus(1.minutes),
+                        lastUpdated = EasternTimeInstant.now().minus(1.minutes),
                         action = {},
                     )
             )
@@ -113,7 +113,7 @@ class ErrorBannerTests {
             MockErrorBannerStateRepository(
                 state =
                     ErrorBannerState.StalePredictions(
-                        lastUpdated = Clock.System.now().minus(2.minutes),
+                        lastUpdated = EasternTimeInstant.now().minus(2.minutes),
                         action = {},
                     )
             )

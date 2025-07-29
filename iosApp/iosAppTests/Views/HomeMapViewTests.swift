@@ -377,7 +377,7 @@ final class HomeMapViewTests: XCTestCase {
                     ),
                 ], globalData: .init(objects: objects)),
             ],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )])
 
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
@@ -477,7 +477,7 @@ final class HomeMapViewTests: XCTestCase {
                     ),
                 ], globalData: .init(objects: objectCollection)),
             ],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )])
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(

@@ -15,7 +15,7 @@ struct TripDetailsView: View {
     var tripFilter: TripDetailsFilter?
     var stopId: String
 
-    var now: Date
+    var now: EasternTimeInstant
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -35,7 +35,7 @@ struct TripDetailsView: View {
     init(
         tripFilter: TripDetailsFilter?,
         stopId: String,
-        now: Date,
+        now: EasternTimeInstant,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
