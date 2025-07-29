@@ -27,13 +27,13 @@ struct ToastView: View {
                 if let onClose = state.onClose {
                     ActionButton(
                         kind: .close,
-                        circleColorOverride: Color.fill1,
-                        iconColorOverride: Color.text
+                        circleColor: Color.fill1,
+                        iconColor: Color.text
                     ) {
                         onClose()
                         onDismiss()
                     }
-                    .withRoundedBorder(radius: 1000, color: Color.haloDark, width: 2)
+                    .overlay(Circle().stroke(Color.halo, lineWidth: 2).frame(width: 34, height: 34))
                     .padding(.trailing, 16)
                 }
                 if let label = state.actionLabel, let onAction = state.onAction {

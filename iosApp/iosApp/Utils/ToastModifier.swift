@@ -53,7 +53,7 @@ struct ToastModifier: ViewModifier {
 
         let duration = state.duration.inMillis
 
-        if duration > 0 {
+        if let duration {
             workItem?.cancel()
             let task = DispatchWorkItem { dismissToast() }
             workItem = task
@@ -69,9 +69,9 @@ struct ToastModifier: ViewModifier {
 }
 
 extension ToastViewModel.Duration {
-    var inMillis: Int {
+    var inMillis: Int? {
         switch self {
-        case .indefinite: 0
+        case .indefinite: nil
         case .short: 4000
         case .long: 10000
         }
