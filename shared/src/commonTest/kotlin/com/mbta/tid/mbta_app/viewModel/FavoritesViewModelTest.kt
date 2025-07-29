@@ -184,7 +184,7 @@ class FavoritesViewModelTest : KoinTest {
         }
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(Clock.System.now())
+        viewModel.setNow(EasternTimeInstant.now())
         viewModel.setLocation(stop1.position)
 
         testViewModelFlow(viewModel).test {
