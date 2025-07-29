@@ -171,7 +171,7 @@ class FavoritesViewModel(
             } else if (stopIds.isEmpty()) {
                 routeCardData = emptyList()
             } else {
-                val loadedRouteCardData =
+                routeCardData =
                     RouteCardData.routeCardsForStopList(
                         stopIds,
                         globalData,
@@ -182,9 +182,9 @@ class FavoritesViewModel(
                         now,
                         emptySet(),
                         RouteCardData.Context.Favorites,
+                        favorites,
                         coroutineDispatcher,
                     )
-                routeCardData = filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
         }
 
@@ -194,7 +194,7 @@ class FavoritesViewModel(
             } else if (stopIds.isEmpty()) {
                 staticRouteCardData = emptyList()
             } else {
-                val loadedRouteCardData =
+                staticRouteCardData =
                     RouteCardData.routeCardsForStaticStopList(
                         stopIds,
                         globalData,
@@ -202,10 +202,9 @@ class FavoritesViewModel(
                         // not depending on now because it only matters for testing
                         now,
                         location,
+                        favorites,
                         coroutineDispatcher,
                     )
-                staticRouteCardData =
-                    filterRouteAndDirection(loadedRouteCardData, globalData, favorites)
             }
         }
 
@@ -239,36 +238,6 @@ class FavoritesViewModel(
         defaultDirection: Int,
     ) {
         fireEvent(Event.UpdateFavorites(updatedFavorites, context, defaultDirection))
-    }
-
-    companion object {
-        fun filterRouteAndDirection(
-            routeCardData: List<RouteCardData>?,
-            global: GlobalResponse,
-            favorites: Set<RouteStopDirection>?,
-        ): List<RouteCardData>? {
-            return routeCardData
-                ?.map { data ->
-                    val filteredStopData =
-                        data.stopData
-                            .map { stopData ->
-                                val filteredLeafData =
-                                    stopData.data.filter { leafData ->
-                                        val routeStopDirection =
-                                            RouteStopDirection(
-                                                leafData.lineOrRoute.id,
-                                                leafData.stop.resolveParent(global).id,
-                                                leafData.directionId,
-                                            )
-                                        favorites?.contains(routeStopDirection) == true
-                                    }
-                                stopData.copy(data = filteredLeafData)
-                            }
-                            .filter { it.data.isNotEmpty() }
-                    data.copy(stopData = filteredStopData)
-                }
-                ?.filter { it.stopData.any { it.data.isNotEmpty() } }
-        }
     }
 }
 

@@ -412,6 +412,10 @@
     <string name="vehicle_prediction_schedule_status_early_other">and %1$s %2$s early</string>
     <string name="vehicle_prediction_time_first">%1$s arriving at %2$s</string>
     <string name="vehicle_prediction_time_other">and at %1$s</string>
+    <string name="vehicle_schedule_hours_first">%1$s arriving in %2$d hr scheduled</string>
+    <string name="vehicle_schedule_hours_minutes_first">%1$s arriving in %2$d hr %3$d min scheduled</string>
+    <string name="vehicle_schedule_hours_minutes_other">and in %1$d hr %2$d min scheduled</string>
+    <string name="vehicle_schedule_hours_other">and in %1$d hr scheduled</string>
     <string name="vehicle_schedule_minutes_first">%1$s arriving in %2$d min scheduled</string>
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>

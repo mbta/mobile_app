@@ -655,6 +655,7 @@ data class RouteCardData(
             now: Instant,
             pinnedRoutes: Set<String>,
             context: Context,
+            favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
@@ -678,7 +679,7 @@ data class RouteCardData(
                 val allDataLoaded = schedules != null
 
                 ListBuilder(allDataLoaded, context, now)
-                    .addStaticStopsData(stopIds, globalData, context)
+                    .addStaticStopsData(stopIds, globalData, context, favorites)
                     .addUpcomingTrips(schedules, predictions, now, globalData)
                     .filterIrrelevantData(now, cutoffTime, context, globalData)
                     .addAlerts(
@@ -706,6 +707,7 @@ data class RouteCardData(
             context: Context,
             now: Instant = Clock.System.now(),
             sortByDistanceFrom: Position? = null,
+            favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
@@ -714,7 +716,7 @@ data class RouteCardData(
                 if (globalData == null) return@withContext null
 
                 ListBuilder(true, context, now)
-                    .addStaticStopsData(stopIds, globalData, context)
+                    .addStaticStopsData(stopIds, globalData, context, favorites)
                     // We don't need alerts here, this is just to satisfy the null check
                     .addAlerts(
                         alerts = AlertsStreamDataResponse(emptyMap()),
@@ -757,6 +759,7 @@ data class RouteCardData(
             stopIds: List<String>,
             globalData: GlobalResponse,
             context: Context,
+            favorites: Set<RouteStopDirection>?,
         ): ListBuilder {
 
             val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
@@ -766,6 +769,7 @@ data class RouteCardData(
                     parentToAllStops,
                     globalData,
                     context,
+                    favorites,
                 )
 
             val builderData =
