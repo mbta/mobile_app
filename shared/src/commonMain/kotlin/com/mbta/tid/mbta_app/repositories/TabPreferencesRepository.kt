@@ -10,16 +10,9 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-enum class DefaultTab {
-    Favorites,
-    Nearby;
-
-    fun toEntrypoint(): SheetRoutes.Entrypoint {
-        return when (this) {
-            Favorites -> SheetRoutes.Favorites
-            Nearby -> SheetRoutes.NearbyTransit
-        }
-    }
+enum class DefaultTab(val entrypoint: SheetRoutes.Entrypoint) {
+    Favorites(SheetRoutes.Favorites),
+    Nearby(SheetRoutes.NearbyTransit),
 }
 
 interface ITabPreferencesRepository {

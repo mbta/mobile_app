@@ -64,7 +64,7 @@ fun ContentView(
 
     LaunchedEffect(defaultTab, enhancedFavorites) {
         if (sheetNavEntrypoint == null && enhancedFavorites == true) {
-            sheetNavEntrypoint = defaultTab?.toEntrypoint()
+            sheetNavEntrypoint = defaultTab?.entrypoint
         } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
             sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }

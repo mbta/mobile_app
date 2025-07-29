@@ -583,8 +583,7 @@ fun MapAndSheetPage(
 
     @Composable
     fun NearbyTransitSheetContents() {
-        // for ViewModel reasons, must be within the `composable` to be the same
-        // instance
+        // for ViewModel reasons, must be within the `composable` to be the same instance
         val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
         LaunchedEffect(Unit) {
             if (!navBarVisible && !searchExpanded) showNavBar()
