@@ -37,7 +37,10 @@ final class CollapsableStopListTests: XCTestCase {
 
         let sut = CollapsableStopList(
             lineOrRoute: .route(mainRoute),
-            segment: .init(stops: [.init(stop: stop1, patterns: [], connectingRoutes: [])], hasRouteLine: false),
+            segment: .init(
+                stops: [.init(stop: stop1, stopLane: .center, stickConnections: [], connectingRoutes: [])],
+                isTypical: false
+            ),
             onClick: { _ in clicked = true },
             isFirstSegment: false,
             isLastSegment: false,
@@ -46,7 +49,6 @@ final class CollapsableStopListTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: stop1.name))
         XCTAssertNotNil(try sut.inspect().find(text: "Less common stop"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "mbta-logo"))
         try sut.inspect().find(button: stop1.name).tap()
         XCTAssertTrue(clicked)
     }
@@ -72,12 +74,12 @@ final class CollapsableStopListTests: XCTestCase {
         let sut = CollapsableStopList(
             lineOrRoute: .route(mainRoute),
             segment: .init(
-                stops: [.init(stop: stop1, patterns: [], connectingRoutes: []), .init(
+                stops: [.init(stop: stop1, stopLane: .center, stickConnections: [], connectingRoutes: []), .init(
                     stop: stop2,
-                    patterns: [],
+                    stopLane: .center, stickConnections: [],
                     connectingRoutes: []
                 )],
-                hasRouteLine: false
+                isTypical: false
             ),
             onClick: { _ in },
             rightSideContent: { _ in EmptyView() }
@@ -92,8 +94,6 @@ final class CollapsableStopListTests: XCTestCase {
             )
             try view.find(ViewType.DisclosureGroup.self).expand()
             XCTAssertTrue(try view.find(ViewType.DisclosureGroup.self).isExpanded())
-            XCTAssertNotNil(try view.find(imageName: "mbta-logo"))
-            XCTAssertNotNil(try view.find(imageName: "map-stop-close-BUS"))
             XCTAssertNotNil(try view.find(text: stop2.name))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))

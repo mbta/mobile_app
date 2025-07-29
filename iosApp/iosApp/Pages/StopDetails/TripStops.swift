@@ -84,18 +84,6 @@ struct TripStops: View {
         }
     }
 
-    @ViewBuilder
-    var routeLineTwist: some View {
-        VStack(spacing: 0) {
-            ColoredRouteLine(routeAccents.color)
-            ZStack {
-                Image(.stopTripLineTwist).foregroundStyle(routeAccents.color)
-                Image(.stopTripLineTwistShadow)
-            }
-            ColoredRouteLine(routeAccents.color)
-        }
-    }
-
     var body: some View {
         ZStack {
             Color.fill2
@@ -121,35 +109,17 @@ struct TripStops: View {
                         isExpanded: $stopsExpanded,
                         content: {
                             VStack(spacing: 0) {
-                                HaloSeparator().overlay(alignment: .leading) {
-                                    if !showFirstStopSeparately {
-                                        // Lil 1x4 pt route color bar to maintain an
-                                        // unbroken route color line over the separator
-                                        ColoredRouteLine(routeAccents.color).padding(.leading, 42)
-                                    }
-                                }
-                                .padding(.horizontal, 6)
                                 stopList(list: collapsedStops)
                             }
                         },
                         label: {
                             HStack(spacing: 0) {
-                                VStack(spacing: 0) {
-                                    if stopsExpanded {
-                                        ColoredRouteLine(routeAccents.color)
-                                    } else {
-                                        routeLineTwist
-                                    }
-                                }
-                                .transition(.opacity.animation(.easeInOut(duration: 0.2)))
-                                .frame(minWidth: 24)
-
                                 Text(
                                     "\(stopsAway, specifier: "%ld") stops away",
                                     comment: "How many stops away the vehicle is from the target stop"
                                 )
                                 .foregroundStyle(Color.text)
-                                .padding(.leading, 16)
+                                .padding(.leading, 0)
                                 .accessibilityLabel(Text(
                                     "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
                                     comment: """
@@ -176,7 +146,7 @@ struct TripStops: View {
                             .frame(maxWidth: .infinity, minHeight: 56)
                         }
                     )
-                    .disclosureGroupStyle(.tripDetails)
+                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents))
                 }
                 if let target, !hideTarget {
                     // If the target is the first stop and there's no vehicle,
@@ -199,7 +169,15 @@ struct TripStops: View {
             .padding(.top, 56)
             .overlay(alignment: .topLeading) {
                 if !showFirstStopSeparately {
-                    ColoredRouteLine(routeAccents.color).frame(maxHeight: 56).padding(.leading, 42)
+                    StickDiagram(
+                        routeAccents.color,
+                        RouteBranchSegment.StickConnection.companion.forward(
+                            stopBefore: "",
+                            stop: nil,
+                            stopAfter: "",
+                            lane: .center
+                        )
+                    ).frame(maxHeight: 56).padding(.leading, 42)
                 }
             }
         }

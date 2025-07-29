@@ -11,11 +11,11 @@ import SwiftUI
 
 struct CollapsableStopList<RightSideContent: View>: View {
     let lineOrRoute: RouteCardData.LineOrRoute
-    let segment: RouteDetailsStopList.OldSegment
-    let onClick: (RouteDetailsStopList.OldEntry) -> Void
+    let segment: RouteDetailsStopList.NewSegment
+    let onClick: (RouteDetailsStopList.NewEntry) -> Void
     let isFirstSegment: Bool
     let isLastSegment: Bool
-    let rightSideContent: (RouteDetailsStopList.OldEntry) -> RightSideContent
+    let rightSideContent: (RouteDetailsStopList.NewEntry) -> RightSideContent
 
     @State var stopsExpanded = false
 
@@ -23,11 +23,11 @@ struct CollapsableStopList<RightSideContent: View>: View {
 
     init(
         lineOrRoute: RouteCardData.LineOrRoute,
-        segment: RouteDetailsStopList.OldSegment,
-        onClick: @escaping (RouteDetailsStopList.OldEntry) -> Void,
+        segment: RouteDetailsStopList.NewSegment,
+        onClick: @escaping (RouteDetailsStopList.NewEntry) -> Void,
         isFirstSegment: Bool = false,
         isLastSegment: Bool = false,
-        rightSideContent: @escaping (RouteDetailsStopList.OldEntry) -> RightSideContent
+        rightSideContent: @escaping (RouteDetailsStopList.NewEntry) -> RightSideContent
     ) {
         self.lineOrRoute = lineOrRoute
         self.segment = segment
@@ -41,29 +41,32 @@ struct CollapsableStopList<RightSideContent: View>: View {
         if let stop = segment.stops.first, segment.stops.count == 1 {
             StopListRow(
                 stop: stop.stop,
+                stopLane: stop.stopLane,
+                stickConnections: stop.stickConnections,
                 onClick: { onClick(stop) },
                 routeAccents: .init(route: lineOrRoute.sortRoute),
                 stopListContext: .routeDetails,
                 connectingRoutes: stop.connectingRoutes,
-                stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment, includeLineDiagram: false),
+                stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment),
                 descriptor: { Text("Less common stop").font(Typography.footnote) },
                 rightSideContent: { rightSideContent(stop) }
             ).background(Color.fill1)
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
         } else {
             DisclosureGroup(isExpanded: $stopsExpanded, content: {
-                VStack {
+                VStack(spacing: 0) {
                     ForEach(Array(segment.stops.enumerated()), id: \.offset) { index, stop in
                         StopListRow(
                             stop: stop.stop,
+                            stopLane: stop.stopLane,
+                            stickConnections: stop.stickConnections,
                             onClick: { onClick(stop) },
                             routeAccents: .init(route: lineOrRoute.sortRoute),
                             stopListContext: .routeDetails,
                             connectingRoutes: stop.connectingRoutes,
                             stopPlacement: .init(
                                 isFirst: isFirstSegment && index == segment.stops.startIndex,
-                                isLast: isLastSegment && index == segment.stops.index(before: segment.stops.endIndex),
-                                includeLineDiagram: false
+                                isLast: isLastSegment && index == segment.stops.index(before: segment.stops.endIndex)
                             ),
                             descriptor: { EmptyView() },
                             rightSideContent: { rightSideContent(stop) }
@@ -71,7 +74,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     }
                 }
             }, label: {
-                VStack(spacing: 4) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text(AttributedString.tryMarkdown(String(format: NSLocalizedString(
                         "**%1$ld** less common stops",
                         comment: "Header for a list of stops that vehicles don't always stop at for a given route"
@@ -85,7 +88,16 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     .foregroundStyle(Color.deemphasized)
                     .font(Typography.footnote)
                 }
+                .padding(.vertical, 8)
+                Spacer()
             })
+            .disclosureGroupStyle(.stopList(
+                routeAccents: .init(route: lineOrRoute.sortRoute),
+                stickConnections: segment.twistedConnections().compactMap {
+                    guard let connection = $0.first, let isTwisted = $0.second else { return nil }
+                    return (connection, isTwisted.boolValue)
+                }
+            ))
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }
     }
