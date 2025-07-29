@@ -17,54 +17,44 @@ struct ToastView: View {
     var state: ToastState
     var onDismiss: () -> Void
 
-    // Color scheme is inverted for toast
-    private var toastColorScheme: ColorScheme {
-        switch colorScheme {
-        case .light: .dark
-        case .dark: .light
-        default: .dark
-        }
-    }
-
     var body: some View {
         HStack {
             Group {
                 Text(state.message)
                     .font(Typography.body)
-                    .foregroundColor(Color.text)
+                    .foregroundColor(Color.textContrast)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
                 if let onClose = state.onClose {
                     ActionButton(
                         kind: .close,
-                        circleColor: Color.fill1,
-                        iconColor: Color.text
+                        circleColor: Color.contrast,
+                        iconColor: Color.textContrast
                     ) {
                         onClose()
                         onDismiss()
                     }
-                    .overlay(Circle().stroke(Color.halo, lineWidth: 2).frame(width: 34, height: 34))
+                    .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
                     .padding(.trailing, 16)
                 }
                 if let label = state.actionLabel, let onAction = state.onAction {
                     NavTextButton(
                         string: label,
-                        backgroundColor: Color.fill1,
-                        textColor: Color.text
+                        backgroundColor: Color.contrast,
+                        textColor: Color.textContrast
                     ) {
                         onAction()
                         onDismiss()
                     }
-                    .withRoundedBorder(radius: 80, color: Color.haloDark, width: 2)
+                    .withRoundedBorder(radius: 80, color: Color.haloContrast, width: 2)
                     .padding(.trailing, 16)
                 }
             }
             .padding(.vertical, 16)
         }
         .frame(maxWidth: .infinity)
-        .background(Color.fill1)
-        .environment(\.colorScheme, toastColorScheme)
+        .background(Color.contrast)
         .cornerRadius(8)
         .padding(.horizontal, 8)
         .padding(.vertical, 16)
