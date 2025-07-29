@@ -78,7 +78,6 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.popBackStackFrom
@@ -440,10 +439,7 @@ fun MapAndSheetPage(
     fun LoadingSheetContents() {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             SheetPage {
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier = Modifier.loadingShimmer(),
-                ) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SheetHeader(title = stringResource(R.string.nearby_transit))
                     ErrorBanner(errorBannerViewModel)
                     RouteCardList(
