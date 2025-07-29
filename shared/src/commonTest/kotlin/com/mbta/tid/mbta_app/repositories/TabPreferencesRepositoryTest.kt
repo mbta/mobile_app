@@ -22,19 +22,19 @@ class TabPreferencesRepositoryTest {
     }
 
     @Test
-    fun testDefaultTabIsFavorites() = runBlocking {
+    fun testDefaultTabIsNearby() = runBlocking {
         startKoinWithPreferences(preferencesOf())
         val repo = TabPreferencesRepository()
-        assertEquals(DefaultTab.Favorites, repo.getDefaultTab())
+        assertEquals(DefaultTab.Nearby, repo.getDefaultTab())
     }
 
     @Test
     fun testReadsDefaultTab() = runBlocking {
         startKoinWithPreferences(
-            preferencesOf(stringPreferencesKey("default_tab") to DefaultTab.Nearby.name)
+            preferencesOf(stringPreferencesKey("default_tab") to DefaultTab.Favorites.name)
         )
         val repo = TabPreferencesRepository()
-        assertEquals(DefaultTab.Nearby, repo.getDefaultTab())
+        assertEquals(DefaultTab.Favorites, repo.getDefaultTab())
     }
 
     @Test
