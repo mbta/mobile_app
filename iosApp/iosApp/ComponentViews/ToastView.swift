@@ -12,8 +12,19 @@ import SwiftUI
 typealias ToastState = ToastViewModel.Toast
 
 struct ToastView: View {
+    @Environment(\.colorScheme) var colorScheme
+
     var state: ToastState
     var onDismiss: () -> Void
+
+    // Color scheme is inverted for toast
+    private var toastColorScheme: ColorScheme {
+        switch colorScheme {
+        case .light: .dark
+        case .dark: .light
+        default: .dark
+        }
+    }
 
     var body: some View {
         HStack {
@@ -53,7 +64,7 @@ struct ToastView: View {
         }
         .frame(maxWidth: .infinity)
         .background(Color.fill1)
-        .environment(\.colorScheme, .dark)
+        .environment(\.colorScheme, toastColorScheme)
         .cornerRadius(8)
         .padding(.horizontal, 8)
         .padding(.vertical, 16)
