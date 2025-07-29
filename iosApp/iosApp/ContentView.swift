@@ -38,7 +38,7 @@ struct ContentView: View {
     let inspection = Inspection<Self>()
 
     @State var selectedDetent: PresentationDetent = .medium
-    @State private var selectedTab = SelectedTab.nearby
+    @State private var selectedTab: SelectedTab? = nil
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
 
@@ -57,12 +57,12 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
-            Task { await contentVM.loadFeaturePromos() }
+            Task { await contentVM.loadPendingFeaturePromosAndTabPreferences() }
             Task { await contentVM.loadOnboardingScreens() }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: hideMaps)
-            updateTabBarVisibility(selectedTab)
+            updateTabBarVisibility()
 
             if let screen = nearbyVM.navigationStack.lastSafe().analyticsScreen {
                 analytics.track(screen: screen)
@@ -75,9 +75,21 @@ struct ContentView: View {
                 _ = try await RepositoryDI().global.getGlobalData()
             } catch {}
         }
+        .onChange(of: contentVM.defaultTab) { newTab in
+
+            if case .favorites = newTab {
+                selectedTab = .favorites
+            }
+            if case let .nearby = newTab {
+                selectedTab = .nearby
+            }
+        }
+
         .onChange(of: selectedTab) { nextTab in
-            nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
-            updateTabBarVisibility(nextTab)
+            if let nextTab {
+                nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
+                updateTabBarVisibility()
+            }
         }
         .onChange(of: AnalyticsParams(
             stopId: nearbyVM.navigationStack.lastSafe().stopId(),
@@ -86,7 +98,7 @@ struct ContentView: View {
             guard let screen = params.analyticsScreen else { return }
             analytics.track(screen: screen)
         }
-        .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility(selectedTab) }
+        .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility() }
         .onChange(of: scenePhase) { newPhase in
             if newPhase == .active {
                 socketProvider.socket.attach()
@@ -497,7 +509,7 @@ struct ContentView: View {
         sheetHeight = newSheetHeight
     }
 
-    private func updateTabBarVisibility(_: SelectedTab) {
+    private func updateTabBarVisibility() {
         let shouldShowTabBar =
             nearbyVM.navigationStack.lastSafe().isEntrypoint
                 && !searchObserver.isSearching

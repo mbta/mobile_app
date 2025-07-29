@@ -32,7 +32,7 @@ final class ContentViewModelTests: XCTestCase {
                 lastLaunchedAppVersionRepository: MockLastLaunchedAppVersionRepository(lastLaunchedAppVersion: nil)
             )
         )
-        await contentVM.loadFeaturePromos()
+        await contentVM.loadPendingFeaturePromosAndTabPreferences()
         XCTAssertEqual(contentVM.featurePromosPending, [])
     }
 
