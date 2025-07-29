@@ -141,7 +141,7 @@ object StickDiagramShapes {
         val base = twistBase(connection, rect, proportionClosed) ?: return null
         val height = base.bottomY - base.topY
         val twistSlantDY = height / 32 * proportionClosed
-        val nearTwistDY = height / 9 * proportionClosed
+        val nearTwistDY = height / 14 * proportionClosed
         val curveStartDY = height / 5
         val curveStartControlDY = rect.height / 13
         val curveEndControlDY = rect.height / 20
