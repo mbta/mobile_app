@@ -14,8 +14,8 @@ class RoutePatternTest {
     val stop3 = objects.stop {}
 
     val route = objects.route {}
-    val rp1 = objects.routePattern(route)
-    val rp2 = objects.routePattern(route)
+    val rp1 = objects.routePattern(route) { directionId = 0 }
+    val rp2 = objects.routePattern(route) { directionId = 1 }
 
     val global =
         GlobalResponse(
@@ -86,6 +86,38 @@ class RoutePatternTest {
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
                 global,
                 RouteCardData.Context.Favorites,
+            ),
+        )
+    }
+
+    @Test
+    fun `test patternsGroupedByLineOrRouteAndStop filters non-favorite stops for favorites`() {
+        val expected: Map<LineOrRoute, Map<Stop, PatternsForStop>> =
+            mapOf(
+                LineOrRoute.Route(route) to
+                    mapOf(
+                        stop1 to
+                            PatternsForStop(
+                                allPatterns = listOf(rp1),
+                                patternsNotSeenAtEarlierStops = setOf(rp1.id),
+                            ),
+                        stop3 to
+                            PatternsForStop(
+                                allPatterns = listOf(rp2),
+                                patternsNotSeenAtEarlierStops = setOf(rp1.id, rp2.id),
+                            ),
+                    )
+            )
+        assertEquals(
+            expected,
+            RoutePattern.patternsGroupedByLineOrRouteAndStop(
+                Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
+                global,
+                RouteCardData.Context.Favorites,
+                setOf(
+                    RouteStopDirection(route.id, stop1.id, rp1.directionId),
+                    RouteStopDirection(route.id, stop3.id, rp2.directionId),
+                ),
             ),
         )
     }
