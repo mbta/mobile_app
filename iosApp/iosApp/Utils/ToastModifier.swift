@@ -42,6 +42,7 @@ struct ToastModifier: ViewModifier {
             VStack {
                 Spacer()
                 ToastView(state: toastState, onDismiss: { dismissToast() })
+                    .onAppear { announceToast(message: toastState.message) }
             }
         }
     }
@@ -65,6 +66,19 @@ struct ToastModifier: ViewModifier {
         vm.hideToast()
         workItem?.cancel()
         workItem = nil
+    }
+
+    private func announceToast(message: String) {
+        if #available(iOS 17, *) {
+            var toastAnnouncement = AttributedString(message)
+            toastAnnouncement.accessibilitySpeechAnnouncementPriority = .high
+            AccessibilityNotification.Announcement(toastAnnouncement).post()
+        } else {
+            UIAccessibility.post(
+                notification: .layoutChanged,
+                argument: message
+            )
+        }
     }
 }
 
