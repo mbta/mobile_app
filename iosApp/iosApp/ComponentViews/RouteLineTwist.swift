@@ -165,14 +165,28 @@ struct RouteLineTwist: View {
     }
 }
 
-#Preview {
-    RouteLineTwist(
-        color: .init(hex: "FFC72C"),
-        proportionClosed: 1,
-        connections: [(
+private struct PreviewHelper: View {
+    @State var proportionClosed: Float = 1
+
+    var body: some View {
+        RouteLineTwist(color: .init(hex: "FFC72C"), proportionClosed: proportionClosed, connections: [(
             .init(fromStop: "", toStop: "", fromLane: .center, toLane: .center, fromVPos: .top, toVPos: .bottom),
             true
-        )]
-    )
-    .frame(height: 60)
+        )])
+        .task {
+            while true {
+                try? await Task.sleep(for: .seconds(1))
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    proportionClosed = 1 - proportionClosed
+                }
+                try? await Task.sleep(for: .milliseconds(500))
+            }
+        }
+    }
+}
+
+#Preview {
+    PreviewHelper()
+        .frame(height: 60)
+        .scaleEffect(6)
 }
