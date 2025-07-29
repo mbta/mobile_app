@@ -15,9 +15,9 @@ import kotlin.reflect.typeOf
 
 val SheetRoutes.Companion.EntrypointSaver
     get() =
-        Saver<SheetRoutes.Entrypoint, String>(
-            save = { json.encodeToString<SheetRoutes.Entrypoint>(it) },
-            restore = { json.decodeFromString<SheetRoutes.Entrypoint>(it) },
+        Saver<SheetRoutes.Entrypoint?, String>(
+            save = { json.encodeToString<SheetRoutes.Entrypoint?>(it) },
+            restore = { json.decodeFromString<SheetRoutes.Entrypoint?>(it) },
         )
 
 val SheetRoutes.Companion.typeMap

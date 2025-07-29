@@ -38,7 +38,11 @@ object LoadingPlaceholders {
                 typicality = RoutePattern.Typicality.Typical
                 directionId = 1
             }
-        val stop = objects.stop { name = "Loading" }
+        val stop =
+            objects.stop {
+                name = "Loading"
+                wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE
+            }
 
         fun newTrip(routePattern: RoutePattern, departsIn: Duration): UpcomingTrip {
             val trip = objects.trip(routePattern)

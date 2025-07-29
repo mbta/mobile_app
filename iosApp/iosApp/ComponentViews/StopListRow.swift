@@ -12,12 +12,10 @@ import SwiftUI
 struct StopPlacement {
     let isFirst: Bool
     let isLast: Bool
-    let includeLineDiagram: Bool
 
-    init(isFirst: Bool = false, isLast: Bool = false, includeLineDiagram: Bool = true) {
+    init(isFirst: Bool = false, isLast: Bool = false) {
         self.isFirst = isFirst
         self.isLast = isLast
-        self.includeLineDiagram = includeLineDiagram
     }
 }
 
@@ -28,6 +26,8 @@ enum StopListContext {
 
 struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var stop: Stop
+    var stopLane: RouteBranchSegment.Lane
+    var stickConnections: [RouteBranchSegment.StickConnection]
     var onClick: () -> Void
     var routeAccents: TripRouteAccents
     var stopListContext: StopListContext
@@ -36,10 +36,9 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var background: Color?
     var connectingRoutes: [Route]?
     var disruption: UpcomingFormat.Disruption?
-    var isTruncating: Bool
+    var getAlertState: (_ fromStop: String, _ toStop: String) -> SegmentAlertState
     var stopPlacement: StopPlacement
     var onOpenAlertDetails: (Shared.Alert) -> Void
-    var showDownstreamAlert: Bool
     var targeted: Bool
     var trackNumber: String?
     var descriptor: () -> Descriptor
@@ -50,6 +49,8 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
 
     init(
         stop: Stop,
+        stopLane: RouteBranchSegment.Lane,
+        stickConnections: [RouteBranchSegment.StickConnection],
         onClick: @escaping () -> Void,
         routeAccents: TripRouteAccents,
         stopListContext: StopListContext,
@@ -58,16 +59,17 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         background: Color? = nil,
         connectingRoutes: [Route]? = nil,
         disruption: UpcomingFormat.Disruption? = nil,
-        isTruncating: Bool = false,
+        getAlertState: @escaping (_ fromStop: String, _ toStop: String) -> SegmentAlertState = { _, _ in .normal },
         stopPlacement: StopPlacement = .init(),
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void = { _ in },
-        showDownstreamAlert: Bool = false,
         targeted: Bool = false,
         trackNumber: String? = nil,
         descriptor: @escaping () -> Descriptor,
         rightSideContent: @escaping () -> RightSideContent
     ) {
         self.stop = stop
+        self.stopLane = stopLane
+        self.stickConnections = stickConnections
         self.onClick = onClick
         self.routeAccents = routeAccents
         self.stopListContext = stopListContext
@@ -76,36 +78,13 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         self.background = background
         self.connectingRoutes = connectingRoutes
         self.disruption = disruption
-        self.isTruncating = isTruncating
+        self.getAlertState = getAlertState
         self.stopPlacement = stopPlacement
         self.onOpenAlertDetails = onOpenAlertDetails
-        self.showDownstreamAlert = showDownstreamAlert
         self.targeted = targeted
         self.trackNumber = trackNumber
         self.descriptor = descriptor
         self.rightSideContent = rightSideContent
-    }
-
-    var stateBefore: ColoredRouteLine.State {
-        if !stopPlacement.includeLineDiagram {
-            .empty
-        } else if stopPlacement.isFirst {
-            .empty
-        } else {
-            .regular
-        }
-    }
-
-    var stateAfter: ColoredRouteLine.State {
-        if !stopPlacement.includeLineDiagram {
-            .empty
-        } else if stopPlacement.isLast {
-            .empty
-        } else if showDownstreamAlert, disruption?.alert.effect == .shuttle {
-            .shuttle
-        } else {
-            .regular
-        }
     }
 
     var body: some View {
@@ -123,13 +102,6 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 }
             if let disruption {
                 ZStack(alignment: .leading) {
-                    VStack(spacing: 0) {
-                        ColoredRouteLine(routeAccents.color, state: stateAfter)
-                        if isTruncating {
-                            ColoredRouteLine(routeAccents.color, state: .empty)
-                        }
-                    }
-                    .padding(.leading, 42)
                     AlertCard(
                         alert: disruption.alert,
                         alertSummary: alertSummaries[disruption.alert.id] ?? nil,
@@ -137,7 +109,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         color: routeAccents.color,
                         textColor: routeAccents.textColor,
                         onViewDetails: { onOpenAlertDetails(disruption.alert) },
-                        internalPadding: .init(top: 0, leading: 21, bottom: 0, trailing: 0)
+                        internalPadding: .init(top: 0, leading: 5, bottom: 0, trailing: 0)
                     )
                     .padding(.horizontal, -4)
                 }
@@ -153,28 +125,24 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 HaloSeparator()
             }
             HStack(alignment: .center, spacing: 0) {
-                HStack(alignment: .center) {
-                    if showStationAccessibility, activeElevatorAlerts > 0 {
-                        Image(.accessibilityIconAlert).tag("elevator_alert")
-                    } else if showStationAccessibility, !stop.isWheelchairAccessible {
-                        Image(.accessibilityIconNotAccessible).tag("wheelchair_not_accessible")
-                    } else {
-                        EmptyView()
-                    }
-                }
-                .accessibilityHidden(true)
-                .frame(minWidth: 28, maxWidth: 28)
-                .padding(.leading, 6)
-                if stopPlacement.includeLineDiagram {
-                    routeLine
-                } else {
-                    standaloneStopIcon
-                }
+                routeLine
                 VStack(alignment: .leading, spacing: 8) {
                     Button(
                         action: { onClick() },
                         label: {
                             HStack(alignment: .center, spacing: 0) {
+                                if showStationAccessibility, activeElevatorAlerts > 0 || !stop.isWheelchairAccessible {
+                                    HStack(alignment: .center) {
+                                        if showStationAccessibility, activeElevatorAlerts > 0 {
+                                            Image(.accessibilityIconAlert).tag("elevator_alert")
+                                        } else {
+                                            Image(.accessibilityIconNotAccessible).tag("wheelchair_not_accessible")
+                                        }
+                                    }
+                                    .accessibilityHidden(true)
+                                    .frame(minWidth: 28, maxWidth: 28)
+                                    .padding(.horizontal, 6)
+                                }
                                 VStack(alignment: .leading, spacing: 4) {
                                     descriptor()
                                     Text(stop.name)
@@ -234,24 +202,16 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var routeLine: some View {
         ZStack(alignment: .center) {
             VStack(spacing: 0) {
-                ColoredRouteLine(routeAccents.color, state: stateBefore)
-                ColoredRouteLine(routeAccents.color, state: stateAfter)
+                StickDiagram(routeAccents.color, stickConnections, getAlertState: getAlertState)
             }
-            StopDot(routeAccents: routeAccents, targeted: targeted)
+            let dot = StopDot(routeAccents: routeAccents, targeted: targeted)
+            switch stopLane {
+            case .left: dot.padding(.trailing, 20)
+            case .center: dot.padding(.horizontal, 10)
+            case .right: dot.padding(.leading, 20)
+            }
         }
-        .padding(.leading, 3)
-        .padding(.trailing, 8)
-    }
-
-    @ViewBuilder
-    var standaloneStopIcon: some View {
-        if stop.locationType == .station {
-            Image(.mbtaLogo).accessibilityHidden(true)
-        } else if stop.vehicleType == .bus {
-            Image(.mapStopCloseBUS).accessibilityHidden(true)
-        } else {
-            StopDot(routeAccents: routeAccents, targeted: false)
-        }
+        .padding(.horizontal, 8)
     }
 
     func connectionLabel(route: Route) -> String {

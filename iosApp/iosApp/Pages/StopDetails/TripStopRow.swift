@@ -35,9 +35,21 @@ struct TripStopRow: View {
         }
     }
 
+    var stickConnections: [RouteBranchSegment.StickConnection] {
+        RouteBranchSegment.StickConnection.companion.forward(
+            stopBefore: firstStop ? nil : "",
+            stop: stop.stop.id,
+            stopAfter: lastStop ? nil : "",
+            lane: .center
+        )
+        .compactMap { $0 }
+    }
+
     var body: some View {
         StopListRow(
             stop: stop.stop,
+            stopLane: .center,
+            stickConnections: stickConnections,
             onClick: { onTapLink(stop) },
             routeAccents: routeAccents,
             stopListContext: .trip,
@@ -46,10 +58,15 @@ struct TripStopRow: View {
             background: background,
             connectingRoutes: stop.routes,
             disruption: disruption,
-            isTruncating: stop.isTruncating,
-            stopPlacement: .init(isFirst: firstStop, isLast: lastStop, includeLineDiagram: true),
+            getAlertState: { fromStop, _ in
+                if fromStop == stop.stop.id, showDownstreamAlert, disruption?.alert.effect == .shuttle {
+                    .shuttle
+                } else {
+                    .normal
+                }
+            },
+            stopPlacement: .init(isFirst: firstStop, isLast: lastStop),
             onOpenAlertDetails: onOpenAlertDetails,
-            showDownstreamAlert: showDownstreamAlert,
             targeted: targeted,
             trackNumber: stop.trackNumber,
             descriptor: { EmptyView() },
@@ -85,7 +102,7 @@ struct TripStopRow: View {
     let objects = ObjectCollectionBuilder()
     let trip = objects.trip { _ in }
     let now = Date.now
-    VStack {
+    VStack(spacing: 0) {
         TripStopRow(
             stop: .init(
                 stop: objects.stop { stop in
@@ -192,7 +209,7 @@ struct TripStopRow: View {
     let now = Date.now
     ZStack {
         Color.fill3.padding(6)
-        VStack {
+        VStack(spacing: 0) {
             TripStopRow(
                 stop:
                 .init(
@@ -282,7 +299,8 @@ struct TripStopRow: View {
                     color: Color(hex: "DA291C"),
                     type: .heavyRail
                 ),
-                alertSummaries: [:]
+                alertSummaries: [:],
+                showDownstreamAlert: true
             )
         }
     }

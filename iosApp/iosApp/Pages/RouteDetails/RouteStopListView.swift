@@ -43,7 +43,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let favoritesUsecases: FavoritesUsecases
     @State var favorites: Set<RouteStopDirection>?
     let routeStopsRepository: IRouteStopsRepository
-    @State var routeStops: OldRouteStopsResult?
+    @State var routeStops: NewRouteStopsResult?
     @State var stopList: RouteDetailsStopList?
 
     @State var selectedRouteId: String
@@ -92,7 +92,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     private struct RouteStopListParams: Equatable {
         let routeId: String
         let directionId: Int32
-        let routeStops: OldRouteStopsResult?
+        let routeStops: NewRouteStopsResult?
         let globalData: GlobalResponse
     }
 
@@ -156,7 +156,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "RouteStopListView.loadRouteStops",
-                getData: { try await routeStopsRepository.getOldRouteStops(
+                getData: { try await routeStopsRepository.getNewRouteSegments(
                     routeId: routeId,
                     directionId: directionId
                 ) },
@@ -169,11 +169,11 @@ struct RouteStopListView<RightSideContent: View>: View {
     private func loadStopList(
         routeId: String,
         directionId: Int32,
-        routeStops: OldRouteStopsResult?,
+        routeStops: NewRouteStopsResult?,
         globalData: GlobalResponse
     ) {
         Task {
-            stopList = try? await RouteDetailsStopList.companion.fromOldPieces(
+            stopList = try? await RouteDetailsStopList.companion.fromNewPieces(
                 routeId: routeId,
                 directionId: directionId,
                 routeStops: routeStops,
@@ -254,7 +254,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     private struct RouteStopListParams: Equatable {
         let routeId: String
         let directionId: Int32
-        let routeStops: OldRouteStopsResult?
+        let routeStops: NewRouteStopsResult?
         let globalData: GlobalResponse
     }
 
@@ -311,10 +311,10 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         onTapStop: @escaping (RouteDetailsRowContext) -> Void
     ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
-            let segments = stopList.oldSegments ?? []
+            let segments = stopList.newSegments ?? []
             let hasTypicalSegment = segments.contains(where: \.isTypical)
             ScrollView {
-                VStack {
+                VStack(spacing: 0) {
                     ForEach(Array(segments.enumerated()), id: \.offset) { segmentIndex, segment in
                         if segment.isTypical || !hasTypicalSegment {
                             ForEach(Array(segment.stops.enumerated()), id: \.offset) { stopIndex, stop in
@@ -323,12 +323,13 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                         .startIndex,
                                     isLast: segmentIndex == segments
                                         .index(before: segments.endIndex) && stopIndex == segment.stops
-                                        .index(before: segment.stops.endIndex),
-                                    includeLineDiagram: segment.hasRouteLine
+                                        .index(before: segment.stops.endIndex)
                                 )
                                 let stopRowContext = stopRowContext(stop.stop)
                                 StopListRow(
                                     stop: stop.stop,
+                                    stopLane: stop.stopLane,
+                                    stickConnections: stop.stickConnections,
                                     onClick: { onTapStop(stopRowContext) },
                                     routeAccents: .init(route: lineOrRoute.sortRoute),
                                     stopListContext: .routeDetails,
