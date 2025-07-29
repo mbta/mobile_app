@@ -139,9 +139,7 @@ fun endToEndModule(): Module {
             // debug.
             IdleRailRouteShapeRepository()
         }
-        single<IRouteStopsRepository> {
-            MockRouteStopsRepository(stopIds = emptyList(), segments = emptyList())
-        }
+        single<IRouteStopsRepository> { MockRouteStopsRepository(emptyList()) }
         single<ISchedulesRepository> {
             MockScheduleRepository(scheduleResponse = ScheduleResponse(objects))
         }
