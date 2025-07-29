@@ -33,7 +33,7 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
      * loading in the background if the cache is empty.
      *
      * Will not automatically see changes made directly to the [settingsRepository]; make sure all
-     * changes are made via [set]. Defaults to fallse if setting not yet loaded
+     * changes are made via [set]. Defaults to false if setting not yet loaded
      */
     @Composable
     fun get(setting: Settings): Boolean {

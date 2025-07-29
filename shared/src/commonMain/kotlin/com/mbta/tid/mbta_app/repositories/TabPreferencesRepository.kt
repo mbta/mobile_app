@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.mbta.tid.mbta_app.model.SheetRoutes
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
@@ -12,7 +13,14 @@ import org.koin.core.component.inject
 
 enum class DefaultTab {
     Favorites,
-    Nearby,
+    Nearby;
+
+    fun toEntrypoint(): SheetRoutes.Entrypoint {
+        return when (this) {
+            Favorites -> SheetRoutes.Favorites
+            Nearby -> SheetRoutes.NearbyTransit
+        }
+    }
 }
 
 interface ITabPreferencesRepository {

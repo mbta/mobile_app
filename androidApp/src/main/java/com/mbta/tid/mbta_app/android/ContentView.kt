@@ -37,7 +37,6 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -65,13 +64,7 @@ fun ContentView(
 
     LaunchedEffect(defaultTab, enhancedFavorites) {
         if (sheetNavEntrypoint == null && enhancedFavorites == true) {
-            sheetNavEntrypoint =
-                defaultTab?.let {
-                    when (it) {
-                        DefaultTab.Favorites -> SheetRoutes.Favorites
-                        DefaultTab.Nearby -> SheetRoutes.NearbyTransit
-                    }
-                }
+            sheetNavEntrypoint = defaultTab?.toEntrypoint()
         } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
             sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }
@@ -171,7 +164,7 @@ fun ContentView(
                     BottomNavBar(
                         currentDestination =
                             Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
-                        sheetNavEntrypoint = sheetNavEntrypoint ?: SheetRoutes.NearbyTransit,
+                        sheetNavEntrypoint = sheetNavEntrypoint,
                         navigateToFavorites = {
                             navController.popBackStack()
                             sheetNavEntrypoint = SheetRoutes.Favorites

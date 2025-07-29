@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -444,7 +444,7 @@ fun MapAndSheetPage(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.loadingShimmer(),
                 ) {
-                    SheetHeader(title = stringResource(R.string.got_it))
+                    SheetHeader(title = stringResource(R.string.nearby_transit))
                     ErrorBanner(errorBannerViewModel)
                     RouteCardList(
                         routeCardData = null,
@@ -461,213 +461,229 @@ fun MapAndSheetPage(
     }
 
     @Composable
+    fun FavoritesSheetContents() {
+        LaunchedEffect(Unit) { analytics.track(AnalyticsScreen.Favorites) }
+
+        fun navigate(route: SheetRoutes) {
+            navController.navigateFrom(SheetRoutes.Favorites::class, route)
+        }
+
+        SheetPage {
+            FavoritesPage(
+                openSheetRoute = ::navigate,
+                favoritesViewModel = favoritesViewModel,
+                errorBannerViewModel = errorBannerViewModel,
+                nearbyTransit = nearbyTransit,
+            )
+        }
+    }
+
+    @Composable
+    fun EditFavoritesSheetContents() {
+        SheetPage {
+            EditFavoritesPage(
+                global = nearbyTransit.globalResponse,
+                favoritesViewModel = favoritesViewModel,
+                onClose = { navController.popBackStackFrom(SheetRoutes.EditFavorites::class) },
+            )
+        }
+    }
+
+    @Composable
+    fun StopDetailsSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
+        val filters =
+            StopDetailsPageFilters(navRoute.stopId, navRoute.stopFilter, navRoute.tripFilter)
+
+        LaunchedEffect(navRoute) {
+            if (navBarVisible) {
+                hideNavBar()
+            }
+            if (filters.stopFilter != null) {
+                analytics.track(AnalyticsScreen.StopDetailsFiltered)
+            } else {
+                analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
+            }
+        }
+
+        SheetPage(colorResource(R.color.fill2)) {
+            StopDetailsPage(
+                modifier = modifier,
+                viewModel = stopDetailsVM,
+                filters = filters,
+                allAlerts = nearbyTransit.alertData,
+                onClose = { navController.popBackStack() },
+                updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
+                updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
+                updateRouteCardData = { viewModel.setRouteCardData(it) },
+                tileScrollState = tileScrollState,
+                openModal = ::openModal,
+                openSheetRoute = navController::navigate,
+                errorBannerViewModel = errorBannerViewModel,
+            )
+        }
+    }
+
+    @Composable
+    fun RoutePickerSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.RoutePicker = backStackEntry.toRoute()
+
+        LaunchedEffect(Unit) {
+            if (navBarVisible) hideNavBar()
+            analytics.track(AnalyticsScreen.RoutePicker)
+        }
+
+        SheetPage(navRoute.path.backgroundColor) {
+            RoutePickerView(
+                navRoute.path,
+                navRoute.context,
+                onOpenPickerPath = { newPath, context ->
+                    val currentPickerRoute =
+                        navController.currentRouteAs(SheetRoutes.RoutePicker::class)
+                    if (currentPickerRoute == null || currentPickerRoute.path != newPath) {
+                        navController.navigate(SheetRoutes.RoutePicker(newPath, context))
+                    }
+                },
+                onOpenRouteDetails = ::handlePickRouteNavigation,
+                onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
+                onBack = onBack@{
+                        val currentPickerRoute =
+                            navController.currentRouteAs(SheetRoutes.RoutePicker::class)
+                                ?: return@onBack
+                        if (currentPickerRoute.path != RoutePickerPath.Root) {
+                            navController.popBackStackFrom(SheetRoutes.RoutePicker::class)
+                        }
+                    },
+                onClose = { navigateToEntrypointFrom(SheetRoutes.RoutePicker::class) },
+                errorBannerViewModel = errorBannerViewModel,
+            )
+        }
+    }
+
+    @Composable
+    fun RouteDetailsSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
+
+        val lineOrRoute = nearbyTransit.globalResponse?.getLineOrRoute(navRoute.routeId)
+        LaunchedEffect(Unit) {
+            if (navBarVisible) hideNavBar()
+            analytics.track(AnalyticsScreen.RouteDetails)
+        }
+
+        SheetPage(
+            lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
+                ?: colorResource(R.color.sheet_background)
+        ) {
+            RouteDetailsView(
+                selectionId = navRoute.routeId,
+                context = navRoute.context,
+                onOpenStopDetails = ::handleStopNavigation,
+                onBack = { navController.popBackStackFrom(SheetRoutes.RouteDetails::class) },
+                onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
+                errorBannerViewModel = errorBannerViewModel,
+            )
+        }
+    }
+
+    @Composable
+    fun NearbyTransitSheetContents() {
+        // for ViewModel reasons, must be within the `composable` to be the same
+        // instance
+        val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
+        LaunchedEffect(Unit) {
+            if (!navBarVisible && !searchExpanded) showNavBar()
+            analytics.track(AnalyticsScreen.NearbyTransit)
+        }
+
+        SheetPage {
+            NearbyTransitPage(
+                nearbyTransit,
+                onOpenStopDetails = { stopId, filter ->
+                    updateVisitHistory(stopId)
+                    navController.navigate(SheetRoutes.StopDetails(stopId, filter, null))
+                },
+                openSearch = ::openSearch,
+                nearbyViewModel = nearbyViewModel,
+                errorBannerViewModel = errorBannerViewModel,
+            )
+        }
+    }
+
+    @Composable
+    fun NavHost(sheetNavEntrypoint: SheetRoutes.Entrypoint, modifier: Modifier) {
+        NavHost(
+            navController,
+            startDestination = sheetNavEntrypoint,
+            modifier = modifier,
+            enterTransition = {
+                val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
+                val (initialStopId, initialStopFilter) =
+                    when (initialRoute) {
+                        is SheetRoutes.StopDetails ->
+                            Pair(initialRoute.stopId, initialRoute.stopFilter)
+
+                        else -> Pair(null, null)
+                    }
+
+                val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
+                val (targetStopId, targetStopFilter) =
+                    when (targetRoute) {
+                        is SheetRoutes.StopDetails ->
+                            Pair(targetRoute.stopId, targetRoute.stopFilter)
+
+                        else -> Pair(null, null)
+                    }
+
+                // Skip animation if navigating within a single stop
+                if (
+                    initialStopId != null &&
+                        targetStopId != null &&
+                        initialStopId == targetStopId &&
+                        initialStopFilter?.routeId == targetStopFilter?.routeId
+                ) {
+                    EnterTransition.None
+                }
+
+                if (initialRoute == targetRoute) {
+                    EnterTransition.None
+                } else {
+                    slideIntoContainer(
+                        AnimatedContentTransitionScope.SlideDirection.Up,
+                        animationSpec = tween(easing = EaseInOut),
+                    )
+                }
+            },
+        ) {
+            composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
+                FavoritesSheetContents()
+            }
+            composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
+                EditFavoritesSheetContents()
+            }
+            composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                StopDetailsSheetContents(backStackEntry)
+            }
+
+            composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                RoutePickerSheetContents(backStackEntry)
+            }
+
+            composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                RouteDetailsSheetContents(backStackEntry)
+            }
+
+            composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
+                NearbyTransitSheetContents()
+            }
+        }
+    }
+
+    @Composable
     fun SheetContent(modifier: Modifier = Modifier) {
         if (sheetNavEntrypoint == null) {
             LoadingSheetContents()
         } else {
-            NavHost(
-                navController,
-                startDestination = sheetNavEntrypoint,
-                modifier = Modifier.then(modifier),
-                enterTransition = {
-                    val initialRoute = SheetRoutes.fromNavBackStackEntry(this.initialState)
-                    val (initialStopId, initialStopFilter) =
-                        when (initialRoute) {
-                            is SheetRoutes.StopDetails ->
-                                Pair(initialRoute.stopId, initialRoute.stopFilter)
-
-                            else -> Pair(null, null)
-                        }
-
-                    val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
-                    val (targetStopId, targetStopFilter) =
-                        when (targetRoute) {
-                            is SheetRoutes.StopDetails ->
-                                Pair(targetRoute.stopId, targetRoute.stopFilter)
-
-                            else -> Pair(null, null)
-                        }
-
-                    // Skip animation if navigating within a single stop
-                    if (
-                        initialStopId != null &&
-                            targetStopId != null &&
-                            initialStopId == targetStopId &&
-                            initialStopFilter?.routeId == targetStopFilter?.routeId
-                    ) {
-                        EnterTransition.None
-                    }
-
-                    if (initialRoute == targetRoute) {
-                        EnterTransition.None
-                    } else {
-                        slideIntoContainer(
-                            AnimatedContentTransitionScope.SlideDirection.Up,
-                            animationSpec = tween(easing = EaseInOut),
-                        )
-                    }
-                },
-            ) {
-                composable<SheetRoutes.Favorites>(typeMap = SheetRoutes.typeMap) {
-                    LaunchedEffect(Unit) { analytics.track(AnalyticsScreen.Favorites) }
-
-                    fun navigate(route: SheetRoutes) {
-                        navController.navigateFrom(SheetRoutes.Favorites::class, route)
-                    }
-
-                    SheetPage {
-                        FavoritesPage(
-                            openSheetRoute = ::navigate,
-                            favoritesViewModel = favoritesViewModel,
-                            errorBannerViewModel = errorBannerViewModel,
-                            nearbyTransit = nearbyTransit,
-                        )
-                    }
-                }
-                composable<SheetRoutes.EditFavorites>(typeMap = SheetRoutes.typeMap) {
-                    SheetPage {
-                        EditFavoritesPage(
-                            global = nearbyTransit.globalResponse,
-                            favoritesViewModel = favoritesViewModel,
-                            onClose = {
-                                navController.popBackStackFrom(SheetRoutes.EditFavorites::class)
-                            },
-                        )
-                    }
-                }
-                composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry
-                    ->
-                    val navRoute: SheetRoutes.StopDetails = backStackEntry.toRoute()
-                    val filters =
-                        StopDetailsPageFilters(
-                            navRoute.stopId,
-                            navRoute.stopFilter,
-                            navRoute.tripFilter,
-                        )
-
-                    LaunchedEffect(navRoute) {
-                        if (navBarVisible) {
-                            hideNavBar()
-                        }
-                        if (filters.stopFilter != null) {
-                            analytics.track(AnalyticsScreen.StopDetailsFiltered)
-                        } else {
-                            analytics.track(AnalyticsScreen.StopDetailsUnfiltered)
-                        }
-                    }
-
-                    SheetPage(colorResource(R.color.fill2)) {
-                        StopDetailsPage(
-                            modifier = modifier,
-                            viewModel = stopDetailsVM,
-                            filters = filters,
-                            allAlerts = nearbyTransit.alertData,
-                            onClose = { navController.popBackStack() },
-                            updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
-                            updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
-                            updateRouteCardData = { viewModel.setRouteCardData(it) },
-                            tileScrollState = tileScrollState,
-                            openModal = ::openModal,
-                            openSheetRoute = navController::navigate,
-                            errorBannerViewModel = errorBannerViewModel,
-                        )
-                    }
-                }
-
-                composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry
-                    ->
-                    val navRoute: SheetRoutes.RoutePicker = backStackEntry.toRoute()
-
-                    LaunchedEffect(Unit) {
-                        if (navBarVisible) hideNavBar()
-                        analytics.track(AnalyticsScreen.RoutePicker)
-                    }
-
-                    SheetPage(navRoute.path.backgroundColor) {
-                        RoutePickerView(
-                            navRoute.path,
-                            navRoute.context,
-                            onOpenPickerPath = { newPath, context ->
-                                val currentPickerRoute =
-                                    navController.currentRouteAs(SheetRoutes.RoutePicker::class)
-                                if (
-                                    currentPickerRoute == null || currentPickerRoute.path != newPath
-                                ) {
-                                    navController.navigate(
-                                        SheetRoutes.RoutePicker(newPath, context)
-                                    )
-                                }
-                            },
-                            onOpenRouteDetails = ::handlePickRouteNavigation,
-                            onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
-                            onBack = onBack@{
-                                    val currentPickerRoute =
-                                        navController.currentRouteAs(SheetRoutes.RoutePicker::class)
-                                            ?: return@onBack
-                                    if (currentPickerRoute.path != RoutePickerPath.Root) {
-                                        navController.popBackStackFrom(
-                                            SheetRoutes.RoutePicker::class
-                                        )
-                                    }
-                                },
-                            onClose = { navigateToEntrypointFrom(SheetRoutes.RoutePicker::class) },
-                            errorBannerViewModel = errorBannerViewModel,
-                        )
-                    }
-                }
-
-                composable<SheetRoutes.RouteDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry
-                    ->
-                    val navRoute: SheetRoutes.RouteDetails = backStackEntry.toRoute()
-
-                    val lineOrRoute = nearbyTransit.globalResponse?.getLineOrRoute(navRoute.routeId)
-                    LaunchedEffect(Unit) {
-                        if (navBarVisible) hideNavBar()
-                        analytics.track(AnalyticsScreen.RouteDetails)
-                    }
-
-                    SheetPage(
-                        lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
-                            ?: colorResource(R.color.sheet_background)
-                    ) {
-                        RouteDetailsView(
-                            selectionId = navRoute.routeId,
-                            context = navRoute.context,
-                            onOpenStopDetails = ::handleStopNavigation,
-                            onBack = {
-                                navController.popBackStackFrom(SheetRoutes.RouteDetails::class)
-                            },
-                            onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
-                            errorBannerViewModel = errorBannerViewModel,
-                        )
-                    }
-                }
-
-                composable<SheetRoutes.NearbyTransit>(typeMap = SheetRoutes.typeMap) {
-                    // for ViewModel reasons, must be within the `composable` to be the same
-                    // instance
-                    val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
-                    LaunchedEffect(Unit) {
-                        if (!navBarVisible && !searchExpanded) showNavBar()
-                        analytics.track(AnalyticsScreen.NearbyTransit)
-                    }
-
-                    SheetPage {
-                        NearbyTransitPage(
-                            nearbyTransit,
-                            onOpenStopDetails = { stopId, filter ->
-                                updateVisitHistory(stopId)
-                                navController.navigate(
-                                    SheetRoutes.StopDetails(stopId, filter, null)
-                                )
-                            },
-                            openSearch = ::openSearch,
-                            nearbyViewModel = nearbyViewModel,
-                            errorBannerViewModel = errorBannerViewModel,
-                        )
-                    }
-                }
-            }
+            NavHost(sheetNavEntrypoint, modifier)
         }
     }
 
