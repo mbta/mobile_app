@@ -60,18 +60,12 @@ struct RouteLineTwist: View {
                 } else {
                     $0.move(to: shape.curves.bottomCurveStart.into())
                 }
-                $0.addCurve(
-                    to: shape.curves.bottomNearTwist.into(),
-                    control1: shape.curves.bottomCurveStartControl.into(),
-                    control2: shape.curves.bottomNearTwistControl.into()
-                )
+                $0.addQuadCurve(to: shape.curves.shadowStart.into(), control: shape.curves.bottomCurveControl.into())
                 $0.addLine(to: shape.curves.shadowStart.into())
                 $0.move(to: shape.curves.shadowEnd.into())
-                $0.addLine(to: shape.curves.topNearTwist.into())
-                $0.addCurve(
+                $0.addQuadCurve(
                     to: shape.curves.topCurveStart.into(),
-                    control1: shape.curves.topNearTwistControl.into(),
-                    control2: shape.curves.topCurveStartControl.into()
+                    control: shape.curves.topCurveControl.into()
                 )
                 if let top = shape.curves.top {
                     $0.addLine(to: top.into())
@@ -136,7 +130,7 @@ struct RouteLineTwist: View {
 
     var body: some View {
         let shadowColor = if #available(iOS 18.0, *) {
-            color.mix(with: .black, by: 0.15)
+            color.mix(with: .black, by: 0.15 * Double(proportionClosed))
         } else {
             color
         }
@@ -152,7 +146,10 @@ struct RouteLineTwist: View {
                         .stroke(shadowColor, style: .init(lineWidth: stickWidth, lineCap: .round))
                     if #unavailable(iOS 18.0) {
                         TwistShadowShape(proportionClosed: proportionClosed, connection: connection)
-                            .stroke(.black.opacity(0.15), style: .init(lineWidth: stickWidth, lineCap: .round))
+                            .stroke(
+                                .black.opacity(0.15 * Double(proportionClosed)),
+                                style: .init(lineWidth: stickWidth, lineCap: .round)
+                            )
                     }
                     TwistCurvesShape(proportionClosed: proportionClosed, connection: connection)
                         .stroke(color, style: .init(lineWidth: stickWidth, lineCap: .round, lineJoin: .round))

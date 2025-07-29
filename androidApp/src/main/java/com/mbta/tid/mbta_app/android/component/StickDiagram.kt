@@ -84,6 +84,10 @@ private fun Path.lineTo(point: SharedPath.Point) {
     lineTo(point.x, point.y)
 }
 
+private fun Path.quadraticTo(control: SharedPath.Point, to: SharedPath.Point) {
+    quadraticTo(control.x, control.y, to.x, to.y)
+}
+
 private fun Path.cubicTo(
     control1: SharedPath.Point,
     control2: SharedPath.Point,
@@ -105,7 +109,7 @@ fun RouteLineTwist(
     Box(
         modifier.width(40.dp).height(IntrinsicSize.Max).drawWithCache {
             onDrawBehind {
-                val shadowColor = lerp(color, Color.Companion.Black, 0.15f)
+                val shadowColor = lerp(color, Color.Companion.Black, 0.15f * proportionClosed)
                 for ((connection, isTwisted) in connections) {
                     if (isTwisted) {
                         // we need to draw the shadow, then the curves with round caps, then the
@@ -138,17 +142,14 @@ fun RouteLineTwist(
                                         lineTo(shape.curves.bottomCurveStart)
                                     }
                                 }
-                                cubicTo(
-                                    shape.curves.bottomCurveStartControl,
-                                    shape.curves.bottomNearTwistControl,
-                                    shape.curves.bottomNearTwist,
+                                quadraticTo(
+                                    shape.curves.bottomCurveControl,
+                                    shape.curves.shadowStart,
                                 )
                                 lineTo(shape.curves.shadowStart)
                                 moveTo(shape.curves.shadowEnd)
-                                lineTo(shape.curves.topNearTwist)
-                                cubicTo(
-                                    shape.curves.topNearTwistControl,
-                                    shape.curves.topCurveStartControl,
+                                quadraticTo(
+                                    shape.curves.topCurveControl,
                                     shape.curves.topCurveStart,
                                 )
                                 when (val top = shape.curves.top) {

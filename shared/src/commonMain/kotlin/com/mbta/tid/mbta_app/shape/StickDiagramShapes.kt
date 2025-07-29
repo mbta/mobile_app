@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.shape
 
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 object StickDiagramShapes {
     data class Connection(
@@ -39,14 +41,10 @@ object StickDiagramShapes {
         data class Curves(
             val bottom: Path.Point?,
             val bottomCurveStart: Path.Point,
-            val bottomCurveStartControl: Path.Point,
-            val bottomNearTwistControl: Path.Point,
-            val bottomNearTwist: Path.Point,
+            val bottomCurveControl: Path.Point,
             val shadowStart: Path.Point,
             val shadowEnd: Path.Point,
-            val topNearTwist: Path.Point,
-            val topNearTwistControl: Path.Point,
-            val topCurveStartControl: Path.Point,
+            val topCurveControl: Path.Point,
             val topCurveStart: Path.Point,
             val top: Path.Point?,
         )
@@ -74,6 +72,8 @@ object StickDiagramShapes {
         }
 
     private fun lerp(x1: Float, x2: Float, t: Float) = x1 * (1 - t) + x2 * t
+
+    private const val PI = kotlin.math.PI.toFloat()
 
     fun connection(connection: RouteBranchSegment.StickConnection, rect: Path.Rect): Connection {
         val fromX = x(connection.fromLane, rect)
@@ -140,15 +140,13 @@ object StickDiagramShapes {
     ): Twisted? {
         val base = twistBase(connection, rect, proportionClosed) ?: return null
         val height = base.bottomY - base.topY
-        val twistSlantDY = height / 32 * proportionClosed
-        val nearTwistDY = height / 14 * proportionClosed
+        val slantAngle = lerp(PI / 2, PI / 8, proportionClosed)
+        val slantRadius = (height + rect.width) / 20
+        val twistSlantDY = slantRadius * sin(slantAngle)
         val curveStartDY = height / 5
-        val curveStartControlDY = rect.height / 13
-        val curveEndControlDY = rect.height / 20
+        val curveControlDY = rect.height / 15
         val centerCenterX = (base.topCenterX + base.bottomCenterX) / 2
-        val twistSlantDX = rect.width / 8 * proportionClosed
-        val nearTwistDX = rect.width / 12 * proportionClosed
-        val curveEndControlDX = rect.width / 15 * proportionClosed
+        val twistSlantDX = slantRadius * cos(slantAngle)
         val shadowStart = Path.Point(centerCenterX + twistSlantDX, base.centerY + twistSlantDY)
         val shadowEnd = Path.Point(centerCenterX - twistSlantDX, base.centerY - twistSlantDY)
         val shadow = Twisted.Shadow(start = shadowStart, end = shadowEnd)
@@ -162,28 +160,12 @@ object StickDiagramShapes {
             Twisted.Curves(
                 bottom = bottom.takeIf { roundedBottom },
                 bottomCurveStart = bottomCurveStart,
-                bottomCurveStartControl =
-                    Path.Point(
-                        base.bottomCenterX,
-                        base.bottomY - curveStartDY - curveStartControlDY,
-                    ),
-                bottomNearTwistControl =
-                    Path.Point(
-                        centerCenterX + nearTwistDX - curveEndControlDX,
-                        base.centerY + nearTwistDY + curveEndControlDY,
-                    ),
-                bottomNearTwist =
-                    Path.Point(centerCenterX + nearTwistDX, base.centerY + nearTwistDY),
+                bottomCurveControl =
+                    Path.Point(base.bottomCenterX, base.centerY + twistSlantDY + curveControlDY),
                 shadowStart = shadowStart,
                 shadowEnd = shadowEnd,
-                topNearTwist = Path.Point(centerCenterX - nearTwistDX, base.centerY - nearTwistDY),
-                topNearTwistControl =
-                    Path.Point(
-                        centerCenterX - nearTwistDX + curveEndControlDX,
-                        base.centerY - nearTwistDY - curveEndControlDY,
-                    ),
-                topCurveStartControl =
-                    Path.Point(base.topCenterX, base.topY + curveStartDY + curveStartControlDY),
+                topCurveControl =
+                    Path.Point(base.topCenterX, base.centerY - twistSlantDY - curveControlDY),
                 topCurveStart = topCurveStart,
                 top = top.takeIf { roundedTop },
             )
