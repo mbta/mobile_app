@@ -430,6 +430,10 @@
     <string name="vehicle_prediction_schedule_status_early_other">ak %1$s %2$s byen bonè</string>
     <string name="vehicle_prediction_time_first">%1$s ap rive a %2$s</string>
     <string name="vehicle_prediction_time_other">epi a %1$s</string>
+    <string name="vehicle_schedule_hours_first">%1$s ap rive nan %2$d èdtan pwograme</string>
+    <string name="vehicle_schedule_hours_minutes_first">%1$s rive nan %2$d è %3$d min pwograme</string>
+    <string name="vehicle_schedule_hours_minutes_other">epi nan %1$d è %2$d min pwograme</string>
+    <string name="vehicle_schedule_hours_other">epi nan %1$d èdtan pwograme</string>
     <string name="vehicle_schedule_minutes_first">%1$s ap rive nan %2$d min pwograme</string>
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
