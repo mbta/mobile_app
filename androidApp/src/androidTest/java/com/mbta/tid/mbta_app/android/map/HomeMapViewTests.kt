@@ -60,8 +60,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -98,8 +98,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -147,8 +147,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -184,8 +184,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.NearbyTransit,
@@ -219,8 +219,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -255,8 +255,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -291,8 +291,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -329,12 +329,12 @@ class HomeMapViewTests {
         every { mapVM.models } returns MutableStateFlow(state)
         every { configManager.configLoadAttempted } returns MutableStateFlow(true)
         composeTestRule.setContent {
-            val nearbyTransitSelectingLocationState = remember { mutableStateOf(false) }
+            val isTargetingState = remember { mutableStateOf(false) }
 
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = nearbyTransitSelectingLocationState,
+                lastLoadedLocation = null,
+                isTargetingState = isTargetingState,
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
@@ -378,8 +378,8 @@ class HomeMapViewTests {
         composeTestRule.setContent {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
-                lastNearbyTransitLocation = null,
-                nearbyTransitSelectingLocationState = mutableStateOf(false),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
                 locationDataManager = MockLocationDataManager(),
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,

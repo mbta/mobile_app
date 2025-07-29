@@ -115,14 +115,14 @@ import org.koin.compose.koinInject
 data class NearbyTransit(
     val alertData: AlertsStreamDataResponse?,
     val globalResponse: GlobalResponse?,
-    val lastNearbyTransitLocationState: MutableState<Position?>,
-    val nearbyTransitSelectingLocationState: MutableState<Boolean>,
+    val lastLoadedLocationState: MutableState<Position?>,
+    val isTargetingState: MutableState<Boolean>,
     val scaffoldState: BottomSheetScaffoldState,
     val locationDataManager: LocationDataManager,
     val viewportProvider: IViewportProvider,
 ) {
-    var lastNearbyTransitLocation by this.lastNearbyTransitLocationState
-    var nearbyTransitSelectingLocation by this.nearbyTransitSelectingLocationState
+    var lastLoadedLocation by this.lastLoadedLocationState
+    var isTargeting by this.isTargetingState
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -744,9 +744,8 @@ fun MapAndSheetPage(
                                     bottom = 0.dp,
                                 )
                             ),
-                        lastNearbyTransitLocation = nearbyTransit.lastNearbyTransitLocation,
-                        nearbyTransitSelectingLocationState =
-                            nearbyTransit.nearbyTransitSelectingLocationState,
+                        lastLoadedLocation = nearbyTransit.lastLoadedLocation,
+                        isTargetingState = nearbyTransit.isTargetingState,
                         locationDataManager = nearbyTransit.locationDataManager,
                         viewportProvider = nearbyTransit.viewportProvider,
                         currentNavEntry = currentNavEntry,

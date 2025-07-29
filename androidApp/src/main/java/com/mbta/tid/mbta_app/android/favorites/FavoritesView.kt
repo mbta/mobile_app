@@ -38,6 +38,8 @@ import kotlin.time.Duration.Companion.seconds
 @Composable
 fun FavoritesView(
     openSheetRoute: (SheetRoutes) -> Unit,
+    setLastLocation: (Position) -> Unit,
+    setIsTargeting: (Boolean) -> Unit,
     favoritesViewModel: IFavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
     alertData: AlertsStreamDataResponse?,
@@ -70,6 +72,11 @@ fun FavoritesView(
 
     LaunchedEffect(state.awaitingPredictionsAfterBackground) {
         errorBannerViewModel.loadingWhenPredictionsStale = state.awaitingPredictionsAfterBackground
+    }
+
+    LaunchedEffect(state.loadedLocation) {
+        state.loadedLocation?.let { setLastLocation(it) }
+        setIsTargeting(false)
     }
 
     val routeCardData = state.routeCardData

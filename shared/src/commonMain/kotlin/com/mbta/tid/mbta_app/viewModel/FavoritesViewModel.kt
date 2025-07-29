@@ -85,8 +85,9 @@ class FavoritesViewModel(
         val favorites: Set<RouteStopDirection>?,
         val routeCardData: List<RouteCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
+        val loadedLocation: Position?,
     ) {
-        constructor() : this(false, null, null, null)
+        constructor() : this(false, null, null, null, null)
     }
 
     @Composable
@@ -95,6 +96,7 @@ class FavoritesViewModel(
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
+        var loadedLocation: Position? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(true) }
         var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
@@ -183,6 +185,7 @@ class FavoritesViewModel(
                         favorites,
                         coroutineDispatcher,
                     )
+                loadedLocation = location
             }
         }
 
@@ -211,6 +214,7 @@ class FavoritesViewModel(
             favorites,
             routeCardData,
             staticRouteCardData,
+            loadedLocation,
         )
     }
 

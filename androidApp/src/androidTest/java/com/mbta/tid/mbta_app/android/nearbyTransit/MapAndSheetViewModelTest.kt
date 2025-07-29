@@ -59,7 +59,7 @@ class MapAndSheetViewModelTest {
                     globalResponse,
                     position,
                     setLastLocation = {},
-                    setSelectingLocation = {},
+                    setIsTargeting = {},
                 )
             }
         }

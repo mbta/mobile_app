@@ -32,7 +32,15 @@ sealed class SheetRoutes {
     val showSearchBar: Boolean
         get() =
             when (this) {
-                is Favorites -> true
+                is Favorites,
+                is NearbyTransit -> true
+                else -> false
+            }
+
+    val allowTargeting: Boolean
+        get() =
+            when (this) {
+                is Favorites,
                 is NearbyTransit -> true
                 else -> false
             }

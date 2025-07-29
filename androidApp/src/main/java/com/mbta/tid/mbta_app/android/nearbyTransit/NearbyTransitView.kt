@@ -40,7 +40,7 @@ fun NearbyTransitView(
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
     setLastLocation: (Position) -> Unit,
-    setSelectingLocation: (Boolean) -> Unit,
+    setIsTargeting: (Boolean) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
@@ -48,12 +48,7 @@ fun NearbyTransitView(
 ) {
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
-            nearbyVM.getNearby(
-                globalResponse,
-                targetLocation,
-                setLastLocation,
-                setSelectingLocation,
-            )
+            nearbyVM.getNearby(globalResponse, targetLocation, setLastLocation, setIsTargeting)
         }
     }
     val now by timer(updateInterval = 5.seconds)
