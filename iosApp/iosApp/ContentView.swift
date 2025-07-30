@@ -302,8 +302,26 @@ struct ContentView: View {
 
     @ViewBuilder
     var sheetContentsPlaceholder: some View {
-        Spacer()
-            .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
+        ZStack {
+            Color.sheetBackground.ignoresSafeArea(.all)
+            VStack {
+                VStack(spacing: 16) {
+                    SheetHeader(title: NSLocalizedString("Nearby Transit", comment: ""))
+                        .loadingPlaceholder(false)
+                    ScrollView {
+                        LazyVStack(alignment: .center, spacing: 14) {
+                            ForEach(0 ..< 5) { _ in
+                                LoadingRouteCard()
+                            }
+                        }
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 16)
+                        .loadingPlaceholder(false)
+                    }
+                    Spacer()
+                }
+            }
+        }
     }
 
     @ViewBuilder

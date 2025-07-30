@@ -10,10 +10,11 @@ import Shimmer
 import SwiftUI
 
 struct LoadingPlaceholderModifier: ViewModifier {
+    let withShimmer: Bool
     func body(content: Content) -> some View {
         content
             .redacted(reason: .placeholder)
-            .shimmering()
+            .shimmering(active: withShimmer)
             .allowsHitTesting(false)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Loading...")
@@ -21,7 +22,7 @@ struct LoadingPlaceholderModifier: ViewModifier {
 }
 
 extension View {
-    func loadingPlaceholder() -> some View {
-        modifier(LoadingPlaceholderModifier())
+    func loadingPlaceholder(_ withShimmer: Bool = true) -> some View {
+        modifier(LoadingPlaceholderModifier(withShimmer: withShimmer))
     }
 }
