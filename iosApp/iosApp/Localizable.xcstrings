@@ -8969,8 +8969,8 @@
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Les arrêts favoris remplacent la fonctionnalité d'itinéraires favoris précédente."
+            "state" : "translated",
+            "value" : "Les arrêts favoris remplacent la fonctionnalité d’itinéraires favoris précédente."
           }
         },
         "ht" : {
