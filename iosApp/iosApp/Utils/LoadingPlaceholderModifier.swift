@@ -22,7 +22,7 @@ struct LoadingPlaceholderModifier: ViewModifier {
 }
 
 extension View {
-    func loadingPlaceholder(_ withShimmer: Bool = true) -> some View {
+    func loadingPlaceholder(withShimmer: Bool = true) -> some View {
         modifier(LoadingPlaceholderModifier(withShimmer: withShimmer))
     }
 }
