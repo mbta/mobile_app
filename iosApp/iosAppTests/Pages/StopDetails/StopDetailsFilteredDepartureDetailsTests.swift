@@ -82,20 +82,20 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testDisplaysTrips() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route()
         let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
         let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "B" }
-            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 3)
         })
         let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "C" }
-            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 7)
         })
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1, trip2, trip3], objects: objects)
@@ -128,12 +128,12 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testUpdatesTilesWhenNowChanges() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route()
         let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1], objects: objects)
@@ -158,7 +158,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let updateNowExp = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "A"))
             XCTAssertNotNil(try view.find(text: "ARR"))
-            try view.find(ViewType.VStack.self).callOnChange(newValue: now + 120)
+            try view.find(ViewType.VStack.self).callOnChange(newValue: now.plus(minutes: 2))
             XCTAssertThrowsError(try view.find(text: "ARR"))
         }
 
@@ -168,7 +168,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let line = objects.line { line in line.id = "Green" }
         let routeB = objects.route { route in
@@ -180,11 +180,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
         let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePatternB)
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
         let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePatternB)
-            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 3)
         })
         let routeC = objects.route { route in
             route.id = "Green-C"
@@ -195,7 +195,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
         let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePatternC)
-            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 7)
         })
 
         let leaf = makeLeaf(
@@ -236,7 +236,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testShowsTripDetails() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route { route in route.id = "Green-B" }
         let pattern = objects.routePattern(route: route) { pattern in
@@ -245,15 +245,15 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let line = objects.line { line in line.id = "Green" }
         let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: pattern)
-            prediction.departureTime = now.addingTimeInterval(120).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 2)
         })
         let trip2 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: pattern)
-            prediction.departureTime = (now + 3 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 3)
         })
         let trip3 = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: pattern)
-            prediction.departureTime = (now + 7 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 7)
         })
 
         let leaf = makeLeaf(
@@ -285,7 +285,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     func testShowsCancelledTripCard() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route { route in
@@ -296,7 +296,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let trip1 = objects.trip(routePattern: pattern)
         let schedule1 = objects.schedule { schedule in
             schedule.trip = trip1
-            schedule.departureTime = now.addingTimeInterval(10).toKotlinInstant()
+            schedule.departureTime = now.plus(seconds: 10)
         }
         let prediction1 = objects.prediction(schedule: schedule1) { prediction in
             prediction.trip = trip1
@@ -306,7 +306,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let trip2 = objects.trip(routePattern: pattern)
         let schedule2 = objects.schedule { schedule in
             schedule.trip = trip2
-            schedule.departureTime = now.addingTimeInterval(10).toKotlinInstant()
+            schedule.departureTime = now.plus(seconds: 10)
         }
         let prediction2 = objects.prediction(schedule: schedule2) { prediction in
             prediction.trip = trip2
@@ -330,7 +330,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
@@ -360,7 +360,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
-            now: Date.now,
+            now: .now(),
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),
@@ -376,7 +376,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsSuspensionFallback() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
@@ -388,7 +388,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         // skipped
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { _ in }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
 
         let nearbyVM = NearbyViewModel()
@@ -437,7 +437,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsDownstreamAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
@@ -446,7 +446,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { _ in }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
 
         let nearbyVM = NearbyViewModel()
@@ -471,7 +471,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
@@ -500,7 +500,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testShowsElevatorAlertOnlyOnce() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
@@ -515,11 +515,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 stop: stop.id,
                 trip: nil
             )
-            alert.activePeriod(start: (now - 30 * 60).toKotlinInstant(), end: nil)
+            alert.activePeriod(start: now.minus(minutes: 30), end: nil)
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
 
         let nearbyVM = NearbyViewModel()
@@ -565,14 +565,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     func testShowsInaccessible() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { stop in
             stop.wheelchairBoarding = .inaccessible
         }
         let route = objects.route { _ in }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { _ in }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
@@ -602,7 +602,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     @MainActor
     func testShowsSubwayDelayAlertFallback() throws {
         let objects = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
@@ -619,7 +619,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { $0.headsign = "A" }
-            prediction.departureTime = (now + 15).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 15)
         })
 
         let nearbyVM = NearbyViewModel()
@@ -661,7 +661,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
     @MainActor
     func testShowsPredictionsAndAlertOnBranchingTrunk() async throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let objects = Shared.TestData.clone()
         let stop = objects.getStop(id: "place-kencl")
@@ -673,8 +673,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert =
             objects.alert { alert in
                 alert.activePeriod(
-                    start: now.addingTimeInterval(-5).toKotlinInstant(),
-                    end: now.addingTimeInterval(100).toKotlinInstant()
+                    start: now.minus(seconds: 5),
+                    end: now.plus(seconds: 100)
                 )
                 alert.effect = .shuttle
                 alert.header = "Green line shuttle on B and C branches"
@@ -694,7 +694,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alertResponse = AlertsStreamDataResponse(alerts: [alert.id: alert])
 
         objects.upcomingTrip(prediction: objects.prediction { prediction in
-            prediction.departureTime = now.addingTimeInterval(300).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 300)
             prediction.routeId = routeD.id
             prediction.stopId = stop.id
             prediction.trip = objects.trip { trip in
@@ -711,7 +711,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             schedules: ScheduleResponse(objects: objects),
             predictions: PredictionsStreamDataResponse(objects: objects),
             alerts: alertResponse,
-            now: now.toKotlinInstant(),
+            now: now,
             pinnedRoutes: [],
             context: .stopDetailsFiltered
         )!.first!
@@ -730,7 +730,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             leaf: leaf,
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
-            now: Date.now,
+            now: now,
             errorBannerVM: .init(),
             nearbyVM: .init(),
             mapVM: .init(),

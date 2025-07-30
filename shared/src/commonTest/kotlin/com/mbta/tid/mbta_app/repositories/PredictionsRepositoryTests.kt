@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.network.PhoenixPush
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.every
@@ -23,7 +24,6 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.test.KoinTest
@@ -447,21 +447,21 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun `shouldForgetPredictions false when no predictions`() {
         val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
-        predictionsRepo.lastUpdated = Instant.DISTANT_PAST
+        predictionsRepo.lastUpdated = EasternTimeInstant(Instant.DISTANT_PAST)
         assertFalse(predictionsRepo.shouldForgetPredictions(0))
     }
 
     @Test
     fun `shouldForgetPredictions false when within ten minutes`() {
         val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
-        predictionsRepo.lastUpdated = Clock.System.now() - 9.9.minutes
+        predictionsRepo.lastUpdated = EasternTimeInstant.now() - 9.9.minutes
         assertFalse(predictionsRepo.shouldForgetPredictions(10))
     }
 
     @Test
     fun `shouldForgetPredictions true when old and nonempty`() {
         val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
-        predictionsRepo.lastUpdated = Clock.System.now() - 10.1.minutes
+        predictionsRepo.lastUpdated = EasternTimeInstant.now() - 10.1.minutes
         assertTrue(predictionsRepo.shouldForgetPredictions(10))
     }
 }

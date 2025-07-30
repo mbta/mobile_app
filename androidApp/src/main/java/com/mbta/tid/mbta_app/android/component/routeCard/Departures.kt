@@ -36,16 +36,15 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.koin.compose.koinInject
 
 @Composable
 fun Departures(
     stopData: RouteCardData.RouteStopData,
     globalData: GlobalResponse?,
-    now: Instant,
+    now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
     analytics: Analytics = koinInject(),
     onClick: (RouteCardData.Leaf) -> Unit,
@@ -136,7 +135,7 @@ fun Departures(
 @Preview
 @Composable
 private fun DeparturesPreview() {
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder()
     val redLine =
         objects.route {

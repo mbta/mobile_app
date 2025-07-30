@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockStopRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -29,7 +30,6 @@ import dev.mokkery.answering.autofill.AutofillProvider
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
-import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -366,7 +366,8 @@ class HomeMapViewTests {
         open class MockConfigManager : IMapboxConfigManager {
             private val _configLoadAttempted = MutableStateFlow(false)
             override val configLoadAttempted: StateFlow<Boolean> = _configLoadAttempted
-            override var lastMapboxErrorTimestamp: Flow<Instant?> = MutableStateFlow(value = null)
+            override var lastMapboxErrorTimestamp: Flow<EasternTimeInstant?> =
+                MutableStateFlow(value = null)
             var loadConfigCalledCount = 0
 
             override suspend fun loadConfig() {

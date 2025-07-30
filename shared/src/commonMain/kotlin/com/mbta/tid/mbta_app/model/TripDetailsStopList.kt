@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -33,14 +33,15 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         val isTruncating = disruption?.alert?.hasNoThroughService == true
 
-        fun activeElevatorAlerts(now: Instant) = elevatorAlerts.filter { it.isActive(now) }
+        fun activeElevatorAlerts(now: EasternTimeInstant) =
+            elevatorAlerts.filter { it.isActive(now) }
 
         /**
          * Gets the time to display for this entry, or an alert to be displayed instead.
          *
          * @return [disruption], an [UpcomingFormat.Some] with a single entry, or null
          */
-        fun format(trip: Trip, now: Instant, routeType: RouteType): UpcomingFormat? {
+        fun format(trip: Trip, now: EasternTimeInstant, routeType: RouteType): UpcomingFormat? {
             if (disruption != null) {
                 // ignore activities on platforms since they may be wrong or they may be correct in
                 // a way that doesn’t match how service is being run
@@ -477,7 +478,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         private fun getDisruption(
             entry: WorkingEntry,
-            fallbackTime: Instant?,
+            fallbackTime: EasternTimeInstant?,
             alertsData: AlertsStreamDataResponse?,
             route: Route?,
             tripId: String,

@@ -28,13 +28,13 @@ import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -520,7 +520,7 @@ class MapViewModel(
         }
 
     private suspend fun globalMapData(
-        now: Instant,
+        now: EasternTimeInstant,
         globalResponse: GlobalResponse?,
         alertsData: AlertsStreamDataResponse?,
     ): GlobalMapData? =

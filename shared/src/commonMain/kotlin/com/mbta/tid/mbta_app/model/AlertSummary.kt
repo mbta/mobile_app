@@ -1,9 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.utils.serviceDate
-import com.mbta.tid.mbta_app.utils.toBostonTime
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
@@ -33,11 +31,11 @@ data class AlertSummary(
 
         data object Tomorrow : Timeframe()
 
-        data class LaterDate(val time: Instant) : Timeframe()
+        data class LaterDate(val time: EasternTimeInstant) : Timeframe()
 
-        data class ThisWeek(val time: Instant) : Timeframe()
+        data class ThisWeek(val time: EasternTimeInstant) : Timeframe()
 
-        data class Time(val time: Instant) : Timeframe()
+        data class Time(val time: EasternTimeInstant) : Timeframe()
     }
 
     companion object {
@@ -46,7 +44,7 @@ data class AlertSummary(
             stopId: String,
             directionId: Int,
             patterns: List<RoutePattern>,
-            atTime: Instant,
+            atTime: EasternTimeInstant,
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
@@ -60,13 +58,13 @@ data class AlertSummary(
             }
         }
 
-        private fun alertTimeframe(alert: Alert, atTime: Instant): Timeframe? {
+        private fun alertTimeframe(alert: Alert, atTime: EasternTimeInstant): Timeframe? {
             val currentPeriod = alert.currentPeriod(atTime) ?: return null
             if (currentPeriod.endingLaterToday) return null
             val endTime = currentPeriod.end ?: return null
             val endDate = currentPeriod.endServiceDate ?: return null
 
-            val serviceDate = atTime.toBostonTime().serviceDate
+            val serviceDate = atTime.serviceDate
             if (serviceDate == endDate && currentPeriod.toEndOfService) {
                 return Timeframe.EndOfService
             } else if (serviceDate == endDate) {

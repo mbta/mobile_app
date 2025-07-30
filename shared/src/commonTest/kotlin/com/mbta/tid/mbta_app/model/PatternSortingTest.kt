@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 
 class PatternSortingTest {
@@ -38,7 +38,7 @@ class PatternSortingTest {
         objects.upcomingTrip(
             objects.schedule {
                 trip = objects.trip(routePattern)
-                departureTime = Clock.System.now() + 4.minutes
+                departureTime = EasternTimeInstant.now() + 4.minutes
             }
         )
 
@@ -82,7 +82,7 @@ class PatternSortingTest {
     private fun routeCard(
         lineOrRoute: RouteCardData.LineOrRoute,
         vararg stops: RouteCardData.RouteStopData,
-    ) = RouteCardData(lineOrRoute, stops.asList(), Clock.System.now())
+    ) = RouteCardData(lineOrRoute, stops.asList(), EasternTimeInstant.now())
 
     @Test
     fun compareLeavesAtStop() {

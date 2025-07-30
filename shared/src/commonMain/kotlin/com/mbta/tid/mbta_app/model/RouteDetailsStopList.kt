@@ -1,24 +1,14 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.NewRouteStopsResult
-import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(
-    val directionId: Int,
-    val oldSegments: List<OldSegment>?,
-    val newSegments: List<NewSegment>?,
-) {
+data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment>) {
 
     /** A subset of consecutive stops that are all typical or all non-typical. */
-    data class OldSegment(val stops: List<OldEntry>, val hasRouteLine: Boolean) {
-        val isTypical = stops.all { it.isTypical }
-    }
-
-    /** A subset of consecutive stops that are all typical or all non-typical. */
-    data class NewSegment(val stops: List<NewEntry>, val isTypical: Boolean) {
+    data class Segment(val stops: List<Entry>, val isTypical: Boolean) {
         /**
          * Assuming that this segment will be collapsed, returns the connections that should be
          * drawn in the toggle, and whether or not they should be twisted because they contain
@@ -68,16 +58,7 @@ data class RouteDetailsStopList(
         }
     }
 
-    data class OldEntry(
-        val stop: Stop,
-        val patterns: List<RoutePattern>,
-        val connectingRoutes: List<Route>,
-    ) {
-        val patternIds = patterns.map { it.id }.toSet()
-        val isTypical = patterns.any { it.isTypical() }
-    }
-
-    data class NewEntry(
+    data class Entry(
         val stop: Stop,
         val stopLane: RouteBranchSegment.Lane,
         val stickConnections: List<RouteBranchSegment.StickConnection>,
@@ -117,43 +98,10 @@ data class RouteDetailsStopList(
 
     companion object {
 
-        suspend fun fromOldPieces(
+        suspend fun fromPieces(
             routeId: String,
             directionId: Int,
-            routeStops: OldRouteStopsResult?,
-            globalData: GlobalResponse,
-        ): RouteDetailsStopList? =
-            withContext(Dispatchers.Default) {
-                if (
-                    routeStops == null ||
-                        routeStops.routeId != routeId ||
-                        routeStops.directionId != directionId
-                )
-                    return@withContext null
-
-                val stops =
-                    routeStops.stopIds.mapNotNull { stopId ->
-                        val stop =
-                            globalData.getStop(stopId)?.resolveParent(globalData)
-                                ?: return@mapNotNull null
-                        val patterns =
-                            globalData.getPatternsFor(stopId, routeId).filter {
-                                it.directionId == directionId
-                            }
-                        val transferRoutes =
-                            TripDetailsStopList.getTransferRoutes(stopId, routeId, globalData)
-                        OldEntry(stop, patterns, transferRoutes)
-                    }
-
-                val segments = splitIntoOldSegments(stops)
-
-                RouteDetailsStopList(directionId, segments, null)
-            }
-
-        suspend fun fromNewPieces(
-            routeId: String,
-            directionId: Int,
-            routeStops: NewRouteStopsResult?,
+            routeStops: RouteStopsResult?,
             globalData: GlobalResponse,
         ): RouteDetailsStopList? =
             withContext(Dispatchers.Default) {
@@ -167,7 +115,7 @@ data class RouteDetailsStopList(
                 val segments =
                     routeStops.segments
                         .mapNotNull { segment ->
-                            NewSegment(
+                            Segment(
                                     segment.stops.mapNotNull { branchStop ->
                                         val stopId = branchStop.stopId
                                         val stop =
@@ -182,7 +130,7 @@ data class RouteDetailsStopList(
                                                 globalData,
                                             )
 
-                                        NewEntry(
+                                        Entry(
                                             stop,
                                             branchStop.stopLane,
                                             branchStop.connections,
@@ -193,7 +141,7 @@ data class RouteDetailsStopList(
                                 )
                                 .takeUnless { it.stops.isEmpty() }
                         }
-                        .fold(mutableListOf<NewSegment>()) { acc, segment ->
+                        .fold(mutableListOf<Segment>()) { acc, segment ->
                             if (acc.lastOrNull()?.isTypical == false && !segment.isTypical) {
                                 val priorSegment = acc.removeLast()
                                 acc.add(
@@ -205,48 +153,7 @@ data class RouteDetailsStopList(
                             acc
                         }
 
-                RouteDetailsStopList(directionId, null, segments)
+                RouteDetailsStopList(directionId, segments)
             }
-
-        /**
-         * Split the list of entries into segments based on whether the stop serves a typical route
-         * pattern.
-         */
-        private fun splitIntoOldSegments(entries: List<OldEntry>): List<OldSegment> {
-            val authoritativePatternId =
-                entries
-                    .flatMapTo(mutableSetOf()) { it.patterns.filter(RoutePattern::isTypical) }
-                    .minOrNull()
-                    ?.id
-
-            val segments: MutableList<MutableList<OldEntry>> = mutableListOf()
-
-            entries.forEach { entry ->
-                if (segments.isEmpty()) {
-                    segments.add(mutableListOf(entry))
-                } else {
-                    val wipSegment = segments.last()
-                    val lastEntry = wipSegment.last()
-                    val isAuthoritativePatternBoundary =
-                        authoritativePatternId != null &&
-                            (entry.patternIds.contains(authoritativePatternId) !=
-                                lastEntry.patternIds.contains(authoritativePatternId))
-                    if (entry.isTypical == lastEntry.isTypical && !isAuthoritativePatternBoundary) {
-                        wipSegment.add(entry)
-                    } else {
-                        segments.add(mutableListOf(entry))
-                    }
-                }
-            }
-
-            return segments.map {
-                OldSegment(
-                    it,
-                    hasRouteLine =
-                        authoritativePatternId == null ||
-                            it.any { it.patternIds.contains(authoritativePatternId) },
-                )
-            }
-        }
     }
 }

@@ -13,7 +13,7 @@ import SwiftUI
 
 struct StopDetailsUnfilteredView: View {
     var stopId: String
-    var now: Date
+    var now: EasternTimeInstant
     var setStopFilter: (StopDetailsFilter?) -> Void
 
     var routeCardData: [RouteCardData]?
@@ -35,7 +35,7 @@ struct StopDetailsUnfilteredView: View {
         stopId: String,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
-        now: Date,
+        now: EasternTimeInstant,
         errorBannerVM: ErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         stopDetailsVM: StopDetailsViewModel

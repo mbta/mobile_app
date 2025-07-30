@@ -43,7 +43,7 @@ import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun DepartureTile(
@@ -141,7 +141,7 @@ private fun DepartureTilePreview() {
                                 UpcomingTrip(trip1),
                                 RouteType.COMMUTER_RAIL,
                                 TripInstantDisplay.TimeWithStatus(
-                                    Clock.System.now(),
+                                    EasternTimeInstant.now(),
                                     "Delay",
                                     headline = true,
                                 ),

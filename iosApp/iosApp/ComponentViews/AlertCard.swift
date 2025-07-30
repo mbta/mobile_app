@@ -171,15 +171,13 @@ struct AlertCard: View {
 
         AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .shuttle,
-                                       location: .some(AlertSummary.LocationSuccessiveStops(
-                                           startStopName: "Start",
-                                           endStopName: "End"
-                                       )),
-                                       timeframe: .some(AlertSummary
-                                           .TimeframeTime(time: ISO8601DateFormatter()
-                                               .date(from: "2025-04-16T20:00:00Z")!
-                                               .toKotlinInstant()))),
+            alertSummary: AlertSummary(
+                effect: .shuttle,
+                location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                timeframe: .some(AlertSummary.TimeframeTime(
+                    time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+                ))
+            ),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,

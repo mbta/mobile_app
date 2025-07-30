@@ -3,10 +3,10 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
-import kotlinx.serialization.encodeToString
+import kotlinx.datetime.Month
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -49,7 +49,7 @@ class VehiclesOnRouteChannelTest {
                             0,
                             42.359901428222656,
                             -71.09449005126953,
-                            Instant.parse("2024-05-15T09:00:00-04:00"),
+                            EasternTimeInstant(2024, Month.MAY, 15, 9, 0),
                             "1",
                             "99",
                             "61391720",

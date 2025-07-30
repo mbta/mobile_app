@@ -47,10 +47,10 @@ import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -533,13 +533,13 @@ fun stopDetailsManagedVM(
     updateStopFilter: (String, StopDetailsFilter?) -> Unit,
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
-    now: Instant? = null,
+    now: EasternTimeInstant? = null,
     viewModel: StopDetailsViewModel = koinViewModel(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
     clock: Clock = koinInject(),
 ): StopDetailsViewModel {
-    val now = now ?: clock.now()
+    val now = now ?: EasternTimeInstant(clock.now())
     val stopId = filters?.stopId
     val timer by timer(checkPredictionsStaleInterval)
 

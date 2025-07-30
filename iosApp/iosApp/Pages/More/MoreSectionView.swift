@@ -18,21 +18,20 @@ struct MoreSectionView: View {
         if !(section.hiddenOnProd && appVariant == .prod) {
             VStack(alignment: .leading, spacing: 8) {
                 if let name = section.name {
-                    VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(name)
                             .foregroundStyle(Color.text)
                             .font(Typography.subheadlineSemibold)
                             .listRowInsets(EdgeInsets())
                             .accessibilityAddTraits(.isHeader)
                             .accessibilityHeading(.h2)
-                        if let note = section.note {
-                            Text(note)
+                        if let noteAbove = section.noteAbove {
+                            Text(noteAbove)
                                 .foregroundStyle(Color.text)
                                 .font(Typography.footnote)
-                                .padding(.top, 2)
                         }
                     }
-                    .padding(.bottom, 2)
+                    .padding(2)
                 }
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(section.items.enumerated()), id: \.element.id) { index, row in
@@ -67,6 +66,12 @@ struct MoreSectionView: View {
                 }
                 .background(section.id == .feedback ? Color.key : Color.fill3)
                 .withRoundedBorder()
+                if let noteBelow = section.noteBelow {
+                    Text(noteBelow)
+                        .foregroundStyle(Color.text)
+                        .font(Typography.footnote)
+                        .padding(.top, 2)
+                }
             }
         }
     }

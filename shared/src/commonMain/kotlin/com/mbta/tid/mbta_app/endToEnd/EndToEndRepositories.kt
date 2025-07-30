@@ -59,13 +59,13 @@ import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 fun endToEndModule(): Module {
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder()
     val lineRed = objects.line()
     val routeRed =
@@ -139,9 +139,7 @@ fun endToEndModule(): Module {
             // debug.
             IdleRailRouteShapeRepository()
         }
-        single<IRouteStopsRepository> {
-            MockRouteStopsRepository(stopIds = emptyList(), segments = emptyList())
-        }
+        single<IRouteStopsRepository> { MockRouteStopsRepository(emptyList()) }
         single<ISchedulesRepository> {
             MockScheduleRepository(scheduleResponse = ScheduleResponse(objects))
         }

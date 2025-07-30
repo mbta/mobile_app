@@ -100,7 +100,7 @@ final class StopDetailsViewModelTests: XCTestCase {
     }
 
     func testGetRouteCardData() async throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
@@ -116,7 +116,7 @@ final class StopDetailsViewModelTests: XCTestCase {
             schedule.trip = trip0
             schedule.routeId = route.id
             schedule.stopId = stop.id
-            schedule.departureTime = (now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 10)
         })
         let direction0 = Direction(
             name: (route.directionNames[0] as? String)!,
@@ -135,7 +135,7 @@ final class StopDetailsViewModelTests: XCTestCase {
             schedule.trip = trip1
             schedule.routeId = route.id
             schedule.stopId = stop.id
-            schedule.departureTime = (now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 10)
         }
         let upcoming1 = objects.upcomingTrip(
             schedule: schedule1,
@@ -143,7 +143,7 @@ final class StopDetailsViewModelTests: XCTestCase {
                 prediction.trip = trip1
                 prediction.routeId = route.id
                 prediction.stopId = stop.id
-                prediction.departureTime = (now + 10 * 60).toKotlinInstant()
+                prediction.departureTime = now.plus(minutes: 10)
             }
         )
         let direction1 = Direction(
@@ -198,7 +198,7 @@ final class StopDetailsViewModelTests: XCTestCase {
                         context: context
                     ),
                 ]),
-            ], at: now.toKotlinInstant()
+            ], at: now
         )], routeCardData)
     }
 

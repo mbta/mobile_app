@@ -12,8 +12,7 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
-import com.mbta.tid.mbta_app.repositories.NewRouteStopsResult
-import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -29,8 +28,8 @@ class GetRouteStopsTest {
     fun testRouteStops() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route {}
-        fun buildSomeRouteStops(directionId: Int): NewRouteStopsResult {
-            return NewRouteStopsResult(
+        fun buildSomeRouteStops(directionId: Int): RouteStopsResult {
+            return RouteStopsResult(
                 route.id,
                 directionId,
                 listOf(RouteBranchSegment.of(listOf(objects.stop().id, objects.stop().id))),
@@ -41,24 +40,17 @@ class GetRouteStopsTest {
 
         val routeStopsRepo =
             object : IRouteStopsRepository {
-                override suspend fun getOldRouteStops(
+                override suspend fun getRouteSegments(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<OldRouteStopsResult> {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getNewRouteSegments(
-                    routeId: String,
-                    directionId: Int,
-                ): ApiResult<NewRouteStopsResult> {
+                ): ApiResult<RouteStopsResult> {
                     return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
                     else ApiResult.Ok(expectedRouteStops2)
                 }
             }
 
         var directionId by mutableIntStateOf(0)
-        var actualRouteStops: NewRouteStopsResult? = expectedRouteStops1
+        var actualRouteStops: RouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
             actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
         }
@@ -78,22 +70,15 @@ class GetRouteStopsTest {
         val sync = Channel<Unit>(capacity = Channel.RENDEZVOUS)
         val routeStopsRepo =
             object : IRouteStopsRepository {
-                override suspend fun getOldRouteStops(
+                override suspend fun getRouteSegments(
                     routeId: String,
                     directionId: Int,
-                ): ApiResult<OldRouteStopsResult> {
-                    TODO("Not yet implemented")
-                }
-
-                override suspend fun getNewRouteSegments(
-                    routeId: String,
-                    directionId: Int,
-                ): ApiResult<NewRouteStopsResult> {
+                ): ApiResult<RouteStopsResult> {
                     sync.receive()
-                    return ApiResult.Ok(NewRouteStopsResult(routeId, directionId, emptyList()))
+                    return ApiResult.Ok(RouteStopsResult(routeId, directionId, emptyList()))
                 }
             }
-        var actualRouteStops: NewRouteStopsResult? = null
+        var actualRouteStops: RouteStopsResult? = null
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {
@@ -115,7 +100,7 @@ class GetRouteStopsTest {
 
     @Test
     fun testErrorCase() {
-        val schedulesRepo = MockRouteStopsRepository(ApiResult.Error(500, "oops"), null)
+        val schedulesRepo = MockRouteStopsRepository(ApiResult.Error(500, "oops"))
 
         val errorRepo = MockErrorBannerStateRepository()
 

@@ -36,7 +36,7 @@ struct StopDetailsFilteredView: View {
     var analytics: Analytics = AnalyticsProvider.shared
 
     var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
-    var nowInstant: KotlinInstant { now.toKotlinInstant() }
+    var nowInstant: EasternTimeInstant { now.toEasternInstant() }
 
     let inspection = Inspection<Self>()
 

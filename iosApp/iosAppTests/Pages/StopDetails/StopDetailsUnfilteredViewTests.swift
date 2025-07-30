@@ -17,7 +17,7 @@ import XCTest
     // override init for XCTestCase Swift interop reasons, no equivalent to Kotlin’s lateinit, must make these optional
     // variables and then force-unwrap every time they’re used
     var builder: ObjectCollectionBuilder?
-    var now: Date?
+    var now: EasternTimeInstant?
     var route: Route?
     var routePatternOne: RoutePattern?
     var routePatternTwo: RoutePattern?
@@ -29,7 +29,7 @@ import XCTest
         executionTimeAllowance = 60
 
         builder = ObjectCollectionBuilder()
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         self.now = now
         route = builder!.route { route in
             route.id = "route_1"
@@ -93,8 +93,8 @@ import XCTest
             prediction.routeId = "route_1"
             prediction.stopSequence = 1
             prediction.directionId = 0
-            prediction.arrivalTime = (now + 60).toKotlinInstant()
-            prediction.departureTime = (now + 1.5 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 1)
+            prediction.departureTime = now.plus(minutes: 1).plus(seconds: 30)
         }
 
         globalResponse = .init(
@@ -116,7 +116,7 @@ import XCTest
             schedules: nil,
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
-            now: now!.toKotlinInstant(),
+            now: now!,
             pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
@@ -149,7 +149,7 @@ import XCTest
             schedules: nil,
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
-            now: now!.toKotlinInstant(),
+            now: now!,
             pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
@@ -174,7 +174,7 @@ import XCTest
     func testShowsElevatorAlertsWhenGroupedByDirection() async throws {
         let alert = builder!.clone().alert { alert in
             alert.header = "Elevator alert"
-            alert.activePeriod(start: Date(timeIntervalSince1970: 0).toKotlinInstant(), end: nil)
+            alert.activePeriod(start: Date(timeIntervalSince1970: 0).toEasternInstant(), end: nil)
             alert.effect = .elevatorClosure
             alert.informedEntity(
                 activities: [.usingWheelchair],
@@ -193,7 +193,7 @@ import XCTest
             schedules: nil,
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [alert.id: alert]),
-            now: now!.toKotlinInstant(),
+            now: now!,
             pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )

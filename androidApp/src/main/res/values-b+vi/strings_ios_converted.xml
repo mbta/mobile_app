@@ -205,7 +205,8 @@
     <string name="more_section_resources">Nguồn</string>
     <string name="more_section_settings">Cài đặt</string>
     <string name="more_section_support">Thông tin &amp; Hỗ trợ chung của MBTA</string>
-    <string name="more_section_support_note">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
+    <string name="more_section_support_note_accessibility">711 dành cho người gọi TTY; VRS dành cho người gọi ASL</string>
+    <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>

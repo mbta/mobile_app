@@ -4,12 +4,13 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Month
 
 class TripDetailsStopListTest {
     // Every good test case deserves its own DSL, right?
@@ -59,7 +60,7 @@ class TripDetailsStopListTest {
             stopId: String,
             stopSequence: Int,
             routeId: String = "",
-            time: Instant? = null,
+            time: EasternTimeInstant? = null,
         ) =
             objects.prediction {
                 this.stopId = stop(stopId).id
@@ -85,7 +86,7 @@ class TripDetailsStopListTest {
         ) =
             objects.alert {
                 this.effect = effect
-                this.activePeriod(Instant.DISTANT_PAST, null)
+                this.activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                 block()
             }
 
@@ -359,21 +360,21 @@ class TripDetailsStopListTest {
 
         val p1 =
             objects.prediction {
-                arrivalTime = Instant.parse("2024-05-10T15:31:05Z")
-                departureTime = Instant.parse("2024-05-10T15:32:12Z")
+                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 5)
+                departureTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 32, 12)
                 stopSequence = 600
                 stopId = "70200"
             }
         val p2 =
             objects.prediction {
-                arrivalTime = Instant.parse("2024-05-10T15:31:08Z")
+                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 31, 8)
                 departureTime = null
                 stopSequence = 600
                 stopId = "71199"
             }
         val p3 =
             objects.prediction {
-                arrivalTime = Instant.parse("2024-05-10T15:33:07Z")
+                arrivalTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 33, 7)
                 departureTime = null
                 stopSequence = 610
                 stopId = "70201"
@@ -780,7 +781,7 @@ class TripDetailsStopListTest {
     fun `fromPieces keeps alerts and picks icon based on route`() = test {
         objects.route { id = "Red" }
         trip { routeId = "Red" }
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val pred1 = prediction("A", 10, routeId = "Red", time = now + 1.minutes)
         val pred2 = prediction("B", 20, routeId = "Red", time = now + 2.minutes)
         val pred3 = prediction("C", 30, routeId = "Red", time = now + 3.minutes)
@@ -806,7 +807,7 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces does not crash on multi-route trips`() = test {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         trip { routeId = "1" }
         val pred1 = prediction("A", 10, routeId = "1", time = now + 1.minutes)
         val pred2 = prediction("A", 10, routeId = "2", time = now + 1.minutes)
@@ -984,7 +985,7 @@ class TripDetailsStopListTest {
     fun `Entry format displays prediction`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val trip = trip { routeId = route.id }
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val pred = prediction("A", 10, time = now)
         val entry = entry("A", 10, prediction = pred)
         assertEquals(
@@ -1004,7 +1005,7 @@ class TripDetailsStopListTest {
     fun `Entry format takes non-truncating disruption over prediction`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val trip = trip { routeId = route.id }
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val shuttleAlert = alert(Alert.Effect.StationClosure)
         val pred = prediction("A", 10, time = now)
         val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)
@@ -1018,7 +1019,7 @@ class TripDetailsStopListTest {
     fun `Entry format takes prediction over truncating disruption`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val trip = trip { routeId = route.id }
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val shuttleAlert = alert(Alert.Effect.Shuttle)
         val pred = prediction("A", 10, time = now)
         val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)

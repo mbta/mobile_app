@@ -12,7 +12,7 @@ import SwiftUI
 struct TripStopRow: View {
     var stop: TripDetailsStopList.Entry
     var trip: Trip
-    var now: KotlinInstant
+    var now: EasternTimeInstant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var onOpenAlertDetails: (Shared.Alert) -> Void
     var routeAccents: TripRouteAccents
@@ -101,7 +101,7 @@ struct TripStopRow: View {
 #Preview {
     let objects = ObjectCollectionBuilder()
     let trip = objects.trip { _ in }
-    let now = Date.now
+    let now = EasternTimeInstant.now()
     VStack(spacing: 0) {
         TripStopRow(
             stop: .init(
@@ -128,7 +128,7 @@ struct TripStopRow: View {
                 ]
             ),
             trip: trip,
-            now: now.toKotlinInstant(),
+            now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
@@ -143,7 +143,7 @@ struct TripStopRow: View {
                 stopSequence: 10,
                 disruption: nil,
                 schedule: nil,
-                prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                 vehicle: nil,
                 routes: [
                     objects.route { route in
@@ -159,7 +159,7 @@ struct TripStopRow: View {
                 ]
             ),
             trip: trip,
-            now: now.toKotlinInstant(),
+            now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
@@ -174,21 +174,21 @@ struct TripStopRow: View {
                 stopSequence: 10,
                 disruption: nil,
                 schedule: nil,
-                prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                 predictionStop: objects.stop { $0.platformCode = "1" },
                 vehicle: nil,
                 routes: [],
                 elevatorAlerts: [
                     objects.alert {
                         $0.activePeriod(
-                            start: (now - 20 * 60).toKotlinInstant(),
-                            end: (now + 20 * 60).toKotlinInstant()
+                            start: now.minus(minutes: 20),
+                            end: now.plus(minutes: 20)
                         )
                     },
                 ]
             ),
             trip: trip,
-            now: now.toKotlinInstant(),
+            now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
             routeAccents: TripRouteAccents(
@@ -206,7 +206,7 @@ struct TripStopRow: View {
 #Preview("Disruptions") {
     let objects = ObjectCollectionBuilder()
     let trip = objects.trip { _ in }
-    let now = Date.now
+    let now = EasternTimeInstant.now()
     ZStack {
         Color.fill3.padding(6)
         VStack(spacing: 0) {
@@ -236,7 +236,7 @@ struct TripStopRow: View {
                     ]
                 ),
                 trip: trip,
-                now: now.toKotlinInstant(),
+                now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
                 routeAccents: TripRouteAccents(
@@ -252,7 +252,7 @@ struct TripStopRow: View {
                     stopSequence: 10,
                     disruption: nil,
                     schedule: nil,
-                    prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                    prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                     vehicle: nil,
                     routes: [
                         objects.route { route in
@@ -268,7 +268,7 @@ struct TripStopRow: View {
                     ]
                 ),
                 trip: trip,
-                now: now.toKotlinInstant(),
+                now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
                 routeAccents: TripRouteAccents(
@@ -285,14 +285,14 @@ struct TripStopRow: View {
                     disruption: .init(alert: objects.alert { $0.effect = .shuttle },
                                       mapStopRoute: .red),
                     schedule: nil,
-                    prediction: objects.prediction { $0.departureTime = (now + 5 * 60).toKotlinInstant() },
+                    prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                     predictionStop: objects.stop { $0.platformCode = "1" },
                     vehicle: nil,
                     routes: [],
                     elevatorAlerts: []
                 ),
                 trip: trip,
-                now: now.toKotlinInstant(),
+                now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
                 routeAccents: TripRouteAccents(

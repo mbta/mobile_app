@@ -16,8 +16,8 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +26,7 @@ import org.koin.compose.KoinContext
 class TripDetailsViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
-    val now = Clock.System.now()
+    val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder()
     val route = objects.route()
     val routePattern = objects.routePattern(route)

@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 data class MapStop(
     val stop: Stop,
@@ -26,7 +26,7 @@ data class GlobalMapData(
         internal fun getAlertsByStop(
             globalData: GlobalResponse,
             alerts: AlertsStreamDataResponse?,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
         ): Map<String, AlertAssociatedStop>? {
             val activeAlerts =
                 alerts?.alerts?.values?.filter { it.isActive(filterAtTime) } ?: return null
@@ -83,7 +83,7 @@ data class GlobalMapData(
     constructor(
         globalData: GlobalResponse,
         alerts: AlertsStreamDataResponse?,
-        filterAtTime: Instant,
+        filterAtTime: EasternTimeInstant,
     ) : this(globalData, getAlertsByStop(globalData, alerts, filterAtTime))
 
     constructor(

@@ -1,10 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.utils.ServiceDateRounding
-import com.mbta.tid.mbta_app.utils.serviceDate
-import com.mbta.tid.mbta_app.utils.toBostonTime
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,7 +19,7 @@ data class Alert(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
     val severity: Int,
-    @SerialName("updated_at") val updatedAt: Instant,
+    @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     // This field is not parsed from the Alert object from the backend, it is injected from
     // global data in the AlertsUsecase if any informed entities apply to a facility.
     val facilities: Map<String, Facility>? = null,
@@ -81,42 +78,38 @@ data class Alert(
         stopId: String,
         directionId: Int,
         patterns: List<RoutePattern>,
-        atTime: Instant,
+        atTime: EasternTimeInstant,
         global: GlobalResponse,
     ) = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
 
     @Serializable
-    data class ActivePeriod(val start: Instant, val end: Instant?) {
+    data class ActivePeriod(val start: EasternTimeInstant, val end: EasternTimeInstant?) {
         // This is only nullable because it's set after serialization within the Alert init,
         // in practice it should always be populated with a value, unless something has gone wrong.
         var durationCertainty: DurationCertainty? = null
 
-        fun activeAt(instant: Instant): Boolean {
+        fun activeAt(instant: EasternTimeInstant): Boolean {
             if (end == null) {
                 return start <= instant
             }
             return instant in start..end
         }
 
-        val startServiceDate = start.toBostonTime().serviceDate
-        val endServiceDate = end?.toBostonTime()?.serviceDate(ServiceDateRounding.BACKWARDS)
+        val startServiceDate = start.serviceDate
+        val endServiceDate = end?.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
 
         val fromStartOfService: Boolean
-            get() {
-                val localTime = start.toBostonTime()
-                return localTime.hour == 3 && localTime.minute == 0
-            }
+            get() = start.local.hour == 3 && start.local.minute == 0
 
         val toEndOfService: Boolean
             get() {
                 val end = end ?: return false
-                val localTime = end.toBostonTime()
-                return (localTime.hour == 3 && localTime.minute == 0) ||
-                    (localTime.hour == 2 && localTime.minute == 59)
+                return (end.local.hour == 3 && end.local.minute == 0) ||
+                    (end.local.hour == 2 && end.local.minute == 59)
             }
 
         val endingLaterToday: Boolean
-            get() = durationCertainty == Alert.DurationCertainty.Estimated
+            get() = durationCertainty == DurationCertainty.Estimated
     }
 
     @Serializable
@@ -353,9 +346,9 @@ data class Alert(
         @SerialName("upcoming") Upcoming,
     }
 
-    fun currentPeriod(time: Instant) = activePeriod.firstOrNull { it.activeAt(time) }
+    fun currentPeriod(time: EasternTimeInstant) = activePeriod.firstOrNull { it.activeAt(time) }
 
-    fun isActive(time: Instant) = currentPeriod(time) != null
+    fun isActive(time: EasternTimeInstant) = currentPeriod(time) != null
 
     fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
 

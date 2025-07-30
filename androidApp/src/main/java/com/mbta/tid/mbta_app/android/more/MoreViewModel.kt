@@ -128,7 +128,8 @@ class MoreViewModel(private val context: Context, private val licensesCallback: 
             MoreSection(
                 id = MoreSection.Category.Support,
                 items = listOf(MoreItem.Phone("617-222-3200", "6172223200")),
-                note = context.resources.getString(R.string.more_section_support_note),
+                noteAbove = context.getString(R.string.more_section_support_note_hours),
+                noteBelow = context.getString(R.string.more_section_support_note_accessibility),
             ),
         )
     }

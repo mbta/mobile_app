@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.alertDetails
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.res.Configuration
-import android.icu.text.DateFormat
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -53,16 +52,15 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.dateFormat
+import com.mbta.tid.mbta_app.android.util.formattedShortDateShortTime
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Stop
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.koin.compose.koinInject
 
 @Composable
@@ -72,7 +70,7 @@ fun AlertDetails(
     routes: List<Route>?,
     stop: Stop?,
     affectedStops: List<Stop>,
-    now: Instant,
+    now: EasternTimeInstant,
     analytics: Analytics = koinInject(),
 ) {
     val routeId = line?.id ?: routes?.firstOrNull()?.id ?: ""
@@ -342,8 +340,8 @@ private fun AlertDescription(alert: Alert, affectedStopsKnown: Boolean) {
 }
 
 @Composable
-private fun AlertFooter(updatedAt: Instant) {
-    val formattedDate = updatedAt.dateFormat(DateFormat.SHORT, DateFormat.SHORT)
+private fun AlertFooter(updatedAt: EasternTimeInstant) {
+    val formattedDate = updatedAt.formattedShortDateShortTime()
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         HorizontalDivider(color = colorResource(R.color.halo))
         Text(
@@ -368,7 +366,7 @@ private fun AlertDetailsPreview() {
                 textColor = "FFFFFF"
                 longName = "Orange Line"
             }
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val stop = objects.stop { name = "Here @ There" }
         val alert =
             objects.alert {

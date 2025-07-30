@@ -19,7 +19,7 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -157,7 +157,7 @@ class SubscribeToVehiclesTest {
                                 ),
                             )
                         ),
-                    at = Clock.System.now(),
+                    at = EasternTimeInstant.now(),
                 )
             )
 

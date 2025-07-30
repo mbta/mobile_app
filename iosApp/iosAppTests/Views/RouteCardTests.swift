@@ -24,13 +24,13 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )
 
         let sut = RouteCard(
             cardData: routeCardData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -54,13 +54,13 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .line(line, [route]),
             stopData: [],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )
 
         let sut = RouteCard(
             cardData: routeCardData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -80,7 +80,7 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )
 
         let pinRouteExp = XCTestExpectation(description: "pinRoute called")
@@ -92,7 +92,7 @@ final class RouteCardTests: XCTestCase {
         let sut = RouteCard(
             cardData: routeCardData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: onPin,
             pinned: false,
             pushNavEntry: { _ in },
@@ -115,13 +115,13 @@ final class RouteCardTests: XCTestCase {
         let routeCardData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [],
-            at: Date.now.toKotlinInstant()
+            at: EasternTimeInstant.now()
         )
 
         let sut = RouteCard(
             cardData: routeCardData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -153,10 +153,10 @@ final class RouteCardTests: XCTestCase {
                     directions: [],
                     data: []
                 )],
-                at: Date.now.toKotlinInstant()
+                at: EasternTimeInstant.now()
             ),
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -173,10 +173,10 @@ final class RouteCardTests: XCTestCase {
                     directions: [],
                     data: []
                 )],
-                at: Date.now.toKotlinInstant()
+                at: EasternTimeInstant.now()
             ),
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -212,10 +212,10 @@ final class RouteCardTests: XCTestCase {
                         context: .nearbyTransit
                     )]
                 )],
-                at: Date.now.toKotlinInstant()
+                at: EasternTimeInstant.now()
             ),
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },
@@ -230,7 +230,7 @@ final class RouteCardTests: XCTestCase {
         let sut = RouteCard(
             cardData: data.GL5(),
             global: data.global,
-            now: data.now.toNSDate(),
+            now: data.now,
             onPin: { _ in },
             pinned: false,
             pushNavEntry: { _ in },

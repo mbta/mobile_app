@@ -7,13 +7,12 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.jvm.JvmName
 import kotlin.math.max
-import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -40,7 +39,7 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
 data class RouteCardData(
     val lineOrRoute: LineOrRoute,
     val stopData: List<RouteStopData>,
-    val at: Instant,
+    val at: EasternTimeInstant,
 ) {
     val id = lineOrRoute.id
 
@@ -200,7 +199,7 @@ data class RouteCardData(
          * disrupted, etc. but should still be considered) could be shown
          */
         private fun potentialService(
-            now: Instant,
+            now: EasternTimeInstant,
             representativeRoute: Route,
             globalData: GlobalResponse?,
             context: Context,
@@ -330,7 +329,7 @@ data class RouteCardData(
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
             globalData: GlobalResponse?,
-            now: Instant,
+            now: EasternTimeInstant,
         ): LeafFormat {
 
             // If we are dealing with a line, then we should show the route alongside the
@@ -466,7 +465,7 @@ data class RouteCardData(
             return LeafFormat.Single(route, headsign, format)
         }
 
-        fun format(now: Instant, globalData: GlobalResponse?): LeafFormat {
+        fun format(now: EasternTimeInstant, globalData: GlobalResponse?): LeafFormat {
             val representativeRoute = this.lineOrRoute.sortRoute
             val potentialService = potentialService(now, representativeRoute, globalData, context)
 
@@ -652,7 +651,7 @@ data class RouteCardData(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
-            now: Instant,
+            now: EasternTimeInstant,
             pinnedRoutes: Set<String>,
             context: Context,
             favorites: Set<RouteStopDirection>? = null,
@@ -705,7 +704,7 @@ data class RouteCardData(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             context: Context,
-            now: Instant = Clock.System.now(),
+            now: EasternTimeInstant = EasternTimeInstant.now(),
             sortByDistanceFrom: Position? = null,
             favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -744,7 +743,11 @@ data class RouteCardData(
 
     data class HierarchyPath(val routeOrLineId: String, val stopId: String, val directionId: Int)
 
-    class ListBuilder(val allDataLoaded: Boolean, val context: Context, val now: Instant) {
+    class ListBuilder(
+        val allDataLoaded: Boolean,
+        val context: Context,
+        val now: EasternTimeInstant,
+    ) {
         var data: ByLineOrRouteBuilder = mutableMapOf()
             private set
 
@@ -839,7 +842,7 @@ data class RouteCardData(
         fun addUpcomingTrips(
             schedules: ScheduleResponse?,
             predictions: PredictionsStreamDataResponse,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
             globalData: GlobalResponse,
         ): ListBuilder {
 
@@ -910,7 +913,7 @@ data class RouteCardData(
         fun addAlerts(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
             globalData: GlobalResponse,
         ): ListBuilder {
             val activeRelevantAlerts =
@@ -952,7 +955,7 @@ data class RouteCardData(
         private fun filterRelevantAlerts(
             alerts: AlertsStreamDataResponse?,
             includeMinorAlerts: Boolean,
-            filterAtTime: Instant,
+            filterAtTime: EasternTimeInstant,
         ): List<Alert> =
             alerts?.alerts?.values?.filter {
                 it.isActive(filterAtTime) &&
@@ -962,8 +965,8 @@ data class RouteCardData(
             } ?: emptyList()
 
         fun filterIrrelevantData(
-            filterAtTime: Instant,
-            cutoffTime: Instant?,
+            filterAtTime: EasternTimeInstant,
+            cutoffTime: EasternTimeInstant?,
             context: Context,
             globalData: GlobalResponse,
         ): ListBuilder {
@@ -1017,7 +1020,7 @@ data class RouteCardData(
     data class Builder(
         val lineOrRoute: LineOrRoute,
         var stopData: ByStopIdBuilder,
-        val now: Instant,
+        val now: EasternTimeInstant,
     ) {
 
         fun build(sortByDistanceFrom: Position?): RouteCardData {
@@ -1151,8 +1154,8 @@ data class RouteCardData(
          */
         fun shouldShow(
             stop: Stop,
-            filterAtTime: Instant,
-            cutoffTime: Instant?,
+            filterAtTime: EasternTimeInstant,
+            cutoffTime: EasternTimeInstant?,
             showAllPatternsWhileLoading: Boolean,
             lineOrRoute: LineOrRoute,
             globalData: GlobalResponse,

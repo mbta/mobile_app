@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -28,7 +29,7 @@ class LeafFormatTest {
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.ScheduleTime(Instant.DISTANT_FUTURE),
+                TripInstantDisplay.ScheduleTime(EasternTimeInstant(Instant.DISTANT_FUTURE)),
             )
         val format =
             LeafFormat.Single(

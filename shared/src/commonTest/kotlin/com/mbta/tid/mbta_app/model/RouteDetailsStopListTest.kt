@@ -1,8 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.NewRouteStopsResult
-import com.mbta.tid.mbta_app.repositories.OldRouteStopsResult
+import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -135,9 +134,9 @@ class RouteDetailsStopListTest {
                     true,
                 )
             ),
-            RouteDetailsStopList.NewSegment(
+            RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop1,
                             lane,
                             stickConnections =
@@ -149,7 +148,7 @@ class RouteDetailsStopListTest {
                                 ),
                             connectingRoutes = emptyList(),
                         ),
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop2,
                             lane,
                             stickConnections =
@@ -189,9 +188,9 @@ class RouteDetailsStopListTest {
                     true,
                 )
             ),
-            RouteDetailsStopList.NewSegment(
+            RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop2,
                             lane,
                             stickConnections =
@@ -203,7 +202,7 @@ class RouteDetailsStopListTest {
                                 ),
                             connectingRoutes = emptyList(),
                         ),
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop3,
                             lane,
                             stickConnections =
@@ -257,9 +256,9 @@ class RouteDetailsStopListTest {
                     true,
                 ),
             ),
-            RouteDetailsStopList.NewSegment(
+            RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop2,
                             stopLane,
                             stickConnections =
@@ -271,7 +270,7 @@ class RouteDetailsStopListTest {
                                 ) + skip,
                             connectingRoutes = emptyList(),
                         ),
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             stop3,
                             stopLane,
                             stickConnections =
@@ -308,9 +307,9 @@ class RouteDetailsStopListTest {
                 RouteBranchSegment.Lane.Left,
             )
         val segment =
-            RouteDetailsStopList.NewSegment(
+            RouteDetailsStopList.Segment(
                 listOf(
-                    RouteDetailsStopList.NewEntry(
+                    RouteDetailsStopList.Entry(
                         stop1,
                         RouteBranchSegment.Lane.Right,
                         RouteBranchSegment.StickConnection.forward(
@@ -330,7 +329,7 @@ class RouteDetailsStopListTest {
                             ),
                         connectingRoutes = emptyList(),
                     ),
-                    RouteDetailsStopList.NewEntry(
+                    RouteDetailsStopList.Entry(
                         stop2,
                         RouteBranchSegment.Lane.Right,
                         RouteBranchSegment.StickConnection.forward(
@@ -341,7 +340,7 @@ class RouteDetailsStopListTest {
                         ),
                         connectingRoutes = emptyList(),
                     ),
-                    RouteDetailsStopList.NewEntry(
+                    RouteDetailsStopList.Entry(
                         stop3,
                         RouteBranchSegment.Lane.Right,
                         RouteBranchSegment.StickConnection.forward(
@@ -386,55 +385,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromOldPieces finds transfer stops`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
-        val connectingStop = objects.stop()
-        val mainStop = objects.stop { connectingStopIds = listOf(connectingStop.id) }
-        val mainRoute = objects.route()
-        val connectingRoute = objects.route()
-
-        val mainPattern =
-            objects.routePattern(mainRoute) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(mainStop.id) }
-            }
-
-        val connectingPattern =
-            objects.routePattern(connectingRoute) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(connectingStop.id) }
-            }
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteDetailsStopList(
-                0,
-                listOf(
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                mainStop,
-                                connectingRoutes = listOf(connectingRoute),
-                                patterns = listOf(mainPattern),
-                            )
-                        ),
-                        hasRouteLine = true,
-                    )
-                ),
-                null,
-            ),
-            RouteDetailsStopList.fromOldPieces(
-                mainRoute.id,
-                0,
-                OldRouteStopsResult(mainRoute.id, 0, listOf(mainStop.id)),
-                globalData,
-            ),
-        )
-    }
-
-    @Test
-    fun `fromNewPieces finds transfer stops`() = runBlocking {
+    fun `fromPieces finds transfer stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val connectingStop = objects.stop()
         val mainStop = objects.stop { connectingStopIds = listOf(connectingStop.id) }
@@ -456,11 +407,10 @@ class RouteDetailsStopListTest {
         assertEquals(
             RouteDetailsStopList(
                 0,
-                null,
                 listOf(
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 mainStop,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -471,10 +421,10 @@ class RouteDetailsStopListTest {
                     )
                 ),
             ),
-            RouteDetailsStopList.fromNewPieces(
+            RouteDetailsStopList.fromPieces(
                 mainRoute.id,
                 0,
-                NewRouteStopsResult(
+                RouteStopsResult(
                     mainRoute.id,
                     0,
                     listOf(
@@ -497,7 +447,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromOldPieces returns null if direction doesn't match`() = runBlocking {
+    fun `fromPieces returns null if direction doesn't match`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val mainStop = objects.stop {}
         val mainRoute = objects.route()
@@ -505,28 +455,10 @@ class RouteDetailsStopListTest {
         val globalData = GlobalResponse(objects)
 
         assertNull(
-            RouteDetailsStopList.fromOldPieces(
+            RouteDetailsStopList.fromPieces(
                 mainRoute.id,
                 0,
-                OldRouteStopsResult(mainRoute.id, 1, listOf(mainStop.id)),
-                globalData,
-            )
-        )
-    }
-
-    @Test
-    fun `fromNewPieces returns null if direction doesn't match`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
-        val mainStop = objects.stop {}
-        val mainRoute = objects.route()
-
-        val globalData = GlobalResponse(objects)
-
-        assertNull(
-            RouteDetailsStopList.fromNewPieces(
-                mainRoute.id,
-                0,
-                NewRouteStopsResult(
+                RouteStopsResult(
                     mainRoute.id,
                     1,
                     listOf(
@@ -549,154 +481,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromOldPieces breaks segments by typicality`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
-        val stop0 = objects.stop { id = "stop0" }
-        val stop1 = objects.stop { id = "stop1" }
-        val stop2NonTypical = objects.stop { id = "stop2NonTypical" }
-        val stop3NonTypical = objects.stop { id = "stop3NonTypical" }
-        val stop4 = objects.stop { id = "stop4" }
-        val stop5NonTypical = objects.stop { id = "stop5NonTypical" }
-        val stop6 = objects.stop { id = "stop6" }
-
-        val mainRoute = objects.route()
-        val patternTypical0 =
-            objects.routePattern(mainRoute) {
-                id = "typical_0"
-                sortOrder = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop4.id) }
-            }
-
-        val patternTypical1 =
-            objects.routePattern(mainRoute) {
-                id = "typical_1"
-                sortOrder = 1
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop6.id) }
-            }
-
-        val patternNonTypical0 =
-            objects.routePattern(mainRoute) {
-                id = "non_typical_0"
-                typicality = RoutePattern.Typicality.Atypical
-                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop2NonTypical.id) }
-            }
-
-        val patternNonTypical1 =
-            objects.routePattern(mainRoute) {
-                id = "non_typical_1"
-                typicality = RoutePattern.Typicality.Deviation
-                representativeTrip {
-                    stopIds =
-                        listOf(stop0.id, stop1.id, stop3NonTypical.id, stop5NonTypical.id, stop6.id)
-                }
-            }
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteDetailsStopList(
-                0,
-                listOf(
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop0,
-                                connectingRoutes = listOf(),
-                                patterns =
-                                    listOf(
-                                        patternTypical0,
-                                        patternTypical1,
-                                        patternNonTypical0,
-                                        patternNonTypical1,
-                                    ),
-                            ),
-                            RouteDetailsStopList.OldEntry(
-                                stop1,
-                                connectingRoutes = listOf(),
-                                patterns =
-                                    listOf(
-                                        patternTypical0,
-                                        patternTypical1,
-                                        patternNonTypical0,
-                                        patternNonTypical1,
-                                    ),
-                            ),
-                        ),
-                        hasRouteLine = true,
-                    ),
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop2NonTypical,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternNonTypical0),
-                            ),
-                            RouteDetailsStopList.OldEntry(
-                                stop3NonTypical,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternNonTypical1),
-                            ),
-                        ),
-                        hasRouteLine = false,
-                    ),
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop4,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternTypical0),
-                            )
-                        ),
-                        hasRouteLine = true,
-                    ),
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop5NonTypical,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternNonTypical1),
-                            )
-                        ),
-                        hasRouteLine = false,
-                    ),
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop6,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternTypical1, patternNonTypical1),
-                            )
-                        ),
-                        hasRouteLine = false,
-                    ),
-                ),
-                null,
-            ),
-            RouteDetailsStopList.fromOldPieces(
-                mainRoute.id,
-                0,
-                OldRouteStopsResult(
-                    mainRoute.id,
-                    0,
-                    listOf(
-                        stop0.id,
-                        stop1.id,
-                        stop2NonTypical.id,
-                        stop3NonTypical.id,
-                        stop4.id,
-                        stop5NonTypical.id,
-                        stop6.id,
-                    ),
-                ),
-                globalData,
-            ),
-        )
-    }
-
-    @Test
-    fun `fromNewPieces breaks segments by typicality`() = runBlocking {
+    fun `fromPieces breaks segments by typicality`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val stop0 = objects.stop { id = "stop0" }
         val stop1 = objects.stop { id = "stop1" }
@@ -713,17 +498,16 @@ class RouteDetailsStopListTest {
         assertEquals(
             RouteDetailsStopList(
                 0,
-                null,
                 listOf(
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop0,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(),
                             ),
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop1,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -732,15 +516,15 @@ class RouteDetailsStopListTest {
                         ),
                         isTypical = true,
                     ),
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop2NonTypical,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
                                 connectingRoutes = listOf(),
                             ),
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop3NonTypical,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -749,9 +533,9 @@ class RouteDetailsStopListTest {
                         ),
                         isTypical = false,
                     ),
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop4,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -760,9 +544,9 @@ class RouteDetailsStopListTest {
                         ),
                         isTypical = true,
                     ),
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop5NonTypical,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -771,9 +555,9 @@ class RouteDetailsStopListTest {
                         ),
                         isTypical = false,
                     ),
-                    RouteDetailsStopList.NewSegment(
+                    RouteDetailsStopList.Segment(
                         listOf(
-                            RouteDetailsStopList.NewEntry(
+                            RouteDetailsStopList.Entry(
                                 stop6,
                                 RouteBranchSegment.Lane.Center,
                                 stickConnections = emptyList(),
@@ -784,10 +568,10 @@ class RouteDetailsStopListTest {
                     ),
                 ),
             ),
-            RouteDetailsStopList.fromNewPieces(
+            RouteDetailsStopList.fromPieces(
                 mainRoute.id,
                 0,
-                NewRouteStopsResult(
+                RouteStopsResult(
                     mainRoute.id,
                     0,
                     listOf(
@@ -864,71 +648,6 @@ class RouteDetailsStopListTest {
                         ),
                     ),
                 ),
-                globalData,
-            ),
-        )
-    }
-
-    @Test
-    fun `fromOldPieces breaks segments by typicality in the selected direction`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
-        val stop0 = objects.stop { id = "stop0" }
-        val stop1 = objects.stop { id = "stop1" }
-        val stop2 = objects.stop { id = "stop2" }
-
-        val mainRoute = objects.route()
-
-        val patternTypical0 =
-            objects.routePattern(mainRoute) {
-                id = "typical_0"
-                directionId = 0
-                sortOrder = 1
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(stop0.id, stop1.id, stop2.id) }
-            }
-
-        val patternTypicalOppositeDirection =
-            objects.routePattern(mainRoute) {
-                id = "typical_opposite_direction"
-                directionId = 1
-                sortOrder = 0
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { stopIds = listOf(stop2.id, stop1.id, stop0.id) }
-            }
-
-        val globalData = GlobalResponse(objects)
-
-        assertEquals(
-            RouteDetailsStopList(
-                0,
-                listOf(
-                    RouteDetailsStopList.OldSegment(
-                        listOf(
-                            RouteDetailsStopList.OldEntry(
-                                stop0,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternTypical0),
-                            ),
-                            RouteDetailsStopList.OldEntry(
-                                stop1,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternTypical0),
-                            ),
-                            RouteDetailsStopList.OldEntry(
-                                stop2,
-                                connectingRoutes = listOf(),
-                                patterns = listOf(patternTypical0),
-                            ),
-                        ),
-                        hasRouteLine = true,
-                    )
-                ),
-                null,
-            ),
-            RouteDetailsStopList.fromOldPieces(
-                mainRoute.id,
-                0,
-                OldRouteStopsResult(mainRoute.id, 0, listOf(stop0.id, stop1.id, stop2.id)),
                 globalData,
             ),
         )

@@ -1,3 +1,6 @@
+@file:OptIn(ExperimentalObjCName::class)
+@file:Suppress("unused")
+
 package com.mbta.tid.mbta_app
 
 import androidx.datastore.core.DataStore
@@ -9,8 +12,12 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
-import kotlin.time.Instant
+import kotlin.experimental.ExperimentalObjCName
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -26,6 +33,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
+import platform.Foundation.dateWithTimeIntervalSince1970
 
 @OptIn(ExperimentalForeignApi::class)
 internal fun createDataStore(): DataStore<Preferences> =
@@ -93,10 +101,21 @@ fun startKoinE2E() {
     }
 }
 
-/**
- * Converts an [NSDate] into a Kotlin stdlib [Instant].
- *
- * Necessary because the real [kotlinx.datetime.toKotlinInstant] has an internal-visibility-only
- * default parameter and default parameters evaporate in Objective-C interop.
- */
-fun NSDate.toKotlinInstant(): Instant = this.toKotlinInstant()
+/** Converts an [NSDate] into an [EasternTimeInstant]. */
+fun NSDate.toEasternInstant(): EasternTimeInstant = EasternTimeInstant(this.toKotlinInstant())
+
+/** Converts an [EasternTimeInstant] into an [NSDate]. Loses time zone information. */
+fun EasternTimeInstant.toNSDateLosingTimeZone(): NSDate =
+    NSDate.dateWithTimeIntervalSince1970(this.toEpochFracSeconds())
+
+@ObjCName("plus") fun EasternTimeInstant.plusSeconds(seconds: Int) = this + seconds.seconds
+
+@ObjCName("minus") fun EasternTimeInstant.minusSeconds(seconds: Int) = this - seconds.seconds
+
+@ObjCName("plus") fun EasternTimeInstant.plusMinutes(minutes: Int) = this + minutes.minutes
+
+@ObjCName("minus") fun EasternTimeInstant.minusMinutes(minutes: Int) = this - minutes.minutes
+
+@ObjCName("plus") fun EasternTimeInstant.plusHours(hours: Int) = this + hours.hours
+
+@ObjCName("minus") fun EasternTimeInstant.minusHours(hours: Int) = this - hours.hours

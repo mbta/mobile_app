@@ -24,7 +24,7 @@ struct TripHeaderCard: View {
     let targetId: String
     let routeAccents: TripRouteAccents
     let onTap: (() -> Void)?
-    let now: Date
+    let now: EasternTimeInstant
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -311,7 +311,7 @@ struct TripHeaderCard: View {
         default: nil
         }
         guard let entry else { return nil }
-        guard let formatted = entry.format(trip: trip, now: now.toKotlinInstant(), routeType: routeAccents.type)
+        guard let formatted = entry.format(trip: trip, now: now, routeType: routeAccents.type)
         else { return nil }
         switch onEnum(of: formatted) {
         case let .disruption(disruption): return .disruption(
@@ -326,6 +326,7 @@ struct TripHeaderCard: View {
 
 struct TripVehicleCard_Previews: PreviewProvider {
     static var previews: some View {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let red = objects.route { route in
             route.id = "Red"
@@ -345,7 +346,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             directionId: 1,
             latitude: 0.0,
             longitude: 0.0,
-            updatedAt: Date.now.addingTimeInterval(-10).toKotlinInstant(),
+            updatedAt: now.minus(seconds: 10),
             routeId: "66",
             stopId: "place-davis",
             tripId: trip.id
@@ -362,7 +363,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
                 targetId: "",
                 routeAccents: TripRouteAccents(route: red),
                 onTap: nil,
-                now: Date.now
+                now: now
             )
         }
         .withFixedSettings([:])

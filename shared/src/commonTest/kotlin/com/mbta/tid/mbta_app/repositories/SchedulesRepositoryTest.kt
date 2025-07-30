@@ -1,11 +1,12 @@
-package com.mbta.tid.mbta_app
+package com.mbta.tid.mbta_app.repositories
 
+import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.model.Schedule
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import com.mbta.tid.mbta_app.repositories.SchedulesRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -14,8 +15,8 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Month
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -33,8 +34,8 @@ class SchedulesRepositoryTest : KoinTest {
                         {
                           "schedules": [{
                             "id": "sched1",
-                            "arrival_time": "2024-01-02T03:04:05.00Z",
-                            "departure_time": "2024-01-02T03:04:06.00Z",
+                            "arrival_time": "2024-01-02T03:04:05.00-05:00",
+                            "departure_time": "2024-01-02T03:04:06.00-05:00",
                             "drop_off_type": "regular",
                             "pick_up_type":  "regular",
                             "stop_headsign": "Stop Headsign",
@@ -76,8 +77,10 @@ class SchedulesRepositoryTest : KoinTest {
                             listOf(
                                 Schedule(
                                     id = "sched1",
-                                    arrivalTime = Instant.parse("2024-01-02T03:04:05.00Z"),
-                                    departureTime = Instant.parse("2024-01-02T03:04:06.00Z"),
+                                    arrivalTime =
+                                        EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 5),
+                                    departureTime =
+                                        EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 6),
                                     dropOffType = Schedule.StopEdgeType.Regular,
                                     pickUpType = Schedule.StopEdgeType.Regular,
                                     stopHeadsign = "Stop Headsign",

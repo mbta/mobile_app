@@ -21,7 +21,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun StopDetailsFilteredView(
@@ -29,7 +29,7 @@ fun StopDetailsFilteredView(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
-    now: Instant,
+    now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
     isFavorite: (FavoriteBridge) -> Boolean,
     updateFavorites: (FavoriteUpdateBridge) -> Unit,
@@ -82,7 +82,7 @@ private fun Loading(
     stopId: String,
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
-    now: Instant,
+    now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,

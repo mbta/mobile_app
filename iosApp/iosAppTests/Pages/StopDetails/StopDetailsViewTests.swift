@@ -45,12 +45,12 @@ final class StopDetailsViewTests: XCTestCase {
                 .init(
                     lineOrRoute: .route(routeDefaultSort1),
                     stopData: [],
-                    at: Date.now.toKotlinInstant()
+                    at: EasternTimeInstant.now()
                 ),
                 .init(
                     lineOrRoute: .route(routeDefaultSort0),
                     stopData: [],
-                    at: Date.now.toKotlinInstant()
+                    at: EasternTimeInstant.now()
                 ),
             ],
             now: Date.now,
@@ -90,7 +90,7 @@ final class StopDetailsViewTests: XCTestCase {
                     data: [],
                     globalData: .init(objects: objects)
                 )],
-                at: Date.now.toKotlinInstant()
+                at: EasternTimeInstant.now()
             )],
             now: Date.now,
             errorBannerVM: .init(),
@@ -140,7 +140,7 @@ final class StopDetailsViewTests: XCTestCase {
                     )],
                     globalData: .init(objects: objects)
                 )],
-                at: Date.now.toKotlinInstant()
+                at: EasternTimeInstant.now()
             )],
             now: Date.now,
             errorBannerVM: .init(),
@@ -155,7 +155,7 @@ final class StopDetailsViewTests: XCTestCase {
     }
 
     func testDisplaysVehicleData() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
             route.shortName = "57"
@@ -164,7 +164,7 @@ final class StopDetailsViewTests: XCTestCase {
         let routePattern = objects.routePattern(route: route) { _ in }
         let trip = objects.trip(routePattern: routePattern) { _ in }
         let prediction = objects.prediction { prediction in
-            prediction.departureTime = now.addingTimeInterval(100).toKotlinInstant()
+            prediction.departureTime = now.plus(seconds: 100)
         }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
@@ -194,7 +194,7 @@ final class StopDetailsViewTests: XCTestCase {
         let routeData = RouteCardData(
             lineOrRoute: .route(route),
             stopData: [stopData],
-            at: now.toKotlinInstant()
+            at: now
         )
 
         let sut = StopDetailsView(

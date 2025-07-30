@@ -25,19 +25,16 @@ final class AlertDetailsTests: XCTestCase {
             route.longName = "Red Line"
         }
 
-        let now = Date.now
+        let now = EasternTimeInstant(year: 2025, month: .july, day: 28, hour: 15, minute: 32, second: 0)
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
-            )
+            alert.activePeriod(start: now.minus(seconds: 5), end: now.plus(seconds: 5))
             alert.description_ = "Long description"
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
             alert.header = "Alert header"
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = .init(year: 2025, month: .july, day: 28, hour: 15, minute: 30, second: 0)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: [route], affectedStops: [stop1, stop2, stop3], now: now)
@@ -53,127 +50,89 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Full Description"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.description_!))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        XCTAssertNotNil(try sut.inspect().find(
-            text: "Updated: \(alert.updatedAt.toNSDate().formatted(date: .numeric, time: .shortened))"
-        ))
+        XCTAssertNotNil(try sut.inspect().find(text: "Updated: 7/28/2025, 3:30\u{202F}PM"))
     }
 
     func testCurrentActivePeriod() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant(year: 2025, month: .july, day: 29, hour: 11, minute: 27, second: 0)
 
         let alert = objects.alert { alert in
-            alert.activePeriod(
-                start: now.addingTimeInterval(-20).toKotlinInstant(),
-                end: now.addingTimeInterval(-10).toKotlinInstant()
-            )
-            alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
-            )
-            alert.activePeriod(
-                start: now.addingTimeInterval(10).toKotlinInstant(),
-                end: now.addingTimeInterval(20).toKotlinInstant()
-            )
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.activePeriod(start: now.minus(minutes: 20), end: now.minus(minutes: 10))
+            alert.activePeriod(start: now.minus(minutes: 5), end: now.plus(minutes: 5))
+            alert.activePeriod(start: now.plus(minutes: 10), end: now.plus(minutes: 20))
+            alert.updatedAt = now.minus(minutes: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
 
-        XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[1].formatStart().characters)))
+        XCTAssertNotNil(try sut.inspect().find(text: "Tuesday, Jul 29, 11:22\u{202F}AM"))
     }
 
     func testServiceStartAndEndActivePeriod() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant(year: 2025, month: .july, day: 29, hour: 10, minute: 37, second: 0)
 
-        guard let eastern = TimeZone(identifier: "America/New_York") else {
-            XCTFail("Eastern time couldn't be loaded")
-            return
-        }
-        var calendar = Calendar.current
-        calendar.timeZone = eastern
-
-        let nowComponents: DateComponents = Calendar.current.dateComponents(in: eastern, from: now)
-
-        let serviceStart = calendar.date(bySettingHour: 3, minute: 0, second: 0, of: now)!
-        let serviceEnd = calendar.date(
-            bySettingHour: 2, minute: 59, second: 0, of: now
-        )!.addingTimeInterval(60 * 60 * 24)
+        let serviceStart = EasternTimeInstant(year: 2025, month: .july, day: 29, hour: 3, minute: 0, second: 0)
+        let serviceEnd = EasternTimeInstant(year: 2025, month: .july, day: 30, hour: 2, minute: 59, second: 0)
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: serviceStart.toKotlinInstant(),
-                end: serviceEnd.toKotlinInstant()
+                start: serviceStart,
+                end: serviceEnd
             )
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
 
-        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
-            string.contains("start of service") &&
-                string.contains(" \(String(nowComponents.day!)),")
-        }))
-        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
-            string.contains(serviceStart.formatted(date: .omitted, time: .shortened))
-        }))
-        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
-            string.contains("end of service") &&
-                string.contains(" \(String(nowComponents.day!)),")
-        }))
-        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
-            string.contains(serviceEnd.formatted(date: .omitted, time: .shortened))
-        }))
+        try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, start of service"))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in string.contains("3:00\u{202F}AM") }))
+        try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, end of service"))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in string.contains("2:59\u{202F}AM") }))
     }
 
     func testLaterTodayActivePeriod() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant(year: 2025, month: .july, day: 29, hour: 11, minute: 39, second: 0)
 
-        let start = now.addingTimeInterval(-20)
-        let end = now.addingTimeInterval(60 * 60 * 2 + 10 * 60)
+        let start = now.minus(minutes: 20)
+        let end = now.plus(hours: 2).plus(minutes: 10)
 
         let alert = objects.alert { alert in
             alert.durationCertainty = .estimated
-            alert.activePeriod(start: start.toKotlinInstant(), end: end.toKotlinInstant())
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.activePeriod(start: start, end: end)
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
 
-        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
-            string.contains(start.formatted(date: .omitted, time: .shortened))
-        }))
-        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in
-            string.contains(end.formatted(date: .omitted, time: .shortened))
-        }))
-        try XCTAssertNotNil(sut.inspect().find(textWhere: { string, _ in
-            string.contains("later today")
-        }))
+        try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, 11:19\u{202F}AM"))
+        try XCTAssertThrowsError(sut.inspect().find(textWhere: { string, _ in string.contains("1:39\u{202F}PM") }))
+        try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, later today"))
     }
 
     func testNoCurrentActivePeriod() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: now.addingTimeInterval(-10).toKotlinInstant(),
-                end: now.addingTimeInterval(-5).toKotlinInstant()
+                start: now.minus(seconds: 10),
+                end: now.minus(seconds: 5)
             )
             alert.activePeriod(
-                start: now.addingTimeInterval(5).toKotlinInstant(),
-                end: now.addingTimeInterval(10).toKotlinInstant()
+                start: now.plus(seconds: 5),
+                end: now.plus(seconds: 10)
             )
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
@@ -185,17 +144,17 @@ final class AlertDetailsTests: XCTestCase {
     func testNoDescription() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
+                start: now.minus(seconds: 5),
+                end: now.plus(seconds: 5)
             )
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, affectedStops: [], now: now)
@@ -206,7 +165,7 @@ final class AlertDetailsTests: XCTestCase {
     func testStopsInDescription() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let stop1 = objects.stop { stop in stop.name = "Stop 1" }
         let stop2 = objects.stop { stop in stop.name = "Stop 2" }
@@ -214,13 +173,13 @@ final class AlertDetailsTests: XCTestCase {
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
+                start: now.minus(seconds: 5),
+                end: now.plus(seconds: 5)
             )
             alert.cause = .unrulyPassenger
             alert.effect = .stopClosure
             alert.effectName = "Closure"
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
             alert.header = "Alert header"
             alert.description_ = "Alert description\n\nAffected stops:\nStop 1\nStop 2\nStop 3\n\nMore details"
         }
@@ -252,16 +211,16 @@ final class AlertDetailsTests: XCTestCase {
 
         let stop = objects.stop { stop in stop.name = "Stop" }
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
+                start: now.minus(seconds: 5),
+                end: now.plus(seconds: 5)
             )
             alert.cause = .maintenance
             alert.effect = .elevatorClosure
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, stop: stop, affectedStops: [stop], now: now)
@@ -273,16 +232,16 @@ final class AlertDetailsTests: XCTestCase {
     func testEffectOnlyHeader() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let alert = objects.alert { alert in
             alert.activePeriod(
-                start: now.addingTimeInterval(-5).toKotlinInstant(),
-                end: now.addingTimeInterval(5).toKotlinInstant()
+                start: now.minus(seconds: 5),
+                end: now.plus(seconds: 5)
             )
             alert.cause = .freightTrainInterference
             alert.effect = .serviceChange
-            alert.updatedAt = now.addingTimeInterval(-100).toKotlinInstant()
+            alert.updatedAt = now.minus(seconds: 100)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: nil, stop: nil, affectedStops: [], now: now)
@@ -293,7 +252,7 @@ final class AlertDetailsTests: XCTestCase {
     func testElevatorClosure() throws {
         let objects = ObjectCollectionBuilder()
 
-        let now = Date.now
+        let now = EasternTimeInstant.now()
 
         let route = objects.route { _ in }
         let stop = objects.stop { $0.name = "Park Street" }
@@ -302,7 +261,7 @@ final class AlertDetailsTests: XCTestCase {
             alert.header = "Elevator 123 (Foo to Bar) unavailable due to demonstration"
             alert.cause = .demonstration
             alert.activePeriod(
-                start: (now - 3 * 24 * 60 * 60).toKotlinInstant(),
+                start: now.minus(hours: 3 * 24),
                 end: nil
             )
             alert.informedEntity(
@@ -315,7 +274,7 @@ final class AlertDetailsTests: XCTestCase {
                 trip: nil
             )
             alert.description_ = "To exit, go somewhere."
-            alert.updatedAt = (now - 10 * 60).toKotlinInstant()
+            alert.updatedAt = now.minus(minutes: 10)
         }
 
         let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)

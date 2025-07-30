@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -38,7 +39,7 @@ import org.koin.compose.KoinContext
 
 class StopDetailsFilteredPickerViewTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"
@@ -257,7 +258,7 @@ class StopDetailsFilteredPickerViewTest {
             effect = Alert.Effect.ElevatorClosure
             header = "Elevator Alert Header"
             informedEntity(listOf(Alert.InformedEntity.Activity.UsingWheelchair), stop = stop.id)
-            activePeriod(Instant.DISTANT_PAST, null)
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
         }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)

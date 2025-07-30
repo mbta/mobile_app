@@ -89,7 +89,7 @@ struct StopDetailsFilteredPickerView: View {
                             leaf: leaf,
                             selectedDirection: stopData.directions[Int(stopFilter.directionId)],
                             favorite: favorite,
-                            now: now,
+                            now: now.toEasternInstant(),
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
@@ -101,7 +101,7 @@ struct StopDetailsFilteredPickerView: View {
                             routeId: stopFilter.routeId,
                             trips: 10,
                             context: .stopDetailsFiltered,
-                            now: now.toKotlinInstant()
+                            now: now.toEasternInstant()
                         )
                         let stopData = routeData.stopData.first!
                         let leaf = stopData.data.first!
@@ -114,7 +114,7 @@ struct StopDetailsFilteredPickerView: View {
                             leaf: leaf,
                             selectedDirection: stopData.directions[0],
                             favorite: false,
-                            now: now,
+                            now: now.toEasternInstant(),
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,

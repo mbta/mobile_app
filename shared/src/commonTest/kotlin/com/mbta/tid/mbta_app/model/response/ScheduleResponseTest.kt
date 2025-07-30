@@ -2,11 +2,12 @@ package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RoutePattern
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Instant
+import kotlinx.datetime.Month
 
 class ScheduleResponseTest {
     @Test
@@ -26,7 +27,7 @@ class ScheduleResponseTest {
             }
         val trip1 = objects.trip(routePatternA)
 
-        val time = Instant.parse("2024-03-14T12:23:44-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
         objects.schedule {
             trip = trip1

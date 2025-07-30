@@ -22,7 +22,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var favorite: Bool
 
-    var now: Date
+    var now: EasternTimeInstant
 
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -81,7 +81,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         let stopId: String
         let directionId: Int32
         let patternsHere: [RoutePattern]?
-        let now: Date
+        let now: EasternTimeInstant
     }
 
     init(
@@ -90,7 +90,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, selectedDirection: Direction, favorite: Bool, now: Date,
+        leaf: RouteCardData.Leaf, selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
         errorBannerVM: ErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
@@ -108,7 +108,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
+        leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
     }
 
     var body: some View {
@@ -187,10 +187,10 @@ struct StopDetailsFilteredDepartureDetails: View {
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
         .onChange(of: leaf) { leaf in
-            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
+            leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
         }
         .onChange(of: now) { now in
-            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: stopDetailsVM.global)
+            leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
         }
         .onChange(of: AlertSummaryParams(
             global: stopDetailsVM.global,
@@ -204,7 +204,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             setAlertSummaries(newParams)
         }
         .onChange(of: stopDetailsVM.global) { global in
-            leafFormat = leaf.format(now: now.toKotlinInstant(), globalData: global)
+            leafFormat = leaf.format(now: now, globalData: global)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
@@ -283,7 +283,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     stopId: alertSummaryParams.stopId,
                     directionId: alertSummaryParams.directionId,
                     patterns: patternsHere,
-                    atTime: alertSummaryParams.now.toKotlinInstant(),
+                    atTime: alertSummaryParams.now,
                     global: global
                 )
                 alertMap[alert.id] = summary

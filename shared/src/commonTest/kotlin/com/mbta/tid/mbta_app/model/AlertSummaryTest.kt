@@ -1,27 +1,23 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.utils.serviceDate
-import com.mbta.tid.mbta_app.utils.toBostonTime
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
+import kotlinx.datetime.Month
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
-import kotlinx.datetime.toInstant
 
 class AlertSummaryTest {
     @Test
     fun `summary is null when there is no timeframe or location`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val alert =
             objects.alert {
                 effect = Alert.Effect.StopClosure
@@ -38,7 +34,7 @@ class AlertSummaryTest {
     @Test
     fun `summary with later today timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val endTime = now.plus(1.hours)
         val alert =
             objects.alert {
@@ -58,11 +54,11 @@ class AlertSummaryTest {
     @Test
     fun `summary with end of service timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
-        val tomorrow = now.toBostonTime().serviceDate.plus(DatePeriod(days = 1))
+        val tomorrow = now.serviceDate.plus(DatePeriod(days = 1))
         val serviceEndTime = LocalTime(hour = 2, minute = 59)
-        val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
         val alert =
             objects.alert {
@@ -82,11 +78,11 @@ class AlertSummaryTest {
     @Test
     fun `summary with alt end of service timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
-        val tomorrow = now.toBostonTime().serviceDate.plus(DatePeriod(days = 1))
+        val tomorrow = now.serviceDate.plus(DatePeriod(days = 1))
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
-        val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
         val alert =
             objects.alert {
@@ -106,12 +102,12 @@ class AlertSummaryTest {
     @Test
     fun `summary with tomorrow timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         // Set to tomorrow's end of service, with a date of 2 days from now
-        val tomorrow = now.toBostonTime().serviceDate.plus(DatePeriod(days = 2))
+        val tomorrow = now.serviceDate.plus(DatePeriod(days = 2))
         val serviceEndTime = LocalTime(hour = 3, minute = 0)
-        val endTime = tomorrow.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        val endTime = EasternTimeInstant(tomorrow.atTime(serviceEndTime))
 
         val alert =
             objects.alert {
@@ -132,11 +128,11 @@ class AlertSummaryTest {
     fun `summary with this week timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
-        val now = Instant.fromEpochMilliseconds(1743598800000)
+        val now = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
 
-        val saturday = now.toBostonTime().serviceDate.plus(DatePeriod(days = 3))
+        val saturday = now.serviceDate.plus(DatePeriod(days = 3))
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
-        val endTime = saturday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        val endTime = EasternTimeInstant(saturday.atTime(serviceEndTime))
 
         val alert =
             objects.alert {
@@ -157,11 +153,11 @@ class AlertSummaryTest {
     fun `summary with later date timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
-        val now = Instant.fromEpochMilliseconds(1743598800000)
+        val now = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
 
-        val monday = now.toBostonTime().serviceDate.plus(DatePeriod(days = 5))
+        val monday = now.serviceDate.plus(DatePeriod(days = 5))
         val serviceEndTime = LocalTime(hour = 5, minute = 0)
-        val endTime = monday.atTime(serviceEndTime).toInstant(TimeZone.of("America/New_York"))
+        val endTime = EasternTimeInstant(monday.atTime(serviceEndTime))
 
         val alert =
             objects.alert {
@@ -182,7 +178,7 @@ class AlertSummaryTest {
     fun `summary with single stop`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val stop =
             objects.stop {
@@ -222,7 +218,7 @@ class AlertSummaryTest {
     fun `summary with successive stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val firstStop = objects.stop { name = "First Stop" }
         val successiveStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
@@ -271,7 +267,7 @@ class AlertSummaryTest {
     fun `summary with successive bus stops`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val firstStop = objects.stop { name = "First Stop" }
         val successiveStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
@@ -314,7 +310,7 @@ class AlertSummaryTest {
     fun `summary with branching stops ahead`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val unaffectedStops = (1..4).map { objects.stop { name = "Unaffected Stop $it" } }
         val firstStop = objects.stop { name = "First Stop" }
@@ -393,7 +389,7 @@ class AlertSummaryTest {
     fun `summary with branching stops behind`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val unaffectedStops = (1..4).map { objects.stop { name = "Unaffected Stop $it" } }
         val lastStop = objects.stop { name = "Last Stop" }
@@ -472,7 +468,7 @@ class AlertSummaryTest {
     fun `summary with branching GL stops ahead`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val firstStop =
             objects.stop {
@@ -551,7 +547,7 @@ class AlertSummaryTest {
     fun `summary with branching GL on branch`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val trunkStop =
             objects.stop {
@@ -623,7 +619,7 @@ class AlertSummaryTest {
     fun `summary with branching GL on opposite and disconnected branch`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val eBranchStart =
             objects.stop {

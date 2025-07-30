@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 object StopDetailsUtils {
     /**
@@ -23,7 +23,7 @@ object StopDetailsUtils {
         routeCardData: List<RouteCardData>?,
         stopFilter: StopDetailsFilter?,
         currentTripFilter: TripDetailsFilter?,
-        filterAtTime: Instant,
+        filterAtTime: EasternTimeInstant,
         globalData: GlobalResponse?,
     ): TripDetailsFilter? {
         val route = routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId } ?: return null

@@ -9,8 +9,6 @@
 import Shared
 import SwiftUI
 
-private let timeFormatter: DateFormatter = makeTimeFormatter()
-
 extension TripInstantDisplay {
     func accessibilityLabel(isFirst: Bool, vehicleType: String) -> Text {
         switch onEnum(of: self) {
@@ -54,8 +52,8 @@ extension TripInstantDisplay {
                    """)
     }
 
-    private func cancelledLabel(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
-        let time = timeFormatter.string(from: Date(instant: scheduledTime))
+    private func cancelledLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
+        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
         return isFirst
             ? Text(
                 "\(vehicleType) arriving at \(time) cancelled",
@@ -74,8 +72,8 @@ extension TripInstantDisplay {
             )
     }
 
-    private func delayString(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
-        let time = timeFormatter.string(from: Date(instant: scheduledTime))
+    private func delayString(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
+        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
         return isFirst
             ? String(format: NSLocalizedString(
                 "%1$@ %2$@ delayed",
@@ -169,13 +167,13 @@ extension TripInstantDisplay {
             return Text(delayString(trip.predictionTime, isFirst, vehicleType))
         }
 
-        guard let predictionInstant: KotlinInstant = switch onEnum(of: self) {
+        guard let predictionInstant: EasternTimeInstant = switch onEnum(of: self) {
         case let .time(trip): trip.predictionTime
         case let .timeWithStatus(trip): trip.predictionTime
         default: nil
         } else { return Text(verbatim: "") }
 
-        let predictionTime = timeFormatter.string(from: Date(instant: predictionInstant))
+        let predictionTime = predictionInstant.formatted(date: .omitted, time: .shortened)
         let timeString = predictedTimeString(predictionTime, isFirst, vehicleType)
         let finalLabel = if case let .timeWithStatus(trip) = onEnum(of: self) {
             "\(timeString), \(trip.status)"
@@ -190,8 +188,8 @@ extension TripInstantDisplay {
         _ isFirst: Bool,
         _ vehicleType: String
     ) -> Text {
-        let scheduledTime = timeFormatter.string(from: Date(instant: trip.scheduledTime))
-        let scheduleStatus = if trip.predictionTime.epochSeconds >= trip.scheduledTime.epochSeconds {
+        let scheduledTime = trip.scheduledTime.formatted(date: .omitted, time: .shortened)
+        let scheduleStatus = if trip.predictionTime.compareTo(other: trip.scheduledTime) >= 0 {
             delayString(trip.scheduledTime, isFirst, vehicleType)
         } else {
             isFirst
@@ -213,7 +211,7 @@ extension TripInstantDisplay {
                     """
                 ), scheduledTime, vehicleType)
         }
-        let predictionTime = timeFormatter.string(from: Date(instant: trip.predictionTime))
+        let predictionTime = trip.predictionTime.formatted(date: .omitted, time: .shortened)
         let actualArrival = String(format: NSLocalizedString(
             "arriving at %1$@",
             comment: """
@@ -303,8 +301,9 @@ extension TripInstantDisplay {
         }
     }
 
-    private func scheduleTimeLabel(_ scheduledTime: KotlinInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
-        let time = timeFormatter.string(from: Date(instant: scheduledTime))
+    private func scheduleTimeLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool,
+                                   _ vehicleType: String) -> Text {
+        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
         return isFirst
             ? Text("\(vehicleType) arriving at \(time) scheduled",
                    comment: """

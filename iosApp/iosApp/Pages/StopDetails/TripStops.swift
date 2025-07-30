@@ -14,7 +14,7 @@ struct TripStops: View {
     let stops: TripDetailsStopList
     let stopSequence: Int?
     let headerSpec: TripHeaderSpec?
-    let now: Date
+    let now: EasternTimeInstant
     let alertSummaries: [String: AlertSummary?]
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
@@ -36,7 +36,7 @@ struct TripStops: View {
         stops: TripDetailsStopList,
         stopSequence: Int?,
         headerSpec: TripHeaderSpec?,
-        now: Date,
+        now: EasternTimeInstant,
         alertSummaries: [String: AlertSummary?],
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
@@ -73,7 +73,7 @@ struct TripStops: View {
             TripStopRow(
                 stop: stop,
                 trip: stops.trip,
-                now: now.toKotlinInstant(),
+                now: now,
                 onTapLink: onTapLink,
                 onOpenAlertDetails: onOpenAlertDetails,
                 routeAccents: routeAccents,
@@ -96,7 +96,7 @@ struct TripStops: View {
                     TripStopRow(
                         stop: firstStop,
                         trip: stops.trip,
-                        now: now.toKotlinInstant(),
+                        now: now,
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
                         routeAccents: routeAccents,
@@ -154,7 +154,7 @@ struct TripStops: View {
                     TripStopRow(
                         stop: target,
                         trip: stops.trip,
-                        now: now.toKotlinInstant(),
+                        now: now,
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
                         routeAccents: routeAccents,
@@ -201,7 +201,7 @@ struct TripStops: View {
         }
     }
     let trip = objects.trip { _ in }
-    let now = Date.now
+    let now = EasternTimeInstant.now()
     let alertStartIndex = 7
     let alert = objects.alert { $0.effect = .shuttle }
     let stopList = TripDetailsStopList(
@@ -214,14 +214,14 @@ struct TripStops: View {
                     nil,
                 schedule: nil,
                 prediction: objects
-                    .prediction { $0.departureTime = (now + TimeInterval(2 * 60 * index)).toKotlinInstant() },
+                    .prediction { $0.departureTime = now.plus(minutes: Int32(2 * index)) },
                 vehicle: nil,
                 routes: []
             )
         }
     )
 
-    VStack {
+    ScrollView {
         TripStops(
             targetId: stops[4].id,
             stops: stopList,

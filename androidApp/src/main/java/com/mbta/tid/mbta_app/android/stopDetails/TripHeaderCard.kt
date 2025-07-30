@@ -68,9 +68,8 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 
 @Composable
 fun TripHeaderCard(
@@ -78,7 +77,7 @@ fun TripHeaderCard(
     spec: TripHeaderSpec?,
     targetId: String,
     routeAccents: TripRouteAccents,
-    now: Instant,
+    now: EasternTimeInstant,
     modifier: Modifier = Modifier,
     onTap: (() -> Unit)? = null,
 ) {
@@ -416,7 +415,7 @@ private fun RowScope.TripIndicator(
     spec: TripHeaderSpec,
     routeAccents: TripRouteAccents,
     trip: Trip,
-    now: Instant,
+    now: EasternTimeInstant,
     clickable: Boolean = false,
 ) {
     val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, trip, now)
@@ -474,7 +473,7 @@ private fun upcomingTripViewState(
     spec: TripHeaderSpec,
     routeAccents: TripRouteAccents,
     trip: Trip,
-    now: Instant,
+    now: EasternTimeInstant,
 ): UpcomingTripViewState? {
     val entry =
         when (spec) {
@@ -550,7 +549,7 @@ private fun TripHeaderCardPreview() {
             0,
             null,
             null,
-            objects.prediction { departureTime = Clock.System.now().plus(5.minutes) },
+            objects.prediction { departureTime = EasternTimeInstant.now().plus(5.minutes) },
             vehicle = null,
             routes = listOf(red),
         )
@@ -559,7 +558,7 @@ private fun TripHeaderCardPreview() {
             cityPoint,
             0,
             null,
-            objects.schedule { departureTime = Clock.System.now().plus(5.minutes) },
+            objects.schedule { departureTime = EasternTimeInstant.now().plus(5.minutes) },
             null,
             vehicle = null,
             routes = listOf(bus),
@@ -572,7 +571,7 @@ private fun TripHeaderCardPreview() {
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
                 targetId = davis.id,
                 routeAccents = TripRouteAccents(red),
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
             )
 
             TripHeaderCard(
@@ -581,7 +580,7 @@ private fun TripHeaderCardPreview() {
                 targetId = cityPoint.id,
                 routeAccents = TripRouteAccents(bus),
                 onTap = {},
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
             )
 
             TripHeaderCard(
@@ -590,7 +589,7 @@ private fun TripHeaderCardPreview() {
                 targetId = "",
                 routeAccents = TripRouteAccents(commuter),
                 onTap = {},
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
             )
 
             TripHeaderCard(
@@ -599,7 +598,7 @@ private fun TripHeaderCardPreview() {
                 targetId = "",
                 routeAccents = TripRouteAccents(ferry),
                 onTap = {},
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
             )
 
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -609,7 +608,7 @@ private fun TripHeaderCardPreview() {
                         spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),
                         targetId = "",
                         routeAccents = TripRouteAccents.default,
-                        now = Clock.System.now(),
+                        now = EasternTimeInstant.now(),
                     )
                 }
             }

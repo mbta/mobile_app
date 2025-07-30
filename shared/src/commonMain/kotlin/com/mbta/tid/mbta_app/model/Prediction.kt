@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,8 +14,8 @@ val SCHEDULE_CLOCK_CUTOFF = 60.minutes
 @Serializable
 data class Prediction(
     override val id: String,
-    @SerialName("arrival_time") override val arrivalTime: Instant?,
-    @SerialName("departure_time") override val departureTime: Instant?,
+    @SerialName("arrival_time") override val arrivalTime: EasternTimeInstant?,
+    @SerialName("departure_time") override val departureTime: EasternTimeInstant?,
     @SerialName("direction_id") val directionId: Int,
     val revenue: Boolean,
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,

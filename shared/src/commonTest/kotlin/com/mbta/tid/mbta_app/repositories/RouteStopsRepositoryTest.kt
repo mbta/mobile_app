@@ -21,89 +21,6 @@ import org.koin.test.KoinTest
 
 class RouteStopsRepositoryTest : KoinTest {
     @Test
-    fun testGetOldStops() {
-        lateinit var requestUrl: Url
-        val mockEngine = MockEngine { request ->
-            requestUrl = request.url
-            respond(
-                content =
-                    ByteReadChannel(
-                        """
-                    {
-                        "stop_ids": [
-                            "place-ogmnl",
-                            "place-mlmnl",
-                            "place-welln",
-                            "place-astao",
-                            "place-sull",
-                            "place-ccmnl",
-                            "place-north",
-                            "place-haecl",
-                            "place-state",
-                            "place-dwnxg",
-                            "place-chncl",
-                            "place-tumnl",
-                            "place-bbsta",
-                            "place-masta",
-                            "place-rugg",
-                            "place-rcmnl",
-                            "place-jaksn",
-                            "place-sbmnl",
-                            "place-grnst",
-                            "place-forhl"
-                        ]
-                    }
-                    """
-                            .trimIndent()
-                    ),
-                status = HttpStatusCode.OK,
-                headers = headersOf(HttpHeaders.ContentType, "application/json"),
-            )
-        }
-
-        startKoin {
-            modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
-        }
-        runBlocking {
-            val response = RouteStopsRepository().getOldRouteStops("Orange", 0)
-            assertEquals("/api/route/stops", requestUrl.encodedPath)
-            assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
-            assertEquals(
-                ApiResult.Ok(
-                    OldRouteStopsResult(
-                        "Orange",
-                        0,
-                        listOf(
-                            "place-ogmnl",
-                            "place-mlmnl",
-                            "place-welln",
-                            "place-astao",
-                            "place-sull",
-                            "place-ccmnl",
-                            "place-north",
-                            "place-haecl",
-                            "place-state",
-                            "place-dwnxg",
-                            "place-chncl",
-                            "place-tumnl",
-                            "place-bbsta",
-                            "place-masta",
-                            "place-rugg",
-                            "place-rcmnl",
-                            "place-jaksn",
-                            "place-sbmnl",
-                            "place-grnst",
-                            "place-forhl",
-                        ),
-                    )
-                ),
-                response,
-            )
-        }
-        stopKoin()
-    }
-
-    @Test
     fun testGetNewSegments() {
         lateinit var requestUrl: Url
         val mockEngine = MockEngine { request ->
@@ -556,12 +473,12 @@ class RouteStopsRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
         runBlocking {
-            val response = RouteStopsRepository().getNewRouteSegments("Orange", 0)
+            val response = RouteStopsRepository().getRouteSegments("Orange", 0)
             assertEquals("/api/route/stop-graph", requestUrl.encodedPath)
             assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
             assertEquals(
                 ApiResult.Ok(
-                    NewRouteStopsResult(
+                    RouteStopsResult(
                         "Orange",
                         0,
                         listOf(

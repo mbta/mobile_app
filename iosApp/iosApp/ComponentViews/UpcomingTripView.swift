@@ -78,14 +78,14 @@ struct UpcomingTripView: View {
                 .opacity(min(1.0, maxTextAlpha))
                 .accessibilityLabel(label)
         case let .time(format):
-            Text(Date(instant: format.predictionTime), style: .time)
+            Text(format.predictionTime, style: .time)
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                 .realtime(hideIndicator: hideRealtimeIndicators)
                 .opacity(min(1.0, maxTextAlpha))
                 .accessibilityLabel(label)
         case let .timeWithStatus(format):
             VStack(alignment: .trailing, spacing: 0) {
-                Text(Date(instant: format.predictionTime), style: .time)
+                Text(format.predictionTime, style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
                     .opacity(min(1.0, maxTextAlpha))
@@ -98,11 +98,11 @@ struct UpcomingTripView: View {
             .accessibilityLabel(label)
         case let .timeWithSchedule(format):
             VStack(alignment: .trailing, spacing: 0) {
-                Text(Date(instant: format.predictionTime), style: .time)
+                Text(format.predictionTime, style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                     .realtime(hideIndicator: hideRealtimeIndicators)
                     .opacity(min(1.0, maxTextAlpha))
-                Text(Date(instant: format.scheduledTime), style: .time)
+                Text(format.scheduledTime, style: .time)
                     .font(Typography.footnoteSemibold)
                     .opacity(min(0.6, maxTextAlpha))
                     .strikethrough()
@@ -116,7 +116,7 @@ struct UpcomingTripView: View {
                 .opacity(min(1.0, maxTextAlpha))
                 .accessibilityLabel(label)
         case let .scheduleTime(format):
-            Text(format.scheduledTime.toNSDate(), style: .time)
+            Text(format.scheduledTime, style: .time)
                 .opacity(min(0.6, maxTextAlpha))
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                 .accessibilityLabel(label)
@@ -129,7 +129,7 @@ struct UpcomingTripView: View {
                 Text("Cancelled", comment: "The status label for a cancelled trip")
                     .font(Typography.footnote)
                     .opacity(min(0.6, maxTextAlpha))
-                Text(format.scheduledTime.toNSDate(), style: .time)
+                Text(format.scheduledTime, style: .time)
                     .font(Typography.footnoteSemibold)
                     .strikethrough()
                     .opacity(min(0.6, maxTextAlpha))
@@ -167,13 +167,6 @@ struct UpcomingTripView: View {
             ProgressView()
         }
     }
-}
-
-func makeTimeFormatter() -> DateFormatter {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .none
-    formatter.timeStyle = .short
-    return formatter
 }
 
 struct DisruptionView: View {

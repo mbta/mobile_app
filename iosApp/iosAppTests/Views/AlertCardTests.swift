@@ -95,14 +95,16 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Detail button pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .shuttle,
-                                       location: .some(AlertSummary.LocationStopToDirection(
-                                           startStopName: "Start Stop",
-                                           direction: Direction(name: "West", destination: "Destination", id: 0)
-                                       )),
-                                       timeframe: .some(AlertSummary
-                                           .TimeframeLaterDate(time: ISO8601DateFormatter()
-                                               .date(from: "2025-04-16T20:00:00Z")!.toKotlinInstant()))),
+            alertSummary: AlertSummary(
+                effect: .shuttle,
+                location: .some(AlertSummary.LocationStopToDirection(
+                    startStopName: "Start Stop",
+                    direction: Direction(name: "West", destination: "Destination", id: 0)
+                )),
+                timeframe: .some(AlertSummary.TimeframeLaterDate(
+                    time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+                ))
+            ),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -121,14 +123,16 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .shuttle,
-                                       location: .some(AlertSummary.LocationDirectionToStop(
-                                           direction: Direction(name: "West", destination: "Destination", id: 0),
-                                           endStopName: "End Stop"
-                                       )),
-                                       timeframe: .some(AlertSummary
-                                           .TimeframeThisWeek(time: ISO8601DateFormatter()
-                                               .date(from: "2025-04-16T20:00:00Z")!.toKotlinInstant()))),
+            alertSummary: AlertSummary(
+                effect: .shuttle,
+                location: .some(AlertSummary.LocationDirectionToStop(
+                    direction: Direction(name: "West", destination: "Destination", id: 0),
+                    endStopName: "End Stop"
+                )),
+                timeframe: .some(AlertSummary.TimeframeThisWeek(
+                    time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+                ))
+            ),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -145,18 +149,18 @@ final class AlertCardTests: XCTestCase {
             alert.header = "Test header"
         }
 
-        let date = ISO8601DateFormatter().date(from: "2025-04-16T20:00:00Z")!
+        let time = EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .shuttle,
-                                       location: .some(AlertSummary.LocationSuccessiveStops(
-                                           startStopName: "Start Stop",
-                                           endStopName: "End Stop"
-                                       )),
-                                       timeframe: .some(AlertSummary
-                                           .TimeframeTime(time: date
-                                               .toKotlinInstant()))),
+            alertSummary: AlertSummary(
+                effect: .shuttle,
+                location: .some(AlertSummary.LocationSuccessiveStops(
+                    startStopName: "Start Stop",
+                    endStopName: "End Stop"
+                )),
+                timeframe: .some(AlertSummary.TimeframeTime(time: time))
+            ),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -164,9 +168,7 @@ final class AlertCardTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect()
-            .find(
-                text: "Shuttle buses from Start Stop to End Stop through \(date.formatted(date: .omitted, time: .shortened))"
-            ))
+            .find(text: "Shuttle buses from Start Stop to End Stop through 4:00\u{202F}PM"))
     }
 
     func testSecondaryAlertCard() throws {

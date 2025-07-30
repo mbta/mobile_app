@@ -28,10 +28,10 @@ import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -39,7 +39,7 @@ import org.koin.test.KoinTest
 
 class NearbyTransitViewTest : KoinTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"

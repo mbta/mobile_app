@@ -28,12 +28,11 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
@@ -42,7 +41,7 @@ import org.koin.compose.KoinContext
 
 class StopDetailsFilteredDeparturesViewTest {
     val builder = ObjectCollectionBuilder()
-    val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+    val now = EasternTimeInstant.now()
     val route =
         builder.route {
             id = "route_1"
@@ -249,7 +248,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @Test
     fun testShowsCancelledTripCard() {
         val objects = ObjectCollectionBuilder()
-        val now = Instant.fromEpochMilliseconds(System.currentTimeMillis())
+        val now = EasternTimeInstant.now()
         val route =
             objects.route {
                 id = "route_1"
@@ -396,7 +395,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsSuspension(): Unit = runBlocking {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val alert =
             builder.alert {
                 activePeriod(now - 5.seconds, now + 5.seconds)
@@ -468,7 +467,7 @@ class StopDetailsFilteredDeparturesViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testShowsPredictionsAndAlertOnBranchingTrunk(): Unit = runBlocking {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = TestData.clone()
         val stop = objects.getStop("place-kencl")
@@ -697,7 +696,7 @@ class StopDetailsFilteredDeparturesViewTest {
 
     @Test
     fun testShowsSubwayDelayAlert(): Unit = runBlocking {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val alert =
             builder.alert {
                 activePeriod(now - 5.seconds, now + 5.seconds)

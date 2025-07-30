@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -579,7 +579,7 @@ class AlertTest {
                 }
             }
 
-        val time = Clock.System.now()
+        val time = EasternTimeInstant.now()
 
         val tripBraintree = objects.trip(routePatternBraintree)
         val scheduleBraintree =

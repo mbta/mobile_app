@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contentDescription
+import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
@@ -46,16 +47,10 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.MinutesFormat
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlin.math.min
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toLocalDateTime
 
 sealed interface UpcomingTripViewState {
     data object Loading : UpcomingTripViewState
@@ -67,11 +62,6 @@ sealed interface UpcomingTripViewState {
 
     data class Some(val trip: TripInstantDisplay) : UpcomingTripViewState
 }
-
-val format: DateTimeFormatter = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT)
-
-fun formatTime(time: Instant): String =
-    format.format(time.toLocalDateTime(TimeZone.currentSystemDefault()).toJavaLocalDateTime())
 
 @Composable
 fun UpcomingTripView(
@@ -154,7 +144,7 @@ fun UpcomingTripView(
                 is TripInstantDisplay.Time ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
-                            formatTime(state.trip.predictionTime),
+                            state.trip.predictionTime.formattedTime(),
                             Modifier.semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
@@ -174,7 +164,7 @@ fun UpcomingTripView(
                             hideRealtimeIndicators,
                         ) {
                             Text(
-                                formatTime(state.trip.predictionTime),
+                                state.trip.predictionTime.formattedTime(),
                                 Modifier.placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -200,7 +190,7 @@ fun UpcomingTripView(
                             hideRealtimeIndicators,
                         ) {
                             Text(
-                                formatTime(state.trip.predictionTime),
+                                state.trip.predictionTime.formattedTime(),
                                 Modifier.placeholderIfLoading(),
                                 textAlign = TextAlign.End,
                                 style =
@@ -209,7 +199,7 @@ fun UpcomingTripView(
                             )
                         }
                         Text(
-                            formatTime(state.trip.scheduledTime),
+                            state.trip.scheduledTime.formattedTime(),
                             color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
                             textAlign = TextAlign.End,
                             textDecoration = TextDecoration.LineThrough,
@@ -219,7 +209,7 @@ fun UpcomingTripView(
 
                 is TripInstantDisplay.ScheduleTime ->
                     Text(
-                        formatTime(state.trip.scheduledTime),
+                        state.trip.scheduledTime.formattedTime(),
                         modifier
                             .alpha(min(maxTextAlpha, 0.6F))
                             .semantics { contentDescription = tripDescription }
@@ -268,7 +258,7 @@ fun UpcomingTripView(
                         )
                         Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            formatTime(state.trip.scheduledTime),
+                            state.trip.scheduledTime.formattedTime(),
                             color = colorResource(R.color.deemphasized),
                             textDecoration = TextDecoration.LineThrough,
                             textAlign = TextAlign.End,
@@ -368,12 +358,12 @@ fun UpcomingTripViewPreview() {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes, true)
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, true)
                 )
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(Clock.System.now() + 10.minutes)
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes)
                 )
             )
             UpcomingTripView(UpcomingTripViewState.Loading)

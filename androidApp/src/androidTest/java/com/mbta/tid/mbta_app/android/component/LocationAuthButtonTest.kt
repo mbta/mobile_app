@@ -4,9 +4,9 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -39,7 +39,7 @@ class LocationAuthButtonTest {
     @Test
     fun testShowsSettingsPromptWhenPermanentlyDeniedBefore() {
 
-        val requestStartTime = Clock.System.now()
+        val requestStartTime = EasternTimeInstant.now()
         val requestEndTime = requestStartTime.plus(0.1.seconds)
 
         assertTrue(shouldShowSettingsPrompt(false, requestStartTime, requestEndTime))
@@ -48,7 +48,7 @@ class LocationAuthButtonTest {
     @Test
     fun testDoesntShowsSettingsPromptWhenPermanentlyDeniedJustNow() {
 
-        val requestStartTime = Clock.System.now()
+        val requestStartTime = EasternTimeInstant.now()
         val requestEndTime = requestStartTime.plus(0.36.seconds)
 
         assertFalse(shouldShowSettingsPrompt(false, requestStartTime, requestEndTime))
@@ -57,7 +57,7 @@ class LocationAuthButtonTest {
     @Test
     fun testDoesntShowsSettingsPromptWhenShouldShowRationale() {
 
-        val requestStartTime = Clock.System.now()
+        val requestStartTime = EasternTimeInstant.now()
         val requestEndTime = requestStartTime.plus(0.1.seconds)
 
         assertFalse(shouldShowSettingsPrompt(true, requestStartTime, requestEndTime))

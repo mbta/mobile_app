@@ -152,7 +152,7 @@ class StopDetailsViewModel: ObservableObject {
     func getRouteCardData(
         stopId: String,
         alerts: AlertsStreamDataResponse?,
-        now: Date,
+        now: EasternTimeInstant,
         isFiltered: Bool
     ) async -> [RouteCardData]? {
         if let global, let schedules = stopData?.schedules {
@@ -163,7 +163,7 @@ class StopDetailsViewModel: ObservableObject {
                 schedules: schedules,
                 predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
-                now: now.toKotlinInstant(),
+                now: now,
                 pinnedRoutes: pinnedRoutes,
                 context: isFiltered ? .stopDetailsFiltered : .stopDetailsUnfiltered
             )
