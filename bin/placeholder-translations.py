@@ -64,3 +64,6 @@ for body_row in sheet_in[1:]:
 
 with open("iosApp/iosApp/Localizable.xcstrings", mode="w", encoding="utf-8") as f:
     json.dump(xcstrings, f, ensure_ascii=False, indent=2, separators=(",", " : "))
+
+print("Running Android localization conversion")
+subprocess.run(["./gradlew", "--quiet", ":androidApp:convertIosLocalization"], check=True)

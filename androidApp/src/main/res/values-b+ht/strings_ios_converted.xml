@@ -220,7 +220,8 @@
     <string name="more_section_resources">Resous</string>
     <string name="more_section_settings">Paramèt</string>
     <string name="more_section_support">Enfòmasyon ak Sipò Jeneral MBTA</string>
-    <string name="more_section_support_note">Lendi rive vandredi: 6:30 AM - 8 PM</string>
+    <string name="more_section_support_note_accessibility">711 pou moun ki rele TTY; VRS pou moun kap rele ASL</string>
+    <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>

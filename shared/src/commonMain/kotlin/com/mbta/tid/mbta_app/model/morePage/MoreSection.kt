@@ -1,6 +1,11 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-class MoreSection(var id: Category, var items: List<MoreItem>, var note: String? = null) {
+class MoreSection(
+    var id: Category,
+    var items: List<MoreItem>,
+    var noteAbove: String? = null,
+    var noteBelow: String? = null,
+) {
 
     enum class Category {
         Feedback,

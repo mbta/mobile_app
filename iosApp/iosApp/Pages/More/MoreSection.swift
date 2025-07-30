@@ -45,11 +45,21 @@ struct MoreSection: Identifiable, Equatable {
         }
     }
 
-    var note: String? {
+    var noteAbove: String? {
         switch id {
         case .support: NSLocalizedString(
                 "Monday through Friday: 6:30 AM - 8 PM",
                 comment: "Footnote under the More page support header, these are the hours for the support call center"
+            )
+        default: nil
+        }
+    }
+
+    var noteBelow: String? {
+        switch id {
+        case .support: NSLocalizedString(
+                "711 for TTY callers; VRS for ASL callers",
+                comment: "Footnote under the More page support phone number, these are the instructions for accessible support via teletypewriter or video relay service"
             )
         default: nil
         }

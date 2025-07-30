@@ -211,7 +211,8 @@
     <string name="more_section_resources">Recursos</string>
     <string name="more_section_settings">Configuración</string>
     <string name="more_section_support">Información general y soporte de MBTA</string>
-    <string name="more_section_support_note">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
+    <string name="more_section_support_note_accessibility">711 para quienes llaman por TTY; VRS para quienes llaman por ASL</string>
+    <string name="more_section_support_note_hours">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
