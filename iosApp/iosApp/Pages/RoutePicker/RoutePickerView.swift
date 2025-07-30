@@ -38,13 +38,16 @@ struct RoutePickerView: View {
         case .root:
             switch onEnum(of: context) {
             case .favorites:
-                NSLocalizedString("Add favorite stops", comment: "Header for add favorites flow")
+                NSLocalizedString(
+                    "Add favorite stops",
+                    comment: "Header for the route details picker when entering from the favorites page to select favorite stops"
+                )
             case .details: "" // TODO: Implement details header
             }
-        case .bus: NSLocalizedString("Bus", comment: "bus")
+        case .bus: NSLocalizedString("Bus", comment: "Label for bus routes in the route picker view")
         case .silver: "Silver Line"
         case .commuterRail: "Commuter Rail"
-        case .ferry: NSLocalizedString("Ferry", comment: "ferry")
+        case .ferry: NSLocalizedString("Ferry", comment: "Label for ferry routes in the route picker view")
         }
     }
 
