@@ -76,12 +76,10 @@ struct ContentView: View {
             } catch {}
         }
         .onChange(of: contentVM.defaultTab) { newTab in
-
-            if case .favorites = newTab {
-                selectedTab = .favorites
-            }
-            if case let .nearby = newTab {
-                selectedTab = .nearby
+            selectedTab = switch newTab {
+            case .favorites: .favorites
+            case .nearby: .nearby
+            case nil: nil
             }
         }
 
@@ -307,7 +305,7 @@ struct ContentView: View {
             VStack {
                 VStack(spacing: 16) {
                     SheetHeader(title: NSLocalizedString("Nearby Transit", comment: ""))
-                        .loadingPlaceholder(false)
+                        .loadingPlaceholder(withShimmer: false)
                     ScrollView {
                         LazyVStack(alignment: .center, spacing: 14) {
                             ForEach(0 ..< 5) { _ in
@@ -316,7 +314,7 @@ struct ContentView: View {
                         }
                         .padding(.vertical, 4)
                         .padding(.horizontal, 16)
-                        .loadingPlaceholder(false)
+                        .loadingPlaceholder(withShimmer: false)
                     }
                     Spacer()
                 }
