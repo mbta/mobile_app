@@ -19,6 +19,7 @@ extension Color {
     static let fill2 = Color("Fill 2")
     static let fill3 = Color("Fill 3")
     static let halo = Color("Halo")
+    static let haloContrast = Color("Halo Contrast")
     static let haloLight = Color("Halo Light")
     static let haloDark = Color("Halo Dark")
     static let key = Color("Key")
@@ -26,6 +27,7 @@ extension Color {
     static let sheetBackground = Color("Sheet Background")
     static let stopDotHalo = Color("Stop Dot Halo")
     static let text = Color("Text")
+    static let textContrast = Color("Text Contrast")
 }
 
 extension UIColor {
