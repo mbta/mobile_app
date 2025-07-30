@@ -129,6 +129,7 @@
     <string name="facility_issue">Vấn đề về cơ sở vật chất</string>
     <string name="facility_issue_sentence_case">Vấn đề về cơ sở vật chất</string>
     <string name="favorite_stop">điểm dừng yêu thích</string>
+    <string name="favorite_stops_first_time_toast_message">Điểm dừng yêu thích thay thế tính năng tuyến đường có dấu sao trước đó.</string>
     <string name="favorites_link">Yêu thích</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> tại &lt;b>%3$s&lt;/b> đã được thêm vào mục Yêu thích</string>
     <string name="favorites_toast_add_fallback">Đã thêm vào mục Yêu thích</string>

@@ -129,6 +129,7 @@
     <string name="facility_issue">設施問題</string>
     <string name="facility_issue_sentence_case">設施問題</string>
     <string name="favorite_stop">最喜歡的一站</string>
+    <string name="favorite_stops_first_time_toast_message">收藏站點取代了先前的加星標路線功能。</string>
     <string name="favorites_link">收藏夾</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> 位於 &lt;b>%3$s&lt;/b> 已新增至收藏夾</string>
     <string name="favorites_toast_add_fallback">已加入到收藏夾</string>
