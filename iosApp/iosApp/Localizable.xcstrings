@@ -2608,6 +2608,53 @@
         }
       }
     },
+    "711 for TTY callers; VRS for ASL callers" : {
+      "comment" : "Footnote under the More page support phone number, these are the instructions for accessible support via teletypewriter or video relay service",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "711 para quienes llaman por TTY; VRS para quienes llaman por ASL"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "711 pour les appelants TTY ; VRS pour les appelants ASL"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "711 pou moun ki rele TTY; VRS pou moun kap rele ASL"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "711 para chamadores TTY; VRS para chamadores ASL"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "711 dành cho người gọi TTY; VRS dành cho người gọi ASL"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "TTY 呼叫者请拨打 711；ASL 呼叫者请拨打 VRS"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "TTY 來電者請撥打 711；ASL 來電者請撥打 VRS"
+          }
+        }
+      }
+    },
     "Access issue" : {
       "comment" : "Possible alert effect",
       "localizations" : {

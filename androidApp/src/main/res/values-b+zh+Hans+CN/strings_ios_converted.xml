@@ -205,7 +205,8 @@
     <string name="more_section_resources">资源</string>
     <string name="more_section_settings">设置</string>
     <string name="more_section_support">MBTA通用信息与支持</string>
-    <string name="more_section_support_note">周一至周五：上午6:30至晚上8:00</string>
+    <string name="more_section_support_note_accessibility">TTY 呼叫者请拨打 711；ASL 呼叫者请拨打 VRS</string>
+    <string name="more_section_support_note_hours">周一至周五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>

@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.more
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -38,20 +39,24 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
             else -> null
         }
 
-    val note = section.note
+    val noteAbove = section.noteAbove
+    val noteBelow = section.noteBelow
 
     if (!(section.hiddenOnProd && appVariant == AppVariant.Prod)) {
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             if (name != null) {
-                Column(modifier = Modifier.padding(2.dp)) {
+                Column(
+                    modifier = Modifier.padding(2.dp),
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                ) {
                     Text(
                         name,
                         style = Typography.subheadlineSemibold,
                         modifier = Modifier.semantics { heading() },
                     )
 
-                    if (note != null) {
-                        Text(note, style = Typography.footnote)
+                    if (noteAbove != null) {
+                        Text(noteAbove, style = Typography.footnote)
                     }
                 }
             }
@@ -100,6 +105,10 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
                         androidx.compose.material3.HorizontalDivider()
                     }
                 }
+            }
+
+            if (noteBelow != null) {
+                Text(noteBelow, style = Typography.footnote)
             }
         }
     }
