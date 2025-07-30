@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23094" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ftz-KW-YBv">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Ftz-KW-YBv">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23084"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -14,7 +15,7 @@
             <objects>
                 <viewController id="rh8-Wh-S2v" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="fzw-W8-pv6">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="735"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="sp9-jc-DYA"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -23,21 +24,55 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="IML-rh-EDR" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-280" y="-77"/>
+            <point key="canvasLocation" x="-155" y="-69"/>
+        </scene>
+        <!--Favorites-->
+        <scene sceneID="L35-ki-Ixy">
+            <objects>
+                <viewController id="QAG-hO-Sfb" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="cYD-Mc-1Jp">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="735"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-map-grid" translatesAutoresizingMaskIntoConstraints="NO" id="NTz-i8-ha6">
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="735"/>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-search" translatesAutoresizingMaskIntoConstraints="NO" id="Yzv-Ks-JFU">
+                                <rect key="frame" x="0.0" y="118" width="393" height="68"/>
+                                <directionalEdgeInsets key="directionalLayoutMargins" top="8" leading="8" bottom="8" trailing="8"/>
+                            </imageView>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="yx6-El-0fu"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="yx6-El-0fu" firstAttribute="trailing" secondItem="Yzv-Ks-JFU" secondAttribute="trailing" id="7Yi-J2-FyS"/>
+                            <constraint firstAttribute="bottom" secondItem="NTz-i8-ha6" secondAttribute="bottom" id="D53-8v-gJH"/>
+                            <constraint firstItem="Yzv-Ks-JFU" firstAttribute="top" secondItem="yx6-El-0fu" secondAttribute="top" id="GMC-GK-G5B"/>
+                            <constraint firstItem="Yzv-Ks-JFU" firstAttribute="leading" secondItem="yx6-El-0fu" secondAttribute="leading" id="bh0-5E-gaW"/>
+                            <constraint firstItem="NTz-i8-ha6" firstAttribute="top" secondItem="cYD-Mc-1Jp" secondAttribute="top" id="cGi-59-mBG"/>
+                            <constraint firstItem="NTz-i8-ha6" firstAttribute="leading" secondItem="yx6-El-0fu" secondAttribute="leading" id="eOi-6c-3ES"/>
+                            <constraint firstItem="yx6-El-0fu" firstAttribute="trailing" secondItem="NTz-i8-ha6" secondAttribute="trailing" id="l6k-wd-7E5"/>
+                        </constraints>
+                    </view>
+                    <tabBarItem key="tabBarItem" title="Favorites" image="tab-icon-favorites" id="aoG-lJ-dYE"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="aU2-Zf-qn8" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-156" y="-715"/>
         </scene>
         <!--Nearby-->
         <scene sceneID="YPg-5f-9cT">
             <objects>
                 <viewController id="sqa-ng-KwG" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Kck-9R-Faz">
-                        <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="735"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-map-grid" translatesAutoresizingMaskIntoConstraints="NO" id="XRc-HZ-h9m">
-                                <rect key="frame" x="0.0" y="0.0" width="393" height="769"/>
+                                <rect key="frame" x="0.0" y="0.0" width="393" height="735"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="empty-search" translatesAutoresizingMaskIntoConstraints="NO" id="06y-uy-U7k">
-                                <rect key="frame" x="0.0" y="59" width="393" height="68"/>
+                                <rect key="frame" x="0.0" y="118" width="393" height="68"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="HQS-pf-pis"/>
@@ -56,7 +91,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="1Dj-uT-BQI" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-280" y="-685"/>
+            <point key="canvasLocation" x="625" y="-715"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="lWV-Yp-0Th">
@@ -66,22 +101,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="selectedImageTintColor" name="Deemphasized"/>
                     </tabBar>
                     <connections>
+                        <segue destination="QAG-hO-Sfb" kind="relationship" relationship="viewControllers" id="SHv-EG-kor"/>
                         <segue destination="sqa-ng-KwG" kind="relationship" relationship="viewControllers" id="nJR-WF-N9E"/>
                         <segue destination="rh8-Wh-S2v" kind="relationship" relationship="viewControllers" id="Gd7-w7-wQP"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="AR5-Y2-7Nm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1185" y="-381"/>
+            <point key="canvasLocation" x="-1114" y="-400"/>
         </scene>
     </scenes>
     <resources>
         <image name="empty-map-grid" width="390" height="844"/>
         <image name="empty-search" width="390" height="68"/>
+        <image name="tab-icon-favorites" width="24" height="24"/>
         <image name="tab-icon-more" width="25" height="25"/>
         <image name="tab-icon-nearby" width="25" height="25"/>
+        <namedColor name="Deemphasized">
+            <color red="0.54117647058823526" green="0.56862745098039214" blue="0.59999999999999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
