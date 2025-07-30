@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -770,6 +771,7 @@ class FavoritesViewModelTest : KoinTest {
         assertEquals(analyticsLogged, Pair("favorites_count", "1"))
     }
 
+    @Test
     fun `does not load new route card data when editing`() = runTest {
         val now = EasternTimeInstant.now()
 
@@ -919,6 +921,22 @@ class FavoritesViewModelTest : KoinTest {
                 ),
                 awaitItem(),
             )
+        }
+    }
+
+    @Test
+    fun `shouldShowFirstTimeToast true when had pinned routes and  shown promo`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            pinnedRoutes = MockPinnedRoutesRepository(initialPinnedRoutes = setOf("Red"))
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setShownFeaturePromo()
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.shouldShowFirstTimeToast }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 }

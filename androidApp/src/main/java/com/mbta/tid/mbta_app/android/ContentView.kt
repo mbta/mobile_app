@@ -34,11 +34,13 @@ import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.androidx.compose.koinViewModel
@@ -49,6 +51,7 @@ import org.koin.compose.koinInject
 fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
+    favoritesViewModel: IFavoritesViewModel = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
@@ -99,6 +102,14 @@ fun ContentView(
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
         onPauseOrDispose { socket.detach() }
+    }
+
+    LaunchedEffect(pendingFeaturePromos) {
+        pendingFeaturePromos?.let {
+            if (it.contains(FeaturePromo.EnhancedFavorites)) {
+                favoritesViewModel.setShownFeaturePromo()
+            }
+        }
     }
 
     val analytics: Analytics = koinInject()

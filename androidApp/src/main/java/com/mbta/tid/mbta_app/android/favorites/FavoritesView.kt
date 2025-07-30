@@ -32,6 +32,8 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -42,6 +44,7 @@ fun FavoritesView(
     setIsTargeting: (Boolean) -> Unit,
     favoritesViewModel: IFavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
+    toastViewModel: IToastViewModel,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
@@ -50,6 +53,7 @@ fun FavoritesView(
     val state by favoritesViewModel.models.collectAsState()
 
     fun onAddFavorites() {
+        toastViewModel.hideToast()
         openSheetRoute(SheetRoutes.RoutePicker(RoutePickerPath.Root, RouteDetailsContext.Favorites))
     }
 
@@ -77,6 +81,13 @@ fun FavoritesView(
     LaunchedEffect(state.loadedLocation) {
         state.loadedLocation?.let { setLastLocation(it) }
         setIsTargeting(false)
+    }
+    LaunchedEffect(state.shouldShowFirstTimeToast) {
+        if (state.shouldShowFirstTimeToast) {
+            toastViewModel.showToast(
+                ToastViewModel.Toast("TODO", onClose = { toastViewModel.hideToast() })
+            )
+        }
     }
 
     val routeCardData = state.routeCardData
