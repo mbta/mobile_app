@@ -17,24 +17,51 @@ struct AnnotatedMap: View {
 
     var stopMapData: StopMapResponse?
     var filter: StopDetailsFilter?
-    var nearbyLocation: CLLocationCoordinate2D?
+    var targetedLocation: CLLocationCoordinate2D?
     var globalData: GlobalResponse?
     var selectedVehicle: Vehicle?
     var sheetHeight: CGFloat
     var vehicles: [Vehicle]?
-
-    @EnvironmentObject var settingsCache: SettingsCache
-
-    @ObservedObject var viewportProvider: ViewportProvider
-    @Environment(\.colorScheme) var colorScheme
-    @Environment(\.scenePhase) var scenePhase
-
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
     var handleTapStopLayer: (QueriedFeature, InteractionContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
 
+    @ObservedObject var viewportProvider: ViewportProvider
+
     @State private var zoomLevel: CGFloat = 0
+
+    @EnvironmentObject var settingsCache: SettingsCache
+    @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
+
+    init(
+        stopMapData: StopMapResponse? = nil,
+        filter: StopDetailsFilter? = nil,
+        targetedLocation: CLLocationCoordinate2D? = nil,
+        globalData: GlobalResponse? = nil,
+        selectedVehicle: Vehicle? = nil,
+        sheetHeight: CGFloat,
+        vehicles: [Vehicle]? = nil,
+        handleCameraChange: @escaping (CameraChanged) -> Void,
+        handleStyleLoaded: @escaping () -> Void,
+        handleTapStopLayer: @escaping (QueriedFeature, InteractionContext) -> Bool,
+        handleTapVehicle: @escaping (Vehicle) -> Void,
+        viewportProvider: ViewportProvider,
+    ) {
+        self.stopMapData = stopMapData
+        self.filter = filter
+        self.targetedLocation = targetedLocation
+        self.globalData = globalData
+        self.selectedVehicle = selectedVehicle
+        self.sheetHeight = sheetHeight
+        self.vehicles = vehicles
+        self.handleCameraChange = handleCameraChange
+        self.handleStyleLoaded = handleStyleLoaded
+        self.handleTapStopLayer = handleTapStopLayer
+        self.handleTapVehicle = handleTapVehicle
+        self.viewportProvider = viewportProvider
+    }
 
     var body: some View {
         map
@@ -98,8 +125,8 @@ struct AnnotatedMap: View {
                 .showsAccuracyRing(true)
                 .accuracyRingColor(.deemphasized.withAlphaComponent(0.1))
                 .accuracyRingBorderColor(.halo)
-            if let nearbyLocation {
-                MapViewAnnotation(coordinate: nearbyLocation) {
+            if let targetedLocation {
+                MapViewAnnotation(coordinate: targetedLocation) {
                     Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)
                 }.allowHitTesting(false)
             }

@@ -26,3 +26,9 @@ extension CLLocationCoordinate2D {
         GeojsonPosition(longitude: longitude, latitude: latitude)
     }
 }
+
+extension GeojsonPosition {
+    var coordinate: CLLocationCoordinate2D {
+        CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+}

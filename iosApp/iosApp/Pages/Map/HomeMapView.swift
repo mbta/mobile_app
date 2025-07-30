@@ -45,9 +45,10 @@ struct HomeMapView: View {
     let inspection = Inspection<Self>()
     let log = Logger()
 
-    private var isNearbyNotFollowing: Bool {
-        !viewportProvider.viewport.isFollowing && locationDataManager.currentLocation != nil
-            && nearbyVM.navigationStack.lastSafe() == .nearby
+    private var shouldShowLoadedLocation: Bool {
+        !viewportProvider.viewport.isFollowing
+            && nearbyVM.navigationStack.lastSafe().allowTargeting
+            && !nearbyVM.isTargeting
     }
 
     init(
@@ -83,7 +84,7 @@ struct HomeMapView: View {
     var body: some View {
         realtimeResponsiveMap
             .overlay(alignment: .center) {
-                if nearbyVM.selectingLocation {
+                if nearbyVM.isTargeting {
                     crosshairs
                 }
             }
@@ -105,12 +106,9 @@ struct HomeMapView: View {
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
-                guard isManuallyCentering, nearbyVM.navigationStack.lastSafe() == .nearby else { return }
-                /*
-                 This will be set to false after nearby is loaded to avoid the crosshair
-                 dissapearing and re-appearing
-                 */
-                nearbyVM.selectingLocation = true
+                guard isManuallyCentering, nearbyVM.navigationStack.lastSafe().allowTargeting else { return }
+                // This will be set to false after nearby is loaded to avoid the crosshair dissapearing and re-appearing
+                nearbyVM.isTargeting = true
             }
             .onChange(of: contentVM.onboardingScreensPending) { _ in
                 checkOnboardingLoaded()
@@ -195,16 +193,16 @@ struct HomeMapView: View {
         AnnotatedMap(
             stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
-            nearbyLocation: isNearbyNotFollowing ? nearbyVM.nearbyState.loadedLocation : nil,
+            targetedLocation: shouldShowLoadedLocation ? nearbyVM.lastLoadedLocation : nil,
             globalData: mapVM.globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
             vehicles: vehicles,
-            viewportProvider: viewportProvider,
             handleCameraChange: handleCameraChange,
             handleStyleLoaded: refreshMap,
             handleTapStopLayer: handleTapStopLayer,
-            handleTapVehicle: handleTapVehicle
+            handleTapVehicle: handleTapVehicle,
+            viewportProvider: viewportProvider
         )
     }
 
