@@ -32,7 +32,7 @@ final class ContentViewModelTests: XCTestCase {
                 lastLaunchedAppVersionRepository: MockLastLaunchedAppVersionRepository(lastLaunchedAppVersion: nil)
             )
         )
-        await contentVM.loadFeaturePromos()
+        await contentVM.loadPendingFeaturePromosAndTabPreferences()
         XCTAssertEqual(contentVM.featurePromosPending, [])
     }
 
@@ -42,5 +42,22 @@ final class ContentViewModelTests: XCTestCase {
         )
         await contentVM.loadOnboardingScreens()
         XCTAssertEqual(contentVM.onboardingScreensPending, [.location, .feedback])
+    }
+
+    func testDefaultTabNearbyIfNotShownPromo() async {
+        let contentVM = ContentViewModel()
+        await contentVM.loadPendingFeaturePromosAndTabPreferences()
+        XCTAssertEqual(contentVM.defaultTab, .nearby)
+    }
+
+    func testDefaultTabFavoritesIfShownPromo() async {
+        let contentVM = ContentViewModel(featurePromoUseCase: FeaturePromoUseCase(
+            currentAppVersionRepository: MockCurrentAppVersionRepository(currentAppVersion:
+                .init(major: 2, minor: 0, patch: 0)),
+            lastLaunchedAppVersionRepository: MockLastLaunchedAppVersionRepository(lastLaunchedAppVersion:
+                .init(major: 1, minor: 0, patch: 0))
+        ))
+        await contentVM.loadPendingFeaturePromosAndTabPreferences()
+        XCTAssertEqual(contentVM.defaultTab, .favorites)
     }
 }
