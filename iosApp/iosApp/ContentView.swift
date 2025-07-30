@@ -206,7 +206,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    var navSheetContents: some View {
+    var sheetContents: some View {
         let navEntry = nearbyVM.navigationStack.lastSafe()
         NavigationStack {
             VStack {
@@ -297,6 +297,23 @@ struct ContentView: View {
             }
             .animation(.easeOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
             .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
+        }
+    }
+
+    @ViewBuilder
+    var sheetContentsPlaceholder: some View {
+        Spacer()
+            .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
+    }
+
+    @ViewBuilder
+    var navSheetContents: some View {
+        if let defaultTab = contentVM.defaultTab,
+           let featurePromosPending = contentVM.featurePromosPending,
+           let onboardingScreensPending = contentVM.onboardingScreensPending {
+            sheetContents
+        } else {
+            sheetContentsPlaceholder
         }
     }
 
