@@ -57,16 +57,26 @@ class FavoritesViewModelTest : KoinTest {
         }
     val stop2 =
         objects.stop {
+            id = "stop1"
             latitude = 1.0
             longitude = 1.0
         }
     val stop3 =
         objects.stop {
+            id = "stop2"
             latitude = -0.5
             longitude = -0.5
         }
-    val route1 = objects.route { directionNames = listOf("Outbound", "Inbound") }
-    val route2 = objects.route { directionNames = listOf("Outbound", "Inbound") }
+    val route1 =
+        objects.route {
+            id = "route1"
+            directionNames = listOf("Outbound", "Inbound")
+        }
+    val route2 =
+        objects.route {
+            id = "route2"
+            directionNames = listOf("Outbound", "Inbound")
+        }
     val patterns =
         listOf(Pair(route1, listOf(stop1)), Pair(route2, listOf(stop2, stop3))).associate {
             (route, stops) ->
@@ -105,6 +115,7 @@ class FavoritesViewModelTest : KoinTest {
                     MockRepositories().apply {
                         useObjects(objects)
                         favorites = MockFavoritesRepository(this@FavoritesViewModelTest.favorites)
+                        pinnedRoutes = MockPinnedRoutesRepository()
                         repositoriesBlock()
                     }
                 ),
@@ -869,21 +880,20 @@ class FavoritesViewModelTest : KoinTest {
                 ),
                 globalData,
             )
+        val routeCard1Data =
+            RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now)
 
-        val expectedStaticDataBefore =
-            listOf(
-                RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
-                    listOf(stop3Data, stop2Data),
-                    now,
-                ),
-                RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now),
+        val routeCard2Data =
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route2),
+                listOf(stop3Data, stop2Data),
+                now,
             )
+
+        val expectedStaticDataBefore = listOf(routeCard2Data, routeCard1Data)
+
         val expectedStaticDataAfter =
-            listOf(
-                RouteCardData(RouteCardData.LineOrRoute.Route(route2), listOf(stop2Data), now),
-                RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now),
-            )
+            listOf(routeCard2Data.copy(stopData = listOf(stop2Data)), routeCard1Data)
 
         testViewModelFlow(viewModel).test {
             assertEquals(
