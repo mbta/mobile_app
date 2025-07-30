@@ -71,10 +71,10 @@ struct FormattedAlert: Equatable {
                 String(format:
                     NSLocalizedString(" from **%1$@** stops to **%2$@**",
                                       comment: """
-                                      Alert summary location for branching routes in the format of " from [direction]
-                                      stops to [Stop name]" ex. " from [Westbound] stops to [Kenmore]" or " from
-                                      [Eastbound] stops to [Government Center]". The leading space should be retained,
-                                      because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert
+                                      Alert summary location for branching routes in the format of " from [direction] \
+                                      stops to [Stop name]" ex. " from [Westbound] stops to [Kenmore]" or " from \
+                                      [Eastbound] stops to [Government Center]". The leading space should be retained, \
+                                      because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
                                       summary template which may or may not include a location fragment.
                                       """),
                     DirectionLabel.directionNameFormatted(location.direction),
@@ -86,7 +86,7 @@ struct FormattedAlert: Equatable {
                                       comment: """
                                       Alert summary location for a single stop in the format of \
                                       " at [Stop name]" ex. " at [Haymarket]" or " at [Green St @ Magazine St]". \
-                                      The leading space should be
+                                      The leading space should be \
                                       retained, because this will be added in the %2 position of the \
                                       "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
                                       location fragment.
@@ -98,7 +98,7 @@ struct FormattedAlert: Equatable {
                                       comment: """
                                       Alert summary location for branching routes in the format of " from [Stop name] \
                                       to [direction] stops" ex. " from [Kenmore] to [Westbound] stops" or " from \
-                                      [JFK/UMass] to [Southbound] stops". The leading space should be retained,
+                                      [JFK/UMass] to [Southbound] stops". The leading space should be retained, \
                                       because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
                                       summary template which may or may not include a location fragment.
                                       """),
@@ -148,7 +148,7 @@ struct FormattedAlert: Equatable {
                                                  ex. " through May 11". The date component is localized by the OS. \
                                                  The leading space should be retained, because this will be added in \
                                                  the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
-                                                 which may or may not include a timeframe fragment. fragment.
+                                                 which may or may not include a timeframe fragment.
                                                  """),
                        timeframe.time.coerceInServiceDay().formatted(.init().month(.abbreviated).day()))
             case let .thisWeek(timeframe):

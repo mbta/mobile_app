@@ -3,7 +3,6 @@
   "strings" : {
     " at **%1$@**" : {
       "comment" : "Alert summary location for a single stop in the format of \" at [Stop name]\" ex. \" at [Haymarket]\" or \" at [Green St @ Magazine St]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -57,7 +56,6 @@
     },
     " from **%1$@** stops to **%2$@**" : {
       "comment" : "Alert summary location for branching routes in the format of \" from [direction] stops to [Stop name]\" ex. \" from [Westbound] stops to [Kenmore]\" or \" from [Eastbound] stops to [Government Center]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -105,7 +103,6 @@
     },
     " from **%1$@** to **%2$@**" : {
       "comment" : "Alert summary location for consecutive stops in the format of \" from [Stop name] to [Other stop name]\" ex. \" from [Alewife] to [Harvard]\" or \" from [Lechmere] to [Park Street]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -159,7 +156,6 @@
     },
     " from **%1$@** to **%2$@** stops" : {
       "comment" : "Alert summary location for branching routes in the format of \" from [Stop name] to [direction] stops\" ex. \" from [Kenmore] to [Westbound] stops\" or \" from [JFK/UMass] to [Southbound] stops\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -213,7 +209,6 @@
     },
     " through end of service" : {
       "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -261,7 +256,6 @@
     },
     " through tomorrow" : {
       "comment" : "Alert summary timeframe ending tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -500,7 +494,6 @@
     },
     "**%1$@**%2$@%3$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -554,7 +547,6 @@
     },
     "**%1$ld** less common stops" : {
       "comment" : "Header for a list of stops that vehicles don't always stop at for a given route",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1728,7 +1720,6 @@
     },
     "%@ service only" : {
       "comment" : "Notice that there is only service in a single direction for a route at a stop within the favorites flow. Ex: [Easbound] service only.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2798,7 +2789,6 @@
     },
     "Add" : {
       "comment" : "Text for confirmation button when user is adding to their favorites",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2852,7 +2842,6 @@
     },
     "Add **%1$@** at **%2$@**" : {
       "comment" : "Title for a confirmation modal when a user adds a favorite route + stop and already has the context that what they are adding is a favorite. Ex: Add [Green Line] at [Boylston]",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2906,7 +2895,6 @@
     },
     "Add **%1$@** at **%2$@** to Favorites" : {
       "comment" : "Title for a confirmation modal when a user adds a favorite route + stop. Ex: Add [Green Line] at [Boylston] to Favorites",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3008,7 +2996,6 @@
     },
     "Add favorite stops" : {
       "comment" : "Header for the route details picker when entering from the favorites page to select favorite stops",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3055,7 +3042,6 @@
       }
     },
     "Add stops" : {
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5326,7 +5312,6 @@
     },
     "Bus" : {
       "comment" : "Label for bus routes in the route picker view",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -6799,7 +6784,6 @@
     },
     "Delete" : {
       "comment" : "Content description for a button that removes a favorited route/stop/direction",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8881,7 +8865,6 @@
     },
     "favorite stop" : {
       "comment" : "Description for an icon representing that a stop is a favorite",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8928,8 +8911,7 @@
       }
     },
     "Favorites" : {
-      "comment" : "The label for the Favorites tab in the navigation bar",
-      "extractionState" : "manual",
+      "comment" : "Header for favorites sheet\nThe label for the Favorites page in the navigation bar",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -9118,7 +9100,6 @@
     },
     "Ferry" : {
       "comment" : "Label for ferry routes in the route picker view",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -10716,7 +10697,6 @@
     },
     "key/alert_summary_timeframe_later_date" : {
       "comment" : "Alert summary timeframe ending on a specific date in the future. ex. \" through May 11\". The date component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10770,7 +10750,6 @@
     },
     "key/alert_summary_timeframe_this_week" : {
       "comment" : "Alert summary timeframe ending on a specific day later this week. ex. \" through Thursday\". The weekday component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10824,7 +10803,6 @@
     },
     "key/alert_summary_timeframe_time" : {
       "comment" : "Alert summary timeframe ending on a specific time later today. ex. \" through 10:00 PM\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10925,7 +10903,6 @@
     },
     "Less common stop" : {
       "comment" : "Descriptor in a list of all stops on a route for a single stop that a vehicle doesn't stop at on every trip",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12663,8 +12640,7 @@
       }
     },
     "Not accessible" : {
-      "comment" : "Status of a station that is not wheelchair accessible",
-      "extractionState" : "manual",
+      "comment" : "Header displayed when station is not wheelchair accessible",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -12995,7 +12971,6 @@
     },
     "Only served at certain times of day" : {
       "comment" : "Explainer text for \"Less common stops\" that vehicles don't always stop at",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15418,7 +15393,6 @@
     },
     "serves %@" : {
       "comment" : "Description of the routes that a stop serves. ex: serves [red line train, silver line buses]",
-      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18058,7 +18032,6 @@
     },
     "Subway" : {
       "comment" : "Header for the section of the route details picker which lists all the rail rapid transit routes",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18435,7 +18408,6 @@
     },
     "Tap stars to add to Favorites" : {
       "comment" : "Hint text that shows up on a toast when the user enters a route on the add favorites flow for the first time",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -18919,7 +18891,6 @@
     },
     "This stop is not accessible" : {
       "comment" : "Displayed on the stop page when the stop is not wheelchair accessible",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
