@@ -77,7 +77,7 @@ struct StopDetailsView: View {
                 stopId: stopId,
                 setStopFilter: setStopFilter,
                 routeCardData: routeCardData,
-                now: now,
+                now: now.toEasternInstant(),
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 stopDetailsVM: stopDetailsVM

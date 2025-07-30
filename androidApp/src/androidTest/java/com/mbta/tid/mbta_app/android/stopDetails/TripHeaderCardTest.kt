@@ -7,15 +7,15 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.formatTime
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
+import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 
@@ -25,7 +25,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testDisplaysStopName() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val trip = objects.trip()
@@ -51,7 +51,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testDisplaysStatusDescription() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val trip = objects.trip()
@@ -102,7 +102,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testDifferentTrip() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val route = objects.route {}
@@ -124,7 +124,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testNoVehicle() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val route = objects.route {}
@@ -141,7 +141,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAtTarget() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val trip = objects.trip()
@@ -172,7 +172,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAtTerminal() {
-        val now = Instant.parse("2024-08-19T16:44:08-04:00")
+        val now = EasternTimeInstant(2024, Month.AUGUST, 19, 16, 44, 8)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop {}
         val route = objects.route {}
@@ -221,13 +221,13 @@ class TripHeaderCardTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText(formatTime(predictionDeparture), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("4:49\\sPM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
     @Test
     fun testTrackNumber() {
-        val now = Instant.parse("2024-08-19T16:44:08-04:00")
+        val now = EasternTimeInstant(2024, Month.AUGUST, 19, 16, 44, 8)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-north" }
         val platformStop =
@@ -284,7 +284,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testScheduled() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant(2025, Month.JULY, 29, 9, 43)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Stop Name" }
         val trip = objects.trip()
@@ -324,10 +324,7 @@ class TripHeaderCardTest {
             .assertIsDisplayed()
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
-            .onNodeWithText(formatTime(scheduledTime), useUnmergedTree = true)
-            .assertIsDisplayed()
-        composeTestRule
-            .onNodeWithText(formatTime(scheduledTime), useUnmergedTree = true)
+            .onNode(hasTextMatching(Regex("9:48\\sAM")), useUnmergedTree = true)
             .assertIsDisplayed()
     }
 
@@ -371,7 +368,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAccessibilityVehicleDescriptionSelectedStop() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
@@ -402,7 +399,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAccessibilityVehicleDescriptionTrackNumber() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop =
             objects.stop {
@@ -465,7 +462,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAccessibilityVehicleDescriptionOtherStop() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
@@ -498,7 +495,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAccessibilityVehicleDescriptionScheduledToDepartSelected() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
@@ -541,7 +538,7 @@ class TripHeaderCardTest {
 
     @Test
     fun testAccessibilityVehicleDescriptionScheduledToDepartOther() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val other = objects.stop { name = "other stop" }

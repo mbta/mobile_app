@@ -1,14 +1,14 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class Schedule(
     override val id: String,
-    @SerialName("arrival_time") override val arrivalTime: Instant?,
-    @SerialName("departure_time") override val departureTime: Instant?,
+    @SerialName("arrival_time") override val arrivalTime: EasternTimeInstant?,
+    @SerialName("departure_time") override val departureTime: EasternTimeInstant?,
     @SerialName("drop_off_type") val dropOffType: StopEdgeType,
     @SerialName("pick_up_type") val pickUpType: StopEdgeType,
     @SerialName("stop_headsign") val stopHeadsign: String?,

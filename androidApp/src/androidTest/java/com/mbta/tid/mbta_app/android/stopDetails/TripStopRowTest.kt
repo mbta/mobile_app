@@ -22,13 +22,11 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
+import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -38,7 +36,7 @@ class TripStopRowTest {
 
     @Test
     fun testStopName() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Worcester" }
         val trip = objects.trip()
@@ -71,8 +69,7 @@ class TripStopRowTest {
 
     @Test
     fun testPrediction() {
-        val now =
-            LocalDateTime.parse("2025-01-24T15:37:39").toInstant(TimeZone.currentSystemDefault())
+        val now = EasternTimeInstant(2025, Month.JANUARY, 24, 15, 37, 39)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val trip = objects.trip()
@@ -105,8 +102,7 @@ class TripStopRowTest {
 
     @Test
     fun testTrackNumber() {
-        val now =
-            LocalDateTime.parse("2025-01-24T15:37:39").toInstant(TimeZone.currentSystemDefault())
+        val now = EasternTimeInstant(2025, Month.JANUARY, 24, 15, 37, 39)
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { id = "place-bbsta" }
         val platformStop =
@@ -147,7 +143,7 @@ class TripStopRowTest {
 
     @Test
     fun testAccessibility() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "stop" }
         val trip = objects.trip()
@@ -201,7 +197,7 @@ class TripStopRowTest {
 
     @Test
     fun testClickable() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Worcester" }
         val trip = objects.trip()
@@ -239,7 +235,7 @@ class TripStopRowTest {
 
     @Test
     fun testStationAccessibility() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val accessibleStop =
             objects.stop {
@@ -318,7 +314,7 @@ class TripStopRowTest {
 
     @Test
     fun testAlertCard() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()

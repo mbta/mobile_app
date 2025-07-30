@@ -16,13 +16,13 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsUnfilteredView(
     stopId: String,
-    now: Instant,
+    now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
     isPinned: (String) -> Boolean,
     togglePinnedRoute: (String) -> Unit,

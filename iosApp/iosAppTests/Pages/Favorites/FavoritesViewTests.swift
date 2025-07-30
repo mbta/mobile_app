@@ -15,7 +15,7 @@ import XCTest
 
 final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsFavorites() {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
             route.longName = "Some Route"
@@ -27,7 +27,7 @@ final class FavoritesViewTests: XCTestCase {
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePattern)
             prediction.stopId = stop.id
-            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 5)
         })
         let globalData = GlobalResponse(objects: objects)
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
@@ -53,7 +53,7 @@ final class FavoritesViewTests: XCTestCase {
                     )],
                     globalData: globalData
                 )],
-                at: now.toKotlinInstant()
+                at: now
             )],
             staticRouteCardData: [.init(
                 lineOrRoute: .route(route),
@@ -75,7 +75,7 @@ final class FavoritesViewTests: XCTestCase {
                     )],
                     globalData: globalData
                 )],
-                at: now.toKotlinInstant()
+                at: now
             )]
         ))
 
@@ -95,7 +95,7 @@ final class FavoritesViewTests: XCTestCase {
     }
 
     @MainActor func testEditButtonWhenHasFavorites() {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
             route.longName = "Some Route"
@@ -107,7 +107,7 @@ final class FavoritesViewTests: XCTestCase {
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePattern)
             prediction.stopId = stop.id
-            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 5)
         })
         let globalData = GlobalResponse(objects: objects)
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
@@ -133,7 +133,7 @@ final class FavoritesViewTests: XCTestCase {
                     )],
                     globalData: globalData
                 )],
-                at: now.toKotlinInstant()
+                at: now
             )],
             staticRouteCardData: [.init(
                 lineOrRoute: .route(route),
@@ -155,7 +155,7 @@ final class FavoritesViewTests: XCTestCase {
                     )],
                     globalData: globalData
                 )],
-                at: now.toKotlinInstant()
+                at: now
             )]
         ))
 
@@ -311,7 +311,7 @@ final class FavoritesViewTests: XCTestCase {
 
     @MainActor func testSetsNow() throws {
         let setFirstExp = expectation(description: "sets a time")
-        var firstTime: KotlinInstant?
+        var firstTime: EasternTimeInstant?
         let setSecondExp = expectation(description: "sets a different time later")
         setSecondExp.assertForOverFulfill = false
         let favoritesVM = MockFavoritesViewModel()

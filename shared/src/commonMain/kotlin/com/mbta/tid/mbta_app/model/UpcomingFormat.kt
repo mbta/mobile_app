@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 sealed class UpcomingFormat {
     sealed class NoTripsFormat {
@@ -20,7 +20,7 @@ sealed class UpcomingFormat {
             fun fromUpcomingTrips(
                 upcomingTrips: List<UpcomingTrip>,
                 hasSchedulesToday: Boolean,
-                now: Instant,
+                now: EasternTimeInstant,
             ): NoTripsFormat {
                 val hasUpcomingTrips =
                     upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
@@ -72,7 +72,7 @@ sealed class UpcomingFormat {
             constructor(
                 trip: UpcomingTrip,
                 routeType: RouteType,
-                now: Instant,
+                now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
             ) : this(trip, routeType, trip.display(now, routeType, context))
         }

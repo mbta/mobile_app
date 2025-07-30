@@ -107,7 +107,7 @@ struct DepartureTile: View {
                         trip: upcomingTrip,
                         routeType: .commuterRail,
                         format: .TimeWithStatus(
-                            predictionTime: Date.now.toKotlinInstant(),
+                            predictionTime: EasternTimeInstant.now(),
                             status: "Delay",
                             headline: true
                         )

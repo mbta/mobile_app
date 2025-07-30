@@ -18,9 +18,9 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -153,7 +153,7 @@ class SubscribeToPredictionsTest {
         val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
         val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
 
-        predictionsRepo.lastUpdated = Clock.System.now()
+        predictionsRepo.lastUpdated = EasternTimeInstant.now()
 
         var stopIds = mutableStateOf(listOf("place-a"))
 

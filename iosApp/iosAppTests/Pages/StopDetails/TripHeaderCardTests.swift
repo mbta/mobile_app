@@ -18,7 +18,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testDisplaysStopName() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
         let trip = objects.trip { _ in }
@@ -39,7 +39,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testDisplaysStatusDescription() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let trip = objects.trip { _ in }
@@ -88,7 +88,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testDifferentTrip() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
         let trip = objects.trip { _ in }
@@ -106,7 +106,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testNoVehicle() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
         let trip = objects.trip { _ in }
@@ -124,7 +124,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testAtTarget() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let trip = objects.trip { _ in }
@@ -158,7 +158,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testAtTerminal() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let trip = objects.trip { _ in }
@@ -170,7 +170,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.currentStopSequence = 0
         }
         let prediction = objects.prediction { prediction in
-            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 5)
         }
 
         let sut = TripHeaderCard(
@@ -197,7 +197,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testTrackNumber() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.id = "place-rugg" }
         let platformStop = objects.stop { platformStop in
@@ -214,7 +214,7 @@ final class TripHeaderCardTests: XCTestCase {
             vehicle.currentStopSequence = 0
         }
         let prediction = objects.prediction { prediction in
-            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 5)
             prediction.stopId = platformStop.id
         }
         let route = objects.route { route in route.type = .commuterRail }
@@ -242,13 +242,13 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testScheduled() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
         let trip = objects.trip { _ in }
 
         let schedule = objects.schedule { schedule in
-            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 5)
         }
 
         let sut = TripHeaderCard(
@@ -276,13 +276,13 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testScheduledTap() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let trip = objects.trip { _ in }
 
         let schedule = objects.schedule { schedule in
-            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 5)
         }
 
         let tapExpectation = expectation(description: "card tapped")
@@ -311,7 +311,7 @@ final class TripHeaderCardTests: XCTestCase {
     }
 
     func testAccessibility() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "stop" }
         let trip = objects.trip { _ in }
@@ -373,7 +373,7 @@ final class TripHeaderCardTests: XCTestCase {
         ))
 
         let schedule = objects.schedule { schedule in
-            schedule.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 5)
         }
         let withScheduleAtStop = TripHeaderCard(
             spec: .scheduled(stop, .init(
@@ -434,7 +434,7 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(boardingVehicle, coreCRStop, .init(
                 stop: stop, stopSequence: 0, disruption: nil, schedule: nil,
                 prediction: objects.prediction { prediction in
-                    prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+                    prediction.departureTime = now.plus(minutes: 5)
                     prediction.stopId = platformStop.id
                 }, predictionStop: platformStop, vehicle: boardingVehicle, routes: [], elevatorAlerts: []
             ), false),

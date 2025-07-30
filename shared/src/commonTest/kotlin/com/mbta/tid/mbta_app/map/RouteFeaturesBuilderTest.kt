@@ -13,13 +13,13 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
 import io.github.dellisd.spatialk.geojson.LineString
 import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
 import io.github.dellisd.spatialk.turf.lineSlice
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 
@@ -92,7 +92,7 @@ class RouteFeaturesBuilderTest {
 
     @Test
     fun `splits for alerts`() = runBlocking {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
 
@@ -189,7 +189,7 @@ class RouteFeaturesBuilderTest {
 
     @Test
     fun `transforms shapes with stops`() {
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
 

@@ -31,7 +31,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.koin.compose.koinInject
 
 @Composable
@@ -44,7 +44,7 @@ fun TripDetailsView(
     onOpenAlertDetails: (Alert) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
-    now: Instant,
+    now: EasternTimeInstant,
     analytics: Analytics = koinInject(),
     modifier: Modifier = Modifier,
 ) {
@@ -165,7 +165,7 @@ private fun TripDetailsView(
     stopId: String,
     stops: TripDetailsStopList,
     tripFilter: TripDetailsFilter?,
-    now: Instant,
+    now: EasternTimeInstant,
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
     modifier: Modifier = Modifier,

@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
@@ -28,7 +28,7 @@ interface IPredictionsRepository {
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
 
-    var lastUpdated: Instant?
+    var lastUpdated: EasternTimeInstant?
 
     fun shouldForgetPredictions(predictionCount: Int): Boolean
 
@@ -40,11 +40,11 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
 
     var channel: PhoenixChannel? = null
 
-    override var lastUpdated: Instant? = null
+    override var lastUpdated: EasternTimeInstant? = null
 
     override fun shouldForgetPredictions(predictionCount: Int) =
-        (Clock.System.now() - (lastUpdated ?: Instant.DISTANT_FUTURE)) > 10.minutes &&
-            predictionCount > 0
+        (EasternTimeInstant.now() - (lastUpdated ?: EasternTimeInstant(Instant.DISTANT_FUTURE))) >
+            10.minutes && predictionCount > 0
 
     override fun connect(
         stopIds: List<String>,
@@ -116,7 +116,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     return
                 }
             println("Received ${newPredictions.predictions.size} predictions")
-            lastUpdated = Clock.System.now()
+            lastUpdated = EasternTimeInstant.now()
             onReceive(ApiResult.Ok(newPredictions))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -141,7 +141,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
             println(
                 "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions on join"
             )
-            lastUpdated = Clock.System.now()
+            lastUpdated = EasternTimeInstant.now()
             onJoin(ApiResult.Ok(newPredictionsByStop))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -168,7 +168,7 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
                     onMessage(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
                 }
-            lastUpdated = Clock.System.now()
+            lastUpdated = EasternTimeInstant.now()
             onMessage(ApiResult.Ok(newPredictionsForStop))
         } else {
             println("No jsonPayload found for message ${message.body}")
@@ -235,7 +235,7 @@ constructor(
         onMessage?.invoke(ApiResult.Ok(message))
     }
 
-    override var lastUpdated: Instant? = null
+    override var lastUpdated: EasternTimeInstant? = null
 
     override fun shouldForgetPredictions(predictionCount: Int) = false
 

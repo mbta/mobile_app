@@ -29,7 +29,7 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.trip = trip
             schedule.routeId = route.id
             schedule.stopId = stop.id
-            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
         let routePattern = objects.routePattern(route: route) { _ in }
 
@@ -237,7 +237,7 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.routeId = route.id
             schedule.stopId = stop.id
             schedule.stopSequence = 0
-            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
@@ -280,9 +280,15 @@ final class StopDetailsPageTests: XCTestCase {
 
         var nowLater: Date?
 
+        // unfortunately, round tripping Swift Dates to EasternTimeInstants can drift by a millisecond or so
+        func roundDate(_ date: Date?) -> Date? {
+            guard let date else { return nil }
+            return Date(timeIntervalSince1970: round(date.timeIntervalSince1970))
+        }
+
         let onChangeCalledExp = sut.inspection.inspect(after: 1) { view in
             nowLater = Date.now
-            XCTAssertLessThan(nearbyVM.routeCardData!.first!.at.toNSDate(), nowLater!)
+            XCTAssertLessThan(nearbyVM.routeCardData!.first!.at.toNSDateLosingTimeZone(), nowLater!)
             XCTAssertEqual(nearbyVM.routeCardData, try view.actualView().internalRouteCardData)
 
             try view.findAndCallOnChange(newValue: RouteCardParams(
@@ -298,8 +304,11 @@ final class StopDetailsPageTests: XCTestCase {
         }
 
         let routeCardDataSetExp = sut.inspection.inspect(onReceive: updatePublisher, after: 1) { view in
-            XCTAssertEqual(nowLater!.toKotlinInstant(), nearbyVM.routeCardData?.first?.at)
-            XCTAssertEqual(nowLater!.toKotlinInstant(), try view.actualView().internalRouteCardData?.first?.at)
+            XCTAssertEqual(roundDate(nowLater!), roundDate(nearbyVM.routeCardData?.first?.at.toNSDateLosingTimeZone()))
+            XCTAssertEqual(
+                roundDate(nowLater!),
+                try roundDate(view.actualView().internalRouteCardData?.first?.at.toNSDateLosingTimeZone())
+            )
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         await fulfillment(of: [onChangeCalledExp, routeCardDataSetExp], timeout: 3)
@@ -327,7 +336,7 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.routeId = route.id
             schedule.stopId = stop.id
             schedule.stopSequence = 0
-            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
@@ -398,10 +407,10 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.routeId = route.id
             schedule.stopId = stop.id
             schedule.stopSequence = 0
-            schedule.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+            schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
         objects.prediction(schedule: schedule) { prediction in
-            prediction.departureTime = (Date.now + 10 * 60).toKotlinInstant()
+            prediction.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)

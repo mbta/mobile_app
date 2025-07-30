@@ -140,7 +140,7 @@ struct NearbyTransitView: View {
                             RouteCard(
                                 cardData: cardData,
                                 global: global,
-                                now: now,
+                                now: now.toEasternInstant(),
                                 onPin: { id in toggledPinnedRoute(id) },
                                 pinned: pinnedRoutes.contains(cardData.lineOrRoute.id),
                                 pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
@@ -167,7 +167,7 @@ struct NearbyTransitView: View {
                     RouteCard(
                         cardData: LoadingPlaceholders.shared.nearbyRoute(),
                         global: globalData,
-                        now: now,
+                        now: now.toEasternInstant(),
                         onPin: { _ in },
                         pinned: false,
                         pushNavEntry: { _ in },

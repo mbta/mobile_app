@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.uuid
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
@@ -97,10 +97,10 @@ private constructor(
         var header: String? = null
         var lifecycle = Alert.Lifecycle.New
         var severity = 0
-        var updatedAt = Instant.fromEpochMilliseconds(0)
+        var updatedAt = EasternTimeInstant(Instant.fromEpochMilliseconds(0))
         var facilities: Map<String, Facility>? = null
 
-        fun activePeriod(start: Instant, end: Instant?) {
+        fun activePeriod(start: EasternTimeInstant, end: EasternTimeInstant?) {
             activePeriod.add(Alert.ActivePeriod(start, end))
         }
 
@@ -181,8 +181,8 @@ private constructor(
 
     inner class PredictionBuilder : ObjectBuilder<Prediction> {
         var id = uuid()
-        var arrivalTime: Instant? = null
-        var departureTime: Instant? = null
+        var arrivalTime: EasternTimeInstant? = null
+        var departureTime: EasternTimeInstant? = null
         var directionId = 0
         var revenue = true
         var scheduleRelationship = Prediction.ScheduleRelationship.Scheduled
@@ -307,8 +307,8 @@ private constructor(
 
     inner class ScheduleBuilder : ObjectBuilder<Schedule> {
         var id = uuid()
-        var arrivalTime: Instant? = null
-        var departureTime: Instant? = null
+        var arrivalTime: EasternTimeInstant? = null
+        var departureTime: EasternTimeInstant? = null
         var stopHeadsign: String? = null
         var stopSequence = 0
         var routeId = ""
@@ -451,7 +451,7 @@ private constructor(
         var directionId = 0
         var latitude = 1.2
         var longitude = 3.4
-        var updatedAt = Clock.System.now() - 10.seconds
+        var updatedAt = EasternTimeInstant.now() - 10.seconds
         var routeId: String? = null
         var stopId: String? = null
         var tripId = ""

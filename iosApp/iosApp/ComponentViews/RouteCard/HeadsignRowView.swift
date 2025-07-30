@@ -37,17 +37,17 @@ struct HeadsignRowView: View {
 struct HeadsignRowView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .trailing) {
-            let now = Date.now
+            let now = EasternTimeInstant.now()
             let objects = ObjectCollectionBuilder()
             let trip1 = objects.trip { _ in }
             let prediction1 = objects.prediction { prediction in
                 prediction.trip = trip1
-                prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+                prediction.departureTime = now.plus(minutes: 5)
             }
             let trip2 = objects.trip { _ in }
             let prediction2 = objects.prediction { prediction in
                 prediction.trip = trip2
-                prediction.departureTime = now.addingTimeInterval(12 * 60).toKotlinInstant()
+                prediction.departureTime = now.plus(minutes: 12)
             }
             let secondaryAlert = UpcomingFormat.SecondaryAlert(
                 iconName: "alert-large-bus-issue"
@@ -71,12 +71,12 @@ struct HeadsignRowView_Previews: PreviewProvider {
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
-                            now: now.toKotlinInstant(), context: .nearbyTransit
+                            now: now, context: .nearbyTransit
                         ),
                         .init(
                             trip: .init(trip: trip2, prediction: prediction2),
                             routeType: .heavyRail,
-                            now: now.toKotlinInstant(), context: .nearbyTransit
+                            now: now, context: .nearbyTransit
                         ),
                     ], secondaryAlert: nil)
                 )
@@ -86,12 +86,12 @@ struct HeadsignRowView_Previews: PreviewProvider {
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
-                            now: now.toKotlinInstant(), context: .nearbyTransit
+                            now: now, context: .nearbyTransit
                         ),
                         .init(
                             trip: .init(trip: trip2, prediction: prediction2),
                             routeType: .heavyRail,
-                            now: now.toKotlinInstant(), context: .nearbyTransit
+                            now: now, context: .nearbyTransit
                         ),
                     ], secondaryAlert: secondaryAlert)
                 )

@@ -44,7 +44,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun StopDetailsFilteredPickerView(
@@ -54,7 +54,7 @@ fun StopDetailsFilteredPickerView(
     routeStopData: RouteCardData.RouteStopData,
     allAlerts: AlertsStreamDataResponse?,
     global: GlobalResponse?,
-    now: Instant,
+    now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,

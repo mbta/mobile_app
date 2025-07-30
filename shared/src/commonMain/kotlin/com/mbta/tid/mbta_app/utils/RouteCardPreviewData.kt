@@ -10,21 +10,12 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
-import kotlinx.datetime.toInstant
-import kotlinx.datetime.toLocalDateTime
 
 open class RouteCardPreviewData {
-    private fun LocalDateTime.toInstant(): Instant = toInstant(TimeZone.currentSystemDefault())
-
-    private val today: LocalDate =
-        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    private val today: LocalDate = EasternTimeInstant.now().local.date
     private val objects = TestData.clone()
     private val greenLine = objects.getLine("line-Green")
     private val slWaterfront = objects.getLine("line-SLWaterfront")
@@ -73,7 +64,7 @@ open class RouteCardPreviewData {
     private val suspensionAlert = objects.alert { effect = Alert.Effect.Suspension }
     private val context = RouteCardData.Context.NearbyTransit
 
-    val now: Instant = today.atTime(11, 30).toInstant()
+    val now = EasternTimeInstant(today.atTime(11, 30))
     val global = GlobalResponse(objects)
 
     private fun cardStop(
@@ -606,7 +597,7 @@ open class RouteCardPreviewData {
                                     representativeTrip { headsign = "Stoughton" }
                                 }
                             )
-                        departureTime = today.atTime(12, 5).toInstant()
+                        departureTime = EasternTimeInstant(today.atTime(12, 5))
                     }
                 ),
                 objects.upcomingTrip(
@@ -619,7 +610,7 @@ open class RouteCardPreviewData {
                                     representativeTrip { headsign = "Providence" }
                                 }
                             )
-                        departureTime = today.atTime(15, 28).toInstant()
+                        departureTime = EasternTimeInstant(today.atTime(15, 28))
                     }
                 ),
                 objects.upcomingTrip(
@@ -632,7 +623,7 @@ open class RouteCardPreviewData {
                                     representativeTrip { headsign = "Wickford Junction" }
                                 }
                             )
-                        departureTime = today.atTime(16, 1).toInstant()
+                        departureTime = EasternTimeInstant(today.atTime(16, 1))
                     }
                 ),
                 objects.upcomingTrip(
@@ -645,7 +636,7 @@ open class RouteCardPreviewData {
                                     representativeTrip { headsign = "South Station" }
                                 }
                             )
-                        departureTime = today.atTime(15, 31).toInstant()
+                        departureTime = EasternTimeInstant(today.atTime(15, 31))
                     }
                 ),
                 objects.upcomingTrip(
@@ -658,7 +649,7 @@ open class RouteCardPreviewData {
                                     representativeTrip { headsign = "South Station" }
                                 }
                             )
-                        departureTime = today.atTime(15, 53).toInstant()
+                        departureTime = EasternTimeInstant(today.atTime(15, 53))
                     }
                 ),
             ),

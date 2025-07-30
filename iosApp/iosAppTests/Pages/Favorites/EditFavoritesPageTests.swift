@@ -63,7 +63,7 @@ final class EditFavoritesPageTests: XCTestCase {
                                                     alertsDownstream: [],
                                                     context: .favorites)],
                                        globalData: globalData)],
-                      at: Date.now.toKotlinInstant()),
+                      at: EasternTimeInstant.now()),
                 .init(lineOrRoute: .route(route67),
                       stopData: [.init(route: route67,
                                        stop: stop67,
@@ -79,7 +79,7 @@ final class EditFavoritesPageTests: XCTestCase {
                                                     alertsDownstream: [],
                                                     context: .favorites)],
                                        globalData: globalData)],
-                      at: Date.now.toKotlinInstant()),
+                      at: EasternTimeInstant.now()),
             ]
         ))
 

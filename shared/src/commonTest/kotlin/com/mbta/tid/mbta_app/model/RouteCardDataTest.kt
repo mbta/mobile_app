@@ -5,14 +5,14 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Month
 
 class RouteCardDataTest {
 
@@ -42,7 +42,7 @@ class RouteCardDataTest {
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             assertEquals(
@@ -115,7 +115,7 @@ class RouteCardDataTest {
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             assertEquals(
@@ -204,7 +204,7 @@ class RouteCardDataTest {
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
         assertEquals(
@@ -319,7 +319,7 @@ class RouteCardDataTest {
                     RouteStopDirection(route1.id, stop3.id, 0),
                     RouteStopDirection(route2.id, stop1.id, 1),
                 )
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
@@ -455,7 +455,7 @@ class RouteCardDataTest {
                     RouteStopDirection(route1.id, stop3.id, 0),
                     RouteStopDirection(route2.id, stop1.id, 1),
                 )
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
@@ -571,7 +571,7 @@ class RouteCardDataTest {
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
             val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
@@ -683,7 +683,7 @@ class RouteCardDataTest {
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
         assertEquals(
@@ -772,7 +772,7 @@ class RouteCardDataTest {
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
         assertEquals(
@@ -858,7 +858,7 @@ class RouteCardDataTest {
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val westDir = Direction("West", "Boston College", 0)
             val eastDir = Direction("East", "Government Center", 1)
@@ -992,7 +992,7 @@ class RouteCardDataTest {
             )
         val nearby = NearbyResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(bRoute, cRoute, dRoute))
         assertEquals(
@@ -1206,7 +1206,7 @@ class RouteCardDataTest {
 
             val global = GlobalResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val now = Clock.System.now()
+            val now = EasternTimeInstant.now()
 
             val westDir = Direction("West", "Copley & West", 0)
             val northDir = Direction("East", "North Station & North", 1)
@@ -1302,7 +1302,7 @@ class RouteCardDataTest {
                         ),
                 )
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-21T09:30:08-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
 
             // should be sorted before the pattern 1 prediction under Harvard
             val stop1Pattern2Prediction =
@@ -1454,7 +1454,7 @@ class RouteCardDataTest {
                     ),
             )
         val context = RouteCardData.Context.NearbyTransit
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val futureSchedule =
             objects.schedule {
@@ -1589,7 +1589,7 @@ class RouteCardDataTest {
                     ),
             )
 
-        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
         val context = RouteCardData.Context.NearbyTransit
 
         val subwayLineOrRoute = RouteCardData.LineOrRoute.Route(subwayRoute)
@@ -1700,7 +1700,7 @@ class RouteCardDataTest {
                 )
             val nearby = NearbyResponse(objects)
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val subwayLineOrRoute1 = RouteCardData.LineOrRoute.Route(subwayRoute1)
             val subwayLineOrRoute2 = RouteCardData.LineOrRoute.Route(subwayRoute2)
@@ -1826,7 +1826,7 @@ class RouteCardDataTest {
         val farBusPattern =
             objects.routePattern(farBusRoute) { representativeTrip { headsign = "Malden Center" } }
 
-        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
 
         // close subway prediction
         objects.prediction {
@@ -1942,7 +1942,7 @@ class RouteCardDataTest {
                 representativeTrip { headsign = "Malden Center" }
             }
 
-        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
 
         // close subway prediction
         objects.prediction {
@@ -2129,7 +2129,7 @@ class RouteCardDataTest {
                 typicality = RoutePattern.Typicality.Typical
             }
 
-        val time = Instant.parse("2024-02-21T09:30:08-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
         objects.prediction {
             arrivalTime = time
             departureTime = time
@@ -2310,7 +2310,7 @@ class RouteCardDataTest {
                     typicality = RoutePattern.Typicality.Typical
                 }
 
-            val time = Instant.parse("2024-02-21T09:30:08-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
 
             objects.prediction {
                 arrivalTime = time.plus(10.minutes)
@@ -2457,7 +2457,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPrediction =
                 objects.prediction {
@@ -2562,7 +2562,7 @@ class RouteCardDataTest {
                         mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPrediction =
                 objects.prediction {
@@ -2694,7 +2694,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPredictionStop1 =
                 objects.prediction {
@@ -2799,7 +2799,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPredictionStop1 =
                 objects.prediction {
@@ -2951,7 +2951,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val trip1 = makeTypicalTrip("trip1")
             val trip2 = makeTypicalTrip("trip2")
@@ -3108,7 +3108,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val deviationOutboundPredictionStop1 =
                 objects.prediction {
@@ -3266,7 +3266,7 @@ class RouteCardDataTest {
                 )
 
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-09-19T13:43:19-04:00")
+            val time = EasternTimeInstant(2024, Month.SEPTEMBER, 19, 13, 43, 19)
 
             val schedulePastSchedule =
                 objects.schedule {
@@ -3448,7 +3448,7 @@ class RouteCardDataTest {
             )
 
         val context = RouteCardData.Context.NearbyTransit
-        val time = Instant.parse("2024-02-22T12:08:19-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
         val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
         assertEquals(
@@ -3529,7 +3529,7 @@ class RouteCardDataTest {
                         mapOf(stop1.id to listOf(typicalOutbound.id, deviationInbound.id)),
                 )
             val context = RouteCardData.Context.StopDetailsFiltered
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundPrediction =
                 objects.prediction {
@@ -3633,7 +3633,7 @@ class RouteCardDataTest {
                     patternIdsByStop = mapOf(stop1.id to listOf(typicalOutbound.id)),
                 )
             val context = RouteCardData.Context.StopDetailsFiltered
-            val time = Instant.parse("2024-02-22T12:08:19-05:00")
+            val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
             val typicalOutboundSchedule =
                 objects.schedule {
@@ -3719,7 +3719,7 @@ class RouteCardDataTest {
         val global =
             GlobalResponse(objects, patternIdsByStop = mapOf(childStop.id to listOf(pattern1.id)))
         val context = RouteCardData.Context.NearbyTransit
-        val time = Instant.parse("2024-02-26T10:45:38-05:00")
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 26, 10, 45, 38)
 
         val prediction1 =
             objects.prediction {
@@ -3786,7 +3786,7 @@ class RouteCardDataTest {
         val global =
             GlobalResponse(objects, patternIdsByStop = mapOf(stop.id to listOf(routePattern.id)))
         val context = RouteCardData.Context.NearbyTransit
-        val time = Instant.parse("2024-03-14T12:23:44-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
         val sched1 =
             objects.schedule {
@@ -3893,7 +3893,7 @@ class RouteCardDataTest {
                 }
             val trip1 = objects.trip(routePatternA)
 
-            val time = Instant.parse("2024-03-14T12:23:44-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
             objects.schedule {
                 trip = trip1
@@ -3977,7 +3977,7 @@ class RouteCardDataTest {
                     patternIdsByStop = mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)),
                 )
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-03-18T10:41:13-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
             val sched1 =
                 objects.schedule {
@@ -4218,7 +4218,7 @@ class RouteCardDataTest {
         val tripE1 = objects.trip(routePatternE1)
         val tripE2 = objects.trip(routePatternE2)
 
-        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
         val schedB1 =
             objects.schedule {
@@ -4436,7 +4436,7 @@ class RouteCardDataTest {
             val tripB1 = objects.trip(routePatternB1)
             val tripB2 = objects.trip(routePatternB2)
 
-            val time = Instant.parse("2024-03-18T10:41:13-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
             val schedB1 =
                 objects.schedule {
@@ -4556,7 +4556,7 @@ class RouteCardDataTest {
                 objects.routePattern(route1) { representativeTrip { headsign = "A" } }
             val trip1 = objects.trip(routePattern1)
 
-            val time = Instant.parse("2024-03-18T10:41:13-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
             val sched1 =
                 objects.schedule {
@@ -4750,7 +4750,7 @@ class RouteCardDataTest {
 
         val orangeSouthboundDiversionTrip = objects.trip(orangeSouthboundDiversion)
 
-        val time = Instant.parse("2024-10-30T16:40:00-04:00")
+        val time = EasternTimeInstant(2024, Month.OCTOBER, 30, 16, 40)
 
         // Scheduled northbound arrivals with North station as last stop
         val northboundSchedule =
@@ -4785,8 +4785,8 @@ class RouteCardDataTest {
             objects.alert {
                 id = "601685"
                 activePeriod(
-                    Instant.parse("2024-10-28T03:00:00-04:00"),
-                    Instant.parse("2024-11-02T03:00:00-04:00"),
+                    EasternTimeInstant(2024, Month.OCTOBER, 28, 3, 0),
+                    EasternTimeInstant(2024, Month.NOVEMBER, 2, 3, 0),
                 )
                 cause = Alert.Cause.Maintenance
                 effect = Alert.Effect.Shuttle
@@ -4985,7 +4985,7 @@ class RouteCardDataTest {
                         ),
                 )
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-10-30T16:40:00-04:00")
+            val time = EasternTimeInstant(2024, Month.OCTOBER, 30, 16, 40)
 
             val orangeNorthboundTypicalTrip = objects.trip(orangeNorthboundTypical)
             val orangeSouthboundTypicalTrip = objects.trip(orangeSouthboundTypical)
@@ -5107,7 +5107,7 @@ class RouteCardDataTest {
                         ),
                 )
             val context = RouteCardData.Context.NearbyTransit
-            val time = Instant.parse("2024-10-30T16:40:00-04:00")
+            val time = EasternTimeInstant(2024, Month.OCTOBER, 30, 16, 40)
 
             val ferryInboundTrip = objects.trip(ferryInboundToLongWharf)
             val ferryOutboundTrip = objects.trip(ferryOutboundToHingham)
@@ -5208,7 +5208,7 @@ class RouteCardDataTest {
                     }
                 }
 
-            val time = Clock.System.now()
+            val time = EasternTimeInstant.now()
 
             val tripBraintree = objects.trip(routePatternBraintree)
             val scheduleBraintree =
@@ -5371,7 +5371,7 @@ class RouteCardDataTest {
                     }
                 }
 
-            val time = Clock.System.now()
+            val time = EasternTimeInstant.now()
 
             val tripPvd = objects.trip(routePatternPvd)
             val schedulePvd =

@@ -42,7 +42,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let sut = RouteCardDepartures(
             stopData: stopData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: EasternTimeInstant.now(),
             pinned: false,
             pushNavEntry: { _ in }
         )
@@ -54,6 +54,7 @@ final class RouteCardDeparturesTests: XCTestCase {
     func testShowsNoPredictions() throws {
         let objects = ObjectCollectionBuilder()
 
+        let now = EasternTimeInstant.now()
         let route = objects.route { route in
             route.longName = "Orange Line"
             route.type = .heavyRail
@@ -66,7 +67,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         }
         let trip = objects.trip(routePattern: pattern)
         let schedule = objects.schedule { schedule in
-            schedule.departureTime = Date.now.addingTimeInterval(10 * 60).toKotlinInstant()
+            schedule.departureTime = now.plus(minutes: 10)
         }
 
         let stopData = RouteCardData.RouteStopData(
@@ -85,7 +86,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let sut = RouteCardDepartures(
             stopData: stopData,
             global: .init(objects: objects),
-            now: Date.now,
+            now: now,
             pinned: false,
             pushNavEntry: { _ in }
         )
@@ -97,7 +98,7 @@ final class RouteCardDeparturesTests: XCTestCase {
 
     func testShowsBranchingHeadsigns() throws {
         typealias Green = GreenLineTestHelper.Companion
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = Green.shared.objects
 
         let stop = objects.stop { _ in }
@@ -107,30 +108,30 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripB0 = objects.trip(routePattern: Green.shared.rpB0)
         let schedB0 = objects.schedule { schedule in
-            schedule.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            schedule.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
+            schedule.arrivalTime = now.plus(minutes: 1).plus(seconds: 1)
+            schedule.departureTime = now.plus(minutes: 2)
             schedule.stopId = Green.shared.stopWestbound.id
             schedule.trip = tripB0
         }
 
         let tripB1 = objects.trip(routePattern: Green.shared.rpB1)
         let schedB1 = objects.schedule { schedule in
-            schedule.arrivalTime = now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
-            schedule.departureTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
+            schedule.arrivalTime = now.plus(minutes: 2).plus(seconds: 10)
+            schedule.departureTime = now.plus(minutes: 3)
             schedule.stopId = Green.shared.stopEastbound.id
             schedule.trip = tripB1
         }
 
         let predB0 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(1 * 60 + 1).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(2 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 1).plus(seconds: 1)
+            prediction.departureTime = now.plus(minutes: 2)
             prediction.routeId = Green.shared.routeB.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripB0.id
         }
         let predB1 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(2 * 60 + 10).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 2).plus(seconds: 10)
+            prediction.departureTime = now.plus(minutes: 3)
             prediction.routeId = Green.shared.routeB.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripB1.id
@@ -138,16 +139,16 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripC01 = objects.trip(routePattern: Green.shared.rpC0)
         let predC01 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(3 * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(4 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 3)
+            prediction.departureTime = now.plus(minutes: 4)
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripC01.id
         }
         let tripC02 = objects.trip(routePattern: Green.shared.rpC0)
         let predC02 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(11 * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(15 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 11)
+            prediction.departureTime = now.plus(minutes: 15)
             prediction.status = "Overridden"
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopWestbound.id
@@ -156,8 +157,8 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripC11 = objects.trip(routePattern: Green.shared.rpC1)
         let predC11 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(4 * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 4)
+            prediction.departureTime = now.plus(minutes: 5)
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripC11.id
@@ -165,7 +166,7 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripC12 = objects.trip(routePattern: Green.shared.rpC1)
         let predC12 = objects.prediction { prediction in
-            prediction.departureTime = now.addingTimeInterval(10 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 10)
             prediction.routeId = Green.shared.routeC.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripC12.id
@@ -173,8 +174,8 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripE0 = objects.trip(routePattern: Green.shared.rpE0)
         let predE0 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(5 * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(6 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 5)
+            prediction.departureTime = now.plus(minutes: 6)
             prediction.routeId = Green.shared.routeE.id
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripE0.id
@@ -182,8 +183,8 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let tripE1 = objects.trip(routePattern: Green.shared.rpE1)
         let predE1 = objects.prediction { prediction in
-            prediction.arrivalTime = now.addingTimeInterval(6 * 60).toKotlinInstant()
-            prediction.departureTime = now.addingTimeInterval(7 * 60).toKotlinInstant()
+            prediction.arrivalTime = now.plus(minutes: 6)
+            prediction.departureTime = now.plus(minutes: 7)
             prediction.routeId = Green.shared.routeE.id
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripE1.id
@@ -266,7 +267,7 @@ final class RouteCardDeparturesTests: XCTestCase {
     }
 
     func testSinglePill() throws {
-        let now = Date.now
+        let now = EasternTimeInstant.now()
         let objects = TestData.clone()
 
         let stop = objects.getStop(id: "place-rsmnl")
@@ -276,7 +277,7 @@ final class RouteCardDeparturesTests: XCTestCase {
 
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip(routePattern: routePattern)
-            prediction.departureTime = (now + 5 * 60).toKotlinInstant()
+            prediction.departureTime = now.plus(minutes: 5)
         })
 
         let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])

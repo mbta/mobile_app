@@ -1,21 +1,20 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 import kotlin.random.Random
-import kotlin.time.Clock
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 
 object LoadingPlaceholders {
     fun nearbyRoute() =
-        routeCardData(context = RouteCardData.Context.NearbyTransit, now = Clock.System.now())
+        routeCardData(context = RouteCardData.Context.NearbyTransit, now = EasternTimeInstant.now())
 
     fun routeCardData(
         routeId: String? = null,
         trips: Int = 2,
         context: RouteCardData.Context,
-        now: Instant,
+        now: EasternTimeInstant,
     ): RouteCardData {
         val objects = ObjectCollectionBuilder()
         val route =
@@ -50,7 +49,7 @@ object LoadingPlaceholders {
                 objects.prediction {
                     this.trip = trip
                     stopId = stop.id
-                    departureTime = Clock.System.now() + departsIn
+                    departureTime = EasternTimeInstant.now() + departsIn
                 }
             return UpcomingTrip(trip, prediction = prediction)
         }
@@ -163,7 +162,7 @@ object LoadingPlaceholders {
         (1..5).map {
             routeCardData(
                 context = RouteCardData.Context.StopDetailsUnfiltered,
-                now = Clock.System.now(),
+                now = EasternTimeInstant.now(),
             )
         }
 
@@ -231,7 +230,7 @@ object LoadingPlaceholders {
                             this.trip = trip
                             this.stopId = stop.id
                             this.vehicleId = vehicle.id
-                            departureTime = Clock.System.now() + sequence.minutes
+                            departureTime = EasternTimeInstant.now() + sequence.minutes
                         }
                     TripDetailsStopList.Entry(
                         stop,

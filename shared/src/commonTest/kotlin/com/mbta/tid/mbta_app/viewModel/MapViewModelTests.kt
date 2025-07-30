@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
@@ -217,7 +218,7 @@ class MapViewModelTests : KoinTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 activePeriod =
-                    mutableListOf(Alert.ActivePeriod(Clock.System.now().minus(5.hours), null))
+                    mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
                 informedEntity = informedEntities.toMutableList()
             }
 
@@ -271,7 +272,7 @@ class MapViewModelTests : KoinTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 activePeriod =
-                    mutableListOf(Alert.ActivePeriod(Clock.System.now().minus(5.hours), null))
+                    mutableListOf(Alert.ActivePeriod(EasternTimeInstant.now().minus(5.hours), null))
                 informedEntity = informedEntities.toMutableList()
             }
 

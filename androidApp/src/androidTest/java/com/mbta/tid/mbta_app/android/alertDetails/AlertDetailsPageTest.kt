@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
@@ -52,7 +52,7 @@ class AlertDetailsPageTest {
 
         val route = objects.route { longName = "Orange Line" }
 
-        val now = Clock.System.now()
+        val now = EasternTimeInstant.now()
 
         val alert =
             objects.alert {

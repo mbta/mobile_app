@@ -19,14 +19,14 @@ import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import kotlin.time.Instant
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun ColumnScope.RouteCardList(
     routeCardData: List<RouteCardData>?,
     emptyView: @Composable () -> Unit,
     global: GlobalResponse?,
-    now: Instant,
+    now: EasternTimeInstant,
     isFavorite: (FavoriteBridge) -> Boolean,
     togglePinnedRoute: (String) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,

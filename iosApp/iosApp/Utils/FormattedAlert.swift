@@ -150,8 +150,7 @@ struct FormattedAlert: Equatable {
                                                  the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
                                                  which may or may not include a timeframe fragment. fragment.
                                                  """),
-                       Date(instant: timeframe.time.coerceInServiceDay())
-                           .formatted(Date.FormatStyle().month(.abbreviated).day()))
+                       timeframe.time.coerceInServiceDay().formatted(.init().month(.abbreviated).day()))
             case let .thisWeek(timeframe):
                 String(format: NSLocalizedString("key/alert_summary_timeframe_this_week",
                                                  comment: """
@@ -160,8 +159,9 @@ struct FormattedAlert: Equatable {
                                                  OS. The leading space should be retained, because this will be added \
                                                  in the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
                                                  which may or may not include a timeframe fragment.
-                                                 """), Date(instant: timeframe.time.coerceInServiceDay())
-                        .formatted(Date.FormatStyle().weekday(.wide)))
+                                                 """), timeframe.time.coerceInServiceDay().formatted(
+                        .init().weekday(.wide)
+                    ))
             case let .time(timeframe):
                 String(format:
                     NSLocalizedString("key/alert_summary_timeframe_time",
@@ -171,7 +171,7 @@ struct FormattedAlert: Equatable {
                                       space should be retained, because this will be added in the %3 position of the \
                                       "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
                                       timeframe fragment.
-                                      """), Date(instant: timeframe.time).formatted(date: .omitted, time: .shortened))
+                                      """), timeframe.time.formatted(date: .omitted, time: .shortened))
             }
         } else {
             ""

@@ -18,7 +18,7 @@ struct AlertDetails: View {
     var stop: Stop?
     var affectedStops: [Stop]
     var stopId: String?
-    var now: Date
+    var now: EasternTimeInstant
 
     @ScaledMetric()
     private var iconSize = 16
@@ -73,7 +73,7 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? {
-        alert.currentPeriod(time: now.toKotlinInstant())
+        alert.currentPeriod(time: now)
     }
 
     @ViewBuilder
@@ -202,7 +202,7 @@ struct AlertDetails: View {
 
     @ViewBuilder
     private var alertFooter: some View {
-        let updatedDate = alert.updatedAt.toNSDate()
+        let updatedDate = alert.updatedAt
         let formattedTimestamp = updatedDate.formatted(date: .numeric, time: .shortened)
         VStack(alignment: .leading, spacing: 16) {
             Divider().background(Color.halo)
@@ -242,6 +242,7 @@ struct AlertDetails: View {
 }
 
 #Preview("Suspension") {
+    let now = EasternTimeInstant.now()
     let objects = ObjectCollectionBuilder()
     let route = objects.route { route in
         route.color = "ED8B00"
@@ -253,8 +254,8 @@ struct AlertDetails: View {
         alert.effect = .suspension
         alert.cause = .maintenance
         alert.activePeriod(
-            start: (Date.now - 3 * 24 * 60 * 60).toKotlinInstant(),
-            end: (Date.now + 3 * 24 * 60 * 60).toKotlinInstant()
+            start: now.minus(hours: 3 * 24),
+            end: now.plus(hours: 3 * 24)
         )
         alert.description_ =
             """
@@ -267,18 +268,19 @@ struct AlertDetails: View {
             The Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station \
             during this work.
             """
-        alert.updatedAt = (Date.now - 10 * 60).toKotlinInstant()
+        alert.updatedAt = now.minus(minutes: 10)
     }
     return AlertDetails(
         alert: alert,
         routes: [route],
         affectedStops: [stop],
         stopId: stop.id,
-        now: Date.now
+        now: now
     )
 }
 
 #Preview("Elevator Closure") {
+    let now = EasternTimeInstant.now()
     let objects = ObjectCollectionBuilder()
     let route = objects.route { route in
         route.color = "DA291C"
@@ -293,7 +295,7 @@ struct AlertDetails: View {
             "Elevator 804 (Government Center & North lobby to Tremont Street, Winter Street) unavailable on Thu Feb 6 due to maintenance"
         alert.cause = .maintenance
         alert.activePeriod(
-            start: (Date.now - 3 * 24 * 60 * 60).toKotlinInstant(),
+            start: now.minus(hours: 3 * 24),
             end: nil
         )
         alert.description_ =
@@ -306,7 +308,7 @@ struct AlertDetails: View {
             cross Tremont St to the Boston Common and use Park Street Elevator 978 to access the Green Line Copley \
             and westbound platform.
             """
-        alert.updatedAt = (Date.now - 10 * 60).toKotlinInstant()
+        alert.updatedAt = now.minus(minutes: 10)
     }
     return AlertDetails(
         alert: alert,
@@ -314,6 +316,6 @@ struct AlertDetails: View {
         stop: stop,
         affectedStops: [stop],
         stopId: stop.id,
-        now: Date.now
+        now: now
     )
 }

@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 @Composable
 fun LoadingRouteCard() {
@@ -14,7 +14,7 @@ fun LoadingRouteCard() {
         RouteCard(
             placeholderRouteData,
             null,
-            Clock.System.now(),
+            EasternTimeInstant.now(),
             { false },
             {},
             showStopHeader = true,

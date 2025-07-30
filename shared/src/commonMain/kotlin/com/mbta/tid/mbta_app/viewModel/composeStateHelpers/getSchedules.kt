@@ -9,7 +9,7 @@ import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -27,7 +27,7 @@ private fun fetchSchedules(
         fetchApi(
             errorBannerRepo = errorBannerRepository,
             errorKey = errorKey,
-            getData = { schedulesRepository.getSchedule(stopIds, Clock.System.now()) },
+            getData = { schedulesRepository.getSchedule(stopIds, EasternTimeInstant.now()) },
             onSuccess = onSuccess,
             onRefreshAfterError = {
                 fetchSchedules(

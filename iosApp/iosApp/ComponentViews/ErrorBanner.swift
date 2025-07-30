@@ -84,12 +84,12 @@ struct ErrorBanner: View {
             state: .DataError(messages: Set(), action: {})
         )))
         ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
-            state: .StalePredictions(lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(), action: {})
+            state: .StalePredictions(lastUpdated: EasternTimeInstant.now().minus(minutes: 2), action: {})
         )))
         ErrorBanner(ErrorBannerViewModel(
             errorRepository: MockErrorBannerStateRepository(
                 state: .StalePredictions(
-                    lastUpdated: Date.now.addingTimeInterval(-2 * 60).toKotlinInstant(),
+                    lastUpdated: EasternTimeInstant.now().minus(minutes: 2),
                     action: {}
                 )
             ),

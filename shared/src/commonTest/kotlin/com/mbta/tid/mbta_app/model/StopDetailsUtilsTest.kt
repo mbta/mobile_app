@@ -5,11 +5,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.Month
 
 class StopDetailsUtilsTest {
     @Test
@@ -23,7 +24,7 @@ class StopDetailsUtilsTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip { headsign = "A" }
                 }
-            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
             val routeCardData =
                 RouteCardData.routeCardsForStopList(
@@ -65,7 +66,7 @@ class StopDetailsUtilsTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip { headsign = "B" }
                 }
-            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
             val routeCardData =
                 RouteCardData.routeCardsForStopList(
@@ -104,7 +105,7 @@ class StopDetailsUtilsTest {
                 representativeTrip { headsign = "B" }
             }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
         val vehicle =
@@ -178,7 +179,7 @@ class StopDetailsUtilsTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "B" }
             }
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
@@ -218,7 +219,7 @@ class StopDetailsUtilsTest {
                 typicality = RoutePattern.Typicality.Typical
                 representativeTrip { headsign = "B" }
             }
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
 
         val global =
             GlobalResponse(objects, mapOf(stop.id to listOf(routePattern1.id, routePattern2.id)))
@@ -267,7 +268,7 @@ class StopDetailsUtilsTest {
                 representativeTrip { headsign = "B" }
             }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
         val trip3 = objects.trip(routePattern2)
@@ -355,7 +356,7 @@ class StopDetailsUtilsTest {
                 representativeTrip { headsign = "B" }
             }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip = objects.trip(routePattern)
         val vehicle =
             objects.vehicle {
@@ -423,7 +424,7 @@ class StopDetailsUtilsTest {
                 representativeTrip { headsign = "B" }
             }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip0 = objects.trip(routePattern2)
         val trip1 = objects.trip(routePattern1)
         val trip2 = objects.trip(routePattern2)
@@ -526,7 +527,7 @@ class StopDetailsUtilsTest {
                     representativeTrip { headsign = "B" }
                 }
 
-            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
             val trip0 = objects.trip(routePattern2)
             val trip1 = objects.trip(routePattern1)
             val trip2 = objects.trip(routePattern2)
@@ -626,7 +627,7 @@ class StopDetailsUtilsTest {
                 representativeTrip { headsign = "A" }
             }
 
-        val time = Instant.parse("2024-03-19T14:16:17-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
         val trip1 = objects.trip(routePattern)
         val trip2 = objects.trip(routePattern)
         val trip3 = objects.trip(routePattern)
@@ -715,7 +716,7 @@ class StopDetailsUtilsTest {
                     representativeTrip { headsign = "A" }
                 }
 
-            val time = Instant.parse("2024-03-19T14:16:17-04:00")
+            val time = EasternTimeInstant(2024, Month.MARCH, 19, 14, 16, 17)
             val trip1 = objects.trip(routePattern)
             val trip2 = objects.trip(routePattern)
             val trip3 = objects.trip(routePattern)
@@ -842,7 +843,7 @@ class StopDetailsUtilsTest {
             }
         val tripE = objects.trip(routePatternE)
 
-        val time = Instant.parse("2024-03-18T10:41:13-04:00")
+        val time = EasternTimeInstant(2024, Month.MARCH, 18, 10, 41, 13)
 
         val schedB =
             objects.schedule {

@@ -4,10 +4,10 @@ import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.time.Instant
-import kotlinx.serialization.encodeToString
+import kotlinx.datetime.Month
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.addJsonObject
@@ -70,7 +70,10 @@ class AlertsChannelTest {
                         Alert(
                             "501047",
                             listOf(
-                                Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                                Alert.ActivePeriod(
+                                    EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
+                                    null,
+                                )
                             ),
                             Alert.Cause.Parade,
                             "Description",
@@ -94,7 +97,7 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            Instant.parse("2023-05-26T16:46:13-04:00"),
+                            EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
                 )
             ),
@@ -147,7 +150,10 @@ class AlertsChannelTest {
                         Alert(
                             "501047",
                             listOf(
-                                Alert.ActivePeriod(Instant.parse("2023-05-26T16:46:13-04:00"), null)
+                                Alert.ActivePeriod(
+                                    EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
+                                    null,
+                                )
                             ),
                             Alert.Cause.UnknownCause,
                             "Description",
@@ -165,7 +171,7 @@ class AlertsChannelTest {
                             ),
                             Alert.Lifecycle.Ongoing,
                             10,
-                            Instant.parse("2023-05-26T16:46:13-04:00"),
+                            EasternTimeInstant(2023, Month.MAY, 26, 16, 46, 13),
                         )
                 )
             ),

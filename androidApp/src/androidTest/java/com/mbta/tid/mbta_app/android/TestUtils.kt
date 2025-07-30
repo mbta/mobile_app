@@ -8,6 +8,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.captureToImage
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
@@ -43,10 +44,22 @@ fun hasTextMatching(regex: Regex): SemanticsMatcher {
     }
 }
 
+fun hasContentDescriptionMatching(regex: Regex): SemanticsMatcher {
+    val propertyName = SemanticsProperties.ContentDescription.name
+    return SemanticsMatcher("$propertyName matches $regex") {
+        it.config.getOrNull(SemanticsProperties.ContentDescription)?.any { item ->
+            item.matches(regex)
+        } ?: false
+    }
+}
+
 fun hasRole(role: Role) =
     SemanticsMatcher("has role $role") { node ->
         node.config.getOrNull(SemanticsProperties.Role) == role
     }
+
+fun SemanticsNodeInteraction.assertContentDescriptionMatches(regex: Regex) =
+    assert(hasContentDescriptionMatching(regex))
 
 @OptIn(ExperimentalStdlibApi::class)
 private fun colorToHex(color: Color): String {

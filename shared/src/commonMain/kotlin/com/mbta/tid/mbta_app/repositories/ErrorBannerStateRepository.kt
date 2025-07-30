@@ -3,9 +3,8 @@ package com.mbta.tid.mbta_app.repositories
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
-import kotlin.time.Clock
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Instant
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.koin.core.component.KoinComponent
@@ -54,12 +53,15 @@ abstract class IErrorBannerStateRepository(initialState: ErrorBannerState? = nul
     }
 
     open fun checkPredictionsStale(
-        predictionsLastUpdated: Instant,
+        predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         action: () -> Unit,
     ) {
         predictionsStale =
-            if (predictionQuantity > 0 && Clock.System.now() - predictionsLastUpdated > 2.minutes) {
+            if (
+                predictionQuantity > 0 &&
+                    EasternTimeInstant.now() - predictionsLastUpdated > 2.minutes
+            ) {
                 ErrorBannerState.StalePredictions(predictionsLastUpdated, action)
             } else {
                 null
@@ -109,7 +111,7 @@ constructor(
     }
 
     override fun checkPredictionsStale(
-        predictionsLastUpdated: Instant,
+        predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
         action: () -> Unit,
     ) {

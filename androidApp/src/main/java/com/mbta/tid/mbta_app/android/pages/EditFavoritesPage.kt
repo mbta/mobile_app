@@ -50,11 +50,11 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
-import kotlin.time.Clock
 import org.koin.compose.koinInject
 
 @Composable
@@ -164,7 +164,7 @@ private fun FavoriteDepartures(
 ) {
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
-            val formatted = leaf.format(Clock.System.now(), globalData)
+            val formatted = leaf.format(EasternTimeInstant.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
 
             Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
