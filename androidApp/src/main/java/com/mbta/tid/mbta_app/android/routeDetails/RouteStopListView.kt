@@ -118,7 +118,7 @@ fun RouteStopListView(
 
     val stopList =
         rememberSuspend(selectedRouteId, selectedDirection, routeStops, globalData) {
-            RouteDetailsStopList.fromNewPieces(
+            RouteDetailsStopList.fromPieces(
                 selectedRouteId,
                 selectedDirection,
                 routeStops,
@@ -165,7 +165,7 @@ fun LoadingRouteStopListView(
             selectedRouteId = mockRoute.id,
             setRouteId = {},
             routes = listOf(mockRoute.route),
-            stopList = RouteDetailsStopList(0, listOf(), null),
+            stopList = RouteDetailsStopList(0, listOf()),
             context = context,
             globalData = GlobalResponse(objects),
             onClick = {},
@@ -379,17 +379,16 @@ private fun RouteStops(
         horizontalAlignment = Alignment.Start,
         scrollEnabled = !loading,
     ) {
-        val segments = stopList.newSegments.orEmpty()
-        val hasTypicalSegment = segments.any { it.isTypical }
+        val hasTypicalSegment = stopList.segments.any { it.isTypical }
 
-        segments.forEachIndexed { segmentIndex, segment ->
+        stopList.segments.forEachIndexed { segmentIndex, segment ->
             if (segment.isTypical || !hasTypicalSegment) {
                 segment.stops.forEachIndexed { stopIndex, stop ->
                     val stopPlacement =
                         StopPlacement(
                             isFirst = segmentIndex == 0 && stopIndex == 0,
                             isLast =
-                                segmentIndex == segments.lastIndex &&
+                                segmentIndex == stopList.segments.lastIndex &&
                                     stopIndex == segment.stops.lastIndex,
                         )
 
@@ -417,7 +416,7 @@ private fun RouteStops(
                     onClick = { onTapStop(stopRowContext(it.stop)) },
                     onClickLabel = { onClickLabel(stopRowContext(it.stop)) },
                     segmentIndex == 0,
-                    segmentIndex == segments.lastIndex,
+                    segmentIndex == stopList.segments.lastIndex,
                 ) { stop, modifier ->
                     rightSideContent(stopRowContext(stop.stop), modifier)
                 }
@@ -512,11 +511,10 @@ private fun RouteStopsPreview() {
         RouteCardData.LineOrRoute.Route(TestData.getRoute("Red")),
         RouteDetailsStopList(
             0,
-            null,
             listOf(
-                RouteDetailsStopList.NewSegment(
+                RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             TestData.getStop("place-alfcl"),
                             RouteBranchSegment.Lane.Center,
                             RouteBranchSegment.StickConnection.forward(
@@ -527,7 +525,7 @@ private fun RouteStopsPreview() {
                             ),
                             emptyList(),
                         ),
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             TestData.getStop("place-jfk"),
                             RouteBranchSegment.Lane.Center,
                             listOf(
@@ -561,9 +559,9 @@ private fun RouteStopsPreview() {
                     ),
                     isTypical = true,
                 ),
-                RouteDetailsStopList.NewSegment(
+                RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             TestData.getStop("place-asmnl"),
                             RouteBranchSegment.Lane.Left,
                             RouteBranchSegment.StickConnection.forward(
@@ -583,9 +581,9 @@ private fun RouteStopsPreview() {
                     ),
                     isTypical = true,
                 ),
-                RouteDetailsStopList.NewSegment(
+                RouteDetailsStopList.Segment(
                     listOf(
-                        RouteDetailsStopList.NewEntry(
+                        RouteDetailsStopList.Entry(
                             TestData.getStop("place-brntn"),
                             RouteBranchSegment.Lane.Right,
                             RouteBranchSegment.StickConnection.forward(

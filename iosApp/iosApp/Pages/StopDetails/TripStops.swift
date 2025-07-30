@@ -221,7 +221,7 @@ struct TripStops: View {
         }
     )
 
-    VStack {
+    ScrollView {
         TripStops(
             targetId: stops[4].id,
             stops: stopList,

@@ -43,7 +43,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let favoritesUsecases: FavoritesUsecases
     @State var favorites: Set<RouteStopDirection>?
     let routeStopsRepository: IRouteStopsRepository
-    @State var routeStops: NewRouteStopsResult?
+    @State var routeStops: RouteStopsResult?
     @State var stopList: RouteDetailsStopList?
 
     @State var selectedRouteId: String
@@ -92,7 +92,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     private struct RouteStopListParams: Equatable {
         let routeId: String
         let directionId: Int32
-        let routeStops: NewRouteStopsResult?
+        let routeStops: RouteStopsResult?
         let globalData: GlobalResponse
     }
 
@@ -156,7 +156,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             await fetchApi(
                 errorBannerVM.errorRepository,
                 errorKey: "RouteStopListView.loadRouteStops",
-                getData: { try await routeStopsRepository.getNewRouteSegments(
+                getData: { try await routeStopsRepository.getRouteSegments(
                     routeId: routeId,
                     directionId: directionId
                 ) },
@@ -169,11 +169,11 @@ struct RouteStopListView<RightSideContent: View>: View {
     private func loadStopList(
         routeId: String,
         directionId: Int32,
-        routeStops: NewRouteStopsResult?,
+        routeStops: RouteStopsResult?,
         globalData: GlobalResponse
     ) {
         Task {
-            stopList = try? await RouteDetailsStopList.companion.fromNewPieces(
+            stopList = try? await RouteDetailsStopList.companion.fromPieces(
                 routeId: routeId,
                 directionId: directionId,
                 routeStops: routeStops,
@@ -254,7 +254,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     private struct RouteStopListParams: Equatable {
         let routeId: String
         let directionId: Int32
-        let routeStops: NewRouteStopsResult?
+        let routeStops: RouteStopsResult?
         let globalData: GlobalResponse
     }
 
@@ -311,18 +311,17 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         onTapStop: @escaping (RouteDetailsRowContext) -> Void
     ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
-            let segments = stopList.newSegments ?? []
-            let hasTypicalSegment = segments.contains(where: \.isTypical)
+            let hasTypicalSegment = stopList.segments.contains(where: \.isTypical)
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(Array(segments.enumerated()), id: \.offset) { segmentIndex, segment in
+                    ForEach(Array(stopList.segments.enumerated()), id: \.offset) { segmentIndex, segment in
                         if segment.isTypical || !hasTypicalSegment {
                             ForEach(Array(segment.stops.enumerated()), id: \.offset) { stopIndex, stop in
                                 let stopPlacement = StopPlacement(
-                                    isFirst: segmentIndex == segments.startIndex && stopIndex == segment.stops
+                                    isFirst: segmentIndex == stopList.segments.startIndex && stopIndex == segment.stops
                                         .startIndex,
-                                    isLast: segmentIndex == segments
-                                        .index(before: segments.endIndex) && stopIndex == segment.stops
+                                    isLast: segmentIndex == stopList.segments
+                                        .index(before: stopList.segments.endIndex) && stopIndex == segment.stops
                                         .index(before: segment.stops.endIndex)
                                 )
                                 let stopRowContext = stopRowContext(stop.stop)
@@ -344,8 +343,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                 lineOrRoute: lineOrRoute,
                                 segment: segment,
                                 onClick: { onTapStop(stopRowContext($0.stop)) },
-                                isFirstSegment: segmentIndex == segments.startIndex,
-                                isLastSegment: segmentIndex == segments.endIndex,
+                                isFirstSegment: segmentIndex == stopList.segments.startIndex,
+                                isLastSegment: segmentIndex == stopList.segments.endIndex,
                                 rightSideContent: { stop in rightSideContent(stopRowContext(stop.stop)) }
                             )
                         }

@@ -191,8 +191,7 @@ class MockRepositories : IRepositories {
     override var pinnedRoutes: IPinnedRoutesRepository = PinnedRoutesRepository()
     override var predictions: IPredictionsRepository = MockPredictionsRepository()
     override var railRouteShapes: IRailRouteShapeRepository = IdleRailRouteShapeRepository()
-    override var routeStops: IRouteStopsRepository =
-        MockRouteStopsRepository(stopIds = emptyList(), segments = emptyList())
+    override var routeStops: IRouteStopsRepository = MockRouteStopsRepository(emptyList())
     override var schedules: ISchedulesRepository = IdleScheduleRepository()
     override var searchResults: ISearchResultRepository = IdleSearchResultRepository()
     override var sentry: ISentryRepository = MockSentryRepository()
