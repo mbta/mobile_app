@@ -752,6 +752,7 @@ class FavoritesViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.favorites == initialFavorites.routeStopDirection }
+            cancelAndIgnoreRemainingEvents()
         }
 
         advanceUntilIdle()
