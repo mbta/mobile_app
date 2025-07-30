@@ -426,4 +426,5 @@
     <string name="weather">Weather</string>
     <string name="weather_lowercase">weather</string>
     <string name="westbound">Westbound</string>
+    <string name="favorite_stops_first_time_toast_message">Favorite stops replaces the prior starred routes feature.</string>
 </resources>

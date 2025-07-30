@@ -925,18 +925,19 @@ class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
-    fun `shouldShowFirstTimeToast true when had pinned routes and  shown promo`() = runTest {
+    fun `shouldShowFirstTimeToast true when had pinned routes and is first exposure`() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
         setUpKoin(objects, dispatcher) {
             pinnedRoutes = MockPinnedRoutesRepository(initialPinnedRoutes = setOf("Red"))
         }
 
         val viewModel: FavoritesViewModel = get()
-        viewModel.setShownFeaturePromo()
+        viewModel.setIsFirstExposureToNewFavorites(true)
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.shouldShowFirstTimeToast }
-            cancelAndIgnoreRemainingEvents()
+            viewModel.setIsFirstExposureToNewFavorites(false)
+            awaitItemSatisfying { !it.shouldShowFirstTimeToast }
         }
     }
 }

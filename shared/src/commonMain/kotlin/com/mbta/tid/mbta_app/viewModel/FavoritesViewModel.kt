@@ -41,7 +41,7 @@ interface IFavoritesViewModel {
 
     fun setNow(now: EasternTimeInstant)
 
-    fun setShownFeaturePromo()
+    fun setIsFirstExposureToNewFavorites(boolean: Boolean)
 
     fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
@@ -77,7 +77,7 @@ class FavoritesViewModel(
 
         data class SetNow(val now: EasternTimeInstant) : Event
 
-        data class SetShownFeaturePromo(val wasShown: Boolean = true) : Event
+        data class SetFirstExposureToNewFavorites(val isFirstExposure: Boolean = true) : Event
 
         data class UpdateFavorites(
             val updatedFavorites: Map<RouteStopDirection, Boolean>,
@@ -103,7 +103,7 @@ class FavoritesViewModel(
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
 
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
-        var shownFeaturePromo: Boolean by remember { mutableStateOf(false) }
+        var isFirstExposureToNewFavorites: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
 
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
@@ -166,8 +166,8 @@ class FavoritesViewModel(
                         reloadFavorites()
                     }
 
-                    is Event.SetShownFeaturePromo -> {
-                        shownFeaturePromo = event.wasShown
+                    is Event.SetFirstExposureToNewFavorites -> {
+                        isFirstExposureToNewFavorites = event.isFirstExposure
                     }
                 }
             }
@@ -226,8 +226,8 @@ class FavoritesViewModel(
             }
         }
 
-        LaunchedEffect(hadOldPinnedRoutes, shownFeaturePromo) {
-            shouldShowFirstTimeToast = hadOldPinnedRoutes && shownFeaturePromo
+        LaunchedEffect(hadOldPinnedRoutes, isFirstExposureToNewFavorites) {
+            shouldShowFirstTimeToast = hadOldPinnedRoutes && isFirstExposureToNewFavorites
         }
 
         return State(
@@ -256,8 +256,8 @@ class FavoritesViewModel(
 
     override fun setNow(now: EasternTimeInstant) = fireEvent(Event.SetNow(now))
 
-    override fun setShownFeaturePromo() {
-        fireEvent(Event.SetShownFeaturePromo(true))
+    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
+        fireEvent(Event.SetFirstExposureToNewFavorites(isFirstExposure))
     }
 
     override fun updateFavorites(
@@ -279,7 +279,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onSetContext = { _: FavoritesViewModel.Context -> }
     var onSetLocation = { _: Position? -> }
     var onSetNow = { _: EasternTimeInstant -> }
-    var onSetShownFeaturePromo = {}
+    var onSetIsFirstExposureToNewFavorites = { _: Boolean -> }
     var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
 
     override val models = MutableStateFlow(initialState)
@@ -308,8 +308,8 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         onSetNow(now)
     }
 
-    override fun setShownFeaturePromo() {
-        onSetShownFeaturePromo()
+    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
+        onSetIsFirstExposureToNewFavorites(isFirstExposure)
     }
 
     override fun updateFavorites(

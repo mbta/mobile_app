@@ -29,9 +29,9 @@ import com.mbta.tid.mbta_app.android.util.Typography
 @Composable
 fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
     Column(
-        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(top = 24.dp),
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
             stringResource(R.string.no_stops_added),

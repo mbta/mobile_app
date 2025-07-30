@@ -255,7 +255,7 @@ class EditFavoritesPageTest : KoinTest {
         val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, favorites, routeCardData, routeCardData, null)
+                FavoritesViewModel.State(false, favorites, false, routeCardData, routeCardData, null)
             )
 
         composeTestRule.setContent {
@@ -276,7 +276,7 @@ class EditFavoritesPageTest : KoinTest {
     fun testShowsEmptyView() {
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, emptySet(), emptyList(), emptyList(), null)
+                FavoritesViewModel.State(false, emptySet(), false, emptyList(), emptyList(), null)
             )
 
         composeTestRule.setContent {
@@ -303,6 +303,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     favorites,
+                    false,
                     combinedRouteCardData,
                     combinedRouteCardData,
                     null,
@@ -314,6 +315,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)),
+                    false,
                     greenLineRouteCardData,
                     greenLineRouteCardData,
                     null,
@@ -367,6 +369,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     favorites,
+                    false,
                     combinedRouteCardData,
                     combinedRouteCardData,
                     null,
@@ -379,6 +382,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     updatedFavorites,
+                    false,
                     if (updatedFavorites.size == 1) greenLineRouteCardData
                     else combinedRouteCardData,
                     if (updatedFavorites.size == 1) greenLineRouteCardData

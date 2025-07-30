@@ -107,7 +107,7 @@ fun ContentView(
     LaunchedEffect(pendingFeaturePromos) {
         pendingFeaturePromos?.let {
             if (it.contains(FeaturePromo.EnhancedFavorites)) {
-                favoritesViewModel.setShownFeaturePromo()
+                favoritesViewModel.setIsFirstExposureToNewFavorites(true)
             }
         }
     }
