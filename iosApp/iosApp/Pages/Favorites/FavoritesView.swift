@@ -13,6 +13,7 @@ import SwiftUI
 struct FavoritesView: View {
     var errorBannerVM: ErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
+    var toastVM: IToastViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @ObservedObject var nearbyVM: NearbyViewModel
     @Binding var location: CLLocationCoordinate2D?
@@ -44,6 +45,8 @@ struct FavoritesView: View {
                 emptyView: {
                     NoFavoritesView(
                         onAddStops: {
+                            favoritesVM.setIsFirstExposureToNewFavorites(false)
+                            toastViewModel.hideToast()
                             nearbyVM.pushNavEntry(
                                 SheetNavigationStackEntry.routePicker(
                                     SheetRoutes.RoutePicker(
@@ -92,6 +95,19 @@ struct FavoritesView: View {
         .onChange(of: favoritesVMState.loadedLocation) {
             nearbyVM.lastLoadedLocation = $0?.coordinate
             nearbyVM.isTargeting = false
+        }
+        .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
+            if shouldShow {
+                toastVM.showToast(state: .init(
+                    message: NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
+                                               comment: "Explainer the first time a user sees the new favorites feature"),
+                    duration: .indefinite,
+                    onClose: {
+                        favoritesVM.setIsFirstExposureToNewFavorites(false)
+                        toastVM.hideToast()
+                    }
+                ))
+            }
         }
         .onChange(of: nearbyVM.alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
