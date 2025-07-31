@@ -30,7 +30,7 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
         globalResponse: GlobalResponse,
         location: Position,
         setLastLocation: (Position) -> Unit,
-        setSelectingLocation: (Boolean) -> Unit,
+        setIsTargeting: (Boolean) -> Unit,
     ) {
         CoroutineScope(Dispatchers.IO).launch {
             if (loading) {
@@ -39,7 +39,7 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
             val stopIds = nearbyRepository.getStopIdsNearby(globalResponse, location)
             nearbyStopIds = stopIds
             setLastLocation(location)
-            setSelectingLocation(false)
+            setIsTargeting(false)
         }
     }
 

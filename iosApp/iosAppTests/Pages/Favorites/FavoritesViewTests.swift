@@ -76,7 +76,8 @@ final class FavoritesViewTests: XCTestCase {
                     globalData: globalData
                 )],
                 at: now
-            )]
+            )],
+            loadedLocation: nil,
         ))
 
         let sut = FavoritesView(
@@ -156,7 +157,8 @@ final class FavoritesViewTests: XCTestCase {
                     globalData: globalData
                 )],
                 at: now
-            )]
+            )],
+            loadedLocation: nil
         ))
 
         let nearbyVM: NearbyViewModel = .init()
@@ -180,7 +182,8 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [],
             routeCardData: [],
-            staticRouteCardData: []
+            staticRouteCardData: [],
+            loadedLocation: nil,
         ))
         let sut = FavoritesView(
             errorBannerVM: .init(),

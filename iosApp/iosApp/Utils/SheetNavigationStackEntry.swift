@@ -35,6 +35,13 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         }
     }
 
+    var allowTargeting: Bool {
+        switch self {
+        case .favorites, .nearby: true
+        default: false
+        }
+    }
+
     var analyticsScreen: AnalyticsScreen? {
         switch self {
         case .favorites: .favorites

@@ -82,9 +82,8 @@ class MapAndSheetPageTest {
                         NearbyTransit(
                             alertData = alertData,
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocationState = remember { mutableStateOf(null) },
-                            nearbyTransitSelectingLocationState =
-                                remember { mutableStateOf(false) },
+                            lastLoadedLocationState = remember { mutableStateOf(null) },
+                            isTargetingState = remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,

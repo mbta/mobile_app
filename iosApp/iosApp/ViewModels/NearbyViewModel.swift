@@ -39,7 +39,9 @@ class NearbyViewModel: ObservableObject {
     @Published var nearbyState = NearbyTransitState()
     @Published var routeCardData: [RouteCardData]?
 
-    @Published var selectingLocation = false
+    @Published var isTargeting = false
+    // Distinct from nearbyState.loadedLocation because it's also set when nearby favorites load
+    @Published var lastLoadedLocation: CLLocationCoordinate2D?
 
     private let alertsUsecase: AlertsUsecase
     private let errorBannerRepository: IErrorBannerStateRepository
@@ -194,10 +196,11 @@ class NearbyViewModel: ObservableObject {
                 global: global,
                 location: location.positionKt
             )
+            lastLoadedLocation = location
             nearbyState.stopIds = stopIds
             nearbyState.loadedLocation = location
             nearbyState.loading = false
-            selectingLocation = false
+            isTargeting = false
         }
     }
 

@@ -76,8 +76,8 @@ import org.koin.compose.koinInject
 @Composable
 fun HomeMapView(
     sheetPadding: PaddingValues,
-    lastNearbyTransitLocation: Position?,
-    nearbyTransitSelectingLocationState: MutableState<Boolean>,
+    lastLoadedLocation: Position?,
+    isTargetingState: MutableState<Boolean>,
     locationDataManager: LocationDataManager,
     viewportProvider: IViewportProvider,
     currentNavEntry: SheetRoutes?,
@@ -91,7 +91,7 @@ fun HomeMapView(
 ) {
     val globalData by globalRepository.state.collectAsState()
     val state by viewModel.models.collectAsState()
-    var nearbyTransitSelectingLocation by nearbyTransitSelectingLocationState
+    var isTargeting by isTargetingState
 
     val configLoadAttempted by
         mapboxConfigManager.configLoadAttempted.collectAsState(initial = false)
@@ -99,7 +99,7 @@ fun HomeMapView(
     val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
     val isDarkMode = isSystemInDarkTheme()
 
-    val isNearby = currentNavEntry?.let { it is SheetRoutes.NearbyTransit } ?: true
+    val allowTargeting = currentNavEntry?.allowTargeting ?: true
 
     val selectedVehicle = (state as? State.TripSelected)?.vehicle
 
@@ -241,14 +241,14 @@ fun HomeMapView(
 
                 if (
                     !viewportProvider.isFollowingPuck &&
-                        isNearby &&
-                        lastNearbyTransitLocation != null &&
-                        !nearbyTransitSelectingLocation
+                        allowTargeting &&
+                        lastLoadedLocation != null &&
+                        !isTargeting
                 ) {
                     ViewAnnotation(
                         options =
                             ViewAnnotationOptions.Builder()
-                                .geometry(lastNearbyTransitLocation.toPoint())
+                                .geometry(lastLoadedLocation.toPoint())
                                 .annotationAnchor { anchor(ViewAnnotationAnchor.CENTER) }
                                 .build()
                     ) {
@@ -295,7 +295,7 @@ fun HomeMapView(
 
             if (
                 !locationDataManager.hasPermission &&
-                    isNearby &&
+                    allowTargeting &&
                     currentLocation == null &&
                     !viewportProvider.isFollowingPuck
             ) {
@@ -307,7 +307,7 @@ fun HomeMapView(
             }
 
             val recenterContainerModifier =
-                if (isNearby)
+                if (allowTargeting)
                     Modifier.align(Alignment.TopEnd).padding(top = 85.dp).statusBarsPadding()
                 else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
 
@@ -340,14 +340,13 @@ fun HomeMapView(
 
             LaunchedEffect(viewportProvider.isManuallyCentering) {
                 if (
-                    viewportProvider.isManuallyCentering &&
-                        currentNavEntry is SheetRoutes.NearbyTransit
+                    viewportProvider.isManuallyCentering && currentNavEntry?.allowTargeting == true
                 ) {
-                    nearbyTransitSelectingLocation = true
+                    isTargeting = true
                 }
             }
 
-            if (nearbyTransitSelectingLocation) {
+            if (isTargeting) {
                 Crosshairs(sheetPadding = sheetPadding)
             }
         }

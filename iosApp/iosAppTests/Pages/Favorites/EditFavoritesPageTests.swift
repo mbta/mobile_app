@@ -20,7 +20,8 @@ final class EditFavoritesPageTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [],
             routeCardData: [],
-            staticRouteCardData: []
+            staticRouteCardData: [],
+            loadedLocation: nil,
         ))
 
         var onCloseCalled = false
@@ -80,7 +81,8 @@ final class EditFavoritesPageTests: XCTestCase {
                                                     context: .favorites)],
                                        globalData: globalData)],
                       at: EasternTimeInstant.now()),
-            ]
+            ],
+            loadedLocation: nil,
         ))
 
         favoritesVM.onUpdateFavorites = { newFavorites in

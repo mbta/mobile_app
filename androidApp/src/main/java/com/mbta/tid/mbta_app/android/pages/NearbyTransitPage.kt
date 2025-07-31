@@ -23,8 +23,8 @@ fun NearbyTransitPage(
         alertData = nearbyTransit.alertData,
         globalResponse = nearbyTransit.globalResponse,
         targetLocation = targetLocation,
-        setLastLocation = { nearbyTransit.lastNearbyTransitLocation = it },
-        setSelectingLocation = { nearbyTransit.nearbyTransitSelectingLocation = it },
+        setLastLocation = { nearbyTransit.lastLoadedLocation = it },
+        setIsTargeting = { nearbyTransit.isTargeting = it },
         onOpenStopDetails = onOpenStopDetails,
         noNearbyStopsView = {
             NoNearbyStopsView(openSearch, nearbyTransit.viewportProvider::panToDefaultCenter)

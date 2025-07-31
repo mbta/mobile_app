@@ -149,6 +149,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = null,
                     routeCardData = null,
                     staticRouteCardData = null,
+                    loadedLocation = null,
                 ),
                 awaitItem(),
             )
@@ -158,6 +159,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = emptySet(),
                     routeCardData = null,
                     staticRouteCardData = null,
+                    loadedLocation = null,
                 ),
                 awaitItem(),
             )
@@ -167,6 +169,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = emptySet(),
                     routeCardData = emptyList(),
                     staticRouteCardData = emptyList(),
+                    loadedLocation = null,
                 ),
                 awaitItem(),
             )
@@ -195,6 +198,7 @@ class FavoritesViewModelTest : KoinTest {
                         favorites = emptySet(),
                         routeCardData = emptyList(),
                         staticRouteCardData = emptyList(),
+                        loadedLocation = null,
                     )
             }
         }
@@ -351,6 +355,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = null,
                     routeCardData = null,
                     staticRouteCardData = null,
+                    loadedLocation = null,
                 ),
                 awaitItem(),
             )
@@ -360,6 +365,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favorites.routeStopDirection,
                     routeCardData = null,
                     staticRouteCardData = null,
+                    loadedLocation = null,
                 ),
                 awaitItem(),
             )
@@ -370,6 +376,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favorites.routeStopDirection,
                     routeCardData = expectedRealtimeData,
                     staticRouteCardData = expectedStaticData,
+                    loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
             )
@@ -461,6 +468,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
                     it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
@@ -474,6 +482,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop1.position,
                 ),
                 awaitItem(),
             )
@@ -483,6 +492,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
+                    loadedLocation = stop1.position,
                 ),
                 awaitItem(),
             )
@@ -552,6 +562,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
                     it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
@@ -879,6 +890,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop3.position,
                 ),
                 awaitItemSatisfying {
                     it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
@@ -893,6 +905,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop3.position,
                 ),
                 awaitItem(),
             )
@@ -902,6 +915,7 @@ class FavoritesViewModelTest : KoinTest {
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
+                    loadedLocation = stop3.position,
                 ),
                 awaitItem(),
             )

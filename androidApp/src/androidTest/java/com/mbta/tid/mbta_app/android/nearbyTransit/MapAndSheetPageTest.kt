@@ -233,10 +233,9 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocationState =
+                            lastLoadedLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
-                            nearbyTransitSelectingLocationState =
-                                remember { mutableStateOf(false) },
+                            isTargetingState = remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
@@ -305,10 +304,9 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocationState =
+                            lastLoadedLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
-                            nearbyTransitSelectingLocationState =
-                                remember { mutableStateOf(false) },
+                            isTargetingState = remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
@@ -350,10 +348,9 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocationState =
+                            lastLoadedLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
-                            nearbyTransitSelectingLocationState =
-                                remember { mutableStateOf(false) },
+                            isTargetingState = remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = MockLocationDataManager(),
                             viewportProvider = viewportProvider,
@@ -431,10 +428,9 @@ class MapAndSheetPageTest : KoinTest {
                         NearbyTransit(
                             alertData = AlertsStreamDataResponse(builder.alerts),
                             globalResponse = globalResponse,
-                            lastNearbyTransitLocationState =
+                            lastLoadedLocationState =
                                 remember { mutableStateOf(Position(0.0, 0.0)) },
-                            nearbyTransitSelectingLocationState =
-                                remember { mutableStateOf(false) },
+                            isTargetingState = remember { mutableStateOf(false) },
                             scaffoldState = rememberBottomSheetScaffoldState(),
                             locationDataManager = locationDataManager,
                             viewportProvider = viewportProvider,

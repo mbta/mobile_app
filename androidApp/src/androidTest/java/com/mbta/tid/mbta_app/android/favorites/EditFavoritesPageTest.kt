@@ -255,7 +255,7 @@ class EditFavoritesPageTest : KoinTest {
         val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, favorites, routeCardData, routeCardData)
+                FavoritesViewModel.State(false, favorites, routeCardData, routeCardData, null)
             )
 
         composeTestRule.setContent {
@@ -276,7 +276,7 @@ class EditFavoritesPageTest : KoinTest {
     fun testShowsEmptyView() {
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, emptySet(), emptyList(), emptyList())
+                FavoritesViewModel.State(false, emptySet(), emptyList(), emptyList(), null)
             )
 
         composeTestRule.setContent {
@@ -305,6 +305,7 @@ class EditFavoritesPageTest : KoinTest {
                     favorites,
                     combinedRouteCardData,
                     combinedRouteCardData,
+                    null,
                 )
             )
 
@@ -315,6 +316,7 @@ class EditFavoritesPageTest : KoinTest {
                     setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)),
                     greenLineRouteCardData,
                     greenLineRouteCardData,
+                    null,
                 )
             }
             updatedWith = update
@@ -367,6 +369,7 @@ class EditFavoritesPageTest : KoinTest {
                     favorites,
                     combinedRouteCardData,
                     combinedRouteCardData,
+                    null,
                 )
             )
 
@@ -380,6 +383,7 @@ class EditFavoritesPageTest : KoinTest {
                     else combinedRouteCardData,
                     if (updatedFavorites.size == 1) greenLineRouteCardData
                     else combinedRouteCardData,
+                    null,
                 )
             }
             updatedWith = update

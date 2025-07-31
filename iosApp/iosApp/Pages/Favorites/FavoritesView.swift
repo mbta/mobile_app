@@ -89,6 +89,10 @@ struct FavoritesView: View {
         .onChange(of: favoritesVMState.awaitingPredictionsAfterBackground) {
             errorBannerVM.loadingWhenPredictionsStale = $0
         }
+        .onChange(of: favoritesVMState.loadedLocation) {
+            nearbyVM.lastLoadedLocation = $0?.coordinate
+            nearbyVM.isTargeting = false
+        }
         .onChange(of: nearbyVM.alerts) { favoritesVM.setAlerts(alerts: $0) }
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
         .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }

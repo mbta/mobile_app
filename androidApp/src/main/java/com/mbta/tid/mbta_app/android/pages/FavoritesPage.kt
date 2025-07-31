@@ -18,6 +18,8 @@ fun FavoritesPage(
     val targetLocation by managedTargetLocation(nearbyTransit)
     FavoritesView(
         openSheetRoute,
+        { nearbyTransit.lastLoadedLocation = it },
+        { nearbyTransit.isTargeting = it },
         favoritesViewModel,
         errorBannerViewModel,
         nearbyTransit.alertData,
