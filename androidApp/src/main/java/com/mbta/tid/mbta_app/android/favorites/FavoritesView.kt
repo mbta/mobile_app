@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -11,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -32,6 +34,8 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 
@@ -42,14 +46,18 @@ fun FavoritesView(
     setIsTargeting: (Boolean) -> Unit,
     favoritesViewModel: IFavoritesViewModel,
     errorBannerViewModel: ErrorBannerViewModel,
+    toastViewModel: IToastViewModel,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
     targetLocation: Position?,
 ) {
     val now by timer(updateInterval = 5.seconds)
     val state by favoritesViewModel.models.collectAsState()
+    val context = LocalContext.current
 
     fun onAddFavorites() {
+        favoritesViewModel.setIsFirstExposureToNewFavorites(false)
+        toastViewModel.hideToast()
         openSheetRoute(SheetRoutes.RoutePicker(RoutePickerPath.Root, RouteDetailsContext.Favorites))
     }
 
@@ -78,10 +86,23 @@ fun FavoritesView(
         state.loadedLocation?.let { setLastLocation(it) }
         setIsTargeting(false)
     }
+    LaunchedEffect(state.shouldShowFirstTimeToast) {
+        if (state.shouldShowFirstTimeToast) {
+            toastViewModel.showToast(
+                ToastViewModel.Toast(
+                    context.getString(R.string.favorite_stops_first_time_toast_message),
+                    onClose = {
+                        favoritesViewModel.setIsFirstExposureToNewFavorites(false)
+                        toastViewModel.hideToast()
+                    },
+                )
+            )
+        }
+    }
 
     val routeCardData = state.routeCardData
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column() {
         SheetHeader(
             title = stringResource(R.string.favorites_link),
             rightActionContents = {
@@ -100,7 +121,7 @@ fun FavoritesView(
             },
         )
 
-        ErrorBanner(errorBannerViewModel)
+        ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
         RouteCardList(
             routeCardData = routeCardData,
             emptyView = {

@@ -135,6 +135,7 @@
     <string name="facility_issue">Problema en las instalaciones</string>
     <string name="facility_issue_sentence_case">Problema en las instalaciones</string>
     <string name="favorite_stop">parada favorita</string>
+    <string name="favorite_stops_first_time_toast_message">Las paradas favoritas reemplazan la función de rutas destacadas anterior.</string>
     <string name="favorites_link">Favoritos</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> en &lt;b>%3$s&lt;/b> añadido a Favoritos</string>
     <string name="favorites_toast_add_fallback">Añadido a favoritos</string>

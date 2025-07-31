@@ -33,6 +33,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0)],
+            shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -114,6 +115,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0)],
+            shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -181,6 +183,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [],
+            shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [],
             loadedLocation: nil,

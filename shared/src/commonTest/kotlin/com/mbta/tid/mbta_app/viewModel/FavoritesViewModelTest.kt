@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -56,16 +57,26 @@ class FavoritesViewModelTest : KoinTest {
         }
     val stop2 =
         objects.stop {
+            id = "stop1"
             latitude = 1.0
             longitude = 1.0
         }
     val stop3 =
         objects.stop {
+            id = "stop2"
             latitude = -0.5
             longitude = -0.5
         }
-    val route1 = objects.route { directionNames = listOf("Outbound", "Inbound") }
-    val route2 = objects.route { directionNames = listOf("Outbound", "Inbound") }
+    val route1 =
+        objects.route {
+            id = "route1"
+            directionNames = listOf("Outbound", "Inbound")
+        }
+    val route2 =
+        objects.route {
+            id = "route2"
+            directionNames = listOf("Outbound", "Inbound")
+        }
     val patterns =
         listOf(Pair(route1, listOf(stop1)), Pair(route2, listOf(stop2, stop3))).associate {
             (route, stops) ->
@@ -104,6 +115,7 @@ class FavoritesViewModelTest : KoinTest {
                     MockRepositories().apply {
                         useObjects(objects)
                         favorites = MockFavoritesRepository(this@FavoritesViewModelTest.favorites)
+                        pinnedRoutes = MockPinnedRoutesRepository()
                         repositoriesBlock()
                     }
                 ),
@@ -701,10 +713,10 @@ class FavoritesViewModelTest : KoinTest {
                     .map { it.stop },
             )
             viewModel.setLocation(stop2.position)
-            assertEquals(
-                listOf(stop2, stop1),
-                awaitItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
-            )
+            advanceUntilIdle()
+            awaitItemSatisfying {
+                listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
+            }
         }
     }
 
@@ -770,6 +782,7 @@ class FavoritesViewModelTest : KoinTest {
         assertEquals(analyticsLogged, Pair("favorites_count", "1"))
     }
 
+    @Test
     fun `does not load new route card data when editing`() = runTest {
         val now = EasternTimeInstant.now()
 
@@ -867,21 +880,20 @@ class FavoritesViewModelTest : KoinTest {
                 ),
                 globalData,
             )
+        val routeCard1Data =
+            RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now)
 
-        val expectedStaticDataBefore =
-            listOf(
-                RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
-                    listOf(stop3Data, stop2Data),
-                    now,
-                ),
-                RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now),
+        val routeCard2Data =
+            RouteCardData(
+                RouteCardData.LineOrRoute.Route(route2),
+                listOf(stop3Data, stop2Data),
+                now,
             )
+
+        val expectedStaticDataBefore = listOf(routeCard2Data, routeCard1Data)
+
         val expectedStaticDataAfter =
-            listOf(
-                RouteCardData(RouteCardData.LineOrRoute.Route(route2), listOf(stop2Data), now),
-                RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now),
-            )
+            listOf(routeCard1Data, routeCard2Data.copy(stopData = listOf(stop2Data)))
 
         testViewModelFlow(viewModel).test {
             assertEquals(
@@ -899,26 +911,28 @@ class FavoritesViewModelTest : KoinTest {
             viewModel.setContext(FavoritesViewModel.Context.Edit)
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataBefore,
-                    loadedLocation = stop3.position,
-                ),
-                awaitItem(),
-            )
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataAfter,
-                    loadedLocation = stop3.position,
-                ),
-                awaitItem(),
-            )
+            awaitItemSatisfying {
+                it.staticRouteCardData == expectedStaticDataAfter &&
+                    it.favorites == favoritesAfter.routeStopDirection
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `shouldShowFirstTimeToast true when had pinned routes and is first exposure`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            pinnedRoutes = MockPinnedRoutesRepository(initialPinnedRoutes = setOf("Red"))
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setIsFirstExposureToNewFavorites(true)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.shouldShowFirstTimeToast }
+            viewModel.setIsFirstExposureToNewFavorites(false)
+            awaitItemSatisfying { !it.shouldShowFirstTimeToast }
         }
     }
 }

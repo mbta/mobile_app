@@ -8957,6 +8957,54 @@
         }
       }
     },
+    "Favorite stops replaces the prior starred routes feature." : {
+      "comment" : "Explainer the first time a user sees the new favorites feature",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Las paradas favoritas reemplazan la función de rutas destacadas anterior."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les arrêts favoris remplacent la fonctionnalité d’itinéraires favoris précédente."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Estasyon pi renmen yo ranplase karakteristik wout ak zetwal anvan an."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "As paradas favoritas substituem o recurso anterior de rotas marcadas com estrela."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Điểm dừng yêu thích thay thế tính năng tuyến đường có dấu sao trước đó."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "收藏站点取代了之前的加星标路线功能。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "收藏站點取代了先前的加星標路線功能。"
+          }
+        }
+      }
+    },
     "Favorites" : {
       "comment" : "Header for favorites sheet\nThe label for the Favorites page in the navigation bar",
       "localizations" : {

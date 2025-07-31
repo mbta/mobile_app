@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.DefaultTab
+import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
@@ -40,6 +41,8 @@ interface IFavoritesViewModel {
 
     fun setNow(now: EasternTimeInstant)
 
+    fun setIsFirstExposureToNewFavorites(boolean: Boolean)
+
     fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
@@ -49,6 +52,7 @@ interface IFavoritesViewModel {
 
 class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
+    private val pinnedRoutesRepository: IPinnedRoutesRepository,
     private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
@@ -73,6 +77,8 @@ class FavoritesViewModel(
 
         data class SetNow(val now: EasternTimeInstant) : Event
 
+        data class SetFirstExposureToNewFavorites(val isFirstExposure: Boolean = true) : Event
+
         data class UpdateFavorites(
             val updatedFavorites: Map<RouteStopDirection, Boolean>,
             val context: EditFavoritesContext,
@@ -83,17 +89,23 @@ class FavoritesViewModel(
     data class State(
         val awaitingPredictionsAfterBackground: Boolean,
         val favorites: Set<RouteStopDirection>?,
+        val shouldShowFirstTimeToast: Boolean = false,
         val routeCardData: List<RouteCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
         val loadedLocation: Position?,
     ) {
-        constructor() : this(false, null, null, null, null)
+        constructor() : this(false, null, false, null, null, null)
     }
 
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
+
+        var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
+        var isFirstExposureToNewFavorites: Boolean by remember { mutableStateOf(false) }
+        var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
+
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var loadedLocation: Position? by remember { mutableStateOf(null) }
@@ -123,6 +135,7 @@ class FavoritesViewModel(
 
         LaunchedEffect(Unit) {
             val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
+            hadOldPinnedRoutes = pinnedRoutesRepository.getPinnedRoutes().isNotEmpty()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
             // first time seeing favorites, default to nearby going forward
@@ -151,6 +164,10 @@ class FavoritesViewModel(
                             event.defaultDirection,
                         )
                         reloadFavorites()
+                    }
+
+                    is Event.SetFirstExposureToNewFavorites -> {
+                        isFirstExposureToNewFavorites = event.isFirstExposure
                     }
                 }
             }
@@ -209,9 +226,14 @@ class FavoritesViewModel(
             }
         }
 
+        LaunchedEffect(hadOldPinnedRoutes, isFirstExposureToNewFavorites) {
+            shouldShowFirstTimeToast = hadOldPinnedRoutes && isFirstExposureToNewFavorites
+        }
+
         return State(
             awaitingPredictionsAfterBackground,
             favorites,
+            shouldShowFirstTimeToast,
             routeCardData,
             staticRouteCardData,
             loadedLocation,
@@ -234,6 +256,10 @@ class FavoritesViewModel(
 
     override fun setNow(now: EasternTimeInstant) = fireEvent(Event.SetNow(now))
 
+    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
+        fireEvent(Event.SetFirstExposureToNewFavorites(isFirstExposure))
+    }
+
     override fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
@@ -253,6 +279,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     var onSetContext = { _: FavoritesViewModel.Context -> }
     var onSetLocation = { _: Position? -> }
     var onSetNow = { _: EasternTimeInstant -> }
+    var onSetIsFirstExposureToNewFavorites = { _: Boolean -> }
     var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
 
     override val models = MutableStateFlow(initialState)
@@ -279,6 +306,10 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
 
     override fun setNow(now: EasternTimeInstant) {
         onSetNow(now)
+    }
+
+    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
+        onSetIsFirstExposureToNewFavorites(isFirstExposure)
     }
 
     override fun updateFavorites(
