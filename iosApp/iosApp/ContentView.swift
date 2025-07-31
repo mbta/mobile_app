@@ -122,8 +122,9 @@ struct ContentView: View {
             }
         }
         .onChange(of: contentVM.featurePromosPending) { promos in
-            if promos?.contains(where: { $0 == .enhancedFavorites }) {
-                favoritesVM.setIsFirstExposureToNewFavorites(true)
+            if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
+                print("KB: Setting is first exposure")
+                favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
             }
         }
         .onReceive(mapVM.lastMapboxErrorSubject

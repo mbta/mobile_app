@@ -41,7 +41,7 @@ interface IFavoritesViewModel {
 
     fun setNow(now: EasternTimeInstant)
 
-    fun setIsFirstExposureToNewFavorites(boolean: Boolean)
+    fun setIsFirstExposureToNewFavorites(isFirst: Boolean)
 
     fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,

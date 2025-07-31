@@ -13,9 +13,9 @@ import SwiftUI
 struct FavoritesView: View {
     var errorBannerVM: ErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
-    var toastVM: IToastViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @ObservedObject var nearbyVM: NearbyViewModel
+    var toastVM: IToastViewModel
     @Binding var location: CLLocationCoordinate2D?
 
     @State var globalData: GlobalResponse?
@@ -45,8 +45,8 @@ struct FavoritesView: View {
                 emptyView: {
                     NoFavoritesView(
                         onAddStops: {
-                            favoritesVM.setIsFirstExposureToNewFavorites(false)
-                            toastViewModel.hideToast()
+                            favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
+                            toastVM.hideToast()
                             nearbyVM.pushNavEntry(
                                 SheetNavigationStackEntry.routePicker(
                                     SheetRoutes.RoutePicker(
@@ -58,7 +58,6 @@ struct FavoritesView: View {
                         }
                     )
                     .frame(maxWidth: .infinity)
-                    .padding(.top, 16)
                 },
                 global: globalData,
                 now: now,
@@ -68,6 +67,7 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
+        .toast(vm: toastVM)
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
@@ -96,17 +96,18 @@ struct FavoritesView: View {
             nearbyVM.lastLoadedLocation = $0?.coordinate
             nearbyVM.isTargeting = false
         }
+        .onAppear {
+            if favoritesVMState.shouldShowFirstTimeToast {
+                print("KB: Show first time toast")
+                showFirstTimeToast()
+            }
+        }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
+
             if shouldShow {
-                toastVM.showToast(state: .init(
-                    message: NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
-                                               comment: "Explainer the first time a user sees the new favorites feature"),
-                    duration: .indefinite,
-                    onClose: {
-                        favoritesVM.setIsFirstExposureToNewFavorites(false)
-                        toastVM.hideToast()
-                    }
-                ))
+                print("KB: Show first time toast on Change")
+
+                showFirstTimeToast()
             }
         }
         .onChange(of: nearbyVM.alerts) { favoritesVM.setAlerts(alerts: $0) }
@@ -128,6 +129,20 @@ struct FavoritesView: View {
         for await globalData in globalRepository.state {
             self.globalData = globalData
         }
+    }
+
+    func showFirstTimeToast() {
+        toastVM.showToast(toast:
+            .init(message:
+                NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
+                                  comment: "Explainer the first time a user sees the new favorites feature"),
+                duration: .indefinite,
+                onClose: {
+                    favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
+                    toastVM.hideToast()
+                },
+                actionLabel: nil,
+                onAction: nil))
     }
 
     func getGlobal() {
