@@ -713,10 +713,10 @@ class FavoritesViewModelTest : KoinTest {
                     .map { it.stop },
             )
             viewModel.setLocation(stop2.position)
-            assertEquals(
-                listOf(stop2, stop1),
-                awaitItem().routeCardData!!.flatMap { it.stopData }.map { it.stop },
-            )
+            advanceUntilIdle()
+            awaitItemSatisfying {
+                listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
+            }
         }
     }
 
