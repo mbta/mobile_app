@@ -98,15 +98,11 @@ struct FavoritesView: View {
         }
         .onAppear {
             if favoritesVMState.shouldShowFirstTimeToast {
-                print("KB: Show first time toast")
                 showFirstTimeToast()
             }
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
-
             if shouldShow {
-                print("KB: Show first time toast on Change")
-
                 showFirstTimeToast()
             }
         }
