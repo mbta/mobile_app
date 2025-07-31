@@ -101,7 +101,7 @@ struct RouteDetailsView: View {
         switch rowContext {
         case .details: Image(.faChevronRight).resizable().frame(width: 8, height: 14)
             .foregroundStyle(Color.deemphasized)
-        case let .favorites(isFavorited: isFavorited, onTapStar: _): StarIcon(pinned: isFavorited, color: Color.text)
+        case let .favorites(isFavorited: isFavorited, onTapStar: _): StarIcon(starred: isFavorited, color: Color.text)
             .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
         }
     }

@@ -71,8 +71,6 @@ object StickDiagramShapes {
             RouteBranchSegment.VPos.Bottom -> rect.maxY
         }
 
-    private fun lerp(x1: Float, x2: Float, t: Float) = x1 * (1 - t) + x2 * t
-
     private const val PI = kotlin.math.PI.toFloat()
 
     fun connection(connection: RouteBranchSegment.StickConnection, rect: Path.Rect): Connection {

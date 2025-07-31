@@ -16,10 +16,7 @@ struct NoFavoritesView: View {
             Text("No stops added", comment: "Indicates the absence of favorites")
                 .font(Typography.title3)
                 .foregroundColor(.deemphasized)
-            Image(.noFavorites)
-                .resizable()
-                .frame(width: 56, height: 56)
-                .foregroundColor(.deemphasized)
+            StarIcon(starred: false, color: .deemphasized, size: 56)
             if let onAddStops {
                 Button(
                     action: onAddStops,

@@ -23,9 +23,9 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
-import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.Line
@@ -39,7 +39,7 @@ fun StopDetailsFilteredHeader(
     route: Route?,
     line: Line?,
     stop: Stop?,
-    pinned: Boolean = false,
+    pinned: Boolean? = false,
     onPin: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
 ) {
@@ -85,7 +85,7 @@ fun StopDetailsFilteredHeader(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (onPin != null) {
-                PinButton(pinned, colorResource(R.color.text), onPin)
+                StarButton(pinned, colorResource(R.color.text), onPin)
             }
             if (onClose != null) {
                 ActionButton(ActionButtonKind.Close) { onClose() }
