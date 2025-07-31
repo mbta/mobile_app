@@ -40,7 +40,7 @@ fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
             color = colorResource(R.color.deemphasized),
         )
         Icon(
-            painterResource(R.drawable.pinned_route_inactive),
+            painterResource(R.drawable.no_favorites),
             null,
             modifier = Modifier.size(56.dp).clearAndSetSemantics {},
             tint = colorResource(R.color.deemphasized),
