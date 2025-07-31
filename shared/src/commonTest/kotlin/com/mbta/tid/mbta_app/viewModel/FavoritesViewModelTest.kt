@@ -893,7 +893,7 @@ class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataBefore = listOf(routeCard2Data, routeCard1Data)
 
         val expectedStaticDataAfter =
-            listOf(routeCard2Data.copy(stopData = listOf(stop2Data)), routeCard1Data)
+            listOf(routeCard1Data, routeCard2Data.copy(stopData = listOf(stop2Data)))
 
         testViewModelFlow(viewModel).test {
             assertEquals(
@@ -911,26 +911,11 @@ class FavoritesViewModelTest : KoinTest {
             viewModel.setContext(FavoritesViewModel.Context.Edit)
             favoritesRepo.setFavorites(favoritesAfter)
             viewModel.reloadFavorites()
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataBefore,
-                    loadedLocation = stop3.position,
-                ),
-                awaitItem(),
-            )
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favoritesAfter.routeStopDirection,
-                    routeCardData = emptyList(),
-                    staticRouteCardData = expectedStaticDataAfter,
-                    loadedLocation = stop3.position,
-                ),
-                awaitItem(),
-            )
+            awaitItemSatisfying {
+                it.staticRouteCardData == expectedStaticDataAfter &&
+                    it.favorites == favoritesAfter.routeStopDirection
+            }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

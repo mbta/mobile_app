@@ -31,7 +31,14 @@ class FavoritesViewTest {
         val favoritesVM =
             MockFavoritesViewModel(
                 initialState =
-                    FavoritesViewModel.State(false, emptySet(), true, emptyList(), emptyList())
+                    FavoritesViewModel.State(
+                        false,
+                        emptySet(),
+                        true,
+                        emptyList(),
+                        emptyList(),
+                        null,
+                    )
             )
         val toastVM = mock<IToastViewModel>(MockMode.autofill)
 
@@ -47,6 +54,8 @@ class FavoritesViewTest {
                 alertData = AlertsStreamDataResponse(objects),
                 globalResponse = GlobalResponse(objects),
                 targetLocation = null,
+                setLastLocation = { _ -> },
+                setIsTargeting = { _ -> },
             )
         }
 
