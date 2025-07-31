@@ -255,7 +255,14 @@ class EditFavoritesPageTest : KoinTest {
         val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, favorites, false, routeCardData, routeCardData, null)
+                FavoritesViewModel.State(
+                    false,
+                    favorites,
+                    false,
+                    routeCardData,
+                    routeCardData,
+                    null,
+                )
             )
 
         composeTestRule.setContent {
