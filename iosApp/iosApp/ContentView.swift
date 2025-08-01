@@ -121,6 +121,11 @@ struct ContentView: View {
             default: debugPrint("Skipping mapbox token configuration")
             }
         }
+        .onChange(of: contentVM.featurePromosPending) { promos in
+            if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
+                favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
+            }
+        }
         .onReceive(mapVM.lastMapboxErrorSubject
             .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
                 Task { await contentVM.loadConfig() }

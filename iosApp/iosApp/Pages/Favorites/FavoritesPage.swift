@@ -14,6 +14,7 @@ struct FavoritesPage: View {
     @ObservedObject var errorBannerVM: ErrorBannerViewModel
     var favoritesVM: FavoritesViewModel
     var nearbyVM: NearbyViewModel
+    var toastVM: IToastViewModel = ViewModelDI().toast
     @ObservedObject var viewportProvider: ViewportProvider
 
     @State var location: CLLocationCoordinate2D?
@@ -25,6 +26,7 @@ struct FavoritesPage: View {
                 errorBannerVM: errorBannerVM,
                 favoritesVM: favoritesVM,
                 nearbyVM: nearbyVM,
+                toastVM: toastVM,
                 location: $location
             )
             .onReceive(
