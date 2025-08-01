@@ -391,7 +391,7 @@ fun MapAndSheetPage(
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) {
-        if (sheetNavEntrypoint != null && previousNavEntry != null) {
+        if (sheetNavEntrypoint != null) {
             navigateToEntrypoint(sheetNavEntrypoint)
         }
     }
@@ -405,7 +405,7 @@ fun MapAndSheetPage(
 
         if (currentNavEntry is SheetRoutes.Entrypoint) {
             showNavBar()
-        } else {
+        } else if (currentNavEntry != null) {
             hideNavBar()
         }
     }
