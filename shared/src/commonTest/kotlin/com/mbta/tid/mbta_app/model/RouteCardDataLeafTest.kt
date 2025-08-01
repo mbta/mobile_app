@@ -165,6 +165,116 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats CR as prediction in past with status`() {
+        val now = EasternTimeInstant.now()
+        val predictionTime = now - 2.minutes
+        val status = "foo"
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        val prediction =
+            objects.prediction {
+                trip = objects.trip()
+                departureTime = predictionTime
+                this.status = status
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        assertEquals(
+            LeafFormat.Single(
+                route = null,
+                headsign = "",
+                UpcomingFormat.Some(
+                    listOf(
+                        UpcomingFormat.Some.FormattedTrip(
+                            upcomingTrip,
+                            route.type,
+                            TripInstantDisplay.TimeWithStatus(
+                                predictionTime,
+                                status,
+                                headline = true,
+                            ),
+                        )
+                    ),
+                    secondaryAlert = null,
+                ),
+            ),
+            RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    listOf(upcomingTrip),
+                    emptyList(),
+                    true,
+                    true,
+                    emptyList(),
+                    RouteCardData.Context.StopDetailsFiltered,
+                )
+                .format(now, GlobalResponse(objects)),
+        )
+    }
+
+    @Test
+    fun `formats CR as schedule in past with status if prediction has null time`() {
+        val now = EasternTimeInstant.now()
+        val scheduleTime = now - 2.minutes
+        val status = "foo"
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+
+        val schedule =
+            objects.schedule {
+                trip = objects.trip()
+                departureTime = scheduleTime
+            }
+        val prediction =
+            objects.prediction(schedule) {
+                departureTime = null
+                this.status = status
+            }
+        val upcomingTrip = objects.upcomingTrip(schedule, prediction)
+
+        assertEquals(
+            LeafFormat.Single(
+                route = null,
+                headsign = "",
+                UpcomingFormat.Some(
+                    listOf(
+                        UpcomingFormat.Some.FormattedTrip(
+                            upcomingTrip,
+                            route.type,
+                            TripInstantDisplay.ScheduleTimeWithStatus(
+                                scheduleTime,
+                                status,
+                                headline = true,
+                            ),
+                        )
+                    ),
+                    secondaryAlert = null,
+                ),
+            ),
+            RouteCardData.Leaf(
+                    RouteCardData.LineOrRoute.Route(route),
+                    objects.stop(),
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    listOf(upcomingTrip),
+                    emptyList(),
+                    true,
+                    true,
+                    emptyList(),
+                    RouteCardData.Context.StopDetailsFiltered,
+                )
+                .format(now, GlobalResponse(objects)),
+        )
+    }
+
+    @Test
     fun `preserves trip alongside secondary alert`() = parametricTest {
         val now = EasternTimeInstant.now()
 

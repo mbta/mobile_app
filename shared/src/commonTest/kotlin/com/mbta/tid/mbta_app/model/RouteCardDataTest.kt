@@ -3862,6 +3862,159 @@ class RouteCardDataTest {
     }
 
     @Test
+    fun `RouteCardData routeCardsForStopList keeps predictions in past with status`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route()
+            val routePattern = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+            val trip = objects.trip(routePattern)
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop = mapOf(stop.id to listOf(routePattern.id)),
+                )
+            val context = RouteCardData.Context.NearbyTransit
+            val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
+
+            val pred =
+                objects.prediction {
+                    this.trip = trip
+                    stopId = stop.id
+                    departureTime = time - 1.minutes
+                    status = "foo"
+                }
+
+            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            assertEquals(
+                listOf(
+                    RouteCardData(
+                        lineOrRoute = lineOrRoute,
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    route,
+                                    stop,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute,
+                                            stop = stop,
+                                            directionId = 0,
+                                            routePatterns = listOf(routePattern),
+                                            stopIds = setOf(stop.id),
+                                            upcomingTrips =
+                                                listOf(objects.upcomingTrip(prediction = pred)),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = false,
+                                            hasSchedulesToday = false,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        )
+                                    ),
+                                    global,
+                                )
+                            ),
+                        time,
+                    )
+                ),
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(stop.id),
+                    globalData = global,
+                    sortByDistanceFrom = stop.position,
+                    schedules = null,
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = setOf(),
+                    context = context,
+                ),
+            )
+        }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList keeps schedules in past with status without predicted time`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
+            val stop = objects.stop()
+            val route = objects.route()
+            val routePattern = objects.routePattern(route) { representativeTrip { headsign = "A" } }
+            val trip = objects.trip(routePattern)
+
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop = mapOf(stop.id to listOf(routePattern.id)),
+                )
+            val context = RouteCardData.Context.NearbyTransit
+            val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
+
+            val sched =
+                objects.schedule {
+                    this.trip = trip
+                    stopId = stop.id
+                    stopSequence = 90
+                    departureTime = time - 1.minutes
+                }
+
+            val pred =
+                objects.prediction(sched) {
+                    departureTime = null
+                    status = "foo"
+                }
+
+            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            assertEquals(
+                listOf(
+                    RouteCardData(
+                        lineOrRoute = lineOrRoute,
+                        stopData =
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    route,
+                                    stop,
+                                    listOf(
+                                        RouteCardData.Leaf(
+                                            lineOrRoute = lineOrRoute,
+                                            stop = stop,
+                                            directionId = 0,
+                                            routePatterns = listOf(routePattern),
+                                            stopIds = setOf(stop.id),
+                                            upcomingTrips =
+                                                listOf(
+                                                    objects.upcomingTrip(
+                                                        prediction = pred,
+                                                        schedule = sched,
+                                                    )
+                                                ),
+                                            alertsHere = emptyList(),
+                                            allDataLoaded = true,
+                                            hasSchedulesToday = true,
+                                            alertsDownstream = emptyList(),
+                                            context = context,
+                                        )
+                                    ),
+                                    global,
+                                )
+                            ),
+                        time,
+                    )
+                ),
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(stop.id),
+                    globalData = global,
+                    sortByDistanceFrom = stop.position,
+                    schedules = ScheduleResponse(objects),
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(objects),
+                    now = time,
+                    pinnedRoutes = setOf(),
+                    context = context,
+                ),
+            )
+        }
+
+    @Test
     fun `RouteCardData routeCardsForStopList checks if any trips are scheduled all day`(): Unit =
         runBlocking {
             val objects = ObjectCollectionBuilder()

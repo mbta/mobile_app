@@ -39,7 +39,8 @@ constructor(
     val time =
         if (
             prediction != null &&
-                prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled
+                prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled &&
+                !(prediction.stopTime == null && prediction.status != null)
         ) {
             prediction.stopTime
         } else {
@@ -74,12 +75,14 @@ constructor(
 
     /**
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
-     * left this stop.
+     * left this stop or a custom status string is still set.
      */
     fun isUpcomingWithin(currentTime: EasternTimeInstant, cutoffTime: EasternTimeInstant): Boolean =
         time != null &&
             time < cutoffTime &&
-            (time >= currentTime || (prediction != null && prediction.stopId == vehicle?.stopId))
+            (time >= currentTime ||
+                (prediction != null &&
+                    (prediction.stopId == vehicle?.stopId || prediction.status != null)))
 
     override fun compareTo(other: UpcomingTrip) =
         nullsLast<EasternTimeInstant>().compare(time, other.time)
