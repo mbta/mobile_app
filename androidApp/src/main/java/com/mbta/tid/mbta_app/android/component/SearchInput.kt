@@ -65,9 +65,7 @@ fun SearchInput(
                 .haloContainer(
                     2.dp,
                     borderRadius = 10.dp,
-                    outlineColor =
-                        if (expanded) colorResource(R.color.key_inverse).copy(alpha = 0.4f)
-                        else haloColor,
+                    outlineColor = if (expanded) colorResource(R.color.key_inverse) else haloColor,
                     backgroundColor = colorResource(R.color.fill3),
                 )
                 .fillMaxWidth()
