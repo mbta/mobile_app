@@ -211,7 +211,7 @@ struct DirectionButtons: View {
                 directionValues
                     .enumerated()
                     .sorted(by: { $0.offset < $1.offset }),
-                id: \.element.hashValue
+                id: \.element.direction
             ) { index, directionValue in
                 Button(action: {
                     updateLocalFavorite(directionValue.direction, !directionValue.isFavorite)
@@ -221,7 +221,7 @@ struct DirectionButtons: View {
                             DirectionLabel(direction: directionValue.direction)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                             Spacer()
-                            StarIcon(pinned: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
+                            StarIcon(starred: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
                         }
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)

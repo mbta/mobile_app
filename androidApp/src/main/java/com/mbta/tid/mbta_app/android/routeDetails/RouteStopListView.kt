@@ -36,12 +36,12 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
+import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
@@ -184,7 +184,7 @@ fun LoadingRouteStopListView(
                             colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
                         )
                     is RouteDetailsRowContext.Favorites ->
-                        PinButton(
+                        StarButton(
                             rowContext.isFavorited,
                             colorResource(R.color.text),
                             rowContext.onTapStar,

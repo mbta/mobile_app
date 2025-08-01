@@ -183,6 +183,7 @@ struct StopDetailsFilteredView: View {
                     route: stopData?.lineOrRoute.sortRoute,
                     line: line,
                     stop: stop,
+                    direction: stopFilter.directionId,
                     pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
                     onPin: {
                         if favoriteBridge is FavoriteBridge.Pinned {

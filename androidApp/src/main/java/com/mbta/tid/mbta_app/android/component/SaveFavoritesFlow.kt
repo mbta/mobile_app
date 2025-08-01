@@ -65,7 +65,7 @@ fun SaveFavoritesFlow(
 ) {
 
     val isUnFavoriting =
-        (directions.any { it.id == selectedDirection }) &&
+        directions.any { it.id == selectedDirection } &&
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))
 
     val isBusOneDirection = directions.size == 1 && lineOrRoute.sortRoute.type == RouteType.BUS

@@ -11,7 +11,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.component.PinButton
+import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
@@ -38,8 +38,8 @@ fun RouteCardContainer(
     Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
         TransitHeader(data.lineOrRoute) { color ->
             if (!enhancedFavorites) {
-                PinButton(
-                    pinned = isFavorite(FavoriteBridge.Pinned(data.lineOrRoute.id)),
+                StarButton(
+                    starred = isFavorite(FavoriteBridge.Pinned(data.lineOrRoute.id)),
                     color = color,
                 ) {
                     onPin(data.lineOrRoute.id)
