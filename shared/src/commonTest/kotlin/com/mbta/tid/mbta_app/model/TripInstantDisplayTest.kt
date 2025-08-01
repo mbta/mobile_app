@@ -59,7 +59,7 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `commuter rail status is non-null, prediction time null, schedule in past`() {
+    fun `commuter rail status is non-null and prediction time null and schedule in past`() {
         val now = EasternTimeInstant.now()
         val scheduleTime = now - 3.minutes
         assertEquals(
