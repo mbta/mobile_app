@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -200,5 +201,40 @@ class SearchBarOverlayTest : KoinTest {
         composeTestRule.onNodeWithText("3½").assertIsDisplayed()
         composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
         composeTestRule.waitUntil { navigated }
+    }
+
+    @Test
+    fun testOnExpandedChangeNotCalledOnFirstLoad() {
+        val koinApplication =
+            testKoinApplication(builder) {
+                searchResults =
+                    MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
+                settings = MockSettingsRepository(mapOf(Settings.SearchRouteResults to true))
+            }
+
+        var onExpandedCalledWith: Boolean? = null
+
+        composeTestRule.setContent {
+            KoinContext(koinApplication.koin) {
+                val focusRequester = remember { FocusRequester() }
+                SearchBarOverlay(
+                    expanded = false,
+                    showSearchBar = true,
+                    onExpandedChange = { expandedVal -> onExpandedCalledWith = expandedVal },
+                    onStopNavigation = {},
+                    onRouteNavigation = {},
+                    inputFieldFocusRequester = focusRequester,
+                    content = {},
+                )
+            }
+        }
+
+        val searchNode = composeTestRule.onNode(hasSetTextAction())
+        searchNode.assertExists()
+        composeTestRule.waitForIdle()
+        assertEquals(null, onExpandedCalledWith)
+        searchNode.requestFocus()
+
+        assertEquals(true, onExpandedCalledWith)
     }
 }

@@ -402,6 +402,12 @@ fun MapAndSheetPage(
         ) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
+
+        if (currentNavEntry is SheetRoutes.Entrypoint) {
+            showNavBar()
+        } else {
+            hideNavBar()
+        }
     }
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
