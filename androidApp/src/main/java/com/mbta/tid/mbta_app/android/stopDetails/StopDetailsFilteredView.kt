@@ -111,7 +111,7 @@ private fun Loading(
                 updateStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                isFavorite = { _ -> false },
+                isFavorite = { _ -> null },
                 updateFavorites = {},
                 openModal = {},
                 openSheetRoute = {},

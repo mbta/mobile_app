@@ -135,6 +135,7 @@
     <string name="facility_issue">Problème d’infrastructure</string>
     <string name="facility_issue_sentence_case">Problème d’infrastructure</string>
     <string name="favorite_stop">arrêt préféré</string>
+    <string name="favorite_stops_first_time_toast_message">Les arrêts favoris remplacent la fonctionnalité d’itinéraires favoris précédente.</string>
     <string name="favorites_link">Favoris</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> à &lt;b>%3$s&lt;/b> ajouté aux favoris</string>
     <string name="favorites_toast_add_fallback">Ajouté aux favoris</string>

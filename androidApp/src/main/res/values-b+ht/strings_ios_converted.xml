@@ -144,6 +144,7 @@
     <string name="facility_issue">Pwoblèm Lokal</string>
     <string name="facility_issue_sentence_case">Pwoblèm lokal</string>
     <string name="favorite_stop">arè pi renmen</string>
+    <string name="favorite_stops_first_time_toast_message">Estasyon pi renmen yo ranplase karakteristik wout ak zetwal anvan an.</string>
     <string name="favorites_link">Favori</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> nan &lt;b>%3$s&lt;/b> ajoute nan Favorites</string>
     <string name="favorites_toast_add_fallback">Te ajoute nan Favoris</string>

@@ -13,6 +13,7 @@ struct StopDetailsFilteredHeader: View {
     var route: Route?
     var line: Line?
     var stop: Stop?
+    var direction: Int32
     var pinned: Bool = false
     var onPin: () -> Void = {}
     var onClose: () -> Void = {}
@@ -50,7 +51,9 @@ struct StopDetailsFilteredHeader: View {
             .accessibilityLabel(accessibilityLabel)
 
             HStack(alignment: .center, spacing: 16) {
-                PinButton(pinned: pinned, color: Color.text, action: onPin)
+                StarButton(starred: pinned, color: Color.text, action: onPin)
+                    .id(direction) // don’t play animation when switching between favorited direction and unfavorited
+                    // direction
                     .fixedSize(horizontal: false, vertical: true)
                     .frame(maxWidth: 44, maxHeight: 44)
                 ActionButton(kind: .close, action: onClose)
@@ -104,9 +107,9 @@ struct StopDetailsFilteredHeader_Previews: PreviewProvider {
             stop.name = "South Station"
         }
         VStack {
-            StopDetailsFilteredHeader(route: route, line: nil, stop: stop)
-            StopDetailsFilteredHeader(route: longestStopNameRoute, line: nil, stop: longestStopName)
-            StopDetailsFilteredHeader(route: crRoute, line: nil, stop: crStop)
+            StopDetailsFilteredHeader(route: route, line: nil, stop: stop, direction: 0)
+            StopDetailsFilteredHeader(route: longestStopNameRoute, line: nil, stop: longestStopName, direction: 0)
+            StopDetailsFilteredHeader(route: crRoute, line: nil, stop: crStop, direction: 0)
         }
     }
 }

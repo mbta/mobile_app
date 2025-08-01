@@ -133,6 +133,7 @@
     <string name="facility_issue">Facility Issue</string>
     <string name="facility_issue_sentence_case">Facility issue</string>
     <string name="favorite_stop">favorite stop</string>
+    <string name="favorite_stops_first_time_toast_message">Favorite stops replaces the prior starred routes feature.</string>
     <string name="favorites_link">Favorites</string>
     <string name="favorites_toast_add">&lt;b&gt;%1$s %2$s&lt;/b&gt; at &lt;b&gt;%3$s&lt;/b&gt; added to Favorites</string>
     <string name="favorites_toast_add_fallback">Added to Favorites</string>

@@ -20,18 +20,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.util.Typography
 
 @Composable
 fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
     Column(
-        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(top = 24.dp),
+        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(32.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Text(
             stringResource(R.string.no_stops_added),
@@ -39,11 +39,11 @@ fun NoFavoritesView(onAddStops: () -> Unit, showAddStops: Boolean = true) {
             style = Typography.title3,
             color = colorResource(R.color.deemphasized),
         )
-        Icon(
-            painterResource(R.drawable.no_favorites),
-            null,
-            modifier = Modifier.size(56.dp).clearAndSetSemantics {},
-            tint = colorResource(R.color.deemphasized),
+        StarIcon(
+            starred = false,
+            color = colorResource(R.color.deemphasized),
+            contentDescription = null,
+            size = 56.dp,
         )
         if (showAddStops) {
             Row(

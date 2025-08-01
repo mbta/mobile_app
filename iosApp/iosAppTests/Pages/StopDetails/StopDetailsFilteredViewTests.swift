@@ -47,7 +47,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let tappedPublisher = PassthroughSubject<Void, Never>()
 
         let tapButtonExp = sut.inspection.inspect(after: 0.5) { view in
-            try view.find(PinButton.self).find(ViewType.Button.self)
+            try view.find(StarButton.self).find(ViewType.Button.self)
                 .tap()
             tappedPublisher.send()
         }
@@ -95,7 +95,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopDetailsVM: stopDetailsVM
         )
 
-        try sut.withFixedSettings([:]).inspect().find(PinButton.self).find(ViewType.Button.self).tap()
+        try sut.withFixedSettings([:]).inspect().find(StarButton.self).find(ViewType.Button.self).tap()
 
         wait(for: [setFavoritesExp, setPinnedRoutesExp], timeout: 1)
     }

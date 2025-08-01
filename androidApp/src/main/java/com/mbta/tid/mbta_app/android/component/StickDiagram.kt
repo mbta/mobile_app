@@ -18,9 +18,13 @@ import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.cubicTo
+import com.mbta.tid.mbta_app.android.util.lineTo
+import com.mbta.tid.mbta_app.android.util.moveTo
+import com.mbta.tid.mbta_app.android.util.quadraticTo
+import com.mbta.tid.mbta_app.android.util.rect
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.SegmentAlertState
-import com.mbta.tid.mbta_app.shape.Path as SharedPath
 import com.mbta.tid.mbta_app.shape.StickDiagramShapes
 
 @Composable
@@ -71,29 +75,6 @@ fun StickDiagram(
             }
         }
     )
-}
-
-private val DrawScope.rect: SharedPath.Rect
-    get() = SharedPath.Rect(0f, size.width, 0f, size.height)
-
-private fun Path.moveTo(point: SharedPath.Point) {
-    moveTo(point.x, point.y)
-}
-
-private fun Path.lineTo(point: SharedPath.Point) {
-    lineTo(point.x, point.y)
-}
-
-private fun Path.quadraticTo(control: SharedPath.Point, to: SharedPath.Point) {
-    quadraticTo(control.x, control.y, to.x, to.y)
-}
-
-private fun Path.cubicTo(
-    control1: SharedPath.Point,
-    control2: SharedPath.Point,
-    to: SharedPath.Point,
-) {
-    cubicTo(control1.x, control1.y, control2.x, control2.y, to.x, to.y)
 }
 
 private val DrawScope.stickWidth

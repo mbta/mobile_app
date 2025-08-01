@@ -19,6 +19,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [],
+            shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [],
             loadedLocation: nil,
@@ -47,6 +48,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [],
+            shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [
                 .init(lineOrRoute: .route(route15),
