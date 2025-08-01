@@ -250,7 +250,7 @@ private fun DeleteIcon(action: () -> Unit) {
         modifier =
             Modifier.size(44.dp)
                 .clip(CircleShape)
-                .background(colorResource(R.color.fill2))
+                .background(colorResource(R.color.delete_background))
                 .clickable { action() }
                 .testTag("trashCan"),
         contentAlignment = Alignment.Center,
@@ -259,7 +259,7 @@ private fun DeleteIcon(action: () -> Unit) {
             painterResource(R.drawable.trash_can),
             stringResource(R.string.delete),
             modifier = Modifier.size(16.dp),
-            tint = colorResource(R.color.error),
+            tint = colorResource(R.color.delete),
         )
     }
 }
