@@ -100,7 +100,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([.enhancedFavorites: false])
 
         let button =
-            try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton").button()
+            try sut.inspect().find(viewWithAccessibilityIdentifier: "starButton").button()
 
         try button.tap()
         wait(for: [pinRouteExp], timeout: 1)
@@ -129,7 +129,7 @@ final class RouteCardTests: XCTestCase {
         ).withFixedSettings([.enhancedFavorites: true])
 
         XCTAssertThrowsError(
-            try sut.inspect().find(viewWithAccessibilityIdentifier: "pinButton")
+            try sut.inspect().find(viewWithAccessibilityIdentifier: "starButton")
         )
     }
 
