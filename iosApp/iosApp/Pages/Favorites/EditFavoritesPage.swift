@@ -211,14 +211,14 @@ struct DeleteButton: View {
         }) {
             ZStack {
                 Circle()
-                    .fill(Color.fill2)
+                    .fill(Color.deleteBackground)
                     .frame(width: buttonSize, height: buttonSize)
 
                 Image(.trashCan)
                     .resizable()
                     .scaledToFit()
                     .frame(width: imageWidth, height: imageHeight)
-                    .foregroundColor(Color.error)
+                    .foregroundColor(Color.delete)
                     .accessibilityLabel(Text("Delete",
                                              comment: "Content description for a button that removes a favorited route/stop/direction"))
             }
