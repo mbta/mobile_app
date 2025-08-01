@@ -42,31 +42,23 @@ struct NearbyTransitPage: View {
             VStack(spacing: 16) {
                 SheetHeader(title: NSLocalizedString("Nearby Transit", comment: "Header for nearby transit sheet"))
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
-                if viewportProvider.isManuallyCentering {
-                    LoadingCard {
-                        Text(
-                            "Select location",
-                            comment: "Visible when the user is panning the map to search for nearby transit"
-                        )
-                    }.padding(.horizontal, 16).padding(.bottom, 16)
-                } else {
-                    NearbyTransitView(
-                        location: $location,
-                        isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
-                        nearbyVM: nearbyVM,
-                        noNearbyStops: noNearbyStops
-                    )
-                    .onReceive(
-                        viewportProvider.cameraStatePublisher
-                            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
+                NearbyTransitView(
+                    location: $location,
+                    isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
+                    nearbyVM: nearbyVM,
+                    noNearbyStops: noNearbyStops
+                )
+                .onReceive(
+                    viewportProvider.cameraStatePublisher
+                        .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
 
-                    ) { newCameraState in
-                        guard nearbyVM.isNearbyVisible() else { return }
-                        location = newCameraState.center
-                    }
-                    .onReceive(inspection.notice) { inspection.visit(self, $0) }
+                ) { newCameraState in
+                    guard nearbyVM.isNearbyVisible() else { return }
+                    location = newCameraState.center
                 }
+                .onReceive(inspection.notice) { inspection.visit(self, $0) }
             }
+            .toolbarBackground(.visible, for: .tabBar)
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 if isManuallyCentering {
                     // The user is manually moving the map, clear the nearby state and

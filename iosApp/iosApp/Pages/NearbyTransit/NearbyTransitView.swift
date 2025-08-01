@@ -134,7 +134,7 @@ struct NearbyTransitView: View {
             }
         } else {
             ScrollViewReader { proxy in
-                ScrollView {
+                HaloScrollView {
                     LazyVStack(spacing: 18) {
                         ForEach(routeCardData) { cardData in
                             RouteCard(
@@ -161,7 +161,7 @@ struct NearbyTransitView: View {
     }
 
     @ViewBuilder private func loadingBody() -> some View {
-        ScrollView {
+        ScrollView([]) {
             LazyVStack(spacing: 18) {
                 ForEach(1 ... 5, id: \.self) { _ in
                     RouteCard(

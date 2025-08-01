@@ -22,7 +22,7 @@ struct RouteDetailsView: View {
     var errorBannerRepository = RepositoryDI().errorBanner
 
     var body: some View {
-        Group {
+        ScrollView([]) {
             if let globalData, let lineOrRoute = globalData.getLineOrRoute(
                 lineOrRouteId: selectionId
             ) {
@@ -46,6 +46,7 @@ struct RouteDetailsView: View {
                 loadingBody()
             }
         }
+        .ignoresSafeArea()
         .onAppear {
             getGlobal()
         }

@@ -12,6 +12,8 @@ import SwiftUI
 struct SheetHeader<Content: View>: View {
     let title: String?
     let titleColor: Color
+    let buttonColor: Color
+    let buttonTextColor: Color
     let onBack: (() -> Void)?
     let onClose: (() -> Void)?
     let closeText: String?
@@ -20,6 +22,8 @@ struct SheetHeader<Content: View>: View {
     init(
         title: String?,
         titleColor: Color = Color.text,
+        buttonColor: Color = Color.contrast,
+        buttonTextColor: Color = Color.fill2,
         onBack: (() -> Void)? = nil,
         onClose: (() -> Void)? = nil,
         closeText: String? = nil,
@@ -27,6 +31,8 @@ struct SheetHeader<Content: View>: View {
     ) {
         self.title = title
         self.titleColor = titleColor
+        self.buttonColor = buttonColor
+        self.buttonTextColor = buttonTextColor
         self.onBack = onBack
         self.onClose = onClose
         self.closeText = closeText
@@ -36,11 +42,11 @@ struct SheetHeader<Content: View>: View {
     var body: some View {
         HStack(alignment: .center, spacing: 16) {
             if let onBack {
-                ActionButton(kind: .back, action: { onBack() })
+                ActionButton(kind: .back, circleColor: buttonColor, iconColor: buttonTextColor, action: { onBack() })
             }
             if let title {
                 Text(title)
-                    .font(Typography.title3Semibold)
+                    .font(Typography.title2Bold)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
                     .foregroundColor(titleColor)
@@ -49,11 +55,16 @@ struct SheetHeader<Content: View>: View {
             rightActionContents()
             if let onClose {
                 if let closeText {
-                    NavTextButton(string: closeText, backgroundColor: Color.key, textColor: Color.fill3) {
+                    NavTextButton(string: closeText, backgroundColor: buttonColor, textColor: buttonTextColor) {
                         onClose()
                     }
                 } else {
-                    ActionButton(kind: .close, action: { onClose() })
+                    ActionButton(
+                        kind: .close,
+                        circleColor: buttonColor,
+                        iconColor: buttonTextColor,
+                        action: { onClose() }
+                    )
                 }
             }
         }

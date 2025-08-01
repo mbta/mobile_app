@@ -28,6 +28,8 @@ struct EditFavoritesPage: View {
             VStack(alignment: .leading, spacing: 16) {
                 SheetHeader(
                     title: NSLocalizedString("Edit Favorites", comment: "Title for flow to edit favorites"),
+                    buttonColor: Color.key,
+                    buttonTextColor: Color.fill3,
                     onClose: {
                         onClose()
                     },
@@ -38,7 +40,6 @@ struct EditFavoritesPage: View {
                                       viewModel.updateFavorites(updatedFavorites: [rsd: false],
                                                                 context: .favorites, defaultDirection: rsd.direction)
                                   })
-                Spacer()
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
@@ -86,8 +87,8 @@ struct EditFavoritesList: View {
 
     var body: some View {
         if let routeCardData, !routeCardData.isEmpty {
-            ScrollView {
-                LazyVStack(alignment: .center, spacing: 18) {
+            HaloScrollView {
+                LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(routeCardData) { cardData in
                         RouteCardContainer(cardData: cardData, onPin: { _ in
                         }, pinned: false, showStopHeader: true) { stopData in
@@ -98,15 +99,16 @@ struct EditFavoritesList: View {
                                 deleteFavorite(favToDelete)
                             }
                         }
-                        .padding(.vertical, 4)
-                        .padding(.horizontal, 16)
                     }
                 }
+                .padding(.vertical, 4)
+                .padding(.horizontal, 16)
+                .frame(maxHeight: .infinity, alignment: .top)
             }
         }
 
         else if routeCardData != nil {
-            ScrollView {
+            HaloScrollView {
                 NoFavoritesView()
                     .frame(maxWidth: .infinity)
                     .padding(.top, 16)
@@ -114,7 +116,7 @@ struct EditFavoritesList: View {
         }
 
         else {
-            ScrollView {
+            ScrollView([]) {
                 LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(0 ..< 5) { _ in
                         LoadingRouteCard()

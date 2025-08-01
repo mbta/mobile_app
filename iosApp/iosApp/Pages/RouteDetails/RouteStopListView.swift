@@ -258,9 +258,21 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         let globalData: GlobalResponse
     }
 
+    private var routeColor: Color { Color(hex: lineOrRoute.backgroundColor) }
+    private var textColor: Color { Color(hex: lineOrRoute.textColor) }
+    private var haloColor: Color {
+        lineOrRoute.type == .bus && !silverRoutes.contains(lineOrRoute.id) ? Color.haloLight : Color.haloDark
+    }
+
     var body: some View {
-        VStack {
-            SheetHeader(title: lineOrRoute.name, onBack: onBack, onClose: onClose)
+        VStack(spacing: 0) {
+            SheetHeader(
+                title: lineOrRoute.name,
+                titleColor: textColor,
+                buttonColor: Color.text.opacity(0.6),
+                onBack: onBack,
+                onClose: onClose
+            )
             ErrorBanner(errorBannerVM)
             DirectionPicker(
                 availableDirections: parameters.availableDirections.map { Int32(truncating: $0) },
@@ -269,12 +281,13 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 selectedDirectionId: selectedDirection,
                 updateDirectionId: { setSelectedDirection($0) }
             )
-            .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 14).padding(.vertical, 8)
+            .fixedSize(horizontal: false, vertical: true).padding([.horizontal, .top], 14).padding(.bottom, 10)
             if case let .line(lineOrRoute) = onEnum(of: lineOrRoute), routes.count > 1 {
                 lineRoutePicker(line: lineOrRoute.line, routes: routes)
             }
             routeStopList(stopList: stopList, onTapStop: onClick)
         }
+        .background { routeColor.ignoresSafeArea() }
         .onAppear {
             loadFavorites()
         }
@@ -312,7 +325,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
             let hasTypicalSegment = stopList.segments.contains(where: \.isTypical)
-            ScrollView {
+            HaloScrollView(haloColor: haloColor) {
                 VStack(spacing: 0) {
                     ForEach(Array(stopList.segments.enumerated()), id: \.offset) { segmentIndex, segment in
                         if segment.isTypical || !hasTypicalSegment {
@@ -350,6 +363,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         }
                     }
                 }
+                .background { Color.fill2 }
+                .withRoundedBorder(color: haloColor, width: 2)
+                .padding(2)
+                .padding(.horizontal, 14)
+                .padding(.top, 4)
+                .padding(.bottom, 32)
             }
         } else {
             AnyView(loadingRouteStops())
@@ -369,17 +388,23 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         RoutePill(route: route, line: line, type: .fixed)
                         Text(((route.directionDestinations[Int(selectedDirection)] as? String?) ?? "") ?? "")
                             .foregroundStyle(textColor)
-                            .font(Typography.title3Semibold)
+                            .font(Typography.title3Bold)
                         Spacer()
                     }
                     .padding(8)
-                    .background(rowColor)
                 }
+                .frame(minHeight: 44)
+                .background(rowColor)
+                .withRoundedBorder(color: selected ? .halo : Color.clear)
             }
         }
         .frame(maxWidth: .infinity)
+        .padding(2)
         .background(Color.deselectedToggle2.opacity(0.6))
         .background(Color(hex: line.color))
+        .withRoundedBorder(radius: 10, width: 0)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder private func loadingRouteStops() -> some View {
