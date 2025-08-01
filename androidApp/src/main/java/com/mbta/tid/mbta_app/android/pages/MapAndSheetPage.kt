@@ -627,6 +627,8 @@ fun MapAndSheetPage(
                     }
 
                 val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
+
+                Log.i("KB", "Transitioning ${initialRoute} ${targetRoute}")
                 val (targetStopId, targetStopFilter) =
                     when (targetRoute) {
                         is SheetRoutes.StopDetails ->
@@ -643,9 +645,7 @@ fun MapAndSheetPage(
                         initialStopFilter?.routeId == targetStopFilter?.routeId
                 ) {
                     EnterTransition.None
-                }
-
-                if (initialRoute == targetRoute) {
+                } else if (initialRoute == targetRoute) {
                     EnterTransition.None
                 } else {
                     slideIntoContainer(
