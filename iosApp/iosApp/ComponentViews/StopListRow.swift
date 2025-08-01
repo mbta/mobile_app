@@ -115,7 +115,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 }
             }
         }
-        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 6)
+        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, stopListContext == .trip ? 6 : 0)
     }
 
     @ViewBuilder

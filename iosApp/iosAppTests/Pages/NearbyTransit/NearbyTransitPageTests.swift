@@ -25,18 +25,6 @@ final class NearbyTransitPageTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testMessageWhenManuallyCentering() throws {
-        let viewportProvider = ViewportProvider(viewport: nil,
-                                                isManuallyCentering: true)
-        let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
-            nearbyVM: .init(),
-            viewportProvider: viewportProvider,
-            noNearbyStops: noNearbyStops
-        )
-        XCTAssertNotNil(try sut.inspect().find(text: "Select location"))
-    }
-
     func testClearsNearbyStateWhenManuallyCentering() throws {
         let viewportProvider = ViewportProvider(
             viewport: nil,

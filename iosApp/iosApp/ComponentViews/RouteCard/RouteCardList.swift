@@ -21,7 +21,7 @@ struct RouteCardList<EmptyView: View>: View {
 
     var body: some View {
         if let routeCardData, !routeCardData.isEmpty {
-            ScrollView {
+            HaloScrollView {
                 LazyVStack(alignment: .center, spacing: 18) {
                     ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
                         RouteCard(
@@ -39,7 +39,7 @@ struct RouteCardList<EmptyView: View>: View {
                 .padding(.horizontal, 16)
             }
         } else if let routeCardData, routeCardData.isEmpty {
-            ScrollView {
+            HaloScrollView {
                 VStack {
                     emptyView()
                     Spacer()
@@ -47,7 +47,7 @@ struct RouteCardList<EmptyView: View>: View {
                 .padding(.horizontal, 16)
             }
         } else {
-            ScrollView {
+            ScrollView([]) {
                 LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(0 ..< 5) { _ in
                         LoadingRouteCard()

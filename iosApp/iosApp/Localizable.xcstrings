@@ -15133,53 +15133,6 @@
         }
       }
     },
-    "Select location" : {
-      "comment" : "Visible when the user is panning the map to search for nearby transit",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar ubicación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionner une localisation"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chwazi pozisyon"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecionar local"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chọn vị trí"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择位置"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇位置"
-          }
-        }
-      }
-    },
     "Select to call" : {
       "comment" : "Screen reader text for a link to call a phone number",
       "localizations" : {

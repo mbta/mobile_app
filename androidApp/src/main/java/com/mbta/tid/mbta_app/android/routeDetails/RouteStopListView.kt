@@ -69,6 +69,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
@@ -362,7 +363,8 @@ private fun RouteStops(
     }
 
     val haloColor =
-        if (lineOrRoute.type == RouteType.BUS) colorResource(R.color.halo_light)
+        if (lineOrRoute.type == RouteType.BUS && !silverRoutes.contains(lineOrRoute.id))
+            colorResource(R.color.halo_light)
         else colorResource(R.color.halo_dark)
 
     ScrollSeparatorColumn(
