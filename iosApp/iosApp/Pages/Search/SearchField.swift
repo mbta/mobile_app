@@ -56,7 +56,7 @@ struct SearchField: View {
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(RoundedRectangle(cornerRadius: 8)
                 .stroke(
-                    searchObserver.isSearching ? Color.keyInverse.opacity(0.40) : Color.halo,
+                    searchObserver.isSearching ? Color.key : Color.halo,
                     lineWidth: searchObserver.isSearching ? 3 : 2
                 ))
 
