@@ -395,4 +395,105 @@ final class RoutePickerViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
     }
+
+    @MainActor func testFilterInputRequests() {
+        let objects = ObjectCollectionBuilder()
+        let route1 =
+            objects.route { route in
+                route.shortName = "1"
+                route.longName = "Harvard Square - Nubian Station"
+                route.type = RouteType.bus
+            }
+        let route71 =
+            objects.route { route in
+                route.shortName = "71"
+                route.longName = "Watertown Square - Harvard Station"
+                route.type = RouteType.bus
+            }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let mockSearchVM = MockSearchRoutesViewModel(
+            initialState: SearchRoutesViewModel.StateResults(routeIds: [route1.id])
+        )
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Bus(),
+            errorBannerVM: errorBannerVM,
+            searchRoutesViewModel: mockSearchVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertNoThrow(try view.find(text: "Filter routes"))
+            XCTAssertNoThrow(try view.find(text: "To find stops, select a route first"))
+            XCTAssertNoThrow(try view.find(text: route1.longName))
+            XCTAssertThrowsError(try view.find(text: route71.longName))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
+
+    @MainActor func testNoFilterResults() {
+        let objects = ObjectCollectionBuilder()
+        let route1 =
+            objects.route { route in
+                route.shortName = "1"
+                route.longName = "Harvard Square - Nubian Station"
+                route.type = RouteType.bus
+            }
+        let route71 =
+            objects.route { route in
+                route.shortName = "71"
+                route.longName = "Watertown Square - Harvard Station"
+                route.type = RouteType.bus
+            }
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let mockSearchVM = MockSearchRoutesViewModel(
+            initialState: SearchRoutesViewModel.StateResults(routeIds: [])
+        )
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Bus(),
+            errorBannerVM: errorBannerVM,
+            searchRoutesViewModel: mockSearchVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
+            XCTAssertNoThrow(try view.find(text: "Filter routes"))
+            XCTAssertNoThrow(try view.find(text: "To find stops, select a route first"))
+            XCTAssertNoThrow(try view.find(text: "No matching bus routes"))
+            XCTAssertThrowsError(try view.find(text: route1.longName))
+            XCTAssertThrowsError(try view.find(text: route71.longName))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 3)
+    }
 }

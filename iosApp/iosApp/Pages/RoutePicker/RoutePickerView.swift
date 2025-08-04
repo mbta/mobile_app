@@ -14,6 +14,7 @@ struct RoutePickerView: View {
     let context: RouteDetailsContext
     let path: RoutePickerPath
     let errorBannerVM: ErrorBannerViewModel
+    var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
     let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
     let onClose: () -> Void
@@ -21,6 +22,8 @@ struct RoutePickerView: View {
 
     @State var globalData: GlobalResponse?
     @State var routes: [RouteCardData.LineOrRoute] = []
+    @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
+    @StateObject var searchObserver = TextFieldObserver()
     let globalRepository: IGlobalRepository = RepositoryDI().global
     var errorBannerRepository = RepositoryDI().errorBanner
 
@@ -51,18 +54,40 @@ struct RoutePickerView: View {
         }
     }
 
+    private var isRootPath: Bool { path is RoutePickerPath.Root }
+
     var body: some View {
         ZStack {
             path.backgroundColor.edgesIgnoringSafeArea(.all)
-            VStack {
+            VStack(spacing: 0) {
                 header
                 ErrorBanner(errorBannerVM)
+                if !isRootPath {
+                    SearchInput(
+                        searchObserver: searchObserver,
+                        hint: NSLocalizedString(
+                            "Filter routes",
+                            comment: "Hint text for the search input in the route picker view"
+                        ),
+                        onClear: { searchObserver.isFocused = false }
+                    )
+                    .padding(.top, 16)
+                    .padding(.bottom, 8)
+                    .padding(.horizontal, 16)
+                }
                 ScrollView {
                     Group {
-                        if path is RoutePickerPath.Root {
+                        if isRootPath {
                             rootContent
+                                .padding(.top, 16)
                         } else {
-                            let displayedRoutes = routes // TODO: Search result state
+                            let displayedRoutes = switch onEnum(of: searchVMState) {
+                            case .unfiltered, .error: routes
+                            case let .results(state):
+                                state.routeIds.compactMap { routeId in
+                                    routes.first(where: { route in route.id == routeId })
+                                }
+                            }
                             VStack(spacing: 0) {
                                 if !displayedRoutes.isEmpty {
                                     ForEach(displayedRoutes, id: \.self) { route in
@@ -73,10 +98,12 @@ struct RoutePickerView: View {
                             }
                             .background(Color.fill3)
                             .withRoundedBorder(color: path.haloColor, width: 2)
+                            .padding(.top, 16)
+                            footer(emptyResults: displayedRoutes.isEmpty)
+                                .padding(.top, 16)
                         }
                     }
                     .padding(.horizontal, 14)
-                    .padding(.top, 10)
                 }
             }
         }
@@ -90,6 +117,14 @@ struct RoutePickerView: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .task {
+            for await model in searchRoutesViewModel.models {
+                searchVMState = model
+            }
+        }
+        .onChange(of: searchObserver.searchText) { query in
+            searchRoutesViewModel.setQuery(query: query)
+        }
     }
 
     private var header: some View {
@@ -126,6 +161,31 @@ struct RoutePickerView: View {
                     }
                 )
             }
+        }
+    }
+
+    @ViewBuilder
+    private func footer(emptyResults: Bool) -> some View {
+        if searchVMState is SearchRoutesViewModel.StateResults {
+            VStack(spacing: 2) {
+                if emptyResults {
+                    Text(
+                        String(
+                            format: NSLocalizedString(
+                                "No matching %1$@ routes",
+                                comment: "Text to indicate there's no matching results in route picker view"
+                            ),
+                            path.routeType.typeText(isOnly: true)
+                        )
+                    )
+                    .foregroundColor(path.textColor)
+                    .font(Typography.bodySemibold)
+                }
+                Text("To find stops, select a route first")
+                    .foregroundColor(path.textColor)
+                    .font(Typography.body)
+            }
+            .frame(maxWidth: .infinity)
         }
     }
 
