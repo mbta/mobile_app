@@ -14,7 +14,7 @@ struct RoutePickerView: View {
     let context: RouteDetailsContext
     let path: RoutePickerPath
     let errorBannerVM: ErrorBannerViewModel
-    let searchRoutesViewModel: SearchRoutesViewModel = ViewModelDI().searchRoutes
+    var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
     let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
     let onClose: () -> Void
