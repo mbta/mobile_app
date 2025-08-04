@@ -46,6 +46,11 @@ sealed class SheetRoutes {
             }
 
     companion object {
+
+        fun shouldResetSheetHeight(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+            return !retainSheetSize(first, second) && pageChanged(first, second)
+        }
+
         /**
          * Whether the page within the nearby transit tab changed. Moving from StopDetails to
          * StopDetails is only considered a page change if the stopId changed.

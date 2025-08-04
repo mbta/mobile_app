@@ -426,7 +426,7 @@ struct ContentView: View {
 
     @ViewBuilder var mapWithSheets: some View {
         let nav = nearbyVM.navigationStack.lastSafe()
-        let sheetItemId: String? = nav.sheetItemIdentifiable()?.id
+        let sheetRoute = nav.toSheetRoute()
         if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
@@ -473,7 +473,15 @@ struct ContentView: View {
                             },
                             content: coverContents
                         )
-                        .onChange(of: sheetItemId) { _ in selectedDetent = .medium }
+                        .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
+
+                            if let oldSheetRoute,
+                               let newSheetRoute,
+                               SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
+                                                                            second: newSheetRoute) {
+                                selectedDetent = .medium
+                            }
+                        }
                         .onAppear { recordSheetHeight(proxy.size.height) }
                         .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
                     }
