@@ -114,6 +114,8 @@ struct RoutePickerView: View {
                 RoutePickerRootRow(path: mode, onTap: { onOpenPickerPath(mode, context) })
             }
             Text("Subway")
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h2)
                 .font(Typography.subheadlineSemibold)
                 .padding(.leading, 16)
                 .padding(.top, 22)
