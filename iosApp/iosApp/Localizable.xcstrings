@@ -12358,6 +12358,9 @@
         }
       }
     },
+    "No matching %@ routes" : {
+      "comment" : "Text to indicate there's no matching results in route picker view"
+    },
     "No matching %1$@ routes" : {
       "comment" : "Text for the empty state on the route picker page when the filter text doesn't match any routes. The interpolated value can be \"bus\", \"ferry\", or \"train\" (localized).",
       "extractionState" : "manual",

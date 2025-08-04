@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.SearchResults
 import com.mbta.tid.mbta_app.model.StopResult
@@ -43,15 +44,21 @@ class SearchResultRepository : KoinComponent, ISearchResultRepository {
         searchRequest("api/search/query", query)
 }
 
-class MockSearchResultRepository(
+class MockSearchResultRepository
+@DefaultArgumentInterop.Enabled
+constructor(
     private val routeResults: List<RouteResult> = emptyList(),
     private val stopResults: List<StopResult> = emptyList(),
+    private val onGetRouteFilterResults: () -> Unit = {},
+    private val onGetSearchResults: () -> Unit = {},
 ) : ISearchResultRepository {
     override suspend fun getRouteFilterResults(query: String): ApiResult<SearchResults> {
+        onGetRouteFilterResults()
         return ApiResult.Ok(SearchResults(routeResults, emptyList()))
     }
 
     override suspend fun getSearchResults(query: String): ApiResult<SearchResults> {
+        onGetSearchResults()
         return ApiResult.Ok(SearchResults(routeResults, stopResults))
     }
 }
