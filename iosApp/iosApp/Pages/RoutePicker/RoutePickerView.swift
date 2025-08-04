@@ -172,7 +172,7 @@ struct RoutePickerView: View {
                     Text(
                         String(
                             format: NSLocalizedString(
-                                "No matching %@ routes",
+                                "No matching %1$@ routes",
                                 comment: "Text to indicate there's no matching results in route picker view"
                             ),
                             path.routeType.typeText(isOnly: true)
