@@ -59,4 +59,60 @@ class SheetRouteTest {
 
         assertTrue(SheetRoutes.retainSheetSize(SheetRoutes.EditFavorites, SheetRoutes.Favorites))
     }
+
+    @Test
+    fun testShouldResetSheetHeightStopDetails() {
+        assertTrue(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.StopDetails("a", null, null),
+                SheetRoutes.StopDetails("b", null, null),
+            )
+        )
+
+        assertFalse(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 0), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+            )
+        )
+
+        assertTrue(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.NearbyTransit,
+                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+            )
+        )
+
+        assertTrue(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.Favorites,
+                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+            )
+        )
+    }
+
+    @Test
+    fun testShouldRestSheetHeightAddOrEditFavorites() {
+        assertFalse(
+            SheetRoutes.shouldResetSheetHeight(SheetRoutes.Favorites, SheetRoutes.EditFavorites)
+        )
+        assertFalse(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.Favorites,
+                SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
+            )
+        )
+        assertFalse(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
+                SheetRoutes.RouteDetails("a", RouteDetailsContext.Favorites),
+            )
+        )
+        assertFalse(
+            SheetRoutes.shouldResetSheetHeight(
+                SheetRoutes.RouteDetails("a", RouteDetailsContext.Favorites),
+                SheetRoutes.Favorites,
+            )
+        )
+    }
 }
