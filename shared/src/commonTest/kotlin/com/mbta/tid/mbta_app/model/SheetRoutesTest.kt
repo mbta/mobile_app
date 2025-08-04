@@ -1,12 +1,10 @@
-package com.mbta.tid.mbta_app.android
+package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.SheetRoutes
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
-import junit.framework.TestCase.assertFalse
+import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.junit.Test
 
 class SheetRouteTest {
     @Test
