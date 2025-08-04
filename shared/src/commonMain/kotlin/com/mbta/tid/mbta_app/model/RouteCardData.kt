@@ -624,6 +624,8 @@ data class RouteCardData(
     /** The distance from the given position to the first stop in this route card. */
     fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
 
+    override fun toString() = "[RouteCardData]"
+
     companion object {
         // For regular non-branching service, we always show up to 2 departure rows for each leaf
         const val TYPICAL_LEAF_ROWS = 2

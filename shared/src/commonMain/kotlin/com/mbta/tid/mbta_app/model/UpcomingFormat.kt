@@ -75,6 +75,8 @@ sealed class UpcomingFormat {
                 now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
             ) : this(trip, routeType, trip.display(now, routeType, context))
+
+            override fun toString() = format.toString()
         }
 
         constructor(

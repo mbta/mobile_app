@@ -17,4 +17,6 @@ data class PredictionsStreamDataResponse(
     ) : this(objects.predictions, objects.trips, objects.vehicles)
 
     fun predictionQuantity() = predictions.size
+
+    override fun toString() = "[PredictionsStreamDataResponse]"
 }

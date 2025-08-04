@@ -24,4 +24,6 @@ data class ScheduleResponse(
         }
         return hasSchedules
     }
+
+    override fun toString() = "[ScheduleResponse]"
 }

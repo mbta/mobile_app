@@ -14,6 +14,8 @@ sealed class TripSchedulesResponse {
             schedules.mapNotNull { globalData.stops[it.stopId] }
 
         override fun routeId(): String? = schedules.map { it.routeId }.distinct().singleOrNull()
+
+        override fun toString() = "[TripSchedulesResponse.Schedules]"
     }
 
     @Serializable
