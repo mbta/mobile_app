@@ -30,7 +30,7 @@ fun DragHandle() {
         val description = stringResource(R.string.drag_handle)
         Surface(
             modifier = Modifier.semantics { contentDescription = description },
-            color = colorResource(R.color.drag_handle),
+            color = colorResource(R.color.text).copy(alpha = 0.6f),
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Box(Modifier.size(width = 32.dp, height = 4.dp))

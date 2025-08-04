@@ -45,12 +45,17 @@ fun SearchBarOverlay(
 ) {
     var searchInputState by rememberSaveable { mutableStateOf("") }
     val searchVMState by searchVM.models.collectAsState()
+    var previouslyExpanded: Boolean by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(searchInputState) { searchVM.setQuery(searchInputState) }
     LaunchedEffect(showSearchBar, expanded) {
         if (showSearchBar) {
             searchVM.refreshHistory()
-            onExpandedChange(expanded)
+            if (expanded != previouslyExpanded) {
+                // don't call onExpandedChange on initial load
+                onExpandedChange(expanded)
+                previouslyExpanded = expanded
+            }
             if (!expanded) {
                 searchInputState = ""
             }

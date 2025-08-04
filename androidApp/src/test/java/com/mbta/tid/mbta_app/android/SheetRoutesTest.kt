@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.android
 
 import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import junit.framework.TestCase.assertFalse
 import kotlin.test.assertTrue
 import org.junit.Test
@@ -35,5 +37,26 @@ class SheetRouteTest {
                 SheetRoutes.StopDetails("a", StopDetailsFilter("route1", 1), null),
             )
         )
+    }
+
+    @Test
+    fun testRetainSheetSizeWhenNotStopDetailsOrEntrypoint() {
+        assertFalse(
+            SheetRoutes.retainSheetSize(
+                SheetRoutes.StopDetails("a", null, null),
+                SheetRoutes.NearbyTransit,
+            )
+        )
+
+        assertFalse(SheetRoutes.retainSheetSize(SheetRoutes.NearbyTransit, SheetRoutes.Favorites))
+
+        assertTrue(
+            SheetRoutes.retainSheetSize(
+                SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
+                SheetRoutes.Favorites,
+            )
+        )
+
+        assertTrue(SheetRoutes.retainSheetSize(SheetRoutes.EditFavorites, SheetRoutes.Favorites))
     }
 }

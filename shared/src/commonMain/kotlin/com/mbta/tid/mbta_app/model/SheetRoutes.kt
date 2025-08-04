@@ -58,11 +58,15 @@ sealed class SheetRoutes {
             }
         }
 
-        /** When transitioning between certain routes, we don't want to resize the sheet */
+        /**
+         * We want to retain sheet size unless moving into or out of stop details, or between tabs
+         */
         fun retainSheetSize(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             val transitionSet = setOf(first?.let { it::class }, second?.let { it::class })
-            return transitionSet == setOf(RoutePicker::class) ||
-                transitionSet == setOf(RouteDetails::class, RoutePicker::class)
+            return !transitionSet.contains(StopDetails::class) &&
+                transitionSet != setOf(NearbyTransit::class, Favorites::class) &&
+                transitionSet != setOf(NearbyTransit::class) &&
+                transitionSet != setOf(Favorites::class)
         }
     }
 }

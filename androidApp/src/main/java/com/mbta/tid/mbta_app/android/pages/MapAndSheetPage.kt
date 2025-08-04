@@ -391,7 +391,7 @@ fun MapAndSheetPage(
     LaunchedEffect(nearbyTransit.alertData) { mapViewModel.alertsChanged(nearbyTransit.alertData) }
 
     LaunchedEffect(sheetNavEntrypoint) {
-        if (sheetNavEntrypoint != null && previousNavEntry != null) {
+        if (sheetNavEntrypoint != null) {
             navigateToEntrypoint(sheetNavEntrypoint)
         }
     }
@@ -401,6 +401,12 @@ fun MapAndSheetPage(
                 SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
         ) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
+        }
+
+        if (currentNavEntry is SheetRoutes.Entrypoint) {
+            showNavBar()
+        } else if (currentNavEntry != null) {
+            hideNavBar()
         }
     }
 
@@ -621,6 +627,7 @@ fun MapAndSheetPage(
                     }
 
                 val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
+
                 val (targetStopId, targetStopFilter) =
                     when (targetRoute) {
                         is SheetRoutes.StopDetails ->
@@ -637,9 +644,7 @@ fun MapAndSheetPage(
                         initialStopFilter?.routeId == targetStopFilter?.routeId
                 ) {
                     EnterTransition.None
-                }
-
-                if (initialRoute == targetRoute) {
+                } else if (initialRoute == targetRoute) {
                     EnterTransition.None
                 } else {
                     slideIntoContainer(
