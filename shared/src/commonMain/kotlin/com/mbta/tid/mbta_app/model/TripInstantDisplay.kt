@@ -42,6 +42,12 @@ sealed class TripInstantDisplay {
     data class ScheduleTime(val scheduledTime: EasternTimeInstant, val headline: Boolean = false) :
         TripInstantDisplay()
 
+    data class ScheduleTimeWithStatus(
+        val scheduledTime: EasternTimeInstant,
+        val status: String,
+        val headline: Boolean = false,
+    ) : TripInstantDisplay()
+
     data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
 
     data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
@@ -115,6 +121,19 @@ sealed class TripInstantDisplay {
                 }
             }
             val predictionTime = prediction.stopTimeAfter(now)
+            if (allowTimeWithStatus && prediction.status != null) {
+                if (predictionTime != null) {
+                    return TimeWithStatus(predictionTime, prediction.status, showTimeAsHeadline)
+                }
+                if (scheduleStopTime != null) {
+                    return ScheduleTimeWithStatus(
+                        scheduleStopTime,
+                        prediction.status,
+                        showTimeAsHeadline,
+                    )
+                }
+                return Overridden(prediction.status)
+            }
             if (predictionTime == null || (prediction.departureTime == null && !allowArrivalOnly)) {
                 return Hidden
             }
@@ -132,10 +151,8 @@ sealed class TripInstantDisplay {
 
                 return if (timeRemaining.isNegative()) {
                     Hidden
-                } else if (showDelayedSchedule && scheduleTime != null) {
+                } else if (showDelayedSchedule) {
                     TimeWithSchedule(predictionTime, scheduleTime, headline = showTimeAsHeadline)
-                } else if (allowTimeWithStatus && prediction.status != null) {
-                    TimeWithStatus(predictionTime, prediction.status, headline = showTimeAsHeadline)
                 } else {
                     Time(predictionTime, headline = showTimeAsHeadline)
                 }
