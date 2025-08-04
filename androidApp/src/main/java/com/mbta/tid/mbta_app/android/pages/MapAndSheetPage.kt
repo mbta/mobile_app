@@ -628,7 +628,6 @@ fun MapAndSheetPage(
 
                 val targetRoute = SheetRoutes.fromNavBackStackEntry(this.targetState)
 
-                Log.i("KB", "Transitioning ${initialRoute} ${targetRoute}")
                 val (targetStopId, targetStopFilter) =
                     when (targetRoute) {
                         is SheetRoutes.StopDetails ->
