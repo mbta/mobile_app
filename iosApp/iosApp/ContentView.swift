@@ -263,10 +263,9 @@ struct ContentView: View {
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
+                    .id(navEntry)
                     .transition(transition)
-                    // This achieves the initial desired transition but going back performs the same transition which is
-                    // odd
-                    // .transition(.asymmetric(insertion: .push(from: .trailing), removal: .opacity))
+                    .animation(.easeOut, value: navEntry)
 
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
