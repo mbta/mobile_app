@@ -124,6 +124,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                     directions: [direction0],
                                     selectedDirection: 0,
                                     context: SaveFavoritesContext.favorites,
+                                    global: .init(objects: .init()),
                                     isFavorite: { _ in false },
                                     updateFavorites: { updateFavoritesCalledFor = $0 },
                                     onClose: {})
@@ -150,6 +151,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                     directions: [direction0],
                                     selectedDirection: 0,
                                     context: SaveFavoritesContext.favorites,
+                                    global: .init(objects: .init()),
                                     isFavorite: { _ in false },
                                     updateFavorites: { updateFavoritesCalledFor = $0 },
                                     onClose: { onCloseExp.fulfill() })
@@ -173,6 +175,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                     directions: [direction0],
                                     selectedDirection: 0,
                                     context: SaveFavoritesContext.favorites,
+                                    global: .init(objects: .init()),
                                     isFavorite: { _ in true },
                                     updateFavorites: { updateFavoritesCalledFor = $0 },
                                     onClose: { onCloseExp.fulfill() })
@@ -192,6 +195,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                     directions: [direction0],
                                     selectedDirection: 1,
                                     context: SaveFavoritesContext.favorites,
+                                    global: .init(objects: .init()),
                                     isFavorite: { _ in false },
                                     updateFavorites: { updateFavoritesCalledFor = $0 },
                                     onClose: {})

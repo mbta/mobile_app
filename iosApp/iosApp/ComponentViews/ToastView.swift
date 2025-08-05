@@ -15,12 +15,13 @@ struct ToastView: View {
     @Environment(\.colorScheme) var colorScheme
 
     var state: ToastState
+    var tabBarVisible: Bool
     var onDismiss: () -> Void
 
     var body: some View {
         HStack {
             Group {
-                Text(state.message)
+                Text(AttributedString.tryMarkdown(state.message))
                     .font(Typography.body)
                     .foregroundColor(Color.textContrast)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,7 +58,7 @@ struct ToastView: View {
         .background(Color.contrast)
         .cornerRadius(8)
         .padding(.horizontal, 8)
-        .padding(.vertical, 16)
+        .padding(.bottom, tabBarVisible ? 64 : 32)
     }
 }
 
@@ -84,8 +85,8 @@ struct ToastView: View {
         onAction: {},
     )
     VStack {
-        ToastView(state: textOnly, onDismiss: {})
-        ToastView(state: close, onDismiss: {})
-        ToastView(state: action, onDismiss: {})
+        ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})
+        ToastView(state: close, tabBarVisible: false, onDismiss: {})
+        ToastView(state: action, tabBarVisible: false, onDismiss: {})
     }
 }

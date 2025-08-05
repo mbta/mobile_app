@@ -85,7 +85,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         let exp = sut.inspection.inspect(after: 1) { view in
@@ -169,7 +169,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: nearbyVM,
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
@@ -194,7 +194,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
@@ -211,7 +211,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
@@ -229,7 +229,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         ).withFixedSettings([:])
         try sut.inspect().view(FavoritesView.self).vStack().callOnAppear()
@@ -255,7 +255,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         ).withFixedSettings([:])
 
@@ -284,7 +284,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: nearbyVM,
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         let appearExp = sut.inspection.inspect(after: 0.2) { _ in
@@ -314,7 +314,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: locationBinding
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -342,7 +342,7 @@ final class FavoritesViewTests: XCTestCase {
             errorBannerVM: .init(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
-            toastVM: MockToastViewModel(initialState: ToastViewModel.StateHidden()),
+            toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -355,16 +355,20 @@ final class FavoritesViewTests: XCTestCase {
         let hideToast = expectation(description: "hideToast called")
         let isFirstExposureToFavoritesSet = expectation(description: "isFirstExposureToFavoritesSet set to false")
 
-        let favoritesVM = MockFavoritesViewModel(initialState: .init(awaitingPredictionsAfterBackground: false,
-                                                                     favorites: [],
-                                                                     shouldShowFirstTimeToast: true,
-                                                                     routeCardData: [],
-                                                                     staticRouteCardData: [],
-                                                                     loadedLocation: nil))
+        let favoritesVM = MockFavoritesViewModel(
+            initialState: .init(
+                awaitingPredictionsAfterBackground: false,
+                favorites: [],
+                shouldShowFirstTimeToast: true,
+                routeCardData: [],
+                staticRouteCardData: [],
+                loadedLocation: nil
+            )
+        )
 
         favoritesVM.onSetIsFirstExposureToNewFavorites = { _ in isFirstExposureToFavoritesSet.fulfill() }
 
-        let toastVM = MockToastViewModel(initialState: ToastViewModel.StateHidden())
+        let toastVM = MockToastViewModel()
         toastVM.onShowToast = { _ in setToastShownExp.fulfill() }
         toastVM.onHideToast = { hideToast.fulfill() }
 

@@ -61,7 +61,6 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
-        .toast(vm: toastVM)
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
@@ -94,6 +93,9 @@ struct FavoritesView: View {
             if favoritesVMState.shouldShowFirstTimeToast {
                 showFirstTimeToast()
             }
+        }
+        onDisappear {
+            toastVM.hideToast()
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
             if shouldShow {

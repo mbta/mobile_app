@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ToastModifier: ViewModifier {
     let vm: IToastViewModel
+    let tabBarVisible: Bool
     @State private var state: ToastViewModel.State = ToastViewModel.StateHidden()
     @State private var workItem: DispatchWorkItem?
     @State private var toastState: ToastState?
@@ -41,8 +42,12 @@ struct ToastModifier: ViewModifier {
         if let toastState {
             VStack {
                 Spacer()
-                ToastView(state: toastState, onDismiss: { dismissToast() })
-                    .onAppear { announceToast(message: toastState.message) }
+                ToastView(
+                    state: toastState,
+                    tabBarVisible: tabBarVisible,
+                    onDismiss: { dismissToast() }
+                )
+                .onAppear { announceToast(message: toastState.message) }
             }
         }
     }
@@ -50,15 +55,19 @@ struct ToastModifier: ViewModifier {
     private func showToast(state: ToastState) {
         UIImpactFeedbackGenerator(style: .light)
             .impactOccurred()
-        toastState = state
+        workItem?.cancel()
+        workItem = nil
+
+        withAnimation {
+            toastState = state
+        }
 
         let duration = state.duration.inMillis
 
         if let duration {
-            workItem?.cancel()
             let task = DispatchWorkItem { dismissToast() }
-            workItem = task
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(duration), execute: task)
+            workItem = task
         }
     }
 
@@ -93,7 +102,10 @@ extension ToastViewModel.Duration {
 }
 
 extension View {
-    func toast(vm: IToastViewModel) -> some View {
-        modifier(ToastModifier(vm: vm))
+    func toast(
+        vm: IToastViewModel,
+        tabBarVisible: Bool
+    ) -> some View {
+        modifier(ToastModifier(vm: vm, tabBarVisible: tabBarVisible))
     }
 }

@@ -26,7 +26,14 @@ final class EditFavoritesPageTests: XCTestCase {
         ))
 
         var onCloseCalled = false
-        let sut = EditFavoritesPage(viewModel: favoritesVM, onClose: { onCloseCalled = true }, errorBannerVM: .init())
+        let sut = EditFavoritesPage(
+            viewModel: favoritesVM,
+            onClose: { onCloseCalled = true },
+            errorBannerVM: .init(),
+            toastVM: MockToastViewModel(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
 
         XCTAssertNotNil(try sut.inspect().find(text: "Edit Favorites"))
         try sut.inspect().find(button: "Done").tap()
@@ -47,7 +54,10 @@ final class EditFavoritesPageTests: XCTestCase {
 
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [],
+            favorites: [
+                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0),
+                RouteStopDirection(route: route67.id, stop: stop67.id, direction: 0),
+            ],
             shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [
@@ -93,9 +103,16 @@ final class EditFavoritesPageTests: XCTestCase {
             }
         }
 
-        let sut = EditFavoritesPage(viewModel: favoritesVM, onClose: {}, errorBannerVM: .init())
+        let toastVM = MockToastViewModel()
 
-        let exp = sut.inspection.inspect(after: 0.2) { view in
+        let sut = EditFavoritesPage(
+            viewModel: favoritesVM,
+            onClose: {},
+            errorBannerVM: .init(),
+            toastVM: toastVM,
+        )
+
+        let exp = sut.inspection.inspect(after: 2.0) { view in
 
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
