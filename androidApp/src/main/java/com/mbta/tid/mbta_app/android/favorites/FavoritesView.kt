@@ -91,10 +91,13 @@ fun FavoritesView(
             toastViewModel.showToast(
                 ToastViewModel.Toast(
                     context.getString(R.string.favorite_stops_first_time_toast_message),
-                    onClose = {
-                        favoritesViewModel.setIsFirstExposureToNewFavorites(false)
-                        toastViewModel.hideToast()
-                    },
+                    buttonSpec =
+                        ToastViewModel.ToastAction.Close(
+                            onClose = {
+                                favoritesViewModel.setIsFirstExposureToNewFavorites(false)
+                                toastViewModel.hideToast()
+                            }
+                        ),
                 )
             )
         }

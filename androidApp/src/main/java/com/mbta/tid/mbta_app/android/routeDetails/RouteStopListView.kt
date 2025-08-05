@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -266,7 +265,10 @@ fun RouteStopListView(
             val toast =
                 ToastViewModel.Toast(
                     message = firstTimeToastMessage,
-                    onClose = { showFirstTimeFavoritesToast = false },
+                    buttonSpec =
+                        ToastViewModel.ToastAction.Close(
+                            onClose = { showFirstTimeFavoritesToast = false }
+                        ),
                 )
             toastViewModel.showToast(toast)
             firstTimeToast = toast

@@ -32,12 +32,19 @@ class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.
     }
 
     @Serializable
+    sealed class ToastAction {
+        @Serializable data class Close(val onClose: (() -> Unit)) : ToastAction()
+
+        @Serializable
+        data class Custom(val actionLabel: String, val onAction: (() -> Unit)) : ToastAction()
+    }
+
+    @Serializable
     data class Toast(
         val message: String,
+        val voiceOverDescription: String? = message,
         val duration: Duration = Duration.Indefinite,
-        val onClose: (() -> Unit)? = null,
-        val actionLabel: String? = null,
-        val onAction: (() -> Unit)? = null,
+        val buttonSpec: ToastAction? = null,
     )
 
     sealed interface Event {

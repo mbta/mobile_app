@@ -104,7 +104,9 @@ fun SaveFavoritesFlow(
         }
 
         toastText?.let {
-            toastViewModel.showToast(ToastViewModel.Toast(it, ToastViewModel.Duration.Short))
+            toastViewModel.showToast(
+                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short)
+            )
         }
     }
 

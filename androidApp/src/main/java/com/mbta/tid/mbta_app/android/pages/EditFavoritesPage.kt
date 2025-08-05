@@ -30,6 +30,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -102,15 +103,18 @@ fun EditFavoritesPage(
                 ToastViewModel.Toast(
                     getToastLabel(it),
                     duration = ToastViewModel.Duration.Short,
-                    actionLabel = toastUndoLabel,
-                    onAction = {
-                        favoritesViewModel.updateFavorites(
-                            mapOf(it to true),
-                            EditFavoritesContext.Favorites,
-                            it.direction,
-                        )
-                        toastViewModel.hideToast()
-                    },
+                    buttonSpec =
+                        ToastViewModel.ToastAction.Custom(
+                            actionLabel = toastUndoLabel,
+                            onAction = {
+                                favoritesViewModel.updateFavorites(
+                                    mapOf(it to true),
+                                    EditFavoritesContext.Favorites,
+                                    it.direction,
+                                )
+                                toastViewModel.hideToast()
+                            },
+                        ),
                 )
             )
         }
@@ -273,12 +277,12 @@ private fun DeleteIcon(action: () -> Unit) {
                 .background(colorResource(R.color.delete_background))
                 .clickable { action() }
                 .testTag("trashCan")
-                .clearAndSetSemantics {},
+                .clearAndSetSemantics { hideFromAccessibility() },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             painterResource(R.drawable.trash_can),
-            stringResource(R.string.delete),
+            null,
             modifier = Modifier.size(16.dp),
             tint = colorResource(R.color.delete),
         )
