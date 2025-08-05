@@ -396,10 +396,7 @@ fun MapAndSheetPage(
         }
     }
     LaunchedEffect(currentNavEntry) {
-        if (
-            !SheetRoutes.retainSheetSize(previousNavEntry, currentNavEntry) &&
-                SheetRoutes.pageChanged(previousNavEntry, currentNavEntry)
-        ) {
+        if (SheetRoutes.shouldResetSheetHeight(previousNavEntry, currentNavEntry)) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
 
