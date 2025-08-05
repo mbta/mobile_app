@@ -69,6 +69,6 @@ struct DirectionLabel: View {
             } else {
                 destinationLabel(DirectionLabel.directionNameFormatted(direction))
             }
-        }
+        }.accessibilityElement(children: .combine)
     }
 }

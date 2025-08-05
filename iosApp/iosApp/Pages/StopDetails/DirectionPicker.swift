@@ -78,6 +78,7 @@ struct DirectionPicker: View {
                     .clipShape(.rect(cornerRadius: 6))
                 }
             }
+            .accessibilityElement(children: .contain)
             .frame(minHeight: 44)
             .padding(2)
             .background(deselectedBackroundColor)
