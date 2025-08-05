@@ -1,16 +1,17 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -460,23 +462,28 @@ private fun LineRoutePicker(
             val selected = route.id == selectedRouteId
             val haloColor = if (selected) colorResource(R.color.halo) else Color.Transparent
             val rowColor = if (selected) colorResource(R.color.fill3) else Color.Transparent
-            val textColor =
-                if (selected) colorResource(R.color.text) else Color.fromHex(line.textColor)
-            Row(
-                Modifier.fillMaxWidth()
-                    .heightIn(min = 44.dp)
-                    .haloContainer(1.dp, haloColor, rowColor, 7.dp)
-                    .clickable { onSelect(route.id) }
-                    .padding(8.dp),
-                Arrangement.spacedBy(8.dp),
-                Alignment.CenterVertically,
+            Tab(
+                selected = selected,
+                onClick = { onSelect(route.id) },
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .heightIn(min = 44.dp)
+                        .haloContainer(1.dp, haloColor, rowColor, 7.dp)
+                        .padding(8.dp),
+                selectedContentColor = colorResource(R.color.text),
+                unselectedContentColor = Color.fromHex(line.textColor),
             ) {
-                RoutePill(route, line, RoutePillType.Fixed)
-                Text(
-                    route.directionDestinations[selectedDirection] ?: "",
-                    color = textColor,
-                    style = Typography.title3Semibold,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RoutePill(route, line, RoutePillType.Fixed)
+                    Text(
+                        route.directionDestinations[selectedDirection] ?: "",
+                        style = Typography.title3Semibold,
+                    )
+                    Spacer(Modifier.weight(1F))
+                }
             }
         }
     }
