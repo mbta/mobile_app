@@ -179,4 +179,6 @@ data class GlobalResponse(
             routeEntities.mapNotNull { this.stops[it.stop]?.resolveParent(this.stops) }
         return parentStops.distinct()
     }
+
+    override fun toString() = "[GlobalResponse]"
 }

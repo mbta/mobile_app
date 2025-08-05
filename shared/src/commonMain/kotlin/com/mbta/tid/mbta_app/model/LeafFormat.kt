@@ -64,9 +64,7 @@ sealed class LeafFormat {
         val branchRows: List<BranchRow>,
         val secondaryAlert: UpcomingFormat.SecondaryAlert? = null,
     ) : LeafFormat() {
-        data class BranchRow
-        @OptIn(ExperimentalUuidApi::class)
-        constructor(
+        data class BranchRow(
             /**
              * The route to display next to [headsign] and [format]. Only set if the
              * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
@@ -75,8 +73,13 @@ sealed class LeafFormat {
             val route: Route?,
             val headsign: String,
             val format: UpcomingFormat,
-            val id: String = "$headsign-$format-${Uuid.random()}",
-        )
+        ) {
+            /**
+             * SwiftUI needs to be able to distinguish rows with the same headsign, but that
+             * shouldn’t be included in equality checks or computed eagerly.
+             */
+            @OptIn(ExperimentalUuidApi::class) val id by lazy { "$headsign-${Uuid.random()}" }
+        }
 
         override fun tileData(directionDestination: String?): List<TileData> {
             return branchRows.mapNotNull { branch ->
