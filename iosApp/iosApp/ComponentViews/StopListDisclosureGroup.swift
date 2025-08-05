@@ -12,6 +12,7 @@ import SwiftUI
 struct StopListDisclosureGroup: DisclosureGroupStyle {
     let routeAccents: TripRouteAccents
     let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
+    let stopListContext: StopListContext
 
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
@@ -22,6 +23,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                 action: { withAnimation { configuration.isExpanded.toggle() } },
                 label: {
                     ZStack(alignment: .bottom) {
+                        HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
                             RouteLineTwist(
                                 color: routeAccents.color,
@@ -36,8 +38,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                                 .foregroundStyle(Color.deemphasized)
                                 .frame(width: 24, height: 24)
                             configuration.label
-                        }.frame(maxWidth: .infinity)
-                        HaloSeparator()
+                        }.frame(maxWidth: .infinity, alignment: .leading)
                     }
                 }
             ).onChange(of: configuration.isExpanded) { expanded in
@@ -62,8 +63,9 @@ extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
         stickConnections: [(RouteBranchSegment.StickConnection, Bool)] = [(
             .init(fromStop: "", toStop: "", fromLane: .center, toLane: .center, fromVPos: .top, toVPos: .bottom),
             true
-        )]
+        )],
+        context: StopListContext,
     ) -> StopListDisclosureGroup {
-        .init(routeAccents: routeAccents, stickConnections: stickConnections)
+        .init(routeAccents: routeAccents, stickConnections: stickConnections, stopListContext: context)
     }
 }

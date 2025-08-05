@@ -86,6 +86,28 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         let item = NearbyCoverItem(stackEntry: self)
         return item.id == "" ? nil : item
     }
+
+    /*
+     Convert this SheetNavigationStackEntry into the shared SheetRoute type. SheetRoute represents only routes displayed
+     in a MapSheetPage. Any other nav stack entries that are displayed as full screen modals (like alertDetails
+     and more) do not have a corresponding SheetRoute, and therefore return nil.
+     */
+    func toSheetRoute() -> SheetRoutes? {
+        switch self {
+        case .nearby: SheetRoutes.NearbyTransit()
+        case .favorites: SheetRoutes.Favorites()
+        case .editFavorites: SheetRoutes.EditFavorites()
+        case let .stopDetails(stopId, stopFilter, tripFilter): SheetRoutes.StopDetails(
+                stopId: stopId,
+                stopFilter: stopFilter,
+                tripFilter: tripFilter
+            )
+        case let .routeDetails(sheetRoute): sheetRoute
+        case let .routePicker(sheetRoute): sheetRoute
+        case .alertDetails: nil
+        case .more: nil
+        }
+    }
 }
 
 /// Struct that holds a SheetNavigationStackEntry. To be used with `sheet(item:onDismiss:content:)`
