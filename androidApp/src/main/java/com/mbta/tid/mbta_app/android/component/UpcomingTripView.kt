@@ -220,7 +220,7 @@ fun UpcomingTripView(
                             else Typography.footnoteSemibold,
                     )
 
-                is TripInstantDisplay.ScheduleTimeWithStatus ->
+                is TripInstantDisplay.ScheduleTimeWithStatusColumn ->
                     Column(
                         modifier.clearAndSetSemantics { contentDescription = tripDescription },
                         horizontalAlignment = Alignment.End,
@@ -244,6 +244,28 @@ fun UpcomingTripView(
                         )
                     }
 
+                is TripInstantDisplay.ScheduleTimeWithStatusRow ->
+                    Row(
+                        modifier.clearAndSetSemantics { contentDescription = tripDescription },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Text(
+                            state.trip.status,
+                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnote,
+                        )
+                        Text(
+                            state.trip.scheduledTime.formattedTime(),
+                            modifier
+                                .alpha(min(maxTextAlpha, 0.6F))
+                                .semantics { contentDescription = tripDescription }
+                                .placeholderIfLoading(),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnoteSemibold,
+                        )
+                    }
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
@@ -377,7 +399,10 @@ fun DisruptionView(
 @Composable
 fun UpcomingTripViewPreview() {
     MyApplicationTheme {
-        Column(horizontalAlignment = Alignment.End) {
+        Column(
+            Modifier.background(colorResource(R.color.fill3)).padding(8.dp),
+            horizontalAlignment = Alignment.End,
+        ) {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
             UpcomingTripView(

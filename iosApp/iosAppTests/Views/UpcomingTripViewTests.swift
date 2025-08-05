@@ -90,6 +90,27 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
 
+    func testScheduleWithStatusColumn() throws {
+        let date = EasternTimeInstant(year: 2025, month: .august, day: 5, hour: 14, minute: 26, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTimeWithStatusColumn(scheduledTime: date, status: "Delayed", headline: true)),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/2:26\sPM train delayed/#))
+        XCTAssertNotNil(try sut.inspect().find(text: "Delayed"))
+    }
+
+    func testScheduleWithStatusRow() throws {
+        let date = EasternTimeInstant(year: 2025, month: .august, day: 5, hour: 14, minute: 26, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTimeWithStatusRow(scheduledTime: date, status: "Anomalous")),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect()
+            .find(viewWithAccessibilityLabelMatching: #/train arriving at 2:26\sPM scheduled, Anomalous/#))
+        XCTAssertNotNil(try sut.inspect().find(text: "Anomalous"))
+    }
+
     func testTimeWithStatusLate() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(

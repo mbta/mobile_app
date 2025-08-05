@@ -17,10 +17,23 @@ extension TripInstantDisplay {
         case .boarding: boardingLabel(isFirst, vehicleType)
         case let .cancelled(trip): cancelledLabel(trip.scheduledTime, isFirst, vehicleType)
         case let .scheduleMinutes(trip): scheduledMinutesLabel(trip.minutes, isFirst, vehicleType)
-        case let .scheduleTime(trip): scheduleTimeLabel(trip.scheduledTime, isFirst, vehicleType)
+        case let .scheduleTime(trip): scheduleTimeLabel(trip.scheduledTime, status: nil, isFirst, vehicleType)
         case .time, .timeWithStatus: predictedTimeLabel(isFirst, vehicleType)
         case let .timeWithSchedule(trip): predictedTimeWithScheduleLabel(trip, isFirst, vehicleType)
-        default: Text(verbatim: "")
+        case let .scheduleTimeWithStatusColumn(trip): scheduleTimeLabel(
+                trip.scheduledTime,
+                status: trip.status,
+                isFirst,
+                vehicleType
+            )
+        case let .scheduleTimeWithStatusRow(trip): scheduleTimeLabel(
+                trip.scheduledTime,
+                status: trip.status,
+                isFirst,
+                vehicleType
+            )
+        case let .overridden(trip): Text(verbatim: trip.text)
+        case .hidden, .skipped: Text(verbatim: "")
         }
     }
 
@@ -301,20 +314,38 @@ extension TripInstantDisplay {
         }
     }
 
-    private func scheduleTimeLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool,
+    private func scheduleTimeLabel(_ scheduledTime: EasternTimeInstant, status: String?, _ isFirst: Bool,
                                    _ vehicleType: String) -> Text {
-        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
-        return isFirst
-            ? Text("\(vehicleType) arriving at \(time) scheduled",
-                   comment: """
-                   Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
-                   First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
-                   For example, 'bus arriving at 10:30AM scheduled'
-                   """)
-            : Text("and at \(time) scheduled",
-                   comment: """
-                   The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.
-                   For example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'
-                   """)
+        if let status, TripInstantDisplay.companion.delayStatuses.contains(status) {
+            return Text(delayString(scheduledTime, isFirst, vehicleType))
+        }
+
+        let scheduledTime = scheduledTime.formatted(date: .omitted, time: .shortened)
+        let timeString = scheduleTimeString(scheduledTime, isFirst, vehicleType)
+        let finalLabel = if let status {
+            "\(timeString), \(status)"
+        } else {
+            timeString
+        }
+        return Text(verbatim: finalLabel)
+    }
+
+    private func scheduleTimeString(_ time: String, _ isFirst: Bool, _ vehicleType: String) -> String {
+        isFirst
+            ? String(format: NSLocalizedString(
+                "%@ arriving at %@ scheduled",
+                comment: """
+                Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
+                For example, 'bus arriving at 10:30AM scheduled'
+                """
+            ), vehicleType, time)
+            : String(format: NSLocalizedString(
+                "and at %@ scheduled",
+                comment: """
+                The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'
+                """
+            ), time)
     }
 }

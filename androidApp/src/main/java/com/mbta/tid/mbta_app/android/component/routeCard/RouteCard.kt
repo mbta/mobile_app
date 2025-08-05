@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.RouteCardPreviewData
@@ -93,7 +94,14 @@ fun RouteCard(
 
 class Previews() {
     val data = RouteCardPreviewData()
-    val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+    val koin = koinApplication {
+        modules(
+            module {
+                single<Analytics> { MockAnalytics() }
+                single<SettingsCache> { SettingsCache(MockSettingsRepository()) }
+            }
+        )
+    }
 
     @Composable
     fun CardForPreview(card: RouteCardData) {

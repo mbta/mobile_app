@@ -230,7 +230,7 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip,
                             route.type,
-                            TripInstantDisplay.ScheduleTimeWithStatus(
+                            TripInstantDisplay.ScheduleTimeWithStatusColumn(
                                 scheduleTime,
                                 status,
                                 headline = true,

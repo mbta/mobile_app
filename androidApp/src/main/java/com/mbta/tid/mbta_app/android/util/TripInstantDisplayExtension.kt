@@ -59,16 +59,17 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
                     else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
             }
         }
-        is TripInstantDisplay.ScheduleTime -> {
-            val time = this.scheduledTime.formattedTime()
-            if (isFirst) stringResource(R.string.vehicle_schedule_time_first, vehicleType, time)
-            else stringResource(R.string.vehicle_schedule_time_other, time)
-        }
+        is TripInstantDisplay.ScheduleTime -> scheduledTimeDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.Time,
         is TripInstantDisplay.TimeWithStatus -> predictedTimeDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.TimeWithSchedule ->
             predictedWithScheduleDescription(this, isFirst, vehicleType)
-        else -> ""
+        is TripInstantDisplay.ScheduleTimeWithStatusColumn,
+        is TripInstantDisplay.ScheduleTimeWithStatusRow ->
+            scheduledTimeDescription(this, isFirst, vehicleType)
+        is TripInstantDisplay.Overridden -> this.text
+        TripInstantDisplay.Hidden,
+        is TripInstantDisplay.Skipped -> ""
     }
 
 @Composable
@@ -191,4 +192,37 @@ private fun predictedWithScheduleDescription(
     val predictionTime = trip.predictionTime.formattedTime()
     val actualArrival = stringResource(R.string.vehicle_prediction_actual_arrival, predictionTime)
     return "$scheduleStatus, $actualArrival"
+}
+
+@Composable
+private fun scheduledTimeDescription(
+    trip: TripInstantDisplay,
+    isFirst: Boolean,
+    vehicleType: String,
+): String {
+    val scheduledTime =
+        when (trip) {
+            is TripInstantDisplay.ScheduleTime -> trip.scheduledTime
+            is TripInstantDisplay.ScheduleTimeWithStatusColumn -> trip.scheduledTime
+            is TripInstantDisplay.ScheduleTimeWithStatusRow -> trip.scheduledTime
+            else -> return ""
+        }
+    val status =
+        when (trip) {
+            is TripInstantDisplay.ScheduleTimeWithStatusColumn -> trip.status
+            is TripInstantDisplay.ScheduleTimeWithStatusRow -> trip.status
+            else -> null
+        }
+    if (status in TripInstantDisplay.delayStatuses)
+        return delayDescription(scheduledTime, isFirst, vehicleType)
+
+    val timeString =
+        if (isFirst)
+            stringResource(
+                R.string.vehicle_schedule_time_first,
+                vehicleType,
+                scheduledTime.formattedTime(),
+            )
+        else stringResource(R.string.vehicle_schedule_time_other, scheduledTime.formattedTime())
+    return if (status != null) "$timeString, $status" else timeString
 }

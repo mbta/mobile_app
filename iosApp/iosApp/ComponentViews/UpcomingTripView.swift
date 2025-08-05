@@ -120,7 +120,7 @@ struct UpcomingTripView: View {
                 .opacity(min(0.6, maxTextAlpha))
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                 .accessibilityLabel(label)
-        case let .scheduleTimeWithStatus(format):
+        case let .scheduleTimeWithStatusColumn(format):
             VStack(alignment: .trailing, spacing: 0) {
                 Text(format.scheduledTime, style: .time)
                     .opacity(min(0.6, maxTextAlpha))
@@ -129,6 +129,18 @@ struct UpcomingTripView: View {
                     .font(Typography.footnoteSemibold)
                     .opacity(min(0.6, maxTextAlpha))
                     .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
+        case let .scheduleTimeWithStatusRow(format):
+            HStack(alignment: .center, spacing: 4) {
+                Text(format.status)
+                    .font(Typography.footnoteSemibold)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .multilineTextAlignment(.trailing)
+                Text(format.scheduledTime, style: .time)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .font(Typography.footnoteSemibold)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(label)

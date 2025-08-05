@@ -76,3 +76,72 @@ struct PredictionRowView: View {
         }
     }
 }
+
+#Preview {
+    let objects = ObjectCollectionBuilder()
+    let trip1 = UpcomingTrip(trip: objects.trip { _ in })
+    let trip2 = UpcomingTrip(trip: objects.trip { _ in })
+    VStack(alignment: .leading, spacing: 20) {
+        PredictionRowView(
+            predictions: .Some(trips: [
+                .init(
+                    trip: trip1,
+                    routeType: .commuterRail,
+                    format: .ScheduleTimeWithStatusRow(
+                        scheduledTime: .init(year: 2025, month: .august, day: 5, hour: 12, minute: 10, second: 0),
+                        status: "Delayed"
+                    )
+                ),
+                .init(
+                    trip: trip2,
+                    routeType: .commuterRail,
+                    format: .Time(
+                        predictionTime: .init(year: 2025, month: .august, day: 5, hour: 12, minute: 45, second: 0),
+                        headline: true
+                    )
+                ),
+            ], secondaryAlert: nil),
+            destination: { Text("Needham Heights") }
+        )
+
+        PredictionRowView(
+            predictions: .Some(trip: .init(trip: trip1, routeType: .lightRail, format: .Boarding.shared),
+                               secondaryAlert: nil),
+            destination: { Text("Longer Destination than That") }
+        )
+
+        PredictionRowView(
+            predictions: .Some(trip: .init(
+                trip: trip1,
+                routeType: .lightRail,
+                format: .Overridden(text: "Stopped 10 stops away")
+            ), secondaryAlert: nil),
+            pillDecoration: .onRow(route: TestData.getRoute(id: "Green-B")),
+            destination: { Text("Destination") }
+        )
+
+        PredictionRowView(
+            predictions: .Some(trip: .init(
+                trip: trip1,
+                routeType: .lightRail,
+                format: .Overridden(text: "Stopped 10 stops away")
+            ), secondaryAlert: nil),
+            destination: { Text("Destination") }
+        )
+
+        PredictionRowView(
+            predictions: .Some(trips: [
+                .init(trip: trip1, routeType: .bus, format: .ScheduleMinutes(minutes: 6)),
+                .init(trip: trip2, routeType: .bus, format: .ScheduleMinutes(minutes: 15)),
+            ], secondaryAlert: nil),
+            destination: { Text("Destination") }
+        )
+
+        PredictionRowView(
+            predictions: .Disruption(alert: objects.alert { $0.effect = .detour }, mapStopRoute: .green),
+            destination: { Text("Destination") }
+        )
+    }
+    .padding(.leading, 16)
+    .padding(.trailing, 8)
+}

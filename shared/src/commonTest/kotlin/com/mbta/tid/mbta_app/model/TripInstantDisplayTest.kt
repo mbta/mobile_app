@@ -38,9 +38,28 @@ class TripInstantDisplayTest {
     }
 
     @Test
-    fun `commuter rail status is non-null and prediction is in past`() {
+    fun `commuter rail status is non-null and prediction is in past`() = parametricTest {
         val now = EasternTimeInstant.now()
         val predictionTime = now - 3.minutes
+        assertEquals(
+            TripInstantDisplay.Time(predictionTime, headline = true),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = predictionTime
+                        status = "Custom Text"
+                    },
+                schedule = null,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context =
+                    anyOf(
+                        TripInstantDisplay.Context.NearbyTransit,
+                        TripInstantDisplay.Context.StopDetailsUnfiltered,
+                    ),
+            ),
+        )
         assertEquals(
             TripInstantDisplay.TimeWithStatus(predictionTime, "Custom Text", headline = true),
             TripInstantDisplay.from(
@@ -56,24 +75,59 @@ class TripInstantDisplayTest {
                 context = TripInstantDisplay.Context.StopDetailsFiltered,
             ),
         )
-    }
-
-    @Test
-    fun `commuter rail status is non-null and prediction time null and schedule in past`() {
-        val now = EasternTimeInstant.now()
-        val scheduleTime = now - 3.minutes
         assertEquals(
-            TripInstantDisplay.ScheduleTimeWithStatus(scheduleTime, "Custom Text", headline = true),
+            TripInstantDisplay.Time(predictionTime, headline = false),
             TripInstantDisplay.from(
-                prediction = ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
-                schedule = ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime },
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = predictionTime
+                        status = "Custom Text"
+                    },
+                schedule = null,
                 vehicle = null,
                 routeType = RouteType.COMMUTER_RAIL,
                 now = now,
-                context = TripInstantDisplay.Context.StopDetailsFiltered,
+                context = TripInstantDisplay.Context.TripDetails,
             ),
         )
     }
+
+    @Test
+    fun `commuter rail status is non-null and prediction time null and schedule in past`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+            val scheduleTime = now - 3.minutes
+            assertEquals(
+                TripInstantDisplay.ScheduleTimeWithStatusRow(scheduleTime, "Custom Text"),
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
+                    schedule =
+                        ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime },
+                    vehicle = null,
+                    routeType = RouteType.COMMUTER_RAIL,
+                    now = now,
+                    context = anyEnumValueExcept(TripInstantDisplay.Context.StopDetailsFiltered),
+                ),
+            )
+            assertEquals(
+                TripInstantDisplay.ScheduleTimeWithStatusColumn(
+                    scheduleTime,
+                    "Custom Text",
+                    headline = true,
+                ),
+                TripInstantDisplay.from(
+                    prediction =
+                        ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
+                    schedule =
+                        ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime },
+                    vehicle = null,
+                    routeType = RouteType.COMMUTER_RAIL,
+                    now = now,
+                    context = TripInstantDisplay.Context.StopDetailsFiltered,
+                ),
+            )
+        }
 
     @Test
     fun `scheduled trip skipped`() = parametricTest {

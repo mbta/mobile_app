@@ -97,54 +97,78 @@ struct DepartureTile: View {
     let trip = objects.trip { _ in }
     let upcomingTrip = UpcomingTrip(trip: trip)
 
-    HStack {
-        DepartureTile(
-            data: .init(
-                route: route1,
-                headsign: "Framingham",
-                formatted: UpcomingFormat.Some(trips: [
-                    .init(
-                        trip: upcomingTrip,
-                        routeType: .commuterRail,
-                        format: .TimeWithStatus(
-                            predictionTime: EasternTimeInstant.now(),
-                            status: "Delay",
-                            headline: true
-                        )
+    ScrollView(.horizontal) {
+        HStack {
+            DepartureTile(
+                data: .init(
+                    route: route1,
+                    headsign: nil,
+                    formatted: UpcomingFormat.Some(trips: [
+                        .init(
+                            trip: upcomingTrip,
+                            routeType: .commuterRail,
+                            format: .TimeWithStatus(
+                                predictionTime: EasternTimeInstant.now(),
+                                status: "Delay",
+                                headline: true
+                            )
+                        ),
+                    ], secondaryAlert: nil),
+                    upcoming: upcomingTrip
+                ),
+                onTap: {},
+                isSelected: true
+            )
+            DepartureTile(
+                data: .init(
+                    route: route1,
+                    headsign: "Harvard",
+                    formatted: UpcomingFormat.Some(trips: [
+                        .init(trip: upcomingTrip, routeType: .bus, format: .Minutes(minutes: 9)),
+                    ], secondaryAlert: nil),
+                    upcoming: upcomingTrip
+                ),
+                onTap: {},
+                isSelected: false
+            )
+            DepartureTile(
+                data: .init(
+                    route: route1,
+                    headsign: nil,
+                    formatted: UpcomingFormat.Some(
+                        trips: [
+                            .init(
+                                trip: upcomingTrip,
+                                routeType: .commuterRail,
+                                format: .ScheduleTimeWithStatusColumn(
+                                    scheduledTime: .now().minus(minutes: 15),
+                                    status: "Delay",
+                                    headline: true
+                                )
+                            ),
+                        ],
+                        secondaryAlert: nil
                     ),
-                ], secondaryAlert: nil),
-                upcoming: upcomingTrip
-            ),
-            onTap: {},
-            isSelected: true
-        )
-        DepartureTile(
-            data: .init(
-                route: route1,
-                headsign: "Harvard",
-                formatted: UpcomingFormat.Some(trips: [
-                    .init(trip: upcomingTrip, routeType: .bus, format: .Minutes(minutes: 9)),
-                ], secondaryAlert: nil),
-                upcoming: upcomingTrip
-            ),
-            onTap: {},
-            isSelected: false
-        )
-        DepartureTile(
-            data: .init(
-                route: routeB,
-                headsign: "Government Center",
-                formatted: UpcomingFormat.Some(trips: [
-                    .init(trip: upcomingTrip, routeType: .lightRail, format: .Minutes(minutes: 12)),
-                ], secondaryAlert: nil),
-                upcoming: upcomingTrip
-            ),
-            onTap: {},
-            pillDecoration: .onPrediction(route: routeB),
-            isSelected: false
-        )
+                    upcoming: upcomingTrip
+                ),
+                onTap: {},
+            )
+            DepartureTile(
+                data: .init(
+                    route: routeB,
+                    headsign: "Government Center",
+                    formatted: UpcomingFormat.Some(trips: [
+                        .init(trip: upcomingTrip, routeType: .lightRail, format: .Minutes(minutes: 12)),
+                    ], secondaryAlert: nil),
+                    upcoming: upcomingTrip
+                ),
+                onTap: {},
+                pillDecoration: .onPrediction(route: routeB),
+                isSelected: false
+            )
+        }
+        .padding(16)
+        .background(Color(hex: "00843D"))
+        .fixedSize(horizontal: false, vertical: true)
     }
-    .padding(16)
-    .background(Color(hex: "00843D"))
-    .fixedSize(horizontal: true, vertical: true)
 }
