@@ -43,7 +43,7 @@ okio = "3.16.0"
 playServicesLocation = "21.3.0"
 sentry = "0.13.0"
 sentryGradle = "5.7.0"
-skie = "0.10.4"
+skie = "0.10.5"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "7.2.1"
