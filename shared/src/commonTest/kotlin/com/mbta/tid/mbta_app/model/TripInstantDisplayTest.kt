@@ -38,6 +38,44 @@ class TripInstantDisplayTest {
     }
 
     @Test
+    fun `commuter rail status is non-null and prediction is in past`() {
+        val now = EasternTimeInstant.now()
+        val predictionTime = now - 3.minutes
+        assertEquals(
+            TripInstantDisplay.TimeWithStatus(predictionTime, "Custom Text", headline = true),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        departureTime = predictionTime
+                        status = "Custom Text"
+                    },
+                schedule = null,
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
+        )
+    }
+
+    @Test
+    fun `commuter rail status is non-null and prediction time null and schedule in past`() {
+        val now = EasternTimeInstant.now()
+        val scheduleTime = now - 3.minutes
+        assertEquals(
+            TripInstantDisplay.ScheduleTimeWithStatus(scheduleTime, "Custom Text", headline = true),
+            TripInstantDisplay.from(
+                prediction = ObjectCollectionBuilder.Single.prediction { status = "Custom Text" },
+                schedule = ObjectCollectionBuilder.Single.schedule { departureTime = scheduleTime },
+                vehicle = null,
+                routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                context = TripInstantDisplay.Context.StopDetailsFiltered,
+            ),
+        )
+    }
+
+    @Test
     fun `scheduled trip skipped`() = parametricTest {
         val now = EasternTimeInstant.now()
         assertEquals(

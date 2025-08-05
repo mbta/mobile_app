@@ -220,6 +220,30 @@ fun UpcomingTripView(
                             else Typography.footnoteSemibold,
                     )
 
+                is TripInstantDisplay.ScheduleTimeWithStatus ->
+                    Column(
+                        modifier.clearAndSetSemantics { contentDescription = tripDescription },
+                        horizontalAlignment = Alignment.End,
+                    ) {
+                        Text(
+                            state.trip.scheduledTime.formattedTime(),
+                            modifier
+                                .alpha(min(maxTextAlpha, 0.6F))
+                                .semantics { contentDescription = tripDescription }
+                                .placeholderIfLoading(),
+                            textAlign = TextAlign.End,
+                            style =
+                                if (state.trip.headline) Typography.headlineSemibold
+                                else Typography.footnoteSemibold,
+                        )
+                        Text(
+                            state.trip.status,
+                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnoteSemibold,
+                        )
+                    }
+
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
                         Text(
