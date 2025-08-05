@@ -37,43 +37,22 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResultsView.self))
     }
 
-    @MainActor func testResultLoad() throws {
-        class FakeRepo: ISearchResultRepository {
-            let getSearchResultsExpectation: XCTestExpectation
-
-            init(getSearchResultsExpectation: XCTestExpectation) {
-                self.getSearchResultsExpectation = getSearchResultsExpectation
-            }
-
-            func __getRouteFilterResults(query _: String) async throws -> ApiResult<SearchResults>? {
-                XCTFail("Route filter should not be queried")
-                return nil
-            }
-
-            func __getSearchResults(query _: String) async throws -> ApiResult<SearchResults>? {
-                getSearchResultsExpectation.fulfill()
-                return nil
-            }
-        }
-
-        let getSearchResultsExpectation = expectation(description: "getSearchResults")
+    @MainActor func testQuerySet() throws {
+        let setQueryExp = expectation(description: "setQuery")
+        let searchVM = MockSearchViewModel()
+        searchVM.onSetQuery = { _ in setQueryExp.fulfill() }
 
         var sut = SearchResultsContainer(
             query: "hay",
             nearbyVM: NearbyViewModel(),
-            searchVM: SearchViewModel(
-                analytics: MockAnalytics(),
-                globalRepository: MockGlobalRepository(),
-                searchResultRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation),
-                visitHistoryUsecase: .init(repository: MockVisitHistoryRepository())
-            )
+            searchVM: searchVM
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in }
         ViewHosting.host(view: sut)
 
         wait(for: [hasAppeared], timeout: 1)
-        wait(for: [getSearchResultsExpectation], timeout: 1)
+        wait(for: [setQueryExp], timeout: 1)
     }
 
     @MainActor func testOverlayDisplayedOnFocus() throws {

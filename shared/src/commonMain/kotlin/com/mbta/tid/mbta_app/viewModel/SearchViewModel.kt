@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.Line
@@ -24,6 +25,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
 private fun stopRouteContentDescription(
@@ -59,12 +62,21 @@ private fun stopRouteContentDescription(
     }
 }
 
+interface ISearchViewModel {
+
+    val models: StateFlow<SearchViewModel.State>
+
+    fun setQuery(query: String)
+
+    fun refreshHistory()
+}
+
 class SearchViewModel(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
-) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>() {
+) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
     sealed interface Event {
         data class SetQuery(val query: String) : Event
 
@@ -211,10 +223,27 @@ class SearchViewModel(
         return state
     }
 
-    val models
+    override val models
         get() = internalModels
 
-    fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
 
-    fun refreshHistory() = fireEvent(Event.RefreshHistory)
+    override fun refreshHistory() = fireEvent(Event.RefreshHistory)
+}
+
+class MockSearchViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: SearchViewModel.State = SearchViewModel.State.Loading) :
+    ISearchViewModel {
+    var onSetQuery = { _: String -> }
+    var onRefreshHistory = {}
+    override val models = MutableStateFlow(initialState)
+
+    override fun setQuery(query: String) {
+        onSetQuery(query)
+    }
+
+    override fun refreshHistory() {
+        onRefreshHistory()
+    }
 }

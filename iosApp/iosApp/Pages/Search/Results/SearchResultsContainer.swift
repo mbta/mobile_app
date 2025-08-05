@@ -15,7 +15,7 @@ struct SearchResultsContainer: View {
     let query: String
 
     @ObservedObject var nearbyVM: NearbyViewModel
-    @State var searchVM: SearchViewModel
+    @State var searchVM: ISearchViewModel
     @State var searchVMState: SearchViewModel.State = SearchViewModel.StateLoading.shared
 
     var didAppear: ((Self) -> Void)?
@@ -24,7 +24,7 @@ struct SearchResultsContainer: View {
     init(
         query: String,
         nearbyVM: NearbyViewModel,
-        searchVM: SearchViewModel,
+        searchVM: ISearchViewModel,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
