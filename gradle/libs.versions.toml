@@ -46,7 +46,7 @@ sentryGradle = "5.7.0"
 skie = "0.10.4"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
-spotless = "7.1.0"
+spotless = "7.2.1"
 turbine = "1.2.1"
 
 [libraries]
