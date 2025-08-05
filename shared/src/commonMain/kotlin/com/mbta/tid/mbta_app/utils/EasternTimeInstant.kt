@@ -81,9 +81,7 @@ private constructor(private val instant: Instant, val local: LocalDateTime) :
         return instant.hashCode()
     }
 
-    override fun toString(): String {
-        return local.toString() + timeZone.offsetAt(instant).toString()
-    }
+    override fun toString() = local.toString() + timeZone.offsetAt(instant).toString()
 
     enum class ServiceDateRounding {
         FORWARDS,

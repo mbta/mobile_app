@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -14,13 +15,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+
+interface ISearchRoutesViewModel {
+
+    val models: StateFlow<SearchRoutesViewModel.State>
+
+    fun setQuery(query: String)
+}
 
 class SearchRoutesViewModel(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
-) : MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>() {
+) :
+    MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
+    ISearchRoutesViewModel {
     sealed interface Event {
         data class SetQuery(val query: String) : Event
     }
@@ -84,8 +96,19 @@ class SearchRoutesViewModel(
         return state
     }
 
-    val models
+    override val models
         get() = internalModels
 
-    fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+}
+
+class MockSearchRoutesViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: SearchRoutesViewModel.State) : ISearchRoutesViewModel {
+    var onSetQuery = { _: String -> }
+    override val models = MutableStateFlow(initialState)
+
+    override fun setQuery(query: String) {
+        onSetQuery(query)
+    }
 }

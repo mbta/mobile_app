@@ -35,11 +35,13 @@ struct EditFavoritesPage: View {
                     },
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
-                EditFavoritesList(routeCardData: favoritesVMState.staticRouteCardData,
-                                  global: globalResponse, deleteFavorite: { rsd in
-                                      viewModel.updateFavorites(updatedFavorites: [rsd: false],
-                                                                context: .favorites, defaultDirection: rsd.direction)
-                                  })
+                EditFavoritesList(
+                    routeCardData: favoritesVMState.staticRouteCardData,
+                    global: globalResponse, deleteFavorite: { rsd in
+                        viewModel.updateFavorites(updatedFavorites: [rsd: false],
+                                                  context: .favorites, defaultDirection: rsd.direction)
+                    }
+                )
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
@@ -163,7 +165,7 @@ struct FavoriteDepartures: View {
                             VStack(alignment: .leading, spacing: 6) {
                                 DirectionLabel(direction: direction, showDestination: false)
                                 BranchRows(formatted: branched)
-                            }
+                            }.accessibilityElement(children: .combine)
                             Spacer()
                             DeleteButton { onClick(leaf) }
                         }
@@ -221,9 +223,10 @@ struct DeleteButton: View {
                     .scaledToFit()
                     .frame(width: imageWidth, height: imageHeight)
                     .foregroundColor(Color.delete)
-                    .accessibilityLabel(Text("Delete",
-                                             comment: "Content description for a button that removes a favorited route/stop/direction"))
             }
-        }
+        }.accessibilityLabel(Text(
+            "Delete",
+            comment: "Content description for a button that removes a favorited route/stop/direction"
+        ))
     }
 }

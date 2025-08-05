@@ -78,6 +78,8 @@ data class PredictionsByStopJoinResponse(
 
     fun predictionQuantity() = predictionsByStop.map { it.value.size }.sum()
 
+    override fun toString() = "[PredictionsByStopJoinResponse]"
+
     companion object {
         val empty = PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
     }

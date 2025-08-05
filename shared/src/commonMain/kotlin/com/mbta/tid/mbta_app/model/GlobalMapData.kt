@@ -172,4 +172,6 @@ data class GlobalMapData(
             .toMap(),
         alertsByStop,
     )
+
+    override fun toString() = "[GlobalMapData]"
 }

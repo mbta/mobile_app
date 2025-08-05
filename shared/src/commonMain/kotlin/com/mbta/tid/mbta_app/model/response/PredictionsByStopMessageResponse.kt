@@ -20,4 +20,6 @@ data class PredictionsByStopMessageResponse(
         objects: ObjectCollectionBuilder,
         stopId: String = objects.stops.keys.single(),
     ) : this(stopId, objects.predictions, objects.trips, objects.vehicles)
+
+    override fun toString() = "[PredictionsByStopMessageResponse]"
 }

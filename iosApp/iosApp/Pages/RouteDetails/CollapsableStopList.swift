@@ -54,7 +54,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
         } else {
             DisclosureGroup(isExpanded: $stopsExpanded, content: {
-                VStack(spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
                     ForEach(Array(segment.stops.enumerated()), id: \.offset) { index, stop in
                         StopListRow(
                             stop: stop.stop,
@@ -71,6 +71,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                             descriptor: { EmptyView() },
                             rightSideContent: { rightSideContent(stop) }
                         ).background(Color.fill1)
+                            .padding(.leading, 7)
                     }
                 }
             }, label: {
@@ -79,24 +80,28 @@ struct CollapsableStopList<RightSideContent: View>: View {
                         "**%1$ld** less common stops",
                         comment: "Header for a list of stops that vehicles don't always stop at for a given route"
                     ), segment.stops.count)))
+                        .multilineTextAlignment(.leading)
                         .foregroundStyle(Color.text)
                         .font(Typography.body)
                     Text(
                         "Only served at certain times of day",
                         comment: "Explainer text for \"Less common stops\" that vehicles don't always stop at"
                     )
+                    .multilineTextAlignment(.leading)
                     .foregroundStyle(Color.deemphasized)
                     .font(Typography.footnote)
                 }
-                .padding(.vertical, 8)
-                Spacer()
+                .padding(.vertical, 12)
+                .padding(.trailing, 8)
             })
+            .padding(.leading, -7)
             .disclosureGroupStyle(.stopList(
                 routeAccents: .init(route: lineOrRoute.sortRoute),
                 stickConnections: segment.twistedConnections().compactMap {
                     guard let connection = $0.first, let isTwisted = $0.second else { return nil }
                     return (connection, isTwisted.boolValue)
-                }
+                },
+                context: .routeDetails,
             ))
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }

@@ -89,4 +89,38 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         XCTAssertEqual([.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)], stack)
         XCTAssertEqual(nil, stack.lastStopDetailsFilter)
     }
+
+    func testToSheetRoute() {
+        XCTAssertEqual(SheetRoutes.NearbyTransit(), SheetNavigationStackEntry.nearby.toSheetRoute())
+        XCTAssertEqual(SheetRoutes.Favorites(), SheetNavigationStackEntry.favorites.toSheetRoute())
+        XCTAssertEqual(SheetRoutes.EditFavorites(), SheetNavigationStackEntry.editFavorites.toSheetRoute())
+
+        XCTAssertEqual(
+            SheetRoutes.RoutePicker(path: .Bus(), context: .Favorites()),
+            SheetNavigationStackEntry.routePicker(SheetRoutes.RoutePicker(path: .Bus(), context: .Favorites()))
+                .toSheetRoute()
+        )
+
+        XCTAssertEqual(SheetRoutes.RouteDetails(routeId: "a", context: .Favorites()),
+                       SheetNavigationStackEntry.routeDetails(SheetRoutes.RouteDetails(routeId: "a",
+                                                                                       context: .Favorites()))
+                           .toSheetRoute())
+
+        XCTAssertEqual(SheetRoutes.StopDetails(stopId: "a",
+                                               stopFilter: .init(routeId: "b", directionId: 0),
+                                               tripFilter: .init(tripId: "c",
+                                                                 vehicleId: "d",
+                                                                 stopSequence: 0,
+                                                                 selectionLock: false)),
+                       SheetNavigationStackEntry.stopDetails(stopId: "a",
+                                                             stopFilter: .init(routeId: "b", directionId: 0),
+                                                             tripFilter: .init(tripId: "c",
+                                                                               vehicleId: "d",
+                                                                               stopSequence: 0,
+                                                                               selectionLock: false)).toSheetRoute())
+
+        XCTAssertNil(SheetNavigationStackEntry.more.toSheetRoute())
+        XCTAssertNil(SheetNavigationStackEntry.alertDetails(alertId: "a", line: nil, routes: [], stop: nil)
+            .toSheetRoute())
+    }
 }

@@ -3089,6 +3089,7 @@
       }
     },
     "Add stops" : {
+      "comment" : "VoiceOver label for add stops button",
       "localizations" : {
         "es" : {
           "stringUnit" : {

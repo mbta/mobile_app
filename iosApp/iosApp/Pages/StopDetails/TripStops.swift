@@ -146,7 +146,7 @@ struct TripStops: View {
                             .frame(maxWidth: .infinity, minHeight: 56)
                         }
                     )
-                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents))
+                    .disclosureGroupStyle(.stopList(routeAccents: routeAccents, context: .trip))
                 }
                 if let target, !hideTarget {
                     // If the target is the first stop and there's no vehicle,

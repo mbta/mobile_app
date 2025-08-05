@@ -316,6 +316,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 toastVM.hideToast()
             }
         }
+        .onDisappear { toastVM.hideToast() }
         .toast(vm: toastVM)
     }
 
@@ -393,11 +394,15 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                     }
                     .padding(8)
                 }
+                .accessibilityAddTraits(selected ? [.isSelected, .isHeader] : [])
+                .accessibilityHeading(selected ? .h2 : .unspecified)
+                .accessibilitySortPriority(selected ? 1 : 0)
                 .frame(minHeight: 44)
                 .background(rowColor)
                 .withRoundedBorder(color: selected ? .halo : Color.clear)
             }
         }
+        .accessibilityElement(children: .contain)
         .frame(maxWidth: .infinity)
         .padding(2)
         .background(Color.deselectedToggle2.opacity(0.6))
@@ -422,6 +427,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             stop: stop,
             patterns: allPatternsForStop.filter { $0.isTypical() }
         )
+
         SaveFavoritesFlow(
             lineOrRoute: lineOrRoute,
             stop: stop,
@@ -458,7 +464,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
                 context: editContext, defaultDirection: selectedDirection
             )
-            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+            loadFavorites()
         }
     }
 
@@ -477,7 +483,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         case .details: .details(stop: stop)
         case .favorites: .favorites(
                 isFavorited: isFavorite(.init(
-                    route: selectedRouteId,
+                    route: lineOrRoute.id,
                     stop: stop.id,
                     direction: selectedDirection
                 )),

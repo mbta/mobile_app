@@ -15,4 +15,6 @@ data class MapFriendlyRouteResponse(
         @SerialName("route_id") val routeId: String,
         @SerialName("route_shapes") val segmentedShapes: List<SegmentedRouteShape>,
     )
+
+    override fun toString() = "[MapFriendlyRouteResponse]"
 }
