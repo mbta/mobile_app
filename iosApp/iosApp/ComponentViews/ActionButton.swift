@@ -14,6 +14,7 @@ struct ActionButton: View {
         case back
         case close
         case clear
+        case plus
 
         var accessibilityLabel: String {
             switch self {
@@ -23,6 +24,8 @@ struct ActionButton: View {
                 NSLocalizedString("Close", comment: "VoiceOver label for a generic close button")
             case .clear:
                 NSLocalizedString("Clear", comment: "VoiceOver label for a generic clear button")
+            case .plus:
+                NSLocalizedString("Add stops", comment: "VoiceOver label for add stops button")
             }
         }
 
@@ -32,6 +35,8 @@ struct ActionButton: View {
                 .faChevronLeft
             case .close, .clear:
                 .faXmark
+            case .plus:
+                .plus
             }
         }
     }
@@ -42,9 +47,9 @@ struct ActionButton: View {
     private let action: () -> Void
 
     @ScaledMetric private var circleSize: CGFloat = 32
-
     @ScaledMetric private var backIconSize: CGFloat = 14
     @ScaledMetric private var closeIconSize: CGFloat = 12
+    @ScaledMetric private var plusIconSize: CGFloat = 13
 
     var iconSize: CGFloat {
         switch kind {
@@ -54,6 +59,8 @@ struct ActionButton: View {
             closeIconSize
         case .clear:
             closeIconSize / 2
+        case .plus:
+            plusIconSize
         }
     }
 
@@ -68,7 +75,7 @@ struct ActionButton: View {
             circleColor
         } else {
             switch kind {
-            case .back, .close:
+            case .back, .close, .plus:
                 Color.contrast
             case .clear:
                 Color.deemphasized
@@ -78,7 +85,7 @@ struct ActionButton: View {
             iconColor
         } else {
             switch kind {
-            case .back, .close:
+            case .back, .close, .plus:
                 Color.fill2
             case .clear:
                 Color.fill3

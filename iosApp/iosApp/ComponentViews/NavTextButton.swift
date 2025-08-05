@@ -13,16 +13,22 @@ struct NavTextButton: View {
     let string: String
     let backgroundColor: Color
     let textColor: Color
+    var height: CGFloat? = nil
     let action: () -> Void
 
     var body: some View {
         Button(
             action: action,
-            label: { Text(string).font(Typography.callout).padding(.horizontal, 12).padding(.vertical, 4)
-                .foregroundColor(textColor)
-                .background(backgroundColor)
-                .buttonBorderShape(.capsule)
-                .clipShape(Capsule())
+            label: {
+                Text(string)
+                    .font(Typography.callout)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .foregroundColor(textColor)
+                    .frame(minHeight: height)
+                    .background(backgroundColor)
+                    .buttonBorderShape(.capsule)
+                    .clipShape(Capsule())
             }
         )
     }
