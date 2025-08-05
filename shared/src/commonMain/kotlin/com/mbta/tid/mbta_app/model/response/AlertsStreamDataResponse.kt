@@ -24,6 +24,8 @@ data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
                 }
             )
         } ?: this
+
+    override fun toString() = "[AlertsStreamDataResponse]"
 }
 
 fun AlertsStreamDataResponse?.isNullOrEmpty() = this == null || this.isEmpty()

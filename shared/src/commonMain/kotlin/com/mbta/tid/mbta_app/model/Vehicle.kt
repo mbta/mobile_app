@@ -27,4 +27,6 @@ data class Vehicle(
         @SerialName("stopped_at") StoppedAt,
         @SerialName("in_transit_to") InTransitTo,
     }
+
+    override fun toString() = "Vehicle(id=$id)"
 }
