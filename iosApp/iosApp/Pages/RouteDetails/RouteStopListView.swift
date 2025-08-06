@@ -205,7 +205,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     @State var favorites: Set<RouteStopDirection>?
 
     @State var showFavoritesStopConfirmation: Stop? = nil
-    @State var showFirstTimeFavoritesToast: Bool = false
+    @State var showFirstTimeFavoritesToast: Bool? = nil
+    @State var displayedToast: ToastViewModel.Toast? = nil
+    @State var firstTimeToast: ToastViewModel.Toast? = nil
 
     let inspection = Inspection<Self>()
 
@@ -291,6 +293,14 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         .onAppear {
             loadFavorites()
         }
+        .task {
+            for await model in toastVM.models {
+                displayedToast = switch onEnum(of: model) {
+                case .hidden: nil
+                case let .visible(toast): toast.toast
+                }
+            }
+        }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .overlay {
             if let showFavoritesStopConfirmation {
@@ -298,26 +308,30 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
         }
         .onChange(of: favorites) { _ in
-            showFirstTimeFavoritesToast = context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+            // Only set first time toast on first favorites load, otherwise keep the current value
+            showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
+                showFirstTimeFavoritesToast
+            } else {
+                context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+            }
         }
         .onChange(of: showFirstTimeFavoritesToast) { _ in
-            if showFirstTimeFavoritesToast {
-                toastVM.showToast(
-                    toast:
-                    ToastState(
-                        message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
-                        duration: .indefinite,
-                        onClose: { showFirstTimeFavoritesToast = false },
-                        actionLabel: nil,
-                        onAction: nil
-                    )
+            if showFirstTimeFavoritesToast == true {
+                let toast = ToastViewModel.Toast(
+                    message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
+                    duration: .indefinite,
+                    onClose: { showFirstTimeFavoritesToast = false },
+                    actionLabel: nil,
+                    onAction: nil
                 )
-            } else {
+                toastVM.showToast(toast: toast)
+                firstTimeToast = toast
+            } else if showFirstTimeFavoritesToast == false,
+                      displayedToast == firstTimeToast {
                 toastVM.hideToast()
             }
         }
         .onDisappear { toastVM.hideToast() }
-        .toast(vm: toastVM)
     }
 
     @ViewBuilder private func routeStopList(
@@ -441,6 +455,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             },
             selectedDirection: selectedDirection,
             context: .favorites,
+            global: globalData,
             isFavorite: { rsd in
                 isFavorite(rsd)
             },
@@ -449,7 +464,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             },
             onClose: {
                 showFavoritesStopConfirmation = nil
-            }
+            },
+            toastVM: toastVM,
         )
     }
 

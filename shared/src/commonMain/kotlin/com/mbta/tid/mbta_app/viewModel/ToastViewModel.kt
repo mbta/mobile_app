@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.produceState
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Toast
 import kotlinx.coroutines.flow.Flow
@@ -73,8 +74,9 @@ class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.
     override fun showToast(toast: Toast) = fireEvent(Event.ShowToast(toast))
 }
 
-class MockToastViewModel(initialState: ToastViewModel.State = ToastViewModel.State.Hidden) :
-    IToastViewModel {
+class MockToastViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: ToastViewModel.State = ToastViewModel.State.Hidden) : IToastViewModel {
     override val models = MutableStateFlow(initialState)
 
     var onHideToast = {}

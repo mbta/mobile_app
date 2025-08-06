@@ -27,6 +27,7 @@ struct ContentView: View {
     @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
+    @State var toastVM = ViewModelDI().toast
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
@@ -88,6 +89,9 @@ struct ContentView: View {
                 nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
                 updateTabBarVisibility()
             }
+        }
+        .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in
+            updateTabBarVisibility()
         }
         .onChange(of: AnalyticsParams(
             stopId: nearbyVM.navigationStack.lastSafe().stopId(),
@@ -332,6 +336,7 @@ struct ContentView: View {
            let featurePromosPending = contentVM.featurePromosPending,
            let onboardingScreensPending = contentVM.onboardingScreensPending {
             sheetContents
+                .toast(vm: toastVM, tabBarVisible: tabBarVisibility == .visible)
         } else {
             sheetContentsPlaceholder
         }
@@ -375,7 +380,8 @@ struct ContentView: View {
                     EditFavoritesPage(
                         viewModel: favoritesVM,
                         onClose: { nearbyVM.popToEntrypoint() },
-                        errorBannerVM: errorBannerVM
+                        errorBannerVM: errorBannerVM,
+                        toastVM: toastVM,
                     )
                     .toolbar(.hidden, for: .tabBar)
                 }

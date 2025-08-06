@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -76,6 +77,7 @@ fun EditFavoritesPage(
     val toastUndoLabel = stringResource(R.string.undo)
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
+    DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(

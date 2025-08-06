@@ -79,7 +79,7 @@ fun SaveFavoritesFlow(
         var toastText: String? = null
 
         // If there's only a single favorite, show direction, route, and stop in the toast
-        if (favorited.size == 1 && firstFavorite.value) {
+        if (favorited.size == 1) {
             toastText =
                 labels?.let {
                     localContext.getString(

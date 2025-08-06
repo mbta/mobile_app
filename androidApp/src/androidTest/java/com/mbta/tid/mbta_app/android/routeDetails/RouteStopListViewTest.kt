@@ -508,8 +508,14 @@ class RouteStopListViewTest {
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
         var toastShown = false
-        toastVM.onShowToast = { _ -> toastShown = true }
-        toastVM.onHideToast = { toastShown = false }
+        toastVM.onShowToast = { toast ->
+            toastVM.models.tryEmit(ToastViewModel.State.Visible(toast))
+            toastShown = true
+        }
+        toastVM.onHideToast = {
+            toastVM.models.tryEmit(ToastViewModel.State.Hidden)
+            toastShown = false
+        }
 
         var backTapped = false
 
@@ -557,8 +563,14 @@ class RouteStopListViewTest {
         val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
         var toastShown = false
-        toastVM.onShowToast = { _ -> toastShown = true }
-        toastVM.onHideToast = { toastShown = false }
+        toastVM.onShowToast = { toast ->
+            toastVM.models.tryEmit(ToastViewModel.State.Visible(toast))
+            toastShown = true
+        }
+        toastVM.onHideToast = {
+            toastVM.models.tryEmit(ToastViewModel.State.Hidden)
+            toastShown = false
+        }
 
         var closeTapped = false
 

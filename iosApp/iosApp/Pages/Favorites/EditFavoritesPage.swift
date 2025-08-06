@@ -18,9 +18,49 @@ struct EditFavoritesPage: View {
     @State var favoritesState: [RouteStopDirection: Bool] = [:]
 
     let errorBannerVM: ErrorBannerViewModel
+    let toastVM: IToastViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
     let inspection = Inspection<Self>()
+
+    func deleteAndToast(_ rsd: RouteStopDirection) {
+        viewModel.updateFavorites(
+            updatedFavorites: [rsd: false],
+            context: .favorites,
+            defaultDirection: rsd.direction
+        )
+
+        let labels = rsd.getLabels(globalResponse)
+        let toastMessage = if let labels {
+            String(format: NSLocalizedString(
+                "**%1$@ %2$@** at **%3$@** removed from Favorites",
+                comment: """
+                Favorite removed toast text, the first value is the direction (southbound, inbound, etc),
+                the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
+                The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
+                """
+            ), labels.direction, labels.route, labels.stop,)
+        } else {
+            NSLocalizedString(
+                "Removed from Favorites",
+                comment: "Favorite removed toast fallback text when more details are unavailable"
+            )
+        }
+
+        toastVM.showToast(toast: .init(
+            message: toastMessage,
+            duration: .short,
+            onClose: nil,
+            actionLabel: NSLocalizedString("Undo", comment: "Button label to undo an action that was just performed"),
+            onAction: {
+                viewModel.updateFavorites(
+                    updatedFavorites: [rsd: true],
+                    context: .favorites,
+                    defaultDirection: rsd.direction
+                )
+            },
+        ))
+    }
 
     var body: some View {
         ZStack {
@@ -37,15 +77,16 @@ struct EditFavoritesPage: View {
                 )
                 EditFavoritesList(
                     routeCardData: favoritesVMState.staticRouteCardData,
-                    global: globalResponse, deleteFavorite: { rsd in
-                        viewModel.updateFavorites(updatedFavorites: [rsd: false],
-                                                  context: .favorites, defaultDirection: rsd.direction)
-                    }
+                    global: globalResponse,
+                    deleteFavorite: { rsd in deleteAndToast(rsd) }
                 )
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
                 loadGlobal()
+            }
+            .onDisappear {
+                toastVM.hideToast()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .task {
@@ -92,12 +133,21 @@ struct EditFavoritesList: View {
             HaloScrollView {
                 LazyVStack(alignment: .center, spacing: 14) {
                     ForEach(routeCardData) { cardData in
-                        RouteCardContainer(cardData: cardData, onPin: { _ in
-                        }, pinned: false, showStopHeader: true) { stopData in
-                            FavoriteDepartures(stopData: stopData, globalData: global) { leaf in
-                                let favToDelete = RouteStopDirection(route: leaf.lineOrRoute.id,
-                                                                     stop: leaf.stop.id,
-                                                                     direction: leaf.directionId)
+                        RouteCardContainer(
+                            cardData: cardData,
+                            onPin: { _ in },
+                            pinned: false,
+                            showStopHeader: true
+                        ) { stopData in
+                            FavoriteDepartures(
+                                stopData: stopData,
+                                globalData: global
+                            ) { leaf in
+                                let favToDelete = RouteStopDirection(
+                                    route: leaf.lineOrRoute.id,
+                                    stop: leaf.stop.id,
+                                    direction: leaf.directionId
+                                )
                                 deleteFavorite(favToDelete)
                             }
                         }
