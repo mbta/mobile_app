@@ -81,22 +81,20 @@ sealed class TripInstantDisplay {
             val scheduleBasedRouteType =
                 routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
             val forceAsTime = context == Context.TripDetails || scheduleBasedRouteType
-            val allowTimeWithStatus =
-                context == Context.StopDetailsFiltered && routeType == RouteType.COMMUTER_RAIL
             val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
             val predictionTime = prediction?.stopTimeAfter(now)
             val scheduleTime = schedule?.stopTimeAfter(now)
             if (prediction?.status != null) {
                 if (routeType == RouteType.COMMUTER_RAIL) {
                     when {
-                        predictionTime != null && allowTimeWithStatus ->
+                        predictionTime != null && context == Context.StopDetailsFiltered ->
                             return TimeWithStatus(
                                 predictionTime,
                                 prediction.status,
                                 showTimeAsHeadline,
                             )
                         predictionTime != null -> return Time(predictionTime, showTimeAsHeadline)
-                        scheduleTime != null && allowTimeWithStatus ->
+                        scheduleTime != null && context == Context.StopDetailsFiltered ->
                             return ScheduleTimeWithStatusColumn(
                                 scheduleTime,
                                 prediction.status,
