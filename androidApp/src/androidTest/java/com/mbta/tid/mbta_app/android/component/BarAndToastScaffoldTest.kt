@@ -33,7 +33,7 @@ class BarAndToastScaffoldTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil { toastShown }
-        composeTestRule.onNodeWithText("Toast message").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Toast message", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
@@ -64,7 +64,10 @@ class BarAndToastScaffoldTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil { toastShown }
-        composeTestRule.onNodeWithText("Action").assertIsDisplayed().performClick()
+        composeTestRule
+            .onNodeWithText("Action", useUnmergedTree = true)
+            .assertIsDisplayed()
+            .performClick()
 
         assert(actionTapped)
     }
@@ -87,7 +90,10 @@ class BarAndToastScaffoldTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithContentDescription("Close").assertIsDisplayed().performClick()
+        composeTestRule
+            .onNodeWithContentDescription("Close", useUnmergedTree = true)
+            .assertIsDisplayed()
+            .performClick()
 
         assert(closeTapped)
     }
