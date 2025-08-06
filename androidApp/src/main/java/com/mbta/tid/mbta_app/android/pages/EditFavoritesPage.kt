@@ -103,7 +103,7 @@ fun EditFavoritesPage(
                 ToastViewModel.Toast(
                     getToastLabel(it),
                     duration = ToastViewModel.Duration.Short,
-                    buttonSpec =
+                    action =
                         ToastViewModel.ToastAction.Custom(
                             actionLabel = toastUndoLabel,
                             onAction = {

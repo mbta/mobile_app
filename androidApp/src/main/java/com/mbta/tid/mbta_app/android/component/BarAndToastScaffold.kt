@@ -47,11 +47,11 @@ fun BarAndToastScaffold(
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(
             message = toast.message,
-            actionLabel = when(val buttonSpec = toast.buttonSpec) {
+            actionLabel = when(val buttonSpec = toast.action) {
                 is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
                 else -> null
             },
-            withDismissAction = when(toast.buttonSpec) {
+            withDismissAction = when(toast.action) {
                 is ToastViewModel.ToastAction.Close -> true
                 else -> false
             },
@@ -80,6 +80,7 @@ fun BarAndToastScaffold(
         when (toastState) {
             is ToastViewModel.State.Hidden -> ""
             is ToastViewModel.State.Visible ->
+                (toastState as ToastViewModel.State.Visible).toast.voiceOverDescription ?:
                 AnnotatedString.fromHtml((toastState as ToastViewModel.State.Visible).toast.message)
                     .text
         }
@@ -89,7 +90,7 @@ fun BarAndToastScaffold(
             is ToastViewModel.State.Hidden -> ""
             is ToastViewModel.State.Visible ->
                 when (
-                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.buttonSpec
+                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.action
                 ) {
                     is ToastViewModel.ToastAction.Close -> closeHintText
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
@@ -101,7 +102,7 @@ fun BarAndToastScaffold(
             is ToastViewModel.State.Hidden -> null
             is ToastViewModel.State.Visible ->
                 when (
-                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.buttonSpec
+                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.action
                 ) {
                     is ToastViewModel.ToastAction.Close -> buttonSpec.onClose
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction
@@ -163,7 +164,7 @@ private fun ToastActionButton(snackbarData: SnackbarData, toastState: ToastViewM
             when (toastState) {
                 is ToastViewModel.State.Hidden -> {}
                 is ToastViewModel.State.Visible ->
-                    when (val buttonSpec = toastState.toast.buttonSpec) {
+                    when (val buttonSpec = toastState.toast.action) {
                         is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction()
                         else -> {}
                     }
@@ -187,7 +188,7 @@ private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewMo
             when (toastState) {
                 is ToastViewModel.State.Hidden -> {}
                 is ToastViewModel.State.Visible ->
-                    when (val buttonSpec = toastState.toast.buttonSpec) {
+                    when (val buttonSpec = toastState.toast.action) {
                         is ToastViewModel.ToastAction.Close -> buttonSpec.onClose()
                         else -> {}
                     }

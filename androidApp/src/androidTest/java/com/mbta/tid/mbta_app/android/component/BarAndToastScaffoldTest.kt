@@ -54,7 +54,7 @@ class BarAndToastScaffoldTest {
         toastVM.showToast(
             ToastViewModel.Toast(
                 message = "Toast message",
-                buttonSpec =
+                action =
                     ToastViewModel.ToastAction.Custom(
                         actionLabel = "Action",
                         onAction = { actionTapped = true },
@@ -77,7 +77,7 @@ class BarAndToastScaffoldTest {
                 ToastViewModel.State.Visible(
                     ToastViewModel.Toast(
                         message = "Toast message",
-                        buttonSpec =
+                        action =
                             ToastViewModel.ToastAction.Close(onClose = { closeTapped = true }),
                     )
                 )

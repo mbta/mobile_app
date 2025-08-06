@@ -40,12 +40,15 @@ class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.
     }
 
     @Serializable
-    data class Toast(
+    data class Toast
+    @DefaultArgumentInterop.Enabled
+    constructor(
         val message: String,
         val voiceOverDescription: String? = message,
         val duration: Duration = Duration.Indefinite,
-        val buttonSpec: ToastAction? = null,
-    )
+        val action: ToastAction? = null)
+
+
 
     sealed interface Event {
         data object Hide : Event

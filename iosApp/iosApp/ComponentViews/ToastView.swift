@@ -27,7 +27,9 @@ struct ToastView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
-                if let onClose = state.onClose {
+                
+                switch(state.action) {
+                case let ToastViewModel.ToastActionClose(onClose: onClose): {
                     ActionButton(
                         kind: .close,
                         circleColor: Color.contrast,
@@ -39,7 +41,7 @@ struct ToastView: View {
                     .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
                     .padding(.trailing, 16)
                 }
-                if let label = state.actionLabel, let onAction = state.onAction {
+                case let ToastViewModel.ToastActionCustom(label, onAction): {
                     NavTextButton(
                         string: label,
                         backgroundColor: Color.contrast,
@@ -50,6 +52,8 @@ struct ToastView: View {
                     }
                     .withRoundedBorder(radius: 80, color: Color.haloContrast, width: 2)
                     .padding(.trailing, 16)
+                }
+                    
                 }
             }
             .padding(.vertical, 16)
@@ -66,23 +70,17 @@ struct ToastView: View {
     let textOnly = ToastState(
         message: "This is a text only toast",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: nil,
-        actionLabel: nil,
-        onAction: nil,
+        action: nil
     )
     let close = ToastState(
         message: "This is a toast with a close button",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: {},
-        actionLabel: nil,
-        onAction: nil,
+        action: ToastViewModel.ToastActionClose(onClose: {})
     )
     let action = ToastState(
         message: "This is a toast with an action button",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: nil,
-        actionLabel: "Action",
-        onAction: {},
+        action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
     )
     VStack {
         ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})

@@ -360,6 +360,7 @@
     <string name="switch_problem">Switch Problem</string>
     <string name="switch_problem_lowercase">switch problem</string>
     <string name="tap_favorites_hint">Tap stars to add to Favorites</string>
+    <string name="tap_favorites_talkback_hint">Tap stops to add to Favorites</string>
     <string name="technical_problem">Technical Problem</string>
     <string name="technical_problem_lowercase">technical problem</string>
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
