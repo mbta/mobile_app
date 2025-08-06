@@ -47,14 +47,16 @@ fun BarAndToastScaffold(
         snackbarHostState.currentSnackbarData?.dismiss()
         snackbarHostState.showSnackbar(
             message = toast.message,
-            actionLabel = when(val buttonSpec = toast.action) {
-                is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
-                else -> null
-            },
-            withDismissAction = when(toast.action) {
-                is ToastViewModel.ToastAction.Close -> true
-                else -> false
-            },
+            actionLabel =
+                when (val buttonSpec = toast.action) {
+                    is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
+                    else -> null
+                },
+            withDismissAction =
+                when (toast.action) {
+                    is ToastViewModel.ToastAction.Close -> true
+                    else -> false
+                },
             duration =
                 when (toast.duration) {
                     ToastViewModel.Duration.Short -> SnackbarDuration.Short
