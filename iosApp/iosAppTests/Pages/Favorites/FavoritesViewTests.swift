@@ -353,6 +353,8 @@ final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsToast() throws {
         let setToastShownExp = expectation(description: "showToast called")
         let hideToast = expectation(description: "hideToast called")
+        // Expect one hideToast when the toast is closed, and another when FavoritesView disappears
+        hideToast.expectedFulfillmentCount = 2
         let isFirstExposureToFavoritesSet = expectation(description: "isFirstExposureToFavoritesSet set to false")
 
         let favoritesVM = MockFavoritesViewModel(

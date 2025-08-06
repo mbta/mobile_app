@@ -236,4 +236,37 @@ final class SaveFavoritesFlowTest: XCTestCase {
 
         try XCTAssertNotNil(sut.inspect().find(text: "This stop is drop-off only"))
     }
+
+    func testFavoritingDisplaysToast() throws {
+        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        let onToastExp = XCTestExpectation(description: "Toast displayed with expected text")
+
+        let route = ObjectCollectionBuilder().route { route in
+            route.type = RouteType.bus
+        }
+
+        let toastVM = MockToastViewModel()
+        toastVM.onShowToast = { toast in
+            XCTAssertEqual("Added to Favorites", toast.message)
+            onToastExp.fulfill()
+        }
+
+        let sut = SaveFavoritesFlow(
+            lineOrRoute: RouteCardData.LineOrRoute.route(route),
+            stop: stop,
+            directions: [direction0],
+            selectedDirection: 0,
+            context: SaveFavoritesContext.favorites,
+            global: .init(objects: .init()),
+            isFavorite: { _ in false },
+            updateFavorites: { updateFavoritesCalledFor = $0 },
+            onClose: {},
+            toastVM: toastVM,
+        )
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [onToastExp], timeout: 2)
+        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): true])
+    }
 }

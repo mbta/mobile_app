@@ -94,7 +94,7 @@ struct FavoritesView: View {
                 showFirstTimeToast()
             }
         }
-        onDisappear {
+        .onDisappear {
             toastVM.hideToast()
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
