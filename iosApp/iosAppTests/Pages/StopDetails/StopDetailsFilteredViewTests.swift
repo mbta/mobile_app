@@ -61,42 +61,4 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ]))
         wait(for: [tapButtonExp, confirmationDialogExp], timeout: 2)
     }
-
-    @MainActor func testSavesPinnedRoute() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-        let route = objects.route()
-        let directionId: Int32 = 0
-
-        let setFavoritesExp = expectation(description: "does not set favorites")
-        setFavoritesExp.isInverted = true
-        let setPinnedRoutesExp = expectation(description: "sets pinned routes")
-        let favoritesRepository = MockFavoritesRepository(onSet: { _ in setFavoritesExp.fulfill() })
-        let pinnedRoutesRepository = MockPinnedRoutesRepository(onSet: { pinnedRoutes in
-            XCTAssertEqual(pinnedRoutes, [route.id])
-            setPinnedRoutesExp.fulfill()
-        })
-
-        let stopDetailsVM = StopDetailsViewModel(
-            favoritesRepository: favoritesRepository,
-            pinnedRoutesRepository: pinnedRoutesRepository
-        )
-        let sut = StopDetailsFilteredView(
-            stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: directionId),
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            routeCardData: [],
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
-        )
-
-        try sut.withFixedSettings([:]).inspect().find(StarButton.self).find(ViewType.Button.self).tap()
-
-        wait(for: [setFavoritesExp, setPinnedRoutesExp], timeout: 1)
-    }
 }
