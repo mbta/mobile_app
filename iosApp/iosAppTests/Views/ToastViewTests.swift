@@ -23,9 +23,7 @@ final class ToastViewTests: XCTestCase {
         let textOnly = ToastState(
             message: "This is a text only toast",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: nil,
-            actionLabel: nil,
-            onAction: nil,
+            action: nil,
         )
 
         let sut = ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})
@@ -38,9 +36,7 @@ final class ToastViewTests: XCTestCase {
         let close = ToastState(
             message: "This is a toast with a close button",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: {},
-            actionLabel: nil,
-            onAction: nil,
+            action: ToastViewModel.ToastActionClose(onClose: {})
         )
 
         let exp = XCTestExpectation(description: "Close button pressed")
@@ -55,9 +51,7 @@ final class ToastViewTests: XCTestCase {
         let action = ToastState(
             message: "This is a toast with an action button",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: nil,
-            actionLabel: "Action",
-            onAction: {},
+            action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
         )
 
         let exp = XCTestExpectation(description: "Action button pressed")

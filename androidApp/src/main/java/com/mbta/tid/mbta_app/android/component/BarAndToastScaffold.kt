@@ -73,37 +73,30 @@ fun BarAndToastScaffold(
 
     val closeHintText = stringResource(R.string.close_button_label)
 
-    // Overriding content description and click label + action so that with voice over turned on,
+    // Overriding click semantics so that with voice over turned on,
     // the snackbar is read as a single element with a hint to perform the single associated
     // action (whether close or custom)
     val overriddenContentDescription =
-        when (toastState) {
+        when (val state = toastState) {
             is ToastViewModel.State.Hidden -> ""
-            is ToastViewModel.State.Visible ->
-                (toastState as ToastViewModel.State.Visible).toast.voiceOverDescription ?:
-                AnnotatedString.fromHtml((toastState as ToastViewModel.State.Visible).toast.message)
-                    .text
+            is ToastViewModel.State.Visible -> AnnotatedString.fromHtml(state.toast.message).text
         }
 
     val clickLabel =
-        when (toastState) {
+        when (val state = toastState) {
             is ToastViewModel.State.Hidden -> ""
             is ToastViewModel.State.Visible ->
-                when (
-                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.action
-                ) {
+                when (val buttonSpec = state.toast.action) {
                     is ToastViewModel.ToastAction.Close -> closeHintText
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
                     null -> ""
                 }
         }
     val clickAction: (() -> Unit)? =
-        when (toastState) {
+        when (val state = toastState) {
             is ToastViewModel.State.Hidden -> null
             is ToastViewModel.State.Visible ->
-                when (
-                    val buttonSpec = (toastState as ToastViewModel.State.Visible).toast.action
-                ) {
+                when (val buttonSpec = state.toast.action) {
                     is ToastViewModel.ToastAction.Close -> buttonSpec.onClose
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction
                     null -> null

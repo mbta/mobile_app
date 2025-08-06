@@ -77,8 +77,7 @@ class BarAndToastScaffoldTest {
                 ToastViewModel.State.Visible(
                     ToastViewModel.Toast(
                         message = "Toast message",
-                        action =
-                            ToastViewModel.ToastAction.Close(onClose = { closeTapped = true }),
+                        action = ToastViewModel.ToastAction.Close(onClose = { closeTapped = true }),
                     )
                 )
             )

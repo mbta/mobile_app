@@ -239,7 +239,6 @@ fun RouteStopListView(
     }
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
-    val firstTimeToastVoiceOver = stringResource(R.string.tap_favorites_talkback_hint)
 
     var showFirstTimeFavoritesToast by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var firstTimeToast by remember { mutableStateOf<ToastViewModel.Toast?>(null) }
@@ -267,7 +266,6 @@ fun RouteStopListView(
             val toast =
                 ToastViewModel.Toast(
                     message = firstTimeToastMessage,
-                    voiceOverDescription = firstTimeToastVoiceOver,
                     action =
                         ToastViewModel.ToastAction.Close(
                             onClose = { showFirstTimeFavoritesToast = false }
