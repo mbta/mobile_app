@@ -50,15 +50,17 @@ struct EditFavoritesPage: View {
         toastVM.showToast(toast: .init(
             message: toastMessage,
             duration: .short,
-            onClose: nil,
-            actionLabel: NSLocalizedString("Undo", comment: "Button label to undo an action that was just performed"),
-            onAction: {
-                viewModel.updateFavorites(
-                    updatedFavorites: [rsd: true],
-                    context: .favorites,
-                    defaultDirection: rsd.direction
-                )
-            },
+            action: ToastViewModel.ToastActionCustom(
+                actionLabel: NSLocalizedString("Undo",
+                                               comment: "Button label to undo an action that was just performed"),
+                onAction: {
+                    viewModel.updateFavorites(
+                        updatedFavorites: [rsd: true],
+                        context: .favorites,
+                        defaultDirection: rsd.direction
+                    )
+                }
+            ),
         ))
     }
 
