@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
@@ -44,6 +45,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun DepartureTile(
@@ -128,7 +130,8 @@ private fun DepartureTilePreview() {
             Modifier.background(Color.fromHex("00843D"))
                 .padding(16.dp)
                 .horizontalScroll(rememberScrollState())
-                .padding(horizontal = 10.dp),
+                .padding(horizontal = 10.dp)
+                .height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             DepartureTile(
@@ -173,6 +176,29 @@ private fun DepartureTilePreview() {
                 ),
                 onTap = {},
                 showHeadsign = true,
+            )
+            DepartureTile(
+                TileData(
+                    route1,
+                    "Framingham",
+                    UpcomingFormat.Some(
+                        listOf(
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip1),
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.ScheduleTimeWithStatusColumn(
+                                    EasternTimeInstant.now() - 15.minutes,
+                                    "Delay",
+                                    true,
+                                ),
+                            )
+                        ),
+                        secondaryAlert = null,
+                    ),
+                    objects.upcomingTrip(schedule1),
+                ),
+                onTap = {},
+                showHeadsign = false,
             )
             DepartureTile(
                 TileData(

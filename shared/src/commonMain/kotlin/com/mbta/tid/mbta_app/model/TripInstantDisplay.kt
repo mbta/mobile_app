@@ -42,10 +42,15 @@ sealed class TripInstantDisplay {
     data class ScheduleTime(val scheduledTime: EasternTimeInstant, val headline: Boolean = false) :
         TripInstantDisplay()
 
-    data class ScheduleTimeWithStatus(
+    data class ScheduleTimeWithStatusColumn(
         val scheduledTime: EasternTimeInstant,
         val status: String,
         val headline: Boolean = false,
+    ) : TripInstantDisplay()
+
+    data class ScheduleTimeWithStatusRow(
+        val scheduledTime: EasternTimeInstant,
+        val status: String,
     ) : TripInstantDisplay()
 
     data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
@@ -62,7 +67,7 @@ sealed class TripInstantDisplay {
     }
 
     companion object {
-        val delayStatuses = setOf("Delay", "Late")
+        val delayStatuses = setOf("Delay", "Delayed", "Late")
 
         fun from(
             prediction: Prediction?,
@@ -76,9 +81,31 @@ sealed class TripInstantDisplay {
             val scheduleBasedRouteType =
                 routeType == RouteType.COMMUTER_RAIL || routeType == RouteType.FERRY
             val forceAsTime = context == Context.TripDetails || scheduleBasedRouteType
-            val allowTimeWithStatus =
-                context == Context.StopDetailsFiltered && routeType == RouteType.COMMUTER_RAIL
-            if (prediction?.status != null && routeType != RouteType.COMMUTER_RAIL) {
+            val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
+            val predictionTime = prediction?.stopTimeAfter(now)
+            val scheduleTime = schedule?.stopTimeAfter(now)
+            if (prediction?.status != null) {
+                if (routeType == RouteType.COMMUTER_RAIL) {
+                    when {
+                        predictionTime != null && context == Context.StopDetailsFiltered ->
+                            return TimeWithStatus(
+                                predictionTime,
+                                prediction.status,
+                                showTimeAsHeadline,
+                            )
+                        predictionTime != null -> return Time(predictionTime, showTimeAsHeadline)
+                        scheduleTime != null && context == Context.StopDetailsFiltered ->
+                            return ScheduleTimeWithStatusColumn(
+                                scheduleTime,
+                                prediction.status,
+                                showTimeAsHeadline,
+                            )
+                        scheduleTime != null && scheduleTime < now ->
+                            return ScheduleTimeWithStatusRow(scheduleTime, prediction.status)
+                        scheduleTime != null ->
+                            return ScheduleTime(scheduleTime, showTimeAsHeadline)
+                    }
+                }
                 return Overridden(prediction.status)
             }
             if (prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Skipped) {
@@ -88,19 +115,17 @@ sealed class TripInstantDisplay {
                 return Hidden
             }
 
-            val scheduleStopTime = schedule?.stopTime
-            val isScheduleUpcoming = scheduleStopTime?.let { it >= now } ?: false
+            val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
             if (
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
-                    scheduleStopTime != null &&
+                    scheduleTime != null &&
                     isScheduleUpcoming &&
                     routeType?.isSubway() == false &&
                     context == Context.StopDetailsFiltered
             ) {
-                return Cancelled(scheduleStopTime)
+                return Cancelled(scheduleTime)
             }
 
-            val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
             if (prediction == null) {
                 val scheduleTime = schedule?.stopTimeAfter(now)
                 return if (
@@ -119,20 +144,6 @@ sealed class TripInstantDisplay {
                         ScheduleMinutes(scheduleMinutesRemaining)
                     }
                 }
-            }
-            val predictionTime = prediction.stopTimeAfter(now)
-            if (allowTimeWithStatus && prediction.status != null) {
-                if (predictionTime != null) {
-                    return TimeWithStatus(predictionTime, prediction.status, showTimeAsHeadline)
-                }
-                if (scheduleStopTime != null) {
-                    return ScheduleTimeWithStatus(
-                        scheduleStopTime,
-                        prediction.status,
-                        showTimeAsHeadline,
-                    )
-                }
-                return Overridden(prediction.status)
             }
             if (predictionTime == null || (prediction.departureTime == null && !allowArrivalOnly)) {
                 return Hidden

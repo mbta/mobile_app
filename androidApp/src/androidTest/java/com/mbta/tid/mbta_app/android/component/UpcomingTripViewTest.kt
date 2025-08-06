@@ -339,6 +339,60 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeScheduleTimeWithStatusColumn() {
+        val instant = EasternTimeInstant(2025, Month.AUGUST, 5, 14, 14)
+        val status = "Delayed"
+
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Delayed", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasContentDescriptionMatching(Regex("2:14\\sPM train delayed")))
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeScheduleTimeWithStatusRow() {
+        val instant = EasternTimeInstant(2025, Month.AUGUST, 5, 14, 14)
+        val status = "Anomalous"
+
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTimeWithStatusRow(instant, status)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Anomalous", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("train arriving at 2:14\\sPM scheduled, Anomalous")
+                )
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeMinutes() {
         composeTestRule.setContent {
             UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
