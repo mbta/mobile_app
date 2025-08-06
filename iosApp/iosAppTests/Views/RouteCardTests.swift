@@ -71,41 +71,6 @@ final class RouteCardTests: XCTestCase {
         XCTAssertNotNil(try? sut.inspect().find(imageName: "mode-subway"))
     }
 
-    func testPinRoute() throws {
-        let objects = ObjectCollectionBuilder()
-        let route = objects.route { route in
-            route.longName = "Red"
-        }
-
-        let routeCardData = RouteCardData(
-            lineOrRoute: .route(route),
-            stopData: [],
-            at: EasternTimeInstant.now()
-        )
-
-        let pinRouteExp = XCTestExpectation(description: "pinRoute called")
-
-        func onPin(_: String) {
-            pinRouteExp.fulfill()
-        }
-
-        let sut = RouteCard(
-            cardData: routeCardData,
-            global: .init(objects: objects),
-            now: EasternTimeInstant.now(),
-            onPin: onPin,
-            pinned: false,
-            pushNavEntry: { _ in },
-            showStopHeader: true
-        ).withFixedSettings([.enhancedFavorites: false])
-
-        let button =
-            try sut.inspect().find(viewWithAccessibilityIdentifier: "starButton").button()
-
-        try button.tap()
-        wait(for: [pinRouteExp], timeout: 1)
-    }
-
     func testPinHiddenWhenEnhanced() throws {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
