@@ -241,11 +241,12 @@ fun RouteStopListView(
     var showFirstTimeFavoritesToast by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var firstTimeToast by remember { mutableStateOf<ToastViewModel.Toast?>(null) }
     val displayedToast by
-        toastViewModel.models
-            .map {
-                when (it) {
-                    is ToastViewModel.State.Hidden -> null
-                    is ToastViewModel.State.Visible -> it.toast
+        remember(toastViewModel) {
+                toastViewModel.models.map {
+                    when (it) {
+                        is ToastViewModel.State.Hidden -> null
+                        is ToastViewModel.State.Visible -> it.toast
+                    }
                 }
             }
             .collectAsState(null)
