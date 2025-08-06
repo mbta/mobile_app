@@ -35,9 +35,9 @@ struct EditFavoritesPage: View {
             String(format: NSLocalizedString(
                 "**%1$@ %2$@** at **%3$@** removed from Favorites",
                 comment: """
-                 Favorite removed toast text, the first value is the direction (southbound, inbound, etc),
-                 the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
-                 The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
+                Favorite removed toast text, the first value is the direction (southbound, inbound, etc),
+                the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
+                The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
                 """
             ), labels.direction, labels.route, labels.stop,)
         } else {

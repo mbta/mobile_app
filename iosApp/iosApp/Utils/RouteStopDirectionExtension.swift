@@ -23,10 +23,10 @@ extension RouteStopDirection {
         else { return nil }
 
         let routeLabel = lineOrRoute.type == .bus
-            ? NSLocalizedString(
-                "\(lineOrRoute.name) bus",
+            ? String(format: NSLocalizedString(
+                "%1$@ bus",
                 comment: "Bus route name label, with the value being the route number, ex. \"1 bus\", \"66 bus\""
-            ) : lineOrRoute.name
+            ), lineOrRoute.name) : lineOrRoute.name
         let directionLabel = DirectionLabel.directionNameFormatted(.init(
             directionId: direction,
             route: lineOrRoute.sortRoute
