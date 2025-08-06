@@ -219,30 +219,6 @@ final class NearbyTransitViewTests: XCTestCase {
         return sut
     }
 
-    @MainActor func testSortsPinnedRoutesToTopByDefault() throws {
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let objects = route52Objects()
-
-        let testData = Shared.TestData.clone()
-
-        objects.put(object: testData.getRoute(id: "15"))
-        objects.put(object: testData.getRoutePattern(id: "15-2-0"))
-        objects.put(object: testData.getTrip(id: "68166816"))
-        objects.put(object: testData.getStop(id: "17863"))
-
-        let sut = setUpSut(objects, loadPublisher, ["52"])
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let routes = view.findAll(RouteCard.self)
-
-            XCTAssertEqual(routes.count, 2)
-            XCTAssertNotNil(try routes[0].find(text: "52"))
-            XCTAssertNotNil(try routes[1].find(text: "15"))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: false]))
-        wait(for: [exp], timeout: 1)
-    }
-
     @MainActor func testDoesntSortsPinnedRoutesToTopEnhancedFavorites() throws {
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()
         let objects = route52Objects()

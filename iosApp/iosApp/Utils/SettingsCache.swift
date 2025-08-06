@@ -23,7 +23,8 @@ class SettingsCache: ObservableObject {
     ///
     /// Unlike the Android version, does not transparently load in the background.
     func get(_ setting: Settings) -> Bool {
-        cache?[setting] ?? false
+        if let override = setting.override { return override.boolValue }
+        return cache?[setting] ?? false
     }
 
     /// Loads the cache from the settings repository. Should be called by `SettingsCacheProvider` in the full app.
@@ -34,6 +35,7 @@ class SettingsCache: ObservableObject {
 
     /// Edits the value of a single `setting` in both the cache and the settings repository.
     func set(_ setting: Settings, _ value: Bool) {
+        if setting.override != nil { return }
         let newSettings = [setting: value]
         cache = newSettings.merging(cache ?? [:]) { newValue, _ in newValue }
         Task {

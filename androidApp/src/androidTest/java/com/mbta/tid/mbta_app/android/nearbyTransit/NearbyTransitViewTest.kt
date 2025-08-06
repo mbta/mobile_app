@@ -215,52 +215,6 @@ class NearbyTransitViewTest : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testSortsPinnedRoutesToTopByDefault() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
-        val koinApplication =
-            testKoinApplication(
-                builder,
-                repositoryOverrides = {
-                    nearby =
-                        MockNearbyRepository(
-                            stopIds = listOf(sampleStop.id, greenLineStop.id),
-                            response = NearbyResponse(builder),
-                        )
-                    pinnedRoutes = MockPinnedRoutesRepository(setOf(route.id))
-                },
-            )
-
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-
-        composeTestRule
-            .onAllNodesWithTag("RouteCard")[0]
-            .onChildren()
-            .assertAny(hasText("Sample Route"))
-        composeTestRule
-            .onAllNodesWithTag("RouteCard")[1]
-            .onChildren()
-            .assertAny(hasText("Green Line Long Name"))
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
     fun testDoesntSortsPinnedRoutesToTopEnhancedFavorites() {
         val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
 
@@ -305,53 +259,6 @@ class NearbyTransitViewTest : KoinTest {
             .onAllNodesWithTag("RouteCard")[1]
             .onChildren()
             .assertAny(hasText("Sample Route"))
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun testRouteCardAnalyticsPinnedWithoutEnhanced() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
-        var analyticsLoggedProps: Map<String, String> = mapOf()
-
-        val koinApplication =
-            testKoinApplication(
-                builder,
-                analytics = MockAnalytics({ _event, props -> analyticsLoggedProps = props }),
-                repositoryOverrides = {
-                    nearby =
-                        MockNearbyRepository(
-                            stopIds = listOf(sampleStop.id, greenLineStop.id),
-                            response = NearbyResponse(builder),
-                        )
-                    settings =
-                        MockSettingsRepository(
-                            settings = mapOf(Settings.EnhancedFavorites to false)
-                        )
-                    pinnedRoutes = MockPinnedRoutesRepository(setOf(route.id))
-                },
-            )
-
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-        composeTestRule.onNodeWithText("Sample Headsign").performClick()
-
-        assertEquals(analyticsLoggedProps.getValue("pinned"), "true")
     }
 
     @OptIn(ExperimentalTestApi::class)

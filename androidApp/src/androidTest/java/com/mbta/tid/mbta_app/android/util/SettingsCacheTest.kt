@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -107,5 +108,28 @@ class SettingsCacheTest {
         composeTestRule.waitForIdle()
         // false while loading and still false after loading
         assertEquals(listOf(false, false, true), hideMapsValues)
+    }
+
+    @Test
+    fun testOverridesSettings() {
+        val settingsRepo =
+            MockSettingsRepository(
+                mapOf(Settings.EnhancedFavorites to false),
+                onGetSettings = { fail("Should not be getting settings from repo") },
+            )
+        val koin = testKoinApplication { settings = settingsRepo }
+
+        val enhancedFavoritesValues = mutableListOf<Boolean>()
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                val cache: SettingsCache = koinInject()
+                enhancedFavoritesValues.add(cache.get(Settings.EnhancedFavorites))
+                cache.set(Settings.EnhancedFavorites, false)
+                enhancedFavoritesValues.add(cache.get(Settings.EnhancedFavorites))
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        assertEquals(listOf(true, true), enhancedFavoritesValues)
     }
 }
