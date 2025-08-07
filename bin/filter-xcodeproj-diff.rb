@@ -16,7 +16,7 @@ module DiffCrawler
     end
 
     def leaf?
-      (keys.size == 2) && (keys.one? { |el| el.include?('diff-xcodeproj.sh') })
+      (keys.size == 2) && keys.one? { |el| el.include?('diff-xcodeproj.sh') }
     end
 
     def replace_leaf_keys!
