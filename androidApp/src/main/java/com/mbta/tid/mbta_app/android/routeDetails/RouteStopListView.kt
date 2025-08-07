@@ -273,7 +273,8 @@ fun RouteStopListView(
         }
     }
 
-    var showFavoritesStopConfirmation by rememberSaveable { mutableStateOf<Stop?>(null) }
+    var showFavoritesStopConfirmationId by rememberSaveable { mutableStateOf<String?>(null) }
+    val showFavoritesStopConfirmation = globalData.getStop(showFavoritesStopConfirmationId)
 
     fun stopRowContext(stop: Stop) =
         when (context) {
@@ -282,7 +283,7 @@ fun RouteStopListView(
                 RouteDetailsRowContext.Favorites(
                     isFavorited =
                         isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
-                    onTapStar = { showFavoritesStopConfirmation = stop },
+                    onTapStar = { showFavoritesStopConfirmationId = stop.id },
                 )
         }
 
@@ -304,7 +305,7 @@ fun RouteStopListView(
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {
-                showFavoritesStopConfirmation = null
+                showFavoritesStopConfirmationId = null
             }
         }
     }
