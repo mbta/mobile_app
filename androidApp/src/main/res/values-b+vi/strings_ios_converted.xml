@@ -394,7 +394,7 @@
     <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
     <string name="vehicle_desc_accessibility_desc">Đã chọn %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Đã chọn %1$s %2$s %3$s, điểm dừng đã chọn</string>
-    <string name="vehicle_prediction_actual_arrival">sẽ đến lúc %2$s</string>
+    <string name="vehicle_prediction_actual_arrival">sẽ đến lúc %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s sẽ đến trong %2$d giờ</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s sẽ đến trong %2$d giờ %3$d phút</string>
     <string name="vehicle_prediction_hours_minutes_other">và trong %1$d giờ %2$d phút</string>

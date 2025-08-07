@@ -4889,43 +4889,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "llegará a la(s) %2$@"
+            "value" : "llegará a la(s) %1$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "arrivant à %2$@"
+            "value" : "arrivant à %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ap rive a %2$@"
+            "value" : "ap rive a %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "chegando às %2$@"
+            "value" : "chegando às %1$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sẽ đến lúc %2$@"
+            "value" : "sẽ đến lúc %1$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "于%2$@到站"
+            "value" : "于%1$@到站"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "於%2$@到站"
+            "value" : "於%1$@到站"
           }
         }
       }
