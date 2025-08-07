@@ -16,3 +16,6 @@ updates:
       interval: weekly
     open-pull-requests-limit: 100
     rebase-strategy: disabled
+    ignore:
+      - dependency-name: "agp"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
