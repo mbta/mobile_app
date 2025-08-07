@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
+import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
 import com.mbta.tid.mbta_app.viewModel.SearchRoutesViewModel
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
@@ -58,7 +59,7 @@ fun RoutePickerView(
     onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
-    searchRoutesViewModel: SearchRoutesViewModel = koinViewModel(),
+    searchRoutesViewModel: ISearchRoutesViewModel = koinViewModel(),
 ) {
     val globalData = getGlobalData("RoutePickerView.globalData")
     var searchInputState by rememberSaveable { mutableStateOf("") }
@@ -69,6 +70,7 @@ fun RoutePickerView(
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(searchInputState) { searchRoutesViewModel.setQuery(searchInputState) }
+    LaunchedEffect(path) { searchRoutesViewModel.setPath(path) }
 
     if (globalData == null) {
         CircularProgressIndicator(Modifier.semantics { contentDescription = "Loading" })

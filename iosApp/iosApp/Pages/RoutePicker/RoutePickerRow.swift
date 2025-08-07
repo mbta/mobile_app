@@ -36,6 +36,6 @@ struct RoutePickerRow: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             }
-        )
+        ).simultaneousGesture(TapGesture())
     }
 }
