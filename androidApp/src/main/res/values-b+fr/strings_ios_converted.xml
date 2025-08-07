@@ -404,7 +404,7 @@
     <string name="vehicle_cancelled_other">et à %1$s est annulé</string>
     <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s sélectionné</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s sélectionné, arrêt sélectionné</string>
-    <string name="vehicle_prediction_actual_arrival">arrivant à %2$s</string>
+    <string name="vehicle_prediction_actual_arrival">arrivant à %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s arrive dans %2$d h</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s arrive dans %2$d h et %3$d min</string>
     <string name="vehicle_prediction_hours_minutes_other">et dans %1$d h et %2$d min</string>

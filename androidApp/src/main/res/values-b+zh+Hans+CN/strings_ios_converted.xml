@@ -394,7 +394,7 @@
     <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
     <string name="vehicle_desc_accessibility_desc">选定%1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">选定%1$s %2$s %3$s，选定站点</string>
-    <string name="vehicle_prediction_actual_arrival">于%2$s到站</string>
+    <string name="vehicle_prediction_actual_arrival">于%1$s到站</string>
     <string name="vehicle_prediction_hours_first">%1$s将于%2$d小时内到站</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s将于%2$d小时%3$d分钟内到站</string>
     <string name="vehicle_prediction_hours_minutes_other">下一趟车将在%1$d小时%2$d分钟内抵达</string>

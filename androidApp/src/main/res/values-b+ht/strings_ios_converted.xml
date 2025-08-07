@@ -419,7 +419,7 @@
     <string name="vehicle_cancelled_other">epi a %1$s anile</string>
     <string name="vehicle_desc_accessibility_desc">Chwazi %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Chwazi %1$s %2$s %3$s, arè ou chwazi a</string>
-    <string name="vehicle_prediction_actual_arrival">ap rive a %2$s</string>
+    <string name="vehicle_prediction_actual_arrival">ap rive a %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s ap rive nan %2$d èdtan</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s rive nan %2$d è %3$d min</string>
     <string name="vehicle_prediction_hours_minutes_other">epi nan %1$d è %2$d min</string>
