@@ -26,7 +26,14 @@ final class EditFavoritesPageTests: XCTestCase {
         ))
 
         var onCloseCalled = false
-        let sut = EditFavoritesPage(viewModel: favoritesVM, onClose: { onCloseCalled = true }, errorBannerVM: .init())
+        let sut = EditFavoritesPage(
+            viewModel: favoritesVM,
+            onClose: { onCloseCalled = true },
+            errorBannerVM: .init(),
+            toastVM: MockToastViewModel(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
 
         XCTAssertNotNil(try sut.inspect().find(text: "Edit Favorites"))
         try sut.inspect().find(button: "Done").tap()
@@ -47,7 +54,10 @@ final class EditFavoritesPageTests: XCTestCase {
 
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [],
+            favorites: [
+                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0),
+                RouteStopDirection(route: route67.id, stop: stop67.id, direction: 0),
+            ],
             shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [
@@ -93,13 +103,90 @@ final class EditFavoritesPageTests: XCTestCase {
             }
         }
 
-        let sut = EditFavoritesPage(viewModel: favoritesVM, onClose: {}, errorBannerVM: .init())
+        let toastVM = MockToastViewModel()
 
-        let exp = sut.inspection.inspect(after: 0.2) { view in
+        let sut = EditFavoritesPage(
+            viewModel: favoritesVM,
+            onClose: {},
+            errorBannerVM: .init(),
+            toastVM: toastVM,
+        )
+
+        let exp = sut.inspection.inspect(after: 2.0) { view in
 
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
         ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
         wait(for: [exp, updateFavoritesExp], timeout: 2)
+    }
+
+    @MainActor func testUndoToast() throws {
+        let objects = TestData.clone()
+        let globalData = GlobalResponse(objects: objects)
+
+        let route15: Route = objects.getRoute(id: "15")
+        let stop15 = objects.getStop(id: "17863")
+
+        let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
+        let undoFavoritesExp = XCTestExpectation(description: "Favorite update undone")
+
+        let favoritesVM = MockFavoritesViewModel(initialState: .init(
+            awaitingPredictionsAfterBackground: false,
+            favorites: [
+                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0),
+            ],
+            shouldShowFirstTimeToast: false,
+            routeCardData: [],
+            staticRouteCardData: [
+                .init(lineOrRoute: .route(route15),
+                      stopData: [.init(route: route15,
+                                       stop: stop15,
+                                       data: [.init(lineOrRoute: .route(route15),
+                                                    stop: stop15,
+                                                    directionId: 0,
+                                                    routePatterns: [],
+                                                    stopIds: [],
+                                                    upcomingTrips: [],
+                                                    alertsHere: [],
+                                                    allDataLoaded: true,
+                                                    hasSchedulesToday: true,
+                                                    alertsDownstream: [],
+                                                    context: .favorites)],
+                                       globalData: globalData)],
+                      at: EasternTimeInstant.now()),
+            ],
+            loadedLocation: nil,
+        ))
+
+        var deleted = false
+        favoritesVM.onUpdateFavorites = { newFavorites in
+            if newFavorites == [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): false] {
+                updateFavoritesExp.fulfill()
+                deleted = true
+            }
+            if deleted, newFavorites == [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): true] {
+                undoFavoritesExp.fulfill()
+            }
+        }
+
+        let toastVM = MockToastViewModel()
+        toastVM.onShowToast = { toast in
+            XCTAssertEqual("Removed from Favorites", toast.message)
+            toast.onAction?()
+        }
+
+        let sut = EditFavoritesPage(
+            viewModel: favoritesVM,
+            onClose: {},
+            errorBannerVM: .init(),
+            toastVM: toastVM,
+        )
+
+        let exp = sut.inspection.inspect(after: 2.0) { view in
+
+            try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
+        }
+        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
+        wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 2)
     }
 }

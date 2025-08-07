@@ -16,8 +16,11 @@ struct DirectionPicker: View {
     let selectedDirectionId: Int32?
     let updateDirectionId: (Int32) -> Void
 
-    init(stopData: RouteCardData.RouteStopData, filter: StopDetailsFilter?,
-         setFilter: @escaping (StopDetailsFilter?) -> Void) {
+    init(
+        stopData: RouteCardData.RouteStopData,
+        filter: StopDetailsFilter?,
+        setFilter: @escaping (StopDetailsFilter?) -> Void
+    ) {
         availableDirections = Set(stopData.data.map(\.directionId)).sorted()
         directions = stopData.directions
         let route = stopData.lineOrRoute.sortRoute
@@ -51,11 +54,16 @@ struct DirectionPicker: View {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = selectedDirectionId == direction
                     let action = { updateDirectionId(direction) }
+                    let selectedDirection = directions[Int(direction)]
 
                     Button(action: action) {
-                        DirectionLabel(direction: directions[Int(direction)])
+                        DirectionLabel(direction: selectedDirection)
                             .padding(8)
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                            .frame(
+                                maxWidth: .infinity,
+                                maxHeight: .infinity,
+                                alignment: selectedDirection.destination == nil ? .center : .leading
+                            )
                     }
                     .simultaneousGesture(TapGesture())
                     .accessibilityAddTraits(isSelected ? [.isSelected, .isHeader] : [])
@@ -70,6 +78,8 @@ struct DirectionPicker: View {
                     .clipShape(.rect(cornerRadius: 6))
                 }
             }
+            .accessibilityElement(children: .contain)
+            .frame(minHeight: 44)
             .padding(2)
             .background(deselectedBackroundColor)
             .clipShape(.rect(cornerRadius: 8))

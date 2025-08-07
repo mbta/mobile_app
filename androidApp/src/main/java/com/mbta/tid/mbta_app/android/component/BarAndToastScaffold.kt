@@ -39,24 +39,27 @@ fun BarAndToastScaffold(
     val snackbarHostState = remember { SnackbarHostState() }
     val toastState by toastViewModel.models.collectAsState()
 
+    suspend fun showToast(toast: ToastViewModel.Toast) {
+        snackbarHostState.currentSnackbarData?.dismiss()
+        snackbarHostState.showSnackbar(
+            message = toast.message,
+            actionLabel =
+                if (toast.actionLabel != null && toast.onAction != null) toast.actionLabel
+                else null,
+            withDismissAction = toast.onClose != null,
+            duration =
+                when (toast.duration) {
+                    ToastViewModel.Duration.Short -> SnackbarDuration.Short
+                    ToastViewModel.Duration.Long -> SnackbarDuration.Long
+                    ToastViewModel.Duration.Indefinite -> SnackbarDuration.Indefinite
+                },
+        )
+    }
+
     LaunchedEffect(toastState) {
         when (val state = toastState) {
             is ToastViewModel.State.Hidden -> snackbarHostState.currentSnackbarData?.dismiss()
-            is ToastViewModel.State.Visible ->
-                snackbarHostState.showSnackbar(
-                    message = state.toast.message,
-                    actionLabel =
-                        if (state.toast.actionLabel != null && state.toast.onAction != null)
-                            state.toast.actionLabel
-                        else null,
-                    withDismissAction = state.toast.onClose != null,
-                    duration =
-                        when (state.toast.duration) {
-                            ToastViewModel.Duration.Short -> SnackbarDuration.Short
-                            ToastViewModel.Duration.Long -> SnackbarDuration.Long
-                            ToastViewModel.Duration.Indefinite -> SnackbarDuration.Indefinite
-                        },
-                )
+            is ToastViewModel.State.Visible -> showToast(state.toast)
         }
     }
 

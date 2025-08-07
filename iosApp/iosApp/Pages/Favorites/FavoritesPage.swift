@@ -29,6 +29,7 @@ struct FavoritesPage: View {
                 toastVM: toastVM,
                 location: $location
             )
+            .toolbarBackground(.visible, for: .tabBar)
             .onReceive(
                 viewportProvider.cameraStatePublisher
                     .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)

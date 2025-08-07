@@ -41,8 +41,8 @@ struct UpcomingTripView: View {
             .padding(.trailing, 4)
     }
 
-    @ViewBuilder
-    func tripInstantView(_ prediction: TripInstantDisplay) -> some View {
+    // swiftlint:disable:next function_body_length
+    @ViewBuilder func tripInstantView(_ prediction: TripInstantDisplay) -> some View {
         let label = prediction.accessibilityLabel(
             isFirst: isFirst,
             vehicleType: routeType?.typeText(isOnly: isOnly) ?? ""
@@ -120,6 +120,30 @@ struct UpcomingTripView: View {
                 .opacity(min(0.6, maxTextAlpha))
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                 .accessibilityLabel(label)
+        case let .scheduleTimeWithStatusColumn(format):
+            VStack(alignment: .trailing, spacing: 0) {
+                Text(format.scheduledTime, style: .time)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                Text(format.status)
+                    .font(Typography.footnoteSemibold)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .multilineTextAlignment(.trailing)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
+        case let .scheduleTimeWithStatusRow(format):
+            HStack(alignment: .center, spacing: 4) {
+                Text(format.status)
+                    .font(Typography.footnoteSemibold)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .multilineTextAlignment(.trailing)
+                Text(format.scheduledTime, style: .time)
+                    .opacity(min(0.6, maxTextAlpha))
+                    .font(Typography.footnoteSemibold)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
         case let .scheduleMinutes(format):
             PredictionText(minutes: format.minutes)
                 .opacity(min(0.6, maxTextAlpha))

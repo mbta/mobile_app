@@ -128,6 +128,7 @@ object ProjectUtils {
                                     route.directionDestinations[0],
                                     route.directionDestinations[1],
                                 )
+                                addStatement("isListedRoute = %L,", route.isListedRoute)
                                 addStatement("longName = %S,", route.longName)
                                 addStatement("shortName = %S,", route.shortName)
                                 addStatement("sortOrder = %L,", route.sortOrder)

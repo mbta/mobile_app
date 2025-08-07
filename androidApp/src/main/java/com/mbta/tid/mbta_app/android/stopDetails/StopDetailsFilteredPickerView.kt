@@ -60,7 +60,7 @@ fun StopDetailsFilteredPickerView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    isFavorite: (FavoriteBridge) -> Boolean,
+    isFavorite: (FavoriteBridge) -> Boolean?,
     updateFavorites: (FavoriteUpdateBridge) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
@@ -103,7 +103,7 @@ fun StopDetailsFilteredPickerView(
                         FavoriteUpdateBridge.Favorites(newValues, stopFilter.directionId)
                     )
                 },
-                isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) },
+                isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) ?: false },
             ) {
                 inSaveFavoritesFlow = false
             }
@@ -155,7 +155,7 @@ fun StopDetailsFilteredPickerView(
                         viewModel = viewModel,
                         updateTripFilter = updateTripFilter,
                         tileScrollState = tileScrollState,
-                        isFavorite = isFavorite(favoriteBridge),
+                        isFavorite = isFavorite(favoriteBridge) ?: false,
                         openModal = openModal,
                         openSheetRoute = openSheetRoute,
                     )

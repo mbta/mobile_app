@@ -90,11 +90,11 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             stopRow
-                .background(background?.padding(.horizontal, 2))
+                .background(background)
                 .overlay {
                     if targeted {
                         VStack {
-                            HaloSeparator(height: 2)
+                            HaloSeparator(height: 1)
                             Spacer()
                             HaloSeparator(height: 2)
                         }
@@ -115,7 +115,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 }
             }
         }
-        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 6)
+        .fixedSize(horizontal: false, vertical: true).padding(.horizontal, stopListContext == .trip ? 7 : 0)
     }
 
     @ViewBuilder
@@ -211,7 +211,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
             case .right: dot.padding(.leading, 20)
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 7)
     }
 
     func connectionLabel(route: Route) -> String {

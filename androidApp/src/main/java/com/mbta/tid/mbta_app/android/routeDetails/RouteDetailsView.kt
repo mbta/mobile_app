@@ -3,13 +3,10 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
@@ -72,9 +69,7 @@ fun RouteDetailsView(
                     StarIcon(
                         rowContext.isFavorited,
                         colorResource(R.color.text),
-                        Modifier.semantics {
-                            contentDescription = if (rowContext.isFavorited) favoriteCD else ""
-                        },
+                        contentDescription = if (rowContext.isFavorited) favoriteCD else "",
                     )
                 }
             }

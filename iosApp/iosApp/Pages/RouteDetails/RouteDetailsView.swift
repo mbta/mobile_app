@@ -22,7 +22,7 @@ struct RouteDetailsView: View {
     var errorBannerRepository = RepositoryDI().errorBanner
 
     var body: some View {
-        Group {
+        ScrollView([]) {
             if let globalData, let lineOrRoute = globalData.getLineOrRoute(
                 lineOrRouteId: selectionId
             ) {
@@ -99,10 +99,14 @@ struct RouteDetailsView: View {
 
     @ViewBuilder private func rightSideContent(rowContext: RouteDetailsRowContext) -> some View {
         switch rowContext {
-        case .details: Image(.faChevronRight).resizable().frame(width: 8, height: 14)
-            .foregroundStyle(Color.deemphasized)
-        case let .favorites(isFavorited: isFavorited, onTapStar: _): StarIcon(pinned: isFavorited, color: Color.text)
-            .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
+        case .details:
+            Image(.faChevronRight)
+                .resizable().frame(width: 8, height: 14).padding(.trailing, 8)
+                .foregroundStyle(Color.deemphasized)
+        case let .favorites(isFavorited: isFavorited, onTapStar: _):
+            StarIcon(starred: isFavorited, color: Color.text)
+                .padding(.trailing, 8)
+                .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
         }
     }
 }

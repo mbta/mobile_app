@@ -143,6 +143,8 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val vehicle: Vehicle? = null,
     )
 
+    override fun toString() = "[TripDetailsStopList]"
+
     companion object {
 
         // TODO: Remove hardcoded IDs once the `listed_route` field is exposed by the API.

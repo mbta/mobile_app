@@ -29,10 +29,13 @@ struct FavoritesView: View {
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 rightActionContents: {
                     if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
-                        NavTextButton(string: NSLocalizedString("Edit",
-                                                                comment: "Button text to enter edit favorites flow"),
-                                      backgroundColor: Color.text.opacity(0.6),
-                                      textColor: Color.fill2) {
+                        ActionButton(kind: .plus, circleColor: Color.text.opacity(0.6), action: { onAddStops() })
+                        NavTextButton(
+                            string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
+                            backgroundColor: Color.text.opacity(0.6),
+                            textColor: Color.fill2,
+                            height: 32
+                        ) {
                             nearbyVM.pushNavEntry(.editFavorites)
                         }
                     }
@@ -45,16 +48,7 @@ struct FavoritesView: View {
                 emptyView: {
                     NoFavoritesView(
                         onAddStops: {
-                            favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
-                            toastVM.hideToast()
-                            nearbyVM.pushNavEntry(
-                                SheetNavigationStackEntry.routePicker(
-                                    SheetRoutes.RoutePicker(
-                                        path: RoutePickerPath.Root(),
-                                        context: RouteDetailsContext.Favorites()
-                                    )
-                                )
-                            )
+                            onAddStops()
                         }
                     )
                     .frame(maxWidth: .infinity)
@@ -67,7 +61,6 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
-        .toast(vm: toastVM)
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
@@ -100,6 +93,9 @@ struct FavoritesView: View {
             if favoritesVMState.shouldShowFirstTimeToast {
                 showFirstTimeToast()
             }
+        }
+        .onDisappear {
+            toastVM.hideToast()
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
             if shouldShow {
@@ -153,5 +149,18 @@ struct FavoritesView: View {
                 onRefreshAfterError: loadEverything
             )
         }
+    }
+
+    private func onAddStops() {
+        favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
+        toastVM.hideToast()
+        nearbyVM.pushNavEntry(
+            SheetNavigationStackEntry.routePicker(
+                SheetRoutes.RoutePicker(
+                    path: RoutePickerPath.Root(),
+                    context: RouteDetailsContext.Favorites()
+                )
+            )
+        )
     }
 }

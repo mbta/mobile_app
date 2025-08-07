@@ -349,8 +349,7 @@
       }
     },
     "**%1$@ %2$@** at **%3$@** added to Favorites" : {
-      "comment" : "Favorite added toast text, the first value is the direction (southbound, inbound, etc), the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Southbound] [Red Line] at [Alewife] added to Favorites\"",
-      "extractionState" : "manual",
+      "comment" : "Favorite added toast text, the first value is the direction (southbound, inbound, etc),\nthe second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Southbound] [Red Line] at [Alewife] added to Favorites\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -397,8 +396,7 @@
       }
     },
     "**%1$@ %2$@** at **%3$@** removed from Favorites" : {
-      "comment" : "Favorite removed toast text, the first value is the direction (southbound, inbound, etc), the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"",
-      "extractionState" : "manual",
+      "comment" : "Favorite removed toast text, the first value is the direction (southbound, inbound, etc),\nthe second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -445,8 +443,7 @@
       }
     },
     "**%1$@** at **%2$@** added to Favorites" : {
-      "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus), and the second is a stop name (Ruggles, Alewife). The asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
-      "extractionState" : "manual",
+      "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -2102,7 +2099,6 @@
     },
     "%1$@ bus" : {
       "comment" : "Bus route name label, with the value being the route number, ex. \"1 bus\", \"66 bus\"",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3089,6 +3085,7 @@
       }
     },
     "Add stops" : {
+      "comment" : "VoiceOver label for add stops button",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3183,7 +3180,6 @@
     },
     "Added to Favorites" : {
       "comment" : "Favorites added toast fallback text when more details are unavailable",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8959,7 +8955,6 @@
     },
     "Favorite stops replaces the prior starred routes feature." : {
       "comment" : "Explainer the first time a user sees the new favorites feature",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14621,7 +14616,6 @@
     },
     "Removed from Favorites" : {
       "comment" : "Favorite removed toast fallback text when more details are unavailable",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15129,53 +15123,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "查看您附近的交通"
-          }
-        }
-      }
-    },
-    "Select location" : {
-      "comment" : "Visible when the user is panning the map to search for nearby transit",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar ubicación"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélectionner une localisation"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chwazi pozisyon"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecionar local"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chọn vị trí"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "选择位置"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "選擇位置"
           }
         }
       }
@@ -20115,7 +20062,6 @@
     },
     "Undo" : {
       "comment" : "Button label to undo an action that was just performed",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {

@@ -157,6 +157,7 @@ struct StopDetailsFilteredView: View {
                                       .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
                                   selectedDirection: routeStopDirection.direction,
                                   context: .stopDetails,
+                                  global: stopDetailsVM.global,
                                   isFavorite: { rsd in
                                       stopDetailsVM.isFavorite(
                                           .Favorite(routeStopDirection: rsd),
@@ -183,6 +184,7 @@ struct StopDetailsFilteredView: View {
                     route: stopData?.lineOrRoute.sortRoute,
                     line: line,
                     stop: stop,
+                    direction: stopFilter.directionId,
                     pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
                     onPin: {
                         if favoriteBridge is FavoriteBridge.Pinned {

@@ -48,6 +48,7 @@ struct Typography {
 
     static let title3 = Typography(size: 20, lineHeight: 28, relativeTo: .title3)
     static let title3Semibold = title3.weight(.semibold)
+    static let title3Bold = title3.bold()
 
     static let headline = Typography(size: 17, lineHeight: 24, relativeTo: .headline)
     static let headlineSemibold = headline.weight(.semibold)

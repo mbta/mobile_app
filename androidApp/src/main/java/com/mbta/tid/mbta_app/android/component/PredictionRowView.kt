@@ -34,6 +34,8 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.Month
 
 sealed interface PillDecoration {
     data class OnRow(val route: Route) : PillDecoration
@@ -136,16 +138,46 @@ private fun PredictionRowViewPreview() {
     val trip = objects.trip()
 
     MyApplicationTheme {
-        Column(Modifier.background(MaterialTheme.colorScheme.background)) {
+        Column(
+            Modifier.background(MaterialTheme.colorScheme.background)
+                .padding(start = 16.dp, end = 8.dp)
+                .padding(vertical = 10.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+        ) {
             PredictionRowView(
                 predictions =
                     UpcomingFormat.Some(
                         listOf(
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip),
-                                RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Boarding,
-                            )
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.ScheduleTimeWithStatusRow(
+                                    EasternTimeInstant(2025, Month.AUGUST, 5, 12, 10),
+                                    "Delayed",
+                                ),
+                            ),
+                            UpcomingFormat.Some.FormattedTrip(
+                                UpcomingTrip(trip),
+                                RouteType.COMMUTER_RAIL,
+                                TripInstantDisplay.Time(
+                                    EasternTimeInstant(2025, Month.AUGUST, 5, 12, 45),
+                                    true,
+                                ),
+                            ),
+                        ),
+                        null,
+                    )
+            ) {
+                Text("Needham Heights")
+            }
+
+            PredictionRowView(
+                predictions =
+                    UpcomingFormat.Some(
+                        UpcomingFormat.Some.FormattedTrip(
+                            UpcomingTrip(trip),
+                            RouteType.LIGHT_RAIL,
+                            TripInstantDisplay.Boarding,
                         ),
                         null,
                     )
@@ -155,12 +187,10 @@ private fun PredictionRowViewPreview() {
 
             PredictionRowView(
                 UpcomingFormat.Some(
-                    listOf(
-                        UpcomingFormat.Some.FormattedTrip(
-                            UpcomingTrip(trip),
-                            RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Overridden("Stopped 10 stops away"),
-                        )
+                    UpcomingFormat.Some.FormattedTrip(
+                        UpcomingTrip(trip),
+                        RouteType.LIGHT_RAIL,
+                        TripInstantDisplay.Overridden("Stopped 10 stops away"),
                     ),
                     null,
                 ),
@@ -171,12 +201,10 @@ private fun PredictionRowViewPreview() {
 
             PredictionRowView(
                 UpcomingFormat.Some(
-                    listOf(
-                        UpcomingFormat.Some.FormattedTrip(
-                            UpcomingTrip(trip),
-                            RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Overridden("Stopped 10 stops away"),
-                        )
+                    UpcomingFormat.Some.FormattedTrip(
+                        UpcomingTrip(trip),
+                        RouteType.LIGHT_RAIL,
+                        TripInstantDisplay.Overridden("Stopped 10 stops away"),
                     ),
                     null,
                 )

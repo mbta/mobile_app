@@ -41,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.takeOrElse
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
@@ -104,6 +105,8 @@ fun SearchInputField(
             colors.textColor(enabled, isError = false, focused = focused)
         }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     BasicTextField(
         value = query,
         onValueChange = onQueryChange,
@@ -126,7 +129,13 @@ fun SearchInputField(
         textStyle = LocalTextStyle.current.merge(Typography.callout).merge(color = textColor),
         cursorBrush = SolidColor(colors.cursorColor(isError = false)),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { onSearch(query) }),
+        keyboardActions =
+            KeyboardActions(
+                onSearch = {
+                    onSearch(query)
+                    keyboardController?.hide()
+                }
+            ),
         interactionSource = interactionSource,
         decorationBox =
             @Composable { innerTextField ->

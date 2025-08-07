@@ -27,6 +27,7 @@ struct ContentView: View {
     @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
+    @State var toastVM = ViewModelDI().toast
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
@@ -88,6 +89,9 @@ struct ContentView: View {
                 nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
                 updateTabBarVisibility()
             }
+        }
+        .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in
+            updateTabBarVisibility()
         }
         .onChange(of: AnalyticsParams(
             stopId: nearbyVM.navigationStack.lastSafe().stopId(),
@@ -263,10 +267,9 @@ struct ContentView: View {
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
+                    .id(navEntry)
                     .transition(transition)
-                    // This achieves the initial desired transition but going back performs the same transition which is
-                    // odd
-                    // .transition(.asymmetric(insertion: .push(from: .trailing), removal: .opacity))
+                    .animation(.easeOut, value: navEntry)
 
                 case let .stopDetails(stopId, stopFilter, tripFilter):
                     // Wrapping in a TabView helps the page to animate in as a single unit
@@ -333,6 +336,7 @@ struct ContentView: View {
            let featurePromosPending = contentVM.featurePromosPending,
            let onboardingScreensPending = contentVM.onboardingScreensPending {
             sheetContents
+                .toast(vm: toastVM, tabBarVisible: tabBarVisibility == .visible)
         } else {
             sheetContentsPlaceholder
         }
@@ -376,7 +380,8 @@ struct ContentView: View {
                     EditFavoritesPage(
                         viewModel: favoritesVM,
                         onClose: { nearbyVM.popToEntrypoint() },
-                        errorBannerVM: errorBannerVM
+                        errorBannerVM: errorBannerVM,
+                        toastVM: toastVM,
                     )
                     .toolbar(.hidden, for: .tabBar)
                 }
@@ -426,7 +431,7 @@ struct ContentView: View {
 
     @ViewBuilder var mapWithSheets: some View {
         let nav = nearbyVM.navigationStack.lastSafe()
-        let sheetItemId: String? = nav.sheetItemIdentifiable()?.id
+        let sheetRoute = nav.toSheetRoute()
         if hideMaps {
             navSheetContents
                 .fullScreenCover(item: .constant(nav.coverItemIdentifiable()), onDismiss: {
@@ -473,7 +478,15 @@ struct ContentView: View {
                             },
                             content: coverContents
                         )
-                        .onChange(of: sheetItemId) { _ in selectedDetent = .medium }
+                        .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
+
+                            if let oldSheetRoute,
+                               let newSheetRoute,
+                               SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
+                                                                            second: newSheetRoute) {
+                                selectedDetent = .medium
+                            }
+                        }
                         .onAppear { recordSheetHeight(proxy.size.height) }
                         .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
                     }

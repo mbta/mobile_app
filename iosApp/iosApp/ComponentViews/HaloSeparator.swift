@@ -10,8 +10,9 @@ import SwiftUI
 
 struct HaloSeparator: View {
     var height: CGFloat = 1
+    var haloColor: Color = .halo
 
     var body: some View {
-        Color.halo.frame(height: height)
+        haloColor.frame(height: height)
     }
 }

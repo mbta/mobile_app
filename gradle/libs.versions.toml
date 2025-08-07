@@ -5,17 +5,17 @@ android-material3 = "1.3.2"
 # changelog: https://developer.android.com/jetpack/androidx/releases/activity
 androidx-activityCompose = "1.10.1"
 # changelog: https://developer.android.com/jetpack/androidx/releases/lifecycle
-androidx-lifecycle = "2.9.1"
+androidx-lifecycle = "2.9.2"
 # changelog: https://developer.android.com/jetpack/androidx/releases/navigation
-androidx-navigationCompose = "2.9.1"
+androidx-navigationCompose = "2.9.3"
 # changelog: https://developer.android.com/jetpack/androidx/releases/test
-androidx-test-monitor = "1.7.2"
-androidx-test-rules = "1.6.1"
+androidx-test-monitor = "1.8.0"
+androidx-test-rules = "1.7.0"
 # changelog: https://developer.android.com/build/releases/past-releases
 agp = "8.7.2"
 # bom: https://developer.android.com/develop/ui/compose/bom/bom-mapping
 # changelog: https://developer.android.com/jetpack/androidx/releases/compose
-compose-bom = "2025.06.01"
+compose-bom = "2025.07.00"
 compose-placeholder-material3= "1.0.11"
 compose-shimmer= "1.3.3"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
@@ -32,21 +32,21 @@ kotlinpoet = "2.2.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.9.0"
-ktor = "3.2.2"
+ktor = "3.2.3"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.12.2"
 mapboxTurf = "7.4.0"
 mokkery = "2.9.0"
 molecule = "2.1.0"
 okhttp = "4.12.0"
-okio = "3.15.0"
+okio = "3.16.0"
 playServicesLocation = "21.3.0"
 sentry = "0.13.0"
 sentryGradle = "5.7.0"
-skie = "0.10.4"
+skie = "0.10.5"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
-spotless = "7.1.0"
+spotless = "7.2.1"
 turbine = "1.2.1"
 
 [libraries]

@@ -205,7 +205,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     @State var favorites: Set<RouteStopDirection>?
 
     @State var showFavoritesStopConfirmation: Stop? = nil
-    @State var showFirstTimeFavoritesToast: Bool = false
+    @State var showFirstTimeFavoritesToast: Bool? = nil
+    @State var displayedToast: ToastViewModel.Toast? = nil
+    @State var firstTimeToast: ToastViewModel.Toast? = nil
 
     let inspection = Inspection<Self>()
 
@@ -258,9 +260,21 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         let globalData: GlobalResponse
     }
 
+    private var routeColor: Color { Color(hex: lineOrRoute.backgroundColor) }
+    private var textColor: Color { Color(hex: lineOrRoute.textColor) }
+    private var haloColor: Color {
+        lineOrRoute.type == .bus && !silverRoutes.contains(lineOrRoute.id) ? Color.haloLight : Color.haloDark
+    }
+
     var body: some View {
-        VStack {
-            SheetHeader(title: lineOrRoute.name, onBack: onBack, onClose: onClose)
+        VStack(spacing: 0) {
+            SheetHeader(
+                title: lineOrRoute.name,
+                titleColor: textColor,
+                buttonColor: Color.text.opacity(0.6),
+                onBack: onBack,
+                onClose: onClose
+            )
             ErrorBanner(errorBannerVM)
             DirectionPicker(
                 availableDirections: parameters.availableDirections.map { Int32(truncating: $0) },
@@ -269,14 +283,23 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 selectedDirectionId: selectedDirection,
                 updateDirectionId: { setSelectedDirection($0) }
             )
-            .fixedSize(horizontal: false, vertical: true).padding(.horizontal, 14).padding(.vertical, 8)
+            .fixedSize(horizontal: false, vertical: true).padding([.horizontal, .top], 14).padding(.bottom, 10)
             if case let .line(lineOrRoute) = onEnum(of: lineOrRoute), routes.count > 1 {
                 lineRoutePicker(line: lineOrRoute.line, routes: routes)
             }
             routeStopList(stopList: stopList, onTapStop: onClick)
         }
+        .background { routeColor.ignoresSafeArea() }
         .onAppear {
             loadFavorites()
+        }
+        .task {
+            for await model in toastVM.models {
+                displayedToast = switch onEnum(of: model) {
+                case .hidden: nil
+                case let .visible(toast): toast.toast
+                }
+            }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .overlay {
@@ -285,25 +308,30 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
         }
         .onChange(of: favorites) { _ in
-            showFirstTimeFavoritesToast = context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+            // Only set first time toast on first favorites load, otherwise keep the current value
+            showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
+                showFirstTimeFavoritesToast
+            } else {
+                context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+            }
         }
         .onChange(of: showFirstTimeFavoritesToast) { _ in
-            if showFirstTimeFavoritesToast {
-                toastVM.showToast(
-                    toast:
-                    ToastState(
-                        message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
-                        duration: .indefinite,
-                        onClose: { showFirstTimeFavoritesToast = false },
-                        actionLabel: nil,
-                        onAction: nil
-                    )
+            if showFirstTimeFavoritesToast == true {
+                let toast = ToastViewModel.Toast(
+                    message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
+                    duration: .indefinite,
+                    onClose: { showFirstTimeFavoritesToast = false },
+                    actionLabel: nil,
+                    onAction: nil
                 )
-            } else {
+                toastVM.showToast(toast: toast)
+                firstTimeToast = toast
+            } else if showFirstTimeFavoritesToast == false,
+                      displayedToast == firstTimeToast {
                 toastVM.hideToast()
             }
         }
-        .toast(vm: toastVM)
+        .onDisappear { toastVM.hideToast() }
     }
 
     @ViewBuilder private func routeStopList(
@@ -312,7 +340,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     ) -> some View {
         if let stopList, stopList.directionId == Int32(selectedDirection) {
             let hasTypicalSegment = stopList.segments.contains(where: \.isTypical)
-            ScrollView {
+            HaloScrollView(haloColor: haloColor) {
                 VStack(spacing: 0) {
                     ForEach(Array(stopList.segments.enumerated()), id: \.offset) { segmentIndex, segment in
                         if segment.isTypical || !hasTypicalSegment {
@@ -350,6 +378,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         }
                     }
                 }
+                .background { Color.fill2 }
+                .withRoundedBorder(color: haloColor, width: 2)
+                .padding(2)
+                .padding(.horizontal, 14)
+                .padding(.top, 4)
+                .padding(.bottom, 32)
             }
         } else {
             AnyView(loadingRouteStops())
@@ -369,17 +403,27 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                         RoutePill(route: route, line: line, type: .fixed)
                         Text(((route.directionDestinations[Int(selectedDirection)] as? String?) ?? "") ?? "")
                             .foregroundStyle(textColor)
-                            .font(Typography.title3Semibold)
+                            .font(Typography.title3Bold)
                         Spacer()
                     }
                     .padding(8)
-                    .background(rowColor)
                 }
+                .accessibilityAddTraits(selected ? [.isSelected, .isHeader] : [])
+                .accessibilityHeading(selected ? .h2 : .unspecified)
+                .accessibilitySortPriority(selected ? 1 : 0)
+                .frame(minHeight: 44)
+                .background(rowColor)
+                .withRoundedBorder(color: selected ? .halo : Color.clear)
             }
         }
+        .accessibilityElement(children: .contain)
         .frame(maxWidth: .infinity)
+        .padding(2)
         .background(Color.deselectedToggle2.opacity(0.6))
         .background(Color(hex: line.color))
+        .withRoundedBorder(radius: 10, width: 0)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 4)
     }
 
     @ViewBuilder private func loadingRouteStops() -> some View {
@@ -397,6 +441,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             stop: stop,
             patterns: allPatternsForStop.filter { $0.isTypical() }
         )
+
         SaveFavoritesFlow(
             lineOrRoute: lineOrRoute,
             stop: stop,
@@ -410,6 +455,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             },
             selectedDirection: selectedDirection,
             context: .favorites,
+            global: globalData,
             isFavorite: { rsd in
                 isFavorite(rsd)
             },
@@ -418,7 +464,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             },
             onClose: {
                 showFavoritesStopConfirmation = nil
-            }
+            },
+            toastVM: toastVM,
         )
     }
 
@@ -433,7 +480,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
                 context: editContext, defaultDirection: selectedDirection
             )
-            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+            loadFavorites()
         }
     }
 
@@ -452,7 +499,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         case .details: .details(stop: stop)
         case .favorites: .favorites(
                 isFavorited: isFavorite(.init(
-                    route: selectedRouteId,
+                    route: lineOrRoute.id,
                     stop: stop.id,
                     direction: selectedDirection
                 )),

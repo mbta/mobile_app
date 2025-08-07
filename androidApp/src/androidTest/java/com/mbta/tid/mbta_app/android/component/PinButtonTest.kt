@@ -15,7 +15,7 @@ class PinButtonTest {
     fun callsAction() {
         var wasTapped = false
         composeTestRule.setContent {
-            PinButton(pinned = false, color = Color.Unspecified) { wasTapped = true }
+            StarButton(starred = false, color = Color.Unspecified) { wasTapped = true }
         }
 
         composeTestRule.onNodeWithContentDescription("Star route").performClick()

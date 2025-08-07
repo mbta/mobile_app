@@ -23,6 +23,7 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
 
     /** Changes the value of a [Settings] both in the cache and in the [settingsRepository]. */
     fun set(setting: Settings, value: Boolean) {
+        if (setting.override != null) return
         val newSettings = mapOf(setting to value)
         cache.update { it.orEmpty() + newSettings }
         CoroutineScope(Dispatchers.IO).launch { settingsRepository.setSettings(newSettings) }
@@ -37,7 +38,7 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
      */
     @Composable
     fun get(setting: Settings): Boolean {
-
+        if (setting.override != null) return setting.override == true
         return getNullable(setting) ?: false
     }
 

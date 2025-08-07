@@ -22,9 +22,11 @@ struct SaveFavoritesFlow: View {
     let directions: [Direction]
     let selectedDirection: Int32
     let context: SaveFavoritesContext
+    let global: GlobalResponse?
     let isFavorite: (RouteStopDirection) -> Bool
     let updateFavorites: ([RouteStopDirection: Bool]) -> Void
     let onClose: () -> Void
+    let toastVM: IToastViewModel
 
     var selectedDirectionIsAvailableAtStop: Bool { directions.contains(where: { $0.id == selectedDirection }) }
 
@@ -36,6 +38,26 @@ struct SaveFavoritesFlow: View {
     var isBusOneDirection: Bool { directions.count == 1 && lineOrRoute.type == RouteType.bus }
 
     let inspection = Inspection<Self>()
+
+    init(
+        lineOrRoute: RouteCardData.LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
+        context: SaveFavoritesContext, global: GlobalResponse?,
+        isFavorite: @escaping (RouteStopDirection) -> Bool,
+        updateFavorites: @escaping ([RouteStopDirection: Bool]) -> Void,
+        onClose: @escaping () -> Void,
+        toastVM: IToastViewModel = ViewModelDI().toast
+    ) {
+        self.lineOrRoute = lineOrRoute
+        self.stop = stop
+        self.directions = directions
+        self.selectedDirection = selectedDirection
+        self.context = context
+        self.global = global
+        self.isFavorite = isFavorite
+        self.updateFavorites = updateFavorites
+        self.onClose = onClose
+        self.toastVM = toastVM
+    }
 
     func proposedFavorites() -> [Int32: Bool] {
         directions
@@ -54,6 +76,63 @@ struct SaveFavoritesFlow: View {
             }
     }
 
+    func updateAndToast(_ update: [RouteStopDirection: Bool]) {
+        updateFavorites(update)
+
+        let favorited = update.filter(\.value)
+        let firstFavorite = favorited.first
+        let labels = firstFavorite?.key.getLabels(global)
+        var toastText: String? = nil
+
+        // If there's only a single favorite, show direction, route, and stop in the toast
+        if favorited.count == 1 {
+            toastText = if let labels {
+                String(format: NSLocalizedString(
+                    "**%1$@ %2$@** at **%3$@** added to Favorites",
+                    comment: """
+                    Favorite added toast text, the first value is the direction (southbound, inbound, etc),
+                    the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
+                    The asterisks surround bolded text. ex. "[Southbound] [Red Line] at [Alewife] added to Favorites"
+                    """
+                ), labels.direction, labels.route, labels.stop)
+            } else {
+                NSLocalizedString(
+                    "Added to Favorites",
+                    comment: "Favorites added toast fallback text when more details are unavailable"
+                )
+            }
+        }
+        // If there are two favorites and they both have the same route and stop, omit direction
+        else if favorited.count == 2,
+                favorited.keys.allSatisfy({
+                    $0.route == firstFavorite?.key.route
+                        && $0.stop == firstFavorite?.key.stop
+                }) {
+            toastText = if let labels {
+                String(format: NSLocalizedString(
+                    "**%1$@** at **%2$@** added to Favorites",
+                    comment: """
+                    Favorite added toast text, the first value is the route name (Red Line, 1 bus),
+                    and the second is a stop name (Ruggles, Alewife).
+                    The asterisks surround bolded text. ex. "[Green Line] at [Arlington] added to Favorites"
+                    """
+                ), labels.route, labels.stop)
+            } else {
+                NSLocalizedString(
+                    "Added to Favorites",
+                    comment: "Favorites added toast fallback text when more details are unavailable"
+                )
+            }
+        }
+
+        if let toastText {
+            toastVM.showToast(toast: .init(
+                message: toastText,
+                duration: .short, onClose: nil, actionLabel: nil
+            ))
+        }
+    }
+
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
@@ -61,18 +140,20 @@ struct SaveFavoritesFlow: View {
                 VStack {}
                     .onAppear {
                         let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
-                        updateFavorites([rsd: !isFavorite(rsd)])
+                        updateAndToast([rsd: !isFavorite(rsd)])
 
                         onClose()
                     }
             } else {
-                FavoriteConfirmationDialog(lineOrRoute: lineOrRoute,
-                                           stop: stop,
-                                           directions: directions,
-                                           selectedDirection: selectedDirection,
-                                           context: context,
-                                           proposedFavorites: proposedFavorites(),
-                                           updateFavorites: updateFavorites, onClose: onClose)
+                FavoriteConfirmationDialog(
+                    lineOrRoute: lineOrRoute,
+                    stop: stop,
+                    directions: directions,
+                    selectedDirection: selectedDirection,
+                    context: context,
+                    proposedFavorites: proposedFavorites(),
+                    updateFavorites: updateAndToast, onClose: onClose
+                )
             }
         }.onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
@@ -102,14 +183,16 @@ struct FavoriteConfirmationDialog: View {
             .customAlert(
                 isPresented: $showDialog,
                 content: {
-                    FavoriteConfirmationDialogContents(lineOrRoute: lineOrRoute,
-                                                       stop: stop, directions: directions,
-                                                       selectedDirection: selectedDirection,
-                                                       context: context,
-                                                       favoritesToSave: favoritesToSave,
-                                                       updateLocalFavorite: { direction, isFavorite in
-                                                           favoritesToSave[direction] = isFavorite
-                                                       })
+                    FavoriteConfirmationDialogContents(
+                        lineOrRoute: lineOrRoute,
+                        stop: stop, directions: directions,
+                        selectedDirection: selectedDirection,
+                        context: context,
+                        favoritesToSave: favoritesToSave,
+                        updateLocalFavorite: { direction, isFavorite in
+                            favoritesToSave[direction] = isFavorite
+                        }
+                    )
                 },
                 actions: {
                     if directions.isEmpty {
@@ -120,11 +203,13 @@ struct FavoriteConfirmationDialog: View {
                         }
                     } else {
                         MultiButton {
-                            FavoriteConfirmationDialogActions(lineOrRoute: lineOrRoute,
-                                                              stop: stop,
-                                                              favoritesToSave: favoritesToSave,
-                                                              updateFavorites: updateFavorites,
-                                                              onClose: onClose)
+                            FavoriteConfirmationDialogActions(
+                                lineOrRoute: lineOrRoute,
+                                stop: stop,
+                                favoritesToSave: favoritesToSave,
+                                updateFavorites: updateFavorites,
+                                onClose: onClose
+                            )
                         }
                     }
                 }
@@ -211,7 +296,7 @@ struct DirectionButtons: View {
                 directionValues
                     .enumerated()
                     .sorted(by: { $0.offset < $1.offset }),
-                id: \.element.hashValue
+                id: \.element.direction
             ) { index, directionValue in
                 Button(action: {
                     updateLocalFavorite(directionValue.direction, !directionValue.isFavorite)
@@ -221,7 +306,7 @@ struct DirectionButtons: View {
                             DirectionLabel(direction: directionValue.direction)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                             Spacer()
-                            StarIcon(pinned: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
+                            StarIcon(starred: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
                         }
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)

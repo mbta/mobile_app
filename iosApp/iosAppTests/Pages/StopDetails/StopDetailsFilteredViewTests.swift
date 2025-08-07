@@ -47,7 +47,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let tappedPublisher = PassthroughSubject<Void, Never>()
 
         let tapButtonExp = sut.inspection.inspect(after: 0.5) { view in
-            try view.find(PinButton.self).find(ViewType.Button.self)
+            try view.find(StarButton.self).find(ViewType.Button.self)
                 .tap()
             tappedPublisher.send()
         }
@@ -60,43 +60,5 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             .devDebugMode: false,
         ]))
         wait(for: [tapButtonExp, confirmationDialogExp], timeout: 2)
-    }
-
-    @MainActor func testSavesPinnedRoute() throws {
-        let objects = ObjectCollectionBuilder()
-        let stop = objects.stop { _ in }
-        let route = objects.route()
-        let directionId: Int32 = 0
-
-        let setFavoritesExp = expectation(description: "does not set favorites")
-        setFavoritesExp.isInverted = true
-        let setPinnedRoutesExp = expectation(description: "sets pinned routes")
-        let favoritesRepository = MockFavoritesRepository(onSet: { _ in setFavoritesExp.fulfill() })
-        let pinnedRoutesRepository = MockPinnedRoutesRepository(onSet: { pinnedRoutes in
-            XCTAssertEqual(pinnedRoutes, [route.id])
-            setPinnedRoutesExp.fulfill()
-        })
-
-        let stopDetailsVM = StopDetailsViewModel(
-            favoritesRepository: favoritesRepository,
-            pinnedRoutesRepository: pinnedRoutesRepository
-        )
-        let sut = StopDetailsFilteredView(
-            stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: directionId),
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            routeCardData: [],
-            now: Date.now,
-            errorBannerVM: .init(),
-            nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM
-        )
-
-        try sut.withFixedSettings([:]).inspect().find(PinButton.self).find(ViewType.Button.self).tap()
-
-        wait(for: [setFavoritesExp, setPinnedRoutesExp], timeout: 1)
     }
 }

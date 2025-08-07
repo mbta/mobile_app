@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -76,6 +77,7 @@ fun EditFavoritesPage(
     val toastUndoLabel = stringResource(R.string.undo)
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
+    DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(
@@ -250,7 +252,7 @@ private fun DeleteIcon(action: () -> Unit) {
         modifier =
             Modifier.size(44.dp)
                 .clip(CircleShape)
-                .background(colorResource(R.color.fill2))
+                .background(colorResource(R.color.delete_background))
                 .clickable { action() }
                 .testTag("trashCan"),
         contentAlignment = Alignment.Center,
@@ -259,7 +261,7 @@ private fun DeleteIcon(action: () -> Unit) {
             painterResource(R.drawable.trash_can),
             stringResource(R.string.delete),
             modifier = Modifier.size(16.dp),
-            tint = colorResource(R.color.error),
+            tint = colorResource(R.color.delete),
         )
     }
 }

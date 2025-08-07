@@ -29,8 +29,8 @@ struct RouteCardContainer<Content: View>: View {
                 rightContent: {
                     HStack {
                         if !enhancedFavorites {
-                            PinButton(
-                                pinned: pinned,
+                            StarButton(
+                                starred: pinned,
                                 color: Color(hex: cardData.lineOrRoute.textColor),
                                 action: { onPin(cardData.lineOrRoute.id) }
                             )

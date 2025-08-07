@@ -28,7 +28,7 @@ final class ToastViewTests: XCTestCase {
             onAction: nil,
         )
 
-        let sut = ToastView(state: textOnly, onDismiss: {})
+        let sut = ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})
 
         XCTAssertThrowsError(try sut.inspect().find(viewWithAccessibilityLabel: "Close"))
         XCTAssertNotNil(try sut.inspect().find(text: "This is a text only toast"))
@@ -44,7 +44,7 @@ final class ToastViewTests: XCTestCase {
         )
 
         let exp = XCTestExpectation(description: "Close button pressed")
-        let sut = ToastView(state: close, onDismiss: { exp.fulfill() })
+        let sut = ToastView(state: close, tabBarVisible: false, onDismiss: { exp.fulfill() })
 
         try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
         XCTAssertNotNil(try sut.inspect().find(text: "This is a toast with a close button"))
@@ -61,7 +61,7 @@ final class ToastViewTests: XCTestCase {
         )
 
         let exp = XCTestExpectation(description: "Action button pressed")
-        let sut = ToastView(state: action, onDismiss: { exp.fulfill() })
+        let sut = ToastView(state: action, tabBarVisible: false, onDismiss: { exp.fulfill() })
 
         try sut.inspect().find(button: "Action").tap()
         XCTAssertNotNil(try sut.inspect().find(text: "This is a toast with an action button"))

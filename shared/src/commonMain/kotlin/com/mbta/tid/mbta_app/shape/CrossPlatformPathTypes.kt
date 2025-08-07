@@ -8,3 +8,5 @@ object Path {
         val height = maxY - minY
     }
 }
+
+internal fun lerp(x1: Float, x2: Float, t: Float) = x1 * (1 - t) + x2 * t

@@ -16,6 +16,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,12 +37,12 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.component.PinButton
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
+import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.component.StopListContext
 import com.mbta.tid.mbta_app.android.component.StopListRow
 import com.mbta.tid.mbta_app.android.component.StopPlacement
@@ -69,11 +70,13 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
@@ -184,7 +187,7 @@ fun LoadingRouteStopListView(
                             colorFilter = ColorFilter.tint(colorResource(R.color.deemphasized)),
                         )
                     is RouteDetailsRowContext.Favorites ->
-                        PinButton(
+                        StarButton(
                             rowContext.isFavorited,
                             colorResource(R.color.text),
                             rowContext.onTapStar,
@@ -236,6 +239,17 @@ fun RouteStopListView(
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
     var showFirstTimeFavoritesToast by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var firstTimeToast by remember { mutableStateOf<ToastViewModel.Toast?>(null) }
+    val displayedToast by
+        remember(toastViewModel) {
+                toastViewModel.models.map {
+                    when (it) {
+                        is ToastViewModel.State.Hidden -> null
+                        is ToastViewModel.State.Visible -> it.toast
+                    }
+                }
+            }
+            .collectAsState(null)
 
     LaunchedEffect(context, favorites) {
         // If favorites have not been loaded, we don't know whether or not to show the toast,
@@ -247,13 +261,14 @@ fun RouteStopListView(
 
     LaunchedEffect(showFirstTimeFavoritesToast) {
         if (showFirstTimeFavoritesToast == true) {
-            toastViewModel.showToast(
+            val toast =
                 ToastViewModel.Toast(
                     message = firstTimeToastMessage,
                     onClose = { showFirstTimeFavoritesToast = false },
                 )
-            )
-        } else if (showFirstTimeFavoritesToast == false) {
+            toastViewModel.showToast(toast)
+            firstTimeToast = toast
+        } else if (showFirstTimeFavoritesToast == false && displayedToast == firstTimeToast) {
             toastViewModel.hideToast()
         }
     }
@@ -267,10 +282,7 @@ fun RouteStopListView(
                 RouteDetailsRowContext.Favorites(
                     isFavorited =
                         isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
-                    onTapStar = {
-                        showFirstTimeFavoritesToast = false
-                        showFavoritesStopConfirmation = stop
-                    },
+                    onTapStar = { showFavoritesStopConfirmation = stop },
                 )
         }
 
@@ -362,7 +374,8 @@ private fun RouteStops(
     }
 
     val haloColor =
-        if (lineOrRoute.type == RouteType.BUS) colorResource(R.color.halo_light)
+        if (lineOrRoute.type == RouteType.BUS && !silverRoutes.contains(lineOrRoute.id))
+            colorResource(R.color.halo_light)
         else colorResource(R.color.halo_dark)
 
     ScrollSeparatorColumn(
