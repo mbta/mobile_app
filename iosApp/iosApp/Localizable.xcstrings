@@ -7343,6 +7343,9 @@
         }
       }
     },
+    "Dismiss" : {
+      "comment" : "VoiceOver label for a dismiss  button"
+    },
     "display more information" : {
       "comment" : "Android talk back hint for tapping on the trip details header on the stop page",
       "extractionState" : "manual",
@@ -19212,6 +19215,9 @@
           }
         }
       }
+    },
+    "Tip: %1$@" : {
+      "comment" : "Voice over text for a tip that will appear in a pop-up message. ex: 'Tip: tap stops to add to favorites'"
     },
     "To find stops, select a route first" : {
       "comment" : "Hint text on the route picker page when a search term has been entered in the filter input, in case people are searching a stop name and are trying to understand why it isn't showing up",

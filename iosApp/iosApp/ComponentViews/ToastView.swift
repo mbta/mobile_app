@@ -16,17 +16,23 @@ struct ToastView: View {
 
     var state: ToastState
     var tabBarVisible: Bool
+    var accessibilityLabel: Text?
     var onDismiss: () -> Void
 
     var body: some View {
+        let attributedString = AttributedString.tryMarkdown(state.message)
+
+        let resolvedLabel = if let accessibilityLabel { accessibilityLabel } else { Text(attributedString) }
+
         HStack {
             Group {
-                Text(AttributedString.tryMarkdown(state.message))
+                Text(attributedString)
                     .font(Typography.body)
                     .foregroundColor(Color.textContrast)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
+                    .accessibilityLabel(resolvedLabel)
 
                 actionButton
             }
@@ -43,7 +49,7 @@ struct ToastView: View {
     var actionButton: some View {
         switch onEnum(of: state.action) {
         case let .close(closeAction): ActionButton(
-                kind: .close,
+                kind: .dismiss,
                 circleColor: Color.contrast,
                 iconColor: Color.textContrast
             ) {
@@ -73,16 +79,19 @@ struct ToastView: View {
     let textOnly = ToastState(
         message: "This is a text only toast",
         duration: ToastViewModel.Duration.indefinite,
+        isTip: false,
         action: nil
     )
     let close = ToastState(
         message: "This is a toast with a close button",
         duration: ToastViewModel.Duration.indefinite,
+        isTip: false,
         action: ToastViewModel.ToastActionClose(onClose: {})
     )
     let action = ToastState(
         message: "This is a toast with an action button",
         duration: ToastViewModel.Duration.indefinite,
+        isTip: false,
         action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
     )
     VStack {
