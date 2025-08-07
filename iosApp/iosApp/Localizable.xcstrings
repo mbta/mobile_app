@@ -3319,6 +3319,53 @@
         }
       }
     },
+    "Adds to favorites" : {
+      "comment" : "VoiceOver hint for favorite button when a route is not favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade a favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute nan favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionar aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm vào mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "加入收藏夾"
+          }
+        }
+      }
+    },
     "Alert" : {
       "comment" : "Possible alert\nPossible alert effect",
       "localizations" : {
@@ -13536,6 +13583,7 @@
     },
     "Pins route to the top of the list" : {
       "comment" : "VoiceOver hint for favorite button when a route is not favorited",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -14657,6 +14705,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "已從收藏夾中移除"
+          }
+        }
+      }
+    },
+    "Removes from favorites" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elimina de favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Supprime des favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire nan pi renmen yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Remove dos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xóa khỏi mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从收藏夹中移除"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從收藏夾移除"
           }
         }
       }
@@ -20155,6 +20250,7 @@
     },
     "Unpins route from the top of the list" : {
       "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
