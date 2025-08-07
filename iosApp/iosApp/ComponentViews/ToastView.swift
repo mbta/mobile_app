@@ -27,30 +27,8 @@ struct ToastView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
-                if let onClose = state.onClose {
-                    ActionButton(
-                        kind: .close,
-                        circleColor: Color.contrast,
-                        iconColor: Color.textContrast
-                    ) {
-                        onClose()
-                        onDismiss()
-                    }
-                    .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
-                    .padding(.trailing, 16)
-                }
-                if let label = state.actionLabel, let onAction = state.onAction {
-                    NavTextButton(
-                        string: label,
-                        backgroundColor: Color.contrast,
-                        textColor: Color.textContrast
-                    ) {
-                        onAction()
-                        onDismiss()
-                    }
-                    .withRoundedBorder(radius: 80, color: Color.haloContrast, width: 2)
-                    .padding(.trailing, 16)
-                }
+
+                actionButton
             }
             .padding(.vertical, 16)
         }
@@ -60,29 +38,52 @@ struct ToastView: View {
         .padding(.horizontal, 8)
         .padding(.bottom, tabBarVisible ? 64 : 32)
     }
+
+    @ViewBuilder
+    var actionButton: some View {
+        switch onEnum(of: state.action) {
+        case let .close(closeAction): ActionButton(
+                kind: .close,
+                circleColor: Color.contrast,
+                iconColor: Color.textContrast
+            ) {
+                closeAction.onClose()
+                onDismiss()
+            }
+            .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
+            .padding(.trailing, 16)
+
+        case let .custom(customAction): NavTextButton(
+                string: customAction.actionLabel,
+                backgroundColor: Color.contrast,
+                textColor: Color.textContrast
+            ) {
+                customAction.onAction()
+                onDismiss()
+            }
+            .withRoundedBorder(radius: 80, color: Color.haloContrast, width: 2)
+            .padding(.trailing, 16)
+
+        case nil: EmptyView()
+        }
+    }
 }
 
 #Preview {
     let textOnly = ToastState(
         message: "This is a text only toast",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: nil,
-        actionLabel: nil,
-        onAction: nil,
+        action: nil
     )
     let close = ToastState(
         message: "This is a toast with a close button",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: {},
-        actionLabel: nil,
-        onAction: nil,
+        action: ToastViewModel.ToastActionClose(onClose: {})
     )
     let action = ToastState(
         message: "This is a toast with an action button",
         duration: ToastViewModel.Duration.indefinite,
-        onClose: nil,
-        actionLabel: "Action",
-        onAction: {},
+        action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
     )
     VStack {
         ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})

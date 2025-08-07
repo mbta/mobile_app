@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -157,7 +158,10 @@ fun RoutePickerView(
                 Text(
                     stringResource(R.string.subway),
                     style = Typography.subheadlineSemibold,
-                    modifier = Modifier.padding(start = 16.dp, top = 22.dp, bottom = 2.dp),
+                    modifier =
+                        Modifier.padding(start = 16.dp, top = 22.dp, bottom = 2.dp).semantics {
+                            heading()
+                        },
                 )
                 for (route in routes) {
                     RoutePickerRootRow(route) { onOpenRouteDetails(route.id, context) }

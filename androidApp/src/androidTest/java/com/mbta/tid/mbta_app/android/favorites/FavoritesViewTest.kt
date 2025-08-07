@@ -65,8 +65,6 @@ class FavoritesViewTest {
                     "Favorite stops replaces the prior starred routes feature.",
                     ToastViewModel.Duration.Indefinite,
                     any(),
-                    null,
-                    null,
                 )
             )
         }

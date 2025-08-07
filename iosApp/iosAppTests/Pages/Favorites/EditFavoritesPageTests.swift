@@ -172,7 +172,10 @@ final class EditFavoritesPageTests: XCTestCase {
         let toastVM = MockToastViewModel()
         toastVM.onShowToast = { toast in
             XCTAssertEqual("Removed from Favorites", toast.message)
-            toast.onAction?()
+            switch onEnum(of: toast.action) {
+            case let .custom(customAction): customAction.onAction()
+            default: XCTFail("No custom action defined found")
+            }
         }
 
         let sut = EditFavoritesPage(

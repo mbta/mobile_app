@@ -353,7 +353,7 @@
     <string name="switch_issue_lowercase">道岔问题</string>
     <string name="switch_problem">道岔故障</string>
     <string name="switch_problem_lowercase">道岔故障</string>
-    <string name="tap_favorites_hint">点按星星即可添加到收藏夹</string>
+    <string name="tap_favorites_hint">点击站点即可添加到收藏夹</string>
     <string name="technical_problem">技术故障</string>
     <string name="technical_problem_lowercase">技术故障</string>
     <string name="this_stop_is_drop_off_only">此站仅供下客</string>

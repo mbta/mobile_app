@@ -129,12 +129,10 @@ struct FavoritesView: View {
                 NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
                                   comment: "Explainer the first time a user sees the new favorites feature"),
                 duration: .indefinite,
-                onClose: {
-                    favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
-                    toastVM.hideToast()
-                },
-                actionLabel: nil,
-                onAction: nil))
+                action: ToastViewModel
+                    .ToastActionClose(onClose: { favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
+                        toastVM.hideToast()
+                    })))
     }
 
     func getGlobal() {

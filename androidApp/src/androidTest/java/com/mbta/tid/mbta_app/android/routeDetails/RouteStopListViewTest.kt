@@ -484,7 +484,7 @@ class RouteStopListViewTest {
         assert(toastShown)
         when (val state = toastState?.value) {
             is ToastViewModel.State.Visible ->
-                assertEquals("Tap stars to add to Favorites", state.toast.message)
+                assertEquals("Tap stops to add to Favorites", state.toast.message)
             else -> fail("Toast should not be hidden")
         }
     }
