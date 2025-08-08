@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.map.style
 
 import kotlinx.serialization.json.JsonPrimitive
 
-sealed interface ArrayType<T> : MapboxStyleObject {
+internal sealed interface ArrayType<T> : MapboxStyleObject {
     data object String : ArrayType<kotlin.String>
 
     data object Number : ArrayType<kotlin.Number>

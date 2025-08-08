@@ -5,11 +5,11 @@ import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.ILastLaunchedAppVersionRepository
 import org.koin.core.component.KoinComponent
 
-interface IFeaturePromoUseCase {
-    suspend fun getFeaturePromos(): List<FeaturePromo>
+public interface IFeaturePromoUseCase {
+    public suspend fun getFeaturePromos(): List<FeaturePromo>
 }
 
-class FeaturePromoUseCase(
+public class FeaturePromoUseCase(
     private val currentAppVersionRepository: ICurrentAppVersionRepository,
     private val lastLaunchedAppVersionRepository: ILastLaunchedAppVersionRepository,
 ) : IFeaturePromoUseCase, KoinComponent {
@@ -25,7 +25,7 @@ class FeaturePromoUseCase(
         return newFeatures
     }
 
-    companion object {
+    internal companion object {
         // https://www.xkcd.com/2615/
         const val MAX_PROMOS = 2
     }

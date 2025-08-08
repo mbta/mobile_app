@@ -2,13 +2,13 @@ package com.mbta.tid.mbta_app.model
 
 import kotlinx.serialization.Serializable
 
-val silverRoutes = setOf("741", "742", "743", "751", "749", "746")
-val greenRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E")
+public val silverRoutes: Set<String> = setOf("741", "742", "743", "751", "749", "746")
+internal val greenRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E")
 
 @Serializable
-enum class MapStopRoute(
-    val hasBranchingTerminals: Boolean = false,
-    val branchingRoutes: Set<String> = setOf(),
+public enum class MapStopRoute(
+    internal val hasBranchingTerminals: Boolean = false,
+    internal val branchingRoutes: Set<String> = setOf(),
 ) {
     RED {
         override fun matches(route: Route): Boolean {
@@ -56,11 +56,11 @@ enum class MapStopRoute(
         }
     };
 
-    abstract fun matches(route: Route): Boolean
+    internal abstract fun matches(route: Route): Boolean
 
-    companion object {
+    internal companion object {
         fun matching(route: Route): MapStopRoute? {
-            return MapStopRoute.entries.firstOrNull { it.matches(route) }
+            return entries.firstOrNull { it.matches(route) }
         }
     }
 }

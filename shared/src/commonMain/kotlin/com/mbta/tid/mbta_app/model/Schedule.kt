@@ -5,20 +5,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Schedule(
+public data class Schedule
+internal constructor(
     override val id: String,
     @SerialName("arrival_time") override val arrivalTime: EasternTimeInstant?,
     @SerialName("departure_time") override val departureTime: EasternTimeInstant?,
-    @SerialName("drop_off_type") val dropOffType: StopEdgeType,
-    @SerialName("pick_up_type") val pickUpType: StopEdgeType,
+    @SerialName("drop_off_type") internal val dropOffType: StopEdgeType,
+    @SerialName("pick_up_type") internal val pickUpType: StopEdgeType,
     @SerialName("stop_headsign") val stopHeadsign: String?,
-    @SerialName("stop_sequence") val stopSequence: Int,
-    @SerialName("route_id") val routeId: String,
-    @SerialName("stop_id") val stopId: String,
-    @SerialName("trip_id") val tripId: String,
+    @SerialName("stop_sequence") internal val stopSequence: Int,
+    @SerialName("route_id") internal val routeId: String,
+    @SerialName("stop_id") internal val stopId: String,
+    @SerialName("trip_id") internal val tripId: String,
 ) : BackendObject, TripStopTime {
     @Serializable
-    enum class StopEdgeType {
+    internal enum class StopEdgeType {
         /** Regularly scheduled drop off / pickup */
         @SerialName("regular") Regular,
         /** No drop off / pickup available */

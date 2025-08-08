@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.map.style.downcastToColor
 import com.mbta.tid.mbta_app.map.style.downcastToResolvedImage
 import com.mbta.tid.mbta_app.model.LocationType
 
-object ChildStopLayerGenerator {
+internal object ChildStopLayerGenerator {
     val childStopLayerId = "child-stop-layer"
 
     val annotationTextZoomThreshold = 19.0

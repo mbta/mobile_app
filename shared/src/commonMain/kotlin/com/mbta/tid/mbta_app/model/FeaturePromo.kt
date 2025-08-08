@@ -1,13 +1,16 @@
 package com.mbta.tid.mbta_app.model
 
-enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVersion: AppVersion) {
+public enum class FeaturePromo(
+    internal val addedInAndroidVersion: AppVersion,
+    internal val addedInIosVersion: AppVersion,
+) {
 
     CombinedStopAndTrip(AppVersion(0u, 0u, 0u), AppVersion(1u, 2u, 0u)),
     EnhancedFavorites(AppVersion(2u, 0u, 0u), AppVersion(2u, 0u, 0u));
 
     constructor(addedInVersion: AppVersion) : this(addedInVersion, addedInVersion)
 
-    companion object {
+    internal companion object {
         fun featuresBetween(
             lastLaunchedVersion: AppVersion,
             currentVersion: AppVersion,
@@ -19,4 +22,4 @@ enum class FeaturePromo(val addedInAndroidVersion: AppVersion, val addedInIosVer
     }
 }
 
-expect val FeaturePromo.addedInVersion: AppVersion
+internal expect val FeaturePromo.addedInVersion: AppVersion

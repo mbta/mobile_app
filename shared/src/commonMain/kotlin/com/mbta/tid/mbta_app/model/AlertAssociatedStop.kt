@@ -3,13 +3,13 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.serialization.Serializable
 
-class AlertAssociatedStop(val stop: Stop) {
-    var relevantAlerts: List<Alert> = mutableListOf()
-    var serviceAlerts: List<Alert> = mutableListOf()
-    var childAlerts: Map<String, AlertAssociatedStop> = mutableMapOf()
-    var stateByRoute: Map<MapStopRoute, StopAlertState> = mutableMapOf()
+public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
+    internal var relevantAlerts: List<Alert> = mutableListOf()
+    internal var serviceAlerts: List<Alert> = mutableListOf()
+    internal var childAlerts: Map<String, AlertAssociatedStop> = mutableMapOf()
+    internal var stateByRoute: Map<MapStopRoute, StopAlertState> = mutableMapOf()
 
-    constructor(
+    internal constructor(
         stop: Stop,
         alertsByStop: Map<String, Set<Alert>>,
         nullStopAlerts: Set<Alert>,
@@ -47,7 +47,7 @@ class AlertAssociatedStop(val stop: Stop) {
         }
     }
 
-    constructor(
+    internal constructor(
         stop: Stop,
         relevantAlerts: List<Alert>,
         stateByRoute: Map<MapStopRoute, StopAlertState>,
@@ -58,7 +58,7 @@ class AlertAssociatedStop(val stop: Stop) {
         this.stateByRoute = stateByRoute
     }
 
-    constructor(
+    internal constructor(
         stop: Stop,
         relevantAlerts: List<Alert>,
         childAlerts: Map<String, AlertAssociatedStop>,
@@ -72,7 +72,7 @@ class AlertAssociatedStop(val stop: Stop) {
 }
 
 @Serializable
-enum class StopAlertState {
+public enum class StopAlertState {
     Elevator,
     Issue,
     Normal,

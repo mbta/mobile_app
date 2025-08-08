@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Build
 import android.view.accessibility.AccessibilityManager
 
-class AccessibilityStatusRepository(context: Context) : IAccessibilityStatusRepository {
+public class AccessibilityStatusRepository(context: Context) : IAccessibilityStatusRepository {
     private val accessibility =
         context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager?
 

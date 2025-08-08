@@ -13,13 +13,13 @@ import kotlinx.coroutines.sync.Mutex
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IVisitHistoryRepository {
-    suspend fun getVisitHistory(): VisitHistory
+public interface IVisitHistoryRepository {
+    public suspend fun getVisitHistory(): VisitHistory
 
-    suspend fun setVisitHistory(visits: VisitHistory)
+    public suspend fun setVisitHistory(visits: VisitHistory)
 }
 
-class VisitHistoryRepository : IVisitHistoryRepository, KoinComponent {
+internal class VisitHistoryRepository : IVisitHistoryRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
     private val mutex = Mutex()
 
@@ -42,7 +42,7 @@ class VisitHistoryRepository : IVisitHistoryRepository, KoinComponent {
     }
 }
 
-class MockVisitHistoryRepository
+public class MockVisitHistoryRepository
 @DefaultArgumentInterop.Enabled
 constructor(private var history: VisitHistory = VisitHistory()) : IVisitHistoryRepository {
     override suspend fun getVisitHistory(): VisitHistory {

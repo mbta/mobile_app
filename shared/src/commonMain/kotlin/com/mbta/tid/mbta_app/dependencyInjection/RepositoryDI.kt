@@ -87,35 +87,35 @@ import com.mbta.tid.mbta_app.repositories.VisitHistoryRepository
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IRepositories {
-    val accessibilityStatus: IAccessibilityStatusRepository?
-    val alerts: IAlertsRepository?
-    val config: IConfigRepository
-    val tabPreferences: ITabPreferencesRepository
-    val currentAppVersion: ICurrentAppVersionRepository?
-    val errorBanner: IErrorBannerStateRepository
-    val global: IGlobalRepository
-    val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository
-    val nearby: INearbyRepository
-    val onboarding: IOnboardingRepository
-    val pinnedRoutes: IPinnedRoutesRepository
-    val predictions: IPredictionsRepository?
-    val railRouteShapes: IRailRouteShapeRepository
-    val routeStops: IRouteStopsRepository
-    val schedules: ISchedulesRepository
-    val searchResults: ISearchResultRepository
-    val sentry: ISentryRepository
-    val settings: ISettingsRepository
-    val stop: IStopRepository
-    val trip: ITripRepository
-    val tripPredictions: ITripPredictionsRepository?
-    val vehicle: IVehicleRepository?
-    val vehicles: IVehiclesRepository?
-    val visitHistory: IVisitHistoryRepository
-    val favorites: IFavoritesRepository
+public interface IRepositories {
+    public val accessibilityStatus: IAccessibilityStatusRepository?
+    public val alerts: IAlertsRepository?
+    public val config: IConfigRepository
+    public val tabPreferences: ITabPreferencesRepository
+    public val currentAppVersion: ICurrentAppVersionRepository?
+    public val errorBanner: IErrorBannerStateRepository
+    public val global: IGlobalRepository
+    public val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository
+    public val nearby: INearbyRepository
+    public val onboarding: IOnboardingRepository
+    public val pinnedRoutes: IPinnedRoutesRepository
+    public val predictions: IPredictionsRepository?
+    public val railRouteShapes: IRailRouteShapeRepository
+    public val routeStops: IRouteStopsRepository
+    public val schedules: ISchedulesRepository
+    public val searchResults: ISearchResultRepository
+    public val sentry: ISentryRepository
+    public val settings: ISettingsRepository
+    public val stop: IStopRepository
+    public val trip: ITripRepository
+    public val tripPredictions: ITripPredictionsRepository?
+    public val vehicle: IVehicleRepository?
+    public val vehicles: IVehiclesRepository?
+    public val visitHistory: IVisitHistoryRepository
+    public val favorites: IFavoritesRepository
 }
 
-class RepositoryDI : IRepositories, KoinComponent {
+public class RepositoryDI : IRepositories, KoinComponent {
     override val accessibilityStatus: IAccessibilityStatusRepository by inject()
     override val alerts: IAlertsRepository by inject()
     override val config: IConfigRepository by inject()
@@ -143,7 +143,7 @@ class RepositoryDI : IRepositories, KoinComponent {
     override val favorites: IFavoritesRepository by inject()
 }
 
-class RealRepositories : IRepositories {
+internal class RealRepositories : IRepositories {
     // initialize repositories with platform-specific dependencies as null.
     // instantiate the real repositories in makeNativeModule
 
@@ -174,7 +174,7 @@ class RealRepositories : IRepositories {
     override val favorites = FavoritesRepository()
 }
 
-class MockRepositories : IRepositories {
+public class MockRepositories : IRepositories {
     override var accessibilityStatus: IAccessibilityStatusRepository =
         MockAccessibilityStatusRepository(isScreenReaderEnabled = false)
     override var alerts: IAlertsRepository = MockAlertsRepository()
@@ -204,7 +204,7 @@ class MockRepositories : IRepositories {
     override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
     override var favorites: IFavoritesRepository = MockFavoritesRepository()
 
-    fun useObjects(objects: ObjectCollectionBuilder) {
+    public fun useObjects(objects: ObjectCollectionBuilder) {
         alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))
         global = MockGlobalRepository(GlobalResponse(objects))
         nearby = MockNearbyRepository(NearbyResponse(objects))

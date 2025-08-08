@@ -4,7 +4,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-data class MapStop(
+public data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
     val routeTypes: List<MapStopRoute>,
@@ -13,11 +13,11 @@ data class MapStop(
     val alerts: Map<MapStopRoute, StopAlertState>?,
 )
 
-data class GlobalMapData(
+public data class GlobalMapData(
     internal val mapStops: Map<String, MapStop>,
     internal val alertsByStop: Map<String, AlertAssociatedStop>?,
 ) {
-    companion object {
+    internal companion object {
         /*
         Only stops without a parent stop (stations and isolated stops) are returned in the result.
         Each AlertAssociatedStop will have entries in childAlerts if there are any active alerts on
@@ -80,13 +80,13 @@ data class GlobalMapData(
         }
     }
 
-    constructor(
+    public constructor(
         globalData: GlobalResponse,
         alerts: AlertsStreamDataResponse?,
         filterAtTime: EasternTimeInstant,
     ) : this(globalData, getAlertsByStop(globalData, alerts, filterAtTime))
 
-    constructor(
+    internal constructor(
         globalData: GlobalResponse,
         alertsByStop: Map<String, AlertAssociatedStop>?,
     ) : this(
@@ -173,5 +173,5 @@ data class GlobalMapData(
         alertsByStop,
     )
 
-    override fun toString() = "[GlobalMapData]"
+    override fun toString(): String = "[GlobalMapData]"
 }

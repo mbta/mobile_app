@@ -36,24 +36,24 @@ private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
  * route at a set of stops. It has the general structure: Route (or Line) => Stop(s) => Direction =>
  * Upcoming Trips / reason for absence of upcoming trips
  */
-data class RouteCardData(
+public data class RouteCardData(
     val lineOrRoute: LineOrRoute,
     val stopData: List<RouteStopData>,
     val at: EasternTimeInstant,
 ) {
-    val id = lineOrRoute.id
+    public val id: String = lineOrRoute.id
 
-    enum class Context {
+    public enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
         StopDetailsUnfiltered,
         Favorites;
 
-        fun isStopDetails(): Boolean {
+        internal fun isStopDetails(): Boolean {
             return this == StopDetailsFiltered || this == StopDetailsUnfiltered
         }
 
-        fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
+        internal fun toTripInstantDisplayContext(): TripInstantDisplay.Context {
             return when (this) {
                 NearbyTransit,
                 Favorites -> TripInstantDisplay.Context.NearbyTransit
@@ -63,21 +63,21 @@ data class RouteCardData(
         }
     }
 
-    data class RouteStopData(
+    public data class RouteStopData(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directions: List<Direction>,
         val data: List<Leaf>,
     ) {
         // convenience constructors for when directions are not directly under test
-        constructor(
+        public constructor(
             route: Route,
             stop: Stop,
             data: List<Leaf>,
             globalData: GlobalResponse,
         ) : this(LineOrRoute.Route(route), stop, data, globalData)
 
-        constructor(
+        internal constructor(
             line: Line,
             routes: Set<Route>,
             stop: Stop,
@@ -85,7 +85,7 @@ data class RouteCardData(
             globalData: GlobalResponse,
         ) : this(LineOrRoute.Line(line, routes), stop, data, globalData)
 
-        constructor(
+        public constructor(
             lineOrRoute: LineOrRoute,
             stop: Stop,
             data: List<Leaf>,
@@ -97,7 +97,7 @@ data class RouteCardData(
             data,
         )
 
-        val id = stop.id
+        internal val id = stop.id
 
         /** The directions for the lineOrRoute that are actually served by this stop */
         val availableDirections: Set<Int> = data.map { it.directionId }.toSet()
@@ -113,22 +113,23 @@ data class RouteCardData(
             get() = elevatorAlerts.isNotEmpty()
     }
 
-    data class Leaf(
+    public data class Leaf
+    internal constructor(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directionId: Int,
         val routePatterns: List<RoutePattern>,
-        val stopIds: Set<String>,
+        internal val stopIds: Set<String>,
         val upcomingTrips: List<UpcomingTrip>,
         private val alertsHere: List<Alert>,
-        val allDataLoaded: Boolean,
-        val hasSchedulesTodayByPattern: Map<String, Boolean>,
+        internal val allDataLoaded: Boolean,
+        internal val hasSchedulesTodayByPattern: Map<String, Boolean>,
         private val alertsDownstream: List<Alert>,
-        val context: Context,
+        internal val context: Context,
     ) {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
-        constructor(
+        public constructor(
             lineOrRoute: LineOrRoute,
             stop: Stop,
             directionId: Int,
@@ -157,11 +158,11 @@ data class RouteCardData(
             context,
         )
 
-        val id = directionId
+        internal val id: Int = directionId
 
-        val hasSchedulesToday = hasSchedulesTodayByPattern.any { it.value }
+        internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
-        val hasMajorAlerts: Boolean
+        internal val hasMajorAlerts: Boolean
             get() = run {
                 this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
             }
@@ -175,12 +176,12 @@ data class RouteCardData(
                     it.significance >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
 
-        fun alertsHere(tripId: String? = null) =
+        public fun alertsHere(tripId: String? = null): List<Alert> =
             alertsHere.filter { alert ->
                 (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
             }
 
-        fun alertsDownstream(tripId: String? = null) =
+        public fun alertsDownstream(tripId: String? = null): List<Alert> =
             alertsDownstream.filter { alert ->
                 (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
             }
@@ -465,7 +466,7 @@ data class RouteCardData(
             return LeafFormat.Single(route, headsign, format)
         }
 
-        fun format(now: EasternTimeInstant, globalData: GlobalResponse?): LeafFormat {
+        public fun format(now: EasternTimeInstant, globalData: GlobalResponse?): LeafFormat {
             val representativeRoute = this.lineOrRoute.sortRoute
             val potentialService = potentialService(now, representativeRoute, globalData, context)
 
@@ -541,48 +542,48 @@ data class RouteCardData(
         }
     }
 
-    sealed class LineOrRoute {
+    public sealed class LineOrRoute {
 
-        data class Line(val line: LineModel, val routes: Set<RouteModel>) : LineOrRoute()
+        public data class Line(val line: LineModel, val routes: Set<RouteModel>) : LineOrRoute()
 
-        data class Route(val route: RouteModel) : LineOrRoute()
+        public data class Route(val route: RouteModel) : LineOrRoute()
 
-        val id: String
+        public val id: String
             get() =
                 when (this) {
                     is Line -> this.line.id
                     is Route -> this.route.id
                 }
 
-        val name: String
+        public val name: String
             get() =
                 when (this) {
                     is Line -> this.line.longName
                     is Route -> this.route.label
                 }
 
-        val type: RouteType
+        public val type: RouteType
             get() =
                 when (this) {
                     is Line -> this.sortRoute.type
                     is Route -> this.route.type
                 }
 
-        val backgroundColor: Color
+        public val backgroundColor: Color
             get() =
                 when (this) {
                     is Line -> this.line.color
                     is Route -> this.route.color
                 }
 
-        val textColor: Color
+        public val textColor: Color
             get() =
                 when (this) {
                     is Line -> this.line.textColor
                     is Route -> this.route.textColor
                 }
 
-        val isSubway: Boolean
+        internal val isSubway: Boolean
             get() =
                 when (this) {
                     is Line -> this.routes.any { it.type.isSubway() }
@@ -590,21 +591,21 @@ data class RouteCardData(
                 }
 
         /** The route whose sortOrder to use when sorting a RouteCardData. */
-        val sortRoute: RouteModel
+        public val sortRoute: RouteModel
             get() =
                 when (this) {
                     is Route -> this.route
                     is Line -> this.routes.min()
                 }
 
-        val allRoutes: Set<RouteModel>
+        public val allRoutes: Set<RouteModel>
             get() =
                 when (this) {
                     is Route -> setOf(this.route)
                     is Line -> this.routes
                 }
 
-        fun directions(
+        public fun directions(
             globalData: GlobalResponse,
             stop: Stop,
             patterns: List<RoutePattern>,
@@ -614,7 +615,7 @@ data class RouteCardData(
                 is Route -> Direction.getDirections(globalData, stop, this.route, patterns)
             }
 
-        fun containsRoute(routeId: String?) =
+        public fun containsRoute(routeId: String?): Boolean =
             when (this) {
                 is Line -> this.routes.any { it.id == routeId }
                 is Route -> this.id == routeId
@@ -622,15 +623,16 @@ data class RouteCardData(
     }
 
     /** The distance from the given position to the first stop in this route card. */
-    fun distanceFrom(position: Position): Double = this.stopData.first().stop.distanceFrom(position)
+    internal fun distanceFrom(position: Position): Double =
+        this.stopData.first().stop.distanceFrom(position)
 
-    override fun toString() = "[RouteCardData]"
+    override fun toString(): String = "[RouteCardData]"
 
-    companion object {
+    public companion object {
         // For regular non-branching service, we always show up to 2 departure rows for each leaf
-        const val TYPICAL_LEAF_ROWS = 2
+        internal const val TYPICAL_LEAF_ROWS = 2
         // For branching non-bus service we show up to 3 departure or disruption rows for each leaf
-        const val BRANCHING_LEAF_ROWS = 3
+        internal const val BRANCHING_LEAF_ROWS = 3
 
         /**
          * Build a sorted list of route cards containing realtime data for the given stops.
@@ -646,7 +648,7 @@ data class RouteCardData(
          * Cancelled trips are also omitted when [context] = NearbyTransit.
          */
         @DefaultArgumentInterop.Enabled
-        suspend fun routeCardsForStopList(
+        public suspend fun routeCardsForStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             sortByDistanceFrom: Position?,
@@ -702,7 +704,7 @@ data class RouteCardData(
          * 3. route pattern sort order
          */
         @DefaultArgumentInterop.Enabled
-        suspend fun routeCardsForStaticStopList(
+        internal suspend fun routeCardsForStaticStopList(
             stopIds: List<String>,
             globalData: GlobalResponse?,
             context: Context,
@@ -729,7 +731,7 @@ data class RouteCardData(
                     .sort(sortByDistanceFrom, emptySet(), context)
             }
 
-        fun filterStopsByPatterns(
+        internal fun filterStopsByPatterns(
             routePatterns: List<RoutePattern>,
             global: GlobalResponse,
             localStops: Set<String>,
@@ -743,9 +745,13 @@ data class RouteCardData(
         }
     }
 
-    data class HierarchyPath(val routeOrLineId: String, val stopId: String, val directionId: Int)
+    internal data class HierarchyPath(
+        val routeOrLineId: String,
+        val stopId: String,
+        val directionId: Int,
+    )
 
-    class ListBuilder(
+    internal class ListBuilder(
         val allDataLoaded: Boolean,
         val context: Context,
         val now: EasternTimeInstant,
@@ -1019,7 +1025,7 @@ data class RouteCardData(
         }
     }
 
-    data class Builder(
+    internal data class Builder(
         val lineOrRoute: LineOrRoute,
         var stopData: ByStopIdBuilder,
         val now: EasternTimeInstant,
@@ -1034,7 +1040,7 @@ data class RouteCardData(
         }
     }
 
-    data class RouteStopDataBuilder(
+    internal data class RouteStopDataBuilder(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directions: List<Direction>,
@@ -1082,7 +1088,7 @@ data class RouteCardData(
         }
     }
 
-    data class LeafBuilder(
+    internal data class LeafBuilder(
         val lineOrRoute: LineOrRoute,
         val stop: Stop,
         val directionId: Int,
@@ -1224,25 +1230,25 @@ data class RouteCardData(
 }
 
 @JvmName("optionalHasContext")
-fun List<RouteCardData>?.hasContext(context: RouteCardData.Context): Boolean =
+public fun List<RouteCardData>?.hasContext(context: RouteCardData.Context): Boolean =
     this?.hasContext(context) == true
 
-fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boolean =
+internal fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boolean =
     this.any {
         it.stopData.any { stopData -> stopData.data.any { leaf -> leaf.context == context } }
     }
 
-fun List<RouteCardData>.sort(
+internal fun List<RouteCardData>.sort(
     distanceFrom: Position?,
     pinnedRoutes: Set<String>,
     context: RouteCardData.Context,
 ): List<RouteCardData> =
     this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom, context))
 
-fun List<RouteCardData.RouteStopData>.sort(
+internal fun List<RouteCardData.RouteStopData>.sort(
     distanceFrom: Position?
 ): List<RouteCardData.RouteStopData> =
     this.sortedWith(PatternSorting.compareStopsOnRoute(distanceFrom))
 
-fun List<RouteCardData.Leaf>.sort(): List<RouteCardData.Leaf> =
+internal fun List<RouteCardData.Leaf>.sort(): List<RouteCardData.Leaf> =
     this.sortedWith(PatternSorting.compareLeavesAtStop())

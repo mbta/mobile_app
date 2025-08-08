@@ -6,11 +6,11 @@ import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 
-object LoadingPlaceholders {
-    fun nearbyRoute() =
+public object LoadingPlaceholders {
+    public fun nearbyRoute(): RouteCardData =
         routeCardData(context = RouteCardData.Context.NearbyTransit, now = EasternTimeInstant.now())
 
-    fun routeCardData(
+    public fun routeCardData(
         routeId: String? = null,
         trips: Int = 2,
         context: RouteCardData.Context,
@@ -98,7 +98,7 @@ object LoadingPlaceholders {
         return routeData
     }
 
-    fun routeDetailsStops(
+    public fun routeDetailsStops(
         lineOrRoute: RouteCardData.LineOrRoute,
         directionId: Int,
     ): RouteDetailsStopList {
@@ -136,7 +136,7 @@ object LoadingPlaceholders {
         )
     }
 
-    fun stopDetailsRouteCards() =
+    public fun stopDetailsRouteCards(): List<RouteCardData> =
         (1..5).map {
             routeCardData(
                 context = RouteCardData.Context.StopDetailsUnfiltered,
@@ -144,7 +144,7 @@ object LoadingPlaceholders {
             )
         }
 
-    fun stopResults(): List<SearchViewModel.StopResult> {
+    public fun stopResults(): List<SearchViewModel.StopResult> {
         val otherRoutePill =
             RoutePillSpec(
                 textColor = "8A9199",
@@ -164,7 +164,8 @@ object LoadingPlaceholders {
         }
     }
 
-    data class TripDetailsInfo(
+    public data class TripDetailsInfo
+    internal constructor(
         val stops: TripDetailsStopList,
         val trip: Trip,
         val vehicle: Vehicle,
@@ -172,7 +173,7 @@ object LoadingPlaceholders {
         val route: Route,
     )
 
-    fun tripDetailsInfo(): TripDetailsInfo {
+    public fun tripDetailsInfo(): TripDetailsInfo {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {

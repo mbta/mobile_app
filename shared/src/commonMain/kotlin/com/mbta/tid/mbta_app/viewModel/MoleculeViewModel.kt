@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 
-expect abstract class MoleculeScopeViewModel() {
-    val scope: CoroutineScope
+public expect abstract class MoleculeScopeViewModel() {
+    internal val scope: CoroutineScope
 }
 
 /**
@@ -21,7 +21,7 @@ expect abstract class MoleculeScopeViewModel() {
  * Implementers should reexpose `val models get() = internalModels` and provide wrappers for
  * `fireEvent` for the types of event that they offer.
  */
-abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel() {
+public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel() {
     private val events =
         MutableSharedFlow<Event>(
             replay = 20,

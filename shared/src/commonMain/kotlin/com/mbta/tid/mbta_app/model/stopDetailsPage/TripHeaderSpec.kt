@@ -4,22 +4,23 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 
-sealed class TripHeaderSpec {
-    data object FinishingAnotherTrip : TripHeaderSpec()
+public sealed class TripHeaderSpec {
+    public data object FinishingAnotherTrip : TripHeaderSpec()
 
-    data object NoVehicle : TripHeaderSpec()
+    public data object NoVehicle : TripHeaderSpec()
 
-    data class Scheduled(val stop: Stop, val entry: TripDetailsStopList.Entry) : TripHeaderSpec()
+    public data class Scheduled(val stop: Stop, val entry: TripDetailsStopList.Entry) :
+        TripHeaderSpec()
 
-    data class VehicleOnTrip(
+    public data class VehicleOnTrip(
         val vehicle: Vehicle,
         val stop: Stop,
         val entry: TripDetailsStopList.Entry?,
         val atTerminal: Boolean,
     ) : TripHeaderSpec()
 
-    companion object {
-        fun getSpec(
+    public companion object {
+        public fun getSpec(
             tripId: String,
             stops: TripDetailsStopList,
             terminalStop: Stop?,

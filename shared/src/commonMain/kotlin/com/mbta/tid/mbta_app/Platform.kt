@@ -2,12 +2,12 @@ package com.mbta.tid.mbta_app
 
 import io.ktor.client.engine.HttpClientEngine
 
-interface Platform {
+internal interface Platform {
     val name: String
 
     val httpClientEngine: HttpClientEngine
 }
 
-expect fun getPlatform(): Platform
+internal expect fun getPlatform(): Platform
 
-expect fun uuid(): String
+internal expect fun uuid(): String

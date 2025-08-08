@@ -12,13 +12,13 @@ import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object RouteLayerGenerator {
-    val routeLayerId = "route-layer"
+public object RouteLayerGenerator {
+    public val routeLayerId: String = "route-layer"
     private val closeZoomCutoff = MapDefaults.closeZoomThreshold
 
-    fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
+    internal fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
 
-    suspend fun createAllRouteLayers(
+    public suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
@@ -47,7 +47,7 @@ object RouteLayerGenerator {
                 }
         }
 
-    fun createRouteLayer(route: Route): LineLayer {
+    internal fun createRouteLayer(route: Route): LineLayer {
         val layer = baseRouteLayer(getRouteLayerId(route.id), route)
         layer.lineWidth = Exp.step(Exp.zoom(), Exp(3), Exp(closeZoomCutoff) to Exp(4))
         return layer
@@ -59,7 +59,10 @@ object RouteLayerGenerator {
      * Creates separate layers for shuttle and suspension segments because `LineLayer.lineDasharray`
      * [doesn't support data-driven styling](https://docs.mapbox.com/style-spec/reference/layers/#paint-line-line-dasharray)
      */
-    fun createAlertingRouteLayers(route: Route, colorPalette: ColorPalette): List<LineLayer> {
+    internal fun createAlertingRouteLayers(
+        route: Route,
+        colorPalette: ColorPalette,
+    ): List<LineLayer> {
         val shuttledLayer = baseRouteLayer(getRouteLayerId("${route.id}-shuttled"), route)
         shuttledLayer.filter =
             Exp.eq(
@@ -92,7 +95,7 @@ object RouteLayerGenerator {
         return listOf(alertBackgroundLayer, shuttledLayer, suspendedLayer)
     }
 
-    fun baseRouteLayer(layerId: String, route: Route): LineLayer {
+    internal fun baseRouteLayer(layerId: String, route: Route): LineLayer {
         val layer =
             LineLayer(id = layerId, source = RouteFeaturesBuilder.getRouteSourceId(route.id))
         layer.lineColor = Exp("#${route.color}")

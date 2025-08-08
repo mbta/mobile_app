@@ -3,15 +3,15 @@ package com.mbta.tid.mbta_app.model
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-sealed class UpcomingFormat {
-    sealed class NoTripsFormat {
-        data object NoSchedulesToday : NoTripsFormat()
+public sealed class UpcomingFormat {
+    public sealed class NoTripsFormat {
+        public data object NoSchedulesToday : NoTripsFormat()
 
-        data object ServiceEndedToday : NoTripsFormat()
+        public data object ServiceEndedToday : NoTripsFormat()
 
-        data object PredictionsUnavailable : NoTripsFormat()
+        public data object PredictionsUnavailable : NoTripsFormat()
 
-        companion object {
+        internal companion object {
             /**
              * Determine the appropriate NoTripsFormat to show. Only for use in situations where it
              * is already determined that there are no trips to show and we only need to determine
@@ -41,67 +41,69 @@ sealed class UpcomingFormat {
         }
     }
 
-    abstract val secondaryAlert: SecondaryAlert?
+    public abstract val secondaryAlert: SecondaryAlert?
 
-    data class SecondaryAlert(val iconName: String) {
-        constructor(
+    public data class SecondaryAlert(val iconName: String) {
+        internal constructor(
             alert: Alert,
             mapStopRoute: MapStopRoute?,
         ) : this(alert.alertState, mapStopRoute)
 
-        constructor(
+        internal constructor(
             alertState: StopAlertState,
             mapStopRoute: MapStopRoute?,
         ) : this(iconName(alertState, mapStopRoute))
     }
 
-    data object Loading : UpcomingFormat() {
-        override val secondaryAlert = null
+    public data object Loading : UpcomingFormat() {
+        override val secondaryAlert: SecondaryAlert? = null
     }
 
-    data class Some(val trips: List<FormattedTrip>, override val secondaryAlert: SecondaryAlert?) :
-        UpcomingFormat() {
-        data class FormattedTrip(
-            val trip: UpcomingTrip,
+    public data class Some(
+        val trips: List<FormattedTrip>,
+        override val secondaryAlert: SecondaryAlert?,
+    ) : UpcomingFormat() {
+        public data class FormattedTrip(
+            internal val trip: UpcomingTrip,
             val routeType: RouteType,
             val format: TripInstantDisplay,
         ) {
             val id: String
                 get() = trip.id
 
-            constructor(
+            public constructor(
                 trip: UpcomingTrip,
                 routeType: RouteType,
                 now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
             ) : this(trip, routeType, trip.display(now, routeType, context))
 
-            override fun toString() = format.toString()
+            override fun toString(): String = format.toString()
         }
 
-        constructor(
+        public constructor(
             trip: FormattedTrip,
             secondaryAlert: SecondaryAlert?,
         ) : this(listOf(trip), secondaryAlert)
     }
 
-    data class NoTrips
+    public data class NoTrips
     @DefaultArgumentInterop.Enabled
     constructor(
         val noTripsFormat: NoTripsFormat,
         override val secondaryAlert: SecondaryAlert? = null,
     ) : UpcomingFormat()
 
-    data class Disruption(val alert: Alert, val iconName: String) : UpcomingFormat() {
-        override val secondaryAlert = null
+    public data class Disruption(val alert: Alert, val iconName: String) : UpcomingFormat() {
+        override val secondaryAlert: SecondaryAlert? = null
 
-        constructor(
+        public constructor(
             alert: Alert,
             mapStopRoute: MapStopRoute?,
         ) : this(alert, iconName(alert.alertState, mapStopRoute))
     }
 
-    companion object {
+    internal companion object {
         private fun iconName(alertState: StopAlertState, mapStopRoute: MapStopRoute?) =
             "alert-${mapStopRoute?.let { "large-${it.name.lowercase()}" } ?: "borderless"}-${alertState.name.lowercase()}"
     }

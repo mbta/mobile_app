@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 
-class PredictionsForStopsChannel {
+internal class PredictionsForStopsChannel {
     companion object {
         val topic = "predictions:stops"
 

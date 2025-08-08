@@ -14,7 +14,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.atTime
 
-open class RouteCardPreviewData {
+public open class RouteCardPreviewData {
     private val today: LocalDate = EasternTimeInstant.now().local.date
     private val objects = TestData.clone()
     private val greenLine = objects.getLine("line-Green")
@@ -64,8 +64,8 @@ open class RouteCardPreviewData {
     private val suspensionAlert = objects.alert { effect = Alert.Effect.Suspension }
     private val context = RouteCardData.Context.NearbyTransit
 
-    val now = EasternTimeInstant(today.atTime(11, 30))
-    val global = GlobalResponse(objects)
+    public val now: EasternTimeInstant = EasternTimeInstant(today.atTime(11, 30))
+    public val global: GlobalResponse = GlobalResponse(objects)
 
     private fun cardStop(
         lineOrRoute: RouteCardData.LineOrRoute,
@@ -162,7 +162,7 @@ open class RouteCardPreviewData {
     }
 
     // "Downstream disruption" group = "1. Orange Line disruption"
-    fun OL1() =
+    public fun OL1(): RouteCardData =
         card(
             orangeLine,
             ruggles,
@@ -196,7 +196,7 @@ open class RouteCardPreviewData {
         )
 
     // "Disrupted stop" group = "1. Orange Line disruption"
-    fun OL2() =
+    public fun OL2(): RouteCardData =
         card(
             orangeLine,
             objects.stop {
@@ -208,7 +208,7 @@ open class RouteCardPreviewData {
         )
 
     // "Show up to the next three trips in the branching direction" group = "2. Red Line branching"
-    fun RL1() =
+    public fun RL1(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -247,7 +247,7 @@ open class RouteCardPreviewData {
         )
 
     // "Next three trips go to the same destination" group = "2. Red Line branching"
-    fun RL2() =
+    public fun RL2(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -292,7 +292,7 @@ open class RouteCardPreviewData {
         )
 
     // "Predictions unavailable for a branch" group = "2. Red Line branching"
-    fun RL3() =
+    public fun RL3(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -331,7 +331,7 @@ open class RouteCardPreviewData {
         )
 
     // "Service not running on a branch downstream", group = "2. Red Line branching"
-    fun RL4() =
+    public fun RL4(): RouteCardData =
         card(
             redLine,
             objects.stop {
@@ -374,7 +374,7 @@ open class RouteCardPreviewData {
         )
 
     // "Service disrupted on a branch downstream", group = "2. Red Line branching"
-    fun RL5() =
+    public fun RL5(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -414,7 +414,7 @@ open class RouteCardPreviewData {
         )
 
     // "Branching in both directions" group = "3. Green Line branching")
-    fun GL1() =
+    public fun GL1(): RouteCardData =
         card(
             greenLine,
             boylston,
@@ -459,7 +459,7 @@ open class RouteCardPreviewData {
         )
 
     // "Downstream disruption", group = "3. Green Line branching"
-    fun GL2() =
+    public fun GL2(): RouteCardData =
         card(
             greenLine,
             boylston,
@@ -505,7 +505,7 @@ open class RouteCardPreviewData {
         )
 
     // "Branching in one direction", group = "4. Silver Line branching"
-    fun SL1() =
+    public fun SL1(): RouteCardData =
         card(
             slWaterfront,
             objects.stop {
@@ -582,7 +582,7 @@ open class RouteCardPreviewData {
         )
 
     // "Branching in one direction", group = "5. CR branching"
-    fun CR1() =
+    public fun CR1(): RouteCardData =
         card(
             providenceLine,
             ruggles,
@@ -656,7 +656,7 @@ open class RouteCardPreviewData {
         )
 
     // "Next two trips go to the same destination" group = "6. Bus route single direction"
-    fun Bus1(): RouteCardData {
+    public fun Bus1(): RouteCardData {
         val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
         return RouteCardData(
             lineOrRoute,
@@ -715,7 +715,7 @@ open class RouteCardPreviewData {
     }
 
     // "Next two trips go to different destinations" group = "6. Bus route single direction"
-    fun Bus2(): RouteCardData {
+    public fun Bus2(): RouteCardData {
         val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
         return RouteCardData(
             lineOrRoute,
@@ -768,7 +768,7 @@ open class RouteCardPreviewData {
     }
 
     // "Next two trips go to different destinations" group = "7. Bus route both directions"
-    fun Bus3() =
+    public fun Bus3(): RouteCardData =
         card(
             bus15,
             objects.stop {
@@ -828,7 +828,7 @@ open class RouteCardPreviewData {
         )
 
     // "Service ended on a branch", group = "8. Service ended")
-    fun RL6() =
+    public fun RL6(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -861,7 +861,7 @@ open class RouteCardPreviewData {
         )
 
     // "Service ended on all branches" group = "8. Service ended"
-    fun RL7() =
+    public fun RL7(): RouteCardData =
         card(
             redLine,
             jfkUmass,
@@ -882,7 +882,7 @@ open class RouteCardPreviewData {
         )
 
     // "Predictions unavailable on a branch", group = "9. Predictions unavailable"
-    fun GL3() =
+    public fun GL3(): RouteCardData =
         card(
             greenLine,
             boylston,
@@ -933,7 +933,7 @@ open class RouteCardPreviewData {
         )
 
     // "Predictions unavailable on all branches", group = "9. Predictions unavailable"
-    fun GL4() =
+    public fun GL4(): RouteCardData =
         card(
             greenLine,
             boylston,
@@ -978,7 +978,7 @@ open class RouteCardPreviewData {
         )
 
     // "Disruption on a branch" group = "A. Disruption"
-    fun GL5(): RouteCardData {
+    public fun GL5(): RouteCardData {
         val kenmoreShuttleToRiverside =
             objects.alert {
                 effect = Alert.Effect.Shuttle
@@ -1029,7 +1029,7 @@ open class RouteCardPreviewData {
     }
 
     // "Disruption on a branch, predictions unavailable for other branches" group = "A. Disruption"
-    fun GL6(): RouteCardData {
+    public fun GL6(): RouteCardData {
         val boylstonShuttleToRiverside =
             objects.alert {
                 effect = Alert.Effect.Shuttle
@@ -1079,7 +1079,7 @@ open class RouteCardPreviewData {
     }
 
     // "Disruption on all branches" group = "A. Disruption"
-    fun GL7(): RouteCardData {
+    public fun GL7(): RouteCardData {
 
         val shuttleAllBranches =
             objects.alert {

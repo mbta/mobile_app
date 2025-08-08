@@ -16,7 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 
-class NearbyRepositoryTest {
+internal class NearbyRepositoryTest {
     val searchPoint = Position(latitude = 42.3513706803105, longitude = -71.06649626809957)
 
     @OptIn(ExperimentalTurfApi::class)

@@ -5,12 +5,12 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 /** Represents a [RouteCardData.Leaf] ready to be displayed. */
-sealed class LeafFormat {
-    abstract fun tileData(directionDestination: String?): List<TileData>
+public sealed class LeafFormat {
+    public abstract fun tileData(directionDestination: String?): List<TileData>
 
-    abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
+    public abstract fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat?
 
-    val isAllServiceDisrupted: Boolean
+    public val isAllServiceDisrupted: Boolean
         get() {
             return when (this) {
                 is Single -> this.format is UpcomingFormat.Disruption
@@ -19,7 +19,8 @@ sealed class LeafFormat {
         }
 
     /** A [RouteCardData.Leaf] which only has one destination within its direction. */
-    data class Single(
+    public data class Single
+    internal constructor(
         /**
          * The route to display next to [headsign] and [format]. Only set if the
          * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
@@ -45,7 +46,8 @@ sealed class LeafFormat {
             }
         }
 
-        override fun noPredictionsStatus() = (format as? UpcomingFormat.NoTrips)?.noTripsFormat
+        override fun noPredictionsStatus(): UpcomingFormat.NoTripsFormat? =
+            (format as? UpcomingFormat.NoTrips)?.noTripsFormat
     }
 
     /**
@@ -60,11 +62,13 @@ sealed class LeafFormat {
      *   once for the entire direction. This may be a secondary alert at this stop, or a major alert
      *   affecting a stop downstream of this one on any of the route patterns it serves.
      */
-    data class Branched(
+    public data class Branched
+    internal constructor(
         val branchRows: List<BranchRow>,
         val secondaryAlert: UpcomingFormat.SecondaryAlert? = null,
     ) : LeafFormat() {
-        data class BranchRow(
+        public data class BranchRow
+        internal constructor(
             /**
              * The route to display next to [headsign] and [format]. Only set if the
              * [RouteCardData.Leaf] comes from a grouped line, and therefore always worth showing if
@@ -78,7 +82,8 @@ sealed class LeafFormat {
              * SwiftUI needs to be able to distinguish rows with the same headsign, but that
              * shouldn’t be included in equality checks or computed eagerly.
              */
-            @OptIn(ExperimentalUuidApi::class) val id by lazy { "$headsign-${Uuid.random()}" }
+            @OptIn(ExperimentalUuidApi::class)
+            internal val id by lazy { "$headsign-${Uuid.random()}" }
         }
 
         override fun tileData(directionDestination: String?): List<TileData> {
@@ -112,7 +117,7 @@ sealed class LeafFormat {
         }
     }
 
-    class BranchedBuilder {
+    internal class BranchedBuilder {
         private val branchRows = mutableListOf<Branched.BranchRow>()
         var secondaryAlert: UpcomingFormat.SecondaryAlert? = null
 
@@ -125,7 +130,7 @@ sealed class LeafFormat {
         internal fun built() = Branched(branchRows, secondaryAlert)
     }
 
-    companion object {
+    internal companion object {
         fun branched(block: BranchedBuilder.() -> Unit) = BranchedBuilder().apply(block).built()
     }
 }

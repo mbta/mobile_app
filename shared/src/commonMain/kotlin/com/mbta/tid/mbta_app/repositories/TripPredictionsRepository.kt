@@ -14,17 +14,20 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
 
-interface ITripPredictionsRepository {
-    fun connect(tripId: String, onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit)
+public interface ITripPredictionsRepository {
+    public fun connect(
+        tripId: String,
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
+    )
 
-    var lastUpdated: EasternTimeInstant?
+    public var lastUpdated: EasternTimeInstant?
 
-    fun shouldForgetPredictions(predictionCount: Int): Boolean
+    public fun shouldForgetPredictions(predictionCount: Int): Boolean
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class TripPredictionsRepository(private val socket: PhoenixSocket) :
+internal class TripPredictionsRepository(private val socket: PhoenixSocket) :
     ITripPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
@@ -87,12 +90,12 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockTripPredictionsRepository
+public class MockTripPredictionsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    var onConnect: () -> Unit = {},
-    var onDisconnect: () -> Unit = {},
-    var response: PredictionsStreamDataResponse =
+    internal var onConnect: () -> Unit = {},
+    internal var onDisconnect: () -> Unit = {},
+    internal var response: PredictionsStreamDataResponse =
         PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
 ) : ITripPredictionsRepository {
 
@@ -106,7 +109,7 @@ constructor(
 
     override var lastUpdated: EasternTimeInstant? = null
 
-    override fun shouldForgetPredictions(predictionCount: Int) = false
+    override fun shouldForgetPredictions(predictionCount: Int): Boolean = false
 
     override fun disconnect() {
         onDisconnect()

@@ -4,12 +4,12 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-object StopDetailsUtils {
+public object StopDetailsUtils {
     /**
      * If the stop serves only 1 route in a single direction, returns a new filter for that route
      * and direction.
      */
-    fun autoStopFilter(routeCardData: List<RouteCardData>?): StopDetailsFilter? {
+    public fun autoStopFilter(routeCardData: List<RouteCardData>?): StopDetailsFilter? {
         val route = routeCardData?.singleOrNull() ?: return null
         val directions = route.stopData.flatMap { it.data }.map { it.directionId }.toSet()
         if (directions.size != 1) {
@@ -19,7 +19,7 @@ object StopDetailsUtils {
         return StopDetailsFilter(route.lineOrRoute.id, direction, autoFilter = true)
     }
 
-    fun autoTripFilter(
+    public fun autoTripFilter(
         routeCardData: List<RouteCardData>?,
         stopFilter: StopDetailsFilter?,
         currentTripFilter: TripDetailsFilter?,
@@ -70,13 +70,13 @@ object StopDetailsUtils {
         )
     }
 
-    class ScreenReaderContext(
-        val routeType: RouteType,
-        val destination: String?,
-        val stopName: String,
+    public class ScreenReaderContext(
+        public val routeType: RouteType,
+        public val destination: String?,
+        public val stopName: String,
     )
 
-    fun getScreenReaderTripDepartureContext(
+    public fun getScreenReaderTripDepartureContext(
         routeCardData: List<RouteCardData>?,
         previousFilters: StopDetailsPageFilters,
     ): ScreenReaderContext? {
@@ -98,7 +98,7 @@ object StopDetailsUtils {
         )
     }
 
-    fun filterVehiclesByUpcoming(
+    public fun filterVehiclesByUpcoming(
         routeCardData: List<RouteCardData>,
         vehicles: VehiclesStreamDataResponse,
     ): Map<String, Vehicle> {

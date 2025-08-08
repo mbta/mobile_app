@@ -4,8 +4,9 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 
-data class LineLayer(override val id: String, override val source: String) : Layer() {
-    override val type = LayerType.Line
+public data class LineLayer
+internal constructor(override val id: String, override val source: String) : Layer() {
+    override val type: LayerType = LayerType.Line
     override var filter: Exp<Boolean>? = null
 
     var lineColor: Exp<Color>? = null

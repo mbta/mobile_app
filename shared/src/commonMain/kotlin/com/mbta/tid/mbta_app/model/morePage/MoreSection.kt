@@ -1,13 +1,13 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-class MoreSection(
-    var id: Category,
-    var items: List<MoreItem>,
-    var noteAbove: String? = null,
-    var noteBelow: String? = null,
+public class MoreSection(
+    public var id: Category,
+    public var items: List<MoreItem>,
+    public var noteAbove: String? = null,
+    public var noteBelow: String? = null,
 ) {
 
-    enum class Category {
+    public enum class Category {
         Feedback,
         FeatureFlags,
         Settings,
@@ -16,7 +16,7 @@ class MoreSection(
         Support,
     }
 
-    val hiddenOnProd: Boolean =
+    public val hiddenOnProd: Boolean =
         when (this.id) {
             Category.FeatureFlags -> true
             else -> false

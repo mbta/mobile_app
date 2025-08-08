@@ -10,19 +10,19 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-enum class DefaultTab(val entrypoint: SheetRoutes.Entrypoint) {
+public enum class DefaultTab(public val entrypoint: SheetRoutes.Entrypoint) {
     Favorites(SheetRoutes.Favorites),
     Nearby(SheetRoutes.NearbyTransit),
 }
 
-interface ITabPreferencesRepository {
+public interface ITabPreferencesRepository {
 
-    suspend fun getDefaultTab(): DefaultTab
+    public suspend fun getDefaultTab(): DefaultTab
 
-    suspend fun setDefaultTab(defaultTab: DefaultTab)
+    public suspend fun setDefaultTab(defaultTab: DefaultTab)
 }
 
-class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
+internal class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val defaultTabKey = stringPreferencesKey("default_tab")
@@ -37,7 +37,7 @@ class TabPreferencesRepository : ITabPreferencesRepository, KoinComponent {
     }
 }
 
-class MockTabPreferencesRepository : ITabPreferencesRepository {
+public class MockTabPreferencesRepository : ITabPreferencesRepository {
     override suspend fun getDefaultTab(): DefaultTab {
         return DefaultTab.Nearby
     }

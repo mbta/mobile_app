@@ -9,17 +9,18 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PredictionsByStopMessageResponse(
+public data class PredictionsByStopMessageResponse
+internal constructor(
     @SerialName("stop_id") val stopId: String,
     internal val predictions: Map<String, Prediction>,
     internal val trips: Map<String, Trip>,
     internal val vehicles: Map<String, Vehicle>,
 ) {
     @DefaultArgumentInterop.Enabled
-    constructor(
+    internal constructor(
         objects: ObjectCollectionBuilder,
         stopId: String = objects.stops.keys.single(),
     ) : this(stopId, objects.predictions, objects.trips, objects.vehicles)
 
-    override fun toString() = "[PredictionsByStopMessageResponse]"
+    override fun toString(): String = "[PredictionsByStopMessageResponse]"
 }

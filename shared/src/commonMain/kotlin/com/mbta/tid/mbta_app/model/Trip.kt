@@ -4,12 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Trip(
+public data class Trip
+internal constructor(
     override val id: String,
     @SerialName("direction_id") val directionId: Int,
     val headsign: String,
     @SerialName("route_id") val routeId: String,
-    @SerialName("route_pattern_id") val routePatternId: String? = null,
-    @SerialName("shape_id") val shapeId: String? = null,
+    @SerialName("route_pattern_id") internal val routePatternId: String? = null,
+    @SerialName("shape_id") internal val shapeId: String? = null,
     @SerialName("stop_ids") val stopIds: List<String>? = null,
 ) : BackendObject

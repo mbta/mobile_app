@@ -11,13 +11,14 @@ import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import org.koin.core.component.KoinComponent
 
-interface IVehicleRepository {
-    fun connect(vehicleId: String, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit)
+public interface IVehicleRepository {
+    public fun connect(vehicleId: String, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit)
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository, KoinComponent {
+internal class VehicleRepository(private val socket: PhoenixSocket) :
+    IVehicleRepository, KoinComponent {
     var channel: PhoenixChannel? = null
 
     override fun connect(
@@ -71,11 +72,11 @@ class VehicleRepository(private val socket: PhoenixSocket) : IVehicleRepository,
     }
 }
 
-class MockVehicleRepository
+public class MockVehicleRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    var onConnect: () -> Unit = {},
-    var onDisconnect: () -> Unit = {},
+    internal var onConnect: () -> Unit = {},
+    internal var onDisconnect: () -> Unit = {},
     private val outcome: ApiResult<VehicleStreamDataResponse>? = null,
 ) : IVehicleRepository {
     override fun connect(

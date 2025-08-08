@@ -4,7 +4,7 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-class FavoriteStarShape(rect: Path.Rect, scale: Float = 1f) {
+public class FavoriteStarShape(rect: Path.Rect, scale: Float = 1f) {
     private val starPoints = 5
     private val phaseShift = 0.25f
     private val diameter = min(rect.width, rect.height) * scale
@@ -29,7 +29,7 @@ class FavoriteStarShape(rect: Path.Rect, scale: Float = 1f) {
         )
     }
 
-    data class Arm(
+    public data class Arm(
         val `in`: Path.Point,
         val outStart: Path.Point,
         val outStartControl: Path.Point,
@@ -40,7 +40,7 @@ class FavoriteStarShape(rect: Path.Rect, scale: Float = 1f) {
         val outEnd: Path.Point,
     )
 
-    val arms =
+    public val arms: List<Arm> =
         (1..5).map {
             val i = it.toFloat()
             val midI = i + 0.5f
@@ -80,7 +80,7 @@ class FavoriteStarShape(rect: Path.Rect, scale: Float = 1f) {
             )
         }
 
-    companion object {
+    internal companion object {
         private const val PI = kotlin.math.PI.toFloat()
     }
 }

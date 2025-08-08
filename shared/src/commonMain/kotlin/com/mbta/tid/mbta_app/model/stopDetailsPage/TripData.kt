@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class TripData(
+public data class TripData(
     val tripFilter: TripDetailsFilter,
     val trip: Trip,
     val tripSchedules: TripSchedulesResponse?,

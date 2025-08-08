@@ -5,17 +5,17 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import org.koin.core.component.KoinComponent
 
-class FavoritesUsecases(
+public class FavoritesUsecases(
     private val repository: IFavoritesRepository,
     private val analytics: Analytics,
 ) : KoinComponent {
 
-    suspend fun getRouteStopDirectionFavorites(): Set<RouteStopDirection> {
+    public suspend fun getRouteStopDirectionFavorites(): Set<RouteStopDirection> {
         val storedFavorites = repository.getFavorites()
         return storedFavorites.routeStopDirection ?: emptySet()
     }
 
-    suspend fun updateRouteStopDirections(
+    public suspend fun updateRouteStopDirections(
         newValues: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
         defaultDirection: Int,
@@ -42,7 +42,7 @@ class FavoritesUsecases(
     }
 }
 
-enum class EditFavoritesContext {
+public enum class EditFavoritesContext {
     Favorites,
     StopDetails,
     RouteDetails,

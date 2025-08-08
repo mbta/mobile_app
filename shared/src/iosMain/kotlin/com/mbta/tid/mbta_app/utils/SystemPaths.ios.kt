@@ -11,7 +11,7 @@ import platform.Foundation.NSURL
 import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
-class IOSSystemPaths() : SystemPaths {
+internal class IOSSystemPaths() : SystemPaths {
     override val data: Path
         get() =
             getURL(NSApplicationSupportDirectory)?.path()?.toPath()

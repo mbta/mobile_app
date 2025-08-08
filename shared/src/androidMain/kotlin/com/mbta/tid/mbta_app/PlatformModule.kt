@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.utils.SystemPaths
 import kotlin.time.Clock
 import org.koin.dsl.module
 
-fun platformModule() = module {
+internal fun platformModule() = module {
     includes(
         module { single { createDataStore(get()) } },
         module { single<SystemPaths> { AndroidSystemPaths(get()) } },

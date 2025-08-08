@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.network
 import platform.Network.*
 import platform.darwin.dispatch_get_main_queue
 
-class NetworkConnectivityMonitor : INetworkConnectivityMonitor {
+internal class NetworkConnectivityMonitor : INetworkConnectivityMonitor {
     private val monitor = nw_path_monitor_create()
 
     override fun registerListener(onNetworkAvailable: () -> Unit, onNetworkLost: () -> Unit) {

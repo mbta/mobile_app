@@ -4,18 +4,18 @@ import com.mbta.tid.mbta_app.model.RouteType
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class RoutePickerPath {
-    @Serializable data object Root : RoutePickerPath()
+public sealed class RoutePickerPath {
+    @Serializable public data object Root : RoutePickerPath()
 
-    @Serializable data object Bus : RoutePickerPath()
+    @Serializable public data object Bus : RoutePickerPath()
 
-    @Serializable data object Silver : RoutePickerPath()
+    @Serializable public data object Silver : RoutePickerPath()
 
-    @Serializable data object CommuterRail : RoutePickerPath()
+    @Serializable public data object CommuterRail : RoutePickerPath()
 
-    @Serializable data object Ferry : RoutePickerPath()
+    @Serializable public data object Ferry : RoutePickerPath()
 
-    val RoutePickerPath.routeType
+    public val RoutePickerPath.routeType: RouteType
         get() =
             when (this) {
                 is Root -> RouteType.HEAVY_RAIL

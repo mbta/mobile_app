@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.analytics
 
-enum class AnalyticsColorScheme(val recordedValue: String) {
+public enum class AnalyticsColorScheme(internal val recordedValue: String) {
     Light("light"),
     Dark("dark"),
     /**

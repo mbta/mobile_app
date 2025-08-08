@@ -20,7 +20,7 @@ import kotlinx.serialization.encoding.Encoder
  * This could cause problems if the system clock is set into the past between persisting and loading
  * from disk, since then the data won't become stale for a longer duration than the cache expects.
  */
-object TimeMarkSerializer : KSerializer<TimeSource.Monotonic.ValueTimeMark> {
+internal object TimeMarkSerializer : KSerializer<TimeSource.Monotonic.ValueTimeMark> {
     override val descriptor: SerialDescriptor
         get() =
             PrimitiveSerialDescriptor("TimeSource.Monotonic.ValueTimeMark", PrimitiveKind.STRING)

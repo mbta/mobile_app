@@ -5,36 +5,41 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RouteBranchSegment(
-    val stops: List<BranchStop>,
-    val name: String?,
-    @SerialName("typical?") val isTypical: Boolean,
+public data class RouteBranchSegment(
+    internal val stops: List<BranchStop>,
+    internal val name: String?,
+    @SerialName("typical?") internal val isTypical: Boolean,
 ) {
     @Serializable
-    enum class Lane {
+    public enum class Lane {
         @SerialName("left") Left,
         @SerialName("center") Center,
         @SerialName("right") Right,
     }
 
     @Serializable
-    data class BranchStop(
-        @SerialName("stop_id") val stopId: String,
-        @SerialName("stop_lane") val stopLane: Lane,
-        val connections: List<StickConnection>,
+    public data class BranchStop(
+        @SerialName("stop_id") internal val stopId: String,
+        @SerialName("stop_lane") internal val stopLane: Lane,
+        internal val connections: List<StickConnection>,
     )
 
     @Serializable
-    data class StickConnection(
+    public data class StickConnection(
         @SerialName("from_stop") val fromStop: String,
         @SerialName("to_stop") val toStop: String,
-        @SerialName("from_lane") val fromLane: Lane,
-        @SerialName("to_lane") val toLane: Lane,
+        @SerialName("from_lane") internal val fromLane: Lane,
+        @SerialName("to_lane") internal val toLane: Lane,
         @SerialName("from_vpos") val fromVPos: VPos,
         @SerialName("to_vpos") val toVPos: VPos,
     ) {
-        companion object {
-            fun forward(stopBefore: String?, stop: String?, stopAfter: String?, lane: Lane) =
+        public companion object {
+            public fun forward(
+                stopBefore: String?,
+                stop: String?,
+                stopAfter: String?,
+                lane: Lane,
+            ): List<StickConnection> =
                 listOfNotNull(
                     if (stopBefore != null && stop != null)
                         StickConnection(
@@ -70,20 +75,20 @@ data class RouteBranchSegment(
         }
     }
 
-    enum class VPos {
+    public enum class VPos {
         @SerialName("top") Top,
         @SerialName("center") Center,
         @SerialName("bottom") Bottom,
     }
 
-    companion object {
+    public companion object {
         @DefaultArgumentInterop.Enabled
-        fun of(
+        public fun of(
             stopIds: List<String>,
             name: String? = null,
             isTypical: Boolean = true,
             lane: Lane = Lane.Center,
-        ) =
+        ): RouteBranchSegment =
             RouteBranchSegment(
                 stopIds.mapIndexed { index, stopId ->
                     BranchStop(

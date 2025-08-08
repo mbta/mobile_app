@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.utils
 
-sealed class MinutesFormat {
-    companion object {
-        fun from(minutes: Int): MinutesFormat {
+public sealed class MinutesFormat {
+    public companion object {
+        public fun from(minutes: Int): MinutesFormat {
             val hours = minutes.floorDiv(60)
             val remainingMinutes = minutes - (hours * 60)
             return if (hours >= 1)
@@ -11,9 +11,10 @@ sealed class MinutesFormat {
         }
     }
 
-    data class Hour(val hours: Int) : MinutesFormat()
+    public data class Hour internal constructor(val hours: Int) : MinutesFormat()
 
-    data class HourMinute(val hours: Int, val minutes: Int) : MinutesFormat()
+    public data class HourMinute internal constructor(val hours: Int, val minutes: Int) :
+        MinutesFormat()
 
-    data class Minute(val minutes: Int) : MinutesFormat()
+    public data class Minute internal constructor(val minutes: Int) : MinutesFormat()
 }

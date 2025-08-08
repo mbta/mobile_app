@@ -3,4 +3,6 @@ package com.mbta.tid.mbta_app.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Shape(override val id: String, val polyline: String? = null) : BackendObject
+public data class Shape
+internal constructor(override val id: String, internal val polyline: String? = null) :
+    BackendObject

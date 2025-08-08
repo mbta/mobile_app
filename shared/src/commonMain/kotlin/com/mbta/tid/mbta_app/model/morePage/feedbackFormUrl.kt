@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-fun localizedFeedbackFormUrl(
+public fun localizedFeedbackFormUrl(
     baseUrl: String,
     translation: String,
     separateHTForm: Boolean = false,

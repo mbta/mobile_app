@@ -7,16 +7,16 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PredictionsStreamDataResponse(
+public data class PredictionsStreamDataResponse(
     internal val predictions: Map<String, Prediction>,
     internal val trips: Map<String, Trip>,
     internal val vehicles: Map<String, Vehicle>,
 ) {
-    constructor(
+    public constructor(
         objects: ObjectCollectionBuilder
     ) : this(objects.predictions, objects.trips, objects.vehicles)
 
-    fun predictionQuantity() = predictions.size
+    public fun predictionQuantity(): Int = predictions.size
 
-    override fun toString() = "[PredictionsStreamDataResponse]"
+    override fun toString(): String = "[PredictionsStreamDataResponse]"
 }

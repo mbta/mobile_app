@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app
 
-enum class AppVariant(
-    val backendHost: String,
-    val lightMapStyle: String,
-    val darkMapStyle: String,
+public enum class AppVariant(
+    internal val backendHost: String,
+    public val lightMapStyle: String,
+    public val darkMapStyle: String,
 ) {
     DevOrange(
         "mobile-app-backend-dev-orange.mbtace.com",
@@ -21,6 +21,6 @@ enum class AppVariant(
         "mapbox://styles/mbtamobileapp/cm02vjs2000e001psbu2v10p9",
     );
 
-    val backendRoot = "https://$backendHost"
-    val socketUrl = "wss://$backendHost/socket"
+    internal val backendRoot = "https://$backendHost"
+    public val socketUrl: String = "wss://$backendHost/socket"
 }

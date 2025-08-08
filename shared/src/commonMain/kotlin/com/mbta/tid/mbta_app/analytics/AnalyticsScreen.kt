@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.analytics
 
-enum class AnalyticsScreen(val pageName: String) {
+public enum class AnalyticsScreen(internal val pageName: String) {
     Favorites("FavoritesPage"),
     NearbyTransit("NearbyTransitPage"),
     RouteDetails("RouteDetailsPage"),

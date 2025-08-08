@@ -12,13 +12,13 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IFavoritesRepository {
-    suspend fun getFavorites(): Favorites
+public interface IFavoritesRepository {
+    public suspend fun getFavorites(): Favorites
 
-    suspend fun setFavorites(favorites: Favorites)
+    public suspend fun setFavorites(favorites: Favorites)
 }
 
-class FavoritesRepository : IFavoritesRepository, KoinComponent {
+internal class FavoritesRepository : IFavoritesRepository, KoinComponent {
 
     private val dataStore: DataStore<Preferences> by inject()
 
@@ -41,10 +41,10 @@ class FavoritesRepository : IFavoritesRepository, KoinComponent {
     }
 }
 
-class MockFavoritesRepository
+public class MockFavoritesRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    var favorites: Favorites = Favorites(),
+    private var favorites: Favorites = Favorites(),
     private val onGet: (() -> Unit)? = null,
     private val onSet: ((Favorites) -> Unit)? = null,
 ) : IFavoritesRepository {

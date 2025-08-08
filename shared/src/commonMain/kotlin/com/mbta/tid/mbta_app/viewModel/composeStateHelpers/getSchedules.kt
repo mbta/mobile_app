@@ -43,7 +43,7 @@ private fun fetchSchedules(
 }
 
 @Composable
-fun getSchedules(
+internal fun getSchedules(
     stopIds: List<String>?,
     errorKey: String,
     schedulesRepository: ISchedulesRepository = koinInject(),

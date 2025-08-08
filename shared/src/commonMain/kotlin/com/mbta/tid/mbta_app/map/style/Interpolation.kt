@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.map.style
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 
-sealed interface Interpolation : MapboxStyleObject {
+internal sealed interface Interpolation : MapboxStyleObject {
     data object Linear : Interpolation {
         override fun asJson() = buildJsonArray { add("linear") }
     }

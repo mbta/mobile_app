@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IOnboardingRepository {
-    suspend fun getPendingOnboarding(): List<OnboardingScreen>
+public interface IOnboardingRepository {
+    public suspend fun getPendingOnboarding(): List<OnboardingScreen>
 
-    suspend fun markOnboardingCompleted(screen: OnboardingScreen)
+    public suspend fun markOnboardingCompleted(screen: OnboardingScreen)
 }
 
-class OnboardingRepository : IOnboardingRepository, KoinComponent {
+internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
     private val accessibilityStatus: IAccessibilityStatusRepository by inject()
     private val dataStore: DataStore<Preferences> by inject()
 
@@ -44,7 +44,7 @@ class OnboardingRepository : IOnboardingRepository, KoinComponent {
     }
 }
 
-class MockOnboardingRepository
+public class MockOnboardingRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private val pendingOnboarding: List<OnboardingScreen> = emptyList(),

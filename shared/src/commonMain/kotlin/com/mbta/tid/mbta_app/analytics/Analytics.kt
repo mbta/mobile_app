@@ -8,12 +8,12 @@ import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 
-abstract class Analytics {
+public abstract class Analytics {
     protected abstract fun logEvent(name: String, parameters: Map<String, String>)
 
     protected abstract fun setUserProperty(name: String, value: String)
 
-    var lastTrackedScreen: AnalyticsScreen? = null
+    internal var lastTrackedScreen: AnalyticsScreen? = null
         private set
 
     private fun logEvent(name: String, vararg parameters: Pair<String, String>) {
@@ -21,7 +21,7 @@ abstract class Analytics {
         logEvent(name, paramsMap)
     }
 
-    fun favoritesUpdated(
+    public fun favoritesUpdated(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
         defaultDirection: Int,
@@ -45,43 +45,43 @@ abstract class Analytics {
             }
     }
 
-    fun performedSearch(query: String) {
+    public fun performedSearch(query: String) {
         logEvent("search", "query" to query)
     }
 
-    fun performedRouteFilter(query: String) {
+    public fun performedRouteFilter(query: String) {
         logEvent("route_filter", "query" to query)
     }
 
-    fun recordSession(colorScheme: AnalyticsColorScheme) {
+    public fun recordSession(colorScheme: AnalyticsColorScheme) {
         setUserProperty("color_scheme", colorScheme.recordedValue)
     }
 
-    fun recordSession(locationAccess: AnalyticsLocationAccess) {
+    public fun recordSession(locationAccess: AnalyticsLocationAccess) {
         setUserProperty("location_access", locationAccess.recordedValue)
     }
 
-    fun recordSession(favoritesCount: Int) {
+    public fun recordSession(favoritesCount: Int) {
         setUserProperty("favorites_count", "$favoritesCount")
     }
 
     @OptIn(ExperimentalObjCName::class)
     @ObjCName(swiftName = "recordSession")
-    fun recordSessionHideMaps(hideMaps: Boolean) {
+    public fun recordSessionHideMaps(hideMaps: Boolean) {
         setUserProperty("hide_maps_on", hideMaps.toString())
     }
 
     @OptIn(ExperimentalObjCName::class)
     @ObjCName(swiftName = "recordSession")
-    fun recordSessionVoiceOver(voiceOver: Boolean) {
+    public fun recordSessionVoiceOver(voiceOver: Boolean) {
         setUserProperty("screen_reader_on", voiceOver.toString())
     }
 
-    fun refetchedNearbyTransit() {
+    public fun refetchedNearbyTransit() {
         logEvent("refetched_nearby_transit")
     }
 
-    fun tappedAffectedStops(routeId: String, stopId: String, alertId: String) {
+    public fun tappedAffectedStops(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_affected_stops",
             "route_id" to routeId,
@@ -91,7 +91,7 @@ abstract class Analytics {
     }
 
     @DefaultArgumentInterop.Enabled
-    fun tappedAlertDetails(
+    public fun tappedAlertDetails(
         routeId: String,
         stopId: String,
         alertId: String,
@@ -106,7 +106,7 @@ abstract class Analytics {
         )
     }
 
-    fun tappedAlertDetailsLegacy(routeId: String, stopId: String, alertId: String) {
+    public fun tappedAlertDetailsLegacy(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_alert_details",
             "route_id" to routeId,
@@ -115,7 +115,7 @@ abstract class Analytics {
         )
     }
 
-    fun tappedDeparture(
+    public fun tappedDeparture(
         routeId: String,
         stopId: String,
         pinned: Boolean,
@@ -150,7 +150,7 @@ abstract class Analytics {
         )
     }
 
-    fun tappedDownstreamStop(
+    public fun tappedDownstreamStop(
         routeId: String,
         stopId: String,
         tripId: String,
@@ -165,19 +165,19 @@ abstract class Analytics {
         )
     }
 
-    fun tappedOnStop(stopId: String) {
+    public fun tappedOnStop(stopId: String) {
         logEvent("tapped_on_stop", "stop_id" to stopId)
     }
 
-    fun tappedRouteFilter(routeId: String, stopId: String) {
+    public fun tappedRouteFilter(routeId: String, stopId: String) {
         logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
     }
 
-    fun tappedRouteFilterLegacy(routeId: String, stopId: String) {
+    public fun tappedRouteFilterLegacy(routeId: String, stopId: String) {
         logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
     }
 
-    fun tappedTripPlanner(routeId: String, stopId: String, alertId: String) {
+    public fun tappedTripPlanner(routeId: String, stopId: String, alertId: String) {
         logEvent(
             "tapped_trip_planner",
             "route_id" to routeId,
@@ -186,20 +186,20 @@ abstract class Analytics {
         )
     }
 
-    fun tappedVehicle(routeId: String) {
+    public fun tappedVehicle(routeId: String) {
         logEvent("tapped_vehicle", "route_id" to routeId)
     }
 
-    fun toggledPinnedRoute(pinned: Boolean, routeId: String) {
+    public fun toggledPinnedRoute(pinned: Boolean, routeId: String) {
         logEvent(if (pinned) "pin_route" else "unpin_route", "route_id" to routeId)
     }
 
-    fun track(screen: AnalyticsScreen) {
+    public fun track(screen: AnalyticsScreen) {
         lastTrackedScreen = screen
         logEvent(ANALYTICS_EVENT_SCREEN_VIEW, ANALYTICS_PARAMETER_SCREEN_NAME to screen.pageName)
     }
 
-    companion object {
+    internal companion object {
         const val ANALYTICS_EVENT_SCREEN_VIEW = "screen_view"
         const val ANALYTICS_PARAMETER_SCREEN_NAME = "screen_name"
     }

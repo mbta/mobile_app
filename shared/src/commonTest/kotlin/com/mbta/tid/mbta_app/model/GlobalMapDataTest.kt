@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-class GlobalMapDataTest {
+internal class GlobalMapDataTest {
 
     fun createData(): Pair<ObjectCollectionBuilder, GlobalResponse> {
         val objects = ObjectCollectionBuilder()

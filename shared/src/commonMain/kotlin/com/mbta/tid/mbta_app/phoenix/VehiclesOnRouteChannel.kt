@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 
-object VehiclesOnRouteChannel {
+internal object VehiclesOnRouteChannel {
     val topic = "vehicles:route"
 
     val newDataEvent = "stream_data"

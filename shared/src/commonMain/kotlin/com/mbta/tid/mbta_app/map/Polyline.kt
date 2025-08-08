@@ -5,7 +5,7 @@ import kotlin.experimental.and
 import kotlin.math.round
 
 // https://developers.google.com/maps/documentation/utilities/polylinealgorithm
-object Polyline {
+internal object Polyline {
     private sealed interface State {
         data object AwaitingLatitude : State
 

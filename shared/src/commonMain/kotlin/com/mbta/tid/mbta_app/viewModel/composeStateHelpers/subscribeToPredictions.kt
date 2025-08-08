@@ -17,7 +17,7 @@ import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import org.koin.compose.koinInject
 
 @Composable
-fun subscribeToPredictions(
+internal fun subscribeToPredictions(
     stopIds: List<String>?,
     active: Boolean,
     onAnyMessageReceived: () -> Unit = {},

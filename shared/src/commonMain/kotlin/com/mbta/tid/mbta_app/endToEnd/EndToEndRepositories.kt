@@ -64,7 +64,7 @@ import kotlin.time.Duration.Companion.minutes
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-fun endToEndModule(): Module {
+internal fun endToEndModule(): Module {
     val now = EasternTimeInstant.now()
     val objects = ObjectCollectionBuilder()
     val lineRed = objects.line()

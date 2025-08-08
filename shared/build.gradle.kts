@@ -31,6 +31,7 @@ plugins {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     applyDefaultHierarchyTemplate()
+    explicitApi()
 
     compilerOptions {
         optIn.add("kotlin.time.ExperimentalTime")

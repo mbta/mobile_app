@@ -6,7 +6,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class RoutePatternTest {
+internal class RoutePatternTest {
 
     val objects = ObjectCollectionBuilder()
     val stop1 = objects.stop {}

@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StopData(
+public data class StopData(
     val stopId: String,
     val schedules: ScheduleResponse?,
     val predictionsByStop: PredictionsByStopJoinResponse?,

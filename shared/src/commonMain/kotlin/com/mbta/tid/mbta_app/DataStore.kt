@@ -9,5 +9,5 @@ import okio.Path.Companion.toPath
 internal const val dataStoreFileName = "mbta.preferences_pb"
 
 @OptIn(InternalCoroutinesApi::class)
-fun getDataStore(producePath: () -> String): DataStore<Preferences> =
+internal fun getDataStore(producePath: () -> String): DataStore<Preferences> =
     PreferenceDataStoreFactory.createWithPath(produceFile = { producePath().toPath() })

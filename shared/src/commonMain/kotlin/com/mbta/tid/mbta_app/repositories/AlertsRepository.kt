@@ -11,13 +11,14 @@ import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.AlertsChannel
 import org.koin.core.component.KoinComponent
 
-interface IAlertsRepository {
-    fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit)
+public interface IAlertsRepository {
+    public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit)
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, KoinComponent {
+internal class AlertsRepository(private val socket: PhoenixSocket) :
+    IAlertsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
 
@@ -69,15 +70,15 @@ class AlertsRepository(private val socket: PhoenixSocket) : IAlertsRepository, K
     }
 }
 
-class MockAlertsRepository
+public class MockAlertsRepository
 @DefaultArgumentInterop.Enabled
-constructor(
+internal constructor(
     private val result: ApiResult<AlertsStreamDataResponse>,
     private val onConnect: () -> Unit = {},
     private val onDisconnect: () -> Unit = {},
 ) : IAlertsRepository {
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         response: AlertsStreamDataResponse = AlertsStreamDataResponse(emptyMap()),
         onConnect: () -> Unit = {},
         onDisconnect: () -> Unit = {},
@@ -95,7 +96,7 @@ constructor(
         onDisconnect()
     }
 
-    fun receiveResult(result: ApiResult<AlertsStreamDataResponse>) {
+    internal fun receiveResult(result: ApiResult<AlertsStreamDataResponse>) {
         receiveCallback?.let { it(result) }
     }
 }

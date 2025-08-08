@@ -48,7 +48,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FavoritesViewModelTest : KoinTest {
+internal class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
         objects.stop {

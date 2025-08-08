@@ -22,7 +22,7 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 
-class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
+internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
     constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
 
     private val httpClient =

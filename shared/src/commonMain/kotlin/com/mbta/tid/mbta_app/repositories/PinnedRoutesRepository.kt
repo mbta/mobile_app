@@ -10,13 +10,13 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IPinnedRoutesRepository {
-    suspend fun getPinnedRoutes(): Set<String>
+public interface IPinnedRoutesRepository {
+    public suspend fun getPinnedRoutes(): Set<String>
 
-    suspend fun setPinnedRoutes(routes: Set<String>)
+    public suspend fun setPinnedRoutes(routes: Set<String>)
 }
 
-class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
+internal class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
 
     private val dataStore: DataStore<Preferences> by inject()
 
@@ -31,14 +31,14 @@ class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
     }
 }
 
-class MockPinnedRoutesRepository
+public class MockPinnedRoutesRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     initialPinnedRoutes: Set<String> = emptySet(),
     private val onGet: (() -> Unit)? = null,
     private val onSet: ((Set<String>) -> Unit)? = null,
 ) : IPinnedRoutesRepository, KoinComponent {
-    var pinnedRoutes: Set<String> = initialPinnedRoutes
+    public var pinnedRoutes: Set<String> = initialPinnedRoutes
 
     override suspend fun getPinnedRoutes(): Set<String> {
         onGet?.invoke()

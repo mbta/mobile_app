@@ -7,24 +7,24 @@ import com.mbta.tid.mbta_app.map.style.FeatureCollection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 
-interface IMapLayerManager {
-    suspend fun addLayers(
+public interface IMapLayerManager {
+    public suspend fun addLayers(
         mapFriendlyRouteResponse: MapFriendlyRouteResponse,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
     )
 
-    suspend fun addLayers(
+    public suspend fun addLayers(
         routes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         state: StopLayerGenerator.State,
         globalResponse: GlobalResponse,
         colorPalette: ColorPalette,
     )
 
-    fun resetPuckPosition()
+    public fun resetPuckPosition()
 
-    suspend fun updateRouteSourceData(routeData: List<RouteSourceData>)
+    public suspend fun updateRouteSourceData(routeData: List<RouteSourceData>)
 
-    suspend fun updateStopSourceData(stopData: FeatureCollection)
+    public suspend fun updateStopSourceData(stopData: FeatureCollection)
 }

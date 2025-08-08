@@ -13,17 +13,20 @@ import org.koin.core.component.inject
 // The response doesn't include the route ID and direction ID, which we need in the UI to ensure
 // that we're using the correct stop list for the selected route and direction.
 @Serializable
-data class RouteStopsResult(
-    val routeId: String,
-    val directionId: Int,
-    val segments: List<RouteBranchSegment>,
+public data class RouteStopsResult(
+    internal val routeId: String,
+    internal val directionId: Int,
+    internal val segments: List<RouteBranchSegment>,
 )
 
-interface IRouteStopsRepository {
-    suspend fun getRouteSegments(routeId: String, directionId: Int): ApiResult<RouteStopsResult>
+public interface IRouteStopsRepository {
+    public suspend fun getRouteSegments(
+        routeId: String,
+        directionId: Int,
+    ): ApiResult<RouteStopsResult>
 }
 
-class RouteStopsRepository : IRouteStopsRepository, KoinComponent {
+internal class RouteStopsRepository : IRouteStopsRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getRouteSegments(
@@ -45,12 +48,12 @@ class RouteStopsRepository : IRouteStopsRepository, KoinComponent {
         }
 }
 
-class MockRouteStopsRepository(
+public class MockRouteStopsRepository(
     private val result: ApiResult<RouteStopsResult>,
     private val onGet: (String, Int) -> Unit = { _, _ -> },
 ) : IRouteStopsRepository {
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         segments: List<RouteBranchSegment>,
         routeId: String = "",
         directionId: Int = 0,

@@ -6,7 +6,7 @@ import android.content.Context.CONNECTIVITY_SERVICE
 import android.net.ConnectivityManager
 import android.net.Network
 
-class NetworkConnectivityMonitor(context: Context) : INetworkConnectivityMonitor {
+internal class NetworkConnectivityMonitor(context: Context) : INetworkConnectivityMonitor {
     private var networkCallback: ConnectivityManager.NetworkCallback? = null
     private val connectivityManager =
         context.getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager

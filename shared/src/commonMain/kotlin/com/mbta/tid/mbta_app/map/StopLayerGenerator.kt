@@ -11,27 +11,30 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-object StopLayerGenerator {
-    val maxTransferLayers = 3
-    val stopZoomThreshold = 11.0
-    val busStopZoomThreshold = 12.0
+public object StopLayerGenerator {
+    internal val maxTransferLayers = 3
+    public val stopZoomThreshold: Double = 11.0
+    internal val busStopZoomThreshold = 12.0
 
-    val stopLayerId = "stop-layer"
-    val stopTouchTargetLayerId = "${stopLayerId}-touch-target"
-    val stopLayerSelectedPinId = "${stopLayerId}-selected-pin"
+    public val stopLayerId: String = "stop-layer"
+    public val stopTouchTargetLayerId: String = "${stopLayerId}-touch-target"
+    internal val stopLayerSelectedPinId = "${stopLayerId}-selected-pin"
 
-    val busLayerId = "${stopLayerId}-bus"
-    val busAlertLayerId = "${stopLayerId}-bus-alert"
+    public val busLayerId: String = "${stopLayerId}-bus"
+    internal val busAlertLayerId = "${stopLayerId}-bus-alert"
 
-    fun getAlertLayerId(index: Int) = "${stopLayerId}-alert-${index}"
+    internal fun getAlertLayerId(index: Int) = "${stopLayerId}-alert-${index}"
 
-    fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
+    internal fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
 
-    data class State
+    public data class State
     @DefaultArgumentInterop.Enabled
     constructor(val selectedStopId: String? = null, val stopFilter: StopDetailsFilter? = null)
 
-    suspend fun createStopLayers(colorPalette: ColorPalette, state: State): List<SymbolLayer> {
+    public suspend fun createStopLayers(
+        colorPalette: ColorPalette,
+        state: State,
+    ): List<SymbolLayer> {
         return withContext(Dispatchers.Default) {
             val sourceId = StopFeaturesBuilder.stopSourceId
 
@@ -90,7 +93,7 @@ object StopLayerGenerator {
         }
     }
 
-    fun createAlertLayer(
+    internal fun createAlertLayer(
         id: String,
         index: Int = 0,
         forBus: Boolean = false,
@@ -105,7 +108,7 @@ object StopLayerGenerator {
         return alertLayer
     }
 
-    fun createStopLayer(
+    internal fun createStopLayer(
         id: String,
         forBus: Boolean = false,
         colorPalette: ColorPalette,
@@ -121,7 +124,7 @@ object StopLayerGenerator {
         return stopLayer
     }
 
-    fun includedDefaultTextProps(layer: SymbolLayer, colorPalette: ColorPalette) {
+    internal fun includedDefaultTextProps(layer: SymbolLayer, colorPalette: ColorPalette) {
         layer.textColor = Exp(colorPalette.text).downcastToColor()
         layer.textFont = listOf("Inter Regular")
         layer.textHaloColor = Exp(colorPalette.fill3).downcastToColor()
@@ -135,7 +138,7 @@ object StopLayerGenerator {
         layer.textOffset = MapExp.labelOffsetExp
     }
 
-    fun includeSharedProps(layer: SymbolLayer, forBus: Boolean, state: State) {
+    internal fun includeSharedProps(layer: SymbolLayer, forBus: Boolean, state: State) {
         layer.iconSize = MapExp.selectedSizeExp(state)
 
         layer.iconAllowOverlap = true
@@ -169,7 +172,7 @@ object StopLayerGenerator {
             Exp.ge(Exp.zoom(), if (forBus) Exp(busStopZoomThreshold) else Exp(stopZoomThreshold)),
         )
 
-    fun offsetAlertValue(index: Int): Exp<List<Number>> {
+    internal fun offsetAlertValue(index: Int): Exp<List<Number>> {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetAlertExp(closeZoom = false, index),
@@ -177,7 +180,7 @@ object StopLayerGenerator {
         )
     }
 
-    fun offsetTransferValue(index: Int): Exp<List<Number>> {
+    internal fun offsetTransferValue(index: Int): Exp<List<Number>> {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetTransferExp(closeZoom = false, index),
@@ -185,7 +188,7 @@ object StopLayerGenerator {
         )
     }
 
-    fun offsetPinValue(): Exp<List<Number>> {
+    internal fun offsetPinValue(): Exp<List<Number>> {
         return Exp.step(
             Exp.zoom(),
             MapExp.offsetPinExp(closeZoom = false),

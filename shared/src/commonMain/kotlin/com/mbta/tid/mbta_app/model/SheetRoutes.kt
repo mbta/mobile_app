@@ -5,31 +5,32 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class SheetRoutes {
+public sealed class SheetRoutes {
 
-    @Serializable sealed interface Entrypoint
+    @Serializable public sealed interface Entrypoint
 
-    @Serializable data object Favorites : SheetRoutes(), Entrypoint
+    @Serializable public data object Favorites : SheetRoutes(), Entrypoint
 
-    @Serializable data object NearbyTransit : SheetRoutes(), Entrypoint
+    @Serializable public data object NearbyTransit : SheetRoutes(), Entrypoint
 
     @Serializable
-    data class StopDetails(
+    public data class StopDetails(
         val stopId: String,
         val stopFilter: StopDetailsFilter?,
         val tripFilter: TripDetailsFilter?,
     ) : SheetRoutes()
 
     @Serializable
-    data class RoutePicker(val path: RoutePickerPath, val context: RouteDetailsContext) :
+    public data class RoutePicker(val path: RoutePickerPath, val context: RouteDetailsContext) :
         SheetRoutes()
 
     @Serializable
-    data class RouteDetails(val routeId: String, val context: RouteDetailsContext) : SheetRoutes()
+    public data class RouteDetails(val routeId: String, val context: RouteDetailsContext) :
+        SheetRoutes()
 
-    @Serializable data object EditFavorites : SheetRoutes()
+    @Serializable public data object EditFavorites : SheetRoutes()
 
-    val showSearchBar: Boolean
+    public val showSearchBar: Boolean
         get() =
             when (this) {
                 is Favorites,
@@ -37,7 +38,7 @@ sealed class SheetRoutes {
                 else -> false
             }
 
-    val allowTargeting: Boolean
+    public val allowTargeting: Boolean
         get() =
             when (this) {
                 is Favorites,
@@ -45,9 +46,9 @@ sealed class SheetRoutes {
                 else -> false
             }
 
-    companion object {
+    public companion object {
 
-        fun shouldResetSheetHeight(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+        public fun shouldResetSheetHeight(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             return !retainSheetSize(first, second) && pageChanged(first, second)
         }
 
@@ -55,7 +56,7 @@ sealed class SheetRoutes {
          * Whether the page within the nearby transit tab changed. Moving from StopDetails to
          * StopDetails is only considered a page change if the stopId changed.
          */
-        fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+        internal fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             return if (first is StopDetails && second is StopDetails) {
                 first.stopId != second.stopId
             } else {
@@ -66,7 +67,7 @@ sealed class SheetRoutes {
         /**
          * We want to retain sheet size unless moving into or out of stop details, or between tabs
          */
-        fun retainSheetSize(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+        internal fun retainSheetSize(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             val transitionSet = setOf(first?.let { it::class }, second?.let { it::class })
             return !transitionSet.contains(StopDetails::class) &&
                 transitionSet != setOf(NearbyTransit::class, Favorites::class) &&

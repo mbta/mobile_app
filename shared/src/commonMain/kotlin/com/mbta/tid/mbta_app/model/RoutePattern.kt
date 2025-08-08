@@ -6,7 +6,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RoutePattern(
+public data class RoutePattern
+internal constructor(
     override val id: String,
     @SerialName("direction_id") val directionId: Int,
     val name: String,
@@ -16,7 +17,7 @@ data class RoutePattern(
     @SerialName("route_id") val routeId: String,
 ) : Comparable<RoutePattern>, BackendObject {
     @Serializable
-    enum class Typicality {
+    public enum class Typicality {
         @SerialName("typical") Typical,
         @SerialName("deviation") Deviation,
         @SerialName("atypical") Atypical,
@@ -29,16 +30,16 @@ data class RoutePattern(
      *
      * If any typicality is unknown, the route should be shown, and so this will return true.
      */
-    fun isTypical() = typicality == null || typicality == Typicality.Typical
+    public fun isTypical(): Boolean = typicality == null || typicality == Typicality.Typical
 
-    override fun compareTo(other: RoutePattern) = sortOrder.compareTo(other.sortOrder)
+    override fun compareTo(other: RoutePattern): Int = sortOrder.compareTo(other.sortOrder)
 
-    data class PatternsForStop(
+    internal data class PatternsForStop(
         val allPatterns: List<RoutePattern>,
         val patternsNotSeenAtEarlierStops: Set<String>,
     )
 
-    companion object {
+    internal companion object {
 
         /**
          * Return the map of LineOrRoute => Stop => Patterns that are served by the given [stopIds].

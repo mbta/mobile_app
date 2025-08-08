@@ -9,7 +9,7 @@ import io.github.dellisd.spatialk.geojson.Position
  * Handles the specific condition where many points coincide - this is frequently true for parent
  * and child stations, for example.
  */
-class KdTree(elements: List<Pair<String, Position>>) {
+internal class KdTree(elements: List<Pair<String, Position>>) {
     internal val root: KdTreeNode? = KdTreeNode.build(elements, Axis.Longitude)
 
     /**

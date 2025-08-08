@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SearchResults(
-    val routes: List<RouteResult> = emptyList(),
-    val stops: List<StopResult> = emptyList(),
+public data class SearchResults(
+    internal val routes: List<RouteResult> = emptyList(),
+    internal val stops: List<StopResult> = emptyList(),
 )

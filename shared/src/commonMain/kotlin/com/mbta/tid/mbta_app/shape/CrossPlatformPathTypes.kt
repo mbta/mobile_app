@@ -1,11 +1,16 @@
 package com.mbta.tid.mbta_app.shape
 
-object Path {
-    data class Point(val x: Float, val y: Float)
+public object Path {
+    public data class Point(val x: Float, val y: Float)
 
-    data class Rect(val minX: Float, val maxX: Float, val minY: Float, val maxY: Float) {
-        val width = maxX - minX
-        val height = maxY - minY
+    public data class Rect(
+        internal val minX: Float,
+        internal val maxX: Float,
+        internal val minY: Float,
+        internal val maxY: Float,
+    ) {
+        internal val width: Float = maxX - minX
+        internal val height: Float = maxY - minY
     }
 }
 

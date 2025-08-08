@@ -35,7 +35,7 @@ private fun fetchGlobalData(
 }
 
 @Composable
-fun getGlobalData(
+internal fun getGlobalData(
     errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),

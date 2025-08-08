@@ -16,26 +16,26 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
 
-interface IPredictionsRepository {
-    fun connect(
+public interface IPredictionsRepository {
+    public fun connect(
         stopIds: List<String>,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     )
 
-    fun connectV2(
+    public fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
 
-    var lastUpdated: EasternTimeInstant?
+    public var lastUpdated: EasternTimeInstant?
 
-    fun shouldForgetPredictions(predictionCount: Int): Boolean
+    public fun shouldForgetPredictions(predictionCount: Int): Boolean
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class PredictionsRepository(private val socket: PhoenixSocket) :
+internal class PredictionsRepository(private val socket: PhoenixSocket) :
     IPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
@@ -176,18 +176,18 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockPredictionsRepository
+public class MockPredictionsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    val onConnect: () -> Unit = {},
-    val onConnectV2: (List<String>) -> Unit = {},
-    val onDisconnect: () -> Unit = {},
+    internal val onConnect: () -> Unit = {},
+    internal val onConnectV2: (List<String>) -> Unit = {},
+    internal val onDisconnect: () -> Unit = {},
     private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
     private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null,
 ) : IPredictionsRepository {
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         onConnect: () -> Unit = {},
         onConnectV2: (List<String>) -> Unit = {},
         onDisconnect: () -> Unit = {},
@@ -229,15 +229,15 @@ constructor(
         this.onMessage = onMessage
     }
 
-    var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
+    internal var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
 
-    fun sendMessage(message: PredictionsByStopMessageResponse) {
+    internal fun sendMessage(message: PredictionsByStopMessageResponse) {
         onMessage?.invoke(ApiResult.Ok(message))
     }
 
     override var lastUpdated: EasternTimeInstant? = null
 
-    override fun shouldForgetPredictions(predictionCount: Int) = false
+    override fun shouldForgetPredictions(predictionCount: Int): Boolean = false
 
     override fun disconnect() {
         onDisconnect()

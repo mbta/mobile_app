@@ -9,12 +9,12 @@ import io.ktor.http.path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IConfigRepository {
+public interface IConfigRepository {
 
-    suspend fun getConfig(): ApiResult<ConfigResponse>
+    public suspend fun getConfig(): ApiResult<ConfigResponse>
 }
 
-class ConfigRepository : IConfigRepository, KoinComponent {
+internal class ConfigRepository : IConfigRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getConfig(): ApiResult<ConfigResponse> =
@@ -25,8 +25,8 @@ class ConfigRepository : IConfigRepository, KoinComponent {
         }
 }
 
-class MockConfigRepository(
-    var response: ApiResult<ConfigResponse> =
+public class MockConfigRepository(
+    private var response: ApiResult<ConfigResponse> =
         ApiResult.Ok(ConfigResponse(mapboxPublicToken = "fake_mapbox_token"))
 ) : IConfigRepository, KoinComponent {
 
