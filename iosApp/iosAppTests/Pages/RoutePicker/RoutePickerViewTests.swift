@@ -446,6 +446,42 @@ final class RoutePickerViewTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
+    @MainActor func testPathSetInVM() {
+        let objects = ObjectCollectionBuilder()
+
+        let gotGlobalData = PassthroughSubject<Void, Never>()
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.global = MockGlobalRepository(
+            response: GlobalResponse(objects: objects),
+            onGet: { gotGlobalData.send() }
+        )
+        repositories.errorBanner = MockErrorBannerStateRepository()
+        loadKoinMocks(repositories: repositories)
+        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let mockSearchVM = MockSearchRoutesViewModel()
+
+        let exp = expectation(description: "Path updated in route search VM")
+        mockSearchVM.onSetPath = { path in
+            XCTAssertEqual(RoutePickerPath.Bus(), path)
+            exp.fulfill()
+        }
+
+        let sut = RoutePickerView(
+            context: RouteDetailsContext.Favorites(),
+            path: RoutePickerPath.Bus(),
+            errorBannerVM: errorBannerVM,
+            searchRoutesViewModel: mockSearchVM,
+            onOpenRouteDetails: { _, _ in },
+            onOpenPickerPath: { _, _ in },
+            onClose: {},
+            onBack: {}
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        wait(for: [exp], timeout: 2)
+    }
+
     @MainActor func testNoFilterResults() {
         let objects = ObjectCollectionBuilder()
         let route1 =

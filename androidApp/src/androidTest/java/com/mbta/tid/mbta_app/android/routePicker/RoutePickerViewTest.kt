@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.viewModel.MockSearchRoutesViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -506,6 +507,39 @@ class RoutePickerViewTest {
         )
         composeTestRule.onNodeWithText(route1.longName).assertIsDisplayed()
         composeTestRule.onNodeWithText(route71.longName).assertIsNotDisplayed()
+    }
+
+    @Test
+    fun testSetPathInVM() {
+        val objects = ObjectCollectionBuilder()
+
+        var setPath: RoutePickerPath? = null
+        val searchVM = MockSearchRoutesViewModel()
+        searchVM.onSetPath = { setPath = it }
+
+        val koin =
+            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
+
+        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+
+        composeTestRule.setContent {
+            KoinContext(koin.koin) {
+                RoutePickerView(
+                    path = RoutePickerPath.Bus,
+                    context = RouteDetailsContext.Favorites,
+                    onOpenPickerPath = { _, _ -> },
+                    onOpenRouteDetails = { _, _ -> },
+                    onRouteSearchExpandedChange = {},
+                    onBack = {},
+                    onClose = {},
+                    errorBannerViewModel = errorBannerVM,
+                    searchRoutesViewModel = searchVM,
+                )
+            }
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntil { setPath == RoutePickerPath.Bus }
     }
 
     @OptIn(ExperimentalTestApi::class)

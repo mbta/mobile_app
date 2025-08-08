@@ -126,4 +126,58 @@ class SearchResultRepositoryTest : KoinTest {
             assertEquals(ApiResult.Ok(expectedResponse), response)
         }
     }
+
+    @Test
+    fun testRouteSearchParams() {
+        val testQuery = "Red"
+        val mockEngine = MockEngine { request ->
+            assertEquals(
+                "query=$testQuery&line_id=Red&type=light_rail%2Cheavy_rail",
+                request.url.encodedQuery,
+            )
+            respond(
+                content =
+                    ByteReadChannel(
+                        """
+{
+  "data": {
+    "routes": [
+      {
+        "id": "Red",
+        "name": "Red Line",
+        "type": "route",
+        "route_type": "heavy_rail",
+        "long_name": "Red Line",
+        "rank": 2
+      }
+    ],
+    "stops": []
+  }
+}
+                        """
+                    ),
+                status = HttpStatusCode.OK,
+                headers = headersOf(HttpHeaders.ContentType, "application/json"),
+            )
+        }
+
+        startKoin {
+            modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
+        }
+        runBlocking {
+            val response =
+                SearchResultRepository()
+                    .getRouteFilterResults(
+                        testQuery,
+                        listOf("Red"),
+                        listOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL),
+                    )
+            val expectedResponse =
+                SearchResults(
+                    listOf(RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL)),
+                    emptyList(),
+                )
+            assertEquals(ApiResult.Ok(expectedResponse), response)
+        }
+    }
 }

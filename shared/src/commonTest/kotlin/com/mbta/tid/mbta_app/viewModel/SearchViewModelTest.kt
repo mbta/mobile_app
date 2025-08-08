@@ -73,7 +73,9 @@ class SearchViewModelTest {
                 MockGlobalRepository(GlobalResponse(objects)),
                 object : ISearchResultRepository {
                     override suspend fun getRouteFilterResults(
-                        query: String
+                        query: String,
+                        lineIds: List<String>?,
+                        routeTypes: List<RouteType>?,
                     ): ApiResult<SearchResults>? {
                         fail("Route search should not be called here")
                     }

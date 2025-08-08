@@ -411,6 +411,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 .accessibilitySortPriority(selected ? 1 : 0)
                 .frame(minHeight: 44)
                 .background(rowColor)
+                .simultaneousGesture(TapGesture())
                 .withRoundedBorder(color: selected ? .halo : Color.clear)
             }
         }

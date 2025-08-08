@@ -82,7 +82,7 @@ struct RoutePickerRootRow: View {
                 .background(routeColor)
                 .withRoundedBorder(width: 2)
             }
-        )
+        ).simultaneousGesture(TapGesture())
     }
 }
 
