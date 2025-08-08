@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import io.github.dellisd.spatialk.geojson.Position
 
-object PatternSorting {
+internal object PatternSorting {
     private fun patternServiceBucket(leafData: RouteCardData.Leaf) =
         when {
             // showing either a trip or an alert

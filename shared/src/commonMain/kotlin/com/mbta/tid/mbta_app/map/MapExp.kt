@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.model.MapStopRoute
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 
-object MapExp {
+internal object MapExp {
     // Get the array of MapStopRoute string values from a stop feature
     val routesExp = Exp.get(StopFeaturesBuilder.propMapRoutesKey)
 

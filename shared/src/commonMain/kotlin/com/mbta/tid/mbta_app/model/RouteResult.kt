@@ -4,15 +4,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class RouteResult(
+public data class RouteResult
+internal constructor(
     val id: String,
-    val rank: Int,
-    @SerialName("long_name") val longName: String,
-    @SerialName("name") val shortName: String,
-    @SerialName("route_type") val routeType: RouteType,
+    internal val rank: Int,
+    @SerialName("long_name") internal val longName: String,
+    @SerialName("name") internal val shortName: String,
+    @SerialName("route_type") internal val routeType: RouteType,
 ) {
     /** Convenience constructor for testing */
-    constructor(
+    public constructor(
         route: Route,
         rank: Int = 1,
     ) : this(

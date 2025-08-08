@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Stop
 import io.github.dellisd.spatialk.geojson.Point
 
-object ChildStopFeaturesBuilder {
+internal object ChildStopFeaturesBuilder {
     val childStopSourceId = "child-stop-source"
 
     val propNameKey = FeatureProperty<String>("name")

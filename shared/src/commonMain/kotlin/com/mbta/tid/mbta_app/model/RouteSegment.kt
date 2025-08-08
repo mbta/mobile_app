@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-interface IRouteSegment {
+internal interface IRouteSegment {
     val sourceRoutePatternId: String
     val sourceRouteId: String
     val stopIds: List<String>
@@ -11,7 +11,7 @@ interface IRouteSegment {
 }
 
 @Serializable
-data class RoutePatternKey(
+public data class RoutePatternKey(
     @SerialName("route_id") val routeId: String,
     @SerialName("route_pattern_id") val routePatternId: String,
 )
@@ -21,7 +21,7 @@ data class RoutePatternKey(
  * A sequential chunk of stops on a route pattern. A segment may only intersect with other segments
  * at the first and last stop.
  */
-data class RouteSegment(
+public data class RouteSegment(
     val id: String,
     @SerialName("source_route_pattern_id") override val sourceRoutePatternId: String,
     @SerialName("source_route_id") override val sourceRouteId: String,
@@ -34,7 +34,7 @@ data class RouteSegment(
      * Split this route segment into one or more `AlertAwareRouteSegments` based on the alerts for
      * the stops within this segment.
      */
-    fun splitAlertingSegments(
+    internal fun splitAlertingSegments(
         alertsByStop: Map<String, AlertAssociatedStop>
     ): List<AlertAwareRouteSegment> {
         val stopsAlertState = alertStateByStopId(alertsByStop)
@@ -110,7 +110,7 @@ data class RouteSegment(
      * Split the list of stops into segments based on whether or not they are alerting. Stops on
      * boundaries are included in both segments.
      */
-    companion object {
+    internal companion object {
         internal fun alertingSegments(
             stopIds: List<String>,
             stopsAlertState: Map<String, StopAlertState>,
@@ -173,7 +173,7 @@ data class RouteSegment(
  * segments that are adjacent to an alerting segment will include the consecutive stops up to and
  * including the adjacent alerting stop.
  */
-data class AlertAwareRouteSegment(
+internal data class AlertAwareRouteSegment(
     val id: String,
     override val sourceRoutePatternId: String,
     override val sourceRouteId: String,
@@ -182,7 +182,7 @@ data class AlertAwareRouteSegment(
     val alertState: SegmentAlertState,
 ) : IRouteSegment
 
-enum class SegmentAlertState {
+public enum class SegmentAlertState {
     Suspension,
     Shuttle,
     Normal,

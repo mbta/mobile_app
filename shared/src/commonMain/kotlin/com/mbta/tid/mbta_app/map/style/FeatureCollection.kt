@@ -1,3 +1,3 @@
 package com.mbta.tid.mbta_app.map.style
 
-data class FeatureCollection(val features: List<Feature>)
+public data class FeatureCollection internal constructor(val features: List<Feature>)

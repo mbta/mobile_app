@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineScope
 
-actual abstract class MoleculeScopeViewModel actual constructor() : ViewModel() {
-    actual val scope by lazy {
+public actual abstract class MoleculeScopeViewModel actual constructor() : ViewModel() {
+    internal actual val scope by lazy {
         CoroutineScope(viewModelScope.coroutineContext + AndroidUiDispatcher.Main)
     }
 }

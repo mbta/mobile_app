@@ -4,6 +4,6 @@ import com.mbta.tid.mbta_app.model.SearchResults
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SearchResponse(val data: SearchResults) {
+internal data class SearchResponse(val data: SearchResults) {
     override fun toString() = "[SearchResponse]"
 }

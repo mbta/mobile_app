@@ -20,7 +20,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
 @Serializable
-data class GlobalResponse(
+public data class GlobalResponse
+internal constructor(
     internal val facilities: Map<String, Facility>,
     internal val lines: Map<String, Line>,
     @SerialName("pattern_ids_by_stop") internal val patternIdsByStop: Map<String, List<String>>,
@@ -29,7 +30,7 @@ data class GlobalResponse(
     internal val stops: Map<String, Stop>,
     internal val trips: Map<String, Trip>,
 ) {
-    constructor(
+    public constructor(
         objects: ObjectCollectionBuilder
     ) : this(
         objects.facilities,
@@ -47,7 +48,7 @@ data class GlobalResponse(
         objects.trips,
     )
 
-    constructor(
+    public constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
     ) : this(
@@ -76,11 +77,11 @@ data class GlobalResponse(
     internal val routesByLineId: Map<String, List<Route>> =
         routes.values.filter { it.lineId != null && !it.isShuttle }.groupBy { it.lineId!! }
 
-    fun getFacility(facilityId: String?) = facilities[facilityId]
+    internal fun getFacility(facilityId: String?) = facilities[facilityId]
 
-    fun getRoute(routeId: String?) = routes[routeId]
+    public fun getRoute(routeId: String?): Route? = routes[routeId]
 
-    fun getRoutesForPicker(path: RoutePickerPath) =
+    public fun getRoutesForPicker(path: RoutePickerPath): List<RouteCardData.LineOrRoute> =
         routes.values
             .filter {
                 it.isListedRoute &&
@@ -117,16 +118,16 @@ data class GlobalResponse(
             }
             .distinct()
 
-    fun getStop(stopId: String?) = stops[stopId]
+    public fun getStop(stopId: String?): Stop? = stops[stopId]
 
-    fun getLine(lineId: String?) =
+    public fun getLine(lineId: String?): Line? =
         if (lineId != null) {
             lines[lineId]
         } else {
             null
         }
 
-    fun getLineOrRoute(lineOrRouteId: String): RouteCardData.LineOrRoute? {
+    public fun getLineOrRoute(lineOrRouteId: String): RouteCardData.LineOrRoute? {
         val route = this.getRoute(lineOrRouteId)
         val line = this.getLine(lineOrRouteId) ?: this.getLine(route?.lineId)
         return when {
@@ -138,14 +139,17 @@ data class GlobalResponse(
         }
     }
 
-    fun getPatternsFor(stopId: String): List<RoutePattern> {
+    internal fun getPatternsFor(stopId: String): List<RoutePattern> {
         val stop = stops[stopId] ?: return emptyList()
         val stopIds = stop.childStopIds + listOf(stopId)
         val patternIds = stopIds.flatMap { patternIdsByStop[it] ?: emptyList() }
         return patternIds.mapNotNull { routePatterns[it] }
     }
 
-    fun getPatternsFor(stopId: String, lineOrRoute: RouteCardData.LineOrRoute): List<RoutePattern> {
+    public fun getPatternsFor(
+        stopId: String,
+        lineOrRoute: RouteCardData.LineOrRoute,
+    ): List<RoutePattern> {
         val stop = stops[stopId] ?: return emptyList()
         val stopIds = stop.childStopIds + listOf(stopId)
         val patternIds = stopIds.flatMap { patternIdsByStop[it] ?: emptyList() }
@@ -154,11 +158,11 @@ data class GlobalResponse(
             .filter { lineOrRoute.containsRoute(it.routeId) }
     }
 
-    fun getPatternsFor(stopId: String, routeId: String): List<RoutePattern> {
+    internal fun getPatternsFor(stopId: String, routeId: String): List<RoutePattern> {
         return getPatternsFor(stopId).filter { it.routeId == routeId }
     }
 
-    fun getTypicalRoutesFor(stopId: String): List<Route> {
+    internal fun getTypicalRoutesFor(stopId: String): List<Route> {
         return getPatternsFor(stopId)
             .mapNotNull { routePattern ->
                 if (routePattern.typicality != RoutePattern.Typicality.Typical) {
@@ -169,7 +173,7 @@ data class GlobalResponse(
             .distinct()
     }
 
-    fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
+    public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
         if (alert == null || routes == null) return null
         val routeEntities =
             routes.flatMap { route ->
@@ -180,5 +184,5 @@ data class GlobalResponse(
         return parentStops.distinct()
     }
 
-    override fun toString() = "[GlobalResponse]"
+    override fun toString(): String = "[GlobalResponse]"
 }

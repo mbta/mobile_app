@@ -62,37 +62,38 @@ private fun stopRouteContentDescription(
     }
 }
 
-interface ISearchViewModel {
+public interface ISearchViewModel {
 
-    val models: StateFlow<SearchViewModel.State>
+    public val models: StateFlow<SearchViewModel.State>
 
-    fun setQuery(query: String)
+    public fun setQuery(query: String)
 
-    fun refreshHistory()
+    public fun refreshHistory()
 }
 
-class SearchViewModel(
+public class SearchViewModel(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
-    sealed interface Event {
-        data class SetQuery(val query: String) : Event
+    public sealed interface Event {
+        public data class SetQuery internal constructor(internal val query: String) : Event
 
-        data object RefreshHistory : Event
+        public data object RefreshHistory : Event
     }
 
-    sealed class State {
-        data object Loading : State()
+    public sealed class State {
+        public data object Loading : State()
 
-        data class RecentStops(val stops: List<StopResult>) : State()
+        public data class RecentStops(val stops: List<StopResult>) : State()
 
-        data class Results(val stops: List<StopResult>, val routes: List<RouteResult>) : State()
+        public data class Results(val stops: List<StopResult>, val routes: List<RouteResult>) :
+            State()
 
-        data object Error : State()
+        public data object Error : State()
 
-        fun isEmpty(includeRoutes: Boolean): Boolean =
+        public fun isEmpty(includeRoutes: Boolean): Boolean =
             when (this) {
                 Loading -> false
                 is RecentStops -> false
@@ -101,13 +102,13 @@ class SearchViewModel(
             }
     }
 
-    data class StopResult(
+    public data class StopResult(
         val id: String,
         val isStation: Boolean,
         val name: String,
         val routePills: List<RoutePillSpec>,
     ) {
-        companion object {
+        internal companion object {
             fun forStop(stopId: String, globalData: GlobalResponse?): StopResult? {
                 val stop = globalData?.getStop(stopId) ?: return null
                 val isStation = stop.locationType == LocationType.STATION
@@ -137,9 +138,9 @@ class SearchViewModel(
         }
     }
 
-    data class RouteResult(val id: String, val name: String, val routePill: RoutePillSpec) {
-        companion object {
-            fun forLineOrRoute(objectId: String, globalData: GlobalResponse?): RouteResult? {
+    public data class RouteResult(val id: String, val name: String, val routePill: RoutePillSpec) {
+        public companion object {
+            public fun forLineOrRoute(objectId: String, globalData: GlobalResponse?): RouteResult? {
                 val route = globalData?.getRoute(objectId)
                 val line = globalData?.getLine(objectId)
 
@@ -223,21 +224,21 @@ class SearchViewModel(
         return state
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String): Unit = fireEvent(Event.SetQuery(query))
 
-    override fun refreshHistory() = fireEvent(Event.RefreshHistory)
+    override fun refreshHistory(): Unit = fireEvent(Event.RefreshHistory)
 }
 
-class MockSearchViewModel
+public class MockSearchViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: SearchViewModel.State = SearchViewModel.State.Loading) :
     ISearchViewModel {
-    var onSetQuery = { _: String -> }
-    var onRefreshHistory = {}
-    override val models = MutableStateFlow(initialState)
+    public var onSetQuery: (String) -> Unit = {}
+    internal var onRefreshHistory = {}
+    override val models: MutableStateFlow<SearchViewModel.State> = MutableStateFlow(initialState)
 
     override fun setQuery(query: String) {
         onSetQuery(query)

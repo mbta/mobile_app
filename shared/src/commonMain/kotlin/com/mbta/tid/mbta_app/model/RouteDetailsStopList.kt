@@ -5,16 +5,16 @@ import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment>) {
+public data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment>) {
 
     /** A subset of consecutive stops that are all typical or all non-typical. */
-    data class Segment(val stops: List<Entry>, val isTypical: Boolean) {
+    public data class Segment(val stops: List<Entry>, val isTypical: Boolean) {
         /**
          * Assuming that this segment will be collapsed, returns the connections that should be
          * drawn in the toggle, and whether or not they should be twisted because they contain
          * stops.
          */
-        fun twistedConnections(): List<Pair<RouteBranchSegment.StickConnection, Boolean>> {
+        public fun twistedConnections(): List<Pair<RouteBranchSegment.StickConnection, Boolean>> {
             val lanesWithStops = stops.map { it.stopLane }.toSet()
             val connectionsBefore =
                 stops.first().stickConnections.filter { it.fromVPos == RouteBranchSegment.VPos.Top }
@@ -58,18 +58,18 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
         }
     }
 
-    data class Entry(
+    public data class Entry(
         val stop: Stop,
         val stopLane: RouteBranchSegment.Lane,
         val stickConnections: List<RouteBranchSegment.StickConnection>,
         val connectingRoutes: List<Route>,
     )
 
-    data class RouteParameters(
+    public data class RouteParameters(
         val availableDirections: List<Int>,
         val directions: List<Direction>,
     ) {
-        constructor(
+        public constructor(
             lineOrRoute: RouteCardData.LineOrRoute,
             globalData: GlobalResponse,
         ) : this(
@@ -96,9 +96,9 @@ data class RouteDetailsStopList(val directionId: Int, val segments: List<Segment
         )
     }
 
-    companion object {
+    public companion object {
 
-        suspend fun fromPieces(
+        public suspend fun fromPieces(
             routeId: String,
             directionId: Int,
             routeStops: RouteStopsResult?,

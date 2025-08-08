@@ -11,16 +11,16 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ISchedulesRepository {
-    suspend fun getSchedule(
+public interface ISchedulesRepository {
+    public suspend fun getSchedule(
         stopIds: List<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse>
 
-    suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse>
+    public suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse>
 }
 
-class SchedulesRepository : ISchedulesRepository, KoinComponent {
+internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
 
     private val mobileBackendClient: MobileBackendClient by inject()
 
@@ -45,18 +45,18 @@ class SchedulesRepository : ISchedulesRepository, KoinComponent {
     }
 }
 
-class MockScheduleRepository(
+public class MockScheduleRepository(
     private val response: ApiResult<ScheduleResponse>,
     private val callback: (stopIds: List<String>) -> Unit = {},
 ) : ISchedulesRepository {
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
         callback: (stopIds: List<String>) -> Unit = {},
     ) : this(ApiResult.Ok(scheduleResponse), callback)
 
-    constructor() :
+    public constructor() :
         this(
             scheduleResponse = ScheduleResponse(schedules = listOf(), trips = mapOf()),
             callback = {},
@@ -76,7 +76,7 @@ class MockScheduleRepository(
     }
 }
 
-class IdleScheduleRepository : ISchedulesRepository {
+public class IdleScheduleRepository : ISchedulesRepository {
     override suspend fun getSchedule(
         stopIds: List<String>,
         now: EasternTimeInstant,

@@ -337,19 +337,22 @@ private data class EvaluationContext(
 }
 
 @JvmName("evaluateBoolean")
-fun Exp<Boolean>.evaluate(featureProperties: FeatureProperties, zoom: Double): Boolean {
+internal fun Exp<Boolean>.evaluate(featureProperties: FeatureProperties, zoom: Double): Boolean {
     val result = EvaluationContext(featureProperties, zoom).evaluate(this.asJson())
     return result.jsonPrimitive.boolean
 }
 
 @JvmName("evaluateResolvedImage")
-fun Exp<ResolvedImage>.evaluate(featureProperties: FeatureProperties, zoom: Double): String {
+internal fun Exp<ResolvedImage>.evaluate(
+    featureProperties: FeatureProperties,
+    zoom: Double,
+): String {
     val result = EvaluationContext(featureProperties, zoom).evaluate(this.asJson())
     return result.jsonPrimitive.content
 }
 
 @JvmName("evaluateString")
-fun Exp<String>.evaluate(featureProperties: FeatureProperties, zoom: Double): String {
+internal fun Exp<String>.evaluate(featureProperties: FeatureProperties, zoom: Double): String {
     val result = EvaluationContext(featureProperties, zoom).evaluate(this.asJson())
     return result.jsonPrimitive.content
 }

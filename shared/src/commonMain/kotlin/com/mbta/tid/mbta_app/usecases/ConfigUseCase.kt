@@ -6,12 +6,12 @@ import com.mbta.tid.mbta_app.repositories.IConfigRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import org.koin.core.component.KoinComponent
 
-class ConfigUseCase(
+public class ConfigUseCase(
     private val configRepo: IConfigRepository,
     private val sentryRepo: ISentryRepository,
 ) : KoinComponent {
 
-    suspend fun getConfig(): ApiResult<ConfigResponse> =
+    public suspend fun getConfig(): ApiResult<ConfigResponse> =
         try {
             configRepo.getConfig()
         } catch (e: Exception) {

@@ -10,35 +10,37 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 
-data class AlertSummary(
-    val effect: Alert.Effect,
+public data class AlertSummary(
+    internal val effect: Alert.Effect,
     val location: Location? = null,
     val timeframe: Timeframe? = null,
 ) {
-    sealed class Location {
-        data class DirectionToStop(val direction: Direction, val endStopName: String) : Location()
-
-        data class SingleStop(val stopName: String) : Location()
-
-        data class StopToDirection(val startStopName: String, val direction: Direction) :
+    public sealed class Location {
+        public data class DirectionToStop(val direction: Direction, val endStopName: String) :
             Location()
 
-        data class SuccessiveStops(val startStopName: String, val endStopName: String) : Location()
+        public data class SingleStop(val stopName: String) : Location()
+
+        public data class StopToDirection(val startStopName: String, val direction: Direction) :
+            Location()
+
+        public data class SuccessiveStops(val startStopName: String, val endStopName: String) :
+            Location()
     }
 
-    sealed class Timeframe {
-        data object EndOfService : Timeframe()
+    public sealed class Timeframe {
+        public data object EndOfService : Timeframe()
 
-        data object Tomorrow : Timeframe()
+        public data object Tomorrow : Timeframe()
 
-        data class LaterDate(val time: EasternTimeInstant) : Timeframe()
+        public data class LaterDate(val time: EasternTimeInstant) : Timeframe()
 
-        data class ThisWeek(val time: EasternTimeInstant) : Timeframe()
+        public data class ThisWeek(val time: EasternTimeInstant) : Timeframe()
 
-        data class Time(val time: EasternTimeInstant) : Timeframe()
+        public data class Time(val time: EasternTimeInstant) : Timeframe()
     }
 
-    companion object {
+    internal companion object {
         suspend fun summarizing(
             alert: Alert,
             stopId: String,

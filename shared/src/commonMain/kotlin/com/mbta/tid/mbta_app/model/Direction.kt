@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.model
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 
-data class Direction(var name: String?, var destination: String?, var id: Int) {
+public data class Direction(var name: String?, var destination: String?, var id: Int) {
     /**
      * This constructor is used to provide additional context to a Direction to allow for overriding
      * the destination label in cases where a route or line has branching. We want to display a
@@ -17,7 +17,7 @@ data class Direction(var name: String?, var destination: String?, var id: Int) {
      * that the direction label will just display the direction name.
      */
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         directionId: Int,
         route: Route,
         stop: Stop? = null,
@@ -32,7 +32,7 @@ data class Direction(var name: String?, var destination: String?, var id: Int) {
         directionId,
     )
 
-    companion object {
+    internal companion object {
         // This is split into a separate variable for a hardcoded check
         private val northStationDestination = "North Station & North"
         /*

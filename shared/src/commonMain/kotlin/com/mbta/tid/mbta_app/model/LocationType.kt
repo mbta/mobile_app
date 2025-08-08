@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class LocationType {
+public enum class LocationType {
     @SerialName("stop") STOP,
     @SerialName("station") STATION,
     @SerialName("entrance_exit") ENTRANCE_EXIT,

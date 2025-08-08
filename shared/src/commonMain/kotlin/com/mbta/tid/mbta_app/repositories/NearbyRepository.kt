@@ -9,16 +9,16 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import io.github.dellisd.spatialk.geojson.Position
 import org.koin.core.component.KoinComponent
 
-interface INearbyRepository {
+public interface INearbyRepository {
     /**
      * Gets the list of stops within 0.5 miles (or 1 mile for CR). Includes only stops with
      * [LocationType.STOP]. Omits stops that serves route pattern that are all served by closer
      * stops.
      */
-    fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
+    public fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
 }
 
-class NearbyRepository : KoinComponent, INearbyRepository {
+public class NearbyRepository : KoinComponent, INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> {
         val searchPosition = Position(latitude = location.latitude, longitude = location.longitude)
 
@@ -90,15 +90,15 @@ class NearbyRepository : KoinComponent, INearbyRepository {
     }
 }
 
-class MockNearbyRepository(
-    val response: NearbyResponse,
-    val stopIds: List<String> = response.stopIds,
+public class MockNearbyRepository(
+    private val response: NearbyResponse,
+    private val stopIds: List<String> = response.stopIds,
 ) : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         stopIds
 }
 
-class IdleNearbyRepository : INearbyRepository {
+internal class IdleNearbyRepository : INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
         emptyList()
 }

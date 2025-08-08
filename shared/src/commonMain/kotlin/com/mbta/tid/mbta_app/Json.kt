@@ -4,9 +4,9 @@ import io.github.dellisd.spatialk.geojson.Feature
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-val json = Json {
+public val json: Json = Json {
     ignoreUnknownKeys = true
     coerceInputValues = true
 }
 
-fun Feature.propertiesToString() = json.encodeToString(properties)
+internal fun Feature.propertiesToString() = json.encodeToString(properties)

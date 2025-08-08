@@ -16,13 +16,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IGlobalRepository {
-    val state: StateFlow<GlobalResponse?>
+public interface IGlobalRepository {
+    public val state: StateFlow<GlobalResponse?>
 
-    suspend fun getGlobalData(): ApiResult<GlobalResponse>
+    public suspend fun getGlobalData(): ApiResult<GlobalResponse>
 }
 
-class GlobalRepository(
+internal class GlobalRepository(
     val cache: ResponseCache<GlobalResponse> =
         ResponseCache.create(cacheKey = "global", invalidationKey = "2025-03-19")
 ) : IGlobalRepository, KoinComponent {
@@ -39,12 +39,13 @@ class GlobalRepository(
         }
 }
 
-class MockGlobalRepository
+public class MockGlobalRepository
 @DefaultArgumentInterop.Enabled
-constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) : IGlobalRepository {
+constructor(private val result: ApiResult<GlobalResponse>, private val onGet: () -> Unit = {}) :
+    IGlobalRepository {
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         response: GlobalResponse =
             GlobalResponse(
                 emptyMap(),
@@ -58,7 +59,7 @@ constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) :
         onGet: () -> Unit = {},
     ) : this(ApiResult.Ok(response), onGet)
 
-    override val state =
+    override val state: MutableStateFlow<GlobalResponse?> =
         MutableStateFlow(
             when (result) {
                 is ApiResult.Error -> null
@@ -71,13 +72,13 @@ constructor(val result: ApiResult<GlobalResponse>, val onGet: () -> Unit = {}) :
         return result
     }
 
-    fun updateGlobalData(newGlobal: GlobalResponse?) {
+    internal fun updateGlobalData(newGlobal: GlobalResponse?) {
         state.update { newGlobal }
     }
 }
 
-class IdleGlobalRepository : IGlobalRepository {
-    override val state = MutableStateFlow(null)
+public class IdleGlobalRepository : IGlobalRepository {
+    override val state: MutableStateFlow<GlobalResponse?> = MutableStateFlow(null)
 
     override suspend fun getGlobalData(): ApiResult<GlobalResponse> {
         return suspendCancellableCoroutine {}

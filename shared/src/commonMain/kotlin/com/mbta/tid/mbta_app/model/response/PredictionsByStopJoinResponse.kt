@@ -8,14 +8,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PredictionsByStopJoinResponse(
+public data class PredictionsByStopJoinResponse(
     @SerialName("predictions_by_stop")
     internal val predictionsByStop: Map<String, Map<String, Prediction>>,
     internal val trips: Map<String, Trip>,
     internal val vehicles: Map<String, Vehicle>,
 ) {
 
-    constructor(
+    public constructor(
         objects: ObjectCollectionBuilder
     ) : this(
         objects.predictions.values
@@ -25,7 +25,7 @@ data class PredictionsByStopJoinResponse(
         objects.vehicles,
     )
 
-    constructor(
+    public constructor(
         partialResponse: PredictionsByStopMessageResponse
     ) : this(
         mapOf(partialResponse.stopId to partialResponse.predictions),
@@ -37,7 +37,7 @@ data class PredictionsByStopJoinResponse(
      * Merge the latest predictions for a single stop into the predictions for all stops. Removes
      * vehicles & trips that are no longer referenced in any predictions
      */
-    fun mergePredictions(
+    public fun mergePredictions(
         updatedPredictions: PredictionsByStopMessageResponse
     ): PredictionsByStopJoinResponse {
 
@@ -67,7 +67,7 @@ data class PredictionsByStopJoinResponse(
     }
 
     /** Flattens the `predictionsByStop` field into a single map of predictions by id */
-    fun toPredictionsStreamDataResponse(): PredictionsStreamDataResponse {
+    public fun toPredictionsStreamDataResponse(): PredictionsStreamDataResponse {
         val predictionsById = predictionsByStop.flatMap { it.value.values }.associateBy { it.id }
         return PredictionsStreamDataResponse(
             predictions = predictionsById,
@@ -76,13 +76,14 @@ data class PredictionsByStopJoinResponse(
         )
     }
 
-    fun predictionQuantity() = predictionsByStop.map { it.value.size }.sum()
+    public fun predictionQuantity(): Int = predictionsByStop.map { it.value.size }.sum()
 
-    override fun toString() = "[PredictionsByStopJoinResponse]"
+    override fun toString(): String = "[PredictionsByStopJoinResponse]"
 
-    companion object {
-        val empty = PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
+    public companion object {
+        public val empty: PredictionsByStopJoinResponse =
+            PredictionsByStopJoinResponse(emptyMap(), emptyMap(), emptyMap())
     }
 }
 
-fun PredictionsByStopJoinResponse?.orEmpty() = this ?: PredictionsByStopJoinResponse.empty
+internal fun PredictionsByStopJoinResponse?.orEmpty() = this ?: PredictionsByStopJoinResponse.empty

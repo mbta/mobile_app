@@ -6,7 +6,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Alert(
+public data class Alert
+internal constructor(
     override val id: String,
     @SerialName("active_period") val activePeriod: List<ActivePeriod>,
     val cause: Cause = Cause.UnknownCause,
@@ -42,9 +43,9 @@ data class Alert(
             else -> StopAlertState.Issue
         }
 
-    val hasStopsSpecified = informedEntity.all { it.stop != null }
+    internal val hasStopsSpecified = informedEntity.all { it.stop != null }
 
-    val significance =
+    val significance: AlertSignificance =
         when (effect) {
             // suspensions or shuttles can reasonably apply to an entire route
             in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
@@ -72,31 +73,33 @@ data class Alert(
             else -> AlertSignificance.None
         }
 
-    val hasNoThroughService = effect in setOf(Effect.Shuttle, Effect.Suspension)
+    val hasNoThroughService: Boolean = effect in setOf(Effect.Shuttle, Effect.Suspension)
 
-    suspend fun summary(
+    public suspend fun summary(
         stopId: String,
         directionId: Int,
         patterns: List<RoutePattern>,
         atTime: EasternTimeInstant,
         global: GlobalResponse,
-    ) = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
+    ): AlertSummary? = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
 
     @Serializable
-    data class ActivePeriod(val start: EasternTimeInstant, val end: EasternTimeInstant?) {
+    public data class ActivePeriod
+    internal constructor(val start: EasternTimeInstant, val end: EasternTimeInstant?) {
         // This is only nullable because it's set after serialization within the Alert init,
         // in practice it should always be populated with a value, unless something has gone wrong.
-        var durationCertainty: DurationCertainty? = null
+        internal var durationCertainty: DurationCertainty? = null
 
-        fun activeAt(instant: EasternTimeInstant): Boolean {
+        internal fun activeAt(instant: EasternTimeInstant): Boolean {
             if (end == null) {
                 return start <= instant
             }
             return instant in start..end
         }
 
-        val startServiceDate = start.serviceDate
-        val endServiceDate = end?.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
+        internal val startServiceDate = start.serviceDate
+        internal val endServiceDate =
+            end?.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
 
         val fromStartOfService: Boolean
             get() = start.local.hour == 3 && start.local.minute == 0
@@ -113,7 +116,7 @@ data class Alert(
     }
 
     @Serializable
-    enum class Cause {
+    public enum class Cause {
         @SerialName("accident") Accident,
         @SerialName("amtrak") Amtrak,
         @SerialName("amtrak_train_traffic") AmtrakTrainTraffic,
@@ -174,14 +177,14 @@ data class Alert(
     }
 
     @Serializable
-    enum class DurationCertainty {
+    public enum class DurationCertainty {
         @SerialName("estimated") Estimated,
         @SerialName("known") Known,
         @SerialName("unknown") Unknown,
     }
 
     @Serializable
-    enum class Effect {
+    public enum class Effect {
         @SerialName("access_issue") AccessIssue,
         @SerialName("additional_service") AdditionalService,
         @SerialName("amber_alert") AmberAlert,
@@ -218,8 +221,9 @@ data class Alert(
     }
 
     @Serializable
-    data class InformedEntity(
-        val activities: List<Activity>,
+    public data class InformedEntity
+    internal constructor(
+        internal val activities: List<Activity>,
         @SerialName("direction_id") val directionId: Int? = null,
         val facility: String? = null,
         val route: String? = null,
@@ -228,7 +232,7 @@ data class Alert(
         val trip: String? = null,
     ) {
         @Serializable
-        enum class Activity {
+        public enum class Activity {
             @SerialName("board") Board,
             @SerialName("bringing_bike") BringingBike,
             @SerialName("exit") Exit,
@@ -239,7 +243,7 @@ data class Alert(
             @SerialName("using_wheelchair") UsingWheelchair,
         }
 
-        fun appliesTo(
+        internal fun appliesTo(
             directionId: Int? = null,
             facilityId: String? = null,
             routeId: String? = null,
@@ -259,7 +263,7 @@ data class Alert(
         }
 
         /** A more expressive way to represent a set of constraints than [appliesTo]. */
-        inner class PredicateBuilder {
+        internal inner class PredicateBuilder {
             var isSatisfied = true
 
             fun checkActivity(activity: Activity) {
@@ -331,7 +335,7 @@ data class Alert(
             }
         }
 
-        fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {
+        internal fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {
             val builder = PredicateBuilder()
             builder.block()
             return builder.isSatisfied
@@ -339,25 +343,29 @@ data class Alert(
     }
 
     @Serializable
-    enum class Lifecycle {
+    public enum class Lifecycle {
         @SerialName("new") New,
         @SerialName("ongoing") Ongoing,
         @SerialName("ongoing_upcoming") OngoingUpcoming,
         @SerialName("upcoming") Upcoming,
     }
 
-    fun currentPeriod(time: EasternTimeInstant) = activePeriod.firstOrNull { it.activeAt(time) }
+    public fun currentPeriod(time: EasternTimeInstant): ActivePeriod? =
+        activePeriod.firstOrNull { it.activeAt(time) }
 
-    fun isActive(time: EasternTimeInstant) = currentPeriod(time) != null
+    internal fun isActive(time: EasternTimeInstant) = currentPeriod(time) != null
 
-    fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) = informedEntity.any(predicate)
+    internal fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) =
+        informedEntity.any(predicate)
 
-    fun anyInformedEntitySatisfies(predicateBuilder: InformedEntity.PredicateBuilder.() -> Unit) =
-        informedEntity.any { it.satisfies(predicateBuilder) }
+    internal fun anyInformedEntitySatisfies(
+        predicateBuilder: InformedEntity.PredicateBuilder.() -> Unit
+    ) = informedEntity.any { it.satisfies(predicateBuilder) }
 
-    fun matchingEntities(predicate: (InformedEntity) -> Boolean) = informedEntity.filter(predicate)
+    internal fun matchingEntities(predicate: (InformedEntity) -> Boolean) =
+        informedEntity.filter(predicate)
 
-    companion object {
+    internal companion object {
         /**
          * Returns alerts that are applicable to the passed in routes, stops, and trips
          *
@@ -401,11 +409,10 @@ data class Alert(
         fun elevatorAlerts(alerts: Collection<Alert>, stopIds: Set<String>): List<Alert> {
             return alerts
                 .filter {
-                    it.effect == Alert.Effect.ElevatorClosure &&
+                    it.effect == Effect.ElevatorClosure &&
                         it.anyInformedEntity { entity ->
-                            entity.activities.contains(
-                                Alert.InformedEntity.Activity.UsingWheelchair
-                            ) && stopIds.any { stopId -> entity.appliesTo(stopId = stopId) }
+                            entity.activities.contains(InformedEntity.Activity.UsingWheelchair) &&
+                                stopIds.any { stopId -> entity.appliesTo(stopId = stopId) }
                         }
                 }
                 .distinct()
@@ -498,5 +505,5 @@ data class Alert(
     }
 }
 
-fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
+internal fun List<Alert>.discardTrackChangesAtCRCore(isCRCore: Boolean): List<Alert> =
     if (isCRCore) this.filterNot { it.effect == Alert.Effect.TrackChange } else this

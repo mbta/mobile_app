@@ -16,30 +16,31 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class StopFeatureData(val stop: MapStop, val feature: Feature)
+internal data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
-object StopFeaturesBuilder {
-    val stopSourceId = "stop-source"
+public object StopFeaturesBuilder {
+    public val stopSourceId: String = "stop-source"
 
-    val propIdKey = FeatureProperty<String>("id")
-    val propIsTerminalKey = FeatureProperty<Boolean>("isTerminal")
+    public val propIdKey: FeatureProperty<String> = FeatureProperty("id")
+    internal val propIsTerminalKey = FeatureProperty<Boolean>("isTerminal")
     // Map routes is an array of MapStopRoute enum names
-    val propMapRoutesKey = FeatureProperty<List<String>>("mapRoutes")
-    val propNameKey = FeatureProperty<String>("name")
+    internal val propMapRoutesKey = FeatureProperty<List<String>>("mapRoutes")
+    internal val propNameKey = FeatureProperty<String>("name")
     // Route IDs are in a map keyed by MapStopRoute enum names, each with a list of IDs
-    val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
-    val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
-    val propSortOrderKey = FeatureProperty<Number>("sortOrder")
+    internal val propRouteIdsKey = FeatureProperty<Map<String, List<String>>>("routeIds")
+    internal val propServiceStatusKey = FeatureProperty<Map<String, String>>("serviceStatus")
+    internal val propSortOrderKey = FeatureProperty<Number>("sortOrder")
 
     /** Routes and directions are stored as "<route id>/<direction id>". */
-    val propAllRouteDirectionsKey = FeatureProperty<List<String>>("allRouteDirections")
+    internal val propAllRouteDirectionsKey = FeatureProperty<List<String>>("allRouteDirections")
 
     @DefaultArgumentInterop.Enabled
-    suspend fun buildCollection(
+    public suspend fun buildCollection(
         globalMapData: GlobalMapData?,
         routeSourceDetails: List<RouteSourceData>,
         coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) = buildCollection(globalMapData?.mapStops.orEmpty(), routeSourceDetails, coroutineDispatcher)
+    ): FeatureCollection =
+        buildCollection(globalMapData?.mapStops.orEmpty(), routeSourceDetails, coroutineDispatcher)
 
     @DefaultArgumentInterop.Enabled
     internal suspend fun buildCollection(
