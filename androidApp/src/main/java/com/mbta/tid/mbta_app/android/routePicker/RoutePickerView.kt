@@ -47,7 +47,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeTyp
 import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
 import com.mbta.tid.mbta_app.viewModel.SearchRoutesViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun RoutePickerView(
@@ -59,7 +59,7 @@ fun RoutePickerView(
     onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
-    searchRoutesViewModel: ISearchRoutesViewModel = koinViewModel(),
+    searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
     val globalData = getGlobalData("RoutePickerView.globalData")
     var searchInputState by rememberSaveable { mutableStateOf("") }

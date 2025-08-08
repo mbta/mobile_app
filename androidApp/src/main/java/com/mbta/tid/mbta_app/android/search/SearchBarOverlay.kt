@@ -27,8 +27,8 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.SearchInput
 import com.mbta.tid.mbta_app.android.search.results.SearchResultsView
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.viewModel.SearchViewModel
-import org.koin.androidx.compose.koinViewModel
+import com.mbta.tid.mbta_app.viewModel.ISearchViewModel
+import org.koin.compose.koinInject
 
 @ExperimentalMaterial3Api
 @Composable
@@ -39,7 +39,7 @@ fun SearchBarOverlay(
     onStopNavigation: (stopId: String) -> Unit,
     onRouteNavigation: (routeId: String) -> Unit,
     inputFieldFocusRequester: FocusRequester,
-    searchVM: SearchViewModel = koinViewModel(),
+    searchVM: ISearchViewModel = koinInject(),
     onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},
     content: @Composable () -> Unit,
 ) {
