@@ -7344,7 +7344,51 @@
       }
     },
     "Dismiss" : {
-      "comment" : "VoiceOver label for a dismiss  button"
+      "comment" : "VoiceOver label for a dismiss  button",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Despedir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rejeter"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ranvwaye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liberar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Miễn nhiệm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "解雇"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "解僱"
+          }
+        }
+      }
     },
     "display more information" : {
       "comment" : "Android talk back hint for tapping on the trip details header on the stop page",
@@ -13584,54 +13628,6 @@
         }
       }
     },
-    "Pins route to the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is not favorited",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fija la ruta en la parte superior de la lista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Épingler le trajet en haut de la liste"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mete wout nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fixa rota no topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ghim lộ trình lên đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将线路置顶"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將線路置頂"
-          }
-        }
-      }
-    },
     "Plan a route with Trip Planner" : {
       "localizations" : {
         "es" : {
@@ -19217,7 +19213,51 @@
       }
     },
     "Tip: %1$@" : {
-      "comment" : "Voice over text for a tip that will appear in a pop-up message. ex: 'Tip: tap stops to add to favorites'"
+      "comment" : "Voice over text for a tip that will appear in a pop-up message. ex: 'Tip: tap stops to add to favorites'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Propina: %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Astuce : %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Konsèy: %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dica: %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mẹo: %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示：%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示：%1$@"
+          }
+        }
+      }
     },
     "To find stops, select a route first" : {
       "comment" : "Hint text on the route picker page when a search term has been entered in the filter input, in case people are searching a stop name and are trying to understand why it isn't showing up",
@@ -20238,54 +20278,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bỏ ghim tuyến đường khỏi đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在列表中取消置顶路线"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從清單頂部取消固定線路"
-          }
-        }
-      }
-    },
-    "Unpins route from the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
-      "extractionState" : "stale",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desancla la ruta de la parte superior de la lista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Désépingler le trajet du haut de la liste"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detache wout la soti nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafixa a rota do topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gỡ ghim tuyến đường khỏi đầu danh sách"
           }
         },
         "zh-Hans-CN" : {
