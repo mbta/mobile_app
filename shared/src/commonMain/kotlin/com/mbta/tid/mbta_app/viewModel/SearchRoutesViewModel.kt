@@ -72,13 +72,14 @@ class SearchRoutesViewModel(
         LaunchedEffect(null) {
             events.collect { event ->
                 when (event) {
-                    is Event.SetPath -> path = event.path
+                    is Event.SetPath -> {
+                        path = event.path
+                        state = State.Unfiltered
+                    }
                     is Event.SetQuery -> query = event.query
                 }
             }
         }
-
-        LaunchedEffect(path) { setQuery("") }
 
         LaunchedEffect(query) {
             analytics.performedRouteFilter(query)

@@ -69,6 +69,7 @@ fun RoutePickerView(
     val routeScroll = rememberScrollState()
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) { searchInputState = "" }
     LaunchedEffect(searchInputState) { searchRoutesViewModel.setQuery(searchInputState) }
     LaunchedEffect(path) { searchRoutesViewModel.setPath(path) }
 

@@ -135,13 +135,13 @@ struct RoutePickerView: View {
         SheetHeader(
             title: headerTitle,
             titleColor: path.textColor,
-            buttonColor: Color.text.opacity(0.6),
+            buttonColor: Color.translucentContrast,
             buttonTextColor: Color.fill3,
             onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
             rightActionContents: {
                 NavTextButton(
                     string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                    backgroundColor: Color.text.opacity(0.6),
+                    backgroundColor: Color.translucentContrast,
                     textColor: Color.fill3,
                     action: onClose
                 )

@@ -271,7 +271,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             SheetHeader(
                 title: lineOrRoute.name,
                 titleColor: textColor,
-                buttonColor: Color.text.opacity(0.6),
+                buttonColor: Color.translucentContrast,
                 onBack: onBack,
                 onClose: onClose
             )
@@ -409,9 +409,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 .accessibilityAddTraits(selected ? [.isSelected, .isHeader] : [])
                 .accessibilityHeading(selected ? .h2 : .unspecified)
                 .accessibilitySortPriority(selected ? 1 : 0)
+                .preventScrollTaps()
                 .frame(minHeight: 44)
                 .background(rowColor)
-                .simultaneousGesture(TapGesture())
                 .withRoundedBorder(color: selected ? .halo : Color.clear)
             }
         }
