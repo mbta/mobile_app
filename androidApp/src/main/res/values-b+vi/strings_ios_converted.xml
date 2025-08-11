@@ -85,6 +85,7 @@
     <string name="disabled_bus_lowercase">sự cố xe buýt</string>
     <string name="disabled_train">Tàu bị sự cố</string>
     <string name="disabled_train_lowercase">sự cố tàu</string>
+    <string name="dismiss">Miễn nhiệm</string>
     <string name="display_more_information">hiển thị thêm thông tin</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="dock_closed">Bến tàu đóng cửa</string>
@@ -359,6 +360,7 @@
     <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ dành cho việc trả khách</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
+    <string name="toast_tip_prefix">Mẹo: %1$s</string>
     <string name="track_change">Thay đổi đường ray</string>
     <string name="track_change_sentence_case">Thay đổi đường ray</string>
     <string name="track_number">Đường ray %1$s</string>

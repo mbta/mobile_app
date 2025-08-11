@@ -23,6 +23,7 @@ final class ToastViewTests: XCTestCase {
         let textOnly = ToastState(
             message: "This is a text only toast",
             duration: ToastViewModel.Duration.indefinite,
+            isTip: false,
             action: nil,
         )
 
@@ -36,6 +37,7 @@ final class ToastViewTests: XCTestCase {
         let close = ToastState(
             message: "This is a toast with a close button",
             duration: ToastViewModel.Duration.indefinite,
+            isTip: false,
             action: ToastViewModel.ToastActionClose(onClose: {})
         )
 
@@ -51,6 +53,7 @@ final class ToastViewTests: XCTestCase {
         let action = ToastState(
             message: "This is a toast with an action button",
             duration: ToastViewModel.Duration.indefinite,
+            isTip: false,
             action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
         )
 

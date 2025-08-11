@@ -87,6 +87,7 @@
     <string name="disabled_bus_lowercase">ônibus com defeito</string>
     <string name="disabled_train">Trem desativado</string>
     <string name="disabled_train_lowercase">trem com defeito</string>
+    <string name="dismiss">Liberar</string>
     <string name="display_more_information">exibir mais informações</string>
     <string name="displays_more_info">exibe mais informações</string>
     <string name="dock_closed">Doca fechada</string>
@@ -367,6 +368,7 @@
     <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
     <string name="tie_replacement">Troca de pneu</string>
     <string name="tie_replacement_lowercase">substituição de dormentes</string>
+    <string name="toast_tip_prefix">Dica: %1$s</string>
     <string name="track_change">Alteração de trilho</string>
     <string name="track_change_sentence_case">Alteração de trilho</string>
     <string name="track_number">Trilho %1$s</string>

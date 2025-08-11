@@ -90,6 +90,7 @@
     <string name="disabled_bus_lowercase">otobis anpann</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
     <string name="disabled_train_lowercase">tren anpann</string>
+    <string name="dismiss">Ranvwaye</string>
     <string name="display_more_information">montre plis enfòmasyon</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
     <string name="dock_closed">Waf Fèmen</string>
@@ -379,6 +380,7 @@
     <string name="this_stop_is_drop_off_only">Estasyon sa a se depoze sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
+    <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="track_change">Suiv Chanjman</string>
     <string name="track_change_sentence_case">Suiv chanjman</string>
     <string name="track_number">Suiv %1$s</string>

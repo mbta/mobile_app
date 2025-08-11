@@ -81,7 +81,11 @@ fun BarAndToastScaffold(
     val overriddenContentDescription =
         when (val state = toastState) {
             is ToastViewModel.State.Hidden -> ""
-            is ToastViewModel.State.Visible -> AnnotatedString.fromHtml(state.toast.message).text
+            is ToastViewModel.State.Visible ->
+                AnnotatedString.fromHtml(
+                        stringResource(R.string.toast_tip_prefix, state.toast.message)
+                    )
+                    .text
         }
 
     val clickLabel =
@@ -172,7 +176,7 @@ private fun ToastActionButton(snackbarData: SnackbarData, toastState: ToastViewM
 private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewModel.State) {
     if (snackbarData.visuals.withDismissAction)
         ActionButton(
-            ActionButtonKind.Close,
+            ActionButtonKind.Dismiss,
             modifier = Modifier.padding(horizontal = 8.dp),
             colors =
                 ButtonDefaults.buttonColors(
