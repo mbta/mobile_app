@@ -143,6 +143,7 @@ struct RoutePickerView: View {
                     string: NSLocalizedString("Done", comment: "Button text for closing flow"),
                     backgroundColor: Color.translucentContrast,
                     textColor: Color.fill3,
+                    height: 32,
                     action: onClose
                 )
             }

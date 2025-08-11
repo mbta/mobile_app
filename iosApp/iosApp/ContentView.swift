@@ -55,6 +55,8 @@ struct ContentView: View {
             }
             .onAppear { contentHeight = proxy.size.height }
             .onChange(of: proxy.size.height) { contentHeight = $0 }
+            .animation(.easeIn, value: contentVM.featurePromosPending)
+            .animation(.easeIn, value: contentVM.onboardingScreensPending)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
