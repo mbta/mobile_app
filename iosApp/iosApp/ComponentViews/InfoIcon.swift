@@ -15,7 +15,7 @@ struct InfoIcon: View {
         Image(.faCircleInfo)
             .resizable()
             .frame(width: size, height: size)
-            .foregroundStyle(Color.text.opacity(0.6))
+            .foregroundStyle(Color.translucentContrast)
             .accessibilityHidden(true)
     }
 }

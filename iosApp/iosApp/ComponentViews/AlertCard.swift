@@ -99,7 +99,7 @@ struct AlertCard: View {
                     .frame(minHeight: 44)
                     .background(color)
                     .clipShape(.rect(cornerRadius: 8.0))
-                    .simultaneousGesture(TapGesture())
+                    .preventScrollTaps()
                 }
             }
         }
@@ -119,7 +119,7 @@ struct AlertCard: View {
                 label: { card }
             )
             .foregroundStyle(Color.text)
-            .simultaneousGesture(TapGesture())
+            .preventScrollTaps()
         } else {
             card
         }

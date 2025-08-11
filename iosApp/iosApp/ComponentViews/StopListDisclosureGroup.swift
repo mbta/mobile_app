@@ -48,7 +48,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                 withAnimation(.easeInOut(duration: 0.5)) {
                     twistFactor = expanded ? 0 : 1
                 }
-            }.simultaneousGesture(TapGesture())
+            }.preventScrollTaps()
             configuration.content
                 .frame(height: configuration.isExpanded ? nil : 0, alignment: .top)
                 .clipped()

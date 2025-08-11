@@ -30,6 +30,8 @@ extension Color {
     static let stopDotHalo = Color("Stop Dot Halo")
     static let text = Color("Text")
     static let textContrast = Color("Text Contrast")
+
+    static let translucentContrast = text.opacity(0.6)
 }
 
 extension UIColor {
@@ -55,4 +57,6 @@ extension UIColor {
 
     static let stopDotHalo = UIColor(named: "Stop Dot Halo") ?? UIColor(Color(.stopDotHalo))
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
+
+    static let translucentContrast = text.withAlphaComponent(0.6)
 }

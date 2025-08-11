@@ -31,11 +31,11 @@ struct RoutePickerRow: View {
                         .scaledToFit()
                         .frame(width: 8)
                         .padding(.horizontal, 8)
-                        .foregroundColor(Color.text.opacity(0.6))
+                        .foregroundColor(Color.translucentContrast)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             }
-        )
+        ).preventScrollTaps()
     }
 }

@@ -43,6 +43,7 @@ struct SheetHeader<Content: View>: View {
         HStack(alignment: .center, spacing: 16) {
             if let onBack {
                 ActionButton(kind: .back, circleColor: buttonColor, iconColor: buttonTextColor, action: { onBack() })
+                    .preventScrollTaps()
             }
             if let title {
                 Text(title)
@@ -64,7 +65,7 @@ struct SheetHeader<Content: View>: View {
                         circleColor: buttonColor,
                         iconColor: buttonTextColor,
                         action: { onClose() }
-                    )
+                    ).preventScrollTaps()
                 }
             }
         }
