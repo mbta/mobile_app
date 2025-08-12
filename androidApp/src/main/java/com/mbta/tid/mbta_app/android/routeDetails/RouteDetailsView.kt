@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.routeDetails
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -12,6 +13,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 
 @Composable
@@ -68,7 +70,7 @@ fun RouteDetailsView(
                     val favoriteCD = stringResource(R.string.favorite_stop)
                     StarIcon(
                         rowContext.isFavorited,
-                        colorResource(R.color.text),
+                        Color.fromHex(lineOrRoute.backgroundColor),
                         contentDescription = if (rowContext.isFavorited) favoriteCD else "",
                     )
                 }

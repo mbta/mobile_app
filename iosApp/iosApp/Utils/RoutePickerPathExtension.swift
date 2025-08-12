@@ -12,7 +12,7 @@ import SwiftUI
 extension RoutePickerPath {
     var backgroundColor: Color {
         switch self {
-        case is RoutePickerPath.Root: Color.fill2
+        case is RoutePickerPath.Root: Color.sheetBackground
         case is RoutePickerPath.Bus: Color(hex: "FFC72C")
         case is RoutePickerPath.Silver: Color(hex: "7C878E")
         case is RoutePickerPath.CommuterRail: Color(hex: "80276C")
