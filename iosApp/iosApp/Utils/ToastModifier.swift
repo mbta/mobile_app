@@ -40,14 +40,24 @@ struct ToastModifier: ViewModifier {
     @ViewBuilder
     private func toast() -> some View {
         if let toastState {
+            let accessibilityLabel = toastState.isTip ?
+                AttributedString
+                .tryMarkdown(String(format: NSLocalizedString(
+                        "Tip: %1$@",
+                        comment: """
+                        Voice over text for a tip that will appear in a pop-up message. ex: 'Tip: tap stops to add to favorites'
+                        """
+                    ),
+                    toastState.message)) : AttributedString.tryMarkdown(toastState.message)
             VStack {
                 Spacer()
                 ToastView(
                     state: toastState,
                     tabBarVisible: tabBarVisible,
+                    accessibilityLabel: Text(accessibilityLabel),
                     onDismiss: { dismissToast() }
                 )
-                .onAppear { announceToast(message: toastState.message) }
+                .onAppear { announceToast(message: accessibilityLabel) }
             }
         }
     }
@@ -77,9 +87,9 @@ struct ToastModifier: ViewModifier {
         workItem = nil
     }
 
-    private func announceToast(message: String) {
+    private func announceToast(message: AttributedString) {
         if #available(iOS 17, *) {
-            var toastAnnouncement = AttributedString(message)
+            var toastAnnouncement = message
             toastAnnouncement.accessibilitySpeechAnnouncementPriority = .high
             AccessibilityNotification.Announcement(toastAnnouncement).post()
         } else {

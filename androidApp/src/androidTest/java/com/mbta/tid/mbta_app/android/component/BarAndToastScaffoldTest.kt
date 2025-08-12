@@ -29,11 +29,14 @@ class BarAndToastScaffoldTest {
             BarAndToastScaffold(toastViewModel = toastVM) { Text("Content") }
         }
 
-        toastVM.showToast(ToastViewModel.Toast(message = "Toast message"))
+        toastVM.showToast(ToastViewModel.Toast(message = "Toast message", isTip = true))
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntil { toastShown }
         composeTestRule.onNodeWithText("Toast message", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Tip: Toast message", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -91,7 +94,7 @@ class BarAndToastScaffoldTest {
 
         composeTestRule.waitForIdle()
         composeTestRule
-            .onNodeWithContentDescription("Close", useUnmergedTree = true)
+            .onNodeWithContentDescription("Dismiss", useUnmergedTree = true)
             .assertIsDisplayed()
             .performClick()
 
