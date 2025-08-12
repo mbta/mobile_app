@@ -107,7 +107,10 @@ struct RoutePickerView: View {
                 }
             }
         }
-        .onAppear { getGlobal() }
+        .onAppear {
+            getGlobal()
+            searchRoutesViewModel.setPath(path: path)
+        }
         .onChange(of: globalData) { globalData in
             routes = globalData?.getRoutesForPicker(path: path) ?? []
         }
@@ -115,6 +118,7 @@ struct RoutePickerView: View {
             withAnimation {
                 routes = globalData?.getRoutesForPicker(path: newPath) ?? []
             }
+            searchRoutesViewModel.setPath(path: newPath)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .task {
@@ -131,11 +135,13 @@ struct RoutePickerView: View {
         SheetHeader(
             title: headerTitle,
             titleColor: path.textColor,
+            buttonColor: Color.translucentContrast,
+            buttonTextColor: Color.fill3,
             onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
             rightActionContents: {
                 NavTextButton(
                     string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                    backgroundColor: Color.text.opacity(0.6),
+                    backgroundColor: Color.translucentContrast,
                     textColor: Color.fill3,
                     action: onClose
                 )

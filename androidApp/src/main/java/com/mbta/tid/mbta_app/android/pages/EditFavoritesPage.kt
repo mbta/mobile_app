@@ -28,6 +28,12 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.hideFromAccessibility
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
@@ -97,15 +103,18 @@ fun EditFavoritesPage(
                 ToastViewModel.Toast(
                     getToastLabel(it),
                     duration = ToastViewModel.Duration.Short,
-                    actionLabel = toastUndoLabel,
-                    onAction = {
-                        favoritesViewModel.updateFavorites(
-                            mapOf(it to true),
-                            EditFavoritesContext.Favorites,
-                            it.direction,
-                        )
-                        toastViewModel.hideToast()
-                    },
+                    action =
+                        ToastViewModel.ToastAction.Custom(
+                            actionLabel = toastUndoLabel,
+                            onAction = {
+                                favoritesViewModel.updateFavorites(
+                                    mapOf(it to true),
+                                    EditFavoritesContext.Favorites,
+                                    it.direction,
+                                )
+                                toastViewModel.hideToast()
+                            },
+                        ),
                 )
             )
         }
@@ -168,8 +177,20 @@ private fun FavoriteDepartures(
         stopData.data.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
+            val overriddenClickLabel = stringResource(R.string.delete)
 
-            Row(modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp)) {
+            Row(
+                modifier =
+                    Modifier.padding(vertical = 10.dp, horizontal = 16.dp).semantics(
+                        mergeDescendants = true
+                    ) {
+                        role = Role.Button
+                        onClick(overriddenClickLabel) {
+                            onClick(leaf)
+                            true
+                        }
+                    }
+            ) {
                 when (formatted) {
                     is LeafFormat.Single -> {
                         Column(
@@ -180,6 +201,7 @@ private fun FavoriteDepartures(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,
+                                modifier = Modifier.semantics() {},
                             ) {
                                 DirectionLabel(
                                     direction,
@@ -254,12 +276,13 @@ private fun DeleteIcon(action: () -> Unit) {
                 .clip(CircleShape)
                 .background(colorResource(R.color.delete_background))
                 .clickable { action() }
-                .testTag("trashCan"),
+                .testTag("trashCan")
+                .clearAndSetSemantics { hideFromAccessibility() },
         contentAlignment = Alignment.Center,
     ) {
         Icon(
             painterResource(R.drawable.trash_can),
-            stringResource(R.string.delete),
+            null,
             modifier = Modifier.size(16.dp),
             tint = colorResource(R.color.delete),
         )

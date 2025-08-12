@@ -271,7 +271,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             SheetHeader(
                 title: lineOrRoute.name,
                 titleColor: textColor,
-                buttonColor: Color.text.opacity(0.6),
+                buttonColor: Color.translucentContrast,
                 onBack: onBack,
                 onClose: onClose
             )
@@ -318,11 +318,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         .onChange(of: showFirstTimeFavoritesToast) { _ in
             if showFirstTimeFavoritesToast == true {
                 let toast = ToastViewModel.Toast(
-                    message: NSLocalizedString("Tap stars to add to Favorites", comment: ""),
+                    message: NSLocalizedString("Tap stops to add to Favorites", comment: ""),
                     duration: .indefinite,
-                    onClose: { showFirstTimeFavoritesToast = false },
-                    actionLabel: nil,
-                    onAction: nil
+                    action: ToastViewModel.ToastActionClose(onClose: { showFirstTimeFavoritesToast = false })
                 )
                 toastVM.showToast(toast: toast)
                 firstTimeToast = toast
@@ -411,6 +409,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 .accessibilityAddTraits(selected ? [.isSelected, .isHeader] : [])
                 .accessibilityHeading(selected ? .h2 : .unspecified)
                 .accessibilitySortPriority(selected ? 1 : 0)
+                .preventScrollTaps()
                 .frame(minHeight: 44)
                 .background(rowColor)
                 .withRoundedBorder(color: selected ? .halo : Color.clear)

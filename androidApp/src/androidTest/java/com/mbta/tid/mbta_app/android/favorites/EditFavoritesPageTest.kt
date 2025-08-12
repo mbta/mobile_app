@@ -430,8 +430,10 @@ class EditFavoritesPageTest : KoinTest {
             "<b>Northbound Sample Route bus</b> at <b>Sample Stop 1</b> removed from Favorites",
             displayedToast?.message,
         )
-        assertEquals("Undo", displayedToast?.actionLabel)
-        displayedToast?.onAction?.let { it() }
+
+        val customAction = displayedToast?.action as ToastViewModel.ToastAction.Custom
+        assertEquals("Undo", customAction.actionLabel)
+        customAction.onAction()
 
         val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to true)
         verifySuspend(VerifyMode.exactly(1)) {

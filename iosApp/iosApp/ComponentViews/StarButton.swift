@@ -21,7 +21,7 @@ struct StarButton: View {
         )
         .accessibilityIdentifier("starButton")
         .accessibilityAddTraits(starred ? [.isSelected] : [])
-        .simultaneousGesture(TapGesture())
+        .preventScrollTaps()
     }
 }
 

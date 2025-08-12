@@ -49,6 +49,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         val strings = Json.decodeFromString<XcStrings>(inputData)
 
         strings.checkNoMissingTranslations()
+        strings.checkNoPlaceholderMismatches()
 
         return strings.resourcesByKey()
     }
@@ -62,6 +63,12 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         fun checkNoMissingTranslations() {
             for ((stringKey, stringInfo) in strings) {
                 stringInfo.checkNoMissingTranslations(stringKey)
+            }
+        }
+
+        fun checkNoPlaceholderMismatches() {
+            for ((stringKey, stringInfo) in strings) {
+                stringInfo.checkNoPlaceholderMismatches(stringKey)
             }
         }
 
@@ -92,6 +99,22 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             for ((languageTag, localization) in localizations.orEmpty()) {
                 if (languageTag != "en") {
                     localization.checkNoMissingTranslations(stringKey, languageTag)
+                }
+            }
+        }
+
+        fun checkNoPlaceholderMismatches(stringKey: String) {
+            val englishValue =
+                localizations?.get("en")?.resource() ?: Resource.StaticString(stringKey)
+            val englishPlaceholders = englishValue.getTemplatePlaceholders()
+            for ((languageTag, localization) in localizations.orEmpty()) {
+                if (languageTag != "en") {
+                    localization.checkNoMissingTranslations(stringKey, languageTag)
+                    localization.checkNoPlaceholderMismatches(
+                        stringKey,
+                        languageTag,
+                        englishPlaceholders,
+                    )
                 }
             }
         }
@@ -139,6 +162,26 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
             }
         }
 
+        fun checkNoPlaceholderMismatches(
+            stringKey: String,
+            languageTag: String,
+            expectedPlaceholders: Set<String>,
+        ) {
+            val actualPlaceholders = resource()?.getTemplatePlaceholders()
+            check(actualPlaceholders == expectedPlaceholders) {
+                buildString {
+                    append("iOS string \"")
+                    append(stringKey)
+                    append("\" language \"")
+                    append(languageTag)
+                    append("\" has placeholders ")
+                    append(actualPlaceholders)
+                    append(" which do not match English placeholders ")
+                    append(expectedPlaceholders)
+                }
+            }
+        }
+
         fun resource(): Resource? = stringUnit?.resource() ?: variations?.resource()
     }
 
@@ -158,10 +201,16 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         fun convertIosTemplate(): Resource
 
+        fun getTemplatePlaceholders(): Set<String>
+
         data class StaticString(val text: String) : Resource {
             override fun key() = text
 
             override fun convertIosTemplate() = StaticString(convertIosTemplate(text))
+
+            override fun getTemplatePlaceholders(): Set<String> {
+                return template.findAll(text).map { it.value }.toSet()
+            }
         }
 
         data class Plural(val items: Map<Quantity, String>) : Resource {
@@ -169,6 +218,14 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
             override fun convertIosTemplate() =
                 Plural(items.mapValues { convertIosTemplate(it.value) })
+
+            override fun getTemplatePlaceholders(): Set<String> {
+                val templatePlaceholders =
+                    items.mapValues { (_, text) -> template.findAll(text).map { it.value }.toSet() }
+                return checkNotNull(templatePlaceholders.values.distinct().singleOrNull()) {
+                    "plural string has inconsistent template placeholders: $templatePlaceholders"
+                }
+            }
 
             fun itemsPotentiallyExtended(languageTag: String): Map<Quantity, String> {
                 // For Spanish, French, and Portuguese, decimals are formatted under the `many` case
