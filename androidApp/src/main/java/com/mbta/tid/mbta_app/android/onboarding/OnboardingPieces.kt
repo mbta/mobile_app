@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -45,10 +46,17 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 
 object OnboardingPieces {
+    sealed class Context {
+        data object Onboarding : Context()
+
+        data object Promo : Context()
+    }
+
     @Composable
     fun PageDescription(
         @StringRes headerId: Int,
         @StringRes bodyId: Int,
+        context: Context,
         modifier: Modifier = Modifier,
     ) {
         val pane = stringResource(headerId)
@@ -59,9 +67,20 @@ object OnboardingPieces {
             modifier.semantics { paneTitle = pane },
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            val headerDescription =
+                if (context == Context.Promo)
+                    stringResource(
+                        R.string.new_feature_screen_reader_header_prefix,
+                        stringResource(headerId),
+                    )
+                else stringResource(headerId)
             Text(
                 stringResource(headerId),
-                modifier = Modifier.semantics { heading() },
+                modifier =
+                    Modifier.semantics {
+                        contentDescription = headerDescription
+                        heading()
+                    },
                 style = Typography.title1Bold,
             )
             Text(AnnotatedString.fromHtml(stringResource(bodyId)), style = Typography.title3)
