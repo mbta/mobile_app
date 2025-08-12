@@ -132,10 +132,6 @@ fun RoutePickerView(
                 searchInputFocused,
                 {
                     if (!it) {
-                        // Only reset the search result scroll position on clear if there is an
-                        // active search, to prevent autoscrolling an already unfiltered list
-                        if (searchInputState.isNotEmpty())
-                            scope.launch { routeScroll.animateScrollTo(0) }
                         searchInputState = ""
                     }
                     onRouteSearchExpandedChange(it)
@@ -183,6 +179,8 @@ fun RoutePickerView(
                             }
                         }
                     }
+
+                LaunchedEffect(displayedRoutes) { scope.launch { routeScroll.animateScrollTo(0) } }
                 if (displayedRoutes.isNotEmpty())
                     Column(
                         Modifier.padding(bottom = 14.dp)
