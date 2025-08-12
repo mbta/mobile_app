@@ -44,7 +44,7 @@ final class ToastViewTests: XCTestCase {
         let exp = XCTestExpectation(description: "Close button pressed")
         let sut = ToastView(state: close, tabBarVisible: false, onDismiss: { exp.fulfill() })
 
-        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        try sut.inspect().find(viewWithAccessibilityLabel: "Dismiss").button().tap()
         XCTAssertNotNil(try sut.inspect().find(text: "This is a toast with a close button"))
         wait(for: [exp], timeout: 1)
     }
