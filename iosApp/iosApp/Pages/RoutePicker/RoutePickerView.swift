@@ -6,6 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
+import Combine
 import Foundation
 import Shared
 import SwiftUI
@@ -22,10 +23,14 @@ struct RoutePickerView: View {
 
     @State var globalData: GlobalResponse?
     @State var routes: [RouteCardData.LineOrRoute] = []
+    @State var routeSearchResults: [RouteCardData.LineOrRoute] = []
+
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
     let globalRepository: IGlobalRepository = RepositoryDI().global
     var errorBannerRepository = RepositoryDI().errorBanner
+
+    let scrollSubject = PassthroughSubject<String, Never>()
 
     let inspection = Inspection<Self>()
 
@@ -62,7 +67,13 @@ struct RoutePickerView: View {
             VStack(spacing: 0) {
                 header
                 ErrorBanner(errorBannerVM)
-                if !isRootPath {
+                if isRootPath {
+                    ScrollView {
+                        rootContent
+                            .padding(.top, 16)
+                            .padding(.horizontal, 14)
+                    }
+                } else {
                     SearchInput(
                         searchObserver: searchObserver,
                         hint: NSLocalizedString(
@@ -74,36 +85,34 @@ struct RoutePickerView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 8)
                     .padding(.horizontal, 16)
-                }
-                ScrollView {
-                    Group {
-                        if isRootPath {
-                            rootContent
-                                .padding(.top, 16)
-                        } else {
-                            let displayedRoutes = switch onEnum(of: searchVMState) {
-                            case .unfiltered, .error: routes
-                            case let .results(state):
-                                state.routeIds.compactMap { routeId in
-                                    routes.first(where: { route in route.id == routeId })
-                                }
-                            }
-                            VStack(spacing: 0) {
-                                if !displayedRoutes.isEmpty {
-                                    ForEach(displayedRoutes, id: \.self) { route in
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                if !routeSearchResults.isEmpty {
+                                    ForEach(routeSearchResults, id: \.id) { route in
                                         RoutePickerRow(route: route, onTap: { onOpenRouteDetails(route.id, context) })
-                                        if route != displayedRoutes.last { HaloSeparator() }
+                                        if route != routeSearchResults.last { HaloSeparator() }
                                     }
                                 }
                             }
                             .background(Color.fill3)
                             .withRoundedBorder(color: path.haloColor, width: 2)
                             .padding(.top, 16)
-                            footer(emptyResults: displayedRoutes.isEmpty)
+                            footer(emptyResults: routeSearchResults.isEmpty)
                                 .padding(.top, 16)
                         }
+
+                        .padding(.horizontal, 14)
+                        .onReceive(scrollSubject) { id in
+                            withAnimation {
+                                proxy.scrollTo(id, anchor: .top)
+                            }
+                        }
+                    }.onChange(of: routeSearchResults) { newRouteSearchResults in
+                        if let firstRoute = newRouteSearchResults.first, !isRootPath {
+                            scrollSubject.send(firstRoute.id)
+                        }
                     }
-                    .padding(.horizontal, 14)
                 }
             }
         }
@@ -113,6 +122,18 @@ struct RoutePickerView: View {
         }
         .onChange(of: globalData) { globalData in
             routes = globalData?.getRoutesForPicker(path: path) ?? []
+        }
+        .onChange(of: routes) { newRoutes in
+            routeSearchResults = newRoutes
+        }
+        .onChange(of: searchVMState) { newSearchVMState in
+            routeSearchResults = switch onEnum(of: newSearchVMState) {
+            case .unfiltered, .error: routes
+            case let .results(state):
+                state.routeIds.compactMap { routeId in
+                    routes.first(where: { route in route.id == routeId })
+                }
+            }
         }
         .onChange(of: path) { newPath in
             withAnimation {
