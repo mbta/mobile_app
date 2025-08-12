@@ -61,6 +61,17 @@ struct RoutePickerView: View {
 
     private var isRootPath: Bool { path is RoutePickerPath.Root }
 
+    func routeSearchResultsForVMState(state: SearchRoutesViewModel.State,
+                                      routes: [RouteCardData.LineOrRoute]) -> [RouteCardData.LineOrRoute] {
+        switch onEnum(of: state) {
+        case .unfiltered, .error: routes
+        case let .results(state):
+            state.routeIds.compactMap { routeId in
+                routes.first(where: { route in route.id == routeId })
+            }
+        }
+    }
+
     var body: some View {
         ZStack {
             path.backgroundColor.edgesIgnoringSafeArea(.all)
@@ -114,7 +125,7 @@ struct RoutePickerView: View {
                         }
                     }
                 }
-            }
+            }.ignoresSafeArea(.keyboard, edges: .bottom)
         }
         .onAppear {
             getGlobal()
@@ -124,16 +135,10 @@ struct RoutePickerView: View {
             routes = globalData?.getRoutesForPicker(path: path) ?? []
         }
         .onChange(of: routes) { newRoutes in
-            routeSearchResults = newRoutes
+            routeSearchResults = routeSearchResultsForVMState(state: searchVMState, routes: newRoutes)
         }
         .onChange(of: searchVMState) { newSearchVMState in
-            routeSearchResults = switch onEnum(of: newSearchVMState) {
-            case .unfiltered, .error: routes
-            case let .results(state):
-                state.routeIds.compactMap { routeId in
-                    routes.first(where: { route in route.id == routeId })
-                }
-            }
+            routeSearchResults = routeSearchResultsForVMState(state: newSearchVMState, routes: routes)
         }
         .onChange(of: path) { newPath in
             withAnimation {
