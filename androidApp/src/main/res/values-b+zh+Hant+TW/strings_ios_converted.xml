@@ -85,6 +85,7 @@
     <string name="disabled_bus_lowercase">巴士拋錨</string>
     <string name="disabled_train">列車停運</string>
     <string name="disabled_train_lowercase">列車停運</string>
+    <string name="dismiss">解僱</string>
     <string name="display_more_information">顯示更多資訊</string>
     <string name="displays_more_info">顯示更多資訊</string>
     <string name="dock_closed">停靠區域已關閉</string>
@@ -359,6 +360,7 @@
     <string name="this_stop_is_drop_off_only">此網站僅供下客</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
+    <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="track_change">軌道變更</string>
     <string name="track_change_sentence_case">軌道變更</string>
     <string name="track_number">追蹤%1$s</string>

@@ -87,6 +87,7 @@
     <string name="disabled_bus_lowercase">autobús averiado</string>
     <string name="disabled_train">Tren averiado</string>
     <string name="disabled_train_lowercase">tren averiado</string>
+    <string name="dismiss">Despedir</string>
     <string name="display_more_information">mostrar más información</string>
     <string name="displays_more_info">muestra más información</string>
     <string name="dock_closed">Dársena cerrada</string>
@@ -367,6 +368,7 @@
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
+    <string name="toast_tip_prefix">Propina: %1$s</string>
     <string name="track_change">Cambio de pista</string>
     <string name="track_change_sentence_case">Cambio de pista</string>
     <string name="track_number">Pista %1$s</string>
