@@ -42,7 +42,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
-import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Route
@@ -248,12 +248,7 @@ fun StopListRow(
     }
 }
 
-private fun connectionLabel(route: Route, context: Context) =
-    context.getString(
-        R.string.route_with_type,
-        route.label,
-        route.type.typeText(context, isOnly = true),
-    )
+private fun connectionLabel(route: Route, context: Context) = routeModeLabel(context, route)
 
 @Composable
 fun ScrollRoutes(routes: List<Route>, modifier: Modifier = Modifier) {
