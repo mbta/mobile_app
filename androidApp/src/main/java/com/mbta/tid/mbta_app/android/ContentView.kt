@@ -60,18 +60,13 @@ fun ContentView(
 
     val defaultTab by viewModel.defaultTab.collectAsState()
     val navController = rememberNavController()
-    val enhancedFavorites = SettingsCache.getNullable(Settings.EnhancedFavorites)
 
     var sheetNavEntrypoint: SheetRoutes.Entrypoint? by
-        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
-            mutableStateOf(if (enhancedFavorites == false) SheetRoutes.NearbyTransit else null)
-        }
+        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) { mutableStateOf(null) }
 
-    LaunchedEffect(defaultTab, enhancedFavorites) {
-        if (sheetNavEntrypoint == null && enhancedFavorites == true) {
+    LaunchedEffect(defaultTab) {
+        if (sheetNavEntrypoint == null) {
             sheetNavEntrypoint = defaultTab?.entrypoint
-        } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
-            sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }
     }
 

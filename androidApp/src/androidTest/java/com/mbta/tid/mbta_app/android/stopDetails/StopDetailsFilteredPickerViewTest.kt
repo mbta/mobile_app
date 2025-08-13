@@ -361,7 +361,6 @@ class StopDetailsFilteredPickerViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStarSavesEnhancedFavoritesWithDialogBehindFlag(): Unit = runBlocking {
-        settings[Settings.EnhancedFavorites] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
 
@@ -431,7 +430,6 @@ class StopDetailsFilteredPickerViewTest {
 
     @Test
     fun testUnfavoriteWithoutDialogBehindFlag(): Unit = runBlocking {
-        settings[Settings.EnhancedFavorites] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
         val viewModel = StopDetailsViewModel.mocked()
 

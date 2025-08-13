@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
@@ -21,7 +20,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.coroutines.launch
@@ -47,29 +45,18 @@ fun StopDetailsPage(
     val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val (favorites, updateFavorites) = manageFavorites()
 
     fun isFavorite(favorite: FavoriteBridge): Boolean {
-        if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
-            return false
-        }
-
-        if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
+        if (favorite is FavoriteBridge.Favorite) {
             return favorites?.contains(favorite.routeStopDirection) ?: false
         }
-
         return false
     }
 
     fun updateFavorites(favoritesUpdate: FavoriteUpdateBridge) {
         coroutineScope.launch {
-            if (favoritesUpdate is FavoriteUpdateBridge.Pinned && !enhancedFavorites) {
-                val pinned = false
-                analytics.toggledPinnedRoute(pinned, favoritesUpdate.routeId)
-            }
-
-            if (favoritesUpdate is FavoriteUpdateBridge.Favorites && enhancedFavorites) {
+            if (favoritesUpdate is FavoriteUpdateBridge.Favorites) {
                 updateFavorites(
                     favoritesUpdate.updatedValues,
                     EditFavoritesContext.StopDetails,
