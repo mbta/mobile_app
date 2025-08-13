@@ -10,8 +10,7 @@ public data class StopResult(
     val name: String,
     val zone: String?,
     @SerialName("station?") val isStation: Boolean,
-    internal val routes: List<StopResultRoute>,
+    val routes: List<StopResultRoute>,
 )
 
-@Serializable
-public data class StopResultRoute(internal val type: RouteType, internal val icon: String)
+@Serializable public data class StopResultRoute(val type: RouteType, val icon: String)

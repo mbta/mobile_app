@@ -7,7 +7,7 @@ public sealed class ErrorBannerState {
     public abstract val action: (() -> Unit)?
 
     public data class StalePredictions(
-        internal val lastUpdated: EasternTimeInstant,
+        val lastUpdated: EasternTimeInstant,
         override val action: () -> Unit,
     ) : ErrorBannerState() {
         public fun minutesAgo(): Long = (EasternTimeInstant.now() - lastUpdated).inWholeMinutes

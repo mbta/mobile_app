@@ -14,16 +14,15 @@ internal constructor(
     val latitude: Double,
     val longitude: Double,
     val name: String,
-    @SerialName("location_type") internal val locationType: LocationType,
-    internal val description: String? = null,
-    @SerialName("platform_code") internal val platformCode: String? = null,
-    @SerialName("platform_name") internal val platformName: String? = null,
-    @SerialName("vehicle_type") internal val vehicleType: RouteType? = null,
+    @SerialName("location_type") val locationType: LocationType,
+    val description: String? = null,
+    @SerialName("platform_code") val platformCode: String? = null,
+    @SerialName("platform_name") val platformName: String? = null,
+    @SerialName("vehicle_type") val vehicleType: RouteType? = null,
     @SerialName("child_stop_ids") val childStopIds: List<String> = emptyList(),
-    @SerialName("connecting_stop_ids") internal val connectingStopIds: List<String> = emptyList(),
-    @SerialName("parent_station_id") internal val parentStationId: String? = null,
-    @SerialName("wheelchair_boarding")
-    internal val wheelchairBoarding: WheelchairBoardingStatus? = null,
+    @SerialName("connecting_stop_ids") val connectingStopIds: List<String> = emptyList(),
+    @SerialName("parent_station_id") val parentStationId: String? = null,
+    @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null,
 ) : BackendObject {
     val position: Position = Position(latitude = latitude, longitude = longitude)
 
@@ -31,9 +30,9 @@ internal constructor(
      * Commuter Rail core stations have realtime track numbers displayed and track change alerts
      * hidden.
      */
-    internal val isCRCore = this.id in crCoreStations || this.parentStationId in crCoreStations
+    val isCRCore: Boolean = this.id in crCoreStations || this.parentStationId in crCoreStations
 
-    internal val shouldShowTrackNumber: Boolean =
+    val shouldShowTrackNumber: Boolean =
         this.vehicleType == RouteType.COMMUTER_RAIL && this.isCRCore
 
     val isWheelchairAccessible: Boolean =

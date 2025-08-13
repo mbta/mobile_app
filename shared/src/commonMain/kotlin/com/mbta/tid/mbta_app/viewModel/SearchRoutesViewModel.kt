@@ -40,9 +40,9 @@ internal constructor(
     MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
     ISearchRoutesViewModel {
     public sealed interface Event {
-        public data class SetPath internal constructor(internal val path: RoutePickerPath) : Event
+        public data class SetPath internal constructor(val path: RoutePickerPath) : Event
 
-        public data class SetQuery internal constructor(internal val query: String) : Event
+        public data class SetQuery internal constructor(val query: String) : Event
     }
 
     public sealed class State {
@@ -160,8 +160,8 @@ public class MockSearchRoutesViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: SearchRoutesViewModel.State = SearchRoutesViewModel.State.Unfiltered) :
     ISearchRoutesViewModel {
-    internal var onSetPath = { _: RoutePickerPath -> }
-    internal var onSetQuery = { _: String -> }
+    public var onSetPath: (RoutePickerPath) -> Unit = {}
+    public var onSetQuery: (String) -> Unit = {}
 
     override val models: MutableStateFlow<SearchRoutesViewModel.State> =
         MutableStateFlow(initialState)

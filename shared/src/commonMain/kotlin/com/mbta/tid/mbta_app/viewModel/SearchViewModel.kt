@@ -78,7 +78,7 @@ public class SearchViewModel(
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
     public sealed interface Event {
-        public data class SetQuery internal constructor(internal val query: String) : Event
+        public data class SetQuery internal constructor(val query: String) : Event
 
         public data object RefreshHistory : Event
     }

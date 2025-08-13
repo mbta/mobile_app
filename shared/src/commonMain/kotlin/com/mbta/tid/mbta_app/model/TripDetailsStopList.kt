@@ -19,14 +19,14 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val stop: Stop,
         val stopSequence: Int,
         val disruption: UpcomingFormat.Disruption?,
-        internal val schedule: Schedule?,
+        val schedule: Schedule?,
         val prediction: Prediction?,
         // The prediction stop can be the same as `stop`, but it can also be a child stop which
         // contains more specific boarding information for a prediction, like the track number
-        internal val predictionStop: Stop? = stop.takeIf { prediction != null },
-        internal val vehicle: Vehicle?,
+        val predictionStop: Stop? = stop.takeIf { prediction != null },
+        val vehicle: Vehicle?,
         val routes: List<Route>,
-        internal val elevatorAlerts: List<Alert> = emptyList(),
+        val elevatorAlerts: List<Alert> = emptyList(),
     ) {
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null

@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-internal data class ShapeWithStops(
+public data class ShapeWithStops(
     @SerialName("direction_id") val directionId: Int,
     @SerialName("route_id") val routeId: String,
     @SerialName("route_pattern_id") val routePatternId: String,

@@ -29,7 +29,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-internal data class RouteLineData(
+public data class RouteLineData
+internal constructor(
     val id: String,
     val sourceRoutePatternId: String,
     val line: LineString,
@@ -40,7 +41,7 @@ internal data class RouteLineData(
 public data class RouteSourceData
 internal constructor(
     val routeId: String,
-    internal val lines: List<RouteLineData>,
+    val lines: List<RouteLineData>,
     val features: FeatureCollection,
 )
 

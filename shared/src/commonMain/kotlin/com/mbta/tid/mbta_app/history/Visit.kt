@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public sealed class Visit {
-    internal val timestamp: EasternTimeInstant = EasternTimeInstant.now()
+    public val timestamp: EasternTimeInstant = EasternTimeInstant.now()
 
-    @Serializable public data class StopVisit(internal val stopId: String) : Visit()
+    @Serializable public data class StopVisit(val stopId: String) : Visit()
 }

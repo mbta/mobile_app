@@ -20,12 +20,12 @@ public data class UpcomingTrip
 @DefaultArgumentInterop.Enabled
 constructor(
     val trip: Trip,
-    internal val schedule: Schedule? = null,
+    val schedule: Schedule? = null,
     val prediction: Prediction? = null,
     // The prediction stop is the stop associated with the stopId contained in the prediction,
     // it can be a child stop with specific boarding information, like the track number
-    internal val predictionStop: Stop? = null,
-    internal val vehicle: Vehicle? = null,
+    val predictionStop: Stop? = null,
+    val vehicle: Vehicle? = null,
 ) : Comparable<UpcomingTrip> {
 
     public constructor(

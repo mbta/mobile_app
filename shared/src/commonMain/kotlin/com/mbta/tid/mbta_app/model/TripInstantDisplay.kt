@@ -57,8 +57,7 @@ public sealed class TripInstantDisplay {
 
     public data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
 
-    public data class Skipped(internal val scheduledTime: EasternTimeInstant?) :
-        TripInstantDisplay()
+    public data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
 
     public data class Cancelled(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
 

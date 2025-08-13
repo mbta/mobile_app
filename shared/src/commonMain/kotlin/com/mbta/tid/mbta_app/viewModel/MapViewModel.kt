@@ -94,19 +94,18 @@ public class MapViewModel(
         }
 
         public data class SelectedStop
-        internal constructor(internal val stop: Stop, internal val stopFilter: StopDetailsFilter?) :
-            Event
+        internal constructor(val stop: Stop, val stopFilter: StopDetailsFilter?) : Event
 
         public data class SelectedTrip
         internal constructor(
-            internal val stop: Stop?,
-            internal val stopFilter: StopDetailsFilter?,
-            internal val tripFilter: TripDetailsFilter,
-            internal val vehicle: Vehicle?,
+            val stop: Stop?,
+            val stopFilter: StopDetailsFilter?,
+            val tripFilter: TripDetailsFilter,
+            val vehicle: Vehicle?,
         ) : Event
 
-        public data class NavChanged
-        internal constructor(internal val currentNavEntry: SheetRoutes?) : Event
+        public data class NavChanged internal constructor(val currentNavEntry: SheetRoutes?) :
+            Event
 
         public data class Recenter(val type: RecenterType) : Event
 
@@ -119,7 +118,7 @@ public class MapViewModel(
         public data object MapStyleLoaded : Event
 
         public data class LayerManagerInitialized
-        internal constructor(internal val layerManager: IMapLayerManager) : Event
+        internal constructor(val layerManager: IMapLayerManager) : Event
 
         public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
     }

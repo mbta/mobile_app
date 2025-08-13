@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 public sealed class TripSchedulesResponse {
     @Serializable
     @SerialName("schedules")
-    public data class Schedules(internal val schedules: List<Schedule>) : TripSchedulesResponse() {
+    public data class Schedules(val schedules: List<Schedule>) : TripSchedulesResponse() {
         override fun stops(globalData: GlobalResponse): List<Stop> =
             schedules.mapNotNull { globalData.stops[it.stopId] }
 
@@ -20,7 +20,7 @@ public sealed class TripSchedulesResponse {
 
     @Serializable
     @SerialName("stop_ids")
-    public data class StopIds(@SerialName("stop_ids") internal val stopIds: List<String>) :
+    public data class StopIds(@SerialName("stop_ids") val stopIds: List<String>) :
         TripSchedulesResponse() {
         override fun stops(globalData: GlobalResponse): List<Stop> =
             stopIds.mapNotNull { globalData.stops[it] }

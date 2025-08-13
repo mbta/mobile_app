@@ -10,13 +10,13 @@ public data class Route(
     val color: String,
     @SerialName("direction_names") val directionNames: List<String?>,
     @SerialName("direction_destinations") val directionDestinations: List<String?>,
-    @SerialName("listed_route") internal val isListedRoute: Boolean = true,
+    @SerialName("listed_route") val isListedRoute: Boolean = true,
     @SerialName("long_name") val longName: String,
     @SerialName("short_name") val shortName: String,
     @SerialName("sort_order") val sortOrder: Int,
     @SerialName("text_color") val textColor: String,
     @SerialName("line_id") val lineId: String? = null,
-    @SerialName("route_pattern_ids") internal val routePatternIds: List<String>? = null,
+    @SerialName("route_pattern_ids") val routePatternIds: List<String>? = null,
 ) : Comparable<Route>, BackendObject {
     override fun compareTo(other: Route): Int = sortOrder.compareTo(other.sortOrder)
 

@@ -6,4 +6,4 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class TripShape
-internal constructor(@SerialName("shape_with_stops") internal val shapeWithStops: ShapeWithStops)
+internal constructor(@SerialName("shape_with_stops") val shapeWithStops: ShapeWithStops)

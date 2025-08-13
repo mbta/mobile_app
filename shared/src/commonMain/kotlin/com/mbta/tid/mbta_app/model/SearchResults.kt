@@ -4,6 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class SearchResults(
-    internal val routes: List<RouteResult> = emptyList(),
-    internal val stops: List<StopResult> = emptyList(),
+    val routes: List<RouteResult> = emptyList(),
+    val stops: List<StopResult> = emptyList(),
 )

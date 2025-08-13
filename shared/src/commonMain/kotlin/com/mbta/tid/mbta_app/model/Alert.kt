@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -43,7 +44,7 @@ internal constructor(
             else -> StopAlertState.Issue
         }
 
-    internal val hasStopsSpecified = informedEntity.all { it.stop != null }
+    val hasStopsSpecified: Boolean = informedEntity.all { it.stop != null }
 
     val significance: AlertSignificance =
         when (effect) {
@@ -88,7 +89,7 @@ internal constructor(
     internal constructor(val start: EasternTimeInstant, val end: EasternTimeInstant?) {
         // This is only nullable because it's set after serialization within the Alert init,
         // in practice it should always be populated with a value, unless something has gone wrong.
-        internal var durationCertainty: DurationCertainty? = null
+        var durationCertainty: DurationCertainty? = null
 
         internal fun activeAt(instant: EasternTimeInstant): Boolean {
             if (end == null) {
@@ -97,8 +98,8 @@ internal constructor(
             return instant in start..end
         }
 
-        internal val startServiceDate = start.serviceDate
-        internal val endServiceDate =
+        val startServiceDate: LocalDate = start.serviceDate
+        val endServiceDate: LocalDate? =
             end?.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
 
         val fromStartOfService: Boolean
@@ -223,7 +224,7 @@ internal constructor(
     @Serializable
     public data class InformedEntity
     internal constructor(
-        internal val activities: List<Activity>,
+        val activities: List<Activity>,
         @SerialName("direction_id") val directionId: Int? = null,
         val facility: String? = null,
         val route: String? = null,
