@@ -17,6 +17,7 @@ struct LoadingRouteCard: View {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         )

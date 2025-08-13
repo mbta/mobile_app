@@ -63,6 +63,7 @@ struct RouteCard: View {
     let now: EasternTimeInstant
     let onPin: (String) -> Void
     let pinned: Bool
+    let isFavorite: (RouteStopDirection) -> Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
 
@@ -81,7 +82,7 @@ struct RouteCard: View {
                 stopData: stopData,
                 global: global,
                 now: now,
-                pinned: pinned,
+                isFavorite: isFavorite,
                 pushNavEntry: pushNavEntry
             )
         }
@@ -95,6 +96,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         now: previewData.now,
         onPin: { _ in },
         pinned: false,
+        isFavorite: { _ in false },
         pushNavEntry: { _ in },
         showStopHeader: true
     )
