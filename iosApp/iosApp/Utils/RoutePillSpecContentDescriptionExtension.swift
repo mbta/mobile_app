@@ -12,11 +12,12 @@ import SwiftUI
 extension RoutePillSpec.ContentDescription {
     var text: String {
         switch onEnum(of: self) {
-        case let .stopSearchResultRoute(description): if let routeName = description.routeName {
-                "\(routeName) \(description.routeType.typeText(isOnly: description.isOnly))"
-            } else {
-                description.routeType.typeText(isOnly: description.isOnly)
-            }
+        case let .stopSearchResultRoute(description):
+            routeModeLabel(
+                name: description.routeName,
+                type: description.routeType,
+                isOnly: description.isOnly
+            )
         }
     }
 }

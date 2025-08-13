@@ -21,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -30,10 +29,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
-import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
@@ -110,15 +108,8 @@ fun RoutePill(
             border(1.dp, routeColor, shape).padding(1.dp)
         }
 
-    val typeText = route?.type?.typeText(LocalContext.current, true)
-
     val contentDescription =
-        spec.contentDescription?.text
-            ?: stringResource(
-                id = R.string.route_with_type,
-                route?.label ?: line?.longName ?: "",
-                typeText ?: "",
-            )
+        spec.contentDescription?.text ?: routeModeLabel(LocalContext.current, line, route)
 
     val finalModifier =
         modifier
@@ -163,18 +154,8 @@ val RoutePillSpec.ContentDescription.text: String
     @Composable
     get() =
         when (this) {
-            is RoutePillSpec.ContentDescription.StopSearchResultRoute -> {
-                val routeName = this.routeName
-                if (routeName == null) {
-                    routeType.typeText(LocalContext.current, isOnly = isOnly)
-                } else {
-                    stringResource(
-                        id = R.string.route_with_type,
-                        routeName,
-                        routeType.typeText(LocalContext.current, isOnly = isOnly),
-                    )
-                }
-            }
+            is RoutePillSpec.ContentDescription.StopSearchResultRoute ->
+                routeModeLabel(LocalContext.current, routeName, routeType, isOnly)
         }
 
 @Preview

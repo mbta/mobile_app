@@ -992,7 +992,7 @@
       }
     },
     "%@ %@" : {
-      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
+      "comment" : "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1952,6 +1952,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@，選定站點，第一站"
+          }
+        }
+      }
+    },
+    "key/route_mode_label" : {
+      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%2$@ %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
           }
         }
       }

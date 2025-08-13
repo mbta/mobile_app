@@ -214,15 +214,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         .padding(.horizontal, 7)
     }
 
-    func connectionLabel(route: Route) -> String {
-        String(format: NSLocalizedString(
-            "%@ %@",
-            comment: """
-            A route label and route type pair,
-            ex 'Red Line train' or '73 bus', used in connecting stop labels
-            """
-        ), route.label, route.type.typeText(isOnly: true))
-    }
+    func connectionLabel(route: Route) -> String { routeModeLabel(route: route) }
 
     var scrollRoutes: some View {
         let routeView = ScrollView(.horizontal, showsIndicators: false) {
