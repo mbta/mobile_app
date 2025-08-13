@@ -12,4 +12,7 @@ public enum class RouteType {
     @SerialName("ferry") FERRY;
 
     internal fun isSubway(): Boolean = this === HEAVY_RAIL || this === LIGHT_RAIL
+
+    internal val serialName: String
+        get() = RouteType.serializer().descriptor.getElementName(this.ordinal)
 }

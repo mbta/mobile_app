@@ -8,7 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +26,8 @@ public interface ISearchRoutesViewModel {
 
     public val models: StateFlow<SearchRoutesViewModel.State>
 
+    public fun setPath(path: RoutePickerPath)
+
     public fun setQuery(query: String)
 }
 
@@ -35,6 +40,8 @@ internal constructor(
     MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
     ISearchRoutesViewModel {
     public sealed interface Event {
+        public data class SetPath internal constructor(internal val path: RoutePickerPath) : Event
+
         public data class SetQuery internal constructor(internal val query: String) : Event
     }
 
@@ -56,13 +63,23 @@ internal constructor(
 
     @Composable
     override fun runLogic(events: Flow<Event>): State {
+        var path: RoutePickerPath? by remember { mutableStateOf(null) }
         var query by remember { mutableStateOf("") }
+
         var state by remember { mutableStateOf<State>(State.Unfiltered) }
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
 
         LaunchedEffect(null) {
-            events.collect { event -> if (event is Event.SetQuery) query = event.query }
+            events.collect { event ->
+                when (event) {
+                    is Event.SetPath -> {
+                        path = event.path
+                        state = State.Unfiltered
+                    }
+                    is Event.SetQuery -> query = event.query
+                }
+            }
         }
 
         LaunchedEffect(query) {
@@ -70,16 +87,32 @@ internal constructor(
             if (query.isNotEmpty()) {
                 withContext(Dispatchers.IO) {
                     delay(500)
-                    when (val data = searchResultRepository.getRouteFilterResults(query)) {
+                    val params = getParamsForPath(path)
+                    when (
+                        val data =
+                            searchResultRepository.getRouteFilterResults(
+                                query,
+                                params.lineIds,
+                                params.routeTypes,
+                            )
+                    ) {
                         is ApiResult.Ok ->
                             state =
                                 State.Results(
-                                    data.data.routes.map {
-                                        when {
-                                            it.id == "Green" -> "line-Green"
-                                            else -> it.id
+                                    data.data.routes
+                                        .map {
+                                            when {
+                                                it.id == "Green" -> "line-Green"
+                                                else -> it.id
+                                            }
                                         }
-                                    }
+                                        .sortedBy {
+                                            when (path) {
+                                                is RoutePickerPath.Bus ->
+                                                    if (it in silverRoutes) 1 else 0
+                                                else -> 0
+                                            }
+                                        }
                                 )
                         is ApiResult.Error -> {
                             // Only set to error if there's a backend error code, otherwise this
@@ -100,17 +133,40 @@ internal constructor(
     override val models: StateFlow<State>
         get() = internalModels
 
+    override fun setPath(path: RoutePickerPath): Unit = fireEvent(Event.SetPath(path))
+
     override fun setQuery(query: String): Unit = fireEvent(Event.SetQuery(query))
+
+    internal companion object {
+        data class FilterParams(val lineIds: List<String>?, val routeTypes: List<RouteType>?)
+
+        fun getParamsForPath(path: RoutePickerPath?) =
+            when (path) {
+                RoutePickerPath.Bus -> FilterParams(null, listOf(RouteType.BUS))
+                RoutePickerPath.CommuterRail -> FilterParams(null, listOf(RouteType.COMMUTER_RAIL))
+                RoutePickerPath.Ferry -> FilterParams(null, listOf(RouteType.FERRY))
+                RoutePickerPath.Root,
+                null -> FilterParams(null, null)
+                RoutePickerPath.Silver ->
+                    FilterParams(
+                        listOf("line-SLWaterfront", "line-SLWashington"),
+                        listOf(RouteType.BUS),
+                    )
+            }
+    }
 }
 
 public class MockSearchRoutesViewModel
 @DefaultArgumentInterop.Enabled
-constructor(initialState: SearchRoutesViewModel.State) : ISearchRoutesViewModel {
+constructor(initialState: SearchRoutesViewModel.State = SearchRoutesViewModel.State.Unfiltered) :
+    ISearchRoutesViewModel {
+    internal var onSetPath = { _: RoutePickerPath -> }
     internal var onSetQuery = { _: String -> }
+
     override val models: MutableStateFlow<SearchRoutesViewModel.State> =
         MutableStateFlow(initialState)
 
-    override fun setQuery(query: String) {
-        onSetQuery(query)
-    }
+    override fun setPath(path: RoutePickerPath): Unit = onSetPath(path)
+
+    override fun setQuery(query: String): Unit = onSetQuery(query)
 }

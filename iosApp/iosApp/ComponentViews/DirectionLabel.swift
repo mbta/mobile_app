@@ -44,6 +44,7 @@ struct DirectionLabel: View {
              """)
              .font(Typography.footnote)
              .textCase(.none)
+             .multilineTextAlignment(.leading)
     }
 
     @ViewBuilder

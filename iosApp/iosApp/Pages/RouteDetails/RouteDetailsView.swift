@@ -18,14 +18,13 @@ struct RouteDetailsView: View {
     let errorBannerVM: ErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
+    @State private var lineOrRoute: RouteCardData.LineOrRoute?
     let globalRepository: IGlobalRepository = RepositoryDI().global
     var errorBannerRepository = RepositoryDI().errorBanner
 
     var body: some View {
         ScrollView([]) {
-            if let globalData, let lineOrRoute = globalData.getLineOrRoute(
-                lineOrRouteId: selectionId
-            ) {
+            if let globalData, let lineOrRoute {
                 RouteStopListView(
                     lineOrRoute: lineOrRoute,
                     context: context,
@@ -48,6 +47,9 @@ struct RouteDetailsView: View {
         }
         .onAppear {
             getGlobal()
+        }
+        .onChange(of: globalData) { globalData in
+            lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
         }
     }
 
@@ -104,7 +106,14 @@ struct RouteDetailsView: View {
                 .resizable().frame(width: 8, height: 14).padding(.trailing, 8)
                 .foregroundStyle(Color.deemphasized)
         case let .favorites(isFavorited: isFavorited, onTapStar: _):
-            StarIcon(starred: isFavorited, color: Color.text)
+            var starColor: Color {
+                if let lineOrRoute {
+                    Color(hex: lineOrRoute.backgroundColor)
+                } else {
+                    Color.text
+                }
+            }
+            StarIcon(starred: isFavorited, color: starColor)
                 .padding(.trailing, 8)
                 .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
         }

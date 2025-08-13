@@ -18,7 +18,7 @@ actual fun viewModelModule() = module {
             get(named("coroutineDispatcherIO")),
         )
     }
-    singleOf(::SearchRoutesViewModel)
-    singleOf(::SearchViewModel)
+    singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
+    singleOf(::SearchViewModel).bind(ISearchViewModel::class)
     singleOf(::ToastViewModel).bind(IToastViewModel::class)
 }

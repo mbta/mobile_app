@@ -86,6 +86,7 @@
     <string name="disabled_bus_lowercase">disabled bus</string>
     <string name="disabled_train">Disabled Train</string>
     <string name="disabled_train_lowercase">disabled train</string>
+    <string name="dismiss">Dismiss</string>
     <string name="display_more_information">display more information</string>
     <string name="displays_more_info">displays more information</string>
     <string name="dock_closed">Dock Closed</string>
@@ -365,6 +366,7 @@
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
+    <string name="toast_tip_prefix">Tip: %1$s</string>
     <string name="track_change">Track Change</string>
     <string name="track_change_sentence_case">Track change</string>
     <string name="track_number">Track %1$s</string>

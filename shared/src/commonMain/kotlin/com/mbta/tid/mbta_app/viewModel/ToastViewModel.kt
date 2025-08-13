@@ -45,6 +45,7 @@ public class ToastViewModel internal constructor() :
     public data class Toast(
         val message: String,
         val duration: Duration = Duration.Indefinite,
+        val isTip: Boolean = false,
         val action: ToastAction? = null,
     )
 

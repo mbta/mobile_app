@@ -61,6 +61,20 @@ platform :android do
           'android.injected.version.code' => next_version_code
         }
       end
+    if options[:build_type] != 'Prod'
+      UI.message 'Skipped creating Android Sentry release because build is not prod'
+    elsif ENV['SENTRY_AUTH_TOKEN'].nil?
+      UI.important 'Skipped creating Android Sentry release because SENTRY_AUTH_TOKEN not set'
+    else
+      version_name = android_get_version_name(gradle_file: 'androidApp/build.gradle.kts')
+      sentry_create_release(
+        org_slug: 'mbtace',
+        project_slug: 'mobile_app_android',
+        version: "#{version_name}+#{next_version_code}",
+        app_identifier: 'com.mbta.tid.mbta_app',
+        finalize: false
+      )
+    end
     gradle(
       task: 'assemble',
       flavor: options[:flavor],

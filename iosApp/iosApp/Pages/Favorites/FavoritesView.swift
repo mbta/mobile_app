@@ -29,10 +29,10 @@ struct FavoritesView: View {
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 rightActionContents: {
                     if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
-                        ActionButton(kind: .plus, circleColor: Color.text.opacity(0.6), action: { onAddStops() })
+                        ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })
                         NavTextButton(
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
-                            backgroundColor: Color.text.opacity(0.6),
+                            backgroundColor: Color.translucentContrast,
                             textColor: Color.fill2,
                             height: 32
                         ) {
@@ -129,6 +129,7 @@ struct FavoritesView: View {
                 NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
                                   comment: "Explainer the first time a user sees the new favorites feature"),
                 duration: .indefinite,
+                isTip: false,
                 action: ToastViewModel
                     .ToastActionClose(onClose: { favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
                         toastVM.hideToast()
