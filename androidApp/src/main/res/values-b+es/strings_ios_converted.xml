@@ -218,6 +218,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
+    <string name="new_feature_screen_reader_header_prefix">Nueva función. %1$s</string>
     <string name="next_stop">Próxima parada</string>
     <string name="no_matching_routes">No hay rutas %1$s coincidentes</string>
     <string name="no_predictions">Las predicciones no están disponibles</string>
