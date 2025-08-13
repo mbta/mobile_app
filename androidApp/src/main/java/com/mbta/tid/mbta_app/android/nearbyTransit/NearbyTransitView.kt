@@ -21,7 +21,6 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.manageFavorites
-import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -30,7 +29,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
@@ -67,15 +65,7 @@ fun NearbyTransitView(
             predictionsVM.reset()
         }
     }
-    val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
     val (favorites) = manageFavorites()
-
-    fun togglePinnedRoute(routeId: String) {
-        coroutineScope.launch {
-            val pinned = rawTogglePinnedRoute(routeId)
-            analytics.toggledPinnedRoute(pinned, routeId)
-        }
-    }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SheetHeader(title = stringResource(R.string.nearby_transit))
@@ -88,14 +78,8 @@ fun NearbyTransitView(
             predictions,
             alertData,
             now,
-            pinnedRoutes,
         ) {
-            val pinnedRoutesForSorting =
-                if (enhancedFavorites) {
-                    emptySet()
-                } else {
-                    pinnedRoutes
-                }
+            val pinnedRoutesForSorting = emptySet<String>()
 
             nearbyVM.loadRouteCardData(
                 globalResponse,
@@ -120,14 +104,14 @@ fun NearbyTransitView(
             now = now,
             isFavorite = { favoriteBridge ->
                 if (!enhancedFavorites && favoriteBridge is FavoriteBridge.Pinned) {
-                    (pinnedRoutes ?: emptySet()).contains(favoriteBridge.routeId)
+                    emptySet<String>().contains(favoriteBridge.routeId)
                 } else if (enhancedFavorites && favoriteBridge is FavoriteBridge.Favorite) {
                     (favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
                 } else {
                     false
                 }
             },
-            togglePinnedRoute = ::togglePinnedRoute,
+            togglePinnedRoute = {},
             onOpenStopDetails = onOpenStopDetails,
         )
     }

@@ -45,7 +45,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
     func testPending() throws {
         let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
@@ -65,7 +64,6 @@ final class NearbyTransitViewTests: XCTestCase {
         let getNearbyExpectation = expectation(description: "getNearby")
 
         var sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
@@ -195,7 +193,6 @@ final class NearbyTransitViewTests: XCTestCase {
         }.store(in: &cancellables)
 
         var sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(
                 onConnectV2: { predictionStops in predictionPub.send(predictionStops) },
@@ -505,7 +502,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(objects: objects)
 
         var sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(
                 onConnectV2: { _ in joinsPredictionsExpectation.fulfill() },
@@ -613,7 +609,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -645,7 +640,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -680,7 +674,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -725,7 +718,6 @@ final class NearbyTransitViewTests: XCTestCase {
         repositories.errorBanner = MockErrorBannerStateRepository(state: .DataError(messages: [], action: {}))
         loadKoinMocks(repositories: repositories)
         let sut = NearbyTransitView(
-            togglePinnedUsecase: TogglePinnedRouteUsecase(repository: pinnedRoutesRepository),
             pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),

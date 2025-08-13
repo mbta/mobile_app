@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.manageFavorites
-import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -49,12 +48,11 @@ fun StopDetailsPage(
     val coroutineScope = rememberCoroutineScope()
 
     val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
-    val (pinnedRoutes, rawTogglePinnedRoute) = managePinnedRoutes()
     val (favorites, updateFavorites) = manageFavorites()
 
     fun isFavorite(favorite: FavoriteBridge): Boolean {
         if (favorite is FavoriteBridge.Pinned && !enhancedFavorites) {
-            return pinnedRoutes?.contains(favorite.routeId) ?: false
+            return false
         }
 
         if (favorite is FavoriteBridge.Favorite && enhancedFavorites) {
@@ -67,7 +65,7 @@ fun StopDetailsPage(
     fun updateFavorites(favoritesUpdate: FavoriteUpdateBridge) {
         coroutineScope.launch {
             if (favoritesUpdate is FavoriteUpdateBridge.Pinned && !enhancedFavorites) {
-                val pinned = rawTogglePinnedRoute(favoritesUpdate.routeId)
+                val pinned = false
                 analytics.toggledPinnedRoute(pinned, favoritesUpdate.routeId)
             }
 
