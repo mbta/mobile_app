@@ -60,7 +60,6 @@ kotlin {
         framework {
             baseName = "Shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
-            export(libs.kotlinx.datetime)
             export(libs.sentry)
         }
 
@@ -75,7 +74,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.kotlinx.datetime)
                 api(libs.sentry)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
@@ -83,6 +81,7 @@ kotlin {
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.core)
