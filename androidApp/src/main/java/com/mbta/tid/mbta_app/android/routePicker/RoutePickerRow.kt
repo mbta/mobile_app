@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteType
 
 @Composable
 fun RoutePickerRow(route: RouteCardData.LineOrRoute, onTap: () -> Unit) {
@@ -32,7 +34,10 @@ fun RoutePickerRow(route: RouteCardData.LineOrRoute, onTap: () -> Unit) {
             Arrangement.spacedBy(8.dp),
             Alignment.CenterVertically,
         ) {
-            RoutePill(route.sortRoute, type = RoutePillType.Fixed)
+            // Route pill TalkBack text is redundant except for bus
+            Row(if (route.type != RouteType.BUS) Modifier.clearAndSetSemantics {} else Modifier) {
+                RoutePill(route.sortRoute, type = RoutePillType.Fixed)
+            }
             Text(route.sortRoute.longName)
         }
         Image(
