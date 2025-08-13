@@ -144,20 +144,7 @@ struct StopDetailsUnfilteredView: View {
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        onPin: { routeId in Task {
-                                            await stopDetailsVM.updateFavorites(
-                                                .Pinned(routeId: routeId),
-                                                enhancedFavorites: false
-                                            )
-                                        } },
-                                        pinned: stopDetailsVM.isFavorite(
-                                            .Pinned(routeId: routeCardData.lineOrRoute.id),
-                                            enhancedFavorites: false
-                                        ),
-                                        isFavorite: { rsd in stopDetailsVM.isFavorite(
-                                            .Favorite(routeStopDirection: rsd),
-                                            enhancedFavorites: true
-                                        ) },
+                                        isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
@@ -183,8 +170,6 @@ struct StopDetailsUnfilteredView: View {
                     cardData: card,
                     global: stopDetailsVM.global,
                     now: now,
-                    onPin: { _ in },
-                    pinned: false,
                     isFavorite: { _ in false },
                     pushNavEntry: { _ in },
                     showStopHeader: false

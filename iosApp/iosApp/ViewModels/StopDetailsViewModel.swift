@@ -489,36 +489,21 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func isFavorite(_ favorite: FavoriteBridge, enhancedFavorites _: Bool) -> Bool {
-        switch onEnum(of: favorite) {
-        case let .pinned(favorite):
-            pinnedRoutes.contains(favorite.routeId)
-        case let .favorite(favorite):
-            favorites.routeStopDirection?.contains(favorite.routeStopDirection) ?? false
-        default:
-            false
-        }
+    func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
+        favorites.routeStopDirection?.contains(routeStopDirection) ?? false
     }
 
-    func updateFavorites(_ favorite: FavoriteUpdateBridge, enhancedFavorites _: Bool) async -> Bool {
+    func updateFavorites(_ updatedFavorites: [RouteStopDirection: Bool], _ defaultDirection: Int32) async -> Bool {
         let task = Task<Bool, Error> {
             do {
-                switch onEnum(of: favorite) {
-                case let .pinned(favorite):
-                    let newValue = false
-                    self.loadPinnedRoutes()
-                    return newValue
-                case let .favorites(favorite):
-                    try await self.favoritesUsecases.updateRouteStopDirections(
-                        newValues: favorite.updatedValues,
-                        context: .stopDetails,
-                        defaultDirection: favorite.defaultDirection
-                    )
-                    self.loadFavorites()
-                    return false
-                default:
-                    return false
-                }
+                try await self.favoritesUsecases.updateRouteStopDirections(
+                    newValues: updatedFavorites.mapValues { KotlinBoolean(bool: $0) },
+                    context: .stopDetails,
+                    defaultDirection: defaultDirection
+                )
+                self.loadFavorites()
+                return false
+
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {
