@@ -52,7 +52,7 @@ final class NearbyTransitViewTests: XCTestCase {
             isReturningFromBackground: .constant(false),
             nearbyVM: .init(),
             noNearbyStops: noNearbyStops
-        ).withFixedSettings([.enhancedFavorites: false])
+        ).withFixedSettings([:])
         let cards = try sut.inspect().findAll(RouteCard.self)
         XCTAssertEqual(cards.count, 5)
         for card in cards {
@@ -236,7 +236,7 @@ final class NearbyTransitViewTests: XCTestCase {
             XCTAssertNotNil(try routes[0].find(text: "15"))
             XCTAssertNotNil(try routes[1].find(text: "52"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -457,7 +457,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }.store(in: &cancellables)
 
         let sut = setUpSut(route52Objects(), loadPublisher)
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: false]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         wait(for: [sawmillAtWalshExpectation], timeout: 1)
 

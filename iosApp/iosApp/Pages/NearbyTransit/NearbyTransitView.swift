@@ -34,9 +34,6 @@ struct NearbyTransitView: View {
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
 
-    @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
     struct RouteCardParams: Equatable {
         let state: NearbyViewModel.NearbyTransitState
         let global: GlobalResponse?
@@ -93,7 +90,7 @@ struct NearbyTransitView: View {
                     predictions: newParams.predictions,
                     alerts: newParams.alerts,
                     now: newParams.now,
-                    pinnedRoutes: enhancedFavorites ? [] : newParams.pinnedRoutes
+                    pinnedRoutes: []
                 )
             }
         }

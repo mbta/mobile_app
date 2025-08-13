@@ -69,44 +69,31 @@ struct StopDetailsFilteredView: View {
         stopData = routeData?.stopData.first { $0.stop.id == stopId }
     }
 
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
     var routeStopDirection: RouteStopDirection {
         .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
     var favoriteBridge: FavoriteBridge {
-        if enhancedFavorites {
-            .Favorite(routeStopDirection: routeStopDirection)
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
+        .Favorite(routeStopDirection: routeStopDirection)
     }
 
     var isFavorite: Bool {
-        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites)
+        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: true)
     }
 
     var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
-        if enhancedFavorites {
-            .Favorites(
-                updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
-                defaultDirection: stopFilter.directionId
-            )
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
+        .Favorites(
+            updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
+            defaultDirection: stopFilter.directionId
+        )
     }
 
     func toggleFavorite() {
         Task {
             let pinned = await stopDetailsVM.updateFavorites(
                 toggleFavoriteUpdateBridge,
-                enhancedFavorites: enhancedFavorites
+                enhancedFavorites: true
             )
-            if !enhancedFavorites {
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: stopFilter.routeId)
-            }
         }
     }
 
@@ -185,7 +172,7 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
+                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: true),
                     onPin: {
                         if favoriteBridge is FavoriteBridge.Pinned {
                             toggleFavorite()

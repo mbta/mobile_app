@@ -16,9 +16,6 @@ struct RouteCardContainer<Content: View>: View {
     let showStopHeader: Bool
     let departureContent: (RouteCardData.RouteStopData) -> Content
 
-    @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
     var body: some View {
         VStack(spacing: 0) {
             TransitHeader(
@@ -26,17 +23,7 @@ struct RouteCardContainer<Content: View>: View {
                 routeType: cardData.lineOrRoute.type,
                 backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
                 textColor: Color(hex: cardData.lineOrRoute.textColor),
-                rightContent: {
-                    HStack {
-                        if !enhancedFavorites {
-                            StarButton(
-                                starred: pinned,
-                                color: Color(hex: cardData.lineOrRoute.textColor),
-                                action: { onPin(cardData.lineOrRoute.id) }
-                            )
-                        }
-                    }
-                }
+                rightContent: { EmptyView() }
             )
             .accessibilityElement(children: .contain)
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
@@ -68,7 +55,6 @@ struct RouteCard: View {
     let showStopHeader: Bool
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
     var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
