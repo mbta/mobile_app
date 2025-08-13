@@ -16,7 +16,6 @@ import SwiftUI
 // swiftlint:disable:next type_body_length
 struct NearbyTransitView: View {
     var analytics: Analytics = AnalyticsProvider.shared
-    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
     var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
@@ -299,7 +298,7 @@ struct NearbyTransitView: View {
     func toggledPinnedRoute(_ routeId: String) {
         Task {
             do {
-                let pinned = try await togglePinnedUsecase.execute(route: routeId).boolValue
+                let pinned = false
                 analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
                 updatePinnedRoutes()
             } catch is CancellationError {

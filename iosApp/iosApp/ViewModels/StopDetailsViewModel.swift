@@ -68,7 +68,6 @@ class StopDetailsViewModel: ObservableObject {
     private let vehicleRepository: IVehicleRepository
 
     private let favoritesUsecases: FavoritesUsecases
-    private let togglePinnedUsecase: TogglePinnedRouteUsecase
 
     let analytics: Analytics = AnalyticsProvider.shared
 
@@ -94,7 +93,6 @@ class StopDetailsViewModel: ObservableObject {
         self.vehicleRepository = vehicleRepository
 
         favoritesUsecases = .init(repository: favoritesRepository, analytics: analytics)
-        togglePinnedUsecase = .init(repository: pinnedRoutesRepository)
     }
 
     private func activateGlobalListener() async {
@@ -507,7 +505,7 @@ class StopDetailsViewModel: ObservableObject {
             do {
                 switch onEnum(of: favorite) {
                 case let .pinned(favorite) where !enhancedFavorites:
-                    let newValue = try await self.togglePinnedUsecase.execute(route: favorite.routeId).boolValue
+                    let newValue = false
                     self.loadPinnedRoutes()
                     return newValue
                 case let .favorites(favorite) where enhancedFavorites:
