@@ -9,8 +9,6 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.junit.Rule
 import org.junit.Test
@@ -68,9 +66,7 @@ class RouteCardTest {
                 type = RouteType.LIGHT_RAIL
             }
 
-        val koinApplication = testKoinApplication {
-            settings = MockSettingsRepository(mapOf(Settings.EnhancedFavorites to true))
-        }
+        val koinApplication = testKoinApplication {}
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {

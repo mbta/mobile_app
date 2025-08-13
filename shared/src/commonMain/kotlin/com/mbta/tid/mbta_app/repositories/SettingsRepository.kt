@@ -40,7 +40,6 @@ public enum class Settings(
     public val override: Boolean? = null,
 ) {
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
-    EnhancedFavorites(booleanPreferencesKey("enhanced_favorites_feature_flag"), true),
     HideMaps(booleanPreferencesKey("hide_maps")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),

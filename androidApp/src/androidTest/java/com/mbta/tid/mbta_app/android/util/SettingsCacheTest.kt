@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
 import kotlin.test.fail
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -111,25 +112,26 @@ class SettingsCacheTest {
     }
 
     @Test
+    @Ignore("No overriden settings right now - typically only before cutting over feature flag")
     fun testOverridesSettings() {
         val settingsRepo =
             MockSettingsRepository(
-                mapOf(Settings.EnhancedFavorites to false),
+                mapOf(Settings.HideMaps to false),
                 onGetSettings = { fail("Should not be getting settings from repo") },
             )
         val koin = testKoinApplication { settings = settingsRepo }
 
-        val enhancedFavoritesValues = mutableListOf<Boolean>()
+        val settingValues = mutableListOf<Boolean>()
         composeTestRule.setContent {
             KoinContext(koin.koin) {
                 val cache: SettingsCache = koinInject()
-                enhancedFavoritesValues.add(cache.get(Settings.EnhancedFavorites))
-                cache.set(Settings.EnhancedFavorites, false)
-                enhancedFavoritesValues.add(cache.get(Settings.EnhancedFavorites))
+                settingValues.add(cache.get(Settings.HideMaps))
+                cache.set(Settings.HideMaps, true)
+                settingValues.add(cache.get(Settings.HideMaps))
             }
         }
 
         composeTestRule.waitForIdle()
-        assertEquals(listOf(true, true), enhancedFavoritesValues)
+        assertEquals(listOf(false, true), settingValues)
     }
 }
