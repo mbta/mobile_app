@@ -35,7 +35,10 @@ kotlin {
 
     compilerOptions {
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xconsistent-data-class-copy-visibility",
+        )
     }
 
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
