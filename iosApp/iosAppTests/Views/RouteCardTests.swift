@@ -31,8 +31,6 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
@@ -62,8 +60,6 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
@@ -89,8 +85,6 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
@@ -125,8 +119,6 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
@@ -146,8 +138,6 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: false
@@ -186,8 +176,6 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
@@ -202,8 +190,6 @@ final class RouteCardTests: XCTestCase {
             cardData: data.GL5(),
             global: data.global,
             now: data.now,
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true

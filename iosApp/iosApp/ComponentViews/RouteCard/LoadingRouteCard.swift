@@ -15,8 +15,6 @@ struct LoadingRouteCard: View {
             cardData: LoadingPlaceholders.shared.nearbyRoute(),
             global: nil,
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true

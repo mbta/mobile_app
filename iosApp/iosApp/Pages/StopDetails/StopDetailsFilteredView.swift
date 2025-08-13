@@ -73,27 +73,14 @@ struct StopDetailsFilteredView: View {
         .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
-    var favoriteBridge: FavoriteBridge {
-        .Favorite(routeStopDirection: routeStopDirection)
-    }
-
     var isFavorite: Bool {
-        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: true)
-    }
-
-    var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
-        .Favorites(
-            updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
-            defaultDirection: stopFilter.directionId
-        )
+        stopDetailsVM.isFavorite(routeStopDirection)
     }
 
     func toggleFavorite() {
         Task {
-            let pinned = await stopDetailsVM.updateFavorites(
-                toggleFavoriteUpdateBridge,
-                enhancedFavorites: true
-            )
+            let pinned = await stopDetailsVM.updateFavorites([routeStopDirection: !isFavorite],
+                                                             stopFilter.directionId)
         }
     }
 
@@ -145,20 +132,11 @@ struct StopDetailsFilteredView: View {
                                   selectedDirection: routeStopDirection.direction,
                                   context: .stopDetails,
                                   global: stopDetailsVM.global,
-                                  isFavorite: { rsd in
-                                      stopDetailsVM.isFavorite(
-                                          .Favorite(routeStopDirection: rsd),
-                                          enhancedFavorites: true
-                                      )
-                                  },
+                                  isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
                                   updateFavorites: { newFavorites in
                                       Task {
-                                          await stopDetailsVM.updateFavorites(
-                                              .Favorites(updatedValues: newFavorites
-                                                  .mapValues { KotlinBoolean(bool: $0) },
-                                                  defaultDirection: stopFilter.directionId),
-                                              enhancedFavorites: true
-                                          )
+                                          await stopDetailsVM.updateFavorites(newFavorites,
+                                                                              stopFilter.directionId)
                                       }
                                   },
                                   onClose: {
@@ -172,14 +150,8 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: true),
-                    onPin: {
-                        if favoriteBridge is FavoriteBridge.Pinned {
-                            toggleFavorite()
-                        } else {
-                            inSaveFavoritesFlow = true
-                        }
-                    },
+                    pinned: stopDetailsVM.isFavorite(routeStopDirection),
+                    onPin: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
                 /*  DebugView {

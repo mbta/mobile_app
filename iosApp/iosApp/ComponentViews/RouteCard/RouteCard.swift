@@ -11,8 +11,6 @@ import SwiftUI
 
 struct RouteCardContainer<Content: View>: View {
     let cardData: RouteCardData
-    let onPin: (String) -> Void
-    let pinned: Bool
     let showStopHeader: Bool
     let departureContent: (RouteCardData.RouteStopData) -> Content
 
@@ -48,8 +46,6 @@ struct RouteCard: View {
     let cardData: RouteCardData
     let global: GlobalResponse?
     let now: EasternTimeInstant
-    let onPin: (String) -> Void
-    let pinned: Bool
     let isFavorite: (RouteStopDirection) -> Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
@@ -61,8 +57,6 @@ struct RouteCard: View {
 
     var body: some View {
         RouteCardContainer(cardData: cardData,
-                           onPin: onPin,
-                           pinned: pinned,
                            showStopHeader: showStopHeader) { stopData in
             RouteCardDepartures(
                 stopData: stopData,
@@ -80,8 +74,6 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         cardData: card,
         global: previewData.global,
         now: previewData.now,
-        onPin: { _ in },
-        pinned: false,
         isFavorite: { _ in false },
         pushNavEntry: { _ in },
         showStopHeader: true
