@@ -45,7 +45,6 @@ class RouteCardTest {
                 GlobalResponse(objects),
                 now,
                 isFavorite = { false },
-                onPin = {},
                 showStopHeader = true,
             ) { _, _ ->
             }
@@ -86,7 +85,6 @@ class RouteCardTest {
                     GlobalResponse(objects),
                     now,
                     isFavorite = { false },
-                    onPin = { false },
                     showStopHeader = true,
                 ) { _, _ ->
                 }
@@ -127,7 +125,6 @@ class RouteCardTest {
                 GlobalResponse(objects),
                 now,
                 isFavorite = { false },
-                onPin = {},
                 showStopHeader = false,
             ) { _, _ ->
             }

@@ -31,8 +31,6 @@ import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
-import com.mbta.tid.mbta_app.model.FavoriteBridge
-import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -58,8 +56,8 @@ fun StopDetailsFilteredPickerView(
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
-    isFavorite: (FavoriteBridge) -> Boolean?,
-    updateFavorites: (FavoriteUpdateBridge) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean?,
+    updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     onClose: () -> Unit,
@@ -75,8 +73,7 @@ fun StopDetailsFilteredPickerView(
     val routeHex: String = lineOrRoute.backgroundColor
     val routeColor: Color = Color.fromHex(routeHex)
 
-    val favoriteBridge =
-        FavoriteBridge.Favorite(RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId))
+    val rsd = RouteStopDirection(lineOrRoute.id, stop.id, stopFilter.directionId)
 
     var inSaveFavoritesFlow by rememberSaveable { mutableStateOf(false) }
 
@@ -90,11 +87,9 @@ fun StopDetailsFilteredPickerView(
                 context = EditFavoritesContext.StopDetails,
                 global = global,
                 updateFavorites = { newValues ->
-                    updateFavorites(
-                        FavoriteUpdateBridge.Favorites(newValues, stopFilter.directionId)
-                    )
+                    updateFavorites(newValues, stopFilter.directionId)
                 },
-                isFavorite = { rsd -> isFavorite(FavoriteBridge.Favorite(rsd)) ?: false },
+                isFavorite = { rsd -> isFavorite(rsd) ?: false },
             ) {
                 inSaveFavoritesFlow = false
             }
@@ -103,14 +98,8 @@ fun StopDetailsFilteredPickerView(
             lineOrRoute.sortRoute,
             (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
             stop,
-            pinned = isFavorite(favoriteBridge),
-            onPin = {
-                if (favoriteBridge is FavoriteBridge.Pinned) {
-                    updateFavorites(FavoriteUpdateBridge.Pinned(favoriteBridge.routeId))
-                } else {
-                    inSaveFavoritesFlow = true
-                }
-            },
+            pinned = isFavorite(rsd),
+            onPin = { inSaveFavoritesFlow = true },
             onClose = onClose,
         )
 
@@ -146,7 +135,7 @@ fun StopDetailsFilteredPickerView(
                         viewModel = viewModel,
                         updateTripFilter = updateTripFilter,
                         tileScrollState = tileScrollState,
-                        isFavorite = isFavorite(favoriteBridge) ?: false,
+                        isFavorite = isFavorite(rsd) ?: false,
                         openModal = openModal,
                         openSheetRoute = openSheetRoute,
                     )

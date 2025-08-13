@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -24,8 +25,7 @@ fun StopDetailsUnfilteredView(
     stopId: String,
     now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
-    isPinned: (String) -> Boolean,
-    togglePinnedRoute: (String) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
@@ -78,8 +78,7 @@ fun StopDetailsUnfilteredView(
                 errorBannerViewModel,
                 now,
                 globalResponse,
-                isPinned,
-                togglePinnedRoute,
+                isFavorite,
                 onClose,
                 onTapRoutePill,
                 updateStopFilter,
@@ -104,8 +103,7 @@ fun StopDetailsUnfilteredView(
                     errorBannerViewModel,
                     now,
                     globalResponse,
-                    { false },
-                    {},
+                    isFavorite = { false },
                     onClose = onClose,
                     onTapRoutePill = {},
                     updateStopFilter = {},

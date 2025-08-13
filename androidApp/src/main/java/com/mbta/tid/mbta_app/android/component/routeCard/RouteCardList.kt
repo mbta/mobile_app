@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -27,7 +27,7 @@ fun ColumnScope.RouteCardList(
     emptyView: @Composable () -> Unit,
     global: GlobalResponse?,
     now: EasternTimeInstant,
-    isFavorite: (FavoriteBridge) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean,
     togglePinnedRoute: (String) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
@@ -59,15 +59,7 @@ fun ColumnScope.RouteCardList(
             horizontalAlignment = horizontalAlignment,
         ) {
             items(routeCardData) {
-                RouteCard(
-                    it,
-                    global,
-                    now,
-                    isFavorite,
-                    togglePinnedRoute,
-                    showStopHeader = true,
-                    onOpenStopDetails,
-                )
+                RouteCard(it, global, now, isFavorite, showStopHeader = true, onOpenStopDetails)
             }
         }
     }
