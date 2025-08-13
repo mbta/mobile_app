@@ -489,26 +489,26 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func isFavorite(_ favorite: FavoriteBridge, enhancedFavorites: Bool) -> Bool {
+    func isFavorite(_ favorite: FavoriteBridge, enhancedFavorites _: Bool) -> Bool {
         switch onEnum(of: favorite) {
-        case let .pinned(favorite) where !enhancedFavorites:
+        case let .pinned(favorite):
             pinnedRoutes.contains(favorite.routeId)
-        case let .favorite(favorite) where enhancedFavorites:
+        case let .favorite(favorite):
             favorites.routeStopDirection?.contains(favorite.routeStopDirection) ?? false
         default:
             false
         }
     }
 
-    func updateFavorites(_ favorite: FavoriteUpdateBridge, enhancedFavorites: Bool) async -> Bool {
+    func updateFavorites(_ favorite: FavoriteUpdateBridge, enhancedFavorites _: Bool) async -> Bool {
         let task = Task<Bool, Error> {
             do {
                 switch onEnum(of: favorite) {
-                case let .pinned(favorite) where !enhancedFavorites:
+                case let .pinned(favorite):
                     let newValue = false
                     self.loadPinnedRoutes()
                     return newValue
-                case let .favorites(favorite) where enhancedFavorites:
+                case let .favorites(favorite):
                     try await self.favoritesUsecases.updateRouteStopDirections(
                         newValues: favorite.updatedValues,
                         context: .stopDetails,

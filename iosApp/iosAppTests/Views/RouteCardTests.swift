@@ -94,7 +94,7 @@ final class RouteCardTests: XCTestCase {
             isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
-        ).withFixedSettings([.enhancedFavorites: true])
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(
             try sut.inspect().find(viewWithAccessibilityIdentifier: "starButton")

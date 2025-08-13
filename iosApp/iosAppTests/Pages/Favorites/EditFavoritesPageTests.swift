@@ -33,7 +33,7 @@ final class EditFavoritesPageTests: XCTestCase {
             toastVM: MockToastViewModel(),
         )
 
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         XCTAssertNotNil(try sut.inspect().find(text: "Edit Favorites"))
         try sut.inspect().find(button: "Done").tap()
@@ -116,7 +116,7 @@ final class EditFavoritesPageTests: XCTestCase {
 
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp, updateFavoritesExp], timeout: 2)
     }
 
@@ -189,7 +189,7 @@ final class EditFavoritesPageTests: XCTestCase {
 
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
-        ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 2)
     }
 }
