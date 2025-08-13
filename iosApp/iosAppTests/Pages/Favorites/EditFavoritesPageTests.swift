@@ -190,7 +190,7 @@ final class EditFavoritesPageTests: XCTestCase {
 
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
-        
+
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 3)
     }

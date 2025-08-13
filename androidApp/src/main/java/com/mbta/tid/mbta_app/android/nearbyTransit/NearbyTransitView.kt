@@ -21,7 +21,6 @@ import com.mbta.tid.mbta_app.android.state.getSchedule
 import com.mbta.tid.mbta_app.android.state.subscribeToPredictions
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -98,13 +97,7 @@ fun NearbyTransitView(
             },
             global = globalResponse,
             now = now,
-            isFavorite = { favoriteBridge ->
-                if (favoriteBridge is FavoriteBridge.Favorite) {
-                    (favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
-                } else {
-                    false
-                }
-            },
+            isFavorite = { rsd -> (favorites ?: emptySet()).contains(rsd) },
             togglePinnedRoute = {},
             onOpenStopDetails = onOpenStopDetails,
         )

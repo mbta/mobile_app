@@ -7,15 +7,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.manageFavorites
-import com.mbta.tid.mbta_app.model.FavoriteBridge
-import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -23,7 +21,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsPage(
@@ -42,27 +39,17 @@ fun StopDetailsPage(
 ) {
     val stopId = filters.stopId
 
-    val analytics: Analytics = koinInject()
     val coroutineScope = rememberCoroutineScope()
 
     val (favorites, updateFavorites) = manageFavorites()
 
-    fun isFavorite(favorite: FavoriteBridge): Boolean {
-        if (favorite is FavoriteBridge.Favorite) {
-            return favorites?.contains(favorite.routeStopDirection) ?: false
-        }
-        return false
+    fun isFavorite(routeStopDirection: RouteStopDirection): Boolean {
+        return favorites?.contains(routeStopDirection) ?: false
     }
 
-    fun updateFavorites(favoritesUpdate: FavoriteUpdateBridge) {
+    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>, defaultDirection: Int) {
         coroutineScope.launch {
-            if (favoritesUpdate is FavoriteUpdateBridge.Favorites) {
-                updateFavorites(
-                    favoritesUpdate.updatedValues,
-                    EditFavoritesContext.StopDetails,
-                    favoritesUpdate.defaultDirection,
-                )
-            }
+            updateFavorites(updatedFavorites, EditFavoritesContext.StopDetails, defaultDirection)
         }
     }
 
