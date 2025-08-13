@@ -18,7 +18,7 @@ extension RouteCardData.LineOrRoute {
         RouteCardData.LineOrRouteLine(line: line, routes: routes)
     }
 
-    var label: String {
+    var labelWithModeIfBus: String {
         type == .bus
             ? String(format: NSLocalizedString(
                 "%1$@ bus",

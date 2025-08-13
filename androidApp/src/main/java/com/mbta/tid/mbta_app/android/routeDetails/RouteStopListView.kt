@@ -56,7 +56,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.fromHex
-import com.mbta.tid.mbta_app.android.util.label
+import com.mbta.tid.mbta_app.android.util.labelWithModeIfBus
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
@@ -320,7 +320,7 @@ fun RouteStopListView(
     Column {
         SheetHeader(
             title = lineOrRoute.name,
-            titleContentDescription = lineOrRoute.label(LocalContext.current),
+            titleContentDescription = lineOrRoute.labelWithModeIfBus(LocalContext.current),
             titleColor = Color.fromHex(lineOrRoute.textColor),
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)

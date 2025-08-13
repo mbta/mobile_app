@@ -17,7 +17,7 @@ fun RouteStopDirection.getLabels(
 
     if (lineOrRoute == null || stop == null) return null
 
-    val routeLabel = lineOrRoute.label(context)
+    val routeLabel = lineOrRoute.labelWithModeIfBus(context)
 
     val directionLabel =
         context.getString(directionNameFormatted(Direction(this.direction, lineOrRoute.sortRoute)))

@@ -270,7 +270,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         VStack(spacing: 0) {
             SheetHeader(
                 title: lineOrRoute.name,
-                titleAccessibilityLabel: lineOrRoute.label,
+                titleAccessibilityLabel: lineOrRoute.labelWithModeIfBus,
                 titleColor: textColor,
                 buttonColor: Color.translucentContrast,
                 onBack: onBack,

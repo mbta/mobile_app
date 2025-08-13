@@ -27,6 +27,6 @@ extension RouteStopDirection {
             route: lineOrRoute.sortRoute
         ))
 
-        return .init(route: lineOrRoute.label, stop: stop.name, direction: directionLabel)
+        return .init(route: lineOrRoute.labelWithModeIfBus, stop: stop.name, direction: directionLabel)
     }
 }
