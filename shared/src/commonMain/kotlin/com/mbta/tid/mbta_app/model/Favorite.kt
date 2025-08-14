@@ -6,4 +6,3 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class RouteStopDirection(val route: String, val stop: String, val direction: Int)
-
