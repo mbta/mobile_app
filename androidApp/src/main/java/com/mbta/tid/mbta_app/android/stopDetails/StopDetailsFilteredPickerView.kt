@@ -98,8 +98,8 @@ fun StopDetailsFilteredPickerView(
             lineOrRoute.sortRoute,
             (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
             stop,
-            pinned = isFavorite(rsd),
-            onPin = { inSaveFavoritesFlow = true },
+            isFavorite = isFavorite(rsd),
+            onFavorite = { inSaveFavoritesFlow = true },
             onClose = onClose,
         )
 

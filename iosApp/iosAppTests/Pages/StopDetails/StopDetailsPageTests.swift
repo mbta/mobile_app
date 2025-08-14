@@ -295,7 +295,6 @@ final class StopDetailsPageTests: XCTestCase {
                 alerts: nearbyVM.alerts,
                 global: stopDetailsVM.global,
                 now: nowLater!,
-                pinnedRoutes: [],
                 stopData: stopDetailsVM.stopData,
                 stopFilter: nil,
                 stopId: stop.id

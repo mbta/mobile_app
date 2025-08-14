@@ -195,7 +195,6 @@ fun MapAndSheetPage(
             filters = filters,
             globalResponse = nearbyTransit.globalResponse,
             alertData = nearbyTransit.alertData,
-            pinnedRoutes = emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = { vehicle ->
@@ -448,7 +447,6 @@ fun MapAndSheetPage(
                         global = null,
                         now = now,
                         isFavorite = { false },
-                        togglePinnedRoute = {},
                         onOpenStopDetails = { _, _ -> },
                     )
                 }

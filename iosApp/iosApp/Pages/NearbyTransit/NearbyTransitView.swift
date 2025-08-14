@@ -16,7 +16,6 @@ import SwiftUI
 // swiftlint:disable:next type_body_length
 struct NearbyTransitView: View {
     var analytics: Analytics = AnalyticsProvider.shared
-    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
@@ -26,7 +25,6 @@ struct NearbyTransitView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var now = Date.now
-    @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
@@ -41,7 +39,6 @@ struct NearbyTransitView: View {
         let predictions: PredictionsByStopJoinResponse?
         let alerts: AlertsStreamDataResponse?
         let now: Date
-        let pinnedRoutes: Set<String>
     }
 
     var body: some View {
@@ -80,7 +77,6 @@ struct NearbyTransitView: View {
             predictions: predictionsByStop,
             alerts: nearbyVM.alerts,
             now: now,
-            pinnedRoutes: pinnedRoutes
         )) { newParams in
             DispatchQueue.main.async {
                 nearbyVM.loadRouteCardData(
@@ -90,7 +86,6 @@ struct NearbyTransitView: View {
                     predictions: newParams.predictions,
                     alerts: newParams.alerts,
                     now: newParams.now,
-                    pinnedRoutes: []
                 )
             }
         }
@@ -184,7 +179,6 @@ struct NearbyTransitView: View {
         getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(nearbyVM.nearbyState.stopIds)
-        updatePinnedRoutes()
         getSchedule()
     }
 
@@ -273,34 +267,6 @@ struct NearbyTransitView: View {
 
     func leavePredictions() {
         predictionsRepository.disconnect()
-    }
-
-    func updatePinnedRoutes() {
-        Task {
-            do {
-                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getPinnedRoutes shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
-    func toggledPinnedRoute(_ routeId: String) {
-        Task {
-            do {
-                let pinned = false
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
-                updatePinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // execute shouldn't actually fail
-                debugPrint(error)
-            }
-        }
     }
 
     private func checkPredictionsStale() {

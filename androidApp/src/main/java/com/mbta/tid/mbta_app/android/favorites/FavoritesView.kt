@@ -133,7 +133,6 @@ fun FavoritesView(
             global = globalResponse,
             now = now,
             isFavorite = { rsd -> (state.favorites ?: emptySet()).contains(rsd) },
-            togglePinnedRoute = {},
             onOpenStopDetails = { stopId, filter ->
                 openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
             },

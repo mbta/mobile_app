@@ -229,7 +229,6 @@ class NearbyViewModel: ObservableObject {
         predictions: PredictionsByStopJoinResponse?,
         alerts: AlertsStreamDataResponse?,
         now: Date,
-        pinnedRoutes: Set<String>
     ) {
         Task {
             guard let global, let stopIds = state.stopIds, let location = state.loadedLocation else {
@@ -244,7 +243,6 @@ class NearbyViewModel: ObservableObject {
                 predictions: predictions?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 now: now.toEasternInstant(),
-                pinnedRoutes: pinnedRoutes,
                 context: .nearbyTransit
             )
             Task { @MainActor in routeCardData = cardData }

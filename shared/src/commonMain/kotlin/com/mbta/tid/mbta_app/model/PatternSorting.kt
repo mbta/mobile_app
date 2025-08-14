@@ -13,12 +13,6 @@ internal object PatternSorting {
             else -> 3
         }
 
-    private fun pinnedRouteBucket(route: Route, pinnedRoutes: Set<String>) =
-        when {
-            pinnedRoutes.contains(route.id) || pinnedRoutes.contains(route.lineId) -> 1
-            else -> 2
-        }
-
     private fun subwayBucket(route: Route) =
         when {
             route.type.isSubway() -> 1
@@ -26,12 +20,10 @@ internal object PatternSorting {
         }
 
     fun compareRouteCards(
-        pinnedRoutes: Set<String>,
         sortByDistanceFrom: Position?,
         context: RouteCardData.Context,
     ): Comparator<RouteCardData> =
         compareBy(
-            { pinnedRouteBucket(it.lineOrRoute.sortRoute, pinnedRoutes) },
             { patternServiceBucket(it.stopData.first().data.first()) },
             if (context != RouteCardData.Context.Favorites) {
                 { subwayBucket(it.lineOrRoute.sortRoute) }

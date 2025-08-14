@@ -28,7 +28,6 @@ fun ColumnScope.RouteCardList(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
-    togglePinnedRoute: (String) -> Unit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
 ) {
     val contentPadding = PaddingValues(start = 15.dp, top = 7.dp, end = 15.dp, bottom = 16.dp)

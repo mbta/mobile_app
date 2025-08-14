@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.repositories
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.coroutines.flow.first
@@ -12,8 +11,6 @@ import org.koin.core.component.inject
 
 public interface IPinnedRoutesRepository {
     public suspend fun getPinnedRoutes(): Set<String>
-
-    public suspend fun setPinnedRoutes(routes: Set<String>)
 }
 
 internal class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
@@ -24,10 +21,6 @@ internal class PinnedRoutesRepository : IPinnedRoutesRepository, KoinComponent {
 
     override suspend fun getPinnedRoutes(): Set<String> {
         return dataStore.data.map { it[pinnedRoutesKey] ?: emptySet() }.first()
-    }
-
-    override suspend fun setPinnedRoutes(routes: Set<String>) {
-        dataStore.edit { it[pinnedRoutesKey] = routes }
     }
 }
 
@@ -43,10 +36,5 @@ constructor(
     override suspend fun getPinnedRoutes(): Set<String> {
         onGet?.invoke()
         return pinnedRoutes
-    }
-
-    override suspend fun setPinnedRoutes(routes: Set<String>) {
-        onSet?.invoke(routes)
-        pinnedRoutes = routes
     }
 }

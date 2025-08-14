@@ -33,12 +33,17 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
     }
 
-    func testPinTap() throws {
-        let tapExpectation = XCTestExpectation(description: "Pin button tap callback")
+    func testStarTap() throws {
+        let tapExpectation = XCTestExpectation(description: "Star button tap callback")
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0, onPin: { tapExpectation.fulfill() })
+        let sut = StopDetailsFilteredHeader(
+            route: route,
+            stop: stop,
+            direction: 0,
+            onFavorite: { tapExpectation.fulfill() }
+        )
         XCTAssertNoThrow(try sut.inspect().find(StarButton.self).find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)
     }

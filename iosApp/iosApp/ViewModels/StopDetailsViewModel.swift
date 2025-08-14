@@ -49,7 +49,6 @@ struct TripRouteAccents: Hashable {
 // swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
-    @Published var pinnedRoutes: Set<String> = []
     @Published var favorites: Favorites = .init(routeStopDirection: [])
     @Published var alertSummaries: [String: AlertSummary?] = [:]
 
@@ -60,7 +59,6 @@ class StopDetailsViewModel: ObservableObject {
     private let errorBannerRepository: IErrorBannerStateRepository
     private let favoritesRepository: IFavoritesRepository
     private let globalRepository: IGlobalRepository
-    private let pinnedRoutesRepository: IPinnedRoutesRepository
     private let predictionsRepository: IPredictionsRepository
     private let schedulesRepository: ISchedulesRepository
     private let tripPredictionsRepository: ITripPredictionsRepository
@@ -75,7 +73,6 @@ class StopDetailsViewModel: ObservableObject {
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         favoritesRepository: IFavoritesRepository = RepositoryDI().favorites,
         globalRepository: IGlobalRepository = RepositoryDI().global,
-        pinnedRoutesRepository: IPinnedRoutesRepository = RepositoryDI().pinnedRoutes,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
@@ -85,7 +82,6 @@ class StopDetailsViewModel: ObservableObject {
         self.errorBannerRepository = errorBannerRepository
         self.favoritesRepository = favoritesRepository
         self.globalRepository = globalRepository
-        self.pinnedRoutesRepository = pinnedRoutesRepository
         self.predictionsRepository = predictionsRepository
         self.schedulesRepository = schedulesRepository
         self.tripPredictionsRepository = tripPredictionsRepository
@@ -162,7 +158,6 @@ class StopDetailsViewModel: ObservableObject {
                 predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 now: now,
-                pinnedRoutes: pinnedRoutes,
                 context: isFiltered ? .stopDetailsFiltered : .stopDetailsUnfiltered
             )
         } else {
@@ -183,7 +178,6 @@ class StopDetailsViewModel: ObservableObject {
         Task {
             loadGlobalData()
             loadFavorites()
-            loadPinnedRoutes()
             await handleStopChange(stopId)
         }
     }
@@ -364,20 +358,6 @@ class StopDetailsViewModel: ObservableObject {
                 // do nothing on cancellation
             } catch {
                 // getFavorites shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
-    func loadPinnedRoutes() {
-        Task {
-            do {
-                let nextPinned = try await pinnedRoutesRepository.getPinnedRoutes()
-                Task { @MainActor in self.pinnedRoutes = nextPinned }
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getPinnedRoutes shouldn't actually fail
                 debugPrint(error)
             }
         }

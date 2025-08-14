@@ -529,7 +529,6 @@ fun stopDetailsManagedVM(
     filters: StopDetailsPageFilters?,
     globalResponse: GlobalResponse?,
     alertData: AlertsStreamDataResponse?,
-    pinnedRoutes: Set<String>,
     updateStopFilter: (String, StopDetailsFilter?) -> Unit,
     updateTripFilter: (String, TripDetailsFilter?) -> Unit,
     setMapSelectedVehicle: (Vehicle?) -> Unit,
@@ -579,7 +578,7 @@ fun stopDetailsManagedVM(
 
     LaunchedEffect(globalResponse) { viewModel.setGlobalResponse(globalResponse) }
 
-    LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, pinnedRoutes, now) {
+    LaunchedEffect(stopId, globalResponse, stopData, filters, alertData, now) {
         val schedules = stopData?.schedules
         withContext(Dispatchers.Default) {
             viewModel.setRouteCardData(
@@ -598,7 +597,6 @@ fun stopDetailsManagedVM(
                         stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                         alertData,
                         now,
-                        pinnedRoutes,
                         context =
                             if (filters.stopFilter != null)
                                 RouteCardData.Context.StopDetailsFiltered

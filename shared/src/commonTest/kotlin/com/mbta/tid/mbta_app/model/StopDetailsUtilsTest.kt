@@ -35,7 +35,6 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
 
@@ -80,7 +79,6 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
 
@@ -153,7 +151,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsUnfiltered,
             )
 
@@ -193,7 +190,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsUnfiltered,
             )
 
@@ -234,7 +230,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 
@@ -329,7 +324,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 
@@ -390,7 +384,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 
@@ -492,7 +485,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 
@@ -598,7 +590,6 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
 
@@ -693,7 +684,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 time,
-                emptySet(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 
@@ -769,7 +759,6 @@ class StopDetailsUtilsTest {
                     PredictionsStreamDataResponse(objects),
                     AlertsStreamDataResponse(objects),
                     time,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
 
@@ -916,7 +905,6 @@ class StopDetailsUtilsTest {
                 PredictionsStreamDataResponse(objects),
                 AlertsStreamDataResponse(objects),
                 now = time,
-                setOf(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
 

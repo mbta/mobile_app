@@ -173,7 +173,6 @@ class RouteCardListTest : KoinTest {
                 predictions = PredictionsStreamDataResponse(builder),
                 AlertsStreamDataResponse(emptyMap()),
                 now,
-                emptySet(),
                 RouteCardData.Context.NearbyTransit,
             )
 
@@ -186,7 +185,6 @@ class RouteCardListTest : KoinTest {
                         global = globalResponse,
                         now = EasternTimeInstant.now(),
                         isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -217,7 +215,6 @@ class RouteCardListTest : KoinTest {
                         global = globalResponse,
                         now = EasternTimeInstant.now(),
                         isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -243,7 +240,6 @@ class RouteCardListTest : KoinTest {
                 predictions = PredictionsStreamDataResponse(builder),
                 AlertsStreamDataResponse(emptyMap()),
                 now,
-                emptySet(),
                 RouteCardData.Context.NearbyTransit,
             )
 
@@ -257,7 +253,6 @@ class RouteCardListTest : KoinTest {
                         global = globalResponse,
                         now = EasternTimeInstant.now(),
                         isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
                         onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
                     )
                 }

@@ -161,7 +161,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -210,7 +209,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -428,7 +426,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -532,7 +529,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(objects),
                     alertResponse,
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -601,7 +597,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -660,7 +655,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(builder),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -732,7 +726,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     alertResponse,
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -780,7 +773,6 @@ class StopDetailsFilteredDeparturesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )

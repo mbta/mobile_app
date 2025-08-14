@@ -26,11 +26,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let directionId: Int32 = 0
 
         let favoritesRepository = MockFavoritesRepository()
-        let pinnedRoutesRepository = MockPinnedRoutesRepository()
 
         let stopDetailsVM = StopDetailsViewModel(
             favoritesRepository: favoritesRepository,
-            pinnedRoutesRepository: pinnedRoutesRepository
         )
         let sut = StopDetailsFilteredView(stopId: stop.id,
                                           stopFilter: .init(routeId: route.id, directionId: directionId),
