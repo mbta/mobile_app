@@ -13,13 +13,16 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     let routeAccents: TripRouteAccents
     let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
     let stopListContext: StopListContext
-    let stopPlacement: StopPlacement
 
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
 
-    private var isFirstOrLast: Bool {
-        stopPlacement.isFirst || stopPlacement.isLast
+    private var showTwist: Bool {
+        stickConnections.contains { connection, twisted in
+            twisted &&
+                (connection.fromVPos != RouteBranchSegment.VPos.top ||
+                    connection.toVPos != RouteBranchSegment.VPos.bottom)
+        }
     }
 
     func makeBody(configuration: Configuration) -> some View {
@@ -30,7 +33,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            if isFirstOrLast {
+                            if showTwist {
                                 ZStack {
                                     if caretRotation != .zero {
                                         Circle()
@@ -89,13 +92,11 @@ extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
             true
         )],
         context: StopListContext,
-        stopPlacement: StopPlacement = .init()
     ) -> StopListDisclosureGroup {
         .init(
             routeAccents: routeAccents,
             stickConnections: stickConnections,
             stopListContext: context,
-            stopPlacement: stopPlacement
         )
     }
 }

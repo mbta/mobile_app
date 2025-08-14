@@ -55,10 +55,14 @@ fun StopListGroupToggle(
                 true,
             )
         ),
-    stopPlacement: StopPlacement = StopPlacement(),
     label: @Composable RowScope.() -> Unit,
 ) {
-    val isFirstOrLast = stopPlacement.isFirst || stopPlacement.isLast
+    val showTwist =
+        stickConnections.any { (connection, twisted) ->
+            twisted &&
+                (connection.fromVPos != RouteBranchSegment.VPos.Top ||
+                    connection.toVPos != RouteBranchSegment.VPos.Bottom)
+        }
     Row(
         modifier
             .height(IntrinsicSize.Min)
@@ -87,7 +91,7 @@ fun StopListGroupToggle(
             ) {
                 if (it) 90f else 0f
             }
-        if (isFirstOrLast) {
+        if (showTwist) {
             Box(modifier = modifier.size(34.dp), contentAlignment = Alignment.Center) {
                 if (stopsExpanded) {
                     Box(

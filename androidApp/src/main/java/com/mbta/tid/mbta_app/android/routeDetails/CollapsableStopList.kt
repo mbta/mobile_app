@@ -84,7 +84,6 @@ fun CollapsableStopList(
                         ),
                     routeAccents = routeAccents,
                     stickConnections = twistedConnections,
-                    stopPlacement = StopPlacement(isFirstSegment, isLastSegment),
                     label = {
                         Column(
                             modifier =
