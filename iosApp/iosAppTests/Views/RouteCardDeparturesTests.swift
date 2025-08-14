@@ -43,7 +43,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stopData: stopData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in }
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Outbound to"))
@@ -87,7 +87,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stopData: stopData,
             global: .init(objects: objects),
             now: now,
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in }
         )
 
@@ -239,7 +239,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             stopData: stopData,
             global: .init(objects: objects),
             now: now,
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in }
         )
 
@@ -307,10 +307,62 @@ final class RouteCardDeparturesTests: XCTestCase {
             stopData: stopData,
             global: .init(objects: objects),
             now: now,
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in }
         )
 
         XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
+    }
+
+    func testAnalytics() throws {
+        let now = EasternTimeInstant.now()
+        let objects = TestData.clone()
+
+        let stop = objects.getStop(id: "place-rsmnl")
+        let line = objects.getLine(id: "line-Green")
+        let route = objects.getRoute(id: "Green-D")
+        let routePattern = objects.getRoutePattern(id: "Green-D-855-0")
+
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip(routePattern: routePattern)
+            prediction.departureTime = now.plus(minutes: 5)
+        })
+
+        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+
+        let context = RouteCardData.Context.nearbyTransit
+        let stopData = RouteCardData.RouteStopData(
+            lineOrRoute: lineOrRoute,
+            stop: stop,
+            directions: [
+                .init(name: "West", destination: "Riverside", id: 0),
+                .init(name: "East", destination: "Park St & North", id: 1),
+            ],
+            data: [.init(
+                lineOrRoute: lineOrRoute,
+                stop: stop,
+                directionId: 0,
+                routePatterns: [routePattern],
+                stopIds: [stop.id],
+                upcomingTrips: [trip],
+                alertsHere: [], allDataLoaded: true,
+                hasSchedulesToday: true, alertsDownstream: [],
+                context: context
+            )]
+        )
+
+        var eventProps: [String: String] = [:]
+
+        let sut = RouteCardDepartures(
+            analytics: MockAnalytics(onLogEvent: { _, props in eventProps = props }),
+            stopData: stopData,
+            global: .init(objects: objects),
+            now: now,
+            isFavorite: { rsd in rsd == RouteStopDirection(route: lineOrRoute.id, stop: "place-rsmnl", direction: 0) },
+            pushNavEntry: { _ in }
+        )
+
+        try sut.inspect().findAll(ViewType.Button.self)[0].tap()
+        XCTAssertEqual(eventProps["pinned"], "true")
     }
 }

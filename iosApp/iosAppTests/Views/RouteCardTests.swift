@@ -33,6 +33,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -63,6 +64,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -89,6 +91,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([.enhancedFavorites: true])
@@ -124,6 +127,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -144,6 +148,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: false
         ).withFixedSettings([:])
@@ -183,6 +188,7 @@ final class RouteCardTests: XCTestCase {
             now: EasternTimeInstant.now(),
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -198,6 +204,7 @@ final class RouteCardTests: XCTestCase {
             now: data.now,
             onPin: { _ in },
             pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
