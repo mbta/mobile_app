@@ -14,7 +14,7 @@ struct RouteCardDepartures: View {
     let stopData: RouteCardData.RouteStopData
     let global: GlobalResponse?
     let now: EasternTimeInstant
-    let pinned: Bool
+    let isFavorite: (RouteStopDirection) -> Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
 
     var body: some View {
@@ -66,7 +66,9 @@ struct RouteCardDepartures: View {
         analytics.tappedDeparture(
             routeId: stopData.lineOrRoute.id,
             stopId: stopData.stop.id,
-            pinned: pinned,
+            pinned: isFavorite(RouteStopDirection(route: stopData.lineOrRoute.id,
+                                                  stop: stopData.stop.id,
+                                                  direction: leaf.directionId)),
             alert: leaf.alertsHere(tripId: nil).count > 0,
             routeType: stopData.lineOrRoute.type,
             noTrips: noTrips

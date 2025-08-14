@@ -57,6 +57,7 @@ struct FavoritesView: View {
                 now: now,
                 isPinned: { _ in false },
                 onPin: { _ in },
+                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0 }) ?? false },
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )

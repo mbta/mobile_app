@@ -59,6 +59,9 @@ struct NearbyTransitPage: View {
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
             }
             .toolbarBackground(.visible, for: .tabBar)
+            .onAppear {
+                nearbyVM.loadFavorites()
+            }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 if isManuallyCentering {
                     // The user is manually moving the map, clear the nearby state and

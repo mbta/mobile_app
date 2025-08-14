@@ -154,6 +154,10 @@ struct StopDetailsUnfilteredView: View {
                                             .Pinned(routeId: routeCardData.lineOrRoute.id),
                                             enhancedFavorites: false
                                         ),
+                                        isFavorite: { rsd in stopDetailsVM.isFavorite(
+                                            .Favorite(routeStopDirection: rsd),
+                                            enhancedFavorites: true
+                                        ) },
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
@@ -181,6 +185,7 @@ struct StopDetailsUnfilteredView: View {
                     now: now,
                     onPin: { _ in },
                     pinned: false,
+                    isFavorite: { _ in false },
                     pushNavEntry: { _ in },
                     showStopHeader: false
                 )
