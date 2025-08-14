@@ -91,6 +91,8 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     .foregroundStyle(Color.deemphasized)
                     .font(Typography.footnote)
                 }
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h4)
                 .padding(.vertical, 12)
                 .padding(.trailing, 8)
             })

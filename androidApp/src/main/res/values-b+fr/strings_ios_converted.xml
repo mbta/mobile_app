@@ -218,6 +218,7 @@
     <string name="more_title">MTBA Go</string>
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
+    <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>
     <string name="next_stop">Prochain arrêt</string>
     <string name="no_matching_routes">Aucune correspondance de routes de %1$s</string>
     <string name="no_predictions">Les prévisions ne sont pas encore disponibles</string>

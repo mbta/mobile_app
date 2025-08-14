@@ -217,6 +217,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
+    <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
     <string name="next_stop">Next stop</string>
     <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>

@@ -103,9 +103,9 @@ fun StopListRow(
             }
             Row(
                 Modifier.fillMaxHeight()
-                    .padding(start = 8.dp)
                     .semantics(mergeDescendants = true) {}
-                    .clickable(onClickLabel = onClickLabel) { onClick() },
+                    .clickable(onClickLabel = onClickLabel) { onClick() }
+                    .padding(start = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(0.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
