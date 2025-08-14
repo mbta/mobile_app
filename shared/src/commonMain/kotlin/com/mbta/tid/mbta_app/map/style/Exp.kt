@@ -203,7 +203,7 @@ internal fun Exp(value: Boolean): Exp<Boolean> = Exp.Bare(JsonPrimitive(value))
 
 internal fun Exp(value: Number): Exp<Number> = Exp.Bare(JsonPrimitive(value))
 
-internal fun Exp(value: String): Exp<String> = Exp.Bare(JsonPrimitive(value))
+public fun Exp(value: String): Exp<String> = Exp.Bare(JsonPrimitive(value))
 
 internal fun Exp<String>.downcastToColor(): Exp<Color> = Exp.Bare(this.asJson())
 

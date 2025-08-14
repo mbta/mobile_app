@@ -44,7 +44,7 @@ public sealed class UpcomingFormat {
     public abstract val secondaryAlert: SecondaryAlert?
 
     public data class SecondaryAlert(val iconName: String) {
-        internal constructor(
+        public constructor(
             alert: Alert,
             mapStopRoute: MapStopRoute?,
         ) : this(alert.alertState, mapStopRoute)
