@@ -107,3 +107,15 @@ public data class RouteBranchSegment(
             )
     }
 }
+
+public val List<Pair<RouteBranchSegment.StickConnection, Boolean>>.terminatedTwist: Boolean
+    get() = isTerminatedTwist(this)
+
+public fun isTerminatedTwist(
+    stickConnections: List<Pair<RouteBranchSegment.StickConnection, Boolean>>
+): Boolean =
+    stickConnections.any { (connection, twisted) ->
+        twisted &&
+            (connection.fromVPos != RouteBranchSegment.VPos.Top ||
+                connection.toVPos != RouteBranchSegment.VPos.Bottom)
+    }

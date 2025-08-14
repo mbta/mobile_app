@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
+import com.mbta.tid.mbta_app.model.terminatedTwist
 
 @Composable
 fun StopListGroupToggle(
@@ -57,12 +58,6 @@ fun StopListGroupToggle(
         ),
     label: @Composable RowScope.() -> Unit,
 ) {
-    val hideTwist =
-        stickConnections.any { (connection, twisted) ->
-            twisted &&
-                (connection.fromVPos != RouteBranchSegment.VPos.Top ||
-                    connection.toVPos != RouteBranchSegment.VPos.Bottom)
-        }
     Row(
         modifier
             .height(IntrinsicSize.Min)
@@ -91,7 +86,7 @@ fun StopListGroupToggle(
             ) {
                 if (it) 90f else 0f
             }
-        if (hideTwist) {
+        if (stickConnections.terminatedTwist) {
             Box(modifier = modifier.size(34.dp), contentAlignment = Alignment.Center) {
                 if (stopsExpanded) {
                     Box(

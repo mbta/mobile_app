@@ -17,12 +17,9 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
 
-    private var hideTwist: Bool {
-        stickConnections.contains { connection, twisted in
-            twisted &&
-                (connection.fromVPos != RouteBranchSegment.VPos.top ||
-                    connection.toVPos != RouteBranchSegment.VPos.bottom)
-        }
+    var terminatedTwist: Bool {
+        let ktStickConnections = stickConnections.map { KotlinPair(first: $0, second: KotlinBoolean(bool: $1)) }
+        return isTerminatedTwist(stickConnections: ktStickConnections)
     }
 
     func makeBody(configuration: Configuration) -> some View {
@@ -33,7 +30,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            if hideTwist {
+                            if terminatedTwist {
                                 ZStack {
                                     if caretRotation != .zero {
                                         Circle()
