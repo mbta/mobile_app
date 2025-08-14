@@ -371,7 +371,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                                 segment: segment,
                                 onClick: { onTapStop(stopRowContext($0.stop)) },
                                 isFirstSegment: segmentIndex == stopList.segments.startIndex,
-                                isLastSegment: segmentIndex == stopList.segments.endIndex,
+                                isLastSegment: segmentIndex == stopList.segments
+                                    .index(before: stopList.segments.endIndex),
                                 rightSideContent: { stop in rightSideContent(stopRowContext(stop.stop)) }
                             )
                         }

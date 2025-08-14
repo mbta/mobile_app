@@ -13,9 +13,14 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     let routeAccents: TripRouteAccents
     let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
     let stopListContext: StopListContext
+    let stopPlacement: StopPlacement
 
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
+
+    private var isFirstOrLast: Bool {
+        stopPlacement.isFirst || stopPlacement.isLast
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         VStack(spacing: 0) {
@@ -25,18 +30,29 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            RouteLineTwist(
-                                color: routeAccents.color,
-                                proportionClosed: twistFactor,
-                                connections: stickConnections
-                            )
-                            .padding(.leading, 14)
-                            Image(.faCaretRight)
-                                .resizable()
-                                .frame(width: 6, height: 10)
-                                .rotationEffect(caretRotation)
-                                .foregroundStyle(Color.deemphasized)
-                                .frame(width: 24, height: 24)
+                            if isFirstOrLast {
+                                ZStack {
+                                    if caretRotation != .zero {
+                                        Circle()
+                                            .stroke(Color.halo, lineWidth: 2)
+                                            .background(Color.fill2)
+                                            .frame(width: 32, height: 32)
+                                    }
+                                    caret
+                                        .frame(width: 32, height: 32)
+                                }
+                                .padding(.leading, 20)
+                                .padding(.trailing, 13) // There's already a leading 7pt padding on StopListRow
+                            } else {
+                                RouteLineTwist(
+                                    color: routeAccents.color,
+                                    proportionClosed: twistFactor,
+                                    connections: stickConnections
+                                )
+                                .padding(.leading, 14)
+                                caret
+                                    .frame(width: 24, height: 24)
+                            }
                             configuration.label
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -55,6 +71,14 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                 .accessibilityHidden(!configuration.isExpanded)
         }
     }
+
+    private var caret: some View {
+        Image(.faCaretRight)
+            .resizable()
+            .frame(width: 6, height: 10)
+            .rotationEffect(caretRotation)
+            .foregroundStyle(Color.deemphasized)
+    }
 }
 
 extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
@@ -65,7 +89,13 @@ extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
             true
         )],
         context: StopListContext,
+        stopPlacement: StopPlacement = .init()
     ) -> StopListDisclosureGroup {
-        .init(routeAccents: routeAccents, stickConnections: stickConnections, stopListContext: context)
+        .init(
+            routeAccents: routeAccents,
+            stickConnections: stickConnections,
+            stopListContext: context,
+            stopPlacement: stopPlacement
+        )
     }
 }

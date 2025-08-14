@@ -102,6 +102,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     return (connection, isTwisted.boolValue)
                 },
                 context: .routeDetails,
+                stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment)
             ))
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }
