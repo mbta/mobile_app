@@ -116,6 +116,7 @@ fun OnboardingScreenView(
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_feedback_header,
                         R.string.onboarding_feedback_body,
+                        OnboardingPieces.Context.Onboarding,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     OnboardingPieces.KeyButton(
@@ -131,6 +132,7 @@ fun OnboardingScreenView(
                 OnboardingPieces.PageDescription(
                     R.string.onboarding_map_display_header,
                     R.string.onboarding_map_display_body,
+                    OnboardingPieces.Context.Onboarding,
                     Modifier.align(Alignment.Center)
                         .padding(horizontal = 32.dp)
                         .background(colorResource(R.color.fill2), shape = RoundedCornerShape(32.dp))
@@ -166,6 +168,7 @@ fun OnboardingScreenView(
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_location_header,
                         R.string.onboarding_location_body,
+                        OnboardingPieces.Context.Onboarding,
                     )
                     OnboardingPieces.KeyButton(
                         R.string.onboarding_continue,
@@ -193,6 +196,7 @@ fun OnboardingScreenView(
                     OnboardingPieces.PageDescription(
                         R.string.onboarding_station_accessibility_header,
                         R.string.onboarding_station_accessibility_body,
+                        OnboardingPieces.Context.Onboarding,
                     )
 
                     val stationAccessibility = settingsCache.get(Settings.StationAccessibility)

@@ -44,6 +44,7 @@ fun EnhancedFavorites(textScale: Float, onAdvance: () -> Unit) {
             OnboardingPieces.PageDescription(
                 R.string.promo_favorites_header,
                 R.string.promo_favorites_body,
+                OnboardingPieces.Context.Promo,
             )
             Spacer(modifier = Modifier.height(16.dp))
             OnboardingPieces.KeyButton(R.string.got_it, onClick = onAdvance)

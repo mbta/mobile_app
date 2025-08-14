@@ -22,16 +22,11 @@ extension RouteStopDirection {
               let stop = global.getStop(stopId: stop)
         else { return nil }
 
-        let routeLabel = lineOrRoute.type == .bus
-            ? String(format: NSLocalizedString(
-                "%1$@ bus",
-                comment: "Bus route name label, with the value being the route number, ex. \"1 bus\", \"66 bus\""
-            ), lineOrRoute.name) : lineOrRoute.name
         let directionLabel = DirectionLabel.directionNameFormatted(.init(
             directionId: direction,
             route: lineOrRoute.sortRoute
         ))
 
-        return .init(route: routeLabel, stop: stop.name, direction: directionLabel)
+        return .init(route: lineOrRoute.labelWithModeIfBus, stop: stop.name, direction: directionLabel)
     }
 }

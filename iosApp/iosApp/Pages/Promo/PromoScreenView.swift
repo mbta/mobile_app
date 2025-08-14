@@ -72,6 +72,7 @@ struct PromoScreenView: View {
                 bodyText: Text(promoDetailsString),
                 focusBinding: $focusHeader,
                 focusValue: .combinedStopAndTrip,
+                context: .promo,
                 bodyDynamicTypeSize: .accessibility3
             )
             .padding(.bottom, 16)
@@ -120,6 +121,7 @@ struct PromoScreenView: View {
                 bodyText: Text(promoDetailsString),
                 focusBinding: $focusHeader,
                 focusValue: .enhancedFavorites,
+                context: .promo,
                 bodyDynamicTypeSize: .accessibility3
             )
             .padding(.bottom, 16)
