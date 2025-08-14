@@ -11,16 +11,11 @@ import SwiftUI
 
 struct StopListDisclosureGroup: DisclosureGroupStyle {
     let routeAccents: TripRouteAccents
-    let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
+    let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]?
     let stopListContext: StopListContext
 
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
-
-    var terminatedTwist: Bool {
-        let ktStickConnections = stickConnections.map { KotlinPair(first: $0, second: KotlinBoolean(bool: $1)) }
-        return isTerminatedTwist(stickConnections: ktStickConnections)
-    }
 
     func makeBody(configuration: Configuration) -> some View {
         VStack(spacing: 0) {
@@ -30,7 +25,16 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            if terminatedTwist {
+                            if let stickConnections {
+                                RouteLineTwist(
+                                    color: routeAccents.color,
+                                    proportionClosed: twistFactor,
+                                    connections: stickConnections
+                                )
+                                .padding(.leading, 14)
+                                caret
+                                    .frame(width: 24, height: 24)
+                            } else {
                                 ZStack {
                                     if caretRotation != .zero {
                                         Circle()
@@ -43,15 +47,6 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                                 }
                                 .padding(.leading, 20)
                                 .padding(.trailing, 13) // There's already a leading 7pt padding on StopListRow
-                            } else {
-                                RouteLineTwist(
-                                    color: routeAccents.color,
-                                    proportionClosed: twistFactor,
-                                    connections: stickConnections
-                                )
-                                .padding(.leading, 14)
-                                caret
-                                    .frame(width: 24, height: 24)
                             }
                             configuration.label
                         }.frame(maxWidth: .infinity, alignment: .leading)
@@ -84,7 +79,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
 extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
     static func stopList(
         routeAccents: TripRouteAccents,
-        stickConnections: [(RouteBranchSegment.StickConnection, Bool)] = [(
+        stickConnections: [(RouteBranchSegment.StickConnection, Bool)]? = [(
             .init(fromStop: "", toStop: "", fromLane: .center, toLane: .center, fromVPos: .top, toVPos: .bottom),
             true
         )],

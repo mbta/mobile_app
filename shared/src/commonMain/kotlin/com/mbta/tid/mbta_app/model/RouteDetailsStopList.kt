@@ -14,7 +14,7 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
          * drawn in the toggle, and whether or not they should be twisted because they contain
          * stops.
          */
-        public fun twistedConnections(): List<Pair<RouteBranchSegment.StickConnection, Boolean>> {
+        public fun twistedConnections(): List<Pair<RouteBranchSegment.StickConnection, Boolean>>? {
             val lanesWithStops = stops.map { it.stopLane }.toSet()
             val connectionsBefore =
                 stops.first().stickConnections.filter { it.fromVPos == RouteBranchSegment.VPos.Top }
@@ -52,9 +52,18 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
                         } +
                         connectionsTransitive.map { it.third })
                     .distinct()
-            return connections.map {
-                it to (lanesWithStops.contains(it.fromLane) && lanesWithStops.contains(it.toLane))
-            }
+            val stickConnections =
+                connections.map {
+                    it to
+                        (lanesWithStops.contains(it.fromLane) && lanesWithStops.contains(it.toLane))
+                }
+            val terminatedTwist =
+                stickConnections.any { (connection, twisted) ->
+                    twisted &&
+                        (connection.fromVPos != RouteBranchSegment.VPos.Top ||
+                            connection.toVPos != RouteBranchSegment.VPos.Bottom)
+                }
+            return if (terminatedTwist) null else stickConnections
         }
     }
 

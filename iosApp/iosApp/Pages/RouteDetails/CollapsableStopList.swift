@@ -99,7 +99,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
             .padding(.leading, -7)
             .disclosureGroupStyle(.stopList(
                 routeAccents: .init(route: lineOrRoute.sortRoute),
-                stickConnections: segment.twistedConnections().compactMap {
+                stickConnections: segment.twistedConnections()?.compactMap {
                     guard let connection = $0.first, let isTwisted = $0.second else { return nil }
                     return (connection, isTwisted.boolValue)
                 },

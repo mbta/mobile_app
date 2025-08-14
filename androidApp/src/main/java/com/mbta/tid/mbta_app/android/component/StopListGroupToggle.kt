@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
-import com.mbta.tid.mbta_app.model.terminatedTwist
 
 @Composable
 fun StopListGroupToggle(
@@ -42,7 +41,7 @@ fun StopListGroupToggle(
     onClickLabel: String,
     routeAccents: TripRouteAccents,
     modifier: Modifier = Modifier,
-    stickConnections: List<Pair<RouteBranchSegment.StickConnection, Boolean>> =
+    stickConnections: List<Pair<RouteBranchSegment.StickConnection, Boolean>>? =
         listOf(
             Pair(
                 RouteBranchSegment.StickConnection(
@@ -86,7 +85,7 @@ fun StopListGroupToggle(
             ) {
                 if (it) 90f else 0f
             }
-        if (stickConnections.terminatedTwist) {
+        if (stickConnections == null) {
             Box(modifier = modifier.size(34.dp), contentAlignment = Alignment.Center) {
                 if (stopsExpanded) {
                     Box(
