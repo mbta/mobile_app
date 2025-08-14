@@ -14,6 +14,7 @@ struct NavTextButton: View {
     let backgroundColor: Color
     let textColor: Color
     var height: CGFloat? = nil
+    var width: CGFloat? = nil
     let action: () -> Void
 
     var body: some View {
@@ -25,7 +26,7 @@ struct NavTextButton: View {
                     .padding(.horizontal, 12)
                     .padding(.vertical, 4)
                     .foregroundColor(textColor)
-                    .frame(minHeight: height)
+                    .frame(minWidth: width, minHeight: height)
                     .background(backgroundColor)
                     .buttonBorderShape(.capsule)
                     .clipShape(Capsule())
