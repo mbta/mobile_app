@@ -57,7 +57,7 @@ fun StopListGroupToggle(
         ),
     label: @Composable RowScope.() -> Unit,
 ) {
-    val showTwist =
+    val hideTwist =
         stickConnections.any { (connection, twisted) ->
             twisted &&
                 (connection.fromVPos != RouteBranchSegment.VPos.Top ||
@@ -91,7 +91,7 @@ fun StopListGroupToggle(
             ) {
                 if (it) 90f else 0f
             }
-        if (showTwist) {
+        if (hideTwist) {
             Box(modifier = modifier.size(34.dp), contentAlignment = Alignment.Center) {
                 if (stopsExpanded) {
                     Box(

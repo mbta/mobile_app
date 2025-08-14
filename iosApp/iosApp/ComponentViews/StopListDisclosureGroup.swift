@@ -17,7 +17,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
     @State var caretRotation: Angle = .zero
     @State var twistFactor: Float = 1
 
-    private var showTwist: Bool {
+    private var hideTwist: Bool {
         stickConnections.contains { connection, twisted in
             twisted &&
                 (connection.fromVPos != RouteBranchSegment.VPos.top ||
@@ -33,7 +33,7 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            if showTwist {
+                            if hideTwist {
                                 ZStack {
                                     if caretRotation != .zero {
                                         Circle()
