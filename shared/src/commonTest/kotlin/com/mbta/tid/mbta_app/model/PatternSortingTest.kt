@@ -178,9 +178,8 @@ class PatternSortingTest {
                 latitude = 2.0
                 longitude = 2.0
             }
-        val pinnedRoutes = mutableSetOf<String>()
+
         fun routeCard(
-            pinned: Boolean,
             service: Service,
             subway: Boolean,
             near: Boolean,
@@ -192,7 +191,6 @@ class PatternSortingTest {
                     this.sortOrder = sortOrder
                 }
             val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
-            if (pinned) pinnedRoutes.add(route.id)
             val stop = if (near) nearStop else farStop
             return routeCard(
                 route,
@@ -209,98 +207,31 @@ class PatternSortingTest {
                 ),
             )
         }
-        val routeCard1 =
-            routeCard(
-                pinned = true,
-                service = Service.Yes,
-                subway = true,
-                near = true,
-                sortOrder = 1,
-            )
+        val routeCard1 = routeCard(service = Service.Yes, subway = true, near = true, sortOrder = 1)
         val routeCard2 =
-            routeCard(
-                pinned = true,
-                service = Service.Yes,
-                subway = true,
-                near = true,
-                sortOrder = 50,
-            )
+            routeCard(service = Service.Yes, subway = true, near = true, sortOrder = 50)
         val routeCard3 =
-            routeCard(
-                pinned = true,
-                service = Service.Yes,
-                subway = true,
-                near = false,
-                sortOrder = 1,
-            )
+            routeCard(service = Service.Yes, subway = true, near = false, sortOrder = 1)
         val routeCard4 =
-            routeCard(
-                pinned = true,
-                service = Service.Yes,
-                subway = false,
-                near = true,
-                sortOrder = 1,
-            )
+            routeCard(service = Service.Yes, subway = false, near = true, sortOrder = 1)
         val routeCard5 =
-            routeCard(
-                pinned = true,
-                service = Service.Ended,
-                subway = true,
-                near = true,
-                sortOrder = 1,
-            )
-        val routeCard6 =
-            routeCard(
-                pinned = true,
-                service = Service.No,
-                subway = true,
-                near = true,
-                sortOrder = 1,
-            )
-        val routeCard7 =
-            routeCard(
-                pinned = false,
-                service = Service.Yes,
-                subway = true,
-                near = true,
-                sortOrder = 1,
-            )
+            routeCard(service = Service.Ended, subway = true, near = true, sortOrder = 1)
+        val routeCard6 = routeCard(service = Service.No, subway = true, near = true, sortOrder = 1)
 
         assertEquals(
             0,
-            PatternSorting.compareRouteCards(emptySet(), null, RouteCardData.Context.NearbyTransit)
+            PatternSorting.compareRouteCards(null, RouteCardData.Context.NearbyTransit)
                 .compare(routeCard1, routeCard3),
-        )
-        assertEquals(
-            0,
-            PatternSorting.compareRouteCards(
-                    emptySet(),
-                    position,
-                    RouteCardData.Context.NearbyTransit,
-                )
-                .compare(routeCard1, routeCard7),
         )
 
         val expected =
-            listOf(
-                routeCard1,
-                routeCard2,
-                routeCard3,
-                routeCard4,
-                routeCard5,
-                routeCard6,
-                routeCard7,
-            )
+            listOf(routeCard1, routeCard2, routeCard3, routeCard4, routeCard5, routeCard6)
         assertEquals(
             expected,
             expected
                 .reversed()
                 .sortedWith(
-                    PatternSorting.compareRouteCards(
-                        pinnedRoutes,
-                        position,
-                        RouteCardData.Context.NearbyTransit,
-                    )
+                    PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit)
                 ),
         )
     }
@@ -350,22 +281,14 @@ class PatternSortingTest {
             expected
                 .reversed()
                 .sortedWith(
-                    PatternSorting.compareRouteCards(
-                        emptySet(),
-                        position,
-                        RouteCardData.Context.Favorites,
-                    )
+                    PatternSorting.compareRouteCards(position, RouteCardData.Context.Favorites)
                 ),
         )
 
         assertEquals(
             expected.reversed(),
             expected.sortedWith(
-                PatternSorting.compareRouteCards(
-                    emptySet(),
-                    position,
-                    RouteCardData.Context.NearbyTransit,
-                )
+                PatternSorting.compareRouteCards(position, RouteCardData.Context.NearbyTransit)
             ),
         )
     }

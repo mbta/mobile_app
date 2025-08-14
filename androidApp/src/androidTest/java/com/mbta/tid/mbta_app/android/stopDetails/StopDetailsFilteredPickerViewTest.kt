@@ -160,7 +160,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -212,7 +211,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -273,7 +271,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(builder),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -323,7 +320,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -373,7 +369,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )
@@ -444,7 +439,6 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )

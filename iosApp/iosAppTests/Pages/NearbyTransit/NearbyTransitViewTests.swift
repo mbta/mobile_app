@@ -18,7 +18,6 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitViewTests: XCTestCase {
-    private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
@@ -45,7 +44,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
     func testPending() throws {
         let sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
@@ -64,7 +62,6 @@ final class NearbyTransitViewTests: XCTestCase {
         let getNearbyExpectation = expectation(description: "getNearby")
 
         var sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
@@ -174,7 +171,6 @@ final class NearbyTransitViewTests: XCTestCase {
         _ objects: ObjectCollectionBuilder,
         _ loadPublisher: PassthroughSubject<LoadedStops, Never>,
         now: EasternTimeInstant? = nil,
-        _ pinnedRoutes: Set<String> = []
     ) -> NearbyTransitView {
         let nearbyVM = NearbyViewModel()
         nearbyVM.nearbyState = getNearbyState(objects: objects)
@@ -182,9 +178,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let predictionPub = PassthroughSubject<[String], Never>()
         let schedulePub = PassthroughSubject<[String], Never>()
-        let pinnedRoutesPub = PassthroughSubject<[String], Never>()
-
-        let pinnedRoutesRepository = MockPinnedRoutesRepository(initialPinnedRoutes: pinnedRoutes)
 
         Publishers.Zip(predictionPub, schedulePub).sink { predictionStops, scheduleStops in
             loadPublisher.send(
@@ -193,7 +186,6 @@ final class NearbyTransitViewTests: XCTestCase {
         }.store(in: &cancellables)
 
         var sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(
                 onConnectV2: { predictionStops in predictionPub.send(predictionStops) },
                 connectV2Response: .init(objects: objects)
@@ -214,30 +206,6 @@ final class NearbyTransitViewTests: XCTestCase {
         sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
 
         return sut
-    }
-
-    @MainActor func testDoesntSortsPinnedRoutesToTopEnhancedFavorites() throws {
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let objects = route52Objects()
-
-        let testData = Shared.TestData.clone()
-
-        objects.put(object: testData.getRoute(id: "15"))
-        objects.put(object: testData.getRoutePattern(id: "15-2-0"))
-        objects.put(object: testData.getTrip(id: "68166816"))
-        objects.put(object: testData.getStop(id: "17863"))
-
-        let sut = setUpSut(objects, loadPublisher, ["52"])
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let routes = view.findAll(RouteCard.self)
-
-            XCTAssertEqual(routes.count, 2)
-            XCTAssertNotNil(try routes[0].find(text: "15"))
-            XCTAssertNotNil(try routes[1].find(text: "52"))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 1)
     }
 
     @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {
@@ -502,7 +470,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(objects: objects)
 
         var sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(
                 onConnectV2: { _ in joinsPredictionsExpectation.fulfill() },
                 connectV2Response: .init(objects: objects)
@@ -567,7 +534,6 @@ final class NearbyTransitViewTests: XCTestCase {
                 predictions: .init(objects: objects),
                 alerts: .init(objects: objects),
                 now: Date.now,
-                pinnedRoutes: pinnedRoutesRepository.pinnedRoutes
             )
         }
 
@@ -609,7 +575,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
@@ -640,7 +605,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
@@ -674,7 +638,6 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = getNearbyState(objects: objects)
         let sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
@@ -718,7 +681,6 @@ final class NearbyTransitViewTests: XCTestCase {
         repositories.errorBanner = MockErrorBannerStateRepository(state: .DataError(messages: [], action: {}))
         loadKoinMocks(repositories: repositories)
         let sut = NearbyTransitView(
-            pinnedRouteRepository: pinnedRoutesRepository,
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),

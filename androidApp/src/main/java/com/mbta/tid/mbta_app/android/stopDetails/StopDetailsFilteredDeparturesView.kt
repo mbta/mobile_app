@@ -283,7 +283,7 @@ private fun DepartureTiles(
     tiles: List<TileData>,
     alerts: List<Alert>,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
-    pinned: Boolean,
+    isFavorite: Boolean,
     analytics: Analytics,
     bringIntoViewRequesters: MutableMap<String, BringIntoViewRequester>,
     scrollState: ScrollState,
@@ -313,7 +313,7 @@ private fun DepartureTiles(
                     analytics.tappedDeparture(
                         routeId = lineOrRoute.id,
                         stopId = stop.id,
-                        pinned = pinned,
+                        pinned = isFavorite,
                         alert = alerts.isNotEmpty(),
                         routeType = lineOrRoute.sortRoute.type,
                         noTrips = null,

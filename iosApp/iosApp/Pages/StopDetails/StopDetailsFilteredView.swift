@@ -77,13 +77,6 @@ struct StopDetailsFilteredView: View {
         stopDetailsVM.isFavorite(routeStopDirection)
     }
 
-    func toggleFavorite() {
-        Task {
-            let pinned = await stopDetailsVM.updateFavorites([routeStopDirection: !isFavorite],
-                                                             stopFilter.directionId)
-        }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             ZStack {
@@ -150,8 +143,8 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(routeStopDirection),
-                    onPin: { inSaveFavoritesFlow = true },
+                    isFavorite: stopDetailsVM.isFavorite(routeStopDirection),
+                    onFavorite: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
                 /*  DebugView {

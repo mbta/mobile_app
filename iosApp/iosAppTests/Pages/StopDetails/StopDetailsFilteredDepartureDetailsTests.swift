@@ -712,7 +712,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             predictions: PredictionsStreamDataResponse(objects: objects),
             alerts: alertResponse,
             now: now,
-            pinnedRoutes: [],
             context: .stopDetailsFiltered
         )!.first!
         let routeStopData = routeCardData.stopData.first!
