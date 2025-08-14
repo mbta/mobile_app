@@ -23,6 +23,8 @@ struct FavoritesView: View {
     let inspection = Inspection<Self>()
     @State var now = Date.now
 
+    @ScaledMetric private var editButtonHeight: CGFloat = 32
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             SheetHeader(
@@ -34,7 +36,8 @@ struct FavoritesView: View {
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
                             backgroundColor: Color.translucentContrast,
                             textColor: Color.fill2,
-                            height: 32
+                            height: editButtonHeight,
+                            width: 64
                         ) {
                             nearbyVM.pushNavEntry(.editFavorites)
                         }
