@@ -49,14 +49,9 @@ struct SheetHeader<Content: View>: View {
                     .preventScrollTaps()
             }
             if let title {
-                let accessibilityLabel = if let titleAccessibilityLabel {
-                    titleAccessibilityLabel
-                } else {
-                    title
-                }
                 Text(title)
                     .font(Typography.title2Bold)
-                    .accessibilityLabel(accessibilityLabel)
+                    .accessibilityLabel(titleAccessibilityLabel ?? title)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
                     .foregroundColor(titleColor)
