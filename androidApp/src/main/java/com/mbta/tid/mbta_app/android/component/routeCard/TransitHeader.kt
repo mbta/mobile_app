@@ -14,17 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
-import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 
@@ -55,12 +53,7 @@ fun TransitHeader(
     modeDescription: String?,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
-    val routeContentDescription =
-        stringResource(
-            id = R.string.route_with_type,
-            name,
-            routeType.typeText(LocalContext.current, isOnly = true),
-        )
+    val routeContentDescription = routeModeLabel(LocalContext.current, name, routeType)
 
     Row(
         modifier = Modifier.background(backgroundColor).fillMaxWidth().padding(8.dp),

@@ -286,8 +286,8 @@
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
     <string name="route_effect">%2$s %1$s</string>
+    <string name="route_mode_label">%2$s %1$s</string>
     <string name="route_picker_header_favorites">Ajouter les arrêts favoris</string>
-    <string name="route_with_type">%2$s %1$s</string>
     <string name="routes">Trajets</string>
     <string name="schedule_change">Changement d’horaire</string>
     <string name="schedule_change_sentence_case">Changement d’horaire</string>

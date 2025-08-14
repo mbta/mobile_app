@@ -48,7 +48,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 stopListContext: .routeDetails,
                 connectingRoutes: stop.connectingRoutes,
                 stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment),
-                descriptor: { Text("Less common stop").font(Typography.footnote) },
+                descriptor: { Text("Less common stop").font(Typography.footnote).foregroundStyle(Color.text) },
                 rightSideContent: { rightSideContent(stop) }
             ).background(Color.fill1)
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
