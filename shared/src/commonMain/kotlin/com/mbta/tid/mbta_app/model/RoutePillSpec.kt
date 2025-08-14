@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 
-data class RoutePillSpec(
+public data class RoutePillSpec(
     val textColor: String,
     val routeColor: String,
     val content: Content,
@@ -10,21 +10,21 @@ data class RoutePillSpec(
     val shape: Shape,
     val contentDescription: ContentDescription? = null,
 ) {
-    enum class Type {
+    public enum class Type {
         Fixed,
         Flex,
         FlexCompact,
     }
 
-    sealed interface Content {
-        data object Empty : Content
+    public sealed interface Content {
+        public data object Empty : Content
 
-        data class Text(val text: String) : Content
+        public data class Text(val text: String) : Content
 
-        data class ModeImage(val mode: RouteType) : Content
+        public data class ModeImage internal constructor(val mode: RouteType) : Content
     }
 
-    enum class Size {
+    public enum class Size {
         FixedPill,
         Circle,
         CircleSmall,
@@ -32,18 +32,18 @@ data class RoutePillSpec(
         FlexPillSmall,
     }
 
-    enum class Shape {
+    public enum class Shape {
         Capsule,
         Rectangle,
     }
 
-    enum class Context {
+    public enum class Context {
         SearchStation,
         Default,
     }
 
-    sealed class ContentDescription {
-        data class StopSearchResultRoute(
+    public sealed class ContentDescription {
+        public data class StopSearchResultRoute(
             val routeName: String?,
             val routeType: RouteType,
             val isOnly: Boolean,
@@ -51,7 +51,7 @@ data class RoutePillSpec(
     }
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         route: Route?,
         line: Line?,
         type: Type,
@@ -86,7 +86,7 @@ data class RoutePillSpec(
         contentDescription = contentDescription,
     )
 
-    companion object {
+    internal companion object {
 
         private fun linePillContent(line: Line): Content =
             if (line.longName == "Green Line") {

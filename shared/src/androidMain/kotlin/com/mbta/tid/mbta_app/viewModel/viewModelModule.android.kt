@@ -1,12 +1,13 @@
 package com.mbta.tid.mbta_app.viewModel
 
+import org.koin.core.module.Module
 import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
-actual fun viewModelModule() = module {
+public actual fun viewModelModule(): Module = module {
     single {
             FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
         }

@@ -2,14 +2,14 @@ package com.mbta.tid.mbta_app.repositories
 
 import io.sentry.kotlin.multiplatform.Sentry
 
-interface ISentryRepository {
+public interface ISentryRepository {
 
-    fun captureMessage(msg: String)
+    public fun captureMessage(msg: String)
 
-    fun captureException(throwable: Throwable)
+    public fun captureException(throwable: Throwable)
 }
 
-class SentryRepository : ISentryRepository {
+internal class SentryRepository : ISentryRepository {
     override fun captureMessage(msg: String) {
         Sentry.captureMessage(msg)
     }
@@ -19,7 +19,7 @@ class SentryRepository : ISentryRepository {
     }
 }
 
-class MockSentryRepository : ISentryRepository {
+public class MockSentryRepository : ISentryRepository {
     override fun captureMessage(msg: String) {
         TODO("Not yet implemented")
     }

@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-enum class AlertSignificance : Comparable<AlertSignificance> {
+public enum class AlertSignificance : Comparable<AlertSignificance> {
     // defined in ascending order so that Major > Secondary > Minor > None
     /** Hidden everywhere. */
     None,

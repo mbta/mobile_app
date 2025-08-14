@@ -10,53 +10,55 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
 
-interface IToastViewModel {
-    val models: StateFlow<ToastViewModel.State>
+public interface IToastViewModel {
+    public val models: StateFlow<ToastViewModel.State>
 
-    fun hideToast()
+    public fun hideToast()
 
-    fun showToast(toast: Toast)
+    public fun showToast(toast: Toast)
 }
 
-class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.State>() {
+public class ToastViewModel internal constructor() :
+    IToastViewModel, MoleculeViewModel<Event, ToastViewModel.State>() {
 
     /**
      * These are parallel to [androidx.compose.material3.SnackbarDuration], because the Jetpack
      * Compose Material 3 snackbar does not allow you to set a specific time, and no toast/snackbar
      * implementation exists in SwiftUI, so we might as well make the behavior match.
      */
-    enum class Duration {
+    public enum class Duration {
         Short,
         Long,
         Indefinite,
     }
 
     @Serializable
-    sealed class ToastAction {
-        @Serializable data class Close(val onClose: (() -> Unit)) : ToastAction()
+    public sealed class ToastAction {
+        @Serializable public data class Close(val onClose: (() -> Unit)) : ToastAction()
 
         @Serializable
-        data class Custom(val actionLabel: String, val onAction: (() -> Unit)) : ToastAction()
+        public data class Custom(val actionLabel: String, val onAction: (() -> Unit)) :
+            ToastAction()
     }
 
     @Serializable
-    data class Toast(
+    public data class Toast(
         val message: String,
         val duration: Duration = Duration.Indefinite,
         val isTip: Boolean = false,
         val action: ToastAction? = null,
     )
 
-    sealed interface Event {
-        data object Hide : Event
+    public sealed interface Event {
+        public data object Hide : Event
 
-        data class ShowToast(val toast: Toast) : Event
+        public data class ShowToast internal constructor(internal val toast: Toast) : Event
     }
 
-    sealed class State {
-        data object Hidden : State()
+    public sealed class State {
+        public data object Hidden : State()
 
-        data class Visible(val toast: Toast) : State()
+        public data class Visible(val toast: Toast) : State()
     }
 
     @Composable
@@ -73,23 +75,23 @@ class ToastViewModel : IToastViewModel, MoleculeViewModel<Event, ToastViewModel.
             .value
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun hideToast() = fireEvent(Event.Hide)
+    override fun hideToast(): Unit = fireEvent(Event.Hide)
 
-    override fun showToast(toast: Toast) = fireEvent(Event.ShowToast(toast))
+    override fun showToast(toast: Toast): Unit = fireEvent(Event.ShowToast(toast))
 }
 
-class MockToastViewModel
+public class MockToastViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: ToastViewModel.State = ToastViewModel.State.Hidden) : IToastViewModel {
-    override val models = MutableStateFlow(initialState)
+    override val models: MutableStateFlow<ToastViewModel.State> = MutableStateFlow(initialState)
 
-    var onHideToast = {}
-    var onShowToast = { _: Toast -> }
+    public var onHideToast: () -> Unit = {}
+    public var onShowToast: (Toast) -> Unit = { _: Toast -> }
 
-    override fun hideToast() = onHideToast()
+    override fun hideToast(): Unit = onHideToast()
 
-    override fun showToast(toast: Toast) = onShowToast(toast)
+    override fun showToast(toast: Toast): Unit = onShowToast(toast)
 }

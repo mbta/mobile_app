@@ -10,7 +10,6 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
-    let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var socketProvider: SocketProvider

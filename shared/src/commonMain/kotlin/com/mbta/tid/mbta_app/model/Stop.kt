@@ -8,7 +8,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Stop(
+public data class Stop
+internal constructor(
     override val id: String,
     val latitude: Double,
     val longitude: Double,
@@ -23,13 +24,13 @@ data class Stop(
     @SerialName("parent_station_id") val parentStationId: String? = null,
     @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null,
 ) : BackendObject {
-    val position = Position(latitude = latitude, longitude = longitude)
+    val position: Position = Position(latitude = latitude, longitude = longitude)
 
     /**
      * Commuter Rail core stations have realtime track numbers displayed and track change alerts
      * hidden.
      */
-    val isCRCore = this.id in crCoreStations || this.parentStationId in crCoreStations
+    val isCRCore: Boolean = this.id in crCoreStations || this.parentStationId in crCoreStations
 
     val shouldShowTrackNumber: Boolean =
         this.vehicleType == RouteType.COMMUTER_RAIL && this.isCRCore
@@ -38,16 +39,16 @@ data class Stop(
         wheelchairBoarding == WheelchairBoardingStatus.ACCESSIBLE ||
             this.vehicleType == RouteType.BUS
 
-    fun resolveParent(stops: Map<String, Stop>): Stop {
+    internal fun resolveParent(stops: Map<String, Stop>): Stop {
         if (this.parentStationId == null) return this
         val parentStation = stops[parentStationId] ?: return this
         return parentStation.resolveParent(stops)
     }
 
-    fun resolveParent(global: GlobalResponse) = resolveParent(global.stops)
+    public fun resolveParent(global: GlobalResponse): Stop = resolveParent(global.stops)
 
     @OptIn(ExperimentalTurfApi::class)
-    fun distanceFrom(position: Position): Double = distance(position, this.position)
+    internal fun distanceFrom(position: Position): Double = distance(position, this.position)
 
     /**
      * Is this stop the last stop for all patterns in which it appears? True if for each patterns in
@@ -55,7 +56,7 @@ data class Stop(
      * - this stop (or its parent) only appears as the last stop
      * - this stop does not appear at all
      */
-    fun isLastStopForAllPatterns(
+    public fun isLastStopForAllPatterns(
         directionId: Int,
         patterns: List<RoutePattern>,
         global: GlobalResponse,
@@ -75,7 +76,7 @@ data class Stop(
             }
     }
 
-    companion object {
+    internal companion object {
         /**
          * Checks if the given stop IDs (as resolved in [stops]) refer to stops which are the same,
          * have the same parent, or are a parent and child.

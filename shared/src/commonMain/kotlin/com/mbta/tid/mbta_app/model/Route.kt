@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Route(
+public data class Route(
     override val id: String,
     val type: RouteType,
     val color: String,
@@ -18,7 +18,7 @@ data class Route(
     @SerialName("line_id") val lineId: String? = null,
     @SerialName("route_pattern_ids") val routePatternIds: List<String>? = null,
 ) : Comparable<Route>, BackendObject {
-    override fun compareTo(other: Route) = sortOrder.compareTo(other.sortOrder)
+    override fun compareTo(other: Route): Int = sortOrder.compareTo(other.sortOrder)
 
     val label: String =
         when (type) {
@@ -27,5 +27,5 @@ data class Route(
             else -> longName
         }
 
-    val isShuttle: Boolean = id.startsWith("Shuttle")
+    internal val isShuttle: Boolean = id.startsWith("Shuttle")
 }

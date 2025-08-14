@@ -1,3 +1,3 @@
 package com.mbta.tid.mbta_app.model
 
-actual fun Dependency.Companion.getAllDependencies() = emptyList<Dependency>()
+public actual fun Dependency.Companion.getAllDependencies(): List<Dependency> = emptyList()

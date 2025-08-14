@@ -8,7 +8,7 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
  * `errorBannerRepo` and calls `onSuccess`. If `getData` returns an `ApiResultError` or throws, sets
  * an error in `errorKey` in `errorBannerRepo` with the given `onRefreshAfterError`.
  */
-suspend fun <T : Any> fetchApi(
+internal suspend fun <T : Any> fetchApi(
     errorBannerRepo: IErrorBannerStateRepository,
     errorKey: String,
     getData: suspend () -> ApiResult<T>,

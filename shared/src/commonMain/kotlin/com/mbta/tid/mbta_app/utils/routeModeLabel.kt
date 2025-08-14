@@ -2,17 +2,17 @@ package com.mbta.tid.mbta_app.utils
 
 import com.mbta.tid.mbta_app.model.RouteType
 
-sealed class RouteModeLabelType {
-    data class NameOnly(val name: String) : RouteModeLabelType()
+public sealed class RouteModeLabelType {
+    public data class NameOnly(val name: String) : RouteModeLabelType()
 
-    data class TypeOnly(val type: RouteType) : RouteModeLabelType()
+    public data class TypeOnly(val type: RouteType) : RouteModeLabelType()
 
-    data class NameAndType(val name: String, val type: RouteType) : RouteModeLabelType()
+    public data class NameAndType(val name: String, val type: RouteType) : RouteModeLabelType()
 
-    data object Empty : RouteModeLabelType()
+    public data object Empty : RouteModeLabelType()
 }
 
-fun routeModeLabel(name: String?, type: RouteType?): RouteModeLabelType {
+public fun routeModeLabel(name: String?, type: RouteType?): RouteModeLabelType {
     return type?.let {
         if (name == null) {
             RouteModeLabelType.TypeOnly(it)

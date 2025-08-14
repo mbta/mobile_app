@@ -5,8 +5,9 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-object StickDiagramShapes {
-    data class Connection(
+public object StickDiagramShapes {
+    public data class Connection
+    internal constructor(
         val start: Path.Point,
         val startControl: Path.Point,
         val endControl: Path.Point,
@@ -23,22 +24,25 @@ object StickDiagramShapes {
         val centerY = (topY + bottomY) / 2
     }
 
-    data class NonTwisted(
+    public data class NonTwisted
+    internal constructor(
         val start: Path.Point,
         val startControl: Path.Point,
         val endControl: Path.Point,
         val end: Path.Point,
     )
 
-    data class Twisted(
+    public data class Twisted
+    internal constructor(
         val shadow: Shadow,
         val curves: Curves,
         val ends: Ends,
         val opensToNothing: Boolean,
     ) {
-        data class Shadow(val start: Path.Point, val end: Path.Point)
+        public data class Shadow internal constructor(val start: Path.Point, val end: Path.Point)
 
-        data class Curves(
+        public data class Curves
+        internal constructor(
             val bottom: Path.Point?,
             val bottomCurveStart: Path.Point,
             val bottomCurveControl: Path.Point,
@@ -49,7 +53,8 @@ object StickDiagramShapes {
             val top: Path.Point?,
         )
 
-        data class Ends(
+        public data class Ends
+        internal constructor(
             val bottom: Path.Point?,
             val bottomCurveStart: Path.Point,
             val topCurveStart: Path.Point,
@@ -73,7 +78,10 @@ object StickDiagramShapes {
 
     private const val PI = kotlin.math.PI.toFloat()
 
-    fun connection(connection: RouteBranchSegment.StickConnection, rect: Path.Rect): Connection {
+    public fun connection(
+        connection: RouteBranchSegment.StickConnection,
+        rect: Path.Rect,
+    ): Connection {
         val fromX = x(connection.fromLane, rect)
         val toX = x(connection.toLane, rect)
         val fromY = y(connection.fromVPos, rect)
@@ -117,7 +125,7 @@ object StickDiagramShapes {
         )
     }
 
-    fun nonTwisted(
+    public fun nonTwisted(
         connection: RouteBranchSegment.StickConnection,
         rect: Path.Rect,
         proportionClosed: Float,
@@ -131,7 +139,7 @@ object StickDiagramShapes {
         )
     }
 
-    fun twisted(
+    public fun twisted(
         connection: RouteBranchSegment.StickConnection,
         rect: Path.Rect,
         proportionClosed: Float,

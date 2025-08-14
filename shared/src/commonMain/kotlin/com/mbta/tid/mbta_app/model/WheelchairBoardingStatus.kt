@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-enum class WheelchairBoardingStatus {
+public enum class WheelchairBoardingStatus {
     @SerialName("accessible") ACCESSIBLE,
     @SerialName("inaccessible") INACCESSIBLE,
 }

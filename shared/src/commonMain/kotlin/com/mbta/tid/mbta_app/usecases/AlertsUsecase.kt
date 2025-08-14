@@ -13,7 +13,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class AlertsUsecase
+public class AlertsUsecase
 @DefaultArgumentInterop.Enabled
 constructor(
     private val alertsRepository: IAlertsRepository,
@@ -25,7 +25,7 @@ constructor(
     private var globalState = globalRepository.state
     private var globalUpdateJob: Job? = null
 
-    fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
+    public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
         fun injectAndReceive(result: ApiResult<AlertsStreamDataResponse>) {
             val injectedResult =
                 if (result is ApiResult.Ok) {
@@ -47,7 +47,7 @@ constructor(
             }
     }
 
-    fun disconnect() {
+    public fun disconnect() {
         alertsRepository.disconnect()
         globalUpdateJob?.cancel()
         globalUpdateJob = null

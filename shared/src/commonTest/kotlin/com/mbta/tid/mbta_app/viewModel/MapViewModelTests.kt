@@ -40,7 +40,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MapViewModelTests : KoinTest {
+internal class MapViewModelTests : KoinTest {
 
     class MockViewportManager(
         private val saveNearbyTransitViewportCalled: () -> Unit = {},

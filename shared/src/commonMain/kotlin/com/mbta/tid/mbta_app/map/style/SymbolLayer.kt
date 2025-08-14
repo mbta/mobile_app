@@ -5,8 +5,8 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
-data class SymbolLayer(override val id: String, override val source: String) : Layer() {
-    override val type = LayerType.Symbol
+public data class SymbolLayer(override val id: String, override val source: String) : Layer() {
+    override val type: LayerType = LayerType.Symbol
     override var filter: Exp<Boolean>? = null
 
     var iconAllowOverlap: Boolean? = null

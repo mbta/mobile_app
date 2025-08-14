@@ -1,7 +1,7 @@
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 
-class VehicleChannel {
+internal class VehicleChannel {
     companion object {
         fun topic(vehicleId: String): String = "vehicle:id:${vehicleId}"
 

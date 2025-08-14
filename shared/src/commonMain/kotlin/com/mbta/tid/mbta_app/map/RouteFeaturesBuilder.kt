@@ -29,7 +29,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class RouteLineData(
+public data class RouteLineData
+internal constructor(
     val id: String,
     val sourceRoutePatternId: String,
     val line: LineString,
@@ -37,26 +38,27 @@ data class RouteLineData(
     val alertState: SegmentAlertState,
 )
 
-data class RouteSourceData(
+public data class RouteSourceData
+internal constructor(
     val routeId: String,
     val lines: List<RouteLineData>,
     val features: FeatureCollection,
 )
 
-object RouteFeaturesBuilder {
-    val routeSourceId = "route-source"
+public object RouteFeaturesBuilder {
+    internal val routeSourceId = "route-source"
 
-    fun getRouteSourceId(routeId: String) = "$routeSourceId-$routeId"
+    public fun getRouteSourceId(routeId: String): String = "$routeSourceId-$routeId"
 
-    val propAlertStateKey = FeatureProperty<String>("alertState")
+    internal val propAlertStateKey = FeatureProperty<String>("alertState")
 
     @DefaultArgumentInterop.Enabled
-    suspend fun generateRouteSources(
+    public suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalData: GlobalResponse,
         globalMapData: GlobalMapData?,
         coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
-    ) =
+    ): List<RouteSourceData> =
         generateRouteSources(
             routeData,
             globalData.stops,
@@ -65,7 +67,7 @@ object RouteFeaturesBuilder {
         )
 
     @DefaultArgumentInterop.Enabled
-    suspend fun generateRouteSources(
+    internal suspend fun generateRouteSources(
         routeData: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
@@ -101,7 +103,7 @@ object RouteFeaturesBuilder {
         return RouteSourceData(routeId, routeLines, featureCollection)
     }
 
-    fun shapesWithStopsToMapFriendly(
+    internal fun shapesWithStopsToMapFriendly(
         shapesWithStops: List<ShapeWithStops>,
         stopsById: Map<String, Stop>?,
     ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> =
@@ -109,7 +111,7 @@ object RouteFeaturesBuilder {
             shapeWithStopsToMapFriendly(shapeWithStops, stopsById)
         }
 
-    fun shapeWithStopsToMapFriendly(
+    internal fun shapeWithStopsToMapFriendly(
         shapeWithStops: ShapeWithStops,
         stopsById: Map<String, Stop>?,
     ): MapFriendlyRouteResponse.RouteWithSegmentedShapes? {
@@ -194,11 +196,12 @@ object RouteFeaturesBuilder {
         )
     }
 
-    fun forRailAtStop(
+    public fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         globalData: GlobalResponse?,
-    ) = forRailAtStop(stopShapes, railShapes, globalData?.routes)
+    ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> =
+        forRailAtStop(stopShapes, railShapes, globalData?.routes)
 
     private fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
@@ -219,7 +222,7 @@ object RouteFeaturesBuilder {
         return railShapes.filter { stopRailRouteIds.contains(it.routeId) }
     }
 
-    fun filteredRouteShapesForStop(
+    public fun filteredRouteShapesForStop(
         stopMapData: StopMapResponse,
         filter: StopDetailsFilter,
         routeCardData: List<RouteCardData>?,

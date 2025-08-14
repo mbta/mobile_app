@@ -19,13 +19,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IRailRouteShapeRepository {
-    val state: StateFlow<MapFriendlyRouteResponse?>
+public interface IRailRouteShapeRepository {
+    public val state: StateFlow<MapFriendlyRouteResponse?>
 
-    suspend fun getRailRouteShapes(): ApiResult<MapFriendlyRouteResponse>
+    public suspend fun getRailRouteShapes(): ApiResult<MapFriendlyRouteResponse>
 }
 
-class RailRouteShapeRepository(
+internal class RailRouteShapeRepository(
     val cache: ResponseCache<MapFriendlyRouteResponse> =
         ResponseCache.create(cacheKey = "rail-route-shapes", invalidationKey = "2025-03-19")
 ) : IRailRouteShapeRepository, KoinComponent {
@@ -42,14 +42,14 @@ class RailRouteShapeRepository(
         }
 }
 
-class MockRailRouteShapeRepository
+public class MockRailRouteShapeRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    val response: MapFriendlyRouteResponse = MapFriendlyRouteResponse(emptyList()),
-    val onGet: () -> Unit = {},
+    private val response: MapFriendlyRouteResponse = MapFriendlyRouteResponse(emptyList()),
+    private val onGet: () -> Unit = {},
 ) : IRailRouteShapeRepository {
 
-    constructor(
+    public constructor(
         objects: ObjectCollectionBuilder
     ) : this(
         response =
@@ -102,7 +102,7 @@ constructor(
             )
     )
 
-    override val state = MutableStateFlow(response)
+    override val state: MutableStateFlow<MapFriendlyRouteResponse> = MutableStateFlow(response)
 
     override suspend fun getRailRouteShapes(): ApiResult<MapFriendlyRouteResponse> {
         onGet()
@@ -110,7 +110,7 @@ constructor(
     }
 }
 
-class IdleRailRouteShapeRepository : IRailRouteShapeRepository {
+internal class IdleRailRouteShapeRepository : IRailRouteShapeRepository {
     override val state = MutableStateFlow(null)
 
     override suspend fun getRailRouteShapes(): ApiResult<MapFriendlyRouteResponse> {

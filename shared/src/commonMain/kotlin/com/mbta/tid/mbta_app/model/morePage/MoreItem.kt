@@ -2,20 +2,25 @@ package com.mbta.tid.mbta_app.model.morePage
 
 import com.mbta.tid.mbta_app.repositories.Settings
 
-sealed class MoreItem {
+public sealed class MoreItem {
 
-    data class Action(val label: String, val action: () -> Unit) : MoreItem()
-
-    data class Link(val label: String, val url: String, val note: String? = null) : MoreItem()
-
-    data class NavLink(val label: String, val callback: () -> Unit, val note: String? = null) :
+    public data class Action internal constructor(val label: String, val action: () -> Unit) :
         MoreItem()
 
-    data class Phone(val label: String, val phoneNumber: String) : MoreItem()
+    public data class Link(val label: String, val url: String, val note: String? = null) :
+        MoreItem()
 
-    data class Toggle(val label: String, val settings: Settings) : MoreItem()
+    public data class NavLink(
+        val label: String,
+        val callback: () -> Unit,
+        val note: String? = null,
+    ) : MoreItem()
 
-    fun id() {
+    public data class Phone(val label: String, val phoneNumber: String) : MoreItem()
+
+    public data class Toggle(val label: String, val settings: Settings) : MoreItem()
+
+    internal fun id() {
         when (this) {
             is Action -> label
             is Link -> url

@@ -9,11 +9,11 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-data class TripDetailsStopList
+public data class TripDetailsStopList
 @DefaultArgumentInterop.Enabled
 constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entry? = null) {
 
-    data class Entry
+    public data class Entry
     @DefaultArgumentInterop.Enabled
     constructor(
         val stop: Stop,
@@ -31,9 +31,9 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val trackNumber: String? =
             if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
-        val isTruncating = disruption?.alert?.hasNoThroughService == true
+        internal val isTruncating = disruption?.alert?.hasNoThroughService == true
 
-        fun activeElevatorAlerts(now: EasternTimeInstant) =
+        public fun activeElevatorAlerts(now: EasternTimeInstant): List<Alert> =
             elevatorAlerts.filter { it.isActive(now) }
 
         /**
@@ -41,7 +41,11 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
          *
          * @return [disruption], an [UpcomingFormat.Some] with a single entry, or null
          */
-        fun format(trip: Trip, now: EasternTimeInstant, routeType: RouteType): UpcomingFormat? {
+        public fun format(
+            trip: Trip,
+            now: EasternTimeInstant,
+            routeType: RouteType,
+        ): UpcomingFormat? {
             if (disruption != null) {
                 // ignore activities on platforms since they may be wrong or they may be correct in
                 // a way that doesn’t match how service is being run
@@ -71,7 +75,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
      * ID, picking the last copy if there are duplicates. Returns all entries in
      * [TargetSplit.followingStops] if no match at all can be found.
      */
-    fun splitForTarget(
+    public fun splitForTarget(
         targetStopId: String,
         targetStopSequence: Int?,
         globalData: GlobalResponse?,
@@ -126,7 +130,8 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         )
     }
 
-    data class TargetSplit(
+    public data class TargetSplit
+    internal constructor(
         val firstStop: Entry? = null,
         val collapsedStops: List<Entry>?,
         val targetStop: Entry?,
@@ -143,9 +148,9 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val vehicle: Vehicle? = null,
     )
 
-    override fun toString() = "[TripDetailsStopList]"
+    override fun toString(): String = "[TripDetailsStopList]"
 
-    companion object {
+    public companion object {
 
         // TODO: Remove hardcoded IDs once the `listed_route` field is exposed by the API.
         // https://mbta.slack.com/archives/C03K6NLKKD1/p1716220182028299
@@ -196,7 +201,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             }
         }
 
-        suspend fun fromPieces(
+        public suspend fun fromPieces(
             trip: Trip,
             tripSchedules: TripSchedulesResponse?,
             tripPredictions: PredictionsStreamDataResponse?,
@@ -345,7 +350,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             )
         }
 
-        fun getTransferRoutes(
+        internal fun getTransferRoutes(
             stopId: String,
             currentRouteId: String?,
             globalData: GlobalResponse,
