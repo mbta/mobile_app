@@ -6,6 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
+import Combine
 import Foundation
 import Shared
 import SwiftUI
@@ -22,10 +23,14 @@ struct RoutePickerView: View {
 
     @State var globalData: GlobalResponse?
     @State var routes: [RouteCardData.LineOrRoute] = []
+    @State var routeSearchResults: [RouteCardData.LineOrRoute] = []
+
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
     let globalRepository: IGlobalRepository = RepositoryDI().global
     var errorBannerRepository = RepositoryDI().errorBanner
+
+    let scrollSubject = PassthroughSubject<String, Never>()
 
     let inspection = Inspection<Self>()
 
@@ -56,13 +61,30 @@ struct RoutePickerView: View {
 
     private var isRootPath: Bool { path is RoutePickerPath.Root }
 
+    func routeSearchResultsForVMState(state: SearchRoutesViewModel.State,
+                                      routes: [RouteCardData.LineOrRoute]) -> [RouteCardData.LineOrRoute] {
+        switch onEnum(of: state) {
+        case .unfiltered, .error: routes
+        case let .results(state):
+            state.routeIds.compactMap { routeId in
+                routes.first(where: { route in route.id == routeId })
+            }
+        }
+    }
+
     var body: some View {
         ZStack {
             path.backgroundColor.edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
                 header
                 ErrorBanner(errorBannerVM)
-                if !isRootPath {
+                if isRootPath {
+                    ScrollView {
+                        rootContent
+                            .padding(.top, 16)
+                            .padding(.horizontal, 14)
+                    }
+                } else {
                     SearchInput(
                         searchObserver: searchObserver,
                         hint: NSLocalizedString(
@@ -74,47 +96,55 @@ struct RoutePickerView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 8)
                     .padding(.horizontal, 16)
-                }
-                ScrollView {
-                    Group {
-                        if isRootPath {
-                            rootContent
-                                .padding(.top, 16)
-                        } else {
-                            let displayedRoutes = switch onEnum(of: searchVMState) {
-                            case .unfiltered, .error: routes
-                            case let .results(state):
-                                state.routeIds.compactMap { routeId in
-                                    routes.first(where: { route in route.id == routeId })
-                                }
-                            }
-                            VStack(spacing: 0) {
-                                if !displayedRoutes.isEmpty {
-                                    ForEach(displayedRoutes, id: \.self) { route in
+                    ScrollViewReader { proxy in
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                if !routeSearchResults.isEmpty {
+                                    ForEach(routeSearchResults, id: \.id) { route in
                                         RoutePickerRow(route: route, onTap: { onOpenRouteDetails(route.id, context) })
-                                        if route != displayedRoutes.last { HaloSeparator() }
+                                        if route != routeSearchResults.last { HaloSeparator() }
                                     }
                                 }
                             }
                             .background(Color.fill3)
                             .withRoundedBorder(color: path.haloColor, width: 2)
                             .padding(.top, 16)
-                            footer(emptyResults: displayedRoutes.isEmpty)
+                            footer(emptyResults: routeSearchResults.isEmpty)
                                 .padding(.top, 16)
                         }
+
+                        .padding(.horizontal, 14)
+                        .onReceive(scrollSubject) { id in
+                            withAnimation {
+                                proxy.scrollTo(id, anchor: .top)
+                            }
+                        }
+                    }.onChange(of: routeSearchResults) { newRouteSearchResults in
+                        if let firstRoute = newRouteSearchResults.first, !isRootPath {
+                            scrollSubject.send(firstRoute.id)
+                        }
                     }
-                    .padding(.horizontal, 14)
                 }
-            }
+            }.ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .onAppear { getGlobal() }
+        .onAppear {
+            getGlobal()
+            searchRoutesViewModel.setPath(path: path)
+        }
         .onChange(of: globalData) { globalData in
             routes = globalData?.getRoutesForPicker(path: path) ?? []
+        }
+        .onChange(of: routes) { newRoutes in
+            routeSearchResults = routeSearchResultsForVMState(state: searchVMState, routes: newRoutes)
+        }
+        .onChange(of: searchVMState) { newSearchVMState in
+            routeSearchResults = routeSearchResultsForVMState(state: newSearchVMState, routes: routes)
         }
         .onChange(of: path) { newPath in
             withAnimation {
                 routes = globalData?.getRoutesForPicker(path: newPath) ?? []
             }
+            searchRoutesViewModel.setPath(path: newPath)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .task {
@@ -131,12 +161,15 @@ struct RoutePickerView: View {
         SheetHeader(
             title: headerTitle,
             titleColor: path.textColor,
+            buttonColor: Color.translucentContrast,
+            buttonTextColor: Color.fill3,
             onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
             rightActionContents: {
                 NavTextButton(
                     string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                    backgroundColor: Color.text.opacity(0.6),
+                    backgroundColor: Color.translucentContrast,
                     textColor: Color.fill3,
+                    height: 32,
                     action: onClose
                 )
             }

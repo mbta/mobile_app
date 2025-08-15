@@ -3,16 +3,16 @@ package com.mbta.tid.mbta_app.utils
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Vehicle
 
-interface ViewportManager {
-    suspend fun saveNearbyTransitViewport()
+public interface ViewportManager {
+    public suspend fun saveNearbyTransitViewport()
 
-    suspend fun restoreNearbyTransitViewport()
+    public suspend fun restoreNearbyTransitViewport()
 
-    suspend fun stopCenter(stop: Stop)
+    public suspend fun stopCenter(stop: Stop)
 
-    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
+    public suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
 
-    suspend fun follow(transitionAnimationDuration: Long?)
+    public suspend fun follow(transitionAnimationDuration: Long?)
 
-    suspend fun isDefault(): Boolean
+    public suspend fun isDefault(): Boolean
 }

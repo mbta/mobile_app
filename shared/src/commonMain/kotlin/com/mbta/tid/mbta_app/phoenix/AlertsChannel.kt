@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 
-class AlertsChannel {
+internal class AlertsChannel {
     companion object {
         val topic = "alerts:v2"
 

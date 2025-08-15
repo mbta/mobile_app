@@ -4,7 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Trip(
+public data class Trip
+internal constructor(
     override val id: String,
     @SerialName("direction_id") val directionId: Int,
     val headsign: String,

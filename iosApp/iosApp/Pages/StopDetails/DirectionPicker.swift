@@ -65,7 +65,7 @@ struct DirectionPicker: View {
                                 alignment: selectedDirection.destination == nil ? .center : .leading
                             )
                     }
-                    .simultaneousGesture(TapGesture())
+                    .preventScrollTaps()
                     .accessibilityAddTraits(isSelected ? [.isSelected, .isHeader] : [])
                     .accessibilityHeading(isSelected ? .h2 : .unspecified)
                     .accessibilitySortPriority(isSelected ? 1 : 0)

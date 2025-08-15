@@ -23,18 +23,21 @@ struct FavoritesView: View {
     let inspection = Inspection<Self>()
     @State var now = Date.now
 
+    @ScaledMetric private var editButtonHeight: CGFloat = 32
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             SheetHeader(
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 rightActionContents: {
                     if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
-                        ActionButton(kind: .plus, circleColor: Color.text.opacity(0.6), action: { onAddStops() })
+                        ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })
                         NavTextButton(
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
-                            backgroundColor: Color.text.opacity(0.6),
+                            backgroundColor: Color.translucentContrast,
                             textColor: Color.fill2,
-                            height: 32
+                            height: editButtonHeight,
+                            width: 64
                         ) {
                             nearbyVM.pushNavEntry(.editFavorites)
                         }
@@ -57,6 +60,7 @@ struct FavoritesView: View {
                 now: now,
                 isPinned: { _ in false },
                 onPin: { _ in },
+                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0 }) ?? false },
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )
@@ -129,12 +133,11 @@ struct FavoritesView: View {
                 NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
                                   comment: "Explainer the first time a user sees the new favorites feature"),
                 duration: .indefinite,
-                onClose: {
-                    favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
-                    toastVM.hideToast()
-                },
-                actionLabel: nil,
-                onAction: nil))
+                isTip: false,
+                action: ToastViewModel
+                    .ToastActionClose(onClose: { favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
+                        toastVM.hideToast()
+                    })))
     }
 
     func getGlobal() {

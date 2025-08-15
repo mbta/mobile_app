@@ -15,7 +15,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-class SettingsRepositoryTest : KoinTest {
+internal class SettingsRepositoryTest : KoinTest {
     val defaultSettings = Settings.entries.associateWith { false }
 
     @AfterTest

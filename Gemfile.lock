@@ -178,6 +178,7 @@ GEM
       xcpretty-travis-formatter (>= 0.0.3, < 2.0.0)
     fastlane-plugin-sentry (1.32.0)
       os (~> 1.1, >= 1.1.4)
+    fastlane-plugin-versioning_android (0.1.1)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     ffi (1.17.1)
@@ -276,7 +277,7 @@ GEM
     retriable (3.1.2)
     rexml (3.4.1)
     rouge (3.28.0)
-    rubocop (1.79.1)
+    rubocop (1.79.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
       lint_roller (~> 1.1.0)
@@ -342,6 +343,7 @@ DEPENDENCIES
   cyclonedx-cocoapods
   fastlane
   fastlane-plugin-sentry
+  fastlane-plugin-versioning_android
   rubocop
   xcodeproj
 

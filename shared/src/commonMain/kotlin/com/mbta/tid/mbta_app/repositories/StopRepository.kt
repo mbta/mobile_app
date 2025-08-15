@@ -14,11 +14,11 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface IStopRepository {
-    suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse>
+public interface IStopRepository {
+    public suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse>
 }
 
-class StopRepository : IStopRepository, KoinComponent {
+internal class StopRepository : IStopRepository, KoinComponent {
 
     private val mobileBackendClient: MobileBackendClient by inject()
 
@@ -35,7 +35,8 @@ class StopRepository : IStopRepository, KoinComponent {
         }
 }
 
-class MockStopRepository(val objects: ObjectCollectionBuilder? = null) : IStopRepository {
+public class MockStopRepository(private val objects: ObjectCollectionBuilder? = null) :
+    IStopRepository {
     override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> {
 
         if (objects == null) {
@@ -69,7 +70,7 @@ class MockStopRepository(val objects: ObjectCollectionBuilder? = null) : IStopRe
     }
 }
 
-class IdleStopRepository : IStopRepository {
+internal class IdleStopRepository : IStopRepository {
     override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> {
         return suspendCancellableCoroutine {}
     }

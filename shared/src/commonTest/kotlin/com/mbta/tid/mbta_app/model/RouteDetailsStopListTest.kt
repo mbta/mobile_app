@@ -121,19 +121,7 @@ class RouteDetailsStopListTest {
         val stop3 = objects.stop()
         val lane = RouteBranchSegment.Lane.Left
         assertEquals(
-            listOf(
-                Pair(
-                    RouteBranchSegment.StickConnection(
-                        fromStop = stop2.id,
-                        toStop = stop3.id,
-                        fromLane = lane,
-                        toLane = lane,
-                        fromVPos = RouteBranchSegment.VPos.Center,
-                        toVPos = RouteBranchSegment.VPos.Bottom,
-                    ),
-                    true,
-                )
-            ),
+            null,
             RouteDetailsStopList.Segment(
                     listOf(
                         RouteDetailsStopList.Entry(
@@ -175,19 +163,7 @@ class RouteDetailsStopListTest {
         val stop3 = objects.stop()
         val lane = RouteBranchSegment.Lane.Left
         assertEquals(
-            listOf(
-                Pair(
-                    RouteBranchSegment.StickConnection(
-                        fromStop = stop1.id,
-                        toStop = stop2.id,
-                        fromLane = lane,
-                        toLane = lane,
-                        fromVPos = RouteBranchSegment.VPos.Top,
-                        toVPos = RouteBranchSegment.VPos.Center,
-                    ),
-                    true,
-                )
-            ),
+            null,
             RouteDetailsStopList.Segment(
                     listOf(
                         RouteDetailsStopList.Entry(

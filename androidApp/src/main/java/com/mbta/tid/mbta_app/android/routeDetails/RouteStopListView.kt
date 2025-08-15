@@ -1,16 +1,17 @@
 package com.mbta.tid.mbta_app.android.routeDetails
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +56,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.labelWithModeIfBus
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
@@ -238,6 +241,7 @@ fun RouteStopListView(
     }
 
     val firstTimeToastMessage = stringResource(R.string.tap_favorites_hint)
+
     var showFirstTimeFavoritesToast by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var firstTimeToast by remember { mutableStateOf<ToastViewModel.Toast?>(null) }
     val displayedToast by
@@ -264,7 +268,11 @@ fun RouteStopListView(
             val toast =
                 ToastViewModel.Toast(
                     message = firstTimeToastMessage,
-                    onClose = { showFirstTimeFavoritesToast = false },
+                    action =
+                        ToastViewModel.ToastAction.Close(
+                            onClose = { showFirstTimeFavoritesToast = false }
+                        ),
+                    isTip = true,
                 )
             toastViewModel.showToast(toast)
             firstTimeToast = toast
@@ -273,7 +281,8 @@ fun RouteStopListView(
         }
     }
 
-    var showFavoritesStopConfirmation by rememberSaveable { mutableStateOf<Stop?>(null) }
+    var showFavoritesStopConfirmationId by rememberSaveable { mutableStateOf<String?>(null) }
+    val showFavoritesStopConfirmation = globalData.getStop(showFavoritesStopConfirmationId)
 
     fun stopRowContext(stop: Stop) =
         when (context) {
@@ -282,7 +291,7 @@ fun RouteStopListView(
                 RouteDetailsRowContext.Favorites(
                     isFavorited =
                         isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)),
-                    onTapStar = { showFavoritesStopConfirmation = stop },
+                    onTapStar = { showFavoritesStopConfirmationId = stop.id },
                 )
         }
 
@@ -304,7 +313,7 @@ fun RouteStopListView(
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {
-                showFavoritesStopConfirmation = null
+                showFavoritesStopConfirmationId = null
             }
         }
     }
@@ -312,6 +321,7 @@ fun RouteStopListView(
     Column {
         SheetHeader(
             title = lineOrRoute.name,
+            titleContentDescription = lineOrRoute.labelWithModeIfBus(LocalContext.current),
             titleColor = Color.fromHex(lineOrRoute.textColor),
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)
@@ -460,23 +470,28 @@ private fun LineRoutePicker(
             val selected = route.id == selectedRouteId
             val haloColor = if (selected) colorResource(R.color.halo) else Color.Transparent
             val rowColor = if (selected) colorResource(R.color.fill3) else Color.Transparent
-            val textColor =
-                if (selected) colorResource(R.color.text) else Color.fromHex(line.textColor)
-            Row(
-                Modifier.fillMaxWidth()
-                    .heightIn(min = 44.dp)
-                    .haloContainer(1.dp, haloColor, rowColor, 7.dp)
-                    .clickable { onSelect(route.id) }
-                    .padding(8.dp),
-                Arrangement.spacedBy(8.dp),
-                Alignment.CenterVertically,
+            Tab(
+                selected = selected,
+                onClick = { onSelect(route.id) },
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .heightIn(min = 44.dp)
+                        .haloContainer(1.dp, haloColor, rowColor, 7.dp)
+                        .padding(8.dp),
+                selectedContentColor = colorResource(R.color.text),
+                unselectedContentColor = Color.fromHex(line.textColor),
             ) {
-                RoutePill(route, line, RoutePillType.Fixed)
-                Text(
-                    route.directionDestinations[selectedDirection] ?: "",
-                    color = textColor,
-                    style = Typography.title3Semibold,
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    RoutePill(route, line, RoutePillType.Fixed)
+                    Text(
+                        route.directionDestinations[selectedDirection] ?: "",
+                        style = Typography.title3Semibold,
+                    )
+                    Spacer(Modifier.weight(1F))
+                }
             }
         }
     }

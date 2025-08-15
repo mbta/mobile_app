@@ -51,7 +51,7 @@ internal fun createDataStore(): DataStore<Preferences> =
         }
     )
 
-fun initKoin(appVariant: AppVariant, nativeModule: Module) {
+public fun initKoin(appVariant: AppVariant, nativeModule: Module) {
     startKoin {
         modules(appModule(appVariant) + viewModelModule() + platformModule() + nativeModule)
     }
@@ -60,14 +60,14 @@ fun initKoin(appVariant: AppVariant, nativeModule: Module) {
 /*
 Load the Koin mock repositories and use cases, overriding their existing definitions
  */
-fun loadKoinMocks(repositories: IRepositories) {
+public fun loadKoinMocks(repositories: IRepositories) {
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 
 /*
 Load the default Koin mock repositories and use cases, overriding their existing definitions
  */
-fun loadDefaultRepoModules() {
+public fun loadDefaultRepoModules() {
     loadKoinModules(repositoriesModule(MockRepositories()))
 }
 
@@ -76,7 +76,7 @@ Start koin with default mocks for all dependencies.
 Useful for IOS testing where we want to start koin once and
 subsequently load in specific modules to override these base definitions.
  */
-fun startKoinIOSTestApp() {
+public fun startKoinIOSTestApp() {
     startKoin {
         modules(
             platformModule() +
@@ -93,7 +93,7 @@ fun startKoinIOSTestApp() {
     loadDefaultRepoModules()
 }
 
-fun startKoinE2E() {
+public fun startKoinE2E() {
     startKoin {
         modules(
             endToEndModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
@@ -102,20 +102,29 @@ fun startKoinE2E() {
 }
 
 /** Converts an [NSDate] into an [EasternTimeInstant]. */
-fun NSDate.toEasternInstant(): EasternTimeInstant = EasternTimeInstant(this.toKotlinInstant())
+public fun NSDate.toEasternInstant(): EasternTimeInstant =
+    EasternTimeInstant(this.toKotlinInstant())
 
 /** Converts an [EasternTimeInstant] into an [NSDate]. Loses time zone information. */
-fun EasternTimeInstant.toNSDateLosingTimeZone(): NSDate =
+public fun EasternTimeInstant.toNSDateLosingTimeZone(): NSDate =
     NSDate.dateWithTimeIntervalSince1970(this.toEpochFracSeconds())
 
-@ObjCName("plus") fun EasternTimeInstant.plusSeconds(seconds: Int) = this + seconds.seconds
+@ObjCName("plus")
+public fun EasternTimeInstant.plusSeconds(seconds: Int): EasternTimeInstant = this + seconds.seconds
 
-@ObjCName("minus") fun EasternTimeInstant.minusSeconds(seconds: Int) = this - seconds.seconds
+@ObjCName("minus")
+public fun EasternTimeInstant.minusSeconds(seconds: Int): EasternTimeInstant =
+    this - seconds.seconds
 
-@ObjCName("plus") fun EasternTimeInstant.plusMinutes(minutes: Int) = this + minutes.minutes
+@ObjCName("plus")
+public fun EasternTimeInstant.plusMinutes(minutes: Int): EasternTimeInstant = this + minutes.minutes
 
-@ObjCName("minus") fun EasternTimeInstant.minusMinutes(minutes: Int) = this - minutes.minutes
+@ObjCName("minus")
+public fun EasternTimeInstant.minusMinutes(minutes: Int): EasternTimeInstant =
+    this - minutes.minutes
 
-@ObjCName("plus") fun EasternTimeInstant.plusHours(hours: Int) = this + hours.hours
+@ObjCName("plus")
+public fun EasternTimeInstant.plusHours(hours: Int): EasternTimeInstant = this + hours.hours
 
-@ObjCName("minus") fun EasternTimeInstant.minusHours(hours: Int) = this - hours.hours
+@ObjCName("minus")
+public fun EasternTimeInstant.minusHours(hours: Int): EasternTimeInstant = this - hours.hours

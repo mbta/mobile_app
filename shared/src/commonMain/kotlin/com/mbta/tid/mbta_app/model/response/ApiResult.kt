@@ -2,18 +2,18 @@ package com.mbta.tid.mbta_app.model.response
 
 import io.ktor.client.plugins.ResponseException
 
-sealed class ApiResult<out T : Any> {
-    data class Ok<T : Any>(val data: T) : ApiResult<T>()
+public sealed class ApiResult<out T : Any> {
+    public data class Ok<T : Any>(val data: T) : ApiResult<T>()
 
-    data class Error<T : Any>(val code: Int? = null, val message: String) : ApiResult<T>()
+    public data class Error<T : Any>(val code: Int? = null, val message: String) : ApiResult<T>()
 
     @Throws(IllegalStateException::class)
-    fun dataOrThrow(): T {
+    internal fun dataOrThrow(): T {
         check(this is Ok) { this }
         return this.data
     }
 
-    companion object {
+    internal companion object {
         inline fun <T : Any> runCatching(block: () -> T): ApiResult<T> {
             return try {
                 Ok(block())

@@ -30,7 +30,7 @@ struct TransitHeader<Content: View>: View {
                 .fullFocusSize()
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h2)
-                .accessibilityLabel(Text("\(name) \(routeType.typeText(isOnly: true))"))
+                .accessibilityLabel(routeModeLabel(name: name, type: routeType))
             rightContent()
                 .foregroundStyle(textColor)
         } icon: {

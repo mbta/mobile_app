@@ -44,7 +44,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /** Define the koin module with the resources to use in dependency injection */
-fun appModule(appVariant: AppVariant) = module {
+internal fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
@@ -56,7 +56,7 @@ fun appModule(appVariant: AppVariant) = module {
     )
 }
 
-fun repositoriesModule(repositories: IRepositories): Module {
+public fun repositoriesModule(repositories: IRepositories): Module {
     return module {
         single<IConfigRepository> { repositories.config }
         single<ITabPreferencesRepository> { repositories.tabPreferences }

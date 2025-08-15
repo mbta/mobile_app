@@ -143,6 +143,9 @@ struct NearbyTransitView: View {
                                 now: now.toEasternInstant(),
                                 onPin: { id in toggledPinnedRoute(id) },
                                 pinned: pinnedRoutes.contains(cardData.lineOrRoute.id),
+                                isFavorite: { rsd in
+                                    nearbyVM.favorites.routeStopDirection?.contains(where: { rsd == $0 }) ?? false
+                                },
                                 pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                 showStopHeader: true
                             )
@@ -170,6 +173,7 @@ struct NearbyTransitView: View {
                         now: now.toEasternInstant(),
                         onPin: { _ in },
                         pinned: false,
+                        isFavorite: { _ in false },
                         pushNavEntry: { _ in },
                         showStopHeader: true
                     )

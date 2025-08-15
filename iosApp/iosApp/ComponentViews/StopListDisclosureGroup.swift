@@ -11,7 +11,7 @@ import SwiftUI
 
 struct StopListDisclosureGroup: DisclosureGroupStyle {
     let routeAccents: TripRouteAccents
-    let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]
+    let stickConnections: [(RouteBranchSegment.StickConnection, Bool)]?
     let stopListContext: StopListContext
 
     @State var caretRotation: Angle = .zero
@@ -25,18 +25,29 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                     ZStack(alignment: .bottom) {
                         HaloSeparator().padding(stopListContext == .trip ? .horizontal : .leading, 7)
                         HStack(spacing: 0) {
-                            RouteLineTwist(
-                                color: routeAccents.color,
-                                proportionClosed: twistFactor,
-                                connections: stickConnections
-                            )
-                            .padding(.leading, 14)
-                            Image(.faCaretRight)
-                                .resizable()
-                                .frame(width: 6, height: 10)
-                                .rotationEffect(caretRotation)
-                                .foregroundStyle(Color.deemphasized)
-                                .frame(width: 24, height: 24)
+                            if let stickConnections {
+                                RouteLineTwist(
+                                    color: routeAccents.color,
+                                    proportionClosed: twistFactor,
+                                    connections: stickConnections
+                                )
+                                .padding(.leading, 14)
+                                caret
+                                    .frame(width: 24, height: 24)
+                            } else {
+                                ZStack {
+                                    if caretRotation != .zero {
+                                        Circle()
+                                            .stroke(Color.halo, lineWidth: 2)
+                                            .background(Color.fill2)
+                                            .frame(width: 32, height: 32)
+                                    }
+                                    caret
+                                        .frame(width: 32, height: 32)
+                                }
+                                .padding(.leading, 20)
+                                .padding(.trailing, 13) // There's already a leading 7pt padding on StopListRow
+                            }
                             configuration.label
                         }.frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -48,24 +59,36 @@ struct StopListDisclosureGroup: DisclosureGroupStyle {
                 withAnimation(.easeInOut(duration: 0.5)) {
                     twistFactor = expanded ? 0 : 1
                 }
-            }.simultaneousGesture(TapGesture())
+            }.preventScrollTaps()
             configuration.content
                 .frame(height: configuration.isExpanded ? nil : 0, alignment: .top)
                 .clipped()
                 .accessibilityHidden(!configuration.isExpanded)
         }
     }
+
+    private var caret: some View {
+        Image(.faCaretRight)
+            .resizable()
+            .frame(width: 6, height: 10)
+            .rotationEffect(caretRotation)
+            .foregroundStyle(Color.deemphasized)
+    }
 }
 
 extension DisclosureGroupStyle where Self == StopListDisclosureGroup {
     static func stopList(
         routeAccents: TripRouteAccents,
-        stickConnections: [(RouteBranchSegment.StickConnection, Bool)] = [(
+        stickConnections: [(RouteBranchSegment.StickConnection, Bool)]? = [(
             .init(fromStop: "", toStop: "", fromLane: .center, toLane: .center, fromVPos: .top, toVPos: .bottom),
             true
         )],
         context: StopListContext,
     ) -> StopListDisclosureGroup {
-        .init(routeAccents: routeAccents, stickConnections: stickConnections, stopListContext: context)
+        .init(
+            routeAccents: routeAccents,
+            stickConnections: stickConnections,
+            stopListContext: context,
+        )
     }
 }

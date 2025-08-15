@@ -20,6 +20,8 @@ struct RoutePickerRow: View {
                 HStack(spacing: 0) {
                     HStack(spacing: 8) {
                         RoutePill(route: route.sortRoute, type: .fixed)
+                            // Route pill VoiceOver text is redundant except for bus
+                            .accessibilityHidden(route.type != .bus)
                         Text(route.sortRoute.longName)
                             .multilineTextAlignment(.leading)
                             .foregroundColor(Color.text)
@@ -31,11 +33,11 @@ struct RoutePickerRow: View {
                         .scaledToFit()
                         .frame(width: 8)
                         .padding(.horizontal, 8)
-                        .foregroundColor(Color.text.opacity(0.6))
+                        .foregroundColor(Color.translucentContrast)
                 }
                 .padding(.horizontal, 8)
                 .padding(.vertical, 12)
             }
-        )
+        ).preventScrollTaps()
     }
 }

@@ -9,11 +9,11 @@ import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class UsecaseDI : KoinComponent {
-    val alertsUsecase: AlertsUsecase by inject()
-    val configUsecase: ConfigUseCase by inject()
-    val featurePromoUsecase: IFeaturePromoUseCase by inject()
-    val toggledPinnedRouteUsecase: TogglePinnedRouteUsecase by inject()
-    val visitHistoryUsecase: VisitHistoryUsecase by inject()
-    val favoritesUsecases: FavoritesUsecases by inject()
+public class UsecaseDI : KoinComponent {
+    public val alertsUsecase: AlertsUsecase by inject()
+    public val configUsecase: ConfigUseCase by inject()
+    public val featurePromoUsecase: IFeaturePromoUseCase by inject()
+    public val toggledPinnedRouteUsecase: TogglePinnedRouteUsecase by inject()
+    public val visitHistoryUsecase: VisitHistoryUsecase by inject()
+    public val favoritesUsecases: FavoritesUsecases by inject()
 }

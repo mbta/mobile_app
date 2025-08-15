@@ -4,7 +4,7 @@ import android.content.Context
 import okio.Path
 import okio.Path.Companion.toPath
 
-class AndroidSystemPaths(val context: Context) : SystemPaths {
+internal class AndroidSystemPaths(val context: Context) : SystemPaths {
     override val data: Path
         get() = context.filesDir.absolutePath.toPath()
 

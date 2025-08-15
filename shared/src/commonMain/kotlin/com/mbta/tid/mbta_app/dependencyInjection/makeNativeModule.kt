@@ -17,7 +17,7 @@ import com.mbta.tid.mbta_app.repositories.VehiclesRepository
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
-fun makeNativeModule(
+public fun makeNativeModule(
     accessibilityStatus: IAccessibilityStatusRepository,
     analytics: Analytics,
     currentAppVersion: ICurrentAppVersionRepository,

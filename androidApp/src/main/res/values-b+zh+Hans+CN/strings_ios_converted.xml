@@ -6,9 +6,9 @@
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
     <string name="add_favorite">添加收藏</string>
-    <string name="add_stops">添加停靠点</string>
-    <string name="add_to_favorites_title">在 &lt;b>%2$s&lt;/b> 添加 &lt;b>%1$s&lt;/b></string>
-    <string name="add_to_favorites_title_stop_details">将 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b> 添加到收藏夹</string>
+    <string name="add_stops">添加站点</string>
+    <string name="add_to_favorites_title">在&lt;b>%1$s&lt;/b>添加&lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">将&lt;b>%2$s&lt;/b>的&lt;b>%1$s&lt;/b>添加到收藏夹</string>
     <string name="additional_service">附加服务</string>
     <string name="additional_service_sentence_case">附加服务</string>
     <plurals name="affected_stops">
@@ -16,7 +16,7 @@
     </plurals>
     <string name="alert">警报</string>
     <string name="alert_details">警报详情</string>
-    <string name="alert_elevator_header">电梯关停 (%1$s)</string>
+    <string name="alert_elevator_header">电梯关停(%1$s)</string>
     <string name="alert_ended">警报已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020从&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
@@ -49,7 +49,7 @@
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在轨道%1$s登车</string>
     <string name="bus">巴士</string>
-    <string name="bus_label">%1$s 巴士</string>
+    <string name="bus_label">%1$s巴士</string>
     <string name="bus_lowercase">巴士</string>
     <string name="buses">巴士</string>
     <string name="cancel">取消</string>
@@ -59,7 +59,7 @@
     <string name="coast_guard_restriction">海岸警卫队警戒</string>
     <string name="coast_guard_restriction_lowercase">海岸警卫队警戒</string>
     <string name="collapse_remaining_stops">折叠剩余站点</string>
-    <string name="collapse_stops">崩溃停止</string>
+    <string name="collapse_stops">折叠站点</string>
     <string name="congestion">交通拥堵</string>
     <string name="congestion_lowercase">交通拥堵</string>
     <string name="connection_to">连接到%1$s</string>
@@ -80,11 +80,12 @@
     <string name="details">详情</string>
     <string name="detour">交通改道</string>
     <string name="directionTo">%1$s至</string>
-    <string name="direction_service_only">仅限 %1$s 服务</string>
+    <string name="direction_service_only">%1$s仅限服务</string>
     <string name="disabled_bus">巴士抛锚</string>
     <string name="disabled_bus_lowercase">巴士抛锚</string>
     <string name="disabled_train">列车停运</string>
     <string name="disabled_train_lowercase">列车停运</string>
+    <string name="dismiss">解雇</string>
     <string name="display_more_information">显示更多信息</string>
     <string name="displays_more_info">显示更多信息</string>
     <string name="dock_closed">停靠区域已关闭</string>
@@ -92,7 +93,7 @@
     <string name="dock_closure">码头关闭</string>
     <string name="dock_issue">停靠区域问题</string>
     <string name="dock_issue_sentence_case">停靠区域问题</string>
-    <string name="done">完毕</string>
+    <string name="done">完成</string>
     <string name="drag_handle">拖动手柄</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="drawbridge_being_raised_lowercase">吊桥升起</string>
@@ -108,7 +109,7 @@
         <item quantity="other">%1$d部电梯已关停</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="other">该站有%1$d电梯关闭</item>
+        <item quantity="other">此站点有%1$d电梯关闭</item>
     </plurals>
     <string name="end">结束日期</string>
     <string name="end_of_service">服务结束</string>
@@ -117,7 +118,7 @@
     <string name="escalator_closure">自动扶梯关闭</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b>小时</string>
     <string name="expand_remaining_stops">展开剩余站点</string>
-    <string name="expand_stops">扩展停止</string>
+    <string name="expand_stops">展开站点</string>
     <string name="explainer_headline_finishing_another">完成其他行程</string>
     <string name="explainer_headline_no_prediction">预测功能暂不可用</string>
     <string name="explainer_headline_no_vehicle">%1$s定位服务暂不可用</string>
@@ -128,13 +129,13 @@
     <string name="extra_service_sentence_case">额外服务</string>
     <string name="facility_issue">设施问题</string>
     <string name="facility_issue_sentence_case">设施问题</string>
-    <string name="favorite_stop">最喜欢的一站</string>
+    <string name="favorite_stop">最喜欢的站点</string>
     <string name="favorite_stops_first_time_toast_message">收藏站点取代了之前的加星标路线功能。</string>
     <string name="favorites_link">收藏夹</string>
-    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> 位于 &lt;b>%3$s&lt;/b> 已添加到收藏夹</string>
+    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b>位于&lt;b>%3$s&lt;/b>已添加到收藏夹</string>
     <string name="favorites_toast_add_fallback">已添加到收藏夹</string>
-    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> 位于 &lt;b>%2$s&lt;/b> 已添加到收藏夹</string>
-    <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b> 位于 &lt;b>%3$s&lt;/b> 已从收藏夹中移除</string>
+    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b>位于&lt;b>%2$s&lt;/b>已添加到收藏夹</string>
+    <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b>位于&lt;b>%3$s&lt;/b>已从收藏夹中移除</string>
     <string name="favorites_toast_remove_fallback">已从收藏夹中移除</string>
     <string name="feature_flag_debug_mode">调试模式</string>
     <string name="feature_flag_route_search">线路搜索</string>
@@ -142,7 +143,7 @@
     <string name="ferries">轮渡</string>
     <string name="ferry">轮渡</string>
     <string name="ferry_lowercase">轮渡</string>
-    <string name="filter_routes">过滤路线</string>
+    <string name="filter_routes">筛选路线</string>
     <string name="filter_show_all">全部</string>
     <string name="find_stops_hint">要查找站点，请先选择路线</string>
     <string name="finishing_another_trip">完成其他行程</string>
@@ -177,8 +178,8 @@
     <string name="inbound">进站</string>
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
     <string name="later_today">今天晚些时候</string>
-    <string name="less_common_stop">不太常见的停站</string>
-    <string name="less_common_stops">&lt;b>%1$d&lt;/b> 不常见站点</string>
+    <string name="less_common_stop">较少停靠的站点</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b>较少停靠的站点</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>
@@ -211,6 +212,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
+    <string name="new_feature_screen_reader_header_prefix">新功能。%1$s</string>
     <string name="next_stop">下一站</string>
     <string name="no_matching_routes">没有匹配的%1$s路线</string>
     <string name="no_predictions">预测不可用</string>
@@ -218,7 +220,7 @@
     <string name="no_service">无服务</string>
     <string name="no_service_sentence_case">无服务</string>
     <string name="no_service_today">今日无服务</string>
-    <string name="no_stops_added">未添加停靠站</string>
+    <string name="no_stops_added">未添加站点</string>
     <string name="no_stops_nearby">您不在MBTA服务区内。</string>
     <string name="no_stops_nearby_pan">查看波士顿车站附近的交通运输服务</string>
     <string name="no_stops_nearby_search">按站点搜索</string>
@@ -240,10 +242,10 @@
     <string name="onboarding_map_display_header">设置地图显示首选项</string>
     <string name="onboarding_station_accessibility_body">通过选择加入，我们可以向您显示哪些车站不适合轮椅通行或电梯关闭。</string>
     <string name="onboarding_station_accessibility_header">设置车站无障碍信息首选项</string>
-    <string name="only_served_at_certain_times">仅在一天中的特定时间供应</string>
+    <string name="only_served_at_certain_times">仅在每日特定时段提供服务</string>
     <string name="open_for_more_arrivals">开启获得更多到站信息</string>
     <string name="other_link_privacy_policy">隐私政策</string>
-    <string name="other_link_source_code">在 Github 上查看源代码</string>
+    <string name="other_link_source_code">在GitHub上查看源代码</string>
     <string name="other_link_tos">使用条款</string>
     <string name="outbound">出站</string>
     <string name="parade">游行</string>
@@ -262,7 +264,7 @@
     <string name="power_problem_lowercase">电力故障</string>
     <string name="predictions_unavailable_details">服务运行中，暂无预计到达时间。请查看地图获取%1$s当前的位置信息。</string>
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
-    <string name="promo_favorites_body">现在将您经常使用的站点保存到&lt;b>一个简单的地方&lt;/b>。</string>
+    <string name="promo_favorites_body">现在将您常用的站点保存到&lt;b>一个便捷位置&lt;/b>。</string>
     <string name="promo_favorites_header">添加您的收藏夹</string>
     <string name="rail_defect">轨道缺陷</string>
     <string name="rail_defect_lowercase">轨道缺陷</string>
@@ -272,15 +274,15 @@
     <string name="refresh">刷新</string>
     <string name="refresh_predictions">刷新预测</string>
     <string name="reload_data">重新加载数据</string>
-    <string name="remove_favorite">删除收藏夹</string>
+    <string name="remove_favorite">移除收藏</string>
     <string name="resources_link_fare_info">票价信息</string>
-    <string name="resources_link_mticket">通勤铁路和渡轮票</string>
+    <string name="resources_link_mticket">通勤列车和渡轮票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
     <string name="resources_link_trip_planner">Trip Planner</string>
     <string name="results_failed_to_load">结果加载失败☹️</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">添加最喜欢的站点</string>
-    <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">线路</string>
     <string name="schedule_change">时刻表变更</string>
     <string name="schedule_change_sentence_case">时刻表变更</string>
@@ -353,12 +355,13 @@
     <string name="switch_issue_lowercase">道岔问题</string>
     <string name="switch_problem">道岔故障</string>
     <string name="switch_problem_lowercase">道岔故障</string>
-    <string name="tap_favorites_hint">点按星星即可添加到收藏夹</string>
+    <string name="tap_favorites_hint">点击站点即可添加到收藏夹</string>
     <string name="technical_problem">技术故障</string>
     <string name="technical_problem_lowercase">技术故障</string>
-    <string name="this_stop_is_drop_off_only">此站仅供下客</string>
+    <string name="this_stop_is_drop_off_only">此站点仅供下客</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
+    <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="track_change">轨道变更</string>
     <string name="track_change_sentence_case">轨道变更</string>
     <string name="track_number">追踪%1$s</string>
@@ -394,16 +397,16 @@
     <string name="vehicle_cancelled_other">于%1$s到站的下一趟车已取消</string>
     <string name="vehicle_desc_accessibility_desc">选定%1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">选定%1$s %2$s %3$s，选定站点</string>
-    <string name="vehicle_prediction_actual_arrival">于%2$s到站</string>
+    <string name="vehicle_prediction_actual_arrival">到站%1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s将于%2$d小时内到站</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s将于%2$d小时%3$d分钟内到站</string>
     <string name="vehicle_prediction_hours_minutes_other">下一趟车将在%1$d小时%2$d分钟内抵达</string>
     <string name="vehicle_prediction_hours_other">下一趟车将在%1$d小时内抵达</string>
     <string name="vehicle_prediction_minutes_first">%1$s将在%2$d分钟内到站</string>
     <string name="vehicle_prediction_minutes_other">下一趟车将在%1$d分钟内抵达</string>
-    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s 延迟</string>
-    <string name="vehicle_prediction_schedule_status_delay_other">下一趟%1$s%2$s延迟</string>
-    <string name="vehicle_prediction_schedule_status_early_first">%1$s%2$s提前</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s延误</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">下一趟%1$s%2$s延误</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s提前</string>
     <string name="vehicle_prediction_schedule_status_early_other">下一趟%1$s%2$s提前</string>
     <string name="vehicle_prediction_time_first">%1$s于%2$s到站</string>
     <string name="vehicle_prediction_time_other">下一趟车将于%1$s到站</string>

@@ -7,8 +7,8 @@
     <string name="add_confirmation_button">Adicionar</string>
     <string name="add_favorite">adicionar favorito</string>
     <string name="add_stops">Adicionar paradas</string>
-    <string name="add_to_favorites_title">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b></string>
-    <string name="add_to_favorites_title_stop_details">Adicione &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> aos favoritos</string>
+    <string name="add_to_favorites_title">Adicionar &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title_stop_details">Adicionar &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> aos Favoritos</string>
     <string name="additional_service">Serviço adicional</string>
     <string name="additional_service_sentence_case">Serviço adicional</string>
     <plurals name="affected_stops">
@@ -18,7 +18,7 @@
     </plurals>
     <string name="alert">Alerta</string>
     <string name="alert_details">Detalhes do alerta</string>
-    <string name="alert_elevator_header">Fechamento de elevador (%1$s)</string>
+    <string name="alert_elevator_header">Fechamento dos elevadores (%1$s)</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020de &lt;b>%1$s&lt;/b> paradas a &lt;b>%2$s&lt;/b></string>
@@ -61,7 +61,7 @@
     <string name="coast_guard_restriction">Restrição da Guarda Costeira</string>
     <string name="coast_guard_restriction_lowercase">Restrição da Guarda Costeira</string>
     <string name="collapse_remaining_stops">recolher paradas restantes</string>
-    <string name="collapse_stops">paradas de colapso</string>
+    <string name="collapse_stops">recolher paradas</string>
     <string name="congestion">Congestionamento</string>
     <string name="congestion_lowercase">congestionamento</string>
     <string name="connection_to">Conexão para %1$s</string>
@@ -87,6 +87,7 @@
     <string name="disabled_bus_lowercase">ônibus com defeito</string>
     <string name="disabled_train">Trem desativado</string>
     <string name="disabled_train_lowercase">trem com defeito</string>
+    <string name="dismiss">Liberar</string>
     <string name="display_more_information">exibir mais informações</string>
     <string name="displays_more_info">exibe mais informações</string>
     <string name="dock_closed">Doca fechada</string>
@@ -94,7 +95,7 @@
     <string name="dock_closure">Fechamento de doca</string>
     <string name="dock_issue">Problema na doca</string>
     <string name="dock_issue_sentence_case">Problema na doca</string>
-    <string name="done">Feito</string>
+    <string name="done">Concluído</string>
     <string name="drag_handle">Alça para arrastar</string>
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="drawbridge_being_raised_lowercase">ponte levadiça sendo levantada</string>
@@ -112,9 +113,9 @@
         <item quantity="other">%1$d elevadores fechados</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="one">Esta parada tem %1$d elevador fechado</item>
-        <item quantity="many">Esta parada tem %1$d elevadores fechados</item>
-        <item quantity="other">Esta parada tem %1$d elevadores fechados</item>
+        <item quantity="one">Esta parada está com %1$d o elevador fechado</item>
+        <item quantity="many">Esta parada está com %1$d os elevadores fechados</item>
+        <item quantity="other">Esta parada está com %1$d os elevadores fechados</item>
     </plurals>
     <string name="end">Fim</string>
     <string name="end_of_service">fim do serviço</string>
@@ -137,14 +138,14 @@
     <string name="favorite_stop">parada favorita</string>
     <string name="favorite_stops_first_time_toast_message">As paradas favoritas substituem o recurso anterior de rotas marcadas com estrela.</string>
     <string name="favorites_link">Favoritos</string>
-    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> em &lt;b>%3$s&lt;/b> adicionado aos favoritos</string>
-    <string name="favorites_toast_add_fallback">Adicionado aos favoritos</string>
-    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> adicionado aos favoritos</string>
+    <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> em &lt;b>%3$s&lt;/b> adicionado aos Favoritos</string>
+    <string name="favorites_toast_add_fallback">Adicionar aos Favoritos</string>
+    <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> adicionado aos Favoritos</string>
     <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b> em &lt;b>%3$s&lt;/b> removido dos Favoritos</string>
     <string name="favorites_toast_remove_fallback">Removido dos Favoritos</string>
     <string name="feature_flag_debug_mode">Modo de depuração</string>
     <string name="feature_flag_route_search">Pesquisa de rotas</string>
-    <string name="feedback_link_form">Enviar feedback sobre o aplicativo</string>
+    <string name="feedback_link_form">Enviar comentário do aplicativo</string>
     <string name="ferries">balsas</string>
     <string name="ferry">Balsa</string>
     <string name="ferry_lowercase">balsa</string>
@@ -217,8 +218,9 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
+    <string name="new_feature_screen_reader_header_prefix">Novo recurso. %1$s</string>
     <string name="next_stop">Próxima parada</string>
-    <string name="no_matching_routes">Nenhuma rota de %1$s correspondente</string>
+    <string name="no_matching_routes">Não há correspondência %1$s nas rotas</string>
     <string name="no_predictions">Previsões indisponíveis</string>
     <string name="no_results_found">Nenhum resultado encontrado 🤔</string>
     <string name="no_service">Sem serviço</string>
@@ -234,7 +236,7 @@
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="now">Agora</string>
     <string name="now_at">Agora em</string>
-    <string name="okay">OK</string>
+    <string name="okay">Ok</string>
     <string name="onboarding_continue">Continuar</string>
     <string name="onboarding_feedback_advance">Comece aqui</string>
     <string name="onboarding_feedback_body">O MBTA Go está no estágio inicial! Queremos seus comentários enquanto continuamos a fazer melhorias e adicionar novos recursos.</string>
@@ -246,10 +248,10 @@
     <string name="onboarding_map_display_header">Definir preferência de exibição do mapa</string>
     <string name="onboarding_station_accessibility_body">Ao ativar, podemos mostrar quais estações estão inacessíveis ou com elevadores fechados.</string>
     <string name="onboarding_station_accessibility_header">Definir preferência de informações de acessibilidade da estação</string>
-    <string name="only_served_at_certain_times">Servido apenas em determinados horários do dia</string>
+    <string name="only_served_at_certain_times">Atendido apenas em alguns horários do dia</string>
     <string name="open_for_more_arrivals">Aberto para mais chegadas</string>
     <string name="other_link_privacy_policy">Política de Privacidade</string>
-    <string name="other_link_source_code">Exibir origem no GitHub</string>
+    <string name="other_link_source_code">Visualizar Origem no GitHub</string>
     <string name="other_link_tos">Termos de Uso</string>
     <string name="outbound">Saída</string>
     <string name="parade">Desfile</string>
@@ -268,8 +270,8 @@
     <string name="power_problem_lowercase">problema de energia</string>
     <string name="predictions_unavailable_details">O serviço está funcionando, mas os horários de chegada previstos não estão disponíveis. Verifique no mapa onde %1$s estão no momento.</string>
     <string name="predictions_unavailable_details_hide_maps">O serviço está funcionando, mas os horários previstos de chegada não estão disponíveis.</string>
-    <string name="promo_favorites_body">Agora salve suas paradas usadas com frequência em &lt;b>um lugar fácil&lt;/b>.</string>
-    <string name="promo_favorites_header">Adicione seus favoritos</string>
+    <string name="promo_favorites_body">Agora salve suas paradas de uso frequente em &lt;b>um lugar fácil&lt;/b>.</string>
+    <string name="promo_favorites_header">Adicionar seus Favoritos</string>
     <string name="rail_defect">Defeito nos trilhos</string>
     <string name="rail_defect_lowercase">defeito nos trilhos</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
@@ -283,10 +285,10 @@
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
     <string name="resources_link_trip_planner">Planejador de trajetos</string>
-    <string name="results_failed_to_load">Falha ao carregar os resultados ☹️</string>
+    <string name="results_failed_to_load">Falha ao carregar resultados 🤔</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Adicionar paradas favoritas</string>
-    <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Rotas</string>
     <string name="schedule_change">Alteração de horário</string>
     <string name="schedule_change_sentence_case">Alteração de horário</string>
@@ -361,12 +363,13 @@
     <string name="switch_issue_lowercase">problema na agulha</string>
     <string name="switch_problem">Problema de troca</string>
     <string name="switch_problem_lowercase">problema na agulha</string>
-    <string name="tap_favorites_hint">Toque nas estrelas para adicionar aos favoritos</string>
+    <string name="tap_favorites_hint">Paradas de toque para adicionar aos favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
     <string name="tie_replacement">Troca de pneu</string>
     <string name="tie_replacement_lowercase">substituição de dormentes</string>
+    <string name="toast_tip_prefix">Dica: %1$s</string>
     <string name="track_change">Alteração de trilho</string>
     <string name="track_change_sentence_case">Alteração de trilho</string>
     <string name="track_number">Trilho %1$s</string>
@@ -382,8 +385,8 @@
     <string name="trains">trens</string>
     <string name="trip_cancelled">Viagem cancelada</string>
     <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
-    <string name="try_a_different_spelling_or_name">Tente uma grafia ou nome diferente.</string>
-    <string name="try_your_search_again">Tente sua pesquisa novamente.</string>
+    <string name="try_a_different_spelling_or_name">Tente uma ortografia ou nome diferente.</string>
+    <string name="try_your_search_again">Tente pesquisar novamente.</string>
     <string name="unable_to_connect">Impossível conectar</string>
     <string name="undo">Desfazer</string>
     <string name="unruly_passenger">Passageiro indisciplinado</string>
@@ -404,7 +407,7 @@
     <string name="vehicle_cancelled_other">e às %1$s cancelado</string>
     <string name="vehicle_desc_accessibility_desc">%1$s %2$s %3$s selecionados</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">%1$s %2$s %3$s selecionados, parada selecionada</string>
-    <string name="vehicle_prediction_actual_arrival">chegando às %2$s</string>
+    <string name="vehicle_prediction_actual_arrival">chegando às %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s chegando em %2$d h</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s chegando em %2$d hr %3$d min</string>
     <string name="vehicle_prediction_hours_minutes_other">e em %1$d h %2$d min</string>
@@ -413,8 +416,8 @@
     <string name="vehicle_prediction_minutes_other">e em %1$d min</string>
     <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s atrasado</string>
     <string name="vehicle_prediction_schedule_status_delay_other">e %1$s %2$s atrasado</string>
-    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s cedo</string>
-    <string name="vehicle_prediction_schedule_status_early_other">e %1$s %2$s cedo</string>
+    <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s adiantado</string>
+    <string name="vehicle_prediction_schedule_status_early_other">e %1$s %2$s adiantado</string>
     <string name="vehicle_prediction_time_first">%1$s chegando às %2$s</string>
     <string name="vehicle_prediction_time_other">e às %1$s</string>
     <string name="vehicle_schedule_hours_first">%1$s chegando em %2$d h programado</string>

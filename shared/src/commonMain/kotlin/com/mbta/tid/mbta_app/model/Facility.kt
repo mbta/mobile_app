@@ -4,14 +4,15 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Facility(
+public data class Facility
+internal constructor(
     override val id: String,
-    @SerialName("long_name") val longName: String? = null,
+    @SerialName("long_name") internal val longName: String? = null,
     @SerialName("short_name") val shortName: String? = null,
     val type: Type = Type.Other,
 ) : BackendObject {
     @Serializable
-    enum class Type {
+    public enum class Type {
         @SerialName("bike_storage") BikeStorage,
         @SerialName("bridge_plate") BridgePlate,
         @SerialName("electric_car_chargers") ElectricCarChargers,

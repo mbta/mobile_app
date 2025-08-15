@@ -14,7 +14,7 @@ import kotlinx.serialization.Serializable
  * @param routeSegments segments of stops that stopped at on the route pattern.
  */
 @Serializable
-data class SegmentedRouteShape(
+public data class SegmentedRouteShape(
     @SerialName("source_route_pattern_id") val sourceRoutePatternId: String,
     @SerialName("source_route_id") val sourceRouteId: String,
     @SerialName("direction_id") val directionId: Int,

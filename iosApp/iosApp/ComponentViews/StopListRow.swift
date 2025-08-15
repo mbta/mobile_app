@@ -120,16 +120,16 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
 
     @ViewBuilder
     var stopRow: some View {
-        ZStack(alignment: .bottom) {
-            if !stopPlacement.isLast, !targeted, disruption == nil {
-                HaloSeparator()
-            }
-            HStack(alignment: .center, spacing: 0) {
-                routeLine
-                VStack(alignment: .leading, spacing: 8) {
-                    Button(
-                        action: { onClick() },
-                        label: {
+        Button(
+            action: { onClick() },
+            label: {
+                ZStack(alignment: .bottom) {
+                    if !stopPlacement.isLast, !targeted, disruption == nil {
+                        HaloSeparator()
+                    }
+                    HStack(alignment: .center, spacing: 0) {
+                        routeLine
+                        VStack(alignment: .leading, spacing: 8) {
                             HStack(alignment: .center, spacing: 0) {
                                 if showStationAccessibility, activeElevatorAlerts > 0 || !stop.isWheelchairAccessible {
                                     HStack(alignment: .center) {
@@ -158,6 +158,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                                             .accessibilityLabel(Text("Boarding on track \(trackNumber)"))
                                     }
                                 }
+
                                 Spacer()
                                 rightSideContent()
 
@@ -173,29 +174,23 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                                     HStack {}
                                         .accessibilityLabel(Text("This stop is not accessible"))
                                 }
+                            }.padding(.trailing, 8)
+                            if let connectingRoutes, !connectingRoutes.isEmpty {
+                                scrollRoutes
+                                    .accessibilityElement()
+                                    .accessibilityLabel(scrollRoutesAccessibilityLabel)
                             }
-                        }
-                    )
-                    .simultaneousGesture(TapGesture())
+                        }.padding(.vertical, 12)
+                    }
                     .accessibilityElement(children: .combine)
-                    .accessibilityInputLabels([stop.name])
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h4)
-
-                    if let connectingRoutes, !connectingRoutes.isEmpty {
-                        scrollRoutes
-                            .accessibilityElement()
-                            .accessibilityLabel(scrollRoutesAccessibilityLabel)
-                    }
+                    .accessibilityInputLabels([stop.name])
                 }
-                .accessibilitySortPriority(1)
-                .padding(.leading, 8)
-                .padding(.vertical, 12)
-                .padding(.trailing, 8)
-                .padding(.bottom, stopPlacement.isLast ? 0 : 1)
-                .frame(minHeight: 56)
-            }.accessibilityElement(children: .contain)
-        }
+            }
+        )
+        .frame(minHeight: 56)
+        .preventScrollTaps()
     }
 
     @ViewBuilder
@@ -214,15 +209,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
         .padding(.horizontal, 7)
     }
 
-    func connectionLabel(route: Route) -> String {
-        String(format: NSLocalizedString(
-            "%@ %@",
-            comment: """
-            A route label and route type pair,
-            ex 'Red Line train' or '73 bus', used in connecting stop labels
-            """
-        ), route.label, route.type.typeText(isOnly: true))
-    }
+    func connectionLabel(route: Route) -> String { routeModeLabel(route: route) }
 
     var scrollRoutes: some View {
         let routeView = ScrollView(.horizontal, showsIndicators: false) {

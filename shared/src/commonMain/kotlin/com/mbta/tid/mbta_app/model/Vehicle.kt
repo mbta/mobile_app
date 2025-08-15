@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Vehicle(
+public data class Vehicle(
     override val id: String,
     val bearing: Double?,
     @SerialName("current_status") val currentStatus: CurrentStatus,
@@ -19,14 +19,14 @@ data class Vehicle(
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,
 ) : BackendObject {
-    val position = Position(latitude = latitude, longitude = longitude)
+    val position: Position = Position(latitude = latitude, longitude = longitude)
 
     @Serializable
-    enum class CurrentStatus {
+    public enum class CurrentStatus {
         @SerialName("incoming_at") IncomingAt,
         @SerialName("stopped_at") StoppedAt,
         @SerialName("in_transit_to") InTransitTo,
     }
 
-    override fun toString() = "Vehicle(id=$id)"
+    override fun toString(): String = "Vehicle(id=$id)"
 }

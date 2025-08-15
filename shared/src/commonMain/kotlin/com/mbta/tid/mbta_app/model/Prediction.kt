@@ -6,13 +6,14 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-val ARRIVAL_CUTOFF = 30.seconds
-val APPROACH_CUTOFF = 60.seconds
-val BOARDING_CUTOFF = 90.seconds
-val SCHEDULE_CLOCK_CUTOFF = 60.minutes
+internal val ARRIVAL_CUTOFF = 30.seconds
+internal val APPROACH_CUTOFF = 60.seconds
+internal val BOARDING_CUTOFF = 90.seconds
+internal val SCHEDULE_CLOCK_CUTOFF = 60.minutes
 
 @Serializable
-data class Prediction(
+public data class Prediction
+internal constructor(
     override val id: String,
     @SerialName("arrival_time") override val arrivalTime: EasternTimeInstant?,
     @SerialName("departure_time") override val departureTime: EasternTimeInstant?,
@@ -27,7 +28,7 @@ data class Prediction(
     @SerialName("vehicle_id") val vehicleId: String?,
 ) : BackendObject, TripStopTime {
     @Serializable
-    enum class ScheduleRelationship {
+    public enum class ScheduleRelationship {
         @SerialName("added") Added,
         @SerialName("cancelled") Cancelled,
         @SerialName("no_data") NoData,

@@ -23,9 +23,8 @@ final class ToastViewTests: XCTestCase {
         let textOnly = ToastState(
             message: "This is a text only toast",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: nil,
-            actionLabel: nil,
-            onAction: nil,
+            isTip: false,
+            action: nil,
         )
 
         let sut = ToastView(state: textOnly, tabBarVisible: false, onDismiss: {})
@@ -38,15 +37,14 @@ final class ToastViewTests: XCTestCase {
         let close = ToastState(
             message: "This is a toast with a close button",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: {},
-            actionLabel: nil,
-            onAction: nil,
+            isTip: false,
+            action: ToastViewModel.ToastActionClose(onClose: {})
         )
 
         let exp = XCTestExpectation(description: "Close button pressed")
         let sut = ToastView(state: close, tabBarVisible: false, onDismiss: { exp.fulfill() })
 
-        try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
+        try sut.inspect().find(viewWithAccessibilityLabel: "Dismiss").button().tap()
         XCTAssertNotNil(try sut.inspect().find(text: "This is a toast with a close button"))
         wait(for: [exp], timeout: 1)
     }
@@ -55,9 +53,8 @@ final class ToastViewTests: XCTestCase {
         let action = ToastState(
             message: "This is a toast with an action button",
             duration: ToastViewModel.Duration.indefinite,
-            onClose: nil,
-            actionLabel: "Action",
-            onAction: {},
+            isTip: false,
+            action: ToastViewModel.ToastActionCustom(actionLabel: "Action", onAction: {})
         )
 
         let exp = XCTestExpectation(description: "Action button pressed")

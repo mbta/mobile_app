@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SheetHeader<Content: View>: View {
     let title: String?
+    let titleAccessibilityLabel: String?
     let titleColor: Color
     let buttonColor: Color
     let buttonTextColor: Color
@@ -21,6 +22,7 @@ struct SheetHeader<Content: View>: View {
 
     init(
         title: String?,
+        titleAccessibilityLabel: String? = nil,
         titleColor: Color = Color.text,
         buttonColor: Color = Color.contrast,
         buttonTextColor: Color = Color.fill2,
@@ -30,6 +32,7 @@ struct SheetHeader<Content: View>: View {
         @ViewBuilder rightActionContents: @escaping () -> Content = { EmptyView() }
     ) {
         self.title = title
+        self.titleAccessibilityLabel = titleAccessibilityLabel
         self.titleColor = titleColor
         self.buttonColor = buttonColor
         self.buttonTextColor = buttonTextColor
@@ -43,10 +46,12 @@ struct SheetHeader<Content: View>: View {
         HStack(alignment: .center, spacing: 16) {
             if let onBack {
                 ActionButton(kind: .back, circleColor: buttonColor, iconColor: buttonTextColor, action: { onBack() })
+                    .preventScrollTaps()
             }
             if let title {
                 Text(title)
                     .font(Typography.title2Bold)
+                    .accessibilityLabel(titleAccessibilityLabel ?? title)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityHeading(.h1)
                     .foregroundColor(titleColor)
@@ -64,7 +69,7 @@ struct SheetHeader<Content: View>: View {
                         circleColor: buttonColor,
                         iconColor: buttonTextColor,
                         action: { onClose() }
-                    )
+                    ).preventScrollTaps()
                 }
             }
         }

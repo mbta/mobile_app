@@ -21,6 +21,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.unit.dp
@@ -44,9 +48,15 @@ fun BarAndToastScaffold(
         snackbarHostState.showSnackbar(
             message = toast.message,
             actionLabel =
-                if (toast.actionLabel != null && toast.onAction != null) toast.actionLabel
-                else null,
-            withDismissAction = toast.onClose != null,
+                when (val buttonSpec = toast.action) {
+                    is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
+                    else -> null
+                },
+            withDismissAction =
+                when (toast.action) {
+                    is ToastViewModel.ToastAction.Close -> true
+                    else -> false
+                },
             duration =
                 when (toast.duration) {
                     ToastViewModel.Duration.Short -> SnackbarDuration.Short
@@ -63,12 +73,58 @@ fun BarAndToastScaffold(
         }
     }
 
+    val closeHintText = stringResource(R.string.close_button_label)
+
+    // Overriding click semantics so that with voice over turned on,
+    // the snackbar is read as a single element with a hint to perform the single associated
+    // action (whether close or custom)
+    val overriddenContentDescription =
+        when (val state = toastState) {
+            is ToastViewModel.State.Hidden -> ""
+            is ToastViewModel.State.Visible ->
+                AnnotatedString.fromHtml(
+                        if (state.toast.isTip)
+                            stringResource(R.string.toast_tip_prefix, state.toast.message)
+                        else state.toast.message
+                    )
+                    .text
+        }
+
+    val clickLabel =
+        when (val state = toastState) {
+            is ToastViewModel.State.Hidden -> ""
+            is ToastViewModel.State.Visible ->
+                when (val buttonSpec = state.toast.action) {
+                    is ToastViewModel.ToastAction.Close -> closeHintText
+                    is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
+                    null -> ""
+                }
+        }
+    val clickAction: (() -> Unit)? =
+        when (val state = toastState) {
+            is ToastViewModel.State.Hidden -> null
+            is ToastViewModel.State.Visible ->
+                when (val buttonSpec = state.toast.action) {
+                    is ToastViewModel.ToastAction.Close -> buttonSpec.onClose
+                    is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction
+                    null -> null
+                }
+        }
+
     Scaffold(
         bottomBar = bottomBar,
         snackbarHost = {
             SnackbarHost(snackbarHostState) {
                 Snackbar(
-                    modifier = Modifier.padding(start = 8.dp, bottom = 16.dp, end = 8.dp),
+                    modifier =
+                        Modifier.padding(start = 8.dp, bottom = 16.dp, end = 8.dp)
+                            .clearAndSetSemantics {
+                                contentDescription = overriddenContentDescription
+                                onClick(clickLabel) {
+                                    clickAction?.invoke()
+                                    true
+                                }
+                            },
                     action = { ToastActionButton(it, toastState) },
                     dismissAction = { ToastCloseButton(it, toastState) },
                     shape = RoundedCornerShape(8.dp),
@@ -109,7 +165,10 @@ private fun ToastActionButton(snackbarData: SnackbarData, toastState: ToastViewM
             when (toastState) {
                 is ToastViewModel.State.Hidden -> {}
                 is ToastViewModel.State.Visible ->
-                    toastState.toast.onAction?.let { action -> action() }
+                    when (val buttonSpec = toastState.toast.action) {
+                        is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction()
+                        else -> {}
+                    }
             }
         }
     }
@@ -119,7 +178,7 @@ private fun ToastActionButton(snackbarData: SnackbarData, toastState: ToastViewM
 private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewModel.State) {
     if (snackbarData.visuals.withDismissAction)
         ActionButton(
-            ActionButtonKind.Close,
+            ActionButtonKind.Dismiss,
             modifier = Modifier.padding(horizontal = 8.dp),
             colors =
                 ButtonDefaults.buttonColors(
@@ -130,7 +189,10 @@ private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewMo
             when (toastState) {
                 is ToastViewModel.State.Hidden -> {}
                 is ToastViewModel.State.Visible ->
-                    toastState.toast.onClose?.let { close -> close() }
+                    when (val buttonSpec = toastState.toast.action) {
+                        is ToastViewModel.ToastAction.Close -> buttonSpec.onClose()
+                        else -> {}
+                    }
             }
         }
 }

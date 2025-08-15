@@ -128,7 +128,7 @@ struct SaveFavoritesFlow: View {
         if let toastText {
             toastVM.showToast(toast: .init(
                 message: toastText,
-                duration: .short, onClose: nil, actionLabel: nil
+                duration: .short, isTip: false, action: nil
             ))
         }
     }

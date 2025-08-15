@@ -4,10 +4,10 @@
     <string name="access_issue_sentence_case">Vấn đề về tiếp cận</string>
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
-    <string name="add_confirmation_button">Thêm vào</string>
+    <string name="add_confirmation_button">Thêm</string>
     <string name="add_favorite">thêm mục yêu thích</string>
     <string name="add_stops">Thêm điểm dừng</string>
-    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> vào &lt;b>%2$s&lt;/b></string>
+    <string name="add_to_favorites_title">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
@@ -16,7 +16,7 @@
     </plurals>
     <string name="alert">Báo động</string>
     <string name="alert_details">Chi tiết cảnh báo</string>
-    <string name="alert_elevator_header">Đóng thang máy (%1$s)</string>
+    <string name="alert_elevator_header">Thang máy đóng (%1$s)</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
@@ -59,7 +59,7 @@
     <string name="coast_guard_restriction">Hạn chế của cảnh sát biển</string>
     <string name="coast_guard_restriction_lowercase">Hạn chế của Cảnh sát biển</string>
     <string name="collapse_remaining_stops">thu gọn các điểm dừng còn lại</string>
-    <string name="collapse_stops">sự sụp đổ dừng lại</string>
+    <string name="collapse_stops">thu gọn các điểm dừng</string>
     <string name="congestion">Tắc nghẽn</string>
     <string name="congestion_lowercase">sự cố tắc nghẽn</string>
     <string name="connection_to">Kết nối với %1$s</string>
@@ -73,7 +73,7 @@
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
-    <string name="delete">Xóa bỏ</string>
+    <string name="delete">Xóa</string>
     <string name="demonstration">Biểu tình</string>
     <string name="demonstration_lowercase">cuộc biểu tình</string>
     <string name="departure_tile_on_click_label">hiển thị thêm thông tin về chuyến đi này</string>
@@ -85,6 +85,7 @@
     <string name="disabled_bus_lowercase">sự cố xe buýt</string>
     <string name="disabled_train">Tàu bị sự cố</string>
     <string name="disabled_train_lowercase">sự cố tàu</string>
+    <string name="dismiss">Miễn nhiệm</string>
     <string name="display_more_information">hiển thị thêm thông tin</string>
     <string name="displays_more_info">hiển thị thêm thông tin</string>
     <string name="dock_closed">Bến tàu đóng cửa</string>
@@ -97,8 +98,8 @@
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
     <string name="eastbound">Về hướng đông</string>
-    <string name="edit">Biên tập</string>
-    <string name="edit_favorites">Chỉnh sửa mục ưa thích</string>
+    <string name="edit">Chỉnh sửa</string>
+    <string name="edit_favorites">Chỉnh sửa mục Yêu thích</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <string name="electrical_work_lowercase">công việc về điện</string>
@@ -108,7 +109,7 @@
         <item quantity="other">%1$d thang máy đã đóng cửa</item>
     </plurals>
     <plurals name="elevator_closure_count_accessibility_description">
-        <item quantity="other">Điểm dừng này có %1$d thang máy đóng cửa</item>
+        <item quantity="other">Điểm dừng này có %1$d thang máy đóng</item>
     </plurals>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
@@ -117,7 +118,7 @@
     <string name="escalator_closure">Thang cuốn đóng cửa</string>
     <string name="exact_hours_format_abbr">&lt;b>%1$d&lt;/b> giờ</string>
     <string name="expand_remaining_stops">mở rộng các điểm dừng còn lại</string>
-    <string name="expand_stops">mở rộng dừng lại</string>
+    <string name="expand_stops">mở rộng các điểm dừng</string>
     <string name="explainer_headline_finishing_another">Kết thúc thêm một chuyến đi</string>
     <string name="explainer_headline_no_prediction">Chưa có dự đoán</string>
     <string name="explainer_headline_no_vehicle">vị trí %1$s chưa có sẵn</string>
@@ -132,13 +133,13 @@
     <string name="favorite_stops_first_time_toast_message">Điểm dừng yêu thích thay thế tính năng tuyến đường có dấu sao trước đó.</string>
     <string name="favorites_link">Yêu thích</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> tại &lt;b>%3$s&lt;/b> đã được thêm vào mục Yêu thích</string>
-    <string name="favorites_toast_add_fallback">Đã thêm vào mục Yêu thích</string>
+    <string name="favorites_toast_add_fallback">Thêm vào mục Yêu thích</string>
     <string name="favorites_toast_add_multi">&lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> đã được thêm vào mục Yêu thích</string>
     <string name="favorites_toast_remove">&lt;b>%1$s %2$s&lt;/b> tại &lt;b>%3$s&lt;/b> đã bị xóa khỏi mục Yêu thích</string>
     <string name="favorites_toast_remove_fallback">Đã xóa khỏi mục Yêu thích</string>
     <string name="feature_flag_debug_mode">Chế độ gỡ lỗi</string>
     <string name="feature_flag_route_search">Tìm kiếm tuyến đường</string>
-    <string name="feedback_link_form">Gửi phản hồi về ứng dụng</string>
+    <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>
     <string name="ferries">phà</string>
     <string name="ferry">Phà</string>
     <string name="ferry_lowercase">phà</string>
@@ -177,8 +178,8 @@
     <string name="inbound">Đến</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
     <string name="later_today">trong ngày hôm nay</string>
-    <string name="less_common_stop">Điểm dừng ít phổ biến hơn</string>
-    <string name="less_common_stops">&lt;b>%1$d&lt;/b> các điểm dừng ít phổ biến hơn</string>
+    <string name="less_common_stop">Ít điểm dừng phổ biến hơn</string>
+    <string name="less_common_stops">&lt;b>%1$d&lt;/b> ít điểm dừng phổ biến hơn</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
@@ -211,14 +212,15 @@
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
+    <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>
     <string name="next_stop">Điểm dừng tiếp theo</string>
-    <string name="no_matching_routes">Không có tuyến xe %1$s nào phù hợp</string>
+    <string name="no_matching_routes">Không có tuyến đường %1$s nào phù hợp</string>
     <string name="no_predictions">Dự đoán không có sẵn</string>
-    <string name="no_results_found">Không tìm thấy kết quả nào 🤔</string>
+    <string name="no_results_found">Không tìm thấy kết quả 🤔</string>
     <string name="no_service">Không có dịch vụ</string>
     <string name="no_service_sentence_case">Không có dịch vụ</string>
     <string name="no_service_today">Hôm nay không có dịch vụ</string>
-    <string name="no_stops_added">Không có điểm dừng nào được thêm vào</string>
+    <string name="no_stops_added">Không có điểm dừng nào được thêm</string>
     <string name="no_stops_nearby">Bạn đang ở ngoài khu vực dịch vụ của MBTA.</string>
     <string name="no_stops_nearby_pan">Xem phương tiện công cộng gần Boston</string>
     <string name="no_stops_nearby_search">Tìm kiếm theo điểm dừng</string>
@@ -228,7 +230,7 @@
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
-    <string name="okay">Đồng ý</string>
+    <string name="okay">Okay</string>
     <string name="onboarding_continue">Tiếp tục</string>
     <string name="onboarding_feedback_advance">Bắt đầu</string>
     <string name="onboarding_feedback_body">MBTA Go đang trong giai đoạn đầu! Chúng tôi muốn nghe ý kiến đóng góp của bạn để tiếp tục cải thiện và bổ sung các tính năng mới.</string>
@@ -243,7 +245,7 @@
     <string name="only_served_at_certain_times">Chỉ phục vụ vào một số thời điểm nhất định trong ngày</string>
     <string name="open_for_more_arrivals">Mở cửa đón thêm khách đến</string>
     <string name="other_link_privacy_policy">Chính sách bảo mật</string>
-    <string name="other_link_source_code">Xem nguồn trên Github</string>
+    <string name="other_link_source_code">Xem nguồn trên GitHub</string>
     <string name="other_link_tos">Điều khoản sử dụng</string>
     <string name="outbound">Đi</string>
     <string name="parade">Cuộc diễu hành</string>
@@ -262,8 +264,8 @@
     <string name="power_problem_lowercase">vấn đề về điện</string>
     <string name="predictions_unavailable_details">Dịch vụ đang hoạt động, nhưng thời gian đến dự kiến không khả dụng. Bản đồ hiển thị vị trí hiện tại của %1$s trên tuyến đường này.</string>
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
-    <string name="promo_favorites_body">Bây giờ hãy lưu những điểm dừng chân thường xuyên của bạn vào &lt;b>một nơi dễ dàng&lt;/b>.</string>
-    <string name="promo_favorites_header">Thêm mục yêu thích của bạn</string>
+    <string name="promo_favorites_body">Bây giờ hãy lưu các điểm dừng thường xuyên sử dụng vào &lt;b>một nơi dễ dàng&lt;/b>.</string>
+    <string name="promo_favorites_header">Thêm mục yêu thích</string>
     <string name="rail_defect">Lỗi đường sắt</string>
     <string name="rail_defect_lowercase">lỗi đường sắt</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
@@ -274,13 +276,13 @@
     <string name="reload_data">Tải lại dữ liệu</string>
     <string name="remove_favorite">xóa mục yêu thích</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>
-    <string name="resources_link_mticket">Vé phà vé đường sắt ngoại ô (Commuter Rail)</string>
+    <string name="resources_link_mticket">Vé phà vaf vé đường sắt ngoại ô</string>
     <string name="resources_link_mticket_note">Ứng dụng mTicket</string>
     <string name="resources_link_trip_planner">Lập kế hoạch chuyến đi</string>
     <string name="results_failed_to_load">Kết quả không tải được ☹️</string>
     <string name="route_effect">%1$s %2$s</string>
+    <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Thêm điểm dừng yêu thích</string>
-    <string name="route_with_type">%1$s %2$s</string>
     <string name="routes">Tuyến đường</string>
     <string name="schedule_change">Thay đổi lịch trình</string>
     <string name="schedule_change_sentence_case">Thay đổi lịch trình</string>
@@ -353,12 +355,13 @@
     <string name="switch_issue_lowercase">vấn đề chuyển đổi</string>
     <string name="switch_problem">Vấn đề chuyển đổi</string>
     <string name="switch_problem_lowercase">vấn đề chuyển đổi</string>
-    <string name="tap_favorites_hint">Nhấn vào các ngôi sao để thêm vào mục Yêu thích</string>
+    <string name="tap_favorites_hint">Nhấn dừng để thêm vào mục Yêu thích</string>
     <string name="technical_problem">Vấn đề kỹ thuật</string>
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
-    <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ dành cho việc trả khách</string>
+    <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
+    <string name="toast_tip_prefix">Mẹo: %1$s</string>
     <string name="track_change">Thay đổi đường ray</string>
     <string name="track_change_sentence_case">Thay đổi đường ray</string>
     <string name="track_number">Đường ray %1$s</string>
@@ -374,8 +377,8 @@
     <string name="trains">tàu</string>
     <string name="trip_cancelled">Chuyến đi đã bị hủy</string>
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
-    <string name="try_a_different_spelling_or_name">Hãy thử cách viết hoặc tên khác.</string>
-    <string name="try_your_search_again">Hãy thử tìm kiếm lại.</string>
+    <string name="try_a_different_spelling_or_name">Thử cách viết hoặc tên khác.</string>
+    <string name="try_your_search_again">Thử tìm kiếm lại.</string>
     <string name="unable_to_connect">Không thể kết nối</string>
     <string name="undo">Hoàn tác</string>
     <string name="unruly_passenger">Hành khách ngỗ ngược</string>
@@ -394,17 +397,17 @@
     <string name="vehicle_cancelled_other">và tại %1$s đã hủy</string>
     <string name="vehicle_desc_accessibility_desc">Đã chọn %1$s %2$s %3$s</string>
     <string name="vehicle_desc_accessibility_desc_selected_stop">Đã chọn %1$s %2$s %3$s, điểm dừng đã chọn</string>
-    <string name="vehicle_prediction_actual_arrival">sẽ đến lúc %2$s</string>
+    <string name="vehicle_prediction_actual_arrival">đến lúc %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s sẽ đến trong %2$d giờ</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s sẽ đến trong %2$d giờ %3$d phút</string>
     <string name="vehicle_prediction_hours_minutes_other">và trong %1$d giờ %2$d phút</string>
     <string name="vehicle_prediction_hours_other">và trong %1$d giờ</string>
     <string name="vehicle_prediction_minutes_first">%1$s sẽ đến sau %2$d phút nữa</string>
     <string name="vehicle_prediction_minutes_other">và sau %1$d phút nữa</string>
-    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s bị trì hoãn</string>
-    <string name="vehicle_prediction_schedule_status_delay_other">và %1$s %2$s bị trì hoãn</string>
+    <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s trễ</string>
+    <string name="vehicle_prediction_schedule_status_delay_other">và %1$s %2$s bị trễ</string>
     <string name="vehicle_prediction_schedule_status_early_first">%1$s %2$s sớm</string>
-    <string name="vehicle_prediction_schedule_status_early_other">và %1$s %2$s sớm</string>
+    <string name="vehicle_prediction_schedule_status_early_other">và %1$s %2$s đến sớm</string>
     <string name="vehicle_prediction_time_first">%1$s sẽ đến lúc %2$s</string>
     <string name="vehicle_prediction_time_other">và lúc %1$s</string>
     <string name="vehicle_schedule_hours_first">%1$s sẽ đến trong %2$d giờ theo lịch trình</string>

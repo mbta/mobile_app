@@ -49,13 +49,13 @@ class RoutePillTest {
 
     @Test
     fun testFerryTypeText() {
-        val crRoute =
+        val ferryRoute =
             ObjectCollectionBuilder().route {
                 type = RouteType.FERRY
-                longName = "Charlestown"
+                longName = "Charlestown Ferry"
             }
 
-        composeTestRule.setContent { RoutePill(crRoute, null, RoutePillType.Fixed) }
-        composeTestRule.onNodeWithContentDescription("Charlestown ferry").assertIsDisplayed()
+        composeTestRule.setContent { RoutePill(ferryRoute, null, RoutePillType.Fixed) }
+        composeTestRule.onNodeWithContentDescription("Charlestown Ferry").assertIsDisplayed()
     }
 }

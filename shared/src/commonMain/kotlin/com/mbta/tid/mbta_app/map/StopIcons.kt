@@ -5,26 +5,26 @@ import com.mbta.tid.mbta_app.map.style.ResolvedImage
 import com.mbta.tid.mbta_app.map.style.downcastToResolvedImage
 import com.mbta.tid.mbta_app.model.MapStopRoute
 
-object StopIcons {
-    val stopIconPrefix = "map-stop-"
-    val stopZoomClosePrefix = "close-"
-    val stopZoomWidePrefix = "wide-"
+public object StopIcons {
+    internal val stopIconPrefix = "map-stop-"
+    internal val stopZoomClosePrefix = "close-"
+    internal val stopZoomWidePrefix = "wide-"
 
-    val stopContainerPrefix = "${stopIconPrefix}container-"
-    val stopTransferSuffix = "-transfer"
-    val stopTerminalSuffix = "-terminal"
+    internal val stopContainerPrefix = "${stopIconPrefix}container-"
+    internal val stopTransferSuffix = "-transfer"
+    internal val stopTerminalSuffix = "-terminal"
 
     // This is a single transparent pixel, used to create a layer just for tap target padding
-    val stopDummyIcon = "${stopIconPrefix}dummy-tap-pixel"
+    internal val stopDummyIcon = "${stopIconPrefix}dummy-tap-pixel"
 
-    val stopPinIcon = "${stopIconPrefix}pin"
+    internal val stopPinIcon = "${stopIconPrefix}pin"
 
-    val basicStopIcons =
+    internal val basicStopIcons =
         MapStopRoute.entries.flatMap { routeType -> atZooms(stopIconPrefix, routeType.name) }
-    val stopContainerIcons =
+    internal val stopContainerIcons =
         listOf("2", "3").flatMap { memberCount -> atZooms(stopContainerPrefix, memberCount) }
 
-    val terminalIcons: List<String> =
+    internal val terminalIcons: List<String> =
         MapStopRoute.entries
             .filter { !it.hasBranchingTerminals }
             .map { routeType ->
@@ -41,7 +41,7 @@ object StopIcons {
                 "${stopIconPrefix}${stopZoomWidePrefix}${MapStopRoute.SILVER.name}${stopTerminalSuffix}"
             )
 
-    val branchIcons: List<String> =
+    internal val branchIcons: List<String> =
         MapStopRoute.entries
             .filter { it.hasBranchingTerminals }
             .flatMap { routeType ->
@@ -50,12 +50,12 @@ object StopIcons {
                 }
             }
 
-    val specialCaseStopIcons =
+    internal val specialCaseStopIcons =
         terminalIcons +
             branchIcons +
             atZooms(stopIconPrefix, MapStopRoute.BUS.name + stopTransferSuffix)
 
-    val all: List<String> =
+    public val all: List<String> =
         basicStopIcons +
             specialCaseStopIcons +
             stopContainerIcons +
@@ -75,7 +75,7 @@ object StopIcons {
             Exp(""),
         )
 
-    fun atZooms(pre: String, post: String): List<String> {
+    internal fun atZooms(pre: String, post: String): List<String> {
         return listOf(stopZoomClosePrefix, stopZoomWidePrefix).map { zoom ->
             "${pre}${zoom}${post}"
         }
@@ -104,7 +104,7 @@ object StopIcons {
     // If the stop serves a single type of route, display a regular stop icon,
     // if it serves 2 or 3, display a container icon, and the stop icons in it
     // will be displayed by the transfer layers.
-    fun getStopIconName(zoomPrefix: String, forBus: Boolean): Exp<ResolvedImage> {
+    internal fun getStopIconName(zoomPrefix: String, forBus: Boolean): Exp<ResolvedImage> {
         return MapExp.busSwitchExp(
                 forBus = forBus,
                 Exp.step(
@@ -117,7 +117,7 @@ object StopIcons {
             .downcastToResolvedImage()
     }
 
-    fun getStopLayerIcon(forBus: Boolean = false): Exp<ResolvedImage> {
+    internal fun getStopLayerIcon(forBus: Boolean = false): Exp<ResolvedImage> {
         return Exp.step(
             Exp.zoom(),
             getStopIconName(stopZoomWidePrefix, forBus = forBus),
@@ -126,7 +126,7 @@ object StopIcons {
         )
     }
 
-    fun getTransferIconName(zoomPrefix: String, index: Int): Exp<ResolvedImage> {
+    internal fun getTransferIconName(zoomPrefix: String, index: Int): Exp<ResolvedImage> {
         return Exp.step(
                 Exp.length(MapExp.routesExp),
                 Exp(""),
@@ -146,7 +146,7 @@ object StopIcons {
             .downcastToResolvedImage()
     }
 
-    fun getTransferLayerIcon(index: Int): Exp<ResolvedImage> {
+    internal fun getTransferLayerIcon(index: Int): Exp<ResolvedImage> {
         return Exp.step(
             Exp.zoom(),
             getTransferIconName(stopZoomWidePrefix, index),

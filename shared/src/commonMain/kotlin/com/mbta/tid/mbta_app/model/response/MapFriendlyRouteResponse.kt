@@ -5,16 +5,16 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MapFriendlyRouteResponse(
+public data class MapFriendlyRouteResponse(
     @SerialName("map_friendly_route_shapes")
     val routesWithSegmentedShapes: List<RouteWithSegmentedShapes>
 ) {
 
     @Serializable
-    data class RouteWithSegmentedShapes(
+    public data class RouteWithSegmentedShapes(
         @SerialName("route_id") val routeId: String,
         @SerialName("route_shapes") val segmentedShapes: List<SegmentedRouteShape>,
     )
 
-    override fun toString() = "[MapFriendlyRouteResponse]"
+    override fun toString(): String = "[MapFriendlyRouteResponse]"
 }

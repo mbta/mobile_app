@@ -20,21 +20,21 @@ import kotlin.time.Instant
  * - Objects which need to be referenced directly but descend inherently from a parent (e.g. route
  *   patterns from routes) are built with a required parent argument
  */
-class ObjectCollectionBuilder
+public class ObjectCollectionBuilder
 private constructor(
-    val alerts: MutableMap<String, Alert>,
-    val facilities: MutableMap<String, Facility>,
-    val lines: MutableMap<String, Line>,
-    val predictions: MutableMap<String, Prediction>,
-    val routes: MutableMap<String, Route>,
-    val routePatterns: MutableMap<String, RoutePattern>,
-    val schedules: MutableMap<String, Schedule>,
-    val stops: MutableMap<String, Stop>,
-    val trips: MutableMap<String, Trip>,
-    val shapes: MutableMap<String, Shape>,
-    val vehicles: MutableMap<String, Vehicle>,
+    public val alerts: MutableMap<String, Alert>,
+    public val facilities: MutableMap<String, Facility>,
+    public val lines: MutableMap<String, Line>,
+    public val predictions: MutableMap<String, Prediction>,
+    public val routes: MutableMap<String, Route>,
+    public val routePatterns: MutableMap<String, RoutePattern>,
+    public val schedules: MutableMap<String, Schedule>,
+    public val stops: MutableMap<String, Stop>,
+    public val trips: MutableMap<String, Trip>,
+    public val shapes: MutableMap<String, Shape>,
+    public val vehicles: MutableMap<String, Vehicle>,
 ) {
-    constructor() :
+    public constructor() :
         this(
             alerts = mutableMapOf(),
             facilities = mutableMapOf(),
@@ -49,7 +49,7 @@ private constructor(
             vehicles = mutableMapOf(),
         )
 
-    fun clone() =
+    public fun clone(): ObjectCollectionBuilder =
         ObjectCollectionBuilder(
             alerts = alerts.toMutableMap(),
             facilities = facilities.toMutableMap(),
@@ -64,11 +64,11 @@ private constructor(
             vehicles = vehicles.toMutableMap(),
         )
 
-    interface ObjectBuilder<Built : BackendObject> {
+    internal interface ObjectBuilder<Built : BackendObject> {
         fun built(): Built
     }
 
-    fun put(`object`: BackendObject) {
+    public fun put(`object`: BackendObject) {
         when (`object`) {
             is Alert -> alerts[`object`.id] = `object`
             is Facility -> facilities[`object`.id] = `object`
@@ -85,27 +85,28 @@ private constructor(
         }
     }
 
-    class AlertBuilder : ObjectBuilder<Alert> {
-        var id = uuid()
-        var activePeriod = mutableListOf<Alert.ActivePeriod>()
-        var cause = Alert.Cause.UnknownCause
-        var description: String? = null
-        var durationCertainty = Alert.DurationCertainty.Unknown
-        var effect = Alert.Effect.UnknownEffect
-        var effectName: String? = null
-        var informedEntity = mutableListOf<Alert.InformedEntity>()
-        var header: String? = null
-        var lifecycle = Alert.Lifecycle.New
-        var severity = 0
-        var updatedAt = EasternTimeInstant(Instant.fromEpochMilliseconds(0))
-        var facilities: Map<String, Facility>? = null
+    public class AlertBuilder : ObjectBuilder<Alert> {
+        public var id: String = uuid()
+        public var activePeriod: MutableList<Alert.ActivePeriod> = mutableListOf()
+        public var cause: Alert.Cause = Alert.Cause.UnknownCause
+        public var description: String? = null
+        public var durationCertainty: Alert.DurationCertainty = Alert.DurationCertainty.Unknown
+        public var effect: Alert.Effect = Alert.Effect.UnknownEffect
+        public var effectName: String? = null
+        public var informedEntity: MutableList<Alert.InformedEntity> = mutableListOf()
+        public var header: String? = null
+        public var lifecycle: Alert.Lifecycle = Alert.Lifecycle.New
+        public var severity: Int = 0
+        public var updatedAt: EasternTimeInstant =
+            EasternTimeInstant(Instant.fromEpochMilliseconds(0))
+        public var facilities: Map<String, Facility>? = null
 
-        fun activePeriod(start: EasternTimeInstant, end: EasternTimeInstant?) {
+        public fun activePeriod(start: EasternTimeInstant, end: EasternTimeInstant?) {
             activePeriod.add(Alert.ActivePeriod(start, end))
         }
 
         @DefaultArgumentInterop.Enabled
-        fun informedEntity(
+        public fun informedEntity(
             activities: List<Alert.InformedEntity.Activity>,
             directionId: Int? = null,
             facility: String? = null,
@@ -127,7 +128,7 @@ private constructor(
             )
         }
 
-        override fun built() =
+        override fun built(): Alert =
             Alert(
                 id,
                 activePeriod,
@@ -145,55 +146,57 @@ private constructor(
             )
     }
 
-    fun alert(block: AlertBuilder.() -> Unit) = build(AlertBuilder(), block)
+    public fun alert(block: AlertBuilder.() -> Unit): Alert = build(AlertBuilder(), block)
 
-    fun getAlert(id: String) = alerts.getValue(id)
+    public fun getAlert(id: String): Alert = alerts.getValue(id)
 
-    class FacilityBuilder : ObjectBuilder<Facility> {
-        var id = uuid()
-        var longName: String? = null
-        var shortName: String? = null
-        var type: Facility.Type = Facility.Type.Other
+    public class FacilityBuilder : ObjectBuilder<Facility> {
+        public var id: String = uuid()
+        public var longName: String? = null
+        public var shortName: String? = null
+        public var type: Facility.Type = Facility.Type.Other
 
-        override fun built() = Facility(id, longName, shortName, type)
+        override fun built(): Facility = Facility(id, longName, shortName, type)
     }
 
     @DefaultArgumentInterop.Enabled
-    fun facility(block: FacilityBuilder.() -> Unit = {}) = build(FacilityBuilder(), block)
+    public fun facility(block: FacilityBuilder.() -> Unit = {}): Facility =
+        build(FacilityBuilder(), block)
 
-    fun getFacility(id: String) = facilities.getValue(id)
+    public fun getFacility(id: String): Facility = facilities.getValue(id)
 
-    class LineBuilder : ObjectBuilder<Line> {
-        var id = uuid()
-        var color = "FFFFFF"
-        var longName = ""
-        var shortName = ""
-        var sortOrder = 0
-        var textColor = "000000"
+    public class LineBuilder : ObjectBuilder<Line> {
+        public var id: String = uuid()
+        public var color: String = "FFFFFF"
+        public var longName: String = ""
+        public var shortName: String = ""
+        public var sortOrder: Int = 0
+        public var textColor: String = "000000"
 
-        override fun built() = Line(id, color, longName, shortName, sortOrder, textColor)
+        override fun built(): Line = Line(id, color, longName, shortName, sortOrder, textColor)
     }
 
     @DefaultArgumentInterop.Enabled
-    fun line(block: LineBuilder.() -> Unit = {}) = build(LineBuilder(), block)
+    public fun line(block: LineBuilder.() -> Unit = {}): Line = build(LineBuilder(), block)
 
-    fun getLine(id: String) = lines.getValue(id)
+    public fun getLine(id: String): Line = lines.getValue(id)
 
-    inner class PredictionBuilder : ObjectBuilder<Prediction> {
-        var id = uuid()
-        var arrivalTime: EasternTimeInstant? = null
-        var departureTime: EasternTimeInstant? = null
-        var directionId = 0
-        var revenue = true
-        var scheduleRelationship = Prediction.ScheduleRelationship.Scheduled
-        var status: String? = null
-        var stopSequence = 0
-        var routeId = ""
-        var stopId = ""
-        var tripId = ""
-        var vehicleId: String? = null
+    public inner class PredictionBuilder : ObjectBuilder<Prediction> {
+        public var id: String = uuid()
+        public var arrivalTime: EasternTimeInstant? = null
+        public var departureTime: EasternTimeInstant? = null
+        public var directionId: Int = 0
+        public var revenue: Boolean = true
+        public var scheduleRelationship: Prediction.ScheduleRelationship =
+            Prediction.ScheduleRelationship.Scheduled
+        public var status: String? = null
+        public var stopSequence: Int = 0
+        public var routeId: String = ""
+        public var stopId: String = ""
+        public var tripId: String = ""
+        public var vehicleId: String? = null
 
-        var trip: Trip
+        public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
@@ -201,7 +204,7 @@ private constructor(
                 directionId = trip.directionId
             }
 
-        override fun built() =
+        override fun built(): Prediction =
             Prediction(
                 id,
                 arrivalTime,
@@ -219,9 +222,13 @@ private constructor(
     }
 
     @DefaultArgumentInterop.Enabled
-    fun prediction(block: PredictionBuilder.() -> Unit = {}) = build(PredictionBuilder(), block)
+    public fun prediction(block: PredictionBuilder.() -> Unit = {}): Prediction =
+        build(PredictionBuilder(), block)
 
-    fun prediction(schedule: Schedule, block: PredictionBuilder.() -> Unit = {}) =
+    public fun prediction(
+        schedule: Schedule,
+        block: PredictionBuilder.() -> Unit = {},
+    ): Prediction =
         build(
             PredictionBuilder().apply {
                 routeId = schedule.routeId
@@ -232,23 +239,23 @@ private constructor(
             block,
         )
 
-    fun getPrediction(id: String) = predictions.getValue(id)
+    public fun getPrediction(id: String): Prediction = predictions.getValue(id)
 
-    class RouteBuilder : ObjectBuilder<Route> {
-        var id = uuid()
-        var type = RouteType.LIGHT_RAIL
-        var color = "FFFFFF"
-        var directionNames = listOf("", "")
-        var directionDestinations = listOf("", "")
-        var isListedRoute = true
-        var longName = ""
-        var shortName = ""
-        var sortOrder = 0
-        var textColor = "000000"
-        var lineId: String? = null
-        var routePatternIds = mutableListOf<String>()
+    public class RouteBuilder : ObjectBuilder<Route> {
+        public var id: String = uuid()
+        public var type: RouteType = RouteType.LIGHT_RAIL
+        public var color: String = "FFFFFF"
+        public var directionNames: List<String> = listOf("", "")
+        public var directionDestinations: List<String> = listOf("", "")
+        public var isListedRoute: Boolean = true
+        public var longName: String = ""
+        public var shortName: String = ""
+        public var sortOrder: Int = 0
+        public var textColor: String = "000000"
+        public var lineId: String? = null
+        public var routePatternIds: MutableList<String> = mutableListOf()
 
-        override fun built() =
+        override fun built(): Route =
             Route(
                 id,
                 type,
@@ -266,20 +273,20 @@ private constructor(
     }
 
     @DefaultArgumentInterop.Enabled
-    fun route(block: RouteBuilder.() -> Unit = {}) = build(RouteBuilder(), block)
+    public fun route(block: RouteBuilder.() -> Unit = {}): Route = build(RouteBuilder(), block)
 
-    fun getRoute(id: String) = routes.getValue(id)
+    public fun getRoute(id: String): Route = routes.getValue(id)
 
-    inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
-        var id: String = uuid()
-        var directionId: Int = 0
-        var name: String = ""
-        var sortOrder: Int = 0
-        var typicality: RoutePattern.Typicality? = RoutePattern.Typicality.Atypical
-        var representativeTripId: String = ""
-        var routeId: String = ""
+    public inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
+        public var id: String = uuid()
+        public var directionId: Int = 0
+        public var name: String = ""
+        public var sortOrder: Int = 0
+        public var typicality: RoutePattern.Typicality? = RoutePattern.Typicality.Atypical
+        public var representativeTripId: String = ""
+        public var routeId: String = ""
 
-        fun representativeTrip(block: TripBuilder.() -> Unit = {}) =
+        public fun representativeTrip(block: TripBuilder.() -> Unit = {}): Trip =
             this@ObjectCollectionBuilder.trip {
                     routeId = this@RoutePatternBuilder.routeId
                     routePatternId = this@RoutePatternBuilder.id
@@ -288,7 +295,7 @@ private constructor(
                 }
                 .also { this.representativeTripId = it.id }
 
-        override fun built() =
+        override fun built(): RoutePattern =
             RoutePattern(
                 id,
                 directionId,
@@ -300,29 +307,31 @@ private constructor(
             )
     }
 
-    fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
-        build(RoutePatternBuilder().apply { routeId = route.id }, block)
+    public fun routePattern(
+        route: Route,
+        block: RoutePatternBuilder.() -> Unit = {},
+    ): RoutePattern = build(RoutePatternBuilder().apply { routeId = route.id }, block)
 
-    fun getRoutePattern(id: String) = routePatterns.getValue(id)
+    public fun getRoutePattern(id: String): RoutePattern = routePatterns.getValue(id)
 
-    inner class ScheduleBuilder : ObjectBuilder<Schedule> {
-        var id = uuid()
-        var arrivalTime: EasternTimeInstant? = null
-        var departureTime: EasternTimeInstant? = null
-        var stopHeadsign: String? = null
-        var stopSequence = 0
-        var routeId = ""
-        var stopId = ""
-        var tripId = ""
+    public inner class ScheduleBuilder : ObjectBuilder<Schedule> {
+        public var id: String = uuid()
+        public var arrivalTime: EasternTimeInstant? = null
+        public var departureTime: EasternTimeInstant? = null
+        public var stopHeadsign: String? = null
+        public var stopSequence: Int = 0
+        public var routeId: String = ""
+        public var stopId: String = ""
+        public var tripId: String = ""
 
-        var trip: Trip
+        public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
                 tripId = trip.id
             }
 
-        override fun built() =
+        override fun built(): Schedule =
             Schedule(
                 id,
                 arrivalTime,
@@ -343,27 +352,28 @@ private constructor(
             )
     }
 
-    fun schedule(block: ScheduleBuilder.() -> Unit = {}) = build(ScheduleBuilder(), block)
+    public fun schedule(block: ScheduleBuilder.() -> Unit = {}): Schedule =
+        build(ScheduleBuilder(), block)
 
-    fun getSchedule(id: String) = schedules.getValue(id)
+    public fun getSchedule(id: String): Schedule = schedules.getValue(id)
 
-    class TripBuilder : ObjectBuilder<Trip> {
-        var id = uuid()
-        var directionId = 0
-        var headsign = ""
-        var routeId = ""
-        var routePatternId: String? = null
-        var shapeId: String? = null
-        var stopIds: List<String>? = null
+    public class TripBuilder : ObjectBuilder<Trip> {
+        public var id: String = uuid()
+        public var directionId: Int = 0
+        public var headsign: String = ""
+        public var routeId: String = ""
+        public var routePatternId: String? = null
+        public var shapeId: String? = null
+        public var stopIds: List<String>? = null
 
-        override fun built() =
+        override fun built(): Trip =
             Trip(id, directionId, headsign, routeId, routePatternId, shapeId, stopIds)
     }
 
-    fun trip(block: TripBuilder.() -> Unit = {}) = build(TripBuilder(), block)
+    public fun trip(block: TripBuilder.() -> Unit = {}): Trip = build(TripBuilder(), block)
 
     @DefaultArgumentInterop.Enabled
-    fun trip(routePattern: RoutePattern, block: TripBuilder.() -> Unit = {}) =
+    public fun trip(routePattern: RoutePattern, block: TripBuilder.() -> Unit = {}): Trip =
         build(
             TripBuilder().apply {
                 directionId = routePattern.directionId
@@ -379,49 +389,49 @@ private constructor(
             block,
         )
 
-    fun getTrip(id: String) = trips.getValue(id)
+    public fun getTrip(id: String): Trip = trips.getValue(id)
 
-    class ShapeBuilder : ObjectBuilder<Shape> {
-        var id = uuid()
-        var polyline = ""
+    public class ShapeBuilder : ObjectBuilder<Shape> {
+        public var id: String = uuid()
+        public var polyline: String = ""
 
-        override fun built() = Shape(id, polyline)
+        override fun built(): Shape = Shape(id, polyline)
     }
 
-    fun shape(block: ShapeBuilder.() -> Unit = {}) = build(ShapeBuilder(), block)
+    public fun shape(block: ShapeBuilder.() -> Unit = {}): Shape = build(ShapeBuilder(), block)
 
-    fun getShape(id: String) = shapes.getValue(id)
+    public fun getShape(id: String): Shape = shapes.getValue(id)
 
-    inner class StopBuilder : ObjectBuilder<Stop> {
-        var id = uuid()
-        var latitude = 1.2
-        var longitude = 3.4
-        var name = ""
-        var locationType = LocationType.STOP
-        var description: String? = null
-        var platformCode: String? = null
-        var platformName: String? = null
-        var vehicleType: RouteType? = null
-        var childStopIds: List<String> = emptyList()
-        var connectingStopIds: List<String> = emptyList()
-        var parentStationId: String? = null
-        var wheelchairBoarding: WheelchairBoardingStatus? = null
+    public inner class StopBuilder : ObjectBuilder<Stop> {
+        public var id: String = uuid()
+        public var latitude: Double = 1.2
+        public var longitude: Double = 3.4
+        public var name: String = ""
+        public var locationType: LocationType = LocationType.STOP
+        public var description: String? = null
+        public var platformCode: String? = null
+        public var platformName: String? = null
+        public var vehicleType: RouteType? = null
+        public var childStopIds: List<String> = emptyList()
+        public var connectingStopIds: List<String> = emptyList()
+        public var parentStationId: String? = null
+        public var wheelchairBoarding: WheelchairBoardingStatus? = null
 
-        var position: Position
+        public var position: Position
             get() = Position(latitude = latitude, longitude = longitude)
             set(value) {
                 latitude = value.latitude
                 longitude = value.longitude
             }
 
-        fun childStop(block: StopBuilder.() -> Unit = {}) =
+        public fun childStop(block: StopBuilder.() -> Unit = {}): Stop =
             this@ObjectCollectionBuilder.stop {
                     parentStationId = this@StopBuilder.id
                     block()
                 }
                 .also { childStopIds += listOf(it.id) }
 
-        override fun built() =
+        override fun built(): Stop =
             Stop(
                 id,
                 latitude,
@@ -439,24 +449,24 @@ private constructor(
             )
     }
 
-    fun stop(block: StopBuilder.() -> Unit = {}) = build(StopBuilder(), block)
+    public fun stop(block: StopBuilder.() -> Unit = {}): Stop = build(StopBuilder(), block)
 
-    fun getStop(id: String) = stops.getValue(id)
+    public fun getStop(id: String): Stop = stops.getValue(id)
 
-    class VehicleBuilder : ObjectBuilder<Vehicle> {
-        var id: String = uuid()
-        var bearing = 0.0
-        lateinit var currentStatus: Vehicle.CurrentStatus
-        var currentStopSequence: Int? = null
-        var directionId = 0
-        var latitude = 1.2
-        var longitude = 3.4
-        var updatedAt = EasternTimeInstant.now() - 10.seconds
-        var routeId: String? = null
-        var stopId: String? = null
-        var tripId = ""
+    public class VehicleBuilder : ObjectBuilder<Vehicle> {
+        public var id: String = uuid()
+        public var bearing: Double = 0.0
+        public lateinit var currentStatus: Vehicle.CurrentStatus
+        public var currentStopSequence: Int? = null
+        public var directionId: Int = 0
+        public var latitude: Double = 1.2
+        public var longitude: Double = 3.4
+        public var updatedAt: EasternTimeInstant = EasternTimeInstant.now() - 10.seconds
+        public var routeId: String? = null
+        public var stopId: String? = null
+        public var tripId: String = ""
 
-        override fun built() =
+        override fun built(): Vehicle =
             Vehicle(
                 id,
                 bearing,
@@ -472,12 +482,13 @@ private constructor(
             )
     }
 
-    fun vehicle(block: VehicleBuilder.() -> Unit = {}) = build(VehicleBuilder(), block)
+    public fun vehicle(block: VehicleBuilder.() -> Unit = {}): Vehicle =
+        build(VehicleBuilder(), block)
 
-    fun getVehicle(id: String) = vehicles.getValue(id)
+    public fun getVehicle(id: String): Vehicle = vehicles.getValue(id)
 
     @DefaultArgumentInterop.Enabled
-    fun upcomingTrip(
+    public fun upcomingTrip(
         schedule: Schedule? = null,
         prediction: Prediction? = null,
         predictionStop: Stop? = null,
@@ -498,7 +509,7 @@ private constructor(
         )
     }
 
-    fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
+    public fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
         upcomingTrip(null, prediction, predictionStop, null)
 
     private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
@@ -510,32 +521,40 @@ private constructor(
         return result.also(this::put)
     }
 
-    object Single {
-        fun alert(block: AlertBuilder.() -> Unit = {}) = ObjectCollectionBuilder().alert(block)
+    public object Single {
+        public fun alert(block: AlertBuilder.() -> Unit = {}): Alert =
+            ObjectCollectionBuilder().alert(block)
 
-        fun facility(block: FacilityBuilder.() -> Unit = {}) =
+        public fun facility(block: FacilityBuilder.() -> Unit = {}): Facility =
             ObjectCollectionBuilder().facility(block)
 
-        fun line(block: LineBuilder.() -> Unit = {}) = ObjectCollectionBuilder().line(block)
+        public fun line(block: LineBuilder.() -> Unit = {}): Line =
+            ObjectCollectionBuilder().line(block)
 
-        fun prediction(block: PredictionBuilder.() -> Unit = {}) =
+        public fun prediction(block: PredictionBuilder.() -> Unit = {}): Prediction =
             ObjectCollectionBuilder().prediction(block)
 
-        fun route(block: RouteBuilder.() -> Unit = {}) = ObjectCollectionBuilder().route(block)
+        public fun route(block: RouteBuilder.() -> Unit = {}): Route =
+            ObjectCollectionBuilder().route(block)
 
-        fun routePattern(route: Route, block: RoutePatternBuilder.() -> Unit = {}) =
-            ObjectCollectionBuilder().routePattern(route, block)
+        public fun routePattern(
+            route: Route,
+            block: RoutePatternBuilder.() -> Unit = {},
+        ): RoutePattern = ObjectCollectionBuilder().routePattern(route, block)
 
-        fun trip(block: TripBuilder.() -> Unit = {}) = ObjectCollectionBuilder().trip(block)
+        public fun trip(block: TripBuilder.() -> Unit = {}): Trip =
+            ObjectCollectionBuilder().trip(block)
 
-        fun shape(block: ShapeBuilder.() -> Unit = {}) = ObjectCollectionBuilder().shape(block)
+        public fun shape(block: ShapeBuilder.() -> Unit = {}): Shape =
+            ObjectCollectionBuilder().shape(block)
 
-        fun schedule(block: ScheduleBuilder.() -> Unit = {}) =
+        public fun schedule(block: ScheduleBuilder.() -> Unit = {}): Schedule =
             ObjectCollectionBuilder().schedule(block)
 
-        fun stop(block: StopBuilder.() -> Unit = {}) = ObjectCollectionBuilder().stop(block)
+        public fun stop(block: StopBuilder.() -> Unit = {}): Stop =
+            ObjectCollectionBuilder().stop(block)
 
-        fun vehicle(block: VehicleBuilder.() -> Unit = {}) =
+        public fun vehicle(block: VehicleBuilder.() -> Unit = {}): Vehicle =
             ObjectCollectionBuilder().vehicle(block)
     }
 }

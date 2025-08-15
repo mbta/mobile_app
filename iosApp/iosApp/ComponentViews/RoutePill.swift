@@ -111,13 +111,12 @@ struct RoutePill: View {
             .font(.custom("Helvetica Neue", size: fontSize).bold())
             .tracking(0.5)
             .modifier(FramePaddingModifier(spec: spec))
+            .minimumScaleFactor(0.4)
             .lineLimit(1)
             .modifier(ColorModifier(pill: self))
             .modifier(ClipShapeModifier(spec: spec))
             .accessibilityElement()
-            .accessibilityLabel(
-                "\(route?.label ?? line?.longName ?? "") \(route?.type.typeText(isOnly: true) ?? "")"
-            )
+            .accessibilityLabel(routeModeLabel(line: line, route: route))
     }
 }
 

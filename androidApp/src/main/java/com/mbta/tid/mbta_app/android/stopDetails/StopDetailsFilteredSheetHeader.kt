@@ -11,8 +11,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
@@ -28,6 +30,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
@@ -55,18 +58,23 @@ fun StopDetailsFilteredHeader(
             Arrangement.spacedBy(8.dp),
             Alignment.CenterVertically,
         ) {
+            val pillDescription = routeModeLabel(LocalContext.current, line, route)
             if (line != null) {
                 RoutePill(
                     route = null,
                     line = line,
                     type = RoutePillType.Fixed,
-                    modifier = Modifier.placeholderIfLoading(),
+                    modifier =
+                        Modifier.semantics { contentDescription = pillDescription }
+                            .placeholderIfLoading(),
                 )
             } else if (route != null) {
                 RoutePill(
                     route = route,
                     type = RoutePillType.Fixed,
-                    modifier = Modifier.placeholderIfLoading(),
+                    modifier =
+                        Modifier.semantics { contentDescription = pillDescription }
+                            .placeholderIfLoading(),
                 )
             }
             if (stop != null) {

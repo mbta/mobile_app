@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.map.style
 
 import kotlinx.serialization.json.JsonPrimitive
 
-enum class TextAnchor : MapboxStyleObject {
+public enum class TextAnchor : MapboxStyleObject {
     CENTER,
     LEFT,
     RIGHT,
@@ -13,7 +13,7 @@ enum class TextAnchor : MapboxStyleObject {
     BOTTOM_LEFT,
     BOTTOM_RIGHT;
 
-    override fun asJson() =
+    override fun asJson(): JsonPrimitive =
         when (this) {
             CENTER -> JsonPrimitive("center")
             LEFT -> JsonPrimitive("left")

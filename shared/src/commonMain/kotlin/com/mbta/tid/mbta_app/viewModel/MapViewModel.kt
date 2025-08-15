@@ -41,41 +41,41 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
-interface IMapViewModel {
+public interface IMapViewModel {
 
-    val models: StateFlow<MapViewModel.State>
+    public val models: StateFlow<MapViewModel.State>
 
-    fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?)
+    public fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?)
 
-    fun selectedTrip(
+    public fun selectedTrip(
         stopFilter: StopDetailsFilter?,
         stop: Stop?,
         tripFilter: TripDetailsFilter,
         vehicle: Vehicle?,
     )
 
-    fun navChanged(currentNavEntry: SheetRoutes?)
+    public fun navChanged(currentNavEntry: SheetRoutes?)
 
-    fun recenter(type: RecenterType = RecenterType.CurrentLocation)
+    public fun recenter(type: RecenterType = RecenterType.CurrentLocation)
 
-    fun alertsChanged(alerts: AlertsStreamDataResponse?)
+    public fun alertsChanged(alerts: AlertsStreamDataResponse?)
 
-    fun routeCardDataChanged(routeCardData: List<RouteCardData>?)
+    public fun routeCardDataChanged(routeCardData: List<RouteCardData>?)
 
-    fun colorPaletteChanged(isDarkMode: Boolean)
+    public fun colorPaletteChanged(isDarkMode: Boolean)
 
-    fun densityChanged(density: Float)
+    public fun densityChanged(density: Float)
 
-    fun mapStyleLoaded()
+    public fun mapStyleLoaded()
 
-    fun layerManagerInitialized(layerManager: IMapLayerManager)
+    public fun layerManagerInitialized(layerManager: IMapLayerManager)
 
-    fun locationPermissionsChanged(hasPermission: Boolean)
+    public fun locationPermissionsChanged(hasPermission: Boolean)
 
-    fun setViewportManager(viewportManager: ViewportManager)
+    public fun setViewportManager(viewportManager: ViewportManager)
 }
 
-class MapViewModel(
+public class MapViewModel(
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val stopRepository: IStopRepository,
@@ -86,58 +86,63 @@ class MapViewModel(
     private lateinit var viewportManager: ViewportManager
     private val routeCardDataUpdates = MutableStateFlow<List<RouteCardData>?>(null)
 
-    sealed interface Event {
+    public sealed interface Event {
 
-        enum class RecenterType {
+        public enum class RecenterType {
             CurrentLocation,
             Trip,
         }
 
-        data class SelectedStop(val stop: Stop, val stopFilter: StopDetailsFilter?) : Event
+        public data class SelectedStop
+        internal constructor(val stop: Stop, val stopFilter: StopDetailsFilter?) : Event
 
-        data class SelectedTrip(
+        public data class SelectedTrip
+        internal constructor(
             val stop: Stop?,
             val stopFilter: StopDetailsFilter?,
             val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
         ) : Event
 
-        data class NavChanged(val currentNavEntry: SheetRoutes?) : Event
+        public data class NavChanged internal constructor(val currentNavEntry: SheetRoutes?) :
+            Event
 
-        data class Recenter(val type: RecenterType) : Event
+        public data class Recenter(val type: RecenterType) : Event
 
-        data class AlertsChanged(val alerts: AlertsStreamDataResponse?) : Event
+        public data class AlertsChanged(val alerts: AlertsStreamDataResponse?) : Event
 
-        data class ColorPaletteChanged(val isDarkMode: Boolean) : Event
+        public data class ColorPaletteChanged(val isDarkMode: Boolean) : Event
 
-        data class DensityChanged(val density: Float) : Event
+        public data class DensityChanged(val density: Float) : Event
 
-        data object MapStyleLoaded : Event
+        public data object MapStyleLoaded : Event
 
-        data class LayerManagerInitialized(val layerManager: IMapLayerManager) : Event
+        public data class LayerManagerInitialized
+        internal constructor(val layerManager: IMapLayerManager) : Event
 
-        data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
+        public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
     }
 
-    sealed class State {
+    public sealed class State {
 
-        abstract val stop: Stop?
-        abstract val stopFilter: StopDetailsFilter?
+        internal abstract val stop: Stop?
+        internal abstract val stopFilter: StopDetailsFilter?
 
-        data object Overview : State() {
+        public data object Overview : State() {
             override val stop: Stop? = null
             override val stopFilter: StopDetailsFilter? = null
         }
 
-        data class StopSelected(
+        public data class StopSelected(
             override val stop: Stop,
             override val stopFilter: StopDetailsFilter?,
         ) : State()
 
-        data class TripSelected(
+        public data class TripSelected
+        internal constructor(
             override val stop: Stop?,
             override val stopFilter: StopDetailsFilter?,
-            val tripFilter: TripDetailsFilter,
+            internal val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
         ) : State()
     }
@@ -309,10 +314,10 @@ class MapViewModel(
         return state
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?) =
+    override fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?): Unit =
         fireEvent(Event.SelectedStop(stop, stopFilter))
 
     override fun selectedTrip(
@@ -320,14 +325,14 @@ class MapViewModel(
         stop: Stop?,
         tripFilter: TripDetailsFilter,
         vehicle: Vehicle?,
-    ) = fireEvent(Event.SelectedTrip(stop, stopFilter, tripFilter, vehicle))
+    ): Unit = fireEvent(Event.SelectedTrip(stop, stopFilter, tripFilter, vehicle))
 
-    override fun navChanged(currentNavEntry: SheetRoutes?) =
+    override fun navChanged(currentNavEntry: SheetRoutes?): Unit =
         fireEvent(Event.NavChanged(currentNavEntry))
 
-    override fun recenter(type: RecenterType) = fireEvent(Event.Recenter(type))
+    override fun recenter(type: RecenterType): Unit = fireEvent(Event.Recenter(type))
 
-    override fun alertsChanged(alerts: AlertsStreamDataResponse?) =
+    override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit =
         fireEvent(Event.AlertsChanged(alerts))
 
     // Route card data is sent through a separate StateFlow rather than the event flow because
@@ -336,17 +341,17 @@ class MapViewModel(
         routeCardDataUpdates.tryEmit(routeCardData)
     }
 
-    override fun colorPaletteChanged(isDarkMode: Boolean) =
+    override fun colorPaletteChanged(isDarkMode: Boolean): Unit =
         fireEvent(Event.ColorPaletteChanged(isDarkMode))
 
-    override fun densityChanged(density: Float) = fireEvent(Event.DensityChanged(density))
+    override fun densityChanged(density: Float): Unit = fireEvent(Event.DensityChanged(density))
 
-    override fun mapStyleLoaded() = fireEvent(Event.MapStyleLoaded)
+    override fun mapStyleLoaded(): Unit = fireEvent(Event.MapStyleLoaded)
 
-    override fun layerManagerInitialized(layerManager: IMapLayerManager) =
+    override fun layerManagerInitialized(layerManager: IMapLayerManager): Unit =
         fireEvent(Event.LayerManagerInitialized(layerManager))
 
-    override fun locationPermissionsChanged(hasPermission: Boolean) =
+    override fun locationPermissionsChanged(hasPermission: Boolean): Unit =
         fireEvent(Event.LocationPermissionsChanged(hasPermission))
 
     override fun setViewportManager(viewportManager: ViewportManager) {

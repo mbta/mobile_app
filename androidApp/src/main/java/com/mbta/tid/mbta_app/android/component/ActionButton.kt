@@ -27,6 +27,7 @@ enum class ActionButtonKind(
 ) {
     Back(14.dp, R.string.back_button_label, R.drawable.fa_chevron_left),
     Close(10.dp, R.string.close_button_label, R.drawable.fa_xmark),
+    Dismiss(10.dp, R.string.dismiss, R.drawable.fa_xmark),
     Plus(24.dp, R.string.add_stops, R.drawable.plus),
 }
 

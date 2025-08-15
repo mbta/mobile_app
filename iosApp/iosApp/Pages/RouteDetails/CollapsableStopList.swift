@@ -48,7 +48,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 stopListContext: .routeDetails,
                 connectingRoutes: stop.connectingRoutes,
                 stopPlacement: .init(isFirst: isFirstSegment, isLast: isLastSegment),
-                descriptor: { Text("Less common stop").font(Typography.footnote) },
+                descriptor: { Text("Less common stop").font(Typography.footnote).foregroundStyle(Color.text) },
                 rightSideContent: { rightSideContent(stop) }
             ).background(Color.fill1)
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -91,13 +91,15 @@ struct CollapsableStopList<RightSideContent: View>: View {
                     .foregroundStyle(Color.deemphasized)
                     .font(Typography.footnote)
                 }
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h4)
                 .padding(.vertical, 12)
                 .padding(.trailing, 8)
             })
             .padding(.leading, -7)
             .disclosureGroupStyle(.stopList(
                 routeAccents: .init(route: lineOrRoute.sortRoute),
-                stickConnections: segment.twistedConnections().compactMap {
+                stickConnections: segment.twistedConnections()?.compactMap {
                     guard let connection = $0.first, let isTwisted = $0.second else { return nil }
                     return (connection, isTwisted.boolValue)
                 },

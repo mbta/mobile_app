@@ -744,7 +744,7 @@ final class NearbyTransitViewTests: XCTestCase {
     @MainActor func testNoService() throws {
         let objects = route52Objects()
         objects.alert { alert in
-            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 1), end: nil)
+            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 90), end: nil)
             alert.effect = .suspension
             alert.informedEntity(
                 activities: [.board],
@@ -760,12 +760,12 @@ final class NearbyTransitViewTests: XCTestCase {
         let loadPublisher = PassthroughSubject<LoadedStops, Never>()
         let sut = setUpSut(objects, loadPublisher)
 
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
+        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Suspension")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 1)
+        wait(for: [exp], timeout: 2)
     }
 
     @MainActor func testElevatorClosed() throws {

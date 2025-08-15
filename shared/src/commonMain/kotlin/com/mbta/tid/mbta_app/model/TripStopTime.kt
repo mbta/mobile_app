@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-interface TripStopTime : Comparable<TripStopTime> {
+internal interface TripStopTime : Comparable<TripStopTime> {
     val arrivalTime: EasternTimeInstant?
     val departureTime: EasternTimeInstant?
 

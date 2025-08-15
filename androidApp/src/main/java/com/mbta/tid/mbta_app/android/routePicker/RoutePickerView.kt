@@ -25,6 +25,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
@@ -43,9 +44,10 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
+import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
 import com.mbta.tid.mbta_app.viewModel.SearchRoutesViewModel
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun RoutePickerView(
@@ -57,7 +59,7 @@ fun RoutePickerView(
     onBack: () -> Unit,
     onClose: () -> Unit,
     errorBannerViewModel: ErrorBannerViewModel,
-    searchRoutesViewModel: SearchRoutesViewModel = koinViewModel(),
+    searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
     val globalData = getGlobalData("RoutePickerView.globalData")
     var searchInputState by rememberSaveable { mutableStateOf("") }
@@ -67,7 +69,9 @@ fun RoutePickerView(
     val routeScroll = rememberScrollState()
     val scope = rememberCoroutineScope()
 
+    LaunchedEffect(Unit) { searchInputState = "" }
     LaunchedEffect(searchInputState) { searchRoutesViewModel.setQuery(searchInputState) }
+    LaunchedEffect(path) { searchRoutesViewModel.setPath(path) }
 
     if (globalData == null) {
         CircularProgressIndicator(Modifier.semantics { contentDescription = "Loading" })
@@ -128,10 +132,6 @@ fun RoutePickerView(
                 searchInputFocused,
                 {
                     if (!it) {
-                        // Only reset the search result scroll position on clear if there is an
-                        // active search, to prevent autoscrolling an already unfiltered list
-                        if (searchInputState.isNotEmpty())
-                            scope.launch { routeScroll.animateScrollTo(0) }
                         searchInputState = ""
                     }
                     onRouteSearchExpandedChange(it)
@@ -157,7 +157,10 @@ fun RoutePickerView(
                 Text(
                     stringResource(R.string.subway),
                     style = Typography.subheadlineSemibold,
-                    modifier = Modifier.padding(start = 16.dp, top = 22.dp, bottom = 2.dp),
+                    modifier =
+                        Modifier.padding(start = 16.dp, top = 22.dp, bottom = 2.dp).semantics {
+                            heading()
+                        },
                 )
                 for (route in routes) {
                     RoutePickerRootRow(route) { onOpenRouteDetails(route.id, context) }
@@ -176,6 +179,8 @@ fun RoutePickerView(
                             }
                         }
                     }
+
+                LaunchedEffect(displayedRoutes) { scope.launch { routeScroll.animateScrollTo(0) } }
                 if (displayedRoutes.isNotEmpty())
                     Column(
                         Modifier.padding(bottom = 14.dp)

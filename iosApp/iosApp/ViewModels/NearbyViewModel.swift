@@ -36,6 +36,7 @@ class NearbyViewModel: ObservableObject {
     }
 
     @Published var alerts: AlertsStreamDataResponse?
+    @Published var favorites: Favorites = .init(routeStopDirection: [])
     @Published var nearbyState = NearbyTransitState()
     @Published var routeCardData: [RouteCardData]?
 
@@ -45,6 +46,7 @@ class NearbyViewModel: ObservableObject {
 
     private let alertsUsecase: AlertsUsecase
     private let errorBannerRepository: IErrorBannerStateRepository
+    private let favoritesRepository: IFavoritesRepository
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
@@ -55,6 +57,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack: [SheetNavigationStackEntry] = [],
         alertsUsecase: AlertsUsecase = UsecaseDI().alertsUsecase,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
+        favoritesRepository: IFavoritesRepository = RepositoryDI().favorites,
         nearbyRepository: INearbyRepository = RepositoryDI().nearby,
         visitHistoryUsecase: VisitHistoryUsecase = UsecaseDI().visitHistoryUsecase,
         analytics: Analytics = AnalyticsProvider.shared
@@ -64,6 +67,7 @@ class NearbyViewModel: ObservableObject {
 
         self.alertsUsecase = alertsUsecase
         self.errorBannerRepository = errorBannerRepository
+        self.favoritesRepository = favoritesRepository
         self.nearbyRepository = nearbyRepository
         self.visitHistoryUsecase = visitHistoryUsecase
         self.analytics = analytics
@@ -201,6 +205,20 @@ class NearbyViewModel: ObservableObject {
             nearbyState.loadedLocation = location
             nearbyState.loading = false
             isTargeting = false
+        }
+    }
+
+    func loadFavorites() {
+        Task {
+            do {
+                let nextFavorites = try await favoritesRepository.getFavorites()
+                Task { @MainActor in self.favorites = nextFavorites }
+            } catch is CancellationError {
+                // do nothing on cancellation
+            } catch {
+                // getFavorites shouldn't actually fail
+                debugPrint(error)
+            }
         }
     }
 

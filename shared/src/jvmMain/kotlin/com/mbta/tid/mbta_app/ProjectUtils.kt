@@ -14,7 +14,7 @@ import okio.Path.Companion.toOkioPath
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
-val platformModule = module {
+internal val platformModule = module {
     single<SystemPaths> {
         object : SystemPaths {
             override val data: Path
@@ -31,7 +31,7 @@ val platformModule = module {
  * Run with `gradlew jvmRun`.
  */
 @Suppress("unused")
-object ProjectUtils {
+internal object ProjectUtils {
     object TestDataFilters {
         val lines = setOf("line-Green", "line-SLWaterfront")
         val routes =
@@ -256,7 +256,7 @@ private fun List<String>.encode() =
         .add(")")
         .build()
 
-fun main() {
+public fun main() {
     println("MBTA Go Project Utilities")
     println("-------------------------")
     println()
