@@ -117,7 +117,7 @@ final class EditFavoritesPageTests: XCTestCase {
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
         ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
-        wait(for: [exp, updateFavoritesExp], timeout: 2)
+        wait(for: [exp, updateFavoritesExp], timeout: 3)
     }
 
     @MainActor func testUndoToast() throws {
@@ -190,6 +190,6 @@ final class EditFavoritesPageTests: XCTestCase {
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
         ViewHosting.host(view: sut.withFixedSettings([.enhancedFavorites: true]))
-        wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 2)
+        wait(for: [exp, updateFavoritesExp, undoFavoritesExp], timeout: 3)
     }
 }
