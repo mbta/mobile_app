@@ -38,7 +38,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -411,7 +410,7 @@ public class MapViewModel(
     }
 
     private fun handleViewportCentering(state: State, density: Float?) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(defaultCoroutineDispatcher).launch {
             when (state) {
                 State.Overview -> {}
                 is State.StopSelected -> {
@@ -441,7 +440,7 @@ public class MapViewModel(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        CoroutineScope(defaultCoroutineDispatcher).launch {
             if (
                 (previousNavEntry is SheetRoutes.NearbyTransit ||
                     previousNavEntry is SheetRoutes.Favorites) &&
@@ -459,7 +458,9 @@ public class MapViewModel(
     }
 
     private fun followPuck(animationDuration: Long?) {
-        CoroutineScope(Dispatchers.Default).launch { viewportManager.follow(animationDuration) }
+        CoroutineScope(defaultCoroutineDispatcher).launch {
+            viewportManager.follow(animationDuration)
+        }
     }
 
     /**
