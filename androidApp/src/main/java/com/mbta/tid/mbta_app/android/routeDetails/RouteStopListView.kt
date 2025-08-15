@@ -272,6 +272,7 @@ fun RouteStopListView(
                         ToastViewModel.ToastAction.Close(
                             onClose = { showFirstTimeFavoritesToast = false }
                         ),
+                    isTip = true,
                 )
             toastViewModel.showToast(toast)
             firstTimeToast = toast
