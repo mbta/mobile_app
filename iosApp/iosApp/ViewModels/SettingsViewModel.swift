@@ -83,10 +83,6 @@ class SettingsViewModel: ObservableObject {
                     setting: .devDebugMode
                 ),
                 .toggle(
-                    label: "Enhanced Favorites",
-                    setting: .enhancedFavorites
-                ),
-                .toggle(
                     label: NSLocalizedString(
                         "Route Search",
                         comment: "A setting on the More page to display routes in search (only visible for developers)"

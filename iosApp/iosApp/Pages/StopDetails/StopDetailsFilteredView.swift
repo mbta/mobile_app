@@ -69,44 +69,18 @@ struct StopDetailsFilteredView: View {
         stopData = routeData?.stopData.first { $0.stop.id == stopId }
     }
 
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
     var routeStopDirection: RouteStopDirection {
         .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
-    var favoriteBridge: FavoriteBridge {
-        if enhancedFavorites {
-            .Favorite(routeStopDirection: routeStopDirection)
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
-    }
-
     var isFavorite: Bool {
-        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites)
-    }
-
-    var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
-        if enhancedFavorites {
-            .Favorites(
-                updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
-                defaultDirection: stopFilter.directionId
-            )
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
+        stopDetailsVM.isFavorite(routeStopDirection)
     }
 
     func toggleFavorite() {
         Task {
-            let pinned = await stopDetailsVM.updateFavorites(
-                toggleFavoriteUpdateBridge,
-                enhancedFavorites: enhancedFavorites
-            )
-            if !enhancedFavorites {
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: stopFilter.routeId)
-            }
+            let pinned = await stopDetailsVM.updateFavorites([routeStopDirection: !isFavorite],
+                                                             stopFilter.directionId)
         }
     }
 
@@ -158,20 +132,11 @@ struct StopDetailsFilteredView: View {
                                   selectedDirection: routeStopDirection.direction,
                                   context: .stopDetails,
                                   global: stopDetailsVM.global,
-                                  isFavorite: { rsd in
-                                      stopDetailsVM.isFavorite(
-                                          .Favorite(routeStopDirection: rsd),
-                                          enhancedFavorites: true
-                                      )
-                                  },
+                                  isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
                                   updateFavorites: { newFavorites in
                                       Task {
-                                          await stopDetailsVM.updateFavorites(
-                                              .Favorites(updatedValues: newFavorites
-                                                  .mapValues { KotlinBoolean(bool: $0) },
-                                                  defaultDirection: stopFilter.directionId),
-                                              enhancedFavorites: true
-                                          )
+                                          await stopDetailsVM.updateFavorites(newFavorites,
+                                                                              stopFilter.directionId)
                                       }
                                   },
                                   onClose: {
@@ -185,14 +150,8 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
-                    onPin: {
-                        if favoriteBridge is FavoriteBridge.Pinned {
-                            toggleFavorite()
-                        } else {
-                            inSaveFavoritesFlow = true
-                        }
-                    },
+                    pinned: stopDetailsVM.isFavorite(routeStopDirection),
+                    onPin: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
                 /*  DebugView {

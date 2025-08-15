@@ -32,7 +32,6 @@ import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -94,7 +93,6 @@ public fun repositoriesModule(repositories: IRepositories): Module {
         single { AlertsUsecase(get(), get()) }
         single { ConfigUseCase(get(), get()) }
         single<IFeaturePromoUseCase> { FeaturePromoUseCase(get(), get()) }
-        single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
         single { FavoritesUsecases(get(), get()) }
     }

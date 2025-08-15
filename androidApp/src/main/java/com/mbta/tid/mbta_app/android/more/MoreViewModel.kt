@@ -94,10 +94,6 @@ class MoreViewModel(private val context: Context, private val licensesCallback: 
                             settings = Settings.DevDebugMode,
                         ),
                         MoreItem.Toggle(
-                            label = "Enhanced Favorites",
-                            settings = Settings.EnhancedFavorites,
-                        ),
-                        MoreItem.Toggle(
                             label = context.getString(R.string.feature_flag_route_search),
                             settings = Settings.SearchRouteResults,
                         ),

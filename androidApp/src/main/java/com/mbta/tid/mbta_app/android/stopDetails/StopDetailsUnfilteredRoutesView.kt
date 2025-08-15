@@ -33,10 +33,10 @@ import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -58,8 +58,7 @@ fun StopDetailsUnfilteredRoutesView(
     errorBannerViewModel: ErrorBannerViewModel,
     now: EasternTimeInstant,
     globalData: GlobalResponse?,
-    isPinned: (String) -> Boolean,
-    pinRoute: (String) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean,
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
@@ -132,11 +131,7 @@ fun StopDetailsUnfilteredRoutesView(
                         routeCardData,
                         globalData,
                         now,
-                        isFavorite = { favoritesBridge ->
-                            favoritesBridge is FavoriteBridge.Pinned &&
-                                isPinned(favoritesBridge.routeId)
-                        },
-                        onPin = pinRoute,
+                        isFavorite = { rsd -> isFavorite(rsd) },
                         showStopHeader = false,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
@@ -291,8 +286,7 @@ private fun StopDetailsRoutesViewPreview() {
                 errorBannerVM,
                 now = now,
                 globalData,
-                isPinned = { false },
-                pinRoute = {},
+                isFavorite = { false },
                 onClose = {},
                 onTapRoutePill = {},
                 updateStopFilter = {},

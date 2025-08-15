@@ -68,7 +68,6 @@ class StopDetailsViewModel: ObservableObject {
     private let vehicleRepository: IVehicleRepository
 
     private let favoritesUsecases: FavoritesUsecases
-    private let togglePinnedUsecase: TogglePinnedRouteUsecase
 
     let analytics: Analytics = AnalyticsProvider.shared
 
@@ -94,7 +93,6 @@ class StopDetailsViewModel: ObservableObject {
         self.vehicleRepository = vehicleRepository
 
         favoritesUsecases = .init(repository: favoritesRepository, analytics: analytics)
-        togglePinnedUsecase = .init(repository: pinnedRoutesRepository)
     }
 
     private func activateGlobalListener() async {
@@ -491,36 +489,21 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func isFavorite(_ favorite: FavoriteBridge, enhancedFavorites: Bool) -> Bool {
-        switch onEnum(of: favorite) {
-        case let .pinned(favorite) where !enhancedFavorites:
-            pinnedRoutes.contains(favorite.routeId)
-        case let .favorite(favorite) where enhancedFavorites:
-            favorites.routeStopDirection?.contains(favorite.routeStopDirection) ?? false
-        default:
-            false
-        }
+    func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
+        favorites.routeStopDirection?.contains(routeStopDirection) ?? false
     }
 
-    func updateFavorites(_ favorite: FavoriteUpdateBridge, enhancedFavorites: Bool) async -> Bool {
+    func updateFavorites(_ updatedFavorites: [RouteStopDirection: Bool], _ defaultDirection: Int32) async -> Bool {
         let task = Task<Bool, Error> {
             do {
-                switch onEnum(of: favorite) {
-                case let .pinned(favorite) where !enhancedFavorites:
-                    let newValue = try await self.togglePinnedUsecase.execute(route: favorite.routeId).boolValue
-                    self.loadPinnedRoutes()
-                    return newValue
-                case let .favorites(favorite) where enhancedFavorites:
-                    try await self.favoritesUsecases.updateRouteStopDirections(
-                        newValues: favorite.updatedValues,
-                        context: .stopDetails,
-                        defaultDirection: favorite.defaultDirection
-                    )
-                    self.loadFavorites()
-                    return false
-                default:
-                    return false
-                }
+                try await self.favoritesUsecases.updateRouteStopDirections(
+                    newValues: updatedFavorites.mapValues { KotlinBoolean(bool: $0) },
+                    context: .stopDetails,
+                    defaultDirection: defaultDirection
+                )
+                self.loadFavorites()
+                return false
+
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {

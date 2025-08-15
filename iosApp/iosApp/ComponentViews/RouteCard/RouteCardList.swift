@@ -14,8 +14,6 @@ struct RouteCardList<EmptyView: View>: View {
     @ViewBuilder let emptyView: () -> EmptyView
     let global: GlobalResponse?
     let now: Date
-    let isPinned: (String) -> Bool
-    let onPin: (String) -> Void
     let isFavorite: (RouteStopDirection) -> Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
@@ -29,8 +27,6 @@ struct RouteCardList<EmptyView: View>: View {
                             cardData: routeCardData,
                             global: global,
                             now: now.toEasternInstant(),
-                            onPin: onPin,
-                            pinned: isPinned(routeCardData.lineOrRoute.id),
                             isFavorite: isFavorite,
                             pushNavEntry: pushNavEntry,
                             showStopHeader: showStopHeader

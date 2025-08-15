@@ -138,8 +138,6 @@ struct EditFavoritesList: View {
                     ForEach(routeCardData) { cardData in
                         RouteCardContainer(
                             cardData: cardData,
-                            onPin: { _ in },
-                            pinned: false,
                             showStopHeader: true
                         ) { stopData in
                             FavoriteDepartures(

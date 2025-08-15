@@ -30,7 +30,6 @@ struct ContentView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -347,13 +346,10 @@ struct ContentView: View {
         // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
-                if enhancedFavorites {
-                    favoritesPage
-                        .toolbar(tabBarVisibility, for: .tabBar)
-                        .tag(SelectedTab.favorites)
-                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                }
-
+                favoritesPage
+                    .toolbar(tabBarVisibility, for: .tabBar)
+                    .tag(SelectedTab.favorites)
+                    .tabItem { TabLabel(tab: SelectedTab.favorites) }
                 nearbyPage
                     .toolbar(tabBarVisibility, for: .tabBar)
                     .tag(SelectedTab.nearby)
@@ -504,14 +500,11 @@ struct ContentView: View {
 
             case .more:
                 TabView(selection: $selectedTab) {
-                    if enhancedFavorites {
-                        VStack {}
-                            .onAppear { selectedTab = .favorites }
-                            .toolbar(.hidden, for: .tabBar)
-                            .tag(SelectedTab.favorites)
-                            .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                    }
-
+                    VStack {}
+                        .onAppear { selectedTab = .favorites }
+                        .toolbar(.hidden, for: .tabBar)
+                        .tag(SelectedTab.favorites)
+                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
                     VStack {}
                         .onAppear { selectedTab = .nearby }
                         .toolbar(.hidden, for: .tabBar)

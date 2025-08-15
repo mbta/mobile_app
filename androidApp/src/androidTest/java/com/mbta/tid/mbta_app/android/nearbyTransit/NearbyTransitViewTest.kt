@@ -27,7 +27,6 @@ import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
@@ -227,8 +226,7 @@ class NearbyTransitViewTest : KoinTest {
                             stopIds = listOf(sampleStop.id, greenLineStop.id),
                             response = NearbyResponse(builder),
                         )
-                    settings =
-                        MockSettingsRepository(settings = mapOf(Settings.EnhancedFavorites to true))
+                    settings = MockSettingsRepository(settings = mapOf())
                     pinnedRoutes = MockPinnedRoutesRepository(setOf(route.id))
                 },
             )
@@ -278,8 +276,7 @@ class NearbyTransitViewTest : KoinTest {
                             stopIds = listOf(sampleStop.id, greenLineStop.id),
                             response = NearbyResponse(builder),
                         )
-                    settings =
-                        MockSettingsRepository(settings = mapOf(Settings.EnhancedFavorites to true))
+                    settings = MockSettingsRepository(settings = mapOf())
                     favorites =
                         MockFavoritesRepository(
                             Favorites(
