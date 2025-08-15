@@ -34,11 +34,15 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 public interface IMapViewModel {
@@ -200,6 +204,7 @@ public class MapViewModel(
 
         LaunchedEffect(null) {
             events.collect { event ->
+                val start = Clock.System.now()
                 when (event) {
                     is Event.AlertsChanged -> alerts = event.alerts
                     is Event.ColorPaletteChanged -> isDarkMode = event.isDarkMode
@@ -219,11 +224,11 @@ public class MapViewModel(
                         when (state) {
                             is State.Overview,
                             is State.StopSelected -> {
-                                viewportManager.follow(null)
+                                followPuck(null)
                             }
                             is State.TripSelected -> {
                                 when (event.type) {
-                                    RecenterType.CurrentLocation -> viewportManager.follow(null)
+                                    RecenterType.CurrentLocation -> followPuck(null)
                                     RecenterType.Trip -> {
                                         val currentState = state as State.TripSelected
                                         handleViewportCentering(currentState, density)
@@ -267,11 +272,12 @@ public class MapViewModel(
                     }
                     is Event.LocationPermissionsChanged -> {
                         if (event.hasPermission && viewportManager.isDefault()) {
-                            viewportManager.follow(0)
+                            followPuck(0)
                             layerManager?.run { resetPuckPosition() }
                         }
                     }
                 }
+                val end = Clock.System.now()
             }
         }
 
@@ -358,7 +364,7 @@ public class MapViewModel(
         this.viewportManager = viewportManager
     }
 
-    private suspend fun handleNavChange(
+    private fun handleNavChange(
         currentState: State,
         newNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
@@ -404,23 +410,26 @@ public class MapViewModel(
         return newState
     }
 
-    private suspend fun handleViewportCentering(state: State, density: Float?) {
-        when (state) {
-            State.Overview -> {}
-            is State.StopSelected -> {
-                viewportManager.stopCenter(state.stop)
-            }
-            is State.TripSelected -> {
-                // there is no vehicle associated with the trip, so just center on the stop
-                // if there is one
-                if (state.tripFilter.vehicleId == null) {
-                    state.stop?.let { viewportManager.stopCenter(it) }
-                } else {
-                    // if there is a vehicle id associated with the trip but there
-                    // isn't a vehicle yet, wait for one to load before centering
-                    state.vehicle?.let {
-                        if (density != null) {
-                            viewportManager.vehicleOverview(it, state.stop, density)
+    private fun handleViewportCentering(state: State, density: Float?) {
+        CoroutineScope(Dispatchers.Default).launch {
+            when (state) {
+                State.Overview -> {}
+                is State.StopSelected -> {
+                    viewportManager.stopCenter(state.stop)
+                }
+
+                is State.TripSelected -> {
+                    // there is no vehicle associated with the trip, so just center on the stop
+                    // if there is one
+                    if (state.tripFilter.vehicleId == null) {
+                        state.stop?.let { viewportManager.stopCenter(it) }
+                    } else {
+                        // if there is a vehicle id associated with the trip but there
+                        // isn't a vehicle yet, wait for one to load before centering
+                        state.vehicle?.let {
+                            if (density != null) {
+                                viewportManager.vehicleOverview(it, state.stop, density)
+                            }
                         }
                     }
                 }
@@ -428,23 +437,29 @@ public class MapViewModel(
         }
     }
 
-    private suspend fun handleViewportRestoration(
+    private fun handleViewportRestoration(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
     ) {
-        if (
-            (previousNavEntry is SheetRoutes.NearbyTransit ||
-                previousNavEntry is SheetRoutes.Favorites) &&
-                currentNavEntry is SheetRoutes.StopDetails
-        ) {
-            viewportManager.saveNearbyTransitViewport()
-        } else if (
-            previousNavEntry is SheetRoutes.StopDetails &&
-                (currentNavEntry is SheetRoutes.NearbyTransit ||
-                    currentNavEntry is SheetRoutes.Favorites)
-        ) {
-            viewportManager.restoreNearbyTransitViewport()
+        CoroutineScope(Dispatchers.Default).launch {
+            if (
+                (previousNavEntry is SheetRoutes.NearbyTransit ||
+                    previousNavEntry is SheetRoutes.Favorites) &&
+                    currentNavEntry is SheetRoutes.StopDetails
+            ) {
+                viewportManager.saveNearbyTransitViewport()
+            } else if (
+                previousNavEntry is SheetRoutes.StopDetails &&
+                    (currentNavEntry is SheetRoutes.NearbyTransit ||
+                        currentNavEntry is SheetRoutes.Favorites)
+            ) {
+                viewportManager.restoreNearbyTransitViewport()
+            }
         }
+    }
+
+    private fun followPuck(animationDuration: Long?) {
+        CoroutineScope(Dispatchers.Default).launch { viewportManager.follow(animationDuration) }
     }
 
     /**
