@@ -83,7 +83,9 @@ fun BarAndToastScaffold(
             is ToastViewModel.State.Hidden -> ""
             is ToastViewModel.State.Visible ->
                 AnnotatedString.fromHtml(
-                        stringResource(R.string.toast_tip_prefix, state.toast.message)
+                        if (state.toast.isTip)
+                            stringResource(R.string.toast_tip_prefix, state.toast.message)
+                        else state.toast.message
                     )
                     .text
         }
