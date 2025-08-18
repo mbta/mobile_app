@@ -143,6 +143,7 @@
     <string name="favorites_toast_remove_fallback">Removed from Favorites</string>
     <string name="feature_flag_debug_mode">Debug Mode</string>
     <string name="feature_flag_route_search">Route Search</string>
+    <string name="feature_flag_track_this_trip" translatable="false">Track This Trip</string>
     <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
     <string name="ferry">Ferry</string>
