@@ -24,8 +24,8 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

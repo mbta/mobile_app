@@ -6,11 +6,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlin.reflect.typeOf
 
 val SheetRoutes.Companion.EntrypointSaver

@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.favorites.FavoritesView
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
-import com.mbta.tid.mbta_app.model.SheetRoutes
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import org.koin.compose.koinInject

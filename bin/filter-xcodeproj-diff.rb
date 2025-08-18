@@ -82,7 +82,7 @@ end
 
 using DiffCrawler
 
-data = YAML.safe_load_file(ARGV[0] || raise('usage: filter-xcodeproj-diff.rb path/to/diff.yml')) || {}
+data = YAML.safe_load_file(ARGV[0] || raise('usage: filter-xcodeproj-diff.rb path/to/diff.yml'), aliases: true) || {}
 
 data.crawl!
 

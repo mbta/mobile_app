@@ -22,13 +22,13 @@ import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopResult
 import com.mbta.tid.mbta_app.model.StopResultRoute
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule

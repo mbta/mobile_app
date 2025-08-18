@@ -3,10 +3,10 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import androidx.compose.ui.unit.Dp
 import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsFilter.Companion.shouldPopLastStopEntry
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
