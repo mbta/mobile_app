@@ -55,8 +55,6 @@ fun TripDetailsView(
     val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
     val vehicle = tripData?.vehicle
 
-    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
-
     fun getParentFor(stopId: String?, globalResponse: GlobalResponse): Stop? {
         return stopId.let { globalResponse.getStop(stopId)?.resolveParent(globalResponse) }
     }
@@ -108,25 +106,20 @@ fun TripDetailsView(
                 null
             }
 
-        val onFollowTrip: (() -> Unit)? =
-            if (hasTrackThisTrip) {
-                {
-                    openSheetRoute(
-                        SheetRoutes.TripDetails(
-                            TripDetailsPageFilter(
-                                tripId,
-                                tripData.tripFilter.vehicleId,
-                                tripData.trip.routeId,
-                                tripData.trip.directionId,
-                                stopId,
-                                tripData.tripFilter.stopSequence,
-                            )
-                        )
+        val onFollowTrip: (() -> Unit) = {
+            openSheetRoute(
+                SheetRoutes.TripDetails(
+                    TripDetailsPageFilter(
+                        tripId,
+                        tripData.tripFilter.vehicleId,
+                        tripData.trip.routeId,
+                        tripData.trip.directionId,
+                        stopId,
+                        tripData.tripFilter.stopSequence,
                     )
-                }
-            } else {
-                null
-            }
+                )
+            )
+        }
 
         TripDetailsView(
             tripData.trip,
@@ -166,7 +159,7 @@ fun TripDetailsView(
                     placeholderHeaderSpec,
                     null,
                     onTapStop = {},
-                    onFollowTrip = null,
+                    onFollowTrip = {},
                     onOpenAlertDetails = {},
                     placeholderRouteAccents,
                     stopId,
@@ -182,12 +175,12 @@ fun TripDetailsView(
 }
 
 @Composable
-private fun TripDetailsView(
+fun TripDetailsView(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
-    onFollowTrip: (() -> Unit)?,
+    onFollowTrip: (() -> Unit),
     onOpenAlertDetails: (Alert) -> Unit,
     routeAccents: TripRouteAccents,
     stopId: String,
@@ -198,6 +191,8 @@ private fun TripDetailsView(
     globalResponse: GlobalResponse,
     modifier: Modifier = Modifier,
 ) {
+
+    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
 
     Column(modifier) {
         DebugView {
@@ -217,7 +212,10 @@ private fun TripDetailsView(
                 routeAccents,
                 now,
                 onTap = onHeaderTap,
-                onFollowTrip = onFollowTrip,
+                onFollowTrip =
+                    if (hasTrackThisTrip) {
+                        onFollowTrip
+                    } else null,
             )
         }
         Column(Modifier.offset(y = (-16).dp)) {

@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 
 @Composable
-fun TripDetailsPage(onClose: () -> Unit, filter: TripDetailsPageFilter) {
+fun TripDetailsPage(filter: TripDetailsPageFilter, onClose: () -> Unit) {
     Column {
         SheetHeader(title = "", onClose = onClose)
         Text("TODO: Populate with actual trip view")

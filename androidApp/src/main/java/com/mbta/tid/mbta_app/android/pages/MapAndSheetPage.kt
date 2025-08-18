@@ -534,7 +534,7 @@ fun MapAndSheetPage(
         }
 
         SheetPage(colorResource(R.color.fill2)) {
-            TripDetailsPage(onClose = { navController.popBackStack() }, filter = navRoute.filter)
+            TripDetailsPage(filter = navRoute.filter, onClose = { navController.popBackStack() })
         }
     }
 

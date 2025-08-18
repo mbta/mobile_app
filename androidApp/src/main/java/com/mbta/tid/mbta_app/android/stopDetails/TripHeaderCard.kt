@@ -611,6 +611,15 @@ private fun TripHeaderCardPreview() {
 
             TripHeaderCard(
                 trip = trip,
+                spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
+                targetId = davis.id,
+                routeAccents = TripRouteAccents(red),
+                now = EasternTimeInstant.now(),
+                onFollowTrip = {},
+            )
+
+            TripHeaderCard(
+                trip = trip,
                 spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
                 targetId = cityPoint.id,
                 routeAccents = TripRouteAccents(bus),
