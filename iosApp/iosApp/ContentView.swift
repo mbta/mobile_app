@@ -75,6 +75,9 @@ struct ContentView: View {
                 _ = try await RepositoryDI().global.getGlobalData()
             } catch {}
         }
+        .onAppear {
+            readDeepLinkState()
+        }
         .onChange(of: contentVM.defaultTab) { newTab in
             selectedTab = switch newTab {
             case .favorites: .favorites
@@ -104,6 +107,7 @@ struct ContentView: View {
             if newPhase == .active {
                 socketProvider.socket.attach()
                 nearbyVM.joinAlertsChannel()
+                readDeepLinkState()
             } else if newPhase == .background {
                 nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
@@ -537,6 +541,13 @@ struct ContentView: View {
             searchObserver.isSearching && nearbyVM.navigationStack.lastSafe().isEntrypoint
                 ? Color.fill2 : Color.clear
         ).ignoresSafeArea(.all)
+    }
+
+    private func readDeepLinkState() {
+        switch onEnum(of: AppDelegate.deepLinkState) {
+        case .none: break
+        }
+        AppDelegate.deepLinkState = .None.shared
     }
 
     private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {

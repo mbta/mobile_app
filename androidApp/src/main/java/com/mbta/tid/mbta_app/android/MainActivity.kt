@@ -20,6 +20,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.initializeSentry
+import com.mbta.tid.mbta_app.routes.DeepLinkState
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -50,13 +51,8 @@ class MainActivity : ComponentActivity() {
         )
 
         val deepLinkUri = intent.data?.takeIf { intent.action == Intent.ACTION_VIEW }
-        when {
-            deepLinkUri?.path == "/" -> {}
-            deepLinkUri != null -> {
-                Log.w("MainActivity", "Unhandled deep link URI $deepLinkUri")
-            }
-            else -> {}
-        }
+        val deepLinkState =
+            deepLinkUri?.let { DeepLinkState.from(it.toString()) } ?: DeepLinkState.None
 
         setContent {
             MyApplicationTheme {
@@ -65,7 +61,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
                     CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
-                        ContentView()
+                        ContentView(deepLinkState)
                     }
                 }
             }
