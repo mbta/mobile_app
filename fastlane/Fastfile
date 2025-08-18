@@ -166,7 +166,11 @@ platform :ios do
       force: false,
       keychain_path: keychain_path
     )
-    get_provisioning_profile(app_identifier: app_identifier(options[:scheme]), output_path: 'iosApp/secrets')
+    get_provisioning_profile(
+      app_identifier: app_identifier(options[:scheme]),
+      output_path: 'iosApp/secrets',
+      readonly: ENV.fetch('CI', nil)
+    )
   end
 
   desc <<~DESC.chomp
