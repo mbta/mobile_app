@@ -124,8 +124,6 @@ internal fun endToEndModule(): Module {
         single<IPinnedRoutesRepository> {
             object : IPinnedRoutesRepository {
                 override suspend fun getPinnedRoutes() = emptySet<String>()
-
-                override suspend fun setPinnedRoutes(routes: Set<String>) {}
             }
         }
         single<IPredictionsRepository> {

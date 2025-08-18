@@ -14,7 +14,6 @@ struct RouteCardParams: Equatable {
     let alerts: AlertsStreamDataResponse?
     let global: GlobalResponse?
     let now: Date
-    let pinnedRoutes: Set<String>
     let stopData: StopData?
     let stopFilter: StopDetailsFilter?
     let stopId: String
@@ -105,7 +104,6 @@ struct StopDetailsPage: View {
             .onChange(of: RouteCardParams(alerts: nearbyVM.alerts,
                                           global: stopDetailsVM.global,
                                           now: now,
-                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
                                           stopData: stopDetailsVM.stopData,
                                           stopFilter: stopFilter,
                                           stopId: stopId)) { newParams in
@@ -223,7 +221,6 @@ struct StopDetailsPage: View {
         updateDepartures(routeCardParams: RouteCardParams(alerts: nearbyVM.alerts,
                                                           global: stopDetailsVM.global,
                                                           now: now,
-                                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
                                                           stopData: stopDetailsVM.stopData,
                                                           stopFilter: stopFilter,
                                                           stopId: stopId))

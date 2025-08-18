@@ -74,8 +74,6 @@ fun NearbyTransitView(
             alertData,
             now,
         ) {
-            val pinnedRoutesForSorting = emptySet<String>()
-
             nearbyVM.loadRouteCardData(
                 globalResponse,
                 targetLocation,
@@ -83,7 +81,6 @@ fun NearbyTransitView(
                 predictions,
                 alertData,
                 now,
-                pinnedRoutesForSorting,
             )
         }
 
@@ -98,7 +95,6 @@ fun NearbyTransitView(
             global = globalResponse,
             now = now,
             isFavorite = { rsd -> (favorites ?: emptySet()).contains(rsd) },
-            togglePinnedRoute = {},
             onOpenStopDetails = onOpenStopDetails,
         )
     }

@@ -638,10 +638,9 @@ public data class RouteCardData(
          * Build a sorted list of route cards containing realtime data for the given stops.
          *
          * Routes are sorted in the following order
-         * 1. pinned routes
-         * 2. subway routes
-         * 3. routes by distance
-         * 4. route pattern sort order
+         * 1. subway routes
+         * 2. routes by distance
+         * 3. route pattern sort order
          *
          * Any non-typical route patterns which are not happening either at all or between
          * [filterAtTime] and [filterAtTime] + [hideNonTypicalPatternsBeyondNext] are omitted.
@@ -656,7 +655,6 @@ public data class RouteCardData(
             predictions: PredictionsStreamDataResponse?,
             alerts: AlertsStreamDataResponse?,
             now: EasternTimeInstant,
-            pinnedRoutes: Set<String>,
             context: Context,
             favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
@@ -692,7 +690,7 @@ public data class RouteCardData(
                         globalData,
                     )
                     .build(sortByDistanceFrom)
-                    .sort(sortByDistanceFrom, pinnedRoutes, context)
+                    .sort(sortByDistanceFrom, context)
             }
 
         /**
@@ -728,7 +726,7 @@ public data class RouteCardData(
                         globalData = globalData,
                     )
                     .build(sortByDistanceFrom)
-                    .sort(sortByDistanceFrom, emptySet(), context)
+                    .sort(sortByDistanceFrom, context)
             }
 
         internal fun filterStopsByPatterns(
@@ -1240,10 +1238,8 @@ internal fun List<RouteCardData>.hasContext(context: RouteCardData.Context): Boo
 
 internal fun List<RouteCardData>.sort(
     distanceFrom: Position?,
-    pinnedRoutes: Set<String>,
     context: RouteCardData.Context,
-): List<RouteCardData> =
-    this.sortedWith(PatternSorting.compareRouteCards(pinnedRoutes, distanceFrom, context))
+): List<RouteCardData> = this.sortedWith(PatternSorting.compareRouteCards(distanceFrom, context))
 
 internal fun List<RouteCardData.RouteStopData>.sort(
     distanceFrom: Position?

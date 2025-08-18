@@ -42,8 +42,8 @@ fun StopDetailsFilteredHeader(
     route: Route?,
     line: Line?,
     stop: Stop?,
-    pinned: Boolean? = false,
-    onPin: (() -> Unit)? = null,
+    isFavorite: Boolean? = false,
+    onFavorite: (() -> Unit)? = null,
     onClose: (() -> Unit)? = null,
 ) {
     Row(
@@ -92,8 +92,8 @@ fun StopDetailsFilteredHeader(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (onPin != null) {
-                StarButton(pinned, colorResource(R.color.text), onPin)
+            if (onFavorite != null) {
+                StarButton(isFavorite, colorResource(R.color.text), onFavorite)
             }
             if (onClose != null) {
                 ActionButton(ActionButtonKind.Close) { onClose() }
@@ -120,8 +120,8 @@ private fun StopDetailsFilteredHeaderPreview() {
                 route = route,
                 line = null,
                 stop = stop,
-                pinned = true,
-                onPin = {},
+                isFavorite = true,
+                onFavorite = {},
                 onClose = {},
             )
             HorizontalDivider()
@@ -129,8 +129,8 @@ private fun StopDetailsFilteredHeaderPreview() {
                 route = route,
                 line = null,
                 stop = stop,
-                pinned = true,
-                onPin = {},
+                isFavorite = true,
+                onFavorite = {},
             )
         }
     }
