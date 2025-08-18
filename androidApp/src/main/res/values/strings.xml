@@ -161,6 +161,7 @@
     <string name="flooding_lowercase">flooding</string>
     <string name="fog">Fog</string>
     <string name="fog_lowercase">fog</string>
+    <string name="follow">Follow</string>
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="freight_train_interference_lowercase">freight train interference</string>
     <string name="full_description">Full Description</string>

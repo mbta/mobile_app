@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -27,19 +28,22 @@ val SheetRoutes.Companion.typeMap
             typeOf<RoutePickerPath>() to RoutePickerPathParameterType,
             typeOf<StopDetailsFilter?>() to StopFilterParameterType,
             typeOf<TripDetailsFilter?>() to TripFilterParameterType,
+            typeOf<TripDetailsPageFilter>() to TripPageFilterParameterType,
         )
 
 fun SheetRoutes.Companion.fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
-    return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
+    return if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
+        backStackEntry.toRoute<SheetRoutes.EditFavorites>()
+    } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
+        backStackEntry.toRoute<SheetRoutes.Favorites>()
+    } else if (backStackEntry.destination.route?.contains("StopDetails") == true) {
         backStackEntry.toRoute<SheetRoutes.StopDetails>()
     } else if (backStackEntry.destination.route?.contains("RouteDetails") == true) {
         backStackEntry.toRoute<SheetRoutes.RouteDetails>()
     } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
         backStackEntry.toRoute<SheetRoutes.RoutePicker>()
-    } else if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
-        backStackEntry.toRoute<SheetRoutes.EditFavorites>()
-    } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
-        backStackEntry.toRoute<SheetRoutes.Favorites>()
+    } else if (backStackEntry.destination.route?.contains("TripDetails") == true) {
+        backStackEntry.toRoute<SheetRoutes.TripDetails>()
     } else {
         backStackEntry.toRoute<SheetRoutes.NearbyTransit>()
     }
@@ -103,5 +107,20 @@ val TripFilterParameterType =
         override fun parseValue(value: String): TripDetailsFilter? = json.decodeFromString(value)
 
         override fun serializeAsValue(value: TripDetailsFilter?): String =
+            json.encodeToString(value)
+    }
+
+val TripPageFilterParameterType =
+    object : NavType<TripDetailsPageFilter>(isNullableAllowed = false) {
+        override fun get(bundle: Bundle, key: String): TripDetailsPageFilter? =
+            bundle.getString(key)?.let { parseValue(it) }
+
+        override fun put(bundle: Bundle, key: String, value: TripDetailsPageFilter) {
+            bundle.putString(key, serializeAsValue(value))
+        }
+
+        override fun parseValue(value: String): TripDetailsPageFilter = json.decodeFromString(value)
+
+        override fun serializeAsValue(value: TripDetailsPageFilter): String =
             json.encodeToString(value)
     }
