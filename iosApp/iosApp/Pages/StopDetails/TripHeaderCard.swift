@@ -22,6 +22,7 @@ struct TripHeaderCard: View {
     let spec: TripHeaderSpec
     let trip: Trip
     let targetId: String
+    let route: Route
     let routeAccents: TripRouteAccents
     let onTap: (() -> Void)?
     let now: EasternTimeInstant
@@ -311,7 +312,7 @@ struct TripHeaderCard: View {
         default: nil
         }
         guard let entry else { return nil }
-        guard let formatted = entry.format(trip: trip, now: now, routeType: routeAccents.type)
+        guard let formatted = entry.format(trip: trip, now: now, route: route)
         else { return nil }
         switch onEnum(of: formatted) {
         case let .disruption(disruption): return .disruption(
@@ -361,6 +362,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
                 spec: .vehicle(vehicle, stop, nil, false),
                 trip: trip,
                 targetId: "",
+                route: red,
                 routeAccents: TripRouteAccents(route: red),
                 onTap: nil,
                 now: now

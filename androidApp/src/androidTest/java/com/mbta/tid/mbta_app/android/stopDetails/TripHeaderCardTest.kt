@@ -43,6 +43,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -70,6 +71,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
                 onFollowTrip = { followTripClicked = true },
@@ -102,6 +104,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -144,6 +147,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.FinishingAnotherTrip,
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -162,7 +166,7 @@ class TripHeaderCardTest {
         val trip = objects.trip()
 
         composeTestRule.setContent {
-            TripHeaderCard(trip, TripHeaderSpec.NoVehicle, "", TripRouteAccents(route), now)
+            TripHeaderCard(trip, TripHeaderSpec.NoVehicle, "", route, TripRouteAccents(route), now)
         }
         composeTestRule
             .onNodeWithText("Location not available yet", useUnmergedTree = true)
@@ -191,6 +195,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -239,6 +244,7 @@ class TripHeaderCardTest {
                     true,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -305,6 +311,7 @@ class TripHeaderCardTest {
                     false,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -345,6 +352,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -415,6 +423,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -475,6 +484,7 @@ class TripHeaderCardTest {
                     false,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -511,6 +521,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -554,6 +565,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -599,6 +611,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )

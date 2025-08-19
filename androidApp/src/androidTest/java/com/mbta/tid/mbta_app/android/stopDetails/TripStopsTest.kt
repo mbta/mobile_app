@@ -133,6 +133,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
@@ -231,6 +232,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
@@ -319,6 +321,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
@@ -417,6 +420,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 global = GlobalResponse(objects),
@@ -515,6 +519,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries =
                     mapOf(
@@ -622,6 +627,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries =
                     mapOf(
@@ -729,6 +735,7 @@ class TripStopsTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route = route,
                 routeAccents = TripRouteAccents(route),
                 alertSummaries =
                     mapOf(

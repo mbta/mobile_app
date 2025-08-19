@@ -102,6 +102,7 @@ final class TripStopsTests: XCTestCase {
             alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -182,6 +183,7 @@ final class TripStopsTests: XCTestCase {
             alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -258,6 +260,7 @@ final class TripStopsTests: XCTestCase {
             alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -340,6 +343,7 @@ final class TripStopsTests: XCTestCase {
             alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -438,6 +442,7 @@ final class TripStopsTests: XCTestCase {
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -533,6 +538,7 @@ final class TripStopsTests: XCTestCase {
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])
@@ -628,6 +634,7 @@ final class TripStopsTests: XCTestCase {
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             global: .init(objects: objects)
         ).withFixedSettings([:])

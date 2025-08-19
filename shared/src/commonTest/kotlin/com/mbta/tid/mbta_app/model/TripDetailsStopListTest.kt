@@ -997,7 +997,7 @@ class TripDetailsStopListTest {
                 ),
                 secondaryAlert = null,
             ),
-            entry.format(trip, now, route.type),
+            entry.format(trip, now, route),
         )
     }
 
@@ -1011,7 +1011,7 @@ class TripDetailsStopListTest {
         val entry = entry("A", 10, alert = shuttleAlert, prediction = pred)
         assertEquals(
             UpcomingFormat.Disruption(shuttleAlert, mapStopRoute = null),
-            entry.format(trip, now, route.type),
+            entry.format(trip, now, route),
         )
     }
 
@@ -1032,7 +1032,7 @@ class TripDetailsStopListTest {
                 ),
                 secondaryAlert = null,
             ),
-            entry.format(trip, now, route.type),
+            entry.format(trip, now, route),
         )
     }
 }

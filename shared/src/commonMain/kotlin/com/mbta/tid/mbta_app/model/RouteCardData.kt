@@ -486,7 +486,12 @@ public data class RouteCardData(
                 }
 
             val tripsToShow =
-                upcomingTrips.withFormat(now, routeType, translatedContext, countTripsToDisplay)
+                upcomingTrips.withFormat(
+                    now,
+                    representativeRoute,
+                    translatedContext,
+                    countTripsToDisplay,
+                )
 
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 

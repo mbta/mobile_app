@@ -172,6 +172,11 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
+    func getTripRoute() -> Route? {
+        guard let routeId = tripData?.trip.routeId else { return nil }
+        return global?.getRoute(routeId: routeId)
+    }
+
     func getTripRouteAccents() -> TripRouteAccents {
         guard let routeId = tripData?.trip.routeId,
               let route = global?.getRoute(routeId: routeId)

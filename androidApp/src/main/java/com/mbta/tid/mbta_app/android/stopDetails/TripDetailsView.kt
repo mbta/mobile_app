@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
@@ -35,6 +36,7 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import io.sentry.kotlin.multiplatform.Sentry
 import org.koin.compose.koinInject
 
 @Composable
@@ -78,8 +80,14 @@ fun TripDetailsView(
             .value
 
     if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
-        val route = globalResponse.getRoute(tripData.trip.routeId)
-        val routeAccents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
+        val route =
+            globalResponse.getRoute(tripData.trip.routeId)
+                ?: run {
+                    Sentry.captureMessage(
+                        "Trip ${tripData.trip.id} on unknown route ${tripData.trip.routeId}"
+                    )
+                    return
+                }
         val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse)
         val vehicleStop =
             if (vehicle != null) getParentFor(vehicle.stopId, globalResponse) else null
@@ -90,7 +98,7 @@ fun TripDetailsView(
         val explainerType: ExplainerType? =
             when (headerSpec) {
                 is TripHeaderSpec.Scheduled ->
-                    if (routeAccents.type != RouteType.FERRY) {
+                    if (route.type != RouteType.FERRY) {
                         ExplainerType.NoPrediction
                     } else {
                         null
@@ -101,7 +109,7 @@ fun TripDetailsView(
             }
         val onHeaderTap: (() -> Unit)? =
             if (explainerType != null) {
-                { openModal(ModalRoutes.Explainer(explainerType, routeAccents)) }
+                { openModal(ModalRoutes.Explainer(explainerType, TripRouteAccents(route))) }
             } else {
                 null
             }
@@ -128,7 +136,7 @@ fun TripDetailsView(
             ::onTapStop,
             onFollowTrip,
             onOpenAlertDetails,
-            routeAccents,
+            route,
             stopId,
             stops,
             tripFilter,
@@ -150,7 +158,6 @@ fun TripDetailsView(
                 placeholderTripInfo.vehicle,
                 placeholderTripInfo.vehicleStop,
             )
-        val placeholderRouteAccents = TripRouteAccents(placeholderTripInfo.route)
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = modifier.loadingShimmer()) {
@@ -161,7 +168,7 @@ fun TripDetailsView(
                     onTapStop = {},
                     onFollowTrip = {},
                     onOpenAlertDetails = {},
-                    placeholderRouteAccents,
+                    placeholderTripInfo.route,
                     stopId,
                     placeholderTripStops,
                     tripFilter,
@@ -182,7 +189,7 @@ fun TripDetailsView(
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
     onFollowTrip: (() -> Unit),
     onOpenAlertDetails: (Alert) -> Unit,
-    routeAccents: TripRouteAccents,
+    route: Route,
     stopId: String,
     stops: TripDetailsStopList,
     tripFilter: TripDetailsFilter?,
@@ -191,7 +198,7 @@ fun TripDetailsView(
     globalResponse: GlobalResponse,
     modifier: Modifier = Modifier,
 ) {
-
+    val routeAccents = TripRouteAccents(route)
     val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
 
     Column(modifier) {
@@ -209,6 +216,7 @@ fun TripDetailsView(
                 trip,
                 headerSpec,
                 stopId,
+                route,
                 routeAccents,
                 now,
                 onTap = onHeaderTap,
@@ -229,6 +237,7 @@ fun TripDetailsView(
                 globalResponse,
                 onTapStop,
                 onOpenAlertDetails,
+                route,
                 routeAccents,
             )
         }
