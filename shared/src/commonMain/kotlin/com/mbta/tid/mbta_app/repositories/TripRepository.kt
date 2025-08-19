@@ -40,17 +40,19 @@ internal class TripRepository : ITripRepository, KoinComponent {
         }
 
     override suspend fun getTrip(tripId: String): ApiResult<TripResponse> =
-        ApiResult.runCatching {
-            val response =
-                mobileBackendClient.get {
-                    url {
-                        path("api/trip")
-                        parameter("trip_id", tripId)
-                    }
-                }
+        ApiResult.Error(500, "oops")
 
-            return ApiResult.Ok(data = json.decodeFromString(response.body()))
-        }
+    /* ApiResult.runCatching {
+        val response =
+            mobileBackendClient.get {
+                url {
+                    path("api/trip")
+                    parameter("trip_id", tripId)
+                }
+            }
+
+       // return ApiResult.Ok(data = json.decodeFromString(response.body()))
+    }*/
 
     override suspend fun getTripShape(tripId: String): ApiResult<TripShape> =
         ApiResult.runCatching {

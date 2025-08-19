@@ -3,8 +3,11 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import android.Manifest
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
@@ -22,6 +25,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
+import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
@@ -41,6 +45,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -272,6 +277,53 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.onNodeWithText("Sample Stop").assertExists()
         composeTestRule.onNodeWithText("Sample Headsign").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists()
+    }
+
+    @Test
+    fun testErrorBannerClearedOnPageChange() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+
+        val mockErrorVM = ErrorBannerViewModel(errorRepository = ErrorBannerStateRepository())
+        mockErrorVM.errorRepository.setDataError("error1", {})
+
+        val koinApplication = koinApplication()
+        composeTestRule.setContent {
+            var entrypoint by remember {
+                mutableStateOf<SheetRoutes.Entrypoint>(SheetRoutes.NearbyTransit)
+            }
+
+            KoinContext(koinApplication.koin) {
+                CompositionLocalProvider(
+                    LocalLocationClient provides MockFusedLocationProviderClient()
+                ) {
+                    MapAndSheetPage(
+                        Modifier,
+                        NearbyTransit(
+                            alertData = AlertsStreamDataResponse(builder.alerts),
+                            globalResponse = globalResponse,
+                            lastLoadedLocationState =
+                                remember { mutableStateOf(Position(0.0, 0.0)) },
+                            isTargetingState = remember { mutableStateOf(false) },
+                            scaffoldState = rememberBottomSheetScaffoldState(),
+                            locationDataManager = MockLocationDataManager(),
+                            viewportProvider = viewportProvider,
+                        ),
+                        entrypoint,
+                        false,
+                        {},
+                        {},
+                        bottomBar = {},
+                        mockMapVM,
+                        errorBannerViewModel = mockErrorVM,
+                    )
+                }
+
+                LaunchedEffect(Unit) { entrypoint = SheetRoutes.Favorites }
+            }
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { mockErrorVM.errorState.value == null }
     }
 
     @OptIn(ExperimentalTestApi::class)
