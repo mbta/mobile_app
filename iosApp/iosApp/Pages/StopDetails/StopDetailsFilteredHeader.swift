@@ -14,8 +14,8 @@ struct StopDetailsFilteredHeader: View {
     var line: Line?
     var stop: Stop?
     var direction: Int32
-    var pinned: Bool = false
-    var onPin: () -> Void = {}
+    var isFavorite: Bool = false
+    var onFavorite: () -> Void = {}
     var onClose: () -> Void = {}
 
     var body: some View {
@@ -59,7 +59,7 @@ struct StopDetailsFilteredHeader: View {
             .accessibilityLabel(accessibilityLabel)
 
             HStack(alignment: .center, spacing: 16) {
-                StarButton(starred: pinned, color: Color.text, action: onPin)
+                StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
                     .id(direction) // don’t play animation when switching between favorited direction and unfavorited
                     // direction
                     .fixedSize(horizontal: false, vertical: true)

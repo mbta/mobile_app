@@ -26,7 +26,6 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
@@ -133,11 +132,7 @@ fun FavoritesView(
             },
             global = globalResponse,
             now = now,
-            isFavorite = { favoriteBridge ->
-                favoriteBridge is FavoriteBridge.Favorite &&
-                    (state.favorites ?: emptySet()).contains(favoriteBridge.routeStopDirection)
-            },
-            togglePinnedRoute = {},
+            isFavorite = { rsd -> (state.favorites ?: emptySet()).contains(rsd) },
             onOpenStopDetails = { stopId, filter ->
                 openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
             },

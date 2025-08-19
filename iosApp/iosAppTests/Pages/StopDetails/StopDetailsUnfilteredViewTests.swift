@@ -117,7 +117,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 
@@ -150,7 +149,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 
@@ -194,7 +192,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [alert.id: alert]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 

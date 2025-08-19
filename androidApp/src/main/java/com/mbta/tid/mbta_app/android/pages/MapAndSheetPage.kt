@@ -77,7 +77,6 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
-import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.popBackStackFrom
@@ -157,8 +156,6 @@ fun MapAndSheetPage(
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
-    val (pinnedRoutes) = managePinnedRoutes()
-
     val density = LocalDensity.current
 
     val now by timer(updateInterval = 5.seconds)
@@ -198,7 +195,6 @@ fun MapAndSheetPage(
             filters = filters,
             globalResponse = nearbyTransit.globalResponse,
             alertData = nearbyTransit.alertData,
-            pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = { vehicle ->
@@ -451,7 +447,6 @@ fun MapAndSheetPage(
                         global = null,
                         now = now,
                         isFavorite = { false },
-                        togglePinnedRoute = {},
                         onOpenStopDetails = { _, _ -> },
                     )
                 }

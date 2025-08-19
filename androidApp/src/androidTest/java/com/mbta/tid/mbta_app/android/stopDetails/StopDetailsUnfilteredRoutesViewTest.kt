@@ -128,7 +128,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -147,8 +146,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,
@@ -175,7 +173,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -194,8 +191,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,
@@ -229,7 +225,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -248,8 +243,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,
