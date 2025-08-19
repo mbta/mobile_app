@@ -48,3 +48,13 @@ public data class StopDetailsPageFilters(
     val stopFilter: StopDetailsFilter?,
     val tripFilter: TripDetailsFilter?,
 )
+
+@Serializable
+public data class TripDetailsPageFilter(
+    val tripId: String,
+    val vehicleId: String?,
+    val routeId: String,
+    val directionId: Int,
+    val stopId: String,
+    val stopSequence: Int?,
+)

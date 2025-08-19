@@ -524,6 +524,21 @@ fun MapAndSheetPage(
     }
 
     @Composable
+    fun TripDetailsSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.TripDetails = backStackEntry.toRoute()
+        LaunchedEffect(navRoute) {
+            if (navBarVisible) {
+                hideNavBar()
+            }
+            analytics.track(AnalyticsScreen.TripDetails)
+        }
+
+        SheetPage(colorResource(R.color.fill2)) {
+            TripDetailsPage(filter = navRoute.filter, onClose = { navController.popBackStack() })
+        }
+    }
+
+    @Composable
     fun RoutePickerSheetContents(backStackEntry: NavBackStackEntry) {
         val navRoute: SheetRoutes.RoutePicker = backStackEntry.toRoute()
 
@@ -659,6 +674,9 @@ fun MapAndSheetPage(
             }
             composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 StopDetailsSheetContents(backStackEntry)
+            }
+            composable<SheetRoutes.TripDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                TripDetailsSheetContents(backStackEntry)
             }
 
             composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry ->

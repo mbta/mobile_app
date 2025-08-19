@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.routes
 
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import kotlinx.serialization.Serializable
@@ -31,6 +32,8 @@ public sealed class SheetRoutes {
         SheetRoutes()
 
     @Serializable public data object EditFavorites : SheetRoutes()
+
+    @Serializable public data class TripDetails(val filter: TripDetailsPageFilter) : SheetRoutes()
 
     public val showSearchBar: Boolean
         get() =

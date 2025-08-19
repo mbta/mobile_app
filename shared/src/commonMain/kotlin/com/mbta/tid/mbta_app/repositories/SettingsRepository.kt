@@ -44,6 +44,7 @@ public enum class Settings(
     HideMaps(booleanPreferencesKey("hide_maps")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
+    TrackThisTrip(booleanPreferencesKey("track_this_trip")),
 }
 
 public class MockSettingsRepository

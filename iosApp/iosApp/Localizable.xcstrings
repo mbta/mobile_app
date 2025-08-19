@@ -1956,59 +1956,6 @@
         }
       }
     },
-    "key/route_mode_label" : {
-      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%2$@ %1$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "%1$@ %2$@"
-          }
-        }
-      }
-    },
     "%1$@ %2$@ delayed" : {
       "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
       "localizations" : {
@@ -9853,6 +9800,54 @@
         }
       }
     },
+    "Follow" : {
+      "comment" : "Text on a button to enter a focused view that follows a single vehicle on a trip",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Suivre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Swiv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Theo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跟随"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跟隨"
+          }
+        }
+      }
+    },
     "freight train interference" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -11087,6 +11082,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : " 至%1$@"
+          }
+        }
+      }
+    },
+    "key/route_mode_label" : {
+      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%2$@ %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
           }
         }
       }
