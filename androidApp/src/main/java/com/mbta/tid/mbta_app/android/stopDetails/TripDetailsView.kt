@@ -32,8 +32,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.koin.compose.koinInject
 

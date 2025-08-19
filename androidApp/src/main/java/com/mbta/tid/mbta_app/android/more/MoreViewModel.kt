@@ -102,7 +102,7 @@ class MoreViewModel(private val context: Context, private val licensesCallback: 
                             settings = Settings.SearchRouteResults,
                         ),
                         MoreItem.Toggle(
-                            label = context.getString(R.string.feature_flag_track_this_trip),
+                            label = "Track this Trip",
                             settings = Settings.TrackThisTrip,
                         ),
                     ),
