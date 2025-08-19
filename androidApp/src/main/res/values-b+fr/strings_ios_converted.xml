@@ -162,6 +162,7 @@
     <string name="flooding_lowercase">inondation</string>
     <string name="fog">Brouillard</string>
     <string name="fog_lowercase">brouillard</string>
+    <string name="follow">Suivre</string>
     <string name="freight_train_interference">Interférence avec un train de marchandises</string>
     <string name="freight_train_interference_lowercase">interférence des trains de marchandises</string>
     <string name="full_description">Description complète</string>

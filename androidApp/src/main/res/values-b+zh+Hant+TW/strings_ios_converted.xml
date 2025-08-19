@@ -156,6 +156,7 @@
     <string name="flooding_lowercase">洪水</string>
     <string name="fog">大霧</string>
     <string name="fog_lowercase">大霧</string>
+    <string name="follow">跟隨</string>
     <string name="freight_train_interference">貨運列車干擾</string>
     <string name="freight_train_interference_lowercase">貨運列車干擾</string>
     <string name="full_description">完整說明</string>
