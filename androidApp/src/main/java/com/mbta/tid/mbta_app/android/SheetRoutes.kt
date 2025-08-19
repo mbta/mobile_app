@@ -51,76 +51,24 @@ fun SheetRoutes.Companion.fromNavBackStackEntry(backStackEntry: NavBackStackEntr
 
 // Defining types for type-safe navigation with custom objects
 // https://medium.com/@kosta.artur/sending-complex-type-safe-objects-in-compose-navigator-bd161e6adc09
+inline fun <reified T> jsonNavType(default: T? = null) =
+    object : NavType<T>(isNullableAllowed = null is T) {
+        override fun get(bundle: Bundle, key: String): T? =
+            bundle.getString(key)?.let { parseValue(it) } ?: default
+
+        override fun put(bundle: Bundle, key: String, value: T) {
+            bundle.putString(key, serializeAsValue(value))
+        }
+
+        override fun parseValue(value: String): T = json.decodeFromString(value)
+
+        override fun serializeAsValue(value: T): String = json.encodeToString(value)
+    }
+
 val RouteDetailsContextParameterType =
-    object : NavType<RouteDetailsContext>(isNullableAllowed = false) {
-        override fun get(bundle: Bundle, key: String): RouteDetailsContext =
-            bundle.getString(key)?.let { parseValue(it) } ?: RouteDetailsContext.Details
+    jsonNavType<RouteDetailsContext>(default = RouteDetailsContext.Details)
 
-        override fun put(bundle: Bundle, key: String, value: RouteDetailsContext) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): RouteDetailsContext = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: RouteDetailsContext): String =
-            json.encodeToString(value)
-    }
-
-val RoutePickerPathParameterType =
-    object : NavType<RoutePickerPath>(isNullableAllowed = false) {
-        override fun get(bundle: Bundle, key: String): RoutePickerPath =
-            bundle.getString(key)?.let { parseValue(it) } ?: RoutePickerPath.Root
-
-        override fun put(bundle: Bundle, key: String, value: RoutePickerPath) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): RoutePickerPath = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: RoutePickerPath): String = json.encodeToString(value)
-    }
-
-val StopFilterParameterType =
-    object : NavType<StopDetailsFilter?>(isNullableAllowed = true) {
-        override fun get(bundle: Bundle, key: String): StopDetailsFilter? =
-            bundle.getString(key)?.let { parseValue(it) }
-
-        override fun put(bundle: Bundle, key: String, value: StopDetailsFilter?) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): StopDetailsFilter? = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: StopDetailsFilter?): String =
-            json.encodeToString(value)
-    }
-
-val TripFilterParameterType =
-    object : NavType<TripDetailsFilter?>(isNullableAllowed = true) {
-        override fun get(bundle: Bundle, key: String): TripDetailsFilter? =
-            bundle.getString(key)?.let { parseValue(it) }
-
-        override fun put(bundle: Bundle, key: String, value: TripDetailsFilter?) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): TripDetailsFilter? = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: TripDetailsFilter?): String =
-            json.encodeToString(value)
-    }
-
-val TripPageFilterParameterType =
-    object : NavType<TripDetailsPageFilter>(isNullableAllowed = false) {
-        override fun get(bundle: Bundle, key: String): TripDetailsPageFilter? =
-            bundle.getString(key)?.let { parseValue(it) }
-
-        override fun put(bundle: Bundle, key: String, value: TripDetailsPageFilter) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): TripDetailsPageFilter = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: TripDetailsPageFilter): String =
-            json.encodeToString(value)
-    }
+val RoutePickerPathParameterType = jsonNavType<RoutePickerPath>(default = RoutePickerPath.Root)
+val StopFilterParameterType = jsonNavType<StopDetailsFilter?>()
+val TripFilterParameterType = jsonNavType<TripDetailsFilter?>()
+val TripPageFilterParameterType = jsonNavType<TripDetailsPageFilter>()
