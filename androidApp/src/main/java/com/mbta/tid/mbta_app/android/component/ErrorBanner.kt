@@ -48,6 +48,7 @@ import org.koin.dsl.module
 @Composable
 fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
     val state by vm.models.collectAsState()
+
     when (val errorState = state.errorState) {
         is ErrorBannerState.DataError -> {
             ErrorCard(

@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
 
 public interface IErrorBannerViewModel {
     public val models: StateFlow<ErrorBannerViewModel.State>
@@ -51,7 +50,7 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
 
         LaunchedEffect(Unit) {
             errorRepository.subscribeToNetworkStatusChanges()
-            errorRepository.state.onEach { errorState = it }.collect()
+            errorRepository.state.collect { errorState = it }
         }
 
         LaunchedEffect(Unit) {
