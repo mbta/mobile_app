@@ -194,16 +194,16 @@ extension HomeMapView {
         resetDefaultSources()
     }
 
-    func handleTapStopLayer(feature: QueriedFeature, _: InteractionContext) -> Bool {
-        guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey.key] else {
-            let featureId = feature.feature.identifier.debugDescription
+    func handleTapStopLayer(feature: FeaturesetFeature, _: InteractionContext) -> Bool {
+        guard case let .string(stopId) = feature.properties[StopFeaturesBuilder.shared.propIdKey.key] else {
+            let featureId = feature.id.debugDescription
             log.error("""
-                Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop. sourceId=\(feature.source)
+                Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop.
             """)
             return false
         }
         guard let stop = mapVM.globalData?.getStop(stopId: stopId) else {
-            let featureId = feature.feature.identifier.debugDescription
+            let featureId = feature.id.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.
             """)
