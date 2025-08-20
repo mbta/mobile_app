@@ -6,6 +6,7 @@ import java.io.Serializable
 import java.io.StringReader
 import java.util.Locale
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // To use debug signing keys and skip Sentry uploads for an easier time debugging
 // performance-sensitive issues, turn this on.
@@ -22,7 +23,12 @@ plugins {
     id("check-mapbox-bridge")
 }
 
-kotlin { compilerOptions { optIn.add("kotlin.time.ExperimentalTime") } }
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        optIn.add("kotlin.time.ExperimentalTime")
+    }
+}
 
 sentry {
     // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
@@ -52,7 +58,6 @@ android {
         buildConfig = true
         compose = true
     }
-    lint { disable.add("NullSafeMutableLiveData") }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes {
         getByName("release") {
@@ -80,7 +85,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }
     androidResources {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true

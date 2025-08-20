@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
-import java.io.ByteArrayOutputStream
 import java.io.Serializable
 import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
@@ -124,10 +123,9 @@ kotlin {
 
 android {
     namespace = "com.mbta.tid.mbta_app"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig { minSdk = 28 }
     testOptions { unitTests.isReturnDefaultValues = true }
-    lint { disable.add("NullSafeMutableLiveData") }
 }
 
 skie {
@@ -214,7 +212,8 @@ task<DependencyCodegenTask>("bomCodegenIos") {
 
 task<CycloneDxBomTransformTask>("bomAndroid") {
     dependsOn(":androidApp:cyclonedxBom")
-    inputPath = projects.androidApp.dependencyProject.layout.buildDirectory.file("reports/bom.json")
+    inputPath =
+        project.project(projects.androidApp.path).layout.buildDirectory.file("reports/bom.json")
     outputPath = layout.buildDirectory.file("boms/bom-android.json")
     transform = {
         components =
@@ -322,9 +321,7 @@ task<Download>("bomCycloneDxCliDownload") {
     src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.27.1/cyclonedx-$os-$arch")
     dest(layout.buildDirectory.file("boms/cyclonedx-cli"))
     onlyIfModified(true)
-    doLast {
-        exec { commandLine("chmod", "+x", layout.buildDirectory.file("boms/cyclonedx-cli").get()) }
-    }
+    doLast { layout.buildDirectory.file("boms/cyclonedx-cli").get().asFile.setExecutable(true) }
 }
 
 task("bomIosKotlinDeps") {
@@ -403,22 +400,19 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             "/license?ref=v"
                         else "/license?ref=",
                     )
-            val ghOutput = ByteArrayOutputStream()
-            try {
-                exec {
-                    commandLine("gh", "api", licenseApiPath)
-                    standardOutput = ghOutput
+            val apiResponse =
+                try {
+                    val gh = providers.exec { commandLine("gh", "api", licenseApiPath) }
+                    gh.standardOutput.asText.get()
+                } catch (e: ExecException) {
+                    throw IllegalStateException(
+                        "\nerror: `gh api $licenseApiPath` failed, ${when {
+                            DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
+                            else -> "install it"
+                        }} and try `gh auth login`",
+                        e,
+                    )
                 }
-            } catch (e: ExecException) {
-                throw IllegalStateException(
-                    "\nerror: `gh api $licenseApiPath` failed, ${when {
-                        DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
-                        else -> "install it"
-                    }} and try `gh auth login`",
-                    e,
-                )
-            }
-            val apiResponse = ghOutput.toString()
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 
             component.licenses.addLicense(
