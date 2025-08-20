@@ -18,6 +18,7 @@ struct TripStops: View {
     let alertSummaries: [String: AlertSummary?]
     let onTapLink: (TripDetailsStopList.Entry) -> Void
     let onOpenAlertDetails: (Shared.Alert) -> Void
+    let route: Route
     let routeAccents: TripRouteAccents
     let splitStops: TripDetailsStopList.TargetSplit
 
@@ -40,6 +41,7 @@ struct TripStops: View {
         alertSummaries: [String: AlertSummary?],
         onTapLink: @escaping (TripDetailsStopList.Entry) -> Void,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
+        route: Route,
         routeAccents: TripRouteAccents,
         global: GlobalResponse?
     ) {
@@ -51,6 +53,7 @@ struct TripStops: View {
         self.alertSummaries = alertSummaries
         self.onTapLink = onTapLink
         self.onOpenAlertDetails = onOpenAlertDetails
+        self.route = route
         self.routeAccents = routeAccents
 
         splitStops = stops.splitForTarget(
@@ -76,6 +79,7 @@ struct TripStops: View {
                 now: now,
                 onTapLink: onTapLink,
                 onOpenAlertDetails: onOpenAlertDetails,
+                route: route,
                 routeAccents: routeAccents,
                 alertSummaries: alertSummaries,
                 showDownstreamAlert: showDownstreamAlerts,
@@ -99,6 +103,7 @@ struct TripStops: View {
                         now: now,
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
+                        route: route,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
                         firstStop: true
@@ -157,6 +162,7 @@ struct TripStops: View {
                         now: now,
                         onTapLink: onTapLink,
                         onOpenAlertDetails: onOpenAlertDetails,
+                        route: route,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
                         targeted: true,
@@ -231,6 +237,7 @@ struct TripStops: View {
             alertSummaries: [:],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             global: .init(objects: objects)
         )

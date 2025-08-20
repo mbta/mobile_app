@@ -421,6 +421,46 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats as none with Silver Line schedules but no predictions and no alert`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+
+            val objects = ObjectCollectionBuilder()
+            val route =
+                objects.route {
+                    type = RouteType.BUS
+                    id = anyOfList(silverRoutes.toList())
+                }
+            val pattern = objects.routePattern(route)
+            val schedule =
+                objects.schedule {
+                    trip = objects.trip(pattern)
+                    departureTime = now + 2.minutes
+                }
+            assertEquals(
+                LeafFormat.Single(
+                    route = null,
+                    headsign = "",
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
+                ),
+                RouteCardData.Leaf(
+                        RouteCardData.LineOrRoute.Route(route),
+                        objects.stop(),
+                        0,
+                        emptyList(),
+                        emptySet(),
+                        listOf(objects.upcomingTrip(schedule)),
+                        emptyList(),
+                        true,
+                        true,
+                        emptyList(),
+                        anyEnumValue(),
+                    )
+                    .format(now, GlobalResponse(objects)),
+            )
+        }
+
+    @Test
     fun `formats as loading if empty trips but still loading`() = parametricTest {
         val now = EasternTimeInstant.now()
 

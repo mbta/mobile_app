@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -78,6 +79,7 @@ fun TripHeaderCard(
     trip: Trip,
     spec: TripHeaderSpec?,
     targetId: String,
+    route: Route,
     routeAccents: TripRouteAccents,
     now: EasternTimeInstant,
     modifier: Modifier = Modifier,
@@ -121,7 +123,15 @@ fun TripHeaderCard(
                                 clickable,
                                 DestinationPredictionBalance.destinationWidth(),
                             )
-                            TripIndicator(spec, routeAccents, trip, now, clickable, onFollowTrip)
+                            TripIndicator(
+                                spec,
+                                route,
+                                routeAccents,
+                                trip,
+                                now,
+                                clickable,
+                                onFollowTrip,
+                            )
                         }
                     }
                     when (spec) {
@@ -416,13 +426,14 @@ private fun VehiclePuck(
 @Composable
 private fun RowScope.TripIndicator(
     spec: TripHeaderSpec,
+    route: Route,
     routeAccents: TripRouteAccents,
     trip: Trip,
     now: EasternTimeInstant,
     clickable: Boolean = false,
     onFollowTrip: (() -> Unit)?,
 ) {
-    val upcomingTripViewState = upcomingTripViewState(spec, routeAccents, trip, now)
+    val upcomingTripViewState = upcomingTripViewState(spec, route, trip, now)
     Column(
         DestinationPredictionBalance.predictionWidth(
             upcomingTripViewState?.containsWrappableText() ?: false
@@ -506,7 +517,7 @@ private fun LiveIcon() {
 
 private fun upcomingTripViewState(
     spec: TripHeaderSpec,
-    routeAccents: TripRouteAccents,
+    route: Route,
     trip: Trip,
     now: EasternTimeInstant,
 ): UpcomingTripViewState? {
@@ -517,7 +528,7 @@ private fun upcomingTripViewState(
             else -> null
         }
     if (entry == null) return null
-    return when (val formatted = entry.format(trip, now, routeAccents.type)) {
+    return when (val formatted = entry.format(trip, now, route)) {
         is UpcomingFormat.Some ->
             UpcomingTripViewState.Some(formatted.trips.singleOrNull()?.format ?: return null)
         else -> null
@@ -605,6 +616,7 @@ private fun TripHeaderCardPreview() {
                 trip = trip,
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
                 targetId = davis.id,
+                route = red,
                 routeAccents = TripRouteAccents(red),
                 now = EasternTimeInstant.now(),
             )
@@ -613,6 +625,7 @@ private fun TripHeaderCardPreview() {
                 trip = trip,
                 spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, true),
                 targetId = davis.id,
+                route = red,
                 routeAccents = TripRouteAccents(red),
                 now = EasternTimeInstant.now(),
                 onFollowTrip = {},
@@ -622,6 +635,7 @@ private fun TripHeaderCardPreview() {
                 trip = trip,
                 spec = TripHeaderSpec.Scheduled(cityPoint, busEntry),
                 targetId = cityPoint.id,
+                route = red,
                 routeAccents = TripRouteAccents(bus),
                 onTap = {},
                 now = EasternTimeInstant.now(),
@@ -631,6 +645,7 @@ private fun TripHeaderCardPreview() {
                 trip = trip,
                 spec = TripHeaderSpec.FinishingAnotherTrip,
                 targetId = "",
+                route = red,
                 routeAccents = TripRouteAccents(commuter),
                 onTap = {},
                 now = EasternTimeInstant.now(),
@@ -640,6 +655,7 @@ private fun TripHeaderCardPreview() {
                 trip = trip,
                 spec = TripHeaderSpec.NoVehicle,
                 targetId = "",
+                route = red,
                 routeAccents = TripRouteAccents(ferry),
                 onTap = {},
                 now = EasternTimeInstant.now(),
@@ -651,6 +667,7 @@ private fun TripHeaderCardPreview() {
                         trip = trip,
                         spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),
                         targetId = "",
+                        route = red,
                         routeAccents = TripRouteAccents.default,
                         now = EasternTimeInstant.now(),
                     )

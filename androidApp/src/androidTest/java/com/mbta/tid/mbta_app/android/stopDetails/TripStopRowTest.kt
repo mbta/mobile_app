@@ -59,6 +59,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
             )
@@ -92,6 +93,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
             )
@@ -132,6 +134,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
             )
@@ -172,6 +175,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
                 targeted = selected,
@@ -224,6 +228,7 @@ class TripStopRowTest {
                 now,
                 onTapLink = { linkTappedWith = it },
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
                 alertSummaries = emptyMap(),
             )
@@ -277,6 +282,7 @@ class TripStopRowTest {
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
+                    route,
                     TripRouteAccents(route),
                     alertSummaries = emptyMap(),
                 )
@@ -345,6 +351,7 @@ class TripStopRowTest {
                 now,
                 {},
                 {},
+                route,
                 TripRouteAccents(route),
                 mapOf(alert.id to summary),
                 showDownstreamAlert = true,
