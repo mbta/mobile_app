@@ -59,7 +59,7 @@ class MapAndSheetPageTest {
         val route = objects.route { type = RouteType.BUS }
         objects.routePattern(route) {
             typicality = RoutePattern.Typicality.Typical
-            representativeTrip { stopIds = listOf(stop1.id, stop2.id) }
+            representativeTrip { stopIds = listOf(stop1.id, stop2.id, "terminal-stop") }
         }
 
         val alertData = AlertsStreamDataResponse(objects)

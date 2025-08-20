@@ -1193,6 +1193,8 @@ public data class RouteCardData(
                     } ?: true
                 } ?: false
 
+            // If we don’t have any upcoming trips to tell us whether or not service is
+            // arrival-only, trust the typical-last-stop-on-route-pattern state.
             val shouldBeFilteredAsArrivalOnly =
                 if (isSubway) {
                     // On subway, only filter out arrival only patterns at the typical last stop.
@@ -1200,9 +1202,10 @@ public data class RouteCardData(
                     // headsign(s) at
                     // a temporary terminal to acknowledge the missing typical service.
                     this.isTypicalLastStopOnRoutePattern(stop, globalData) &&
-                        (this.upcomingTrips?.isArrivalOnly() ?: false)
+                        (this.upcomingTrips?.isArrivalOnly() ?: true)
                 } else {
-                    this.upcomingTrips?.isArrivalOnly() ?: false
+                    this.upcomingTrips?.isArrivalOnly()
+                        ?: this.isTypicalLastStopOnRoutePattern(stop, globalData)
                 }
 
             val hasUnseenTypicalPattern =
@@ -1221,6 +1224,7 @@ public data class RouteCardData(
             return this.routePatterns
                 ?.filter { it.typicality == RoutePattern.Typicality.Typical }
                 ?.map { it.representativeTripId }
+                ?.takeUnless { it.isEmpty() }
                 ?.all { representativeTripId ->
                     val representativeTrip = globalData.trips[representativeTripId]
                     val lastStopIdInPattern =
