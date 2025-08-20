@@ -76,6 +76,7 @@ kotlin {
                 api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
+                implementation(project.dependencies.platform(libs.sentry.bom))
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
@@ -108,7 +109,6 @@ kotlin {
                 implementation(libs.androidx.lifecycle.viewmodel.android)
                 implementation(libs.koin.androidxCompose)
                 implementation(libs.ktor.client.okhttp)
-                implementation(libs.sentry)
             }
         }
         val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }

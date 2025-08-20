@@ -102,8 +102,7 @@ okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 playServices-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
-sentry = { module = "io.sentry:sentry", version.ref = "sentry-java" }
-sentry-android = { module = "io.sentry:sentry-android", version.ref = "sentry-java" }
+sentry-bom = { module = "io.sentry:sentry-bom", version.ref = "sentry-java" }
 sentry-kmp = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sentry-kmp" }
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
 spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }

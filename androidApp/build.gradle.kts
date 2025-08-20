@@ -39,7 +39,6 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
-    autoInstallation { enabled = false }
 }
 
 android {
@@ -114,7 +113,6 @@ dependencies {
     implementation(libs.mapbox.turf)
     implementation(libs.okhttp)
     implementation(libs.playServices.location)
-    implementation(libs.sentry.android)
     implementation(libs.androidx.lifecycle.runtime.testing)
     debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.test.manifest)
