@@ -17,7 +17,11 @@ struct EditFavoritesPage: View {
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @State var favoritesState: [RouteStopDirection: Bool] = [:]
 
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
+
+    // Needed in addition to the VM for compatibility with fetchApi
+    let errorBannerRepository = RepositoryDI().errorBanner
+
     let toastVM: IToastViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
@@ -117,7 +121,7 @@ struct EditFavoritesPage: View {
         }
         Task {
             await fetchApi(
-                errorBannerVM.errorRepository,
+                errorBannerRepository,
                 errorKey: "EditDetailsPage.loadGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadGlobal

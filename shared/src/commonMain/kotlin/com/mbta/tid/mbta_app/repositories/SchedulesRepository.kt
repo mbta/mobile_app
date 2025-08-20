@@ -28,16 +28,20 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
         stopIds: List<String>,
         now: EasternTimeInstant,
     ): ApiResult<ScheduleResponse> =
-        ApiResult.runCatching {
-            mobileBackendClient
-                .get {
-                    url {
-                        path("api/schedules")
-                        parameters.append("stop_ids", stopIds.joinToString(separator = ","))
-                        parameters.append("date_time", now.toString())
+        if (stopIds.count() >= 2) {
+            ApiResult.Error(500, "oops")
+        } else {
+            ApiResult.runCatching {
+                mobileBackendClient
+                    .get {
+                        url {
+                            path("api/schedules")
+                            parameters.append("stop_ids", stopIds.joinToString(separator = ","))
+                            parameters.append("date_time", now.toString())
+                        }
                     }
-                }
-                .body()
+                    .body()
+            }
         }
 
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {

@@ -35,7 +35,9 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
     public data class State(
         val loadingWhenPredictionsStale: Boolean = false,
         val errorState: ErrorBannerState? = null,
-    )
+    ) {
+        public constructor() : this(false, null)
+    }
 
     public sealed interface Event {
         public data class SetIsLoadingWhenPredictionsStale(val isLoading: Boolean) : Event
@@ -50,7 +52,11 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
 
         LaunchedEffect(Unit) {
             errorRepository.subscribeToNetworkStatusChanges()
-            errorRepository.state.collect { errorState = it }
+            println("KB: HERE IN SHARED CODE")
+            errorRepository.state.collect {
+                errorState = it
+                println("KB: SETTING ERROR STATE ${it}")
+            }
         }
 
         LaunchedEffect(Unit) {

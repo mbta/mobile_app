@@ -51,6 +51,9 @@ struct RouteStopListView<RightSideContent: View>: View {
 
     let inspection = Inspection<Self>()
 
+    // Needed in addition to the VM for compatibility with fetchApi
+    let errorBannerRepository = RepositoryDI().errorBanner
+
     init(
         lineOrRoute: RouteCardData.LineOrRoute,
         context: RouteDetailsContext,
@@ -154,7 +157,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     private func loadRouteStops(routeId: String, directionId: Int32) {
         Task {
             await fetchApi(
-                errorBannerVM.errorRepository,
+                errorBannerRepository,
                 errorKey: "RouteStopListView.loadRouteStops",
                 getData: { try await routeStopsRepository.getRouteSegments(
                     routeId: routeId,

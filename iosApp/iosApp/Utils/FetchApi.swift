@@ -20,6 +20,7 @@ func fetchApi<T>(
     onSuccess: @MainActor (T) -> Void = { _ in },
     onRefreshAfterError: @escaping () -> Void
 ) async {
+    print("KB: Error banner repo for fetch \(errorBannerRepo.self)")
     var result: ApiResult<T>
     do {
         result = try await getData()

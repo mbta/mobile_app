@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 struct FavoritesPage: View {
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: FavoritesViewModel
     var nearbyVM: NearbyViewModel
     var toastVM: IToastViewModel = ViewModelDI().toast
