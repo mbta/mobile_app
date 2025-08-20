@@ -1,7 +1,7 @@
 default_install_hook_types: [pre-commit, post-checkout, post-merge]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
+    rev: v6.0.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
@@ -20,7 +20,7 @@ repos:
         name: "gradle spotless buildSrc"
         entry: gradle-task :buildSrc:spotlessCheck :buildSrc:spotlessApply -w
   - repo: https://github.com/nicklockwood/SwiftFormat
-    rev: 0.55.6
+    rev: 0.57.2
     hooks:
       - id: swiftformat
         args: [ "--config","config.swiftformat" ]

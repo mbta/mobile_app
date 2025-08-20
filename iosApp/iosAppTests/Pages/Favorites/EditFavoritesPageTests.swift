@@ -113,7 +113,6 @@ final class EditFavoritesPageTests: XCTestCase {
         )
 
         let exp = sut.inspection.inspect(after: 2.0) { view in
-
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
 
@@ -187,7 +186,6 @@ final class EditFavoritesPageTests: XCTestCase {
         )
 
         let exp = sut.inspection.inspect(after: 2.0) { view in
-
             try view.findAll(DeleteButton.self)[0].find(ViewType.Button.self).tap()
         }
 

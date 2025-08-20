@@ -11,7 +11,7 @@ import SwiftUI
 struct MoreLink: View {
     var label: String
     var url: String
-    var note: String? = nil
+    var note: String?
     var isKey: Bool = false
 
     @ScaledMetric

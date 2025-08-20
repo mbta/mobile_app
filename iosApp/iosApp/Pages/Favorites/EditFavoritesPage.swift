@@ -39,7 +39,7 @@ struct EditFavoritesPage: View {
                 the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
                 The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
                 """
-            ), labels.direction, labels.route, labels.stop,)
+            ), labels.direction, labels.route, labels.stop)
         } else {
             NSLocalizedString(
                 "Removed from Favorites",
@@ -191,7 +191,6 @@ struct FavoriteDepartures: View {
     var body: some View {
         VStack {
             ForEach(stopData.data.enumerated().sorted(by: { $0.offset < $1.offset }), id: \.element.id) { index, leaf in
-
                 let formatted = leaf.format(now: EasternTimeInstant.now(), globalData: globalData)
                 let direction: Direction = stopData.directions.first(where: { $0.id == leaf.directionId })!
 

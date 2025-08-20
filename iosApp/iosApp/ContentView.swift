@@ -478,7 +478,6 @@ struct ContentView: View {
                             content: coverContents
                         )
                         .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-
                             if let oldSheetRoute,
                                let newSheetRoute,
                                SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
