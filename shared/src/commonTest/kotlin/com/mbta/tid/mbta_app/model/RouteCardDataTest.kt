@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -2090,6 +2091,7 @@ class RouteCardDataTest {
         runBlocking {
             val objects = ObjectCollectionBuilder()
 
+            val terminalStop = objects.stop()
             val closeBusStop = objects.stop { id = "close-bus" }
             val midBusStop =
                 objects.stop {
@@ -2152,7 +2154,7 @@ class RouteCardDataTest {
                     sortOrder = 1
                     representativeTrip {
                         headsign = "Design Center via South Station"
-                        stopIds = listOf(farBusStop.id)
+                        stopIds = listOf(farBusStop.id, terminalStop.id)
                     }
                     typicality = RoutePattern.Typicality.Typical
                 }
@@ -2161,7 +2163,7 @@ class RouteCardDataTest {
                     sortOrder = 1
                     representativeTrip {
                         headsign = "Design Center"
-                        stopIds = listOf(midBusStop.id)
+                        stopIds = listOf(midBusStop.id, terminalStop.id)
                     }
                     typicality = RoutePattern.Typicality.Typical
                 }
@@ -2170,7 +2172,7 @@ class RouteCardDataTest {
                     sortOrder = 1
                     representativeTrip {
                         headsign = "Nubian"
-                        stopIds = listOf(closeBusStop.id, midBusStop.id)
+                        stopIds = listOf(closeBusStop.id, midBusStop.id, terminalStop.id)
                     }
                     typicality = RoutePattern.Typicality.Typical
                 }
@@ -2179,7 +2181,7 @@ class RouteCardDataTest {
                     sortOrder = 1
                     representativeTrip {
                         headsign = "Cleveland Circle"
-                        stopIds = listOf(closeSubwayStop.id)
+                        stopIds = listOf(closeSubwayStop.id, terminalStop.id)
                     }
                     typicality = RoutePattern.Typicality.Typical
                 }
@@ -2188,7 +2190,7 @@ class RouteCardDataTest {
                     sortOrder = 1
                     representativeTrip {
                         headsign = "Government Center"
-                        stopIds = listOf(midSubwayStop.id, farSubwayStop.id)
+                        stopIds = listOf(midSubwayStop.id, farSubwayStop.id, terminalStop.id)
                     }
                     typicality = RoutePattern.Typicality.Typical
                 }
@@ -3887,13 +3889,14 @@ class RouteCardDataTest {
         runBlocking {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
+            val otherStop = objects.stop()
             val route = objects.route()
             val routePatternA =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip {
                         headsign = "A"
-                        stopIds = listOf(stop.id)
+                        stopIds = listOf(stop.id, otherStop.id)
                     }
                 }
             val routePatternB =
@@ -3901,7 +3904,7 @@ class RouteCardDataTest {
                     typicality = RoutePattern.Typicality.Typical
                     representativeTrip {
                         headsign = "B"
-                        stopIds = listOf(stop.id)
+                        stopIds = listOf(stop.id, otherStop.id)
                     }
                 }
             val routePatternC =
@@ -3909,7 +3912,7 @@ class RouteCardDataTest {
                     typicality = RoutePattern.Typicality.Deviation
                     representativeTrip {
                         headsign = "C"
-                        stopIds = listOf(stop.id)
+                        stopIds = listOf(stop.id, otherStop.id)
                     }
                 }
             val trip1 = objects.trip(routePatternA)
@@ -3963,6 +3966,38 @@ class RouteCardDataTest {
                     stopIds = listOf(stop.id),
                     globalData = GlobalResponse(objects),
                     sortByDistanceFrom = stop.position,
+                    schedules = ScheduleResponse(objects),
+                    predictions = PredictionsStreamDataResponse(objects),
+                    alerts = AlertsStreamDataResponse(emptyMap()),
+                    now = time,
+                    context = context,
+                ),
+            )
+        }
+
+    @Test
+    fun `RouteCardData routeCardsForStopList treats typical last stop as arrival-only even with no trips`() =
+        parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val firstStop = objects.stop()
+            val lastStop = objects.stop()
+            val route = objects.route { type = anyEnumValue() }
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(firstStop.id, lastStop.id)
+                }
+            }
+            val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
+
+            val context = RouteCardData.Context.NearbyTransit
+            assertEquals(
+                emptyList(),
+                RouteCardData.routeCardsForStopList(
+                    stopIds = listOf(lastStop.id),
+                    globalData = GlobalResponse(objects),
+                    sortByDistanceFrom = lastStop.position,
                     schedules = ScheduleResponse(objects),
                     predictions = PredictionsStreamDataResponse(objects),
                     alerts = AlertsStreamDataResponse(emptyMap()),
@@ -5371,6 +5406,7 @@ class RouteCardDataTest {
             val route = objects.route()
             val southStation = objects.stop { id = "place-sstat" }
             val providence = objects.stop { id = "place-NEC-1851" }
+            val wickfordJunction = objects.stop { id = "place-NEC-1659" }
 
             val routePatternPvd =
                 objects.routePattern(route) {
@@ -5379,7 +5415,7 @@ class RouteCardDataTest {
                     representativeTrip {
                         directionId = 0
                         headsign = "Providence"
-                        stopIds = listOf(southStation.id, providence.id)
+                        stopIds = listOf(southStation.id, providence.id, wickfordJunction.id)
                     }
                 }
 

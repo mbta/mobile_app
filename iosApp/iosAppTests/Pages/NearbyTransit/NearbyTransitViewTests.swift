@@ -112,7 +112,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.representativeTrip { trip in
                 trip.headsign = "Charles River Loop"
                 trip.routePatternId = pattern.id
-                trip.stopIds = [stop1.id]
+                trip.stopIds = [stop1.id, "terminal-stop"]
             }
         }
         objects.routePattern(route: route52) { pattern in
@@ -123,7 +123,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.representativeTrip { trip in
                 trip.headsign = "Dedham Mall"
                 trip.routePatternId = pattern.id
-                trip.stopIds = [stop1.id]
+                trip.stopIds = [stop1.id, "terminal-stop"]
             }
         }
         objects.routePattern(route: route52) { pattern in
@@ -134,7 +134,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.representativeTrip { trip in
                 trip.headsign = "Watertown Yard"
                 trip.routePatternId = pattern.id
-                trip.stopIds = [stop2.id]
+                trip.stopIds = [stop2.id, "terminal-stop"]
             }
         }
         objects.routePattern(route: route52) { pattern in
@@ -145,7 +145,7 @@ final class NearbyTransitViewTests: XCTestCase {
             pattern.representativeTrip { trip in
                 trip.headsign = "Watertown Yard"
                 trip.routePatternId = pattern.id
-                trip.stopIds = [stop2.id]
+                trip.stopIds = [stop2.id, "terminal-stop"]
             }
         }
 
