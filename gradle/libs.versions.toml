@@ -34,7 +34,7 @@ kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.9.0"
 ktor = "3.2.3"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
-mapbox = "11.12.2"
+mapbox = "11.14.2"
 mapboxTurf = "7.4.0"
 mokkery = "2.9.0"
 molecule = "2.1.0"

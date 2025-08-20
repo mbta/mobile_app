@@ -14,8 +14,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://androidx.dev/storage/compose-compiler/repository/")
-
-        maven { url = uri("https://api.mapbox.com/downloads/v2/releases/maven") }
+        maven("https://api.mapbox.com/downloads/v2/releases/maven/")
     }
 }
 
