@@ -6,13 +6,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
@@ -32,7 +32,7 @@ fun StopDetailsView(
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()

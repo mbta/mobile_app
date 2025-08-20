@@ -2,12 +2,12 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun NearbyTransitPage(
@@ -15,7 +15,7 @@ fun NearbyTransitPage(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     openSearch: () -> Unit,
     nearbyViewModel: NearbyTransitViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val targetLocation by managedTargetLocation(nearbyTransit) { nearbyViewModel.reset() }
 

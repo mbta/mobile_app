@@ -5,6 +5,7 @@ import org.koin.core.component.inject
 
 @Suppress("unused")
 public class ViewModelDI : KoinComponent {
+    public val errorBanner: ErrorBannerViewModel by inject()
     public val favorites: FavoritesViewModel by inject()
     public val map: MapViewModel by inject()
     public val search: SearchViewModel by inject()

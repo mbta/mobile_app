@@ -6,6 +6,7 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 public actual fun viewModelModule(): Module = module {
+    singleOf(::ErrorBannerViewModel)
     single {
         FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
     }
