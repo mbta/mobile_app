@@ -44,7 +44,7 @@ playServicesLocation = "21.3.0"
 sentry-android-gradle = "5.9.0"
 sentry-java = "8.19.1"
 sentry-kmp = "0.18.0"
-skie = "0.10.5"
+skie = "0.10.6"
 spatialk = "0.3.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "7.2.1"
