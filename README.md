@@ -51,7 +51,7 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 - If some piece of BOM generation still fails in Xcode even when Xcode was launched with a good `PATH`, try running `./gradlew :shared:bomCodegenIos` manually from a terminal with a good `PATH`.
 - If `./gradlew :shared:bomCodegenIos` fails in a terminal with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try `./gradlew :shared:bomCodegenIos` again.
 - If Android Studio can't find `rsvg-convert` even when Android Studio was launched with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try the build again.
-- If your Gradle dependency tree has problems you need to visualize, try `./gradlew :shared:dependencies --configuration iosMainImplementationDependenciesMetadata` or `./gradlew :shared:dependencies --configuration releaseRuntimeClasspath` or `./gradlew :androidApp:dependencies --configuration stagingReleaseRuntimeClasspath`.
+- If your Gradle dependency tree has problems you need to visualize, try `./gradlew :shared:dependencies --configuration iosMainImplementationDependenciesMetadata` or `./gradlew :shared:dependencies --configuration releaseRuntimeClasspath` or `./gradlew :androidApp:dependencies --configuration stagingReleaseRuntimeClasspath`. Gradle sometimes just lies about what dependencies it’ll use, though.
 
 ## Running Locally
 

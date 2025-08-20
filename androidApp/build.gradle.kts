@@ -39,6 +39,20 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
+    autoInstallation {
+        sentryVersion = provider {
+            val bareKMPConfig = configurations.detachedConfiguration(libs.sentry.kmp.get())
+            val resolvedDependencies = bareKMPConfig.incoming.resolutionResult
+            val resolvedModuleVersions =
+                resolvedDependencies.allComponents.mapNotNull { it.moduleVersion }
+            val transitiveSentryCore =
+                resolvedModuleVersions.find { it.module.toString() == "io.sentry:sentry" }
+            checkNotNull(transitiveSentryCore) {
+                    "Could not find io.sentry:sentry among ${resolvedModuleVersions.joinToString(prefix = "[", postfix = "]")}"
+                }
+                .version
+        }
+    }
 }
 
 android {

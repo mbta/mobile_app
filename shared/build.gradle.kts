@@ -76,7 +76,6 @@ kotlin {
                 api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
-                implementation(project.dependencies.platform(libs.sentry.bom))
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
