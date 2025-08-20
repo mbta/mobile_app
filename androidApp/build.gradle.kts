@@ -18,7 +18,7 @@ plugins {
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.mokkery)
-    alias(libs.plugins.sentryGradle)
+    alias(libs.plugins.sentry.android)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
 }
@@ -39,7 +39,7 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
-    autoInstallation { sentryVersion = "8.15.1" }
+    autoInstallation { enabled = false }
 }
 
 android {
@@ -114,6 +114,7 @@ dependencies {
     implementation(libs.mapbox.turf)
     implementation(libs.okhttp)
     implementation(libs.playServices.location)
+    implementation(libs.sentry.android)
     implementation(libs.androidx.lifecycle.runtime.testing)
     debugImplementation(platform(libs.compose.bom))
     debugImplementation(libs.compose.ui.test.manifest)

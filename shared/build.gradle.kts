@@ -21,7 +21,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
-    alias(libs.plugins.sentry)
+    alias(libs.plugins.sentry.kmp)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
     id("de.undercouch.download").version("5.6.0")
@@ -59,7 +59,7 @@ kotlin {
         framework {
             baseName = "Shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
-            export(libs.sentry)
+            export(libs.sentry.kmp)
         }
 
         xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
@@ -73,7 +73,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.sentry)
+                api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.androidx.datastore.preferences.core)
@@ -108,6 +108,7 @@ kotlin {
                 implementation(libs.androidx.lifecycle.viewmodel.android)
                 implementation(libs.koin.androidxCompose)
                 implementation(libs.ktor.client.okhttp)
+                implementation(libs.sentry)
             }
         }
         val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
