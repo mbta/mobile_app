@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.parametric.parametricTest
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
@@ -1551,6 +1552,148 @@ class RouteCardDataTest {
                     PredictionsStreamDataResponse(objects),
                     filterAtTime = now,
                     globalData = global,
+                )
+                .data,
+        )
+    }
+
+    @Test
+    fun `ListBuilder addAlerts filters to relevant routes`() = parametricTest {
+        val context =
+            anyOf(
+                RouteCardData.Context.StopDetailsUnfiltered,
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+        val now = EasternTimeInstant.now()
+        val objects = TestData.clone()
+        val stop = objects.getStop("place-wascm")
+        val platform = objects.getStop("70121")
+        val greenLine = objects.getLine("line-Green")
+        val greenB = objects.getRoute("Green-B")
+        val greenBWestbound = objects.getRoutePattern("Green-B-812-0")
+
+        val greenBPrediction =
+            objects.prediction {
+                trip = objects.trip(greenBWestbound)
+                departureTime = now + 3.minutes
+                stopId = platform.id
+            }
+
+        val alertB =
+            objects.alert {
+                activePeriod(now - 15.minutes, null)
+                effect = Alert.Effect.Delay
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = greenB.id,
+                    routeType = RouteType.LIGHT_RAIL,
+                )
+                severity = 5
+            }
+        objects.alert {
+            activePeriod(now - 15.minutes, null)
+            effect = Alert.Effect.Delay
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride,
+                ),
+                route = "Green-C",
+                routeType = RouteType.LIGHT_RAIL,
+            )
+            severity = 5
+        }
+        objects.alert {
+            activePeriod(now - 15.minutes, null)
+            effect = Alert.Effect.Delay
+            informedEntity(
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride,
+                ),
+                route = "Green-E",
+                routeType = RouteType.LIGHT_RAIL,
+            )
+            severity = 5
+        }
+
+        val globalData = GlobalResponse(objects)
+
+        val lineOrRoute =
+            RouteCardData.LineOrRoute.Line(
+                greenLine,
+                setOf(
+                    greenB,
+                    objects.getRoute("Green-C"),
+                    objects.getRoute("Green-D"),
+                    objects.getRoute("Green-E"),
+                ),
+            )
+
+        assertEquals(
+            mapOf(
+                "line-Green" to
+                    RouteCardData.Builder(
+                        lineOrRoute,
+                        mapOf(
+                            stop.id to
+                                RouteCardData.RouteStopDataBuilder(
+                                    lineOrRoute,
+                                    stop,
+                                    listOf(
+                                        Direction("West", "Boston College", 0),
+                                        Direction("East", "Government Center", 1),
+                                    ),
+                                    mapOf(
+                                        0 to
+                                            RouteCardData.LeafBuilder(
+                                                lineOrRoute,
+                                                stop,
+                                                0,
+                                                listOf(greenBWestbound),
+                                                stopIds = setOf(platform.id),
+                                                upcomingTrips =
+                                                    listOfNotNull(
+                                                        objects.upcomingTrip(greenBPrediction)
+                                                    ),
+                                                alertsHere = listOfNotNull(alertB),
+                                                allDataLoaded = true,
+                                                hasSchedulesTodayByPattern =
+                                                    mapOf(greenBWestbound.id to false),
+                                                alertsDownstream = emptyList(),
+                                                context = context,
+                                            )
+                                    ),
+                                )
+                        ),
+                        now,
+                    )
+            ),
+            RouteCardData.ListBuilder(true, context, now)
+                .addStaticStopsData(
+                    listOf(platform.id),
+                    globalData,
+                    context,
+                    favorites = emptySet(),
+                )
+                .addUpcomingTrips(
+                    ScheduleResponse(objects),
+                    PredictionsStreamDataResponse(objects),
+                    now,
+                    globalData,
+                )
+                .filterIrrelevantData(now, cutoffTime = null, context, globalData)
+                .addAlerts(
+                    AlertsStreamDataResponse(objects),
+                    includeMinorAlerts = true,
+                    now,
+                    globalData,
                 )
                 .data,
         )

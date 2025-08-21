@@ -933,7 +933,13 @@ public data class RouteCardData(
                 process = { path, leafBuilder ->
                     val routes =
                         if (path.routeOrLineId.startsWith("line-")) {
-                            globalData.routesByLineId[path.routeOrLineId].orEmpty().map { it.id }
+                            leafBuilder.routePatterns
+                                ?.map { it.routeId }
+                                ?.distinct()
+                                ?.takeUnless { it.isEmpty() }
+                                ?: globalData.routesByLineId[path.routeOrLineId].orEmpty().map {
+                                    it.id
+                                }
                         } else {
                             listOf(path.routeOrLineId)
                         }
