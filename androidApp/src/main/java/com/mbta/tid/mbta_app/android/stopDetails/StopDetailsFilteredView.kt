@@ -9,19 +9,18 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.android.ModalRoutes
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
-import com.mbta.tid.mbta_app.model.FavoriteBridge
-import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun StopDetailsFilteredView(
@@ -31,15 +30,15 @@ fun StopDetailsFilteredView(
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
-    isFavorite: (FavoriteBridge) -> Boolean,
-    updateFavorites: (FavoriteUpdateBridge) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean,
+    updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val globalResponse by viewModel.globalResponse.collectAsState()
     val routeStopData by viewModel.filteredRouteStopData.collectAsState()
@@ -85,7 +84,7 @@ private fun Loading(
     now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     globalResponse: GlobalResponse?,
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -111,8 +110,8 @@ private fun Loading(
                 updateStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                isFavorite = { _ -> null },
-                updateFavorites = {},
+                isFavorite = { _ -> false },
+                updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
                 onClose = {},

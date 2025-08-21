@@ -17,7 +17,7 @@ struct TripDetailsView: View {
 
     var now: EasternTimeInstant
 
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
@@ -36,7 +36,7 @@ struct TripDetailsView: View {
         tripFilter: TripDetailsFilter?,
         stopId: String,
         now: EasternTimeInstant,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel,
@@ -108,11 +108,11 @@ struct TripDetailsView: View {
                tripData.tripFilter == tripFilter,
                tripData.tripPredictionsLoaded,
                let global = stopDetailsVM.global,
+               let route = stopDetailsVM.getTripRoute(),
                let stops {
-                let routeAccents = stopDetailsVM.getTripRouteAccents()
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first, global: global)
                 let vehicleStop = getParentFor(vehicle?.stopId, global: global)
-                tripDetails(tripData.trip, stops, terminalStop, vehicle, vehicleStop, routeAccents)
+                tripDetails(tripData.trip, stops, terminalStop, vehicle, vehicleStop, route)
                     .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
@@ -126,8 +126,9 @@ struct TripDetailsView: View {
         _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
         _ vehicleStop: Stop?,
-        _ routeAccents: TripRouteAccents
+        _ route: Route,
     ) -> some View {
+        let routeAccents = TripRouteAccents(route: route)
         let headerSpec: TripHeaderSpec? = {
             if let vehicle, let vehicleStop {
                 let atTerminal = terminalStop != nil && terminalStop?.id == vehicleStop.id
@@ -156,7 +157,7 @@ struct TripDetailsView: View {
         } } else { nil }
 
         VStack(spacing: 0) {
-            tripHeaderCard(trip, headerSpec, onHeaderTap, routeAccents).zIndex(1)
+            tripHeaderCard(trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
                 .padding(.horizontal, 6)
             TripStops(
                 targetId: stopId,
@@ -167,6 +168,7 @@ struct TripDetailsView: View {
                 alertSummaries: stopDetailsVM.alertSummaries,
                 onTapLink: onTapStop,
                 onOpenAlertDetails: onOpenAlertDetails,
+                route: route,
                 routeAccents: routeAccents,
                 global: stopDetailsVM.global
             )
@@ -179,6 +181,7 @@ struct TripDetailsView: View {
         _ trip: Trip,
         _ spec: TripHeaderSpec?,
         _ onTap: (() -> Void)?,
+        _ route: Route,
         _ routeAccents: TripRouteAccents
     ) -> some View {
         if let spec {
@@ -186,6 +189,7 @@ struct TripDetailsView: View {
                 spec: spec,
                 trip: trip,
                 targetId: stopId,
+                route: route,
                 routeAccents: routeAccents,
                 onTap: onTap,
                 now: now
@@ -201,7 +205,7 @@ struct TripDetailsView: View {
             nil,
             placeholderInfo.vehicle,
             placeholderInfo.vehicleStop,
-            TripRouteAccents()
+            placeholderInfo.route,
         ).loadingPlaceholder()
     }
 

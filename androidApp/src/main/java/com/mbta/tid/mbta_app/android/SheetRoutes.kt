@@ -8,6 +8,7 @@ import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -27,19 +28,22 @@ val SheetRoutes.Companion.typeMap
             typeOf<RoutePickerPath>() to RoutePickerPathParameterType,
             typeOf<StopDetailsFilter?>() to StopFilterParameterType,
             typeOf<TripDetailsFilter?>() to TripFilterParameterType,
+            typeOf<TripDetailsPageFilter>() to TripPageFilterParameterType,
         )
 
 fun SheetRoutes.Companion.fromNavBackStackEntry(backStackEntry: NavBackStackEntry): SheetRoutes {
-    return if (backStackEntry.destination.route?.contains("StopDetails") == true) {
+    return if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
+        backStackEntry.toRoute<SheetRoutes.EditFavorites>()
+    } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
+        backStackEntry.toRoute<SheetRoutes.Favorites>()
+    } else if (backStackEntry.destination.route?.contains("StopDetails") == true) {
         backStackEntry.toRoute<SheetRoutes.StopDetails>()
     } else if (backStackEntry.destination.route?.contains("RouteDetails") == true) {
         backStackEntry.toRoute<SheetRoutes.RouteDetails>()
     } else if (backStackEntry.destination.route?.contains("RoutePicker") == true) {
         backStackEntry.toRoute<SheetRoutes.RoutePicker>()
-    } else if (backStackEntry.destination.route?.contains("EditFavorites") == true) {
-        backStackEntry.toRoute<SheetRoutes.EditFavorites>()
-    } else if (backStackEntry.destination.route?.contains("Favorites") == true) {
-        backStackEntry.toRoute<SheetRoutes.Favorites>()
+    } else if (backStackEntry.destination.route?.contains("TripDetails") == true) {
+        backStackEntry.toRoute<SheetRoutes.TripDetails>()
     } else {
         backStackEntry.toRoute<SheetRoutes.NearbyTransit>()
     }
@@ -47,61 +51,24 @@ fun SheetRoutes.Companion.fromNavBackStackEntry(backStackEntry: NavBackStackEntr
 
 // Defining types for type-safe navigation with custom objects
 // https://medium.com/@kosta.artur/sending-complex-type-safe-objects-in-compose-navigator-bd161e6adc09
+inline fun <reified T> jsonNavType(default: T? = null) =
+    object : NavType<T>(isNullableAllowed = null is T) {
+        override fun get(bundle: Bundle, key: String): T? =
+            bundle.getString(key)?.let { parseValue(it) } ?: default
+
+        override fun put(bundle: Bundle, key: String, value: T) {
+            bundle.putString(key, serializeAsValue(value))
+        }
+
+        override fun parseValue(value: String): T = json.decodeFromString(value)
+
+        override fun serializeAsValue(value: T): String = json.encodeToString(value)
+    }
+
 val RouteDetailsContextParameterType =
-    object : NavType<RouteDetailsContext>(isNullableAllowed = false) {
-        override fun get(bundle: Bundle, key: String): RouteDetailsContext =
-            bundle.getString(key)?.let { parseValue(it) } ?: RouteDetailsContext.Details
+    jsonNavType<RouteDetailsContext>(default = RouteDetailsContext.Details)
 
-        override fun put(bundle: Bundle, key: String, value: RouteDetailsContext) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): RouteDetailsContext = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: RouteDetailsContext): String =
-            json.encodeToString(value)
-    }
-
-val RoutePickerPathParameterType =
-    object : NavType<RoutePickerPath>(isNullableAllowed = false) {
-        override fun get(bundle: Bundle, key: String): RoutePickerPath =
-            bundle.getString(key)?.let { parseValue(it) } ?: RoutePickerPath.Root
-
-        override fun put(bundle: Bundle, key: String, value: RoutePickerPath) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): RoutePickerPath = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: RoutePickerPath): String = json.encodeToString(value)
-    }
-
-val StopFilterParameterType =
-    object : NavType<StopDetailsFilter?>(isNullableAllowed = true) {
-        override fun get(bundle: Bundle, key: String): StopDetailsFilter? =
-            bundle.getString(key)?.let { parseValue(it) }
-
-        override fun put(bundle: Bundle, key: String, value: StopDetailsFilter?) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): StopDetailsFilter? = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: StopDetailsFilter?): String =
-            json.encodeToString(value)
-    }
-
-val TripFilterParameterType =
-    object : NavType<TripDetailsFilter?>(isNullableAllowed = true) {
-        override fun get(bundle: Bundle, key: String): TripDetailsFilter? =
-            bundle.getString(key)?.let { parseValue(it) }
-
-        override fun put(bundle: Bundle, key: String, value: TripDetailsFilter?) {
-            bundle.putString(key, serializeAsValue(value))
-        }
-
-        override fun parseValue(value: String): TripDetailsFilter? = json.decodeFromString(value)
-
-        override fun serializeAsValue(value: TripDetailsFilter?): String =
-            json.encodeToString(value)
-    }
+val RoutePickerPathParameterType = jsonNavType<RoutePickerPath>(default = RoutePickerPath.Root)
+val StopFilterParameterType = jsonNavType<StopDetailsFilter?>()
+val TripFilterParameterType = jsonNavType<TripDetailsFilter?>()
+val TripPageFilterParameterType = jsonNavType<TripDetailsPageFilter>()

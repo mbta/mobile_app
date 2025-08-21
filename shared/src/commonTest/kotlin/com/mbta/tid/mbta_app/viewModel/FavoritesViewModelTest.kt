@@ -145,9 +145,13 @@ internal class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `loads empty favorites`() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        setUpKoin(objects, dispatcher) {
-            favorites = MockFavoritesRepository(Favorites(emptySet()))
+        try {
+            val dispatcher = StandardTestDispatcher(testScheduler)
+            setUpKoin(objects, dispatcher) {
+                favorites = MockFavoritesRepository(Favorites(emptySet()))
+            }
+        } catch (e: Exception) {
+            TODO("Not yet implemented")
         }
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))

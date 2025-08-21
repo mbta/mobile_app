@@ -24,7 +24,7 @@ struct AnnotatedMap: View {
     var vehicles: [Vehicle]?
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
-    var handleTapStopLayer: (QueriedFeature, InteractionContext) -> Bool
+    var handleTapStopLayer: (FeaturesetFeature, InteractionContext) -> Bool
     var handleTapVehicle: (Vehicle) -> Void
 
     @ObservedObject var viewportProvider: ViewportProvider
@@ -45,7 +45,7 @@ struct AnnotatedMap: View {
         vehicles: [Vehicle]? = nil,
         handleCameraChange: @escaping (CameraChanged) -> Void,
         handleStyleLoaded: @escaping () -> Void,
-        handleTapStopLayer: @escaping (QueriedFeature, InteractionContext) -> Bool,
+        handleTapStopLayer: @escaping (FeaturesetFeature, InteractionContext) -> Bool,
         handleTapVehicle: @escaping (Vehicle) -> Void,
         viewportProvider: ViewportProvider,
     ) {
@@ -79,8 +79,6 @@ struct AnnotatedMap: View {
                 compass: .init(visibility: .hidden),
                 attributionButton: .init(margins: .init(x: -3, y: 6))
             ))
-            .onLayerTapGesture(StopLayerGenerator.shared.stopLayerId, perform: handleTapStopLayer)
-            .onLayerTapGesture(StopLayerGenerator.shared.stopTouchTargetLayerId, perform: handleTapStopLayer)
             .onStyleLoaded { _ in
                 // The initial run of this happens before any required data is loaded, so it does nothing and
                 // handleTryLayerInit always performs the first layer creation, but once the data is in place,
@@ -118,6 +116,8 @@ struct AnnotatedMap: View {
     @ViewBuilder
     var map: Map {
         Map(viewport: $viewportProvider.viewport) {
+            TapInteraction(.layer(StopLayerGenerator.shared.stopLayerId), action: handleTapStopLayer)
+            TapInteraction(.layer(StopLayerGenerator.shared.stopTouchTargetLayerId), action: handleTapStopLayer)
             Puck2D()
                 .topImage(.init(resource: .locationDot))
                 .shadowImage(.init(resource: .locationHalo))
@@ -143,7 +143,7 @@ struct AnnotatedMap: View {
                                 onTap: { handleTapVehicle(vehicle) }
                             )
                         }
-                        .selected(isSelected)
+                        .priority(isSelected ? 1 : 0)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
                         .visible(zoomLevel >= StopLayerGenerator.shared.stopZoomThreshold || isSelected)

@@ -11,7 +11,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
@@ -25,6 +24,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.test.assertEquals

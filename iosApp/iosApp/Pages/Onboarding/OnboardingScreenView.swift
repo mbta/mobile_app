@@ -91,7 +91,6 @@ struct OnboardingScreenView: View {
                 })
 
             case .hideMaps:
-
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(

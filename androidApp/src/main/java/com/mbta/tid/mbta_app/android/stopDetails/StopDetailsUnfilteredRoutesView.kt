@@ -22,29 +22,28 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.MockErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
@@ -55,11 +54,10 @@ fun StopDetailsUnfilteredRoutesView(
     stop: Stop,
     routeCardData: List<RouteCardData>,
     servedRoutes: List<PillFilter>,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     now: EasternTimeInstant,
     globalData: GlobalResponse?,
-    isPinned: (String) -> Boolean,
-    pinRoute: (String) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean,
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
@@ -132,11 +130,7 @@ fun StopDetailsUnfilteredRoutesView(
                         routeCardData,
                         globalData,
                         now,
-                        isFavorite = { favoritesBridge ->
-                            favoritesBridge is FavoriteBridge.Pinned &&
-                                isPinned(favoritesBridge.routeId)
-                        },
-                        onPin = pinRoute,
+                        isFavorite = { rsd -> isFavorite(rsd) },
                         showStopHeader = false,
                         onOpenStopDetails = { _, stopDetailsFilter ->
                             updateStopFilter(stopDetailsFilter)
@@ -280,7 +274,7 @@ private fun StopDetailsRoutesViewPreview() {
         )
 
     val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
-    val errorBannerVM = viewModel { ErrorBannerViewModel(false, MockErrorBannerStateRepository()) }
+    val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()
 
     MyApplicationTheme {
         KoinContext(koin.koin) {
@@ -291,8 +285,7 @@ private fun StopDetailsRoutesViewPreview() {
                 errorBannerVM,
                 now = now,
                 globalData,
-                isPinned = { false },
-                pinRoute = {},
+                isFavorite = { false },
                 onClose = {},
                 onTapRoutePill = {},
                 updateStopFilter = {},

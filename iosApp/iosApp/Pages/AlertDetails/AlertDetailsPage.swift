@@ -15,7 +15,6 @@ struct AlertDetailsPage: View {
     var routes: [Route]?
     var stop: Stop?
     var nearbyVM: NearbyViewModel
-    var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
     var globalRepository: IGlobalRepository = RepositoryDI().global
 
     @State private var alert: Shared.Alert?
@@ -117,7 +116,6 @@ struct AlertDetailsPage: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "AlertDetailsPage.loadGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadGlobal

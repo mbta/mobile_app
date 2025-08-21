@@ -10,7 +10,6 @@ import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
@@ -25,6 +24,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -143,7 +143,7 @@ class StopDetailsViewTest {
             )
         )
 
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
@@ -151,7 +151,7 @@ class StopDetailsViewTest {
                     stopId = stop.id,
                     viewModel = viewModel,
                     isFavorite = { false },
-                    updateFavorites = {},
+                    updateFavorites = { _, _ -> },
                     onClose = {},
                     stopFilter = null,
                     tripFilter = null,
@@ -202,7 +202,7 @@ class StopDetailsViewTest {
                 GlobalResponse(builder),
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -213,7 +213,7 @@ class StopDetailsViewTest {
                     stopId = stop.id,
                     viewModel = viewModel,
                     isFavorite = { false },
-                    updateFavorites = {},
+                    updateFavorites = { _, _ -> },
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -279,7 +279,7 @@ class StopDetailsViewTest {
                 )
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -288,7 +288,7 @@ class StopDetailsViewTest {
                     stopId = stop.id,
                     viewModel = viewModel,
                     isFavorite = { false },
-                    updateFavorites = {},
+                    updateFavorites = { _, _ -> },
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,
@@ -338,7 +338,7 @@ class StopDetailsViewTest {
                 GlobalResponse(builder),
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -348,7 +348,7 @@ class StopDetailsViewTest {
                     stopId = stop.id,
                     viewModel = viewModel,
                     isFavorite = { false },
-                    updateFavorites = {},
+                    updateFavorites = { _, _ -> },
                     onClose = {},
                     stopFilter = filterState.value,
                     tripFilter = null,

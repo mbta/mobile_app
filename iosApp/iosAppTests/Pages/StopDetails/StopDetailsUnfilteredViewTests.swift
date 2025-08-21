@@ -103,10 +103,7 @@ import XCTest
         )
     }
 
-    private let errorBannerViewModel = ErrorBannerViewModel(
-        errorRepository: MockErrorBannerStateRepository(),
-        initialLoadingWhenPredictionsStale: false
-    )
+    private let errorBannerViewModel = MockErrorBannerViewModel()
 
     func testGroupsByDirection() async throws {
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
@@ -117,7 +114,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 
@@ -150,7 +146,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [:]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 
@@ -194,7 +189,6 @@ import XCTest
             predictions: .init(objects: builder!),
             alerts: .init(alerts: [alert.id: alert]),
             now: now!,
-            pinnedRoutes: [],
             context: .stopDetailsUnfiltered
         )
 

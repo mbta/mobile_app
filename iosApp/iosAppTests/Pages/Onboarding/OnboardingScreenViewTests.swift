@@ -83,7 +83,6 @@ final class OnboardingScreenViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(ViewType.Toggle.self))
 
         let exp = sut.inspection.inspect { view in
-
             try view.find(ViewType.Toggle.self).tap()
             try view.find(button: "Continue").tap()
         }

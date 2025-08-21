@@ -26,11 +26,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let directionId: Int32 = 0
 
         let favoritesRepository = MockFavoritesRepository()
-        let pinnedRoutesRepository = MockPinnedRoutesRepository()
 
         let stopDetailsVM = StopDetailsViewModel(
             favoritesRepository: favoritesRepository,
-            pinnedRoutesRepository: pinnedRoutesRepository
         )
         let sut = StopDetailsFilteredView(stopId: stop.id,
                                           stopFilter: .init(routeId: route.id, directionId: directionId),
@@ -39,7 +37,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                                           setTripFilter: { _ in },
                                           routeCardData: [],
                                           now: Date.now,
-                                          errorBannerVM: .init(),
+                                          errorBannerVM: MockErrorBannerViewModel(),
                                           nearbyVM: .init(),
                                           mapVM: .init(),
                                           stopDetailsVM: stopDetailsVM)
@@ -56,7 +54,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
-            .enhancedFavorites: true,
             .devDebugMode: false,
         ]))
         wait(for: [tapButtonExp, confirmationDialogExp], timeout: 2)

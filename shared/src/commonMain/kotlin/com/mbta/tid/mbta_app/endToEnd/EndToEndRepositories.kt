@@ -57,7 +57,6 @@ import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
-import com.mbta.tid.mbta_app.usecases.TogglePinnedRouteUsecase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -125,8 +124,6 @@ internal fun endToEndModule(): Module {
         single<IPinnedRoutesRepository> {
             object : IPinnedRoutesRepository {
                 override suspend fun getPinnedRoutes() = emptySet<String>()
-
-                override suspend fun setPinnedRoutes(routes: Set<String>) {}
             }
         }
         single<IPredictionsRepository> {
@@ -155,7 +152,6 @@ internal fun endToEndModule(): Module {
         single { AlertsUsecase(get(), get()) }
         single { ConfigUseCase(get(), get()) }
         single { FeaturePromoUseCase(get(), get()) }
-        single { TogglePinnedRouteUsecase(get()) }
         single { VisitHistoryUsecase(get()) }
     }
 }

@@ -28,6 +28,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentAlertState
@@ -49,6 +50,7 @@ fun TripStopRow(
     now: EasternTimeInstant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
+    route: Route,
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
     modifier: Modifier = Modifier,
@@ -93,7 +95,7 @@ fun TripStopRow(
         trackNumber = stop.trackNumber,
         rightSideContent = { rightSideModifier ->
             CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
-                val state = upcomingTripViewState(stop, trip, now, routeAccents)
+                val state = upcomingTripViewState(stop, trip, now, route)
                 if (state != null) {
                     UpcomingTripView(
                         state,
@@ -116,9 +118,9 @@ private fun upcomingTripViewState(
     stop: TripDetailsStopList.Entry,
     trip: Trip,
     now: EasternTimeInstant,
-    routeAccents: TripRouteAccents,
+    route: Route,
 ): UpcomingTripViewState? {
-    return when (val formatted = stop.format(trip, now, routeAccents.type)) {
+    return when (val formatted = stop.format(trip, now, route)) {
         is UpcomingFormat.Some ->
             UpcomingTripViewState.Some(formatted.trips.singleOrNull()?.format ?: return null)
         is UpcomingFormat.Disruption ->
@@ -139,6 +141,14 @@ private fun TripStopRowPreview() {
     val objects = ObjectCollectionBuilder()
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
+    val red =
+        objects.route {
+            color = "DA291C"
+            longName = "Red Line"
+            textColor = "FFFFFF"
+            type = RouteType.HEAVY_RAIL
+        }
+    val redAccents = TripRouteAccents(red)
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
@@ -156,11 +166,7 @@ private fun TripStopRowPreview() {
                             vehicle = null,
                             routes =
                                 listOf(
-                                    objects.route {
-                                        longName = "Red Line"
-                                        color = "DA291C"
-                                        textColor = "FFFFFF"
-                                    },
+                                    red,
                                     objects.route {
                                         longName = "Green Line"
                                         color = "00843D"
@@ -172,10 +178,8 @@ private fun TripStopRowPreview() {
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
-                    TripRouteAccents.default.copy(
-                        type = RouteType.HEAVY_RAIL,
-                        color = Color.fromHex("DA291C"),
-                    ),
+                    red,
+                    redAccents,
                     alertSummaries = emptyMap(),
                 )
                 TripStopRow(
@@ -189,11 +193,7 @@ private fun TripStopRowPreview() {
                             vehicle = null,
                             routes =
                                 listOf(
-                                    objects.route {
-                                        longName = "Red Line"
-                                        color = "DA291C"
-                                        textColor = "FFFFFF"
-                                    },
+                                    red,
                                     objects.route {
                                         longName = "Green Line"
                                         color = "00843D"
@@ -205,10 +205,8 @@ private fun TripStopRowPreview() {
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
-                    TripRouteAccents.default.copy(
-                        type = RouteType.HEAVY_RAIL,
-                        color = Color.fromHex("DA291C"),
-                    ),
+                    red,
+                    redAccents,
                     alertSummaries = emptyMap(),
                 )
                 TripStopRow(
@@ -233,6 +231,7 @@ private fun TripStopRowPreview() {
                     now,
                     onTapLink = {},
                     onOpenAlertDetails = {},
+                    objects.route { type = RouteType.COMMUTER_RAIL },
                     TripRouteAccents.default.copy(
                         type = RouteType.COMMUTER_RAIL,
                         color = Color.fromHex("DA291C"),
@@ -253,6 +252,14 @@ private fun TripStopRowDisruptionsPreview() {
     val objects = ObjectCollectionBuilder()
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
+    val red =
+        objects.route {
+            color = "DA291C"
+            longName = "Red Line"
+            textColor = "FFFFFF"
+            type = RouteType.HEAVY_RAIL
+        }
+    val redAccents = TripRouteAccents(red)
     KoinContext(koin.koin) {
         MyApplicationTheme {
             Box {
@@ -277,11 +284,7 @@ private fun TripStopRowDisruptionsPreview() {
                                 vehicle = null,
                                 routes =
                                     listOf(
-                                        objects.route {
-                                            longName = "Red Line"
-                                            color = "DA291C"
-                                            textColor = "FFFFFF"
-                                        },
+                                        red,
                                         objects.route {
                                             longName = "Green Line"
                                             color = "00843D"
@@ -293,10 +296,8 @@ private fun TripStopRowDisruptionsPreview() {
                         now,
                         onTapLink = {},
                         onOpenAlertDetails = {},
-                        TripRouteAccents.default.copy(
-                            type = RouteType.HEAVY_RAIL,
-                            color = Color.fromHex("DA291C"),
-                        ),
+                        red,
+                        redAccents,
                         alertSummaries = emptyMap(),
                         showDownstreamAlert = true,
                     )
@@ -312,11 +313,7 @@ private fun TripStopRowDisruptionsPreview() {
                                 vehicle = null,
                                 routes =
                                     listOf(
-                                        objects.route {
-                                            longName = "Red Line"
-                                            color = "DA291C"
-                                            textColor = "FFFFFF"
-                                        },
+                                        red,
                                         objects.route {
                                             longName = "Green Line"
                                             color = "00843D"
@@ -328,10 +325,8 @@ private fun TripStopRowDisruptionsPreview() {
                         now,
                         onTapLink = {},
                         onOpenAlertDetails = {},
-                        TripRouteAccents.default.copy(
-                            type = RouteType.HEAVY_RAIL,
-                            color = Color.fromHex("DA291C"),
-                        ),
+                        red,
+                        redAccents,
                         alertSummaries = emptyMap(),
                         showDownstreamAlert = true,
                     )
@@ -365,6 +360,7 @@ private fun TripStopRowDisruptionsPreview() {
                         now,
                         onTapLink = {},
                         onOpenAlertDetails = {},
+                        objects.route { type = RouteType.COMMUTER_RAIL },
                         TripRouteAccents.default.copy(
                             type = RouteType.COMMUTER_RAIL,
                             color = Color.fromHex("DA291C"),

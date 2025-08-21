@@ -198,7 +198,6 @@ public class FavoritesViewModel(
                         predictions,
                         alerts,
                         now,
-                        emptySet(),
                         RouteCardData.Context.Favorites,
                         favorites,
                         coroutineDispatcher,

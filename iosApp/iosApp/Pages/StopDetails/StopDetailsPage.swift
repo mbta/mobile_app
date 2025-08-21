@@ -14,7 +14,6 @@ struct RouteCardParams: Equatable {
     let alerts: AlertsStreamDataResponse?
     let global: GlobalResponse?
     let now: Date
-    let pinnedRoutes: Set<String>
     let stopData: StopData?
     let stopFilter: StopDetailsFilter?
     let stopId: String
@@ -30,7 +29,7 @@ struct StopDetailsPage: View {
     @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now
 
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
@@ -46,7 +45,7 @@ struct StopDetailsPage: View {
 
     init(
         filters: StopDetailsPageFilters,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel,
@@ -99,13 +98,12 @@ struct StopDetailsPage: View {
                 }
             }
             .onChange(of: stopDetailsVM.stopData) { stopData in
-                errorBannerVM.loadingWhenPredictionsStale = !(stopData?.predictionsLoaded ?? true)
+                errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: !(stopData?.predictionsLoaded ?? true))
             }
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
             .onChange(of: RouteCardParams(alerts: nearbyVM.alerts,
                                           global: stopDetailsVM.global,
                                           now: now,
-                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
                                           stopData: stopDetailsVM.stopData,
                                           stopFilter: stopFilter,
                                           stopId: stopId)) { newParams in
@@ -131,7 +129,7 @@ struct StopDetailsPage: View {
                 onInactive: stopDetailsVM.leaveStopPredictions,
                 onBackground: {
                     stopDetailsVM.leaveStopPredictions()
-                    errorBannerVM.loadingWhenPredictionsStale = true
+                    errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: true)
                 }
             )
     }
@@ -223,7 +221,6 @@ struct StopDetailsPage: View {
         updateDepartures(routeCardParams: RouteCardParams(alerts: nearbyVM.alerts,
                                                           global: stopDetailsVM.global,
                                                           now: now,
-                                                          pinnedRoutes: stopDetailsVM.pinnedRoutes,
                                                           stopData: stopDetailsVM.stopData,
                                                           stopFilter: stopFilter,
                                                           stopId: stopId))

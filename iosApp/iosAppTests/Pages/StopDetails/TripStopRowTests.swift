@@ -40,6 +40,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([:])
@@ -70,6 +71,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([:])
@@ -106,6 +108,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             alertSummaries: [:]
         ).withFixedSettings([:])
@@ -137,6 +140,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             targeted: true
@@ -154,6 +158,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([:])
@@ -186,6 +191,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([:])
@@ -197,6 +203,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             targeted: true
@@ -209,6 +216,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             firstStop: true
@@ -221,6 +229,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:],
             targeted: true,
@@ -259,6 +268,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([.stationAccessibility: true])
@@ -299,6 +309,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: TripRouteAccents(route: route),
             alertSummaries: [:]
         ).withFixedSettings([.stationAccessibility: true])
@@ -336,6 +347,7 @@ final class TripStopRowTests: XCTestCase {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
+            route: route,
             routeAccents: .init(route: route),
             alertSummaries: [alert.id: summary],
             showDownstreamAlert: true

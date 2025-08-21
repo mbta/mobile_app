@@ -49,7 +49,6 @@ struct TripRouteAccents: Hashable {
 // swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
     @Published var global: GlobalResponse?
-    @Published var pinnedRoutes: Set<String> = []
     @Published var favorites: Favorites = .init(routeStopDirection: [])
     @Published var alertSummaries: [String: AlertSummary?] = [:]
 
@@ -60,7 +59,6 @@ class StopDetailsViewModel: ObservableObject {
     private let errorBannerRepository: IErrorBannerStateRepository
     private let favoritesRepository: IFavoritesRepository
     private let globalRepository: IGlobalRepository
-    private let pinnedRoutesRepository: IPinnedRoutesRepository
     private let predictionsRepository: IPredictionsRepository
     private let schedulesRepository: ISchedulesRepository
     private let tripPredictionsRepository: ITripPredictionsRepository
@@ -68,7 +66,6 @@ class StopDetailsViewModel: ObservableObject {
     private let vehicleRepository: IVehicleRepository
 
     private let favoritesUsecases: FavoritesUsecases
-    private let togglePinnedUsecase: TogglePinnedRouteUsecase
 
     let analytics: Analytics = AnalyticsProvider.shared
 
@@ -76,7 +73,6 @@ class StopDetailsViewModel: ObservableObject {
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         favoritesRepository: IFavoritesRepository = RepositoryDI().favorites,
         globalRepository: IGlobalRepository = RepositoryDI().global,
-        pinnedRoutesRepository: IPinnedRoutesRepository = RepositoryDI().pinnedRoutes,
         predictionsRepository: IPredictionsRepository = RepositoryDI().predictions,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
         tripPredictionsRepository: ITripPredictionsRepository = RepositoryDI().tripPredictions,
@@ -86,7 +82,6 @@ class StopDetailsViewModel: ObservableObject {
         self.errorBannerRepository = errorBannerRepository
         self.favoritesRepository = favoritesRepository
         self.globalRepository = globalRepository
-        self.pinnedRoutesRepository = pinnedRoutesRepository
         self.predictionsRepository = predictionsRepository
         self.schedulesRepository = schedulesRepository
         self.tripPredictionsRepository = tripPredictionsRepository
@@ -94,7 +89,6 @@ class StopDetailsViewModel: ObservableObject {
         self.vehicleRepository = vehicleRepository
 
         favoritesUsecases = .init(repository: favoritesRepository, analytics: analytics)
-        togglePinnedUsecase = .init(repository: pinnedRoutesRepository)
     }
 
     private func activateGlobalListener() async {
@@ -164,12 +158,16 @@ class StopDetailsViewModel: ObservableObject {
                 predictions: stopData?.predictionsByStop?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 now: now,
-                pinnedRoutes: pinnedRoutes,
                 context: isFiltered ? .stopDetailsFiltered : .stopDetailsUnfiltered
             )
         } else {
             nil
         }
+    }
+
+    func getTripRoute() -> Route? {
+        guard let routeId = tripData?.trip.routeId else { return nil }
+        return global?.getRoute(routeId: routeId)
     }
 
     func getTripRouteAccents() -> TripRouteAccents {
@@ -185,7 +183,6 @@ class StopDetailsViewModel: ObservableObject {
         Task {
             loadGlobalData()
             loadFavorites()
-            loadPinnedRoutes()
             await handleStopChange(stopId)
         }
     }
@@ -349,7 +346,6 @@ class StopDetailsViewModel: ObservableObject {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadGlobalData
@@ -371,20 +367,6 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func loadPinnedRoutes() {
-        Task {
-            do {
-                let nextPinned = try await pinnedRoutesRepository.getPinnedRoutes()
-                Task { @MainActor in self.pinnedRoutes = nextPinned }
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getPinnedRoutes shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
     func loadStopDetails(stopId: String) async {
         let schedules = await loadStopSchedules(stopId: stopId)
         let task = Task { @MainActor in
@@ -401,7 +383,6 @@ class StopDetailsViewModel: ObservableObject {
         let task = Task<ScheduleResponse?, Error> {
             var result: ScheduleResponse?
             await fetchApi(
-                self.errorBannerRepository,
                 errorKey: "StopDetailsPage.getSchedule",
                 getData: { try await self.schedulesRepository.getSchedule(stopIds: [stopId]) },
                 onSuccess: { @MainActor in result = $0 },
@@ -460,7 +441,6 @@ class StopDetailsViewModel: ObservableObject {
         let task = Task<TripSchedulesResponse?, Error> {
             var result: TripSchedulesResponse?
             await fetchApi(
-                self.errorBannerRepository,
                 errorKey: "TripDetailsView.loadTripSchedules",
                 getData: { try await self.tripRepository.getTripSchedules(tripId: tripFilter.tripId) },
                 onSuccess: { @MainActor in result = $0 },
@@ -491,36 +471,21 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func isFavorite(_ favorite: FavoriteBridge, enhancedFavorites: Bool) -> Bool {
-        switch onEnum(of: favorite) {
-        case let .pinned(favorite) where !enhancedFavorites:
-            pinnedRoutes.contains(favorite.routeId)
-        case let .favorite(favorite) where enhancedFavorites:
-            favorites.routeStopDirection?.contains(favorite.routeStopDirection) ?? false
-        default:
-            false
-        }
+    func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
+        favorites.routeStopDirection?.contains(routeStopDirection) ?? false
     }
 
-    func updateFavorites(_ favorite: FavoriteUpdateBridge, enhancedFavorites: Bool) async -> Bool {
+    func updateFavorites(_ updatedFavorites: [RouteStopDirection: Bool], _ defaultDirection: Int32) async -> Bool {
         let task = Task<Bool, Error> {
             do {
-                switch onEnum(of: favorite) {
-                case let .pinned(favorite) where !enhancedFavorites:
-                    let newValue = try await self.togglePinnedUsecase.execute(route: favorite.routeId).boolValue
-                    self.loadPinnedRoutes()
-                    return newValue
-                case let .favorites(favorite) where enhancedFavorites:
-                    try await self.favoritesUsecases.updateRouteStopDirections(
-                        newValues: favorite.updatedValues,
-                        context: .stopDetails,
-                        defaultDirection: favorite.defaultDirection
-                    )
-                    self.loadFavorites()
-                    return false
-                default:
-                    return false
-                }
+                try await self.favoritesUsecases.updateRouteStopDirections(
+                    newValues: updatedFavorites.mapValues { KotlinBoolean(bool: $0) },
+                    context: .stopDetails,
+                    defaultDirection: defaultDirection
+                )
+                self.loadFavorites()
+                return false
+
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {

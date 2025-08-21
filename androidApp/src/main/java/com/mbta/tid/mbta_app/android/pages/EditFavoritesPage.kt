@@ -152,8 +152,6 @@ private fun EditFavoritesList(
                 RouteCardContainer(
                     modifier = Modifier.animateItem(),
                     data = it,
-                    isFavorite = { _ -> true },
-                    onPin = {},
                     showStopHeader = true,
                 ) { stopData ->
                     FavoriteDepartures(stopData, global) {

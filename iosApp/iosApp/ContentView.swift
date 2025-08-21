@@ -20,7 +20,7 @@ struct ContentView: View {
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
     @State private var sheetHeight: CGFloat =
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
-    @StateObject var errorBannerVM = ErrorBannerViewModel()
+    @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = iosApp.MapViewModel()
@@ -30,7 +30,6 @@ struct ContentView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -210,9 +209,6 @@ struct ContentView: View {
             }
         }
         .background(Color.sheetBackground)
-        .onAppear {
-            Task { await errorBannerVM.activate() }
-        }
     }
 
     @ViewBuilder
@@ -351,13 +347,10 @@ struct ContentView: View {
         // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
-                if enhancedFavorites {
-                    favoritesPage
-                        .toolbar(tabBarVisibility, for: .tabBar)
-                        .tag(SelectedTab.favorites)
-                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                }
-
+                favoritesPage
+                    .toolbar(tabBarVisibility, for: .tabBar)
+                    .tag(SelectedTab.favorites)
+                    .tabItem { TabLabel(tab: SelectedTab.favorites) }
                 nearbyPage
                     .toolbar(tabBarVisibility, for: .tabBar)
                     .tag(SelectedTab.nearby)
@@ -482,7 +475,6 @@ struct ContentView: View {
                             content: coverContents
                         )
                         .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-
                             if let oldSheetRoute,
                                let newSheetRoute,
                                SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
@@ -508,14 +500,11 @@ struct ContentView: View {
 
             case .more:
                 TabView(selection: $selectedTab) {
-                    if enhancedFavorites {
-                        VStack {}
-                            .onAppear { selectedTab = .favorites }
-                            .toolbar(.hidden, for: .tabBar)
-                            .tag(SelectedTab.favorites)
-                            .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                    }
-
+                    VStack {}
+                        .onAppear { selectedTab = .favorites }
+                        .toolbar(.hidden, for: .tabBar)
+                        .tag(SelectedTab.favorites)
+                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
                     VStack {}
                         .onAppear { selectedTab = .nearby }
                         .toolbar(.hidden, for: .tabBar)

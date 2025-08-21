@@ -18,7 +18,6 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageTests: XCTestCase {
-    private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
@@ -35,7 +34,7 @@ final class NearbyTransitPageTests: XCTestCase {
         nearbyVM.routeCardData = []
 
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
@@ -84,7 +83,7 @@ final class NearbyTransitPageTests: XCTestCase {
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
@@ -127,7 +126,7 @@ final class NearbyTransitPageTests: XCTestCase {
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops

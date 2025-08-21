@@ -15,12 +15,11 @@ struct RouteDetailsView: View {
     let onOpenStopDetails: (String) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
     @State private var lineOrRoute: RouteCardData.LineOrRoute?
     let globalRepository: IGlobalRepository = RepositoryDI().global
-    var errorBannerRepository = RepositoryDI().errorBanner
 
     var body: some View {
         ScrollView([]) {
@@ -66,7 +65,6 @@ struct RouteDetailsView: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: { @MainActor in getGlobal() }

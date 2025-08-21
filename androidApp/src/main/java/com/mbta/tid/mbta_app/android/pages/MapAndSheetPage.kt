@@ -53,7 +53,6 @@ import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.BarAndToastScaffold
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -77,7 +76,6 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
-import com.mbta.tid.mbta_app.android.util.managePinnedRoutes
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.popBackStackFrom
@@ -97,6 +95,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
@@ -136,15 +135,12 @@ fun MapAndSheetPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = koinInject(),
-    errorBannerViewModel: ErrorBannerViewModel =
-        viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
+    errorBannerViewModel: IErrorBannerViewModel = koinInject(),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
-    LaunchedEffect(Unit) { errorBannerViewModel.activate() }
-
     val viewModel: NearbyTransitTabViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
@@ -156,8 +152,6 @@ fun MapAndSheetPage(
 
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
-
-    val (pinnedRoutes) = managePinnedRoutes()
 
     val density = LocalDensity.current
 
@@ -198,7 +192,6 @@ fun MapAndSheetPage(
             filters = filters,
             globalResponse = nearbyTransit.globalResponse,
             alertData = nearbyTransit.alertData,
-            pinnedRoutes = pinnedRoutes ?: emptySet(),
             updateStopFilter = ::updateStopFilter,
             updateTripFilter = ::updateTripFilter,
             setMapSelectedVehicle = { vehicle ->
@@ -451,7 +444,6 @@ fun MapAndSheetPage(
                         global = null,
                         now = now,
                         isFavorite = { false },
-                        togglePinnedRoute = {},
                         onOpenStopDetails = { _, _ -> },
                     )
                 }
@@ -520,6 +512,21 @@ fun MapAndSheetPage(
                 openSheetRoute = navController::navigate,
                 errorBannerViewModel = errorBannerViewModel,
             )
+        }
+    }
+
+    @Composable
+    fun TripDetailsSheetContents(backStackEntry: NavBackStackEntry) {
+        val navRoute: SheetRoutes.TripDetails = backStackEntry.toRoute()
+        LaunchedEffect(navRoute) {
+            if (navBarVisible) {
+                hideNavBar()
+            }
+            analytics.track(AnalyticsScreen.TripDetails)
+        }
+
+        SheetPage(colorResource(R.color.fill2)) {
+            TripDetailsPage(filter = navRoute.filter, onClose = { navController.popBackStack() })
         }
     }
 
@@ -659,6 +666,9 @@ fun MapAndSheetPage(
             }
             composable<SheetRoutes.StopDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
                 StopDetailsSheetContents(backStackEntry)
+            }
+            composable<SheetRoutes.TripDetails>(typeMap = SheetRoutes.typeMap) { backStackEntry ->
+                TripDetailsSheetContents(backStackEntry)
             }
 
             composable<SheetRoutes.RoutePicker>(typeMap = SheetRoutes.typeMap) { backStackEntry ->

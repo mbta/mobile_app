@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Trip
@@ -64,6 +65,7 @@ fun TripStops(
     global: GlobalResponse?,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
+    route: Route,
     routeAccents: TripRouteAccents,
 ) {
     val context = LocalContext.current
@@ -126,6 +128,7 @@ fun TripStops(
                         now,
                         onTapLink,
                         onOpenAlertDetails,
+                        route,
                         routeAccents,
                         alertSummaries,
                         firstStop = true,
@@ -166,6 +169,7 @@ fun TripStops(
                         now,
                         onTapLink,
                         onOpenAlertDetails,
+                        route,
                         routeAccents,
                         alertSummaries,
                     )
@@ -191,6 +195,7 @@ fun TripStops(
                     now,
                     onTapLink,
                     onOpenAlertDetails,
+                    route,
                     routeAccents,
                     alertSummaries,
                     targeted = true,
@@ -208,6 +213,7 @@ fun TripStops(
                 now,
                 onTapLink,
                 onOpenAlertDetails,
+                route,
                 routeAccents,
                 alertSummaries,
                 showDownstreamAlerts = true,
@@ -243,6 +249,7 @@ private fun StopList(
     now: EasternTimeInstant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
     onOpenAlertDetails: (Alert) -> Unit,
+    route: Route,
     routeAccents: TripRouteAccents,
     alertSummaries: Map<String, AlertSummary?>,
     showDownstreamAlerts: Boolean = false,
@@ -254,6 +261,7 @@ private fun StopList(
             now,
             onTapLink,
             onOpenAlertDetails,
+            route,
             routeAccents,
             alertSummaries,
             showDownstreamAlert = showDownstreamAlerts,
@@ -315,6 +323,7 @@ private fun TripStopsPreview() {
                 GlobalResponse(objects),
                 onTapLink = {},
                 onOpenAlertDetails = {},
+                route,
                 TripRouteAccents(route),
             )
         }

@@ -5,7 +5,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -22,6 +21,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -112,7 +112,7 @@ class StopDetailsUnfilteredRoutesViewTest {
             mutableMapOf(stop.id to listOf(routePatternOne.id, routePatternTwo.id)),
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+    private val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
     @get:Rule val composeTestRule = createComposeRule()
 
@@ -128,7 +128,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -147,8 +146,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,
@@ -175,7 +173,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -194,8 +191,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,
@@ -229,7 +225,6 @@ class StopDetailsUnfilteredRoutesViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(mapOf(alert.id to alert)),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsUnfiltered,
                 )
             )
@@ -248,8 +243,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     errorBannerViewModel = errorBannerViewModel,
                     now = now,
                     globalData = globalResponse,
-                    isPinned = { false },
-                    pinRoute = {},
+                    isFavorite = { false },
                     onClose = {},
                     onTapRoutePill = {},
                     updateStopFilter = filterState::value::set,

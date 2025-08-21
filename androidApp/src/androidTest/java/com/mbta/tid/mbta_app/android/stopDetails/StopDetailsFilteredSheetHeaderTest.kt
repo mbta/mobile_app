@@ -51,7 +51,7 @@ class StopDetailsFilteredSheetHeaderTest {
                 route = route,
                 line = null,
                 stop = stop,
-                onPin = {},
+                onFavorite = {},
                 onClose = {},
             )
         }
@@ -74,8 +74,8 @@ class StopDetailsFilteredSheetHeaderTest {
                 route = route,
                 line = null,
                 stop = stop,
-                pinned = false,
-                onPin = { pinCalled = true },
+                isFavorite = false,
+                onFavorite = { pinCalled = true },
                 onClose = { closeCalled = true },
             )
         }

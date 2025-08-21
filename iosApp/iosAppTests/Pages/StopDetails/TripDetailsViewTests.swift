@@ -56,7 +56,6 @@ final class TripDetailsViewTests: XCTestCase {
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.pinnedRoutes = .init()
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -76,7 +75,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -122,7 +121,6 @@ final class TripDetailsViewTests: XCTestCase {
             )
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.pinnedRoutes = .init()
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -142,7 +140,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -198,7 +196,6 @@ final class TripDetailsViewTests: XCTestCase {
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.pinnedRoutes = .init()
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -223,7 +220,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -277,7 +274,6 @@ final class TripDetailsViewTests: XCTestCase {
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
         stopDetailsVM.global = .init(objects: objects)
-        stopDetailsVM.pinnedRoutes = .init()
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -302,7 +298,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripFilter: stopDetailsVM.tripData?.tripFilter,
             stopId: targetStop.id,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,

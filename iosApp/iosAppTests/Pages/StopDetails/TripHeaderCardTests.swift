@@ -21,6 +21,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .inTransitTo
@@ -30,7 +31,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -42,6 +44,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let inTransitVehicle = objects.vehicle { vehicle in
@@ -52,7 +55,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(inTransitVehicle, stop, nil, false),
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -66,7 +70,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(incomingVehicle, stop, nil, false),
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -80,7 +85,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(stoppedVehicle, stop, nil, false),
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -91,13 +97,15 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let sut = TripHeaderCard(
             spec: .finishingAnotherTrip,
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -109,13 +117,15 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let sut = TripHeaderCard(
             spec: .noVehicle,
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -127,6 +137,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let vehicle = objects.vehicle { vehicle in
@@ -138,7 +149,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -149,7 +161,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip,
             targetId: "",
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -161,6 +174,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let vehicle = objects.vehicle { vehicle in
@@ -186,7 +200,8 @@ final class TripHeaderCardTests: XCTestCase {
             ), true),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -233,6 +248,7 @@ final class TripHeaderCardTests: XCTestCase {
             ), true),
             trip: trip,
             targetId: stop.id,
+            route: route,
             routeAccents: .init(route: route),
             onTap: nil,
             now: now
@@ -245,6 +261,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "Stop Name" }
+        let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
 
         let schedule = objects.schedule { schedule in
@@ -264,7 +281,8 @@ final class TripHeaderCardTests: XCTestCase {
             )),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -279,6 +297,7 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
         let trip = objects.trip { _ in }
 
         let schedule = objects.schedule { schedule in
@@ -300,7 +319,8 @@ final class TripHeaderCardTests: XCTestCase {
             )),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: { tapExpectation.fulfill() },
             now: now
         )
@@ -314,13 +334,15 @@ final class TripHeaderCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { stop in stop.name = "stop" }
+        let route = objects.route { $0.type = .bus }
         let trip = objects.trip { _ in }
 
         let withTap = TripHeaderCard(
             spec: .finishingAnotherTrip,
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: {},
             now: now
         )
@@ -333,7 +355,8 @@ final class TripHeaderCardTests: XCTestCase {
             spec: .finishingAnotherTrip,
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: nil,
             now: now
         )
@@ -350,7 +373,8 @@ final class TripHeaderCardTests: XCTestCase {
         let withVehicleAtStop = TripHeaderCard(
             spec: .vehicle(vehicle, stop, nil, false),
             trip: trip, targetId: stop.id,
-            routeAccents: .init(type: .bus),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: {},
             now: now
         )
@@ -364,7 +388,8 @@ final class TripHeaderCardTests: XCTestCase {
         let withVehicleAtOtherStop = TripHeaderCard(
             spec: .vehicle(vehicle, otherStop, nil, false),
             trip: trip, targetId: stop.id,
-            routeAccents: .init(type: .bus),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: {},
             now: now
         )
@@ -388,7 +413,8 @@ final class TripHeaderCardTests: XCTestCase {
             )),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: {},
             now: now
         )
@@ -409,7 +435,8 @@ final class TripHeaderCardTests: XCTestCase {
             )),
             trip: trip,
             targetId: stop.id,
-            routeAccents: .init(),
+            route: route,
+            routeAccents: .init(route: route),
             onTap: {},
             now: now
         )
@@ -425,6 +452,7 @@ final class TripHeaderCardTests: XCTestCase {
             stop.name = "North Station"
             stop.id = "place-north"
         }
+        let crRoute = objects.route { $0.type = .commuterRail }
         let platformStop = objects.stop { platformStop in
             platformStop.platformCode = "4"
             platformStop.vehicleType = .commuterRail
@@ -439,6 +467,7 @@ final class TripHeaderCardTests: XCTestCase {
                 }, predictionStop: platformStop, vehicle: boardingVehicle, routes: [], elevatorAlerts: []
             ), false),
             trip: trip, targetId: coreCRStop.id,
+            route: crRoute,
             routeAccents: .init(type: .commuterRail),
             onTap: {},
             now: now

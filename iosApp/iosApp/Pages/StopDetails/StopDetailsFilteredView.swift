@@ -24,7 +24,7 @@ struct StopDetailsFilteredView: View {
 
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
@@ -48,7 +48,7 @@ struct StopDetailsFilteredView: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
         now: Date,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel
@@ -69,45 +69,12 @@ struct StopDetailsFilteredView: View {
         stopData = routeData?.stopData.first { $0.stop.id == stopId }
     }
 
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
     var routeStopDirection: RouteStopDirection {
         .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
-    var favoriteBridge: FavoriteBridge {
-        if enhancedFavorites {
-            .Favorite(routeStopDirection: routeStopDirection)
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
-    }
-
     var isFavorite: Bool {
-        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites)
-    }
-
-    var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
-        if enhancedFavorites {
-            .Favorites(
-                updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
-                defaultDirection: stopFilter.directionId
-            )
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
-    }
-
-    func toggleFavorite() {
-        Task {
-            let pinned = await stopDetailsVM.updateFavorites(
-                toggleFavoriteUpdateBridge,
-                enhancedFavorites: enhancedFavorites
-            )
-            if !enhancedFavorites {
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: stopFilter.routeId)
-            }
-        }
+        stopDetailsVM.isFavorite(routeStopDirection)
     }
 
     var body: some View {
@@ -158,20 +125,11 @@ struct StopDetailsFilteredView: View {
                                   selectedDirection: routeStopDirection.direction,
                                   context: .stopDetails,
                                   global: stopDetailsVM.global,
-                                  isFavorite: { rsd in
-                                      stopDetailsVM.isFavorite(
-                                          .Favorite(routeStopDirection: rsd),
-                                          enhancedFavorites: true
-                                      )
-                                  },
+                                  isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
                                   updateFavorites: { newFavorites in
                                       Task {
-                                          await stopDetailsVM.updateFavorites(
-                                              .Favorites(updatedValues: newFavorites
-                                                  .mapValues { KotlinBoolean(bool: $0) },
-                                                  defaultDirection: stopFilter.directionId),
-                                              enhancedFavorites: true
-                                          )
+                                          await stopDetailsVM.updateFavorites(newFavorites,
+                                                                              stopFilter.directionId)
                                       }
                                   },
                                   onClose: {
@@ -185,14 +143,8 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
-                    onPin: {
-                        if favoriteBridge is FavoriteBridge.Pinned {
-                            toggleFavorite()
-                        } else {
-                            inSaveFavoritesFlow = true
-                        }
-                    },
+                    isFavorite: stopDetailsVM.isFavorite(routeStopDirection),
+                    onFavorite: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
                 /*  DebugView {

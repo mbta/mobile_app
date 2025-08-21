@@ -16,13 +16,13 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
 }
 
 struct HaloScrollView<Content>: View where Content: View {
-    public var content: Content
-    public var axes: Axis.Set
+    var content: Content
+    var axes: Axis.Set
 
-    public var haloColor: Color
-    public var haloHeight: CGFloat
+    var haloColor: Color
+    var haloHeight: CGFloat
 
-    public init(
+    init(
         _ axes: Axis.Set = .vertical,
         haloColor: Color = .halo,
         haloHeight: CGFloat = 2,
@@ -36,7 +36,7 @@ struct HaloScrollView<Content>: View where Content: View {
 
     @State private var haloVisible = false
 
-    @MainActor @preconcurrency public var body: some View {
+    @MainActor @preconcurrency var body: some View {
         ZStack(alignment: .top) {
             ScrollView(axes) {
                 content

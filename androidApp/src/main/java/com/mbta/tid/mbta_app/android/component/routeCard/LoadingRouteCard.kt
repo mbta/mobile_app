@@ -16,7 +16,6 @@ fun LoadingRouteCard() {
             null,
             EasternTimeInstant.now(),
             { false },
-            {},
             showStopHeader = true,
             { _, _ -> },
         )

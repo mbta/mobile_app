@@ -2,16 +2,12 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.material3.Text
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertAny
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.compose.ui.test.onChildren
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
@@ -25,10 +21,9 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
-import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -185,7 +180,7 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 NearbyTransitView(
@@ -215,56 +210,8 @@ class NearbyTransitViewTest : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testDoesntSortsPinnedRoutesToTopEnhancedFavorites() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
-        val koinApplication =
-            testKoinApplication(
-                builder,
-                repositoryOverrides = {
-                    nearby =
-                        MockNearbyRepository(
-                            stopIds = listOf(sampleStop.id, greenLineStop.id),
-                            response = NearbyResponse(builder),
-                        )
-                    settings =
-                        MockSettingsRepository(settings = mapOf(Settings.EnhancedFavorites to true))
-                    pinnedRoutes = MockPinnedRoutesRepository(setOf(route.id))
-                },
-            )
-
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
-        }
-
-        composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
-        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
-
-        composeTestRule
-            .onAllNodesWithTag("RouteCard")[0]
-            .onChildren()
-            .assertAny(hasText("Green Line Long Name"))
-        composeTestRule
-            .onAllNodesWithTag("RouteCard")[1]
-            .onChildren()
-            .assertAny(hasText("Sample Route"))
-    }
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
     fun testRouteCardAnalyticsPinnedWithEnhanced() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         var analyticsLoggedProps: Map<String, String> = mapOf()
 
@@ -278,8 +225,7 @@ class NearbyTransitViewTest : KoinTest {
                             stopIds = listOf(sampleStop.id, greenLineStop.id),
                             response = NearbyResponse(builder),
                         )
-                    settings =
-                        MockSettingsRepository(settings = mapOf(Settings.EnhancedFavorites to true))
+                    settings = MockSettingsRepository(settings = mapOf())
                     favorites =
                         MockFavoritesRepository(
                             Favorites(
@@ -321,7 +267,7 @@ class NearbyTransitViewTest : KoinTest {
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
         val emptyNearbyKoinApplication = testKoinApplication()
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
                 NearbyTransitView(

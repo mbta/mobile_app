@@ -125,21 +125,21 @@ constructor(
 
     internal fun format(
         now: EasternTimeInstant,
-        routeType: RouteType,
+        route: Route,
         context: TripInstantDisplay.Context,
-    ) = format(now, routeType, context, routeType.isSubway())
+    ) = format(now, route.type, context, route.type.isSubway() || route.id in silverRoutes)
 
     internal fun format(
         now: EasternTimeInstant,
         routeType: RouteType,
         context: TripInstantDisplay.Context,
-        isSubway: Boolean,
+        hideSchedule: Boolean,
     ): UpcomingFormat.Some.FormattedTrip? {
         return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context).takeUnless {
             it.format is TripInstantDisplay.Hidden ||
                 it.format is TripInstantDisplay.Skipped ||
                 // API best practices call for hiding scheduled times on subway
-                (isSubway &&
+                (hideSchedule &&
                     (it.format is TripInstantDisplay.ScheduleTime ||
                         it.format is TripInstantDisplay.ScheduleMinutes))
         }
@@ -294,12 +294,12 @@ internal fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
  */
 internal fun List<UpcomingTrip>.withFormat(
     now: EasternTimeInstant,
-    routeType: RouteType,
+    route: Route,
     context: TripInstantDisplay.Context,
     limit: Int?,
 ): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
     return this.mapNotNull {
-            val format = it.format(now, routeType, context) ?: return@mapNotNull null
+            val format = it.format(now, route, context) ?: return@mapNotNull null
             Pair(it, format)
         }
         .run { if (limit != null) take(limit) else this }

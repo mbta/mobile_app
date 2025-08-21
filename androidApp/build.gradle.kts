@@ -6,6 +6,7 @@ import java.io.Serializable
 import java.io.StringReader
 import java.util.Locale
 import java.util.Properties
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // To use debug signing keys and skip Sentry uploads for an easier time debugging
 // performance-sensitive issues, turn this on.
@@ -17,12 +18,17 @@ plugins {
     alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.mokkery)
-    alias(libs.plugins.sentryGradle)
+    alias(libs.plugins.sentry.android)
     alias(libs.plugins.serialization)
     id("check-mapbox-bridge")
 }
 
-kotlin { compilerOptions { optIn.add("kotlin.time.ExperimentalTime") } }
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        optIn.add("kotlin.time.ExperimentalTime")
+    }
+}
 
 sentry {
     // Generates a JVM (Java, Kotlin, etc.) source bundle and uploads your source code to Sentry.
@@ -33,7 +39,20 @@ sentry {
     org = "mbtace"
     projectName = "mobile_app_android"
     authToken = System.getenv("SENTRY_AUTH_TOKEN")
-    autoInstallation { sentryVersion = "8.15.1" }
+    autoInstallation {
+        sentryVersion = provider {
+            val bareKMPConfig = configurations.detachedConfiguration(libs.sentry.kmp.get())
+            val resolvedDependencies = bareKMPConfig.incoming.resolutionResult
+            val resolvedModuleVersions =
+                resolvedDependencies.allComponents.mapNotNull { it.moduleVersion }
+            val transitiveSentryCore =
+                resolvedModuleVersions.find { it.module.toString() == "io.sentry:sentry" }
+            checkNotNull(transitiveSentryCore) {
+                    "Could not find io.sentry:sentry among ${resolvedModuleVersions.joinToString(prefix = "[", postfix = "]")}"
+                }
+                .version
+        }
+    }
 }
 
 android {
@@ -45,14 +64,13 @@ android {
         targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "2.0.0"
+        versionName = "2.0.1"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
-    lint { disable.add("NullSafeMutableLiveData") }
     packaging { resources { excludes += "/META-INF/{AL2.0,LGPL2.1}" } }
     buildTypes {
         getByName("release") {
@@ -80,7 +98,6 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions { jvmTarget = "1.8" }
     androidResources {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
