@@ -14,7 +14,7 @@ import SwiftUI
 struct RoutePickerView: View {
     let context: RouteDetailsContext
     let path: RoutePickerPath
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
     let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
@@ -28,7 +28,6 @@ struct RoutePickerView: View {
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
     let globalRepository: IGlobalRepository = RepositoryDI().global
-    var errorBannerRepository = RepositoryDI().errorBanner
 
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -237,7 +236,6 @@ struct RoutePickerView: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "RoutePickerView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: { @MainActor in getGlobal() }

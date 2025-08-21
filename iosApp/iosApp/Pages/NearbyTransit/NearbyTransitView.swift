@@ -19,7 +19,7 @@ struct NearbyTransitView: View {
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
-    @Binding var isReturningFromBackground: Bool
+    let setIsReturningFromBackground: (Bool) -> Void
     var globalRepository = RepositoryDI().global
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -112,7 +112,7 @@ struct NearbyTransitView: View {
             onInactive: leavePredictions,
             onBackground: {
                 leavePredictions()
-                isReturningFromBackground = true
+                setIsReturningFromBackground(true)
             }
         )
     }
@@ -199,7 +199,6 @@ struct NearbyTransitView: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: { @MainActor in loadEverything() }
@@ -224,7 +223,6 @@ struct NearbyTransitView: View {
         Task {
             guard let stopIds = nearbyVM.nearbyState.stopIds else { return }
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },
                 onSuccess: { scheduleResponse = $0 },
@@ -243,7 +241,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
-                isReturningFromBackground = false
+                setIsReturningFromBackground(false)
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -259,7 +257,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
-                isReturningFromBackground = false
+                setIsReturningFromBackground(false)
             }
 
         })

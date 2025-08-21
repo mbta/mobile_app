@@ -19,7 +19,7 @@ struct StopDetailsUnfilteredView: View {
     var routeCardData: [RouteCardData]?
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
@@ -36,7 +36,7 @@ struct StopDetailsUnfilteredView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
         now: EasternTimeInstant,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         stopDetailsVM: StopDetailsViewModel
     ) {

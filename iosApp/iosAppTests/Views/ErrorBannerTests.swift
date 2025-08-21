@@ -18,7 +18,6 @@ final class ErrorBannerTests: XCTestCase {
     func testRespondsToState() throws {
         let repo = MockErrorBannerStateRepository(state: nil)
         let errorBannerVM = ErrorBannerViewModel(errorRepository: repo)
-        Task { await errorBannerVM.activate() }
 
         let sut = ErrorBanner(errorBannerVM)
 
@@ -51,25 +50,29 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testWhenNetworkError() throws {
-        let sut = ErrorBanner(.init(
-            errorRepository: MockErrorBannerStateRepository(state: .NetworkError()),
-            initialLoadingWhenPredictionsStale: true
-        ))
-        XCTAssertNotNil(try sut.inspect().find(text: "Unable to connect"))
-    }
-
-    @MainActor func testLoadingWhenPredictionsStale() throws {
-        let sut = ErrorBanner(.init(
-            errorRepository: MockErrorBannerStateRepository(state: .StalePredictions(
-                lastUpdated: Date.distantPast.toEasternInstant(),
-                action: {}
-            )),
-            initialLoadingWhenPredictionsStale: true
-        ))
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
+                                                                           errorState: .NetworkError())))
 
         ViewHosting.host(view: sut)
 
-        let showedLoading = sut.inspection.inspect(after: 0.2) { view in
+        let showedError = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "Unable to connect"))
+        }
+
+        wait(for: [showedError], timeout: 1)
+    }
+
+    @MainActor func testLoadingWhenPredictionsStale() throws {
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: true,
+                                                                           errorState: .StalePredictions(
+                                                                               lastUpdated: Date.distantPast
+                                                                                   .toEasternInstant(),
+                                                                               action: {}
+                                                                           ))))
+
+        ViewHosting.host(view: sut)
+
+        let showedLoading = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(ViewType.ProgressView.self))
         }
 
@@ -77,10 +80,11 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testDebugModeNotShownByDefault() throws {
-        let sut = ErrorBanner(.init(
-            errorRepository: MockErrorBannerStateRepository(state: .DataError(messages: ["Fake message"], action: {})),
-            initialLoadingWhenPredictionsStale: true
-        ))
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
+                                                                           errorState: .DataError(
+                                                                               messages: ["Fake message"],
+                                                                               action: {}
+                                                                           ))))
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 

@@ -47,7 +47,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         ).withFixedSettings([:])
@@ -65,7 +65,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             globalRepository: MockGlobalRepository(),
             nearbyVM: FakeNearbyVM(getNearbyExpectation),
             noNearbyStops: noNearbyStops
@@ -195,7 +195,7 @@ final class NearbyTransitViewTests: XCTestCase {
                 callback: { scheduleStops in schedulePub.send(scheduleStops) }
             ),
             location: .constant(mockLocation),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
@@ -476,7 +476,7 @@ final class NearbyTransitViewTests: XCTestCase {
             ),
             schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects)),
             location: .constant(mockLocation),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
@@ -578,7 +578,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
@@ -608,7 +608,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
@@ -641,7 +641,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
@@ -684,7 +684,7 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
-            isReturningFromBackground: .constant(false),
+            setIsReturningFromBackground: { _ in },
             nearbyVM: .init(),
             noNearbyStops: noNearbyStops
         )

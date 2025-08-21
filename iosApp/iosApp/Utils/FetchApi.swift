@@ -14,7 +14,7 @@ import Shared
 /// `onRefreshAfterError`.
 /// If `getData` is interrupted by task cancellation, does nothing.
 func fetchApi<T>(
-    _ errorBannerRepo: IErrorBannerStateRepository,
+    _ errorBannerRepo: IErrorBannerStateRepository = RepositoryDI().errorBanner,
     errorKey: String,
     getData: () async throws -> ApiResult<T>,
     onSuccess: @MainActor (T) -> Void = { _ in },
