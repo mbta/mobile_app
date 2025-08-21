@@ -14,7 +14,7 @@ import SwiftUI
 struct RoutePickerView: View {
     let context: RouteDetailsContext
     let path: RoutePickerPath
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
     let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void

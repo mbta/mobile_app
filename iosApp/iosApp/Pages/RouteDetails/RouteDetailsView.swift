@@ -15,7 +15,7 @@ struct RouteDetailsView: View {
     let onOpenStopDetails: (String) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
     @State private var lineOrRoute: RouteCardData.LineOrRoute?

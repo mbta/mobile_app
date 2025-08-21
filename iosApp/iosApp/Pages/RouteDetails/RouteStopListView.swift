@@ -35,7 +35,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let onClick: (RouteDetailsRowContext) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     let defaultSelectedRouteId: String?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
@@ -61,7 +61,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         onClick: @escaping (RouteDetailsRowContext) -> Void,
         onBack: @escaping () -> Void,
         onClose: @escaping () -> Void,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         defaultSelectedRouteId: String? = nil,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         routeStopsRepository: IRouteStopsRepository = RepositoryDI().routeStops,
@@ -200,7 +200,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let onClick: (RouteDetailsRowContext) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
 
@@ -227,7 +227,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         onClick: @escaping (RouteDetailsRowContext) -> Void,
         onBack: @escaping () -> Void,
         onClose: @escaping () -> Void,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
         toastVM: IToastViewModel = ViewModelDI().toast

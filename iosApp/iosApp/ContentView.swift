@@ -20,7 +20,7 @@ struct ContentView: View {
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
     @State private var sheetHeight: CGFloat =
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
-    @State var errorBannerVM = ErrorBannerViewModel(errorRepository: RepositoryDI().errorBanner)
+    @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = iosApp.MapViewModel()

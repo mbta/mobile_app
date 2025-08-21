@@ -21,15 +21,15 @@ struct ErrorBanner: View {
     }
 
     var body: some View {
-        content
-            .task {
-                print("KB: GOING TO WAIT FOR NEW MODELS")
-                for await model in errorBannerVM.models {
-                    print("KB: HELLO NEW MODEL \(model)")
-                    errorBannerVMState = model
-                }
+        VStack {
+            content
+        }
+        .task {
+            for await model in errorBannerVM.models {
+                errorBannerVMState = model
             }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder private var content: some View {
