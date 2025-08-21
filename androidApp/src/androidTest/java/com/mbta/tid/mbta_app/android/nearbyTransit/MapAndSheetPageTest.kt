@@ -25,7 +25,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
@@ -45,12 +44,13 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import dev.mokkery.MockMode
@@ -61,6 +61,7 @@ import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.spy
+import dev.mokkery.verify
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Clock
@@ -280,12 +281,12 @@ class MapAndSheetPageTest : KoinTest {
     }
 
     @Test
-    fun testErrorBannerClearedOnPageChange() {
+    fun testErrorBannerPageChangeCalled() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
 
-        val mockErrorVM = ErrorBannerViewModel(errorRepository = ErrorBannerStateRepository())
-        mockErrorVM.errorRepository.setDataError("error1", {})
+        val mockErrorVM = mock<IErrorBannerViewModel>(MockMode.autofill)
+        every { mockErrorVM.models } returns MutableStateFlow(ErrorBannerViewModel.State())
 
         val koinApplication = koinApplication()
         composeTestRule.setContent {
@@ -323,7 +324,9 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
-        composeTestRule.waitUntilDefaultTimeout { mockErrorVM.errorState.value == null }
+        composeTestRule.waitForIdle()
+
+        verify { mockErrorVM.setSheetRoute(SheetRoutes.Favorites) }
     }
 
     @OptIn(ExperimentalTestApi::class)

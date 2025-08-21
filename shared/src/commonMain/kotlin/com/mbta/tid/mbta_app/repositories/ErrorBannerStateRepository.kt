@@ -92,7 +92,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         try {
             dataErrors.clear()
         } catch (e: ArrayIndexOutOfBoundsException) {
-            // race condition if calling
+            // ignore race condition if clearing multiple times
         }
         flow.value = null
     }

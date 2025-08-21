@@ -9,11 +9,11 @@ import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 
 public interface IErrorBannerViewModel {
     public val models: StateFlow<ErrorBannerViewModel.State>
@@ -27,6 +27,8 @@ public interface IErrorBannerViewModel {
         predictionQuantity: Int,
         action: () -> Unit,
     )
+
+    public fun setSheetRoute(sheetRoute: SheetRoutes?)
 }
 
 public class ErrorBannerViewModel(private val errorRepository: IErrorBannerStateRepository) :
@@ -43,12 +45,16 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
     public sealed interface Event {
         public data class SetIsLoadingWhenPredictionsStale(val isLoading: Boolean) : Event
 
+        public data class SetSheetRoute(val sheetRoute: SheetRoutes?) : Event
+
         public data object ClearState : Event
     }
 
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
+        var sheetRoute: SheetRoutes? by remember { mutableStateOf(null) }
+
         var errorState: ErrorBannerState? by remember { mutableStateOf(null) }
 
         LaunchedEffect(Unit) {
@@ -59,9 +65,16 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
-                    Event.ClearState -> errorRepository.clearState()
+                    is Event.ClearState -> errorRepository.clearState()
                     is Event.SetIsLoadingWhenPredictionsStale ->
                         awaitingPredictionsAfterBackground = event.isLoading
+
+                    is Event.SetSheetRoute -> {
+                        if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
+                            errorRepository.clearState()
+                        }
+                        sheetRoute = event.sheetRoute
+                    }
                 }
             }
         }
@@ -87,6 +100,10 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
     ) {
         errorRepository.checkPredictionsStale(predictionsLastUpdated, predictionQuantity, action)
     }
+
+    override fun setSheetRoute(sheetRoute: SheetRoutes?) {
+        fireEvent(Event.SetSheetRoute(sheetRoute))
+    }
 }
 
 public class MockErrorBannerViewModel
@@ -105,4 +122,6 @@ constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.Stat
         predictionQuantity: Int,
         action: () -> Unit,
     ) {}
+
+    override fun setSheetRoute(sheetRoutes: SheetRoutes?) {}
 }

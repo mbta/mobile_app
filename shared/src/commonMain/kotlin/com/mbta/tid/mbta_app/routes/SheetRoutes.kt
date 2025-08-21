@@ -61,7 +61,7 @@ public sealed class SheetRoutes {
          * Whether the page within the nearby transit tab changed. Moving from StopDetails to
          * StopDetails is only considered a page change if the stopId changed.
          */
-        public fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
+        internal fun pageChanged(first: SheetRoutes?, second: SheetRoutes?): Boolean {
             return if (first is StopDetails && second is StopDetails) {
                 first.stopId != second.stopId
             } else {
