@@ -341,7 +341,6 @@ class StopDetailsViewModel: ObservableObject {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "StopDetailsPage.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadGlobalData
@@ -379,7 +378,6 @@ class StopDetailsViewModel: ObservableObject {
         let task = Task<ScheduleResponse?, Error> {
             var result: ScheduleResponse?
             await fetchApi(
-                self.errorBannerRepository,
                 errorKey: "StopDetailsPage.getSchedule",
                 getData: { try await self.schedulesRepository.getSchedule(stopIds: [stopId]) },
                 onSuccess: { @MainActor in result = $0 },
@@ -438,7 +436,6 @@ class StopDetailsViewModel: ObservableObject {
         let task = Task<TripSchedulesResponse?, Error> {
             var result: TripSchedulesResponse?
             await fetchApi(
-                self.errorBannerRepository,
                 errorKey: "TripDetailsView.loadTripSchedules",
                 getData: { try await self.tripRepository.getTripSchedules(tripId: tripFilter.tripId) },
                 onSuccess: { @MainActor in result = $0 },

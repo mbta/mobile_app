@@ -23,9 +23,6 @@ struct FavoritesView: View {
     let inspection = Inspection<Self>()
     @State var now = Date.now
 
-    // Needed in addition to the VM for compatibility with fetchApi
-    let errorBannerRepository = RepositoryDI().errorBanner
-
     @ScaledMetric private var editButtonHeight: CGFloat = 32
 
     var body: some View {
@@ -147,7 +144,6 @@ struct FavoritesView: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "FavoritesView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadEverything

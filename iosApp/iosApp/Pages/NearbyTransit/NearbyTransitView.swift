@@ -199,7 +199,6 @@ struct NearbyTransitView: View {
         }
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: { @MainActor in loadEverything() }
@@ -224,7 +223,6 @@ struct NearbyTransitView: View {
         Task {
             guard let stopIds = nearbyVM.nearbyState.stopIds else { return }
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },
                 onSuccess: { scheduleResponse = $0 },

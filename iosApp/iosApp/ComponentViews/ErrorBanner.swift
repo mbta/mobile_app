@@ -93,12 +93,13 @@ struct ErrorBanner: View {
             loadingWhenPredictionsStale: false,
             errorState: .DataError(messages: Set(), action: {})
         )))
-        ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
-                                                                 errorState: .StalePredictions(
-                                                                     lastUpdated: EasternTimeInstant.now()
-                                                                         .minus(minutes: 2),
-                                                                     action: {}
-                                                                 ))))
+        ErrorBanner(MockErrorBannerViewModel(initialState:
+            .init(loadingWhenPredictionsStale: false,
+                  errorState: .StalePredictions(
+                      lastUpdated: EasternTimeInstant.now()
+                          .minus(minutes: 2),
+                      action: {}
+                  ))))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: true,
                   errorState: .StalePredictions(
