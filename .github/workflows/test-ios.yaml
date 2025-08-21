@@ -23,7 +23,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
         if: ${{ !inputs.skip-everything }}
