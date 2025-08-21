@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -173,14 +174,7 @@ private fun RefreshButton(
     }
 }
 
-@Preview
-@Composable
-private fun ErrorBannerPreviews() {
-    @Composable
-    fun PreviewBanner(vm: IErrorBannerViewModel) {
-        ErrorBanner(vm)
-    }
-
+class ErrorBannerPreviews() {
     val dataErrorRepo =
         MockErrorBannerStateRepository(
             state = ErrorBannerState.DataError(messages = setOf("foo"), action = {})
@@ -200,7 +194,6 @@ private fun ErrorBannerPreviews() {
         )
     val staleVM = ErrorBannerViewModel(staleRepo)
     val staleLoadingVM = ErrorBannerViewModel(staleRepo)
-    staleLoadingVM.setIsLoadingWhenPredictionsStale(true)
 
     // The preview requires Koin to contain the cache in order to render,
     // but it won't actually use the debug value set here when displayed
@@ -208,19 +201,30 @@ private fun ErrorBannerPreviews() {
     val koinApplication = koinApplication {
         modules(module { single<SettingsCache> { SettingsCache(settingsRepo) } })
     }
-    KoinContext(koinApplication.koin) {
-        MyApplicationTheme {
-            Column(
-                modifier =
-                    Modifier.background(MaterialTheme.colorScheme.background)
-                        .padding(vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                PreviewBanner(networkErrorVM)
-                PreviewBanner(dataErrorVM)
-                PreviewBanner(staleVM)
-                PreviewBanner(staleLoadingVM)
+
+    @Composable
+    fun PreviewBanner(vm: IErrorBannerViewModel) {
+        ErrorBanner(vm)
+    }
+
+    @Preview
+    @Composable
+    fun Previews() {
+        KoinContext(koinApplication.koin) {
+            MyApplicationTheme {
+                Column(
+                    modifier =
+                        Modifier.background(MaterialTheme.colorScheme.background)
+                            .padding(vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    PreviewBanner(networkErrorVM)
+                    PreviewBanner(dataErrorVM)
+                    PreviewBanner(staleVM)
+                    PreviewBanner(staleLoadingVM)
+                }
             }
         }
+        LaunchedEffect(Unit) { staleLoadingVM.setIsLoadingWhenPredictionsStale(true) }
     }
 }
