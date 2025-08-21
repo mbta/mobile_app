@@ -152,7 +152,9 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
                         }
                         .fold(mutableListOf<Segment>()) { acc, segment ->
                             if (acc.lastOrNull()?.isTypical == false && !segment.isTypical) {
-                                val priorSegment = acc.removeLast()
+                                // removeLast was added to the Android stdlib in API 35 and so will
+                                // fail when compiled against API 35 but run on API <35
+                                val priorSegment = acc.removeAt(acc.lastIndex)
                                 acc.add(
                                     priorSegment.copy(stops = priorSegment.stops + segment.stops)
                                 )

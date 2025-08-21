@@ -13,8 +13,8 @@ struct NavTextButton: View {
     let string: String
     let backgroundColor: Color
     let textColor: Color
-    var height: CGFloat? = nil
-    var width: CGFloat? = nil
+    var height: CGFloat?
+    var width: CGFloat?
     let action: () -> Void
 
     var body: some View {

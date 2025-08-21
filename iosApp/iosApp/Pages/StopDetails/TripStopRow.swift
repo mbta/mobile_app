@@ -22,7 +22,7 @@ struct TripStopRow: View {
     var targeted: Bool = false
     var firstStop: Bool = false
     var lastStop: Bool = false
-    var background: Color? = nil
+    var background: Color?
 
     var activeElevatorAlerts: [Shared.Alert] {
         stop.activeElevatorAlerts(now: now)
