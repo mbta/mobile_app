@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -52,11 +53,7 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
 
         LaunchedEffect(Unit) {
             errorRepository.subscribeToNetworkStatusChanges()
-            println("KB: HERE IN SHARED CODE")
-            errorRepository.state.collect {
-                errorState = it
-                println("KB: SETTING ERROR STATE ${it}")
-            }
+            errorRepository.state.collect { errorState = it }
         }
 
         LaunchedEffect(Unit) {
@@ -92,9 +89,10 @@ public class ErrorBannerViewModel(private val errorRepository: IErrorBannerState
     }
 }
 
-public class MockErrorBannerViewModel(
-    initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.State()
-) : IErrorBannerViewModel {
+public class MockErrorBannerViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.State()) :
+    IErrorBannerViewModel {
     override val models: MutableStateFlow<ErrorBannerViewModel.State> =
         MutableStateFlow(initialState)
 

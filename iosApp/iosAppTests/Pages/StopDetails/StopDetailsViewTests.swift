@@ -54,7 +54,7 @@ final class StopDetailsViewTests: XCTestCase {
                 ),
             ],
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: .init(
@@ -93,7 +93,7 @@ final class StopDetailsViewTests: XCTestCase {
                 at: EasternTimeInstant.now()
             )],
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
@@ -143,7 +143,7 @@ final class StopDetailsViewTests: XCTestCase {
                 at: EasternTimeInstant.now()
             )],
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
@@ -205,7 +205,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             routeCardData: [routeData],
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: .init()
@@ -232,7 +232,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             routeCardData: nil,
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: .init()
@@ -260,7 +260,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             routeCardData: nil,
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: .init()
@@ -287,7 +287,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             routeCardData: nil,
             now: Date.now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: .init()
