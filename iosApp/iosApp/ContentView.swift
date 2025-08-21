@@ -481,10 +481,7 @@ struct ContentView: View {
                                                                             second: newSheetRoute) {
                                 selectedDetent = .medium
                             }
-
-                            if SheetRoutes.companion.pageChanged(first: oldSheetRoute, second: newSheetRoute) {
-                                errorBannerVM.clearState()
-                            }
+                            errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
                         }
                         .onAppear { recordSheetHeight(proxy.size.height) }
                         .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
