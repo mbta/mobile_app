@@ -48,7 +48,6 @@ internal class TripRepository : ITripRepository, KoinComponent {
                         parameter("trip_id", tripId)
                     }
                 }
-
             return ApiResult.Ok(data = json.decodeFromString(response.body()))
         }
 

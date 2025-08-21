@@ -400,6 +400,8 @@ fun MapAndSheetPage(
         }
     }
 
+    LaunchedEffect(currentNavEntry) { errorBannerViewModel.setSheetRoute(currentNavEntry) }
+
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentModal by
         rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
