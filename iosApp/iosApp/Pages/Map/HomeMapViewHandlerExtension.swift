@@ -78,7 +78,6 @@ extension HomeMapView {
     func fetchGlobalData() {
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "HomeMapView.loadGlobalData",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: fetchGlobalData
@@ -103,7 +102,6 @@ extension HomeMapView {
     func fetchRouteShapes() {
         Task {
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "HomeMapView.handleAppear",
                 getData: { try await railRouteShapeRepository.getRailRouteShapes() },
                 onRefreshAfterError: fetchRouteShapes

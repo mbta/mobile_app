@@ -24,7 +24,7 @@ struct StopDetailsFilteredView: View {
 
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
@@ -48,7 +48,7 @@ struct StopDetailsFilteredView: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
         now: Date,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
         stopDetailsVM: StopDetailsViewModel

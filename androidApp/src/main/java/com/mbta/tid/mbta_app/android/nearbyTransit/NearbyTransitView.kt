@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.state.getSchedule
@@ -24,6 +23,7 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import org.koin.androidx.compose.koinViewModel
@@ -39,7 +39,7 @@ fun NearbyTransitView(
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     noNearbyStopsView: @Composable () -> Unit,
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
 ) {
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {

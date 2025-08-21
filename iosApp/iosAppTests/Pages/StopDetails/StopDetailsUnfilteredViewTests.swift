@@ -103,10 +103,7 @@ import XCTest
         )
     }
 
-    private let errorBannerViewModel = ErrorBannerViewModel(
-        errorRepository: MockErrorBannerStateRepository(),
-        initialLoadingWhenPredictionsStale: false
-    )
+    private let errorBannerViewModel = MockErrorBannerViewModel()
 
     func testGroupsByDirection() async throws {
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(

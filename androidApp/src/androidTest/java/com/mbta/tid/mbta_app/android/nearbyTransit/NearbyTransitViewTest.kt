@@ -8,7 +8,6 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
@@ -24,6 +23,7 @@ import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -180,7 +180,7 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 NearbyTransitView(
@@ -211,7 +211,7 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testRouteCardAnalyticsPinnedWithEnhanced() {
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         var analyticsLoggedProps: Map<String, String> = mapOf()
 
@@ -267,7 +267,7 @@ class NearbyTransitViewTest : KoinTest {
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
         val emptyNearbyKoinApplication = testKoinApplication()
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
                 NearbyTransitView(

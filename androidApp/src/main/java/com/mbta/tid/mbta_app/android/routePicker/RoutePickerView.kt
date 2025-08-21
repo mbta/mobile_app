@@ -30,7 +30,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.ErrorCard
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
@@ -44,6 +43,7 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
 import com.mbta.tid.mbta_app.viewModel.SearchRoutesViewModel
 import kotlinx.coroutines.launch
@@ -58,7 +58,7 @@ fun RoutePickerView(
     onRouteSearchExpandedChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
     val globalData = getGlobalData("RoutePickerView.globalData")

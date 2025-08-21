@@ -26,7 +26,6 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -41,6 +40,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun StopDetailsFilteredPickerView(
@@ -52,7 +52,7 @@ fun StopDetailsFilteredPickerView(
     global: GlobalResponse?,
     now: EasternTimeInstant,
     viewModel: StopDetailsViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,

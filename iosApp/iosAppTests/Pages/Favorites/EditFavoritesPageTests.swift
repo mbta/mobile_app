@@ -29,7 +29,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             onClose: { onCloseCalled = true },
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             toastVM: MockToastViewModel(),
         )
 
@@ -108,7 +108,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             onClose: {},
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             toastVM: toastVM,
         )
 
@@ -181,7 +181,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             onClose: {},
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             toastVM: toastVM,
         )
 

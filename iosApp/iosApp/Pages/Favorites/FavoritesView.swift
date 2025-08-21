@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 struct FavoritesView: View {
-    var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -85,7 +85,7 @@ struct FavoritesView: View {
             }
         }
         .onChange(of: favoritesVMState.awaitingPredictionsAfterBackground) {
-            errorBannerVM.loadingWhenPredictionsStale = $0
+            errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0)
         }
         .onChange(of: favoritesVMState.loadedLocation) {
             nearbyVM.lastLoadedLocation = $0?.coordinate
@@ -144,7 +144,6 @@ struct FavoritesView: View {
         }
         Task {
             await fetchApi(
-                errorBannerVM.errorRepository,
                 errorKey: "FavoritesView.getGlobal",
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadEverything

@@ -7,11 +7,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import junit.framework.TestCase.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +30,7 @@ class StopDetailsPageTest : KoinTest {
         val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
 
         var routeCardDataUpdated = false
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
