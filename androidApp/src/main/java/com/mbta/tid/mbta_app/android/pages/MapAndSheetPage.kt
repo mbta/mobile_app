@@ -719,6 +719,7 @@ fun MapAndSheetPage(
             ) {
                 SheetContent(
                     Modifier.background(colorResource(R.color.sheet_background))
+                        .padding(outerSheetPadding)
                         .padding(top = if (showSearchBar) 64.dp else 0.dp)
                         .statusBarsPadding()
                         .fillMaxSize()
