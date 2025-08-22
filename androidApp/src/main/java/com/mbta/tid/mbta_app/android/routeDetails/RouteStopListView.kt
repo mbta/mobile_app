@@ -38,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
@@ -77,6 +76,7 @@ import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.flow.map
@@ -101,7 +101,7 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     defaultSelectedRouteId: String? = null,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
@@ -156,7 +156,7 @@ fun RouteStopListView(
 @Composable
 fun LoadingRouteStopListView(
     context: RouteDetailsContext,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -217,7 +217,7 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {

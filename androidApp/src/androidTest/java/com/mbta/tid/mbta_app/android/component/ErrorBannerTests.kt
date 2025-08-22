@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.android.component
 
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
@@ -17,12 +17,9 @@ class ErrorBannerTests {
     @Test
     fun testRespondsToState() {
         val errorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val viewModel = ErrorBannerViewModel(false, errorRepo)
+        val viewModel = ErrorBannerViewModel(errorRepo)
 
-        composeTestRule.setContent {
-            LaunchedEffect(null) { viewModel.activate() }
-            ErrorBanner(viewModel)
-        }
+        composeTestRule.setContent { ErrorBanner(viewModel) }
 
         composeTestRule.onNodeWithText("Unable to connect").assertExists()
 
@@ -44,12 +41,9 @@ class ErrorBannerTests {
     fun testNetworkError() {
         val networkErrorRepo =
             MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-        val networkErrorVM = ErrorBannerViewModel(false, networkErrorRepo)
+        val networkErrorVM = ErrorBannerViewModel(networkErrorRepo)
 
-        composeTestRule.setContent {
-            LaunchedEffect(null) { networkErrorVM.activate() }
-            ErrorBanner(networkErrorVM)
-        }
+        composeTestRule.setContent { ErrorBanner(networkErrorVM) }
 
         composeTestRule.onNodeWithText("Unable to connect").assertExists()
     }
@@ -60,11 +54,8 @@ class ErrorBannerTests {
             MockErrorBannerStateRepository(
                 state = ErrorBannerState.DataError(messages = emptySet(), action = {})
             )
-        val dataErrorVM = ErrorBannerViewModel(false, dataErrorRepo)
-        composeTestRule.setContent {
-            LaunchedEffect(null) { dataErrorVM.activate() }
-            ErrorBanner(dataErrorVM)
-        }
+        val dataErrorVM = ErrorBannerViewModel(dataErrorRepo)
+        composeTestRule.setContent { ErrorBanner(dataErrorVM) }
 
         composeTestRule.onNodeWithText("Error loading data").assertExists()
     }
@@ -79,11 +70,8 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(false, staleRepo)
-        composeTestRule.setContent {
-            LaunchedEffect(null) { staleVM.activate() }
-            ErrorBanner(staleVM)
-        }
+        val staleVM = ErrorBannerViewModel(staleRepo)
+        composeTestRule.setContent { ErrorBanner(staleVM) }
 
         composeTestRule.onNodeWithText("Updated 2 minutes ago").assertExists()
     }
@@ -98,11 +86,8 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(false, staleRepo)
-        composeTestRule.setContent {
-            LaunchedEffect(null) { staleVM.activate() }
-            ErrorBanner(staleVM)
-        }
+        val staleVM = ErrorBannerViewModel(staleRepo)
+        composeTestRule.setContent { ErrorBanner(staleVM) }
 
         composeTestRule.onNodeWithText("Updated 1 minute ago").assertExists()
     }
@@ -117,11 +102,9 @@ class ErrorBannerTests {
                         action = {},
                     )
             )
-        val staleVM = ErrorBannerViewModel(true, staleRepo)
-        composeTestRule.setContent {
-            LaunchedEffect(null) { staleVM.activate() }
-            ErrorBanner(staleVM)
-        }
+        val staleVM = ErrorBannerViewModel(staleRepo)
+        staleVM.setIsLoadingWhenPredictionsStale(true)
+        composeTestRule.setContent { ErrorBanner(staleVM) }
 
         composeTestRule.onNodeWithText("Updated 2 minutes ago").assertDoesNotExist()
     }

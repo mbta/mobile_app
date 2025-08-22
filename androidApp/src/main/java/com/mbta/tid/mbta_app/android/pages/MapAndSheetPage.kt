@@ -53,7 +53,6 @@ import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.BarAndToastScaffold
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -96,6 +95,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import io.github.dellisd.spatialk.geojson.Position
@@ -135,15 +135,12 @@ fun MapAndSheetPage(
     hideNavBar: () -> Unit,
     bottomBar: @Composable () -> Unit,
     mapViewModel: IMapViewModel = koinInject(),
-    errorBannerViewModel: ErrorBannerViewModel =
-        viewModel(factory = ErrorBannerViewModel.Factory(errorRepository = koinInject())),
+    errorBannerViewModel: IErrorBannerViewModel = koinInject(),
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
-    LaunchedEffect(Unit) { errorBannerViewModel.activate() }
-
     val viewModel: NearbyTransitTabViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()

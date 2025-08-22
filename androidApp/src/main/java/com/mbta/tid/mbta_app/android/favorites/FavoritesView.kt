@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
@@ -32,6 +31,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
@@ -44,7 +44,7 @@ fun FavoritesView(
     setLastLocation: (Position) -> Unit,
     setIsTargeting: (Boolean) -> Unit,
     favoritesViewModel: IFavoritesViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel,
     alertData: AlertsStreamDataResponse?,
     globalResponse: GlobalResponse?,
@@ -78,7 +78,9 @@ fun FavoritesView(
     }
 
     LaunchedEffect(state.awaitingPredictionsAfterBackground) {
-        errorBannerViewModel.loadingWhenPredictionsStale = state.awaitingPredictionsAfterBackground
+        errorBannerViewModel.setIsLoadingWhenPredictionsStale(
+            state.awaitingPredictionsAfterBackground
+        )
     }
 
     LaunchedEffect(state.loadedLocation) {

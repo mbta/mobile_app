@@ -8,13 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -30,10 +31,38 @@ import org.koin.core.component.KoinComponent
 
 class StopPredictionsFetcher(
     private val predictionsRepository: IPredictionsRepository,
-    private val errorRepository: IErrorBannerStateRepository,
     private val onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
     private val onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
+    private val checkPredictionStale: (EasternTimeInstant, Int, () -> Unit) -> Unit,
 ) {
+
+    constructor(
+        predictionsRepository: IPredictionsRepository,
+        errorRepository: IErrorBannerStateRepository,
+        onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
+        onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
+    ) : this(
+        predictionsRepository,
+        onJoinResponse,
+        onPushMessage,
+        { lastUpdatedTime, quantity, action ->
+            errorRepository.checkPredictionsStale(lastUpdatedTime, quantity, action)
+        },
+    )
+
+    constructor(
+        predictionsRepository: IPredictionsRepository,
+        errorBannerVM: IErrorBannerViewModel,
+        onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
+        onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
+    ) : this(
+        predictionsRepository,
+        onJoinResponse,
+        onPushMessage,
+        { lastUpdatedTime, quantity, action ->
+            errorBannerVM.checkPredictionsStale(lastUpdatedTime, quantity, action)
+        },
+    )
 
     private var currentStopIds: List<String>? = null
 
@@ -81,10 +110,10 @@ class StopPredictionsFetcher(
     fun checkPredictionsStale(predictions: PredictionsByStopJoinResponse?) {
         CoroutineScope(Dispatchers.IO).launch {
             predictionsRepository.lastUpdated?.let { lastPredictions ->
-                errorRepository.checkPredictionsStale(
-                    predictionsLastUpdated = lastPredictions,
-                    predictionQuantity = predictions?.predictionQuantity() ?: 0,
-                    action = {
+                checkPredictionStale(
+                    lastPredictions,
+                    predictions?.predictionQuantity() ?: 0,
+                    {
                         disconnect()
                         connect(currentStopIds)
                     },
@@ -96,7 +125,7 @@ class StopPredictionsFetcher(
 
 class PredictionsViewModel(
     private val predictionsRepository: IPredictionsRepository,
-    private val errorBannerViewModel: ErrorBannerViewModel,
+    private val errorBannerViewModel: IErrorBannerViewModel,
 ) : KoinComponent, ViewModel() {
     private val _predictions = MutableStateFlow<PredictionsByStopJoinResponse?>(null)
     val predictions: StateFlow<PredictionsByStopJoinResponse?> = _predictions
@@ -106,14 +135,14 @@ class PredictionsViewModel(
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
             predictionsRepository,
-            errorBannerViewModel.errorRepository,
+            errorBannerViewModel,
             ::onJoinResponse,
             ::onPushMessage,
         )
 
     fun onJoinResponse(joinResponse: PredictionsByStopJoinResponse) {
         _predictions.value = joinResponse
-        errorBannerViewModel.loadingWhenPredictionsStale = false
+        errorBannerViewModel.setIsLoadingWhenPredictionsStale(false)
     }
 
     fun onPushMessage(
@@ -132,7 +161,7 @@ class PredictionsViewModel(
 
     fun disconnect() {
         stopPredictionsFetcher.disconnect()
-        errorBannerViewModel.loadingWhenPredictionsStale = true
+        errorBannerViewModel.setIsLoadingWhenPredictionsStale(true)
     }
 
     override fun onCleared() {
@@ -150,7 +179,7 @@ class PredictionsViewModel(
 
     class Factory(
         private val predictionsRepository: IPredictionsRepository,
-        private val errorBannerViewModel: ErrorBannerViewModel,
+        private val errorBannerViewModel: IErrorBannerViewModel,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return PredictionsViewModel(predictionsRepository, errorBannerViewModel) as T
@@ -162,7 +191,7 @@ class PredictionsViewModel(
 fun subscribeToPredictions(
     stopIds: List<String>?,
     predictionsRepository: IPredictionsRepository = koinInject(),
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =

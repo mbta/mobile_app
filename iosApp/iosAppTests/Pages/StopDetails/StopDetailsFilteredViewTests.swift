@@ -37,7 +37,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                                           setTripFilter: { _ in },
                                           routeCardData: [],
                                           now: Date.now,
-                                          errorBannerVM: .init(),
+                                          errorBannerVM: MockErrorBannerViewModel(),
                                           nearbyVM: .init(),
                                           mapVM: .init(),
                                           stopDetailsVM: stopDetailsVM)

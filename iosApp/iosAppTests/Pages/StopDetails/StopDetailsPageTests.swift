@@ -59,7 +59,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: stopFilter,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -97,7 +97,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -139,7 +139,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: stopFilter,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -189,7 +189,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: stopFilter,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -269,7 +269,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -367,7 +367,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
@@ -439,7 +439,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: stopFilter,
                 tripFilter: nil
             ),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,

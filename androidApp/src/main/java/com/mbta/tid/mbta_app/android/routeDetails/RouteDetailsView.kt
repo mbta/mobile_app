@@ -10,11 +10,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun RouteDetailsView(
@@ -23,7 +23,7 @@ fun RouteDetailsView(
     onOpenStopDetails: (String) -> Unit,
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView.globalData")
     val lineOrRoute = globalData?.getLineOrRoute(selectionId)

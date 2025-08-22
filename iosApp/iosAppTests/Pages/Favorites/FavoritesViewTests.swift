@@ -82,7 +82,7 @@ final class FavoritesViewTests: XCTestCase {
         ))
 
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -166,7 +166,7 @@ final class FavoritesViewTests: XCTestCase {
 
         let nearbyVM: NearbyViewModel = .init()
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: nearbyVM,
             toastVM: MockToastViewModel(),
@@ -191,7 +191,7 @@ final class FavoritesViewTests: XCTestCase {
             loadedLocation: nil,
         ))
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -208,7 +208,7 @@ final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsLoading() {
         let favoritesVM = MockFavoritesViewModel()
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -226,7 +226,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel()
         favoritesVM.onReloadFavorites = { exp.fulfill() }
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -252,7 +252,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -281,7 +281,7 @@ final class FavoritesViewTests: XCTestCase {
         }
         let nearbyVM = NearbyViewModel()
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: nearbyVM,
             toastVM: MockToastViewModel(),
@@ -311,7 +311,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -339,7 +339,7 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: MockToastViewModel(),
@@ -375,7 +375,7 @@ final class FavoritesViewTests: XCTestCase {
         toastVM.onHideToast = { hideToast.fulfill() }
 
         let sut = FavoritesView(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
             nearbyVM: .init(),
             toastVM: toastVM,
