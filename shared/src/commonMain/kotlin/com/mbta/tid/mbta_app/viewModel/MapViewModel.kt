@@ -267,7 +267,7 @@ public class MapViewModel(
                         }
                     }
                     is Event.LayerManagerInitialized -> {
-                        if (layerManager == null) layerManager = event.layerManager
+                        layerManager = event.layerManager
                     }
                     is Event.LocationPermissionsChanged -> {
                         if (event.hasPermission && viewportManager.isDefault()) {

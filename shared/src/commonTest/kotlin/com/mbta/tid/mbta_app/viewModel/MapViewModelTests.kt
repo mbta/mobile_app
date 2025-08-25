@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -15,6 +16,7 @@ import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import dev.mokkery.MockMode
+import dev.mokkery.matcher.any
 import dev.mokkery.matcher.matching
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
@@ -322,5 +324,40 @@ internal class MapViewModelTests : KoinTest {
         advanceUntilIdle()
 
         verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+    }
+
+    @Test
+    fun `layer manager can change`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+
+        val layerManager1 = mock<IMapLayerManager>(MockMode.autofill)
+        val layerManager2 = mock<IMapLayerManager>(MockMode.autofill)
+
+        val viewModel: MapViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            viewModel.layerManagerInitialized(layerManager1)
+            awaitItem()
+            advanceUntilIdle()
+            verifySuspend {
+                layerManager1.addLayers(
+                    any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                    any(),
+                    any(),
+                    any(),
+                )
+            }
+            viewModel.layerManagerInitialized(layerManager2)
+            advanceUntilIdle()
+            verifySuspend {
+                layerManager2.addLayers(
+                    any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                    any(),
+                    any(),
+                    any(),
+                )
+            }
+        }
     }
 }
