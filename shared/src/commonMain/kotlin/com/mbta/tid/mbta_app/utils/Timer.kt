@@ -29,7 +29,7 @@ internal class ClockTickHandler {
                     CoroutineScope(Dispatchers.IO).launch {
                         while (true) {
                             _clockFlow.emit(EasternTimeInstant.now(clock))
-                            delay(500)
+                            delay(1000)
                         }
                     }
             }

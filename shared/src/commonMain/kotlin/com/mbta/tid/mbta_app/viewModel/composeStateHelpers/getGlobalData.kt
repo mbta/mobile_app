@@ -2,13 +2,13 @@ package com.mbta.tid.mbta_app.viewModel.composeStateHelpers
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -19,16 +19,22 @@ private fun fetchGlobalData(
     errorKey: String,
     errorBannerRepository: IErrorBannerStateRepository,
     globalRepository: IGlobalRepository,
-    onSuccess: (GlobalResponse) -> Unit,
+    coroutineDispatcher: CoroutineDispatcher,
 ) {
-    CoroutineScope(Dispatchers.IO).launch {
+    CoroutineScope(coroutineDispatcher).launch {
         fetchApi(
             errorBannerRepo = errorBannerRepository,
             errorKey = errorKey,
             getData = { globalRepository.getGlobalData() },
-            onSuccess = onSuccess,
+            // Ignore success response because getGlobalData consumes directly from the repo
+            onSuccess = {},
             onRefreshAfterError = {
-                fetchGlobalData(errorKey, errorBannerRepository, globalRepository, onSuccess)
+                fetchGlobalData(
+                    errorKey,
+                    errorBannerRepository,
+                    globalRepository,
+                    coroutineDispatcher,
+                )
             },
         )
     }
@@ -39,10 +45,11 @@ internal fun getGlobalData(
     errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): GlobalResponse? {
-    var globalResponse: GlobalResponse? by remember { mutableStateOf(null) }
-    LaunchedEffect(null) {
-        fetchGlobalData(errorKey, errorBannerRepository, globalRepository) { globalResponse = it }
+    val globalResponse: GlobalResponse? by globalRepository.state.collectAsState()
+    LaunchedEffect(Unit) {
+        fetchGlobalData(errorKey, errorBannerRepository, globalRepository, coroutineDispatcher)
     }
     return globalResponse
 }

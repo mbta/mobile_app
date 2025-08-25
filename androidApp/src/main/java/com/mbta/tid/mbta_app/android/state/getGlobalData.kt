@@ -12,8 +12,6 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -21,16 +19,14 @@ class GlobalDataViewModel(
     private val globalRepository: IGlobalRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
-    private val _globalResponse = MutableStateFlow<GlobalResponse?>(null)
-    var globalResponse: StateFlow<GlobalResponse?> = _globalResponse
-
     fun getGlobalData(errorKey: String) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
                 errorKey = errorKey,
                 getData = { globalRepository.getGlobalData() },
-                onSuccess = { _globalResponse.emit(it) },
+                // Response is consumed directly from the repository to avoid null states
+                onSuccess = {},
                 onRefreshAfterError = { getGlobalData(errorKey) },
             )
         }
@@ -55,6 +51,7 @@ fun getGlobalData(
     val viewModel: GlobalDataViewModel =
         viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))
 
-    LaunchedEffect(key1 = null) { viewModel.getGlobalData(errorKey) }
-    return viewModel.globalResponse.collectAsState(initial = null).value
+    LaunchedEffect(Unit) { viewModel.getGlobalData(errorKey) }
+
+    return globalRepository.state.collectAsState().value
 }

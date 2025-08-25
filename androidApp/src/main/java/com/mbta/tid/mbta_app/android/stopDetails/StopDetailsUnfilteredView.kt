@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
@@ -18,26 +20,32 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsUnfilteredView(
     stopId: String,
     now: EasternTimeInstant,
-    viewModel: StopDetailsViewModel,
     isFavorite: (RouteStopDirection) -> Boolean,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
+    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
-    val globalResponse = viewModel.globalResponse.collectAsState().value
-
+    val globalResponse = getGlobalData("StopDetailsUnfilteredView.getGlobalData")
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()
 
-    val routeCardData = viewModel.unfilteredRouteCardData.collectAsState().value
+    val state by stopDetailsViewModel.models.collectAsState()
+    val routeCardData =
+        when (val data = state.routeData) {
+            is StopDetailsViewModel.RouteData.Unfiltered -> data.routeCards
+            else -> null
+        }
 
     val onTapRoutePill = { pillFilter: PillFilter ->
         analytics.tappedRouteFilter(pillFilter.id, stopId)

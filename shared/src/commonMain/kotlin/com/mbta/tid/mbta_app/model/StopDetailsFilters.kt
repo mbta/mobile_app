@@ -27,7 +27,7 @@ constructor(
             lastFilter: StopDetailsFilter?,
             newFilter: StopDetailsFilter?,
         ): Boolean {
-            return (lastFilter != null) || (lastFilter == null && newFilter?.autoFilter == true)
+            return lastFilter != null || newFilter?.autoFilter == true
         }
     }
 }
@@ -57,4 +57,17 @@ public data class TripDetailsPageFilter(
     val directionId: Int,
     val stopId: String,
     val stopSequence: Int?,
-)
+) {
+    public constructor(
+        stopId: String,
+        stopFilter: StopDetailsFilter,
+        tripFilter: TripDetailsFilter,
+    ) : this(
+        tripFilter.tripId,
+        tripFilter.vehicleId,
+        stopFilter.routeId,
+        stopFilter.directionId,
+        stopId,
+        tripFilter.stopSequence,
+    )
+}

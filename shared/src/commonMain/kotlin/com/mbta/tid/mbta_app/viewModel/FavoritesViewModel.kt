@@ -117,7 +117,8 @@ public class FavoritesViewModel(
         var location: Position? by remember { mutableStateOf(null) }
         var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
-        val globalData = getGlobalData("FavoritesViewModel.getGlobalData")
+        val errorKey = "FavoritesViewModel"
+        val globalData = getGlobalData("$errorKey.getGlobalData")
         val stopIds =
             remember(favorites, globalData) {
                 val stops = favorites?.mapNotNull { globalData?.getStop(it.stop) }
@@ -126,11 +127,12 @@ public class FavoritesViewModel(
                         stop.id
                 }
             }
-        val schedules = getSchedules(stopIds, "FavoritesViewModel.getSchedules")
+        val schedules = getSchedules(stopIds, errorKey)
         val predictions =
             subscribeToPredictions(
                 stopIds,
                 active,
+                errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
