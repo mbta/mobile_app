@@ -17,7 +17,11 @@ final class ErrorBannerTests: XCTestCase {
     @MainActor
     func testRespondsToState() throws {
         let repo = MockErrorBannerStateRepository(state: nil)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repo)
+        let errorBannerVM = ErrorBannerViewModel(
+            errorRepository: repo,
+            sentryRepository: MockSentryRepository(),
+            clock: SystemClock
+        )
 
         let sut = ErrorBanner(errorBannerVM)
 
@@ -80,11 +84,12 @@ final class ErrorBannerTests: XCTestCase {
     }
 
     @MainActor func testDebugModeNotShownByDefault() throws {
-        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
-                                                                           errorState: .DataError(
-                                                                               messages: ["Fake message"],
-                                                                               action: {}
-                                                                           ))))
+        let sut = ErrorBanner(
+            MockErrorBannerViewModel(initialState: .init(
+                loadingWhenPredictionsStale: false,
+                errorState: .DataError(messages: ["Fake message"], details: [], action: {})
+            ))
+        )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 

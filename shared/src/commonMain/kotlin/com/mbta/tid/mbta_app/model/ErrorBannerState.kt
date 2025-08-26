@@ -13,8 +13,11 @@ public sealed class ErrorBannerState {
         public fun minutesAgo(): Long = (EasternTimeInstant.now() - lastUpdated).inWholeMinutes
     }
 
-    public data class DataError(val messages: Set<String>, override val action: () -> Unit) :
-        ErrorBannerState()
+    public data class DataError(
+        val messages: Set<String>,
+        internal val details: Set<String>,
+        override val action: () -> Unit,
+    ) : ErrorBannerState()
 
     public data class NetworkError(override val action: (() -> Unit)?) : ErrorBannerState()
 }

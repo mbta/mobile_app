@@ -23,10 +23,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -35,6 +33,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class StopDetailsFilteredPickerViewTest {
     val builder = ObjectCollectionBuilder()
@@ -130,8 +129,6 @@ class StopDetailsFilteredPickerViewTest {
             ),
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
-
     private val settings = mutableMapOf<Settings, Boolean>()
     private val settingsRepository =
         object : ISettingsRepository {
@@ -177,7 +174,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
@@ -228,7 +225,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = { tripFilter = it },
                     tileScrollState = rememberScrollState(),
@@ -288,7 +285,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
@@ -337,7 +334,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
@@ -388,7 +385,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),
@@ -458,7 +455,7 @@ class StopDetailsFilteredPickerViewTest {
                     global = globalResponse,
                     now = now,
                     viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
                     tileScrollState = rememberScrollState(),

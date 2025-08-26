@@ -50,7 +50,7 @@ class ErrorBannerStateRepositoryTest {
 
         repo.checkPredictionsStale(EasternTimeInstant.now() - 3.minutes, 1) {}
 
-        repo.setDataError("global") {}
+        repo.setDataError("global", "") {}
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)
 
@@ -64,9 +64,9 @@ class ErrorBannerStateRepositoryTest {
         val repo = ErrorBannerStateRepository()
         val actionsCalled = mutableSetOf<String>()
 
-        repo.setDataError("a") { actionsCalled.add("a") }
-        repo.setDataError("b") { actionsCalled.add("b") }
-        repo.setDataError("c") { actionsCalled.add("c") }
+        repo.setDataError("a", "") { actionsCalled.add("a") }
+        repo.setDataError("b", "") { actionsCalled.add("b") }
+        repo.setDataError("c", "") { actionsCalled.add("c") }
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)
         repo.state.value?.action?.invoke()

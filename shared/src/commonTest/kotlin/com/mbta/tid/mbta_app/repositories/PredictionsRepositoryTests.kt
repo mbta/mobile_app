@@ -437,6 +437,35 @@ class PredictionsRepositoryTests : KoinTest {
     }
 
     @Test
+    fun `v2 sets error when timeout on join`() {
+        val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val predictionsRepo = PredictionsRepository(socket)
+        val push =
+            object : PhoenixPush {
+                override fun receive(
+                    status: PhoenixPushStatus,
+                    callback: (PhoenixMessage) -> Unit,
+                ): PhoenixPush {
+                    if (status == PhoenixPushStatus.Timeout) {
+                        callback(mock<PhoenixMessage>(MockMode.autofill))
+                    }
+                    return this
+                }
+            }
+        val channel = mock<PhoenixChannel>(MockMode.autofill)
+        every { channel.attach() } returns push
+        every { socket.getChannel(any(), any()) } returns channel
+        predictionsRepo.connectV2(
+            stopIds = listOf("1"),
+            onJoin = { outcome ->
+                assertIs<ApiResult.Error<*>>(outcome)
+                assertEquals(SocketError.TIMEOUT, outcome.message)
+            },
+            onMessage = { /* no-op */ },
+        )
+    }
+
+    @Test
     fun `shouldForgetPredictions false when never updated`() {
         val predictionsRepo = PredictionsRepository(mock(MockMode.autofill))
         predictionsRepo.lastUpdated = null

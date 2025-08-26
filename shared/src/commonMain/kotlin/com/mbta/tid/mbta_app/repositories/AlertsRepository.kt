@@ -6,8 +6,8 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
-import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.network.receiveAll
 import com.mbta.tid.mbta_app.phoenix.AlertsChannel
 import org.koin.core.component.KoinComponent
 
@@ -34,13 +34,14 @@ internal class AlertsRepository(private val socket: PhoenixSocket) :
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
             ?.attach()
-            ?.receive(PhoenixPushStatus.Ok) { message ->
-                println("joined channel ${message.subject}")
-                handleNewDataMessage(message, onReceive)
-            }
-            ?.receive(PhoenixPushStatus.Error) {
-                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
-            }
+            ?.receiveAll(
+                onOk = { message ->
+                    println("joined channel ${message.subject}")
+                    handleNewDataMessage(message, onReceive)
+                },
+                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
+                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
+            )
     }
 
     override fun disconnect() {

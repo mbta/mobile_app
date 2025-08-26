@@ -47,9 +47,11 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
                 networkStatus == NetworkStatus.Disconnected -> ErrorBannerState.NetworkError(null)
                 dataErrors.isNotEmpty() ->
                     // encapsulate all the different error actions within one error
-                    ErrorBannerState.DataError(dataErrors.keys) {
-                        dataErrors.values.forEach { it.action() }
-                    }
+                    ErrorBannerState.DataError(
+                        messages = dataErrors.keys,
+                        details = dataErrors.values.flatMap { it.details }.toSet(),
+                        action = { dataErrors.values.forEach { it.action() } },
+                    )
                 predictionsStale != null -> predictionsStale
                 else -> null
             }
@@ -77,8 +79,8 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
-    public fun setDataError(key: String, action: () -> Unit) {
-        dataErrors[key] = ErrorBannerState.DataError(setOf(key), action)
+    public fun setDataError(key: String, details: String, action: () -> Unit) {
+        dataErrors[key] = ErrorBannerState.DataError(setOf(key), setOf(details), action)
         updateState()
     }
 

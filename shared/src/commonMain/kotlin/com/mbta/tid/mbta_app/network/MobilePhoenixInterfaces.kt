@@ -18,6 +18,16 @@ public interface PhoenixPush {
     public fun receive(status: PhoenixPushStatus, callback: ((PhoenixMessage) -> Unit)): PhoenixPush
 }
 
+// if this is part of the interface then it’s not inherited by the Swift extension
+public fun PhoenixPush.receiveAll(
+    onOk: (PhoenixMessage) -> Unit,
+    onError: (PhoenixMessage) -> Unit,
+    onTimeout: (PhoenixMessage) -> Unit,
+): PhoenixPush =
+    receive(PhoenixPushStatus.Ok, onOk)
+        .receive(PhoenixPushStatus.Error, onError)
+        .receive(PhoenixPushStatus.Timeout, onTimeout)
+
 public interface PhoenixChannel {
     public fun onEvent(event: String, callback: ((PhoenixMessage) -> Unit))
 

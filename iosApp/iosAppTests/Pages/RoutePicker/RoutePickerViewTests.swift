@@ -25,7 +25,7 @@ final class RoutePickerViewTests: XCTestCase {
         repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -54,7 +54,7 @@ final class RoutePickerViewTests: XCTestCase {
         repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -83,7 +83,7 @@ final class RoutePickerViewTests: XCTestCase {
         repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -106,7 +106,7 @@ final class RoutePickerViewTests: XCTestCase {
         repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -135,7 +135,7 @@ final class RoutePickerViewTests: XCTestCase {
         repositories.global = MockGlobalRepository(response: GlobalResponse(objects: objects))
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -181,7 +181,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -225,7 +225,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -260,7 +260,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -294,7 +294,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -333,7 +333,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -372,7 +372,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RoutePickerView(
             context: RouteDetailsContext.Favorites(),
@@ -420,7 +420,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
         let mockSearchVM = MockSearchRoutesViewModel(
             initialState: SearchRoutesViewModel.StateResults(routeIds: [route1.id])
         )
@@ -458,7 +458,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
         let mockSearchVM = MockSearchRoutesViewModel()
 
         let exp = expectation(description: "Path updated in route search VM")
@@ -506,7 +506,7 @@ final class RoutePickerViewTests: XCTestCase {
         )
         repositories.errorBanner = MockErrorBannerStateRepository()
         loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: repositories.errorBanner)
+        let errorBannerVM = ViewModelDI().errorBanner
         let mockSearchVM = MockSearchRoutesViewModel(
             initialState: SearchRoutesViewModel.StateResults(routeIds: [])
         )

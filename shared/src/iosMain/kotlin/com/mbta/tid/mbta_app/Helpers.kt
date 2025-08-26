@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.endToEnd.endToEndModule
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.experimental.ExperimentalObjCName
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -128,3 +129,5 @@ public fun EasternTimeInstant.plusHours(hours: Int): EasternTimeInstant = this +
 
 @ObjCName("minus")
 public fun EasternTimeInstant.minusHours(hours: Int): EasternTimeInstant = this - hours.hours
+
+public val SystemClock: Clock = Clock.System

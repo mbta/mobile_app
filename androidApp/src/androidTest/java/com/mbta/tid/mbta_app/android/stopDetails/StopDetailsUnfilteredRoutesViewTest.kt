@@ -17,17 +17,16 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class StopDetailsUnfilteredRoutesViewTest {
     val builder = ObjectCollectionBuilder()
@@ -112,8 +111,6 @@ class StopDetailsUnfilteredRoutesViewTest {
             mutableMapOf(stop.id to listOf(routePatternOne.id, routePatternTwo.id)),
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
-
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
@@ -143,7 +140,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     stop = stop,
                     routeCardData = routeCardData,
                     servedRoutes = emptyList(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     now = now,
                     globalData = globalResponse,
                     isFavorite = { false },
@@ -188,7 +185,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     stop = inaccessibleStop,
                     routeCardData = routeCardData,
                     servedRoutes = emptyList(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     now = now,
                     globalData = globalResponse,
                     isFavorite = { false },
@@ -240,7 +237,7 @@ class StopDetailsUnfilteredRoutesViewTest {
                     stop = stop,
                     routeCardData = routeCardData,
                     servedRoutes = emptyList(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     now = now,
                     globalData = globalResponse,
                     isFavorite = { false },
