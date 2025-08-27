@@ -14,7 +14,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
-import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
+import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +65,7 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
 @Composable
 fun subscribeToVehicles(
     routeDirection: RouteDirection?,
-    routeCardDataViewModel: RouteCardDataViewModel = koinInject(),
+    routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     vehiclesRepository: IVehiclesRepository = koinInject(),
 ): List<Vehicle> {
     val routeCardDataState by routeCardDataViewModel.models.collectAsState()

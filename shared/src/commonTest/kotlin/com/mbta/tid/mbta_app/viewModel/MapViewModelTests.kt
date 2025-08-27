@@ -38,6 +38,7 @@ import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -72,19 +73,18 @@ internal class MapViewModelTests : KoinTest {
     fun setUpKoin(coroutineDispatcher: CoroutineDispatcher) {
         startKoin {
             modules(
+                repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
+                viewModelModule(),
                 module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         coroutineDispatcher
                     }
-                },
-                module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         coroutineDispatcher
                     }
+                    single<Clock> { Clock.System }
+                    single { MockRouteCardDataViewModel() }.bind(IRouteCardDataViewModel::class)
                 },
-                repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
-                viewModelModule(),
-                module { single<Clock> { Clock.System } },
             )
         }
     }

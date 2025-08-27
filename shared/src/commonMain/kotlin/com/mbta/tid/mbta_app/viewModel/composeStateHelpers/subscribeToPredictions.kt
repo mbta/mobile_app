@@ -33,6 +33,7 @@ internal fun subscribeToPredictions(
     val staleTimer by timer(checkPredictionsStaleInterval)
 
     var predictions: PredictionsByStopJoinResponse? by remember { mutableStateOf(null) }
+    var loadedStopIds: List<String>? by remember { mutableStateOf(null) }
 
     fun connect(
         stopIds: List<String>?,
@@ -63,10 +64,11 @@ internal fun subscribeToPredictions(
         when (message) {
             is ApiResult.Ok -> {
                 errorBannerRepository.clearDataError(errorKey)
+                loadedStopIds = stopIds
                 predictions = message.data
             }
             is ApiResult.Error -> {
-                errorBannerRepository.setDataError(errorKey) {
+                errorBannerRepository.setDataError(errorKey, message.toString()) {
                     connect(stopIds, active, ::onJoin, ::onMessage)
                 }
                 println("Predictions stream failed to join: ${message.message}")
@@ -86,6 +88,10 @@ internal fun subscribeToPredictions(
     }
 
     DisposableEffect(stopIds, active) {
+        if (loadedStopIds != stopIds) {
+            predictions = null
+            loadedStopIds = null
+        }
         connect(stopIds, active, ::onJoin, ::onMessage)
         onDispose { predictionsRepository.disconnect() }
     }

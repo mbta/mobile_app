@@ -20,6 +20,8 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
+import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +50,7 @@ class SubscribeToVehiclesTest {
 
         setContent {
             var filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
+            vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
         }
 
         waitUntil { connectProps == Pair("route_1", 1) }
@@ -81,7 +83,7 @@ class SubscribeToVehiclesTest {
         setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var filter by remember { stateFilter }
-                vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
+                vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
             }
         }
 
@@ -165,9 +167,12 @@ class SubscribeToVehiclesTest {
 
         val stateFilter = mutableStateOf(StopDetailsFilter(line.id, 0))
 
+        val routeCardDataVM =
+            MockRouteCardDataViewModel(RouteCardDataViewModel.State(routeCardData))
+
         setContent {
             val filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, routeCardData, vehiclesRepo)
+            vehicles = subscribeToVehicles(filter, routeCardDataVM, vehiclesRepo)
         }
 
         waitUntil { connectProps == Pair(line.id, 0) }

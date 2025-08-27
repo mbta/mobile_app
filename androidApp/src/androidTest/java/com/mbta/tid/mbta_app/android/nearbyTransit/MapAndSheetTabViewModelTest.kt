@@ -1,15 +1,10 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
-import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import org.junit.Test
 
 class MapAndSheetTabViewModelTest {
@@ -96,34 +91,5 @@ class MapAndSheetTabViewModelTest {
         )
 
         assertTrue(popCalled)
-    }
-
-    @Test
-    fun testSetRouteCardData() {
-        val vm = NearbyTransitTabViewModel()
-        val objectCollectionBuilder = ObjectCollectionBuilder()
-        val route = objectCollectionBuilder.route {}
-        val stop = objectCollectionBuilder.stop {}
-
-        val routeCardData =
-            listOf(
-                RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
-                    listOf(
-                        RouteCardData.RouteStopData(
-                            route,
-                            stop,
-                            listOf(),
-                            GlobalResponse(objectCollectionBuilder),
-                        )
-                    ),
-                    EasternTimeInstant.now(),
-                )
-            )
-
-        assertNull(vm.routeCardData.value)
-
-        vm.setRouteCardData(routeCardData)
-        assertEquals(routeCardData, vm.routeCardData.value)
     }
 }

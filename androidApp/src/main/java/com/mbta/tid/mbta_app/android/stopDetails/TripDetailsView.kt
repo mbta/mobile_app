@@ -148,7 +148,7 @@ fun TripDetailsView(
             )
         }
 
-        TripDetailsView(
+        TripDetails(
             tripData.trip,
             headerSpec,
             onHeaderTap,
@@ -179,7 +179,7 @@ fun TripDetailsView(
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = modifier.loadingShimmer()) {
-                TripDetailsView(
+                TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,
                     null,
@@ -199,7 +199,7 @@ fun TripDetailsView(
 }
 
 @Composable
-fun TripDetailsView(
+fun TripDetails(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
     onHeaderTap: (() -> Unit)?,

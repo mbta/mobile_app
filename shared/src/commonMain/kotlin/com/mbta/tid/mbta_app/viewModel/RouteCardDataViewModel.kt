@@ -6,8 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteCardData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 public interface IRouteCardDataViewModel {
@@ -45,4 +47,16 @@ public class RouteCardDataViewModel :
 
     override fun setRouteCardData(data: List<RouteCardData>?): Unit =
         fireEvent(Event.SetRouteCardData(data))
+}
+
+public class MockRouteCardDataViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: RouteCardDataViewModel.State = RouteCardDataViewModel.State(null)) :
+    IRouteCardDataViewModel {
+    public var onSetRouteCardData: (List<RouteCardData>?) -> Unit = {}
+
+    override val models: MutableStateFlow<RouteCardDataViewModel.State> =
+        MutableStateFlow(initialState)
+
+    override fun setRouteCardData(data: List<RouteCardData>?): Unit = onSetRouteCardData(data)
 }

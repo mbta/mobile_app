@@ -780,7 +780,6 @@ fun MapAndSheetPage(
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = ::handleVehicleTap,
                         vehiclesData = vehiclesData,
-                        //                        routeCardData = routeCardData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,
                     )

@@ -57,6 +57,7 @@ internal fun getSchedules(
     var result: ScheduleResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(stopIds) {
+        result = null
         if (stopIds != null) {
             fetchSchedules(
                 stopIds,

@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
@@ -72,7 +73,7 @@ public class TripDetailsViewModel(
     }
 
     @Composable
-    override fun runLogic(events: Flow<TripDetailsViewModel.Event>): TripDetailsViewModel.State {
+    override fun runLogic(events: Flow<TripDetailsViewModel.Event>): State {
         var context: Context? by remember { mutableStateOf(null) }
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
@@ -150,4 +151,27 @@ public class TripDetailsViewModel(
 
     override fun setFilters(filters: TripDetailsPageFilter?): Unit =
         fireEvent(Event.SetFilters(filters))
+}
+
+public class MockTripDetailsViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: TripDetailsViewModel.State = TripDetailsViewModel.State()) :
+    ITripDetailsViewModel {
+    public var onSetActive: (Boolean, Boolean) -> Unit = { _, _ -> }
+    public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
+    public var onSetContext: (TripDetailsViewModel.Context) -> Unit = {}
+    public var onSetFilters: (TripDetailsPageFilter?) -> Unit = {}
+
+    override val models: MutableStateFlow<TripDetailsViewModel.State> =
+        MutableStateFlow(initialState)
+    override val selectedVehicleUpdates: MutableStateFlow<Vehicle?> = MutableStateFlow(null)
+
+    override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
+        onSetActive(active, wasSentToBackground)
+
+    override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit = onSetAlerts(alerts)
+
+    override fun setContext(context: TripDetailsViewModel.Context): Unit = onSetContext(context)
+
+    override fun setFilters(filters: TripDetailsPageFilter?): Unit = onSetFilters(filters)
 }

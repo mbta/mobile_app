@@ -146,7 +146,6 @@ class StopDetailsFilteredPickerViewTest {
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -161,7 +160,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -171,9 +169,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
@@ -196,7 +192,6 @@ class StopDetailsFilteredPickerViewTest {
         var tripFilter: TripDetailsFilter? = null
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -212,7 +207,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -222,9 +216,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = { tripFilter = it },
@@ -256,7 +248,6 @@ class StopDetailsFilteredPickerViewTest {
         }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -272,7 +263,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -282,9 +272,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
@@ -305,7 +293,6 @@ class StopDetailsFilteredPickerViewTest {
     fun testShowsNotAccessibleAlert(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -321,7 +308,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -331,9 +317,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
@@ -354,7 +338,6 @@ class StopDetailsFilteredPickerViewTest {
     @Test
     fun testStarSavesEnhancedFavoritesWithDialogBehindFlag(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -370,7 +353,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
 
@@ -382,9 +364,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},
@@ -424,7 +404,6 @@ class StopDetailsFilteredPickerViewTest {
     @Test
     fun testUnfavoriteWithoutDialogBehindFlag(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -440,7 +419,6 @@ class StopDetailsFilteredPickerViewTest {
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
 
@@ -452,9 +430,7 @@ class StopDetailsFilteredPickerViewTest {
                     tripFilter = null,
                     routeStopData = routeStopData,
                     allAlerts = null,
-                    global = globalResponse,
                     now = now,
-                    viewModel = viewModel,
                     errorBannerViewModel = koinInject(),
                     updateStopFilter = {},
                     updateTripFilter = {},

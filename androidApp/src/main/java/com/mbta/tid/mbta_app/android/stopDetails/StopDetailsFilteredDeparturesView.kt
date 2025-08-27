@@ -48,7 +48,7 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -66,7 +66,7 @@ fun StopDetailsFilteredDeparturesView(
     isFavorite: Boolean,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    viewModel: StopDetailsViewModel = koinInject(),
+    viewModel: IStopDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
     val global = getGlobalData("StopDetailsFilteredDeparturesView.getGlobalData")

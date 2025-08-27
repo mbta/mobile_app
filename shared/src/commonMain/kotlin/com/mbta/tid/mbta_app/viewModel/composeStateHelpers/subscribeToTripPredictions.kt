@@ -52,7 +52,7 @@ internal fun subscribeToTripPredictions(
                 predictions = message.data
             }
             is ApiResult.Error -> {
-                errorBannerRepository.setDataError(errorKey) {
+                errorBannerRepository.setDataError(errorKey, message.toString()) {
                     connect(tripId, active, ::onReceive)
                 }
                 println("Trip predictions stream failed to join: ${message.message}")
