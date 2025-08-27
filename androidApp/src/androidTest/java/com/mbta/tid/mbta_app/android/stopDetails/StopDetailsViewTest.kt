@@ -20,15 +20,14 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class StopDetailsViewTest {
     val builder = ObjectCollectionBuilder()
@@ -143,7 +142,6 @@ class StopDetailsViewTest {
             )
         )
 
-        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
@@ -159,7 +157,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -202,7 +200,6 @@ class StopDetailsViewTest {
                 GlobalResponse(builder),
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -221,7 +218,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -279,7 +276,6 @@ class StopDetailsViewTest {
                 )
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
@@ -296,7 +292,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     openModal = {},
                     openSheetRoute = {},
                 )
@@ -338,7 +334,6 @@ class StopDetailsViewTest {
                 GlobalResponse(builder),
             )
         )
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 val filterState = remember {
@@ -356,7 +351,7 @@ class StopDetailsViewTest {
                     updateStopFilter = filterState::value::set,
                     updateTripDetailsFilter = {},
                     tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = errorBannerViewModel,
+                    errorBannerViewModel = koinInject(),
                     openModal = {},
                     openSheetRoute = {},
                 )

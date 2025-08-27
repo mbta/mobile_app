@@ -91,7 +91,7 @@ struct ErrorBanner: View {
     VStack(spacing: 16) {
         ErrorBanner(MockErrorBannerViewModel(initialState: .init(
             loadingWhenPredictionsStale: false,
-            errorState: .DataError(messages: Set(), action: {})
+            errorState: .DataError(messages: Set(), details: Set(), action: {})
         )))
         ErrorBanner(MockErrorBannerViewModel(initialState:
             .init(loadingWhenPredictionsStale: false,

@@ -21,10 +21,8 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.utils.TestData
-import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.test.assertEquals
@@ -34,6 +32,7 @@ import kotlinx.coroutines.flow.update
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class RouteStopListViewTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -104,7 +103,6 @@ class RouteStopListViewTest {
                         routeId = mainRoute.id,
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -115,7 +113,7 @@ class RouteStopListViewTest {
                     onClick = clicks::add,
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = MockToastViewModel(),
                     rightSideContent = { context, _ ->
                         when (context) {
@@ -193,7 +191,6 @@ class RouteStopListViewTest {
                         onGet = { routeId, _ -> lastSelectedRoute = routeId },
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -204,7 +201,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = MockToastViewModel(),
                     defaultSelectedRouteId = route2.id,
                     rightSideContent = { _, _ -> },
@@ -298,7 +295,6 @@ class RouteStopListViewTest {
                         routeId = mainRoute.id,
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -309,7 +305,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = MockToastViewModel(),
                     rightSideContent = { _, _ -> },
                 )
@@ -356,7 +352,6 @@ class RouteStopListViewTest {
                         routeId = mainRoute.id,
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -367,7 +362,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = MockToastViewModel(),
                     rightSideContent = { _, _ -> },
                 )
@@ -400,7 +395,6 @@ class RouteStopListViewTest {
                         routeId = route.id,
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
 
         composeTestRule.setContent {
             KoinContext(koin.koin) {
@@ -416,7 +410,7 @@ class RouteStopListViewTest {
                     },
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = MockToastViewModel(),
                     rightSideContent = { _, _ -> },
                 )
@@ -453,7 +447,6 @@ class RouteStopListViewTest {
                             )
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -473,7 +466,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = {},
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = toastVM,
                     rightSideContent = { _, _ -> },
                 )
@@ -505,7 +498,6 @@ class RouteStopListViewTest {
                             )
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -528,7 +520,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = { backTapped = true },
                     onClose = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = toastVM,
                     rightSideContent = { _, _ -> },
                 )
@@ -560,7 +552,6 @@ class RouteStopListViewTest {
                             )
                     )
             }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -583,7 +574,7 @@ class RouteStopListViewTest {
                     onClick = {},
                     onBack = {},
                     onClose = { closeTapped = true },
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                     toastViewModel = toastVM,
                     rightSideContent = { _, _ -> },
                 )

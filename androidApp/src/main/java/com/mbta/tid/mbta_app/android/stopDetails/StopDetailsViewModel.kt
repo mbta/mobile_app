@@ -245,7 +245,7 @@ class StopDetailsViewModel(
                     is ApiResult.Error -> {
                         _tripData.update { it?.copy(vehicle = null) }
 
-                        errorBannerRepository.setDataError(errorKey) {
+                        errorBannerRepository.setDataError(errorKey, outcome.toString()) {
                             clearAndLoadTripDetails(tripFilter)
                         }
                     }
@@ -389,7 +389,7 @@ class StopDetailsViewModel(
                 }
                 is ApiResult.Error -> {
                     Log.e("StopDetailsViewModel", "loadTrip failed: $response")
-                    errorBannerRepository.setDataError(errorKey) {
+                    errorBannerRepository.setDataError(errorKey, details = response.toString()) {
                         clearAndLoadTripDetails(tripFilter)
                     }
                     null

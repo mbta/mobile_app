@@ -18,18 +18,17 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 import org.koin.test.KoinTest
 
 class NearbyTransitViewTest : KoinTest {
@@ -180,7 +179,6 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewDisplaysCorrectly() {
-        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
                 NearbyTransitView(
@@ -191,7 +189,7 @@ class NearbyTransitViewTest : KoinTest {
                     setIsTargeting = {},
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                 )
             }
         }
@@ -211,8 +209,6 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testRouteCardAnalyticsPinnedWithEnhanced() {
-        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
-
         var analyticsLoggedProps: Map<String, String> = mapOf()
 
         val koinApplication =
@@ -251,7 +247,7 @@ class NearbyTransitViewTest : KoinTest {
                     setIsTargeting = {},
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = {},
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                 )
             }
         }
@@ -267,7 +263,6 @@ class NearbyTransitViewTest : KoinTest {
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
         val emptyNearbyKoinApplication = testKoinApplication()
-        val errorBannerVM = ErrorBannerViewModel(MockErrorBannerStateRepository())
         composeTestRule.setContent {
             KoinContext(emptyNearbyKoinApplication.koin) {
                 NearbyTransitView(
@@ -278,7 +273,7 @@ class NearbyTransitViewTest : KoinTest {
                     setIsTargeting = {},
                     onOpenStopDetails = { _, _ -> },
                     noNearbyStopsView = { Text("This would be the no nearby stops view") },
-                    errorBannerViewModel = errorBannerVM,
+                    errorBannerViewModel = koinInject(),
                 )
             }
         }

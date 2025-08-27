@@ -5,7 +5,9 @@ import io.ktor.client.plugins.ResponseException
 public sealed class ApiResult<out T : Any> {
     public data class Ok<T : Any>(val data: T) : ApiResult<T>()
 
-    public data class Error<T : Any>(val code: Int? = null, val message: String) : ApiResult<T>()
+    public data class Error<T : Any>(val code: Int? = null, val message: String) : ApiResult<T>() {
+        override fun toString(): String = if (code != null) "Error $code: $message" else message
+    }
 
     @Throws(IllegalStateException::class)
     internal fun dataOrThrow(): T {

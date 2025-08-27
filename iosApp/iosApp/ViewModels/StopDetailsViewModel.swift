@@ -312,10 +312,11 @@ class StopDetailsViewModel: ObservableObject {
                 case let .ok(result):
                     self.tripData?.vehicle = result.data.vehicle
                     self.errorBannerRepository.clearDataError(key: errorKey)
-                case .error:
+                case let .error(error):
                     self.tripData?.vehicle = nil
                     self.errorBannerRepository.setDataError(
                         key: errorKey,
+                        details: error.description(),
                         action: { self.clearAndLoadTripDetails(tripFilter) }
                     )
                 }
@@ -422,9 +423,10 @@ class StopDetailsViewModel: ObservableObject {
                 case let .ok(okResponse):
                     self.errorBannerRepository.clearDataError(key: errorKey)
                     return okResponse.data.trip
-                case .error:
+                case let .error(error):
                     self.errorBannerRepository.setDataError(
                         key: errorKey,
+                        details: error.description(),
                         action: { self.clearAndLoadTripDetails(tripFilter) }
                     )
                     return nil
