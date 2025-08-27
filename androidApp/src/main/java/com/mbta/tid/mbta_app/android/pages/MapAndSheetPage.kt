@@ -389,7 +389,9 @@ fun MapAndSheetPage(
         }
     }
     LaunchedEffect(currentNavEntry) {
-        if (SheetRoutes.shouldResetSheetHeight(previousNavEntry, currentNavEntry)) {
+        if (currentNavEntry?.showSearchBar == true && searchExpanded) {
+            nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Hidden)
+        } else if (SheetRoutes.shouldResetSheetHeight(previousNavEntry, currentNavEntry)) {
             nearbyTransit.scaffoldState.bottomSheetState.animateTo(SheetValue.Medium)
         }
 
