@@ -751,16 +751,20 @@ fun MapAndSheetPage(
                         }
                     },
                 ) {
-                    HomeMapView(
-                        sheetPadding =
+                    val searchBarHeight by viewModel.searchBarHeight.collectAsState()
+                    val mapPadding =
+                        remember(sheetPadding, searchBarHeight) {
                             sheetPadding.plus(
                                 PaddingValues(
                                     start = 0.dp,
                                     end = 0.dp,
-                                    top = (viewModel.searchBarHeight.value ?: 0.dp),
+                                    top = (searchBarHeight ?: 0.dp),
                                     bottom = 0.dp,
                                 )
-                            ),
+                            )
+                        }
+                    HomeMapView(
+                        sheetPadding = mapPadding,
                         lastLoadedLocation = nearbyTransit.lastLoadedLocation,
                         isTargetingState = nearbyTransit.isTargetingState,
                         locationDataManager = nearbyTransit.locationDataManager,
