@@ -695,31 +695,68 @@ final class NearbyTransitViewTests: XCTestCase {
         }
     }
 
-    @MainActor func testNoService() throws {
+    @MainActor func testRendersUpdatedAlerts() throws {
+        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
+
         let objects = route52Objects()
-        objects.alert { alert in
-            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 90), end: nil)
-            alert.effect = .suspension
-            alert.informedEntity(
-                activities: [.board],
-                directionId: nil,
-                facility: nil,
-                route: "52",
-                routeType: .bus,
-                stop: "8552",
-                trip: nil
+
+        let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
+        objects.prediction { prediction in
+            prediction.id = "prediction"
+            prediction.arrivalTime = EasternTimeInstant.now().plus(minutes: 2)
+            prediction.departureTime = EasternTimeInstant.now().plus(minutes: 2)
+            prediction.routeId = "52"
+            prediction.stopId = "8552"
+            prediction.tripId = objects.trip(routePattern: rp1!).id
+        }
+
+        let sut = setUpSut(objects, loadPublisher)
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        func changeParams(objects: ObjectCollectionBuilder) -> NearbyTransitView.RouteCardParams {
+            .init(
+                state: getNearbyState(objects: objects),
+                global: .init(objects: objects),
+                schedules: .init(objects: objects),
+                predictions: .init(objects: objects),
+                alerts: .init(objects: objects),
+                now: Date.now,
             )
         }
 
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher)
+        let alertChangePublisher = PassthroughSubject<Void, Never>()
 
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
+        let loadExp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "2 min"))
+            XCTAssertThrowsError(try view.find(text: "Suspension"))
+
+            objects.alert { alert in
+                alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 90), end: nil)
+                alert.effect = .suspension
+                alert.informedEntity(
+                    activities: [.board],
+                    directionId: nil,
+                    facility: nil,
+                    route: "52",
+                    routeType: .bus,
+                    stop: "8552",
+                    trip: nil
+                )
+            }
+
+            try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
+            alertChangePublisher.send()
+        }
+
+        let alertChangeExp = sut.inspection.inspect(onReceive: alertChangePublisher, after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Suspension")
                 .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
+            XCTAssertThrowsError(try view.find(text: "2 min"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 2)
+
+        wait(for: [loadExp, alertChangeExp], timeout: 3)
     }
 
     @MainActor func testElevatorClosed() throws {
