@@ -26,7 +26,7 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
         MutableSharedFlow<Event>(
             replay = 20,
             extraBufferCapacity = 20,
-            onBufferOverflow = BufferOverflow.SUSPEND,
+            onBufferOverflow = BufferOverflow.DROP_OLDEST,
         )
 
     /**
@@ -49,9 +49,7 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
         }
 
     protected fun fireEvent(event: Event) {
-        if (!events.tryEmit(event)) {
-            error("Event buffer overflow in ${this::class}")
-        }
+        events.tryEmit(event)
     }
 
     @Composable protected abstract fun runLogic(events: Flow<Event>): Model
