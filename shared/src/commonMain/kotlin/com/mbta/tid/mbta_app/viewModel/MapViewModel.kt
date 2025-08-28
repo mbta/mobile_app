@@ -39,6 +39,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -61,6 +62,8 @@ public interface IMapViewModel {
     public fun recenter(type: RecenterType = RecenterType.CurrentLocation)
 
     public fun alertsChanged(alerts: AlertsStreamDataResponse?)
+
+    public fun routeCardDataChanged(routeCardData: List<RouteCardData>?)
 
     public fun colorPaletteChanged(isDarkMode: Boolean)
 
@@ -85,7 +88,8 @@ public class MapViewModel(
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
-    private val routeCardDataUpdates = routeCardDataViewModel.models
+    private val routeCardDataUpdates = MutableStateFlow<List<RouteCardData>?>(null)
+    private val routeCardVMUpdates = routeCardDataViewModel.models
 
     public sealed interface Event {
 
@@ -154,6 +158,7 @@ public class MapViewModel(
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
         val routeCardData by routeCardDataUpdates.collectAsState()
+        val routeCardDataVMState by routeCardVMUpdates.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -197,6 +202,12 @@ public class MapViewModel(
                 routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
             }
+        }
+
+        /* TODO: Replace routeCardUpdates with routeCardDataViewModel.models once iOS adopts
+        the shared StopDetailsViewModel, until then it needs to be compatible with both */
+        LaunchedEffect(routeCardDataVMState) {
+            routeCardDataUpdates.tryEmit(routeCardDataVMState.data)
         }
 
         LaunchedEffect(null) {
@@ -287,7 +298,7 @@ public class MapViewModel(
                         stopId = stopId,
                         stopFilter = stopFilter,
                         globalMapData = globalMapData,
-                        routeCardData = routeCardData.data,
+                        routeCardData = routeCardData,
                     )
                 featuresToDisplayForStop?.let {
                     routeSourceData = it.first
@@ -337,6 +348,12 @@ public class MapViewModel(
 
     override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit =
         fireEvent(Event.AlertsChanged(alerts))
+
+    // Route card data is sent through a separate StateFlow rather than the event flow because
+    // frequent updates were causing buffer overflows, and we only care about the latest value.
+    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
+        routeCardDataUpdates.tryEmit(routeCardData)
+    }
 
     override fun colorPaletteChanged(isDarkMode: Boolean): Unit =
         fireEvent(Event.ColorPaletteChanged(isDarkMode))
