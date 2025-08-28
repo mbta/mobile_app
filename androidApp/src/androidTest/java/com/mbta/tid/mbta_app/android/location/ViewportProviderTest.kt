@@ -113,6 +113,8 @@ class ViewportProviderTest {
 
         withTimeout(10.seconds) { awaitAll(stopCenter, setPadding, vehicleOverview) }
 
+        composeTestRule.waitUntil { mapViewportState.mapViewportStatus is ViewportStatus.State }
+
         val viewportStatus = assertIs<ViewportStatus.State>(mapViewportState.mapViewportStatus)
         val viewportInnerState = assertIs<OverviewViewportState>(viewportStatus.state)
         assertEquals(
