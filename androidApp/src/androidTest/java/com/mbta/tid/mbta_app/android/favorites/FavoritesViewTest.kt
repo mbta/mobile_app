@@ -20,6 +20,7 @@ import dev.mokkery.resetCalls
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import kotlin.time.Clock
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -55,6 +56,7 @@ class FavoritesViewTest {
                         errorRepository = MockErrorBannerStateRepository(),
                         MockSentryRepository(),
                         Clock.System,
+                        onEventBufferOverflow = BufferOverflow.SUSPEND,
                     ),
                 toastViewModel = toastVM,
                 alertData = AlertsStreamDataResponse(objects),

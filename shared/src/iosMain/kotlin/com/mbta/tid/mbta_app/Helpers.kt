@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.Preferences
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
+import com.mbta.tid.mbta_app.dependencyInjection.KoinName
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
@@ -23,6 +24,7 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.datetime.toKotlinInstant
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -84,10 +86,13 @@ public fun startKoinIOSTestApp() {
                 viewModelModule() +
                 module {
                     single<Analytics> { MockAnalytics() }
-                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                    single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherDefault)) {
                         Dispatchers.Default
                     }
-                    single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
+                    single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherIO)) {
+                        Dispatchers.IO
+                    }
+                    single(named(KoinName.OnEventBufferOverflow)) { BufferOverflow.SUSPEND }
                 }
         )
     }
@@ -97,7 +102,12 @@ public fun startKoinIOSTestApp() {
 public fun startKoinE2E() {
     startKoin {
         modules(
-            endToEndModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+            endToEndModule() +
+                viewModelModule() +
+                module {
+                    single<Analytics> { MockAnalytics() }
+                    single(named(KoinName.OnEventBufferOverflow)) { BufferOverflow.SUSPEND }
+                }
         )
     }
 }

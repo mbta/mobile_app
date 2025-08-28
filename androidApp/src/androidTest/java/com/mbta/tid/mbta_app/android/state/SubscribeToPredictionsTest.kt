@@ -24,6 +24,7 @@ import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.channels.BufferOverflow
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -58,6 +59,7 @@ class SubscribeToPredictionsTest {
                 MockErrorBannerStateRepository(),
                 MockSentryRepository(),
                 Clock.System,
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         composeTestRule.setContent {
@@ -106,6 +108,7 @@ class SubscribeToPredictionsTest {
                 MockErrorBannerStateRepository(),
                 MockSentryRepository(),
                 Clock.System,
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         composeTestRule.setContent {
@@ -150,6 +153,7 @@ class SubscribeToPredictionsTest {
                 MockErrorBannerStateRepository(),
                 MockSentryRepository(),
                 Clock.System,
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         composeTestRule.setContent {
@@ -180,7 +184,12 @@ class SubscribeToPredictionsTest {
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
         val errorBannerViewModel =
-            ErrorBannerViewModel(mockErrorRepo, MockSentryRepository(), Clock.System)
+            ErrorBannerViewModel(
+                mockErrorRepo,
+                MockSentryRepository(),
+                Clock.System,
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
+            )
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }

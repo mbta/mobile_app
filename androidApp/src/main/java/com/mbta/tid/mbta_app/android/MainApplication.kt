@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -39,6 +40,7 @@ class MainApplication : Application() {
                 else MockAnalytics(),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
                 socket.wrapped(),
+                if (BuildConfig.DEBUG) BufferOverflow.SUSPEND else BufferOverflow.DROP_OLDEST,
             ) + koinViewModelModule(),
             this,
         )

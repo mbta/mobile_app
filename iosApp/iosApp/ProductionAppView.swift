@@ -91,12 +91,19 @@ struct ProductionAppView: View {
         return socket
     }
 
+    #if DEBUG
+        private static let onEventBufferOverflow = Kotlinx_coroutines_coreBufferOverflow.suspend
+    #else
+        private static let onEventBufferOverflow = Kotlinx_coroutines_coreBufferOverflow.dropOldest
+    #endif
+
     private static func initKoin(socket: PhoenixSocket) {
         let nativeModule: Koin_coreModule = MakeNativeModuleKt.makeNativeModule(
             accessibilityStatus: AccessibilityStatusRepository(),
             analytics: AnalyticsProvider.shared,
             currentAppVersion: CurrentAppVersionRepository(),
-            socket: socket
+            socket: socket,
+            onEventBufferOverflow: Self.onEventBufferOverflow
         )
         HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
     }

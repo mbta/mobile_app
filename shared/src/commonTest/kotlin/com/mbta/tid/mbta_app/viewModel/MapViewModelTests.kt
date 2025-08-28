@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import com.mbta.tid.mbta_app.dependencyInjection.KoinName
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
@@ -30,6 +31,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -73,18 +75,17 @@ internal class MapViewModelTests : KoinTest {
         startKoin {
             modules(
                 module {
-                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                    single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherDefault)) {
                         coroutineDispatcher
                     }
-                },
-                module {
-                    single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
+                    single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherIO)) {
                         coroutineDispatcher
                     }
+                    single<Clock> { Clock.System }
+                    single(named(KoinName.OnEventBufferOverflow)) { BufferOverflow.SUSPEND }
                 },
                 repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
                 viewModelModule(),
-                module { single<Clock> { Clock.System } },
             )
         }
     }

@@ -15,6 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 
@@ -44,6 +45,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         testViewModelFlow(searchVM).test {
@@ -82,6 +84,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         testViewModelFlow(searchVM).test {
@@ -114,6 +117,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         testViewModelFlow(searchVM).test {

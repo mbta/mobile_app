@@ -21,12 +21,13 @@ public expect abstract class MoleculeScopeViewModel() {
  * Implementers should reexpose `val models get() = internalModels` and provide wrappers for
  * `fireEvent` for the types of event that they offer.
  */
-public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel() {
+public abstract class MoleculeViewModel<Event, Model>(onEventBufferOverflow: BufferOverflow) :
+    MoleculeScopeViewModel() {
     private val events =
         MutableSharedFlow<Event>(
             replay = 20,
             extraBufferCapacity = 20,
-            onBufferOverflow = BufferOverflow.SUSPEND,
+            onBufferOverflow = onEventBufferOverflow,
         )
 
     /**

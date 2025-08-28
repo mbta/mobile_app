@@ -20,7 +20,8 @@ final class ErrorBannerTests: XCTestCase {
         let errorBannerVM = ErrorBannerViewModel(
             errorRepository: repo,
             sentryRepository: MockSentryRepository(),
-            clock: SystemClock
+            clock: SystemClock,
+            onEventBufferOverflow: .suspend
         )
 
         let sut = ErrorBanner(errorBannerVM)

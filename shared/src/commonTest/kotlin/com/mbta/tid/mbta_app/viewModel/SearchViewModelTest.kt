@@ -26,6 +26,7 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
@@ -86,6 +87,7 @@ class SearchViewModelTest {
                     }
                 },
                 VisitHistoryUsecase(visitHistoryRepo),
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         testViewModelFlow(searchVM).test {
@@ -190,6 +192,7 @@ class SearchViewModelTest {
                         }
                     )
                 ),
+                onEventBufferOverflow = BufferOverflow.SUSPEND,
             )
 
         val state =

@@ -12,6 +12,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.captureToImage
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.dependencyInjection.KoinName
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -22,6 +23,7 @@ import kotlin.math.abs
 import kotlin.time.Clock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.BufferOverflow
 import org.junit.Assert.fail
 import org.koin.core.qualifier.named
 import org.koin.dsl.koinApplication
@@ -126,8 +128,11 @@ fun testKoinApplication(
 ) = koinApplication {
     modules(
         module {
-            single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
-            single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
+            single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherDefault)) {
+                Dispatchers.Default
+            }
+            single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherIO)) { Dispatchers.IO }
+            single<BufferOverflow>(named(KoinName.OnEventBufferOverflow)) { BufferOverflow.SUSPEND }
 
             single<Analytics> { analytics }
             single<PhoenixSocket> { socket }

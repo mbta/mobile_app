@@ -48,9 +48,13 @@ internal fun appModule(appVariant: AppVariant) = module {
         module { single { MobileBackendClient(appVariant) } },
         module { single { FileSystem.SYSTEM } },
         module {
-            single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
+            single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherDefault)) {
+                Dispatchers.Default
+            }
         },
-        module { single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO } },
+        module {
+            single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherIO)) { Dispatchers.IO }
+        },
         repositoriesModule(RealRepositories()),
     )
 }

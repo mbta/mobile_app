@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,8 +57,12 @@ public class FavoritesViewModel(
     private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
-) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
-
+    onEventBufferOverflow: BufferOverflow,
+) :
+    MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(
+        onEventBufferOverflow = onEventBufferOverflow
+    ),
+    IFavoritesViewModel {
     public sealed class Context {
         public data object Favorites : Context()
 

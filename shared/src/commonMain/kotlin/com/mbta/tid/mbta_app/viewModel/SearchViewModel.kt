@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -76,7 +77,12 @@ public class SearchViewModel(
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
-) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
+    onEventBufferOverflow: BufferOverflow,
+) :
+    MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(
+        onEventBufferOverflow = onEventBufferOverflow
+    ),
+    ISearchViewModel {
     public sealed interface Event {
         public data class SetQuery internal constructor(val query: String) : Event
 

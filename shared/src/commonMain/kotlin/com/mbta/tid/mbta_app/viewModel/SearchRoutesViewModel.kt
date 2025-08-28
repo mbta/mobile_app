@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -36,8 +37,11 @@ internal constructor(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
+    onEventBufferOverflow: BufferOverflow,
 ) :
-    MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
+    MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(
+        onEventBufferOverflow = onEventBufferOverflow
+    ),
     ISearchRoutesViewModel {
     public sealed interface Event {
         public data class SetPath internal constructor(val path: RoutePickerPath) : Event

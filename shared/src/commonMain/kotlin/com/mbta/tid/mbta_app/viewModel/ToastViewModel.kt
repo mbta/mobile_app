@@ -5,6 +5,7 @@ import androidx.compose.runtime.produceState
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Toast
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +19,9 @@ public interface IToastViewModel {
     public fun showToast(toast: Toast)
 }
 
-public class ToastViewModel internal constructor() :
-    IToastViewModel, MoleculeViewModel<Event, ToastViewModel.State>() {
+public class ToastViewModel internal constructor(onEventBufferOverflow: BufferOverflow) :
+    IToastViewModel,
+    MoleculeViewModel<Event, ToastViewModel.State>(onEventBufferOverflow = onEventBufferOverflow) {
 
     /**
      * These are parallel to [androidx.compose.material3.SnackbarDuration], because the Jetpack

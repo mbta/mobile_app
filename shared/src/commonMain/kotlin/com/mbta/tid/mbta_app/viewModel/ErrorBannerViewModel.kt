@@ -16,6 +16,7 @@ import io.sentry.kotlin.multiplatform.SentryLevel
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,8 +41,11 @@ public class ErrorBannerViewModel(
     private val errorRepository: IErrorBannerStateRepository,
     private val sentryRepository: ISentryRepository,
     private val clock: Clock,
+    onEventBufferOverflow: BufferOverflow,
 ) :
-    MoleculeViewModel<ErrorBannerViewModel.Event, ErrorBannerViewModel.State>(),
+    MoleculeViewModel<ErrorBannerViewModel.Event, ErrorBannerViewModel.State>(
+        onEventBufferOverflow = onEventBufferOverflow
+    ),
     IErrorBannerViewModel {
 
     public data class State(

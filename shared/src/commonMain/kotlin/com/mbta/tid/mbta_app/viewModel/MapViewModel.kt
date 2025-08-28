@@ -38,6 +38,7 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -84,8 +85,10 @@ public class MapViewModel(
     private val stopRepository: IStopRepository,
     private val defaultCoroutineDispatcher: CoroutineDispatcher,
     private val iOCoroutineDispatcher: CoroutineDispatcher,
-) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
-
+    onEventBufferOverflow: BufferOverflow,
+) :
+    MoleculeViewModel<Event, MapViewModel.State>(onEventBufferOverflow = onEventBufferOverflow),
+    IMapViewModel {
     private lateinit var viewportManager: ViewportManager
     private val routeCardDataUpdates = MutableStateFlow<List<RouteCardData>?>(null)
 

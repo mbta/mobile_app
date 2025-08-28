@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import com.mbta.tid.mbta_app.dependencyInjection.KoinName
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ErrorBannerState
@@ -31,6 +32,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -55,11 +57,14 @@ internal class ErrorBannerViewModelTest : KoinTest {
         startKoin {
             modules(
                 module {
-                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                    single<CoroutineDispatcher>(named(KoinName.CoroutineDispatcherDefault)) {
                         coroutineDispatcher
                     }
                     single<INetworkConnectivityMonitor> { mockNetworkMonitor }
                     single<Clock> { clock }
+                    single<BufferOverflow>(named(KoinName.OnEventBufferOverflow)) {
+                        BufferOverflow.SUSPEND
+                    }
                 },
                 repositoriesModule(
                     MockRepositories().apply {

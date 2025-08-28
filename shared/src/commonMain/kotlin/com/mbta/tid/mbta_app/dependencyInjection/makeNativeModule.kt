@@ -14,7 +14,9 @@ import com.mbta.tid.mbta_app.repositories.PredictionsRepository
 import com.mbta.tid.mbta_app.repositories.TripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.VehicleRepository
 import com.mbta.tid.mbta_app.repositories.VehiclesRepository
+import kotlinx.coroutines.channels.BufferOverflow
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 public fun makeNativeModule(
@@ -22,12 +24,14 @@ public fun makeNativeModule(
     analytics: Analytics,
     currentAppVersion: ICurrentAppVersionRepository,
     socket: PhoenixSocket,
+    onEventBufferOverflow: BufferOverflow,
 ): Module {
     return module {
         single<IAccessibilityStatusRepository> { accessibilityStatus }
         single<Analytics> { analytics }
         single<ICurrentAppVersionRepository> { currentAppVersion }
         single<PhoenixSocket> { socket }
+        single<BufferOverflow>(named(KoinName.OnEventBufferOverflow)) { onEventBufferOverflow }
         factory<IAlertsRepository> { AlertsRepository(get()) }
         factory<IPredictionsRepository> { PredictionsRepository(get()) }
         factory<ITripPredictionsRepository> { TripPredictionsRepository(get()) }
