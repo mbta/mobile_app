@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -78,8 +79,6 @@ public class SearchViewModel(
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
     public sealed interface Event {
-        public data class SetQuery internal constructor(val query: String) : Event
-
         public data object RefreshHistory : Event
     }
 
@@ -161,11 +160,12 @@ public class SearchViewModel(
         }
     }
 
+    @set:JvmName("setQueryState") private var query by mutableStateOf("")
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         val globalData by globalRepository.state.collectAsState()
         var latestVisits by remember { mutableStateOf<List<Visit>?>(null) }
-        var query by remember { mutableStateOf("") }
         var state by remember { mutableStateOf<State>(State.Loading) }
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
@@ -175,7 +175,6 @@ public class SearchViewModel(
         LaunchedEffect(null) {
             events.collect { event ->
                 when (event) {
-                    is Event.SetQuery -> query = event.query
                     Event.RefreshHistory -> latestVisits = visitHistoryUsecase.getLatestVisits()
                 }
             }
@@ -227,7 +226,9 @@ public class SearchViewModel(
     override val models: StateFlow<State>
         get() = internalModels
 
-    override fun setQuery(query: String): Unit = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) {
+        this.query = query
+    }
 
     override fun refreshHistory(): Unit = fireEvent(Event.RefreshHistory)
 }

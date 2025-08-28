@@ -52,8 +52,6 @@ public class ErrorBannerViewModel(
     }
 
     public sealed interface Event {
-        public data class SetIsLoadingWhenPredictionsStale(val isLoading: Boolean) : Event
-
         public data class SetSheetRoute(val sheetRoute: SheetRoutes?) : Event
 
         public data object ClearState : Event
@@ -65,9 +63,10 @@ public class ErrorBannerViewModel(
         val clearedAt: EasternTimeInstant,
     )
 
+    private var awaitingPredictionsAfterBackground: Boolean by mutableStateOf(false)
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
-        var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var sheetRoute: SheetRoutes? by remember { mutableStateOf(null) }
 
         var errorState: ErrorBannerState? by remember { mutableStateOf(null) }
@@ -131,9 +130,6 @@ public class ErrorBannerViewModel(
             events.collect { event ->
                 when (event) {
                     is Event.ClearState -> errorRepository.clearState()
-                    is Event.SetIsLoadingWhenPredictionsStale ->
-                        awaitingPredictionsAfterBackground = event.isLoading
-
                     is Event.SetSheetRoute -> {
                         if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
                             errorRepository.clearState()
@@ -155,7 +151,7 @@ public class ErrorBannerViewModel(
     }
 
     override fun setIsLoadingWhenPredictionsStale(isLoading: Boolean) {
-        fireEvent(Event.SetIsLoadingWhenPredictionsStale(isLoading))
+        this.awaitingPredictionsAfterBackground = isLoading
     }
 
     override fun checkPredictionsStale(
