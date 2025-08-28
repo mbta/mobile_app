@@ -138,6 +138,7 @@ class TripDetailsViewModelTest : KoinTest {
                 it.tripData?.tripFilter == filters && it.tripData.vehicle == vehicle
             }
             assertTrue(vehicleLoaded)
+            awaitItem()
         }
     }
 

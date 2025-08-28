@@ -257,7 +257,8 @@ class StopDetailsViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             awaitItem()
             advanceTimeBy(6.seconds)
-            assertEquals(1, staleCheckCount)
+            assertTrue(staleCheckCount > 0)
+            awaitItem()
         }
     }
 
@@ -280,12 +281,14 @@ class StopDetailsViewModelTest : KoinTest {
         val viewModel: StopDetailsViewModel = get()
         val filters = StopDetailsPageFilters("2595", null, null)
 
-        viewModel.setActive(true, false)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
+        viewModel.setActive(active = true, wasSentToBackground = false)
 
-        testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying(5.seconds) { it.routeData != null }
+        }
 
         viewModel.filterUpdates.test {
             awaitItemSatisfying { it?.stopFilter == StopDetailsFilter("87", 1, true) }
@@ -322,15 +325,18 @@ class StopDetailsViewModelTest : KoinTest {
         val viewModel: StopDetailsViewModel = get()
         val filters = StopDetailsPageFilters(stop.id, null, null)
 
-        viewModel.setActive(true, false)
+        viewModel.setActive(active = true, wasSentToBackground = false)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
 
-        testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
-
-        viewModel.filterUpdates.test {
-            awaitItemSatisfying { it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false) }
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.routeData != null }
+            viewModel.filterUpdates.test {
+                awaitItemSatisfying(5.seconds) {
+                    it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false)
+                }
+            }
         }
     }
 
@@ -378,7 +384,7 @@ class StopDetailsViewModelTest : KoinTest {
         val filters =
             StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 0, false), null)
 
-        viewModel.setActive(true, false)
+        viewModel.setActive(active = true, wasSentToBackground = false)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)

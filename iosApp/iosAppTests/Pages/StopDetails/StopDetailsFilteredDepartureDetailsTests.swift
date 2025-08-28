@@ -207,7 +207,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let stopDetailsVM = StopDetailsViewModel()
+        let stopDetailsVM = iosApp.StopDetailsViewModel()
         stopDetailsVM.global = .init(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
@@ -393,7 +393,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let nearbyVM = NearbyViewModel()
 
-        let stopDetailsVM: StopDetailsViewModel = .init()
+        let stopDetailsVM: iosApp.StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
@@ -451,7 +451,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         let nearbyVM = NearbyViewModel()
 
-        let stopDetailsVM: StopDetailsViewModel = .init()
+        let stopDetailsVM: iosApp.StopDetailsViewModel = .init()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(
@@ -717,7 +717,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let routeStopData = routeCardData.stopData.first!
         let leaf = routeStopData.data.first { $0.directionId == 0 }!
 
-        let stopDetailsVM = StopDetailsViewModel()
+        let stopDetailsVM = iosApp.StopDetailsViewModel()
         stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
