@@ -23,7 +23,7 @@ import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = EasternTimeInstant.Serializer::class)
 public class EasternTimeInstant
-private constructor(private val instant: Instant, public val local: LocalDateTime) :
+private constructor(public val instant: Instant, public val local: LocalDateTime) :
     Comparable<EasternTimeInstant> {
     public constructor(instant: Instant) : this(instant, instant.toLocalDateTime(timeZone))
 

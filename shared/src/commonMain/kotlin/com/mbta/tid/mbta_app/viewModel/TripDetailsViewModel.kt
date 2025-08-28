@@ -16,7 +16,6 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
-import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripDetailsStopList
@@ -66,14 +65,13 @@ public class TripDetailsViewModel(
         val awaitingPredictionsAfterBackground: Boolean = false,
     )
 
-    public sealed class Context {
-        public data object StopDetails : Context()
-
-        public data object TripDetails : Context()
+    public enum class Context {
+        StopDetails,
+        TripDetails,
     }
 
     @Composable
-    override fun runLogic(events: Flow<TripDetailsViewModel.Event>): State {
+    override fun runLogic(events: Flow<Event>): State {
         var context: Context? by remember { mutableStateOf(null) }
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
@@ -128,7 +126,7 @@ public class TripDetailsViewModel(
                 State(
                     tripData,
                     stopList,
-                    context is Context.TripDetails && awaitingPredictionsAfterBackground,
+                    context == Context.TripDetails && awaitingPredictionsAfterBackground,
                 )
             }
 

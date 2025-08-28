@@ -26,7 +26,7 @@ internal fun subscribeToVehicle(
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
         vehicleRepository.disconnect()
-        vehicleId?.let { vehicleRepository.connect(it, onReceive) }
+        if (active) vehicleId?.let { vehicleRepository.connect(it, onReceive) }
     }
 
     fun onReceive(message: ApiResult<VehicleStreamDataResponse>) {
@@ -39,7 +39,7 @@ internal fun subscribeToVehicle(
                 errorBannerRepository.setDataError(errorKey, message.toString()) {
                     connect(vehicleId, ::onReceive)
                 }
-                println("Trip predictions stream failed to join: ${message.message}")
+                println("Vehicle stream failed to join: ${message.message}")
                 vehicle = null
             }
         }

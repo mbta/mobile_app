@@ -24,6 +24,7 @@ import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -255,14 +256,23 @@ class TripDetailsViewModelTest : KoinTest {
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setActive(active = true, wasSentToBackground = false)
 
-        testViewModelFlow(viewModel).test {
-            awaitItemSatisfying {
-                it.tripData?.tripFilter == filters &&
-                    it.tripData.vehicle == vehicle &&
-                    it.stopList != null
+        launch {
+            testViewModelFlow(viewModel).test {
+                awaitItemSatisfying {
+                    it.tripData?.tripFilter == filters &&
+                        it.tripData.vehicle == vehicle &&
+                        it.stopList != null
+                }
             }
         }
 
-        viewModel.selectedVehicleUpdates.test { awaitItemSatisfying { it == vehicle } }
+        launch {
+            viewModel.selectedVehicleUpdates.test {
+                awaitItem()
+                awaitItemSatisfying { it == vehicle }
+            }
+        }
+
+        testScheduler.advanceUntilIdle()
     }
 }
