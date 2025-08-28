@@ -1,0 +1,22 @@
+name: Clean up GitHub Actions cache
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "32 */12 * * MON-FRI"
+
+jobs:
+  cleanup:
+    name: Clean up GitHub Actions cache
+    permissions:
+      actions: write
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          gh cache list \
+            --json id,lastAccessedAt,ref \
+            --limit 100 \
+            --sort last_accessed_at \
+            --order asc \
+            --jq '.[] | select(.ref | startswith("refs/heads/gh-readonly-queue/")) | .id' | \
+            xargs -n1 gh cache delete
