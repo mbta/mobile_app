@@ -34,6 +34,7 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -134,7 +135,10 @@ class ViewportProvider(
      */
     suspend fun <T> withViewport(operation: suspend (MapViewportState) -> T): T {
         return viewportLock.withLock {
-            withContext(Dispatchers.Default) { operation(_rawViewport) }
+            withContext(Dispatchers.Default) {
+                ensureActive()
+                operation(_rawViewport)
+            }
         }
     }
 
@@ -167,10 +171,12 @@ class ViewportProvider(
             }
 
         withViewport { viewport ->
-            withContext(Dispatchers.Main) { viewport.setCameraOptions { padding(insets) } }
+            withContext(Dispatchers.Main) {
+                ensureActive()
+                viewport.setCameraOptions { padding(insets) }
+            }
+            lastEdgeInsets = insets
         }
-
-        lastEdgeInsets = insets
     }
 
     override suspend fun follow(transitionAnimationDuration: Long?) {
@@ -206,7 +212,7 @@ class ViewportProvider(
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
         } else {
-            animateToOverview(
+            animateToOverview({
                 OverviewViewportStateOptions.Builder()
                     .padding(lastEdgeInsets)
                     .geometry(
@@ -217,7 +223,7 @@ class ViewportProvider(
                     .geometryPadding(Defaults.overviewPadding(density))
                     .maxZoom(16.0)
                     .build()
-            )
+            })
         }
     }
 
@@ -269,13 +275,13 @@ class ViewportProvider(
     }
 
     private suspend fun animateToOverview(
-        options: OverviewViewportStateOptions,
+        options: () -> OverviewViewportStateOptions,
         defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition,
     ) {
         isAnimating = true
         animateViewport { viewport, completionListener ->
             viewport.transitionToOverviewState(
-                options,
+                options(),
                 defaultTransitionOptions,
                 completionListener,
             )
