@@ -224,6 +224,7 @@ constructor(
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
+        lastUpdated = EasternTimeInstant.now()
         onConnectV2(stopIds)
         if (connectV2Outcome != null) {
             onJoin(connectV2Outcome)
@@ -234,6 +235,7 @@ constructor(
     internal var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
 
     internal fun sendMessage(message: PredictionsByStopMessageResponse) {
+        lastUpdated = EasternTimeInstant.now()
         onMessage?.invoke(ApiResult.Ok(message))
     }
 

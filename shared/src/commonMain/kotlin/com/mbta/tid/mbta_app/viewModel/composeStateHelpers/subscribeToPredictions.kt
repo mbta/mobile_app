@@ -88,12 +88,14 @@ internal fun subscribeToPredictions(
     }
 
     DisposableEffect(stopIds, active) {
-        if (loadedStopIds != stopIds) {
-            predictions = null
-            loadedStopIds = null
-        }
         connect(stopIds, active, ::onJoin, ::onMessage)
-        onDispose { predictionsRepository.disconnect() }
+        onDispose {
+            predictionsRepository.disconnect()
+            if (loadedStopIds != stopIds) {
+                predictions = null
+                loadedStopIds = null
+            }
+        }
     }
 
     LaunchedEffect(predictions) { checkStale() }

@@ -101,15 +101,6 @@ public class TripDetailsViewModel(
 
         val stopList = getTripDetailsStopList(filters, tripData, alerts, globalData)
 
-        val state =
-            remember(context, tripData, stopList, awaitingPredictionsAfterBackground) {
-                State(
-                    tripData,
-                    stopList,
-                    context is Context.TripDetails && awaitingPredictionsAfterBackground,
-                )
-            }
-
         LaunchedEffect(Unit) {
             events.collect { event ->
                 when (event) {
@@ -131,6 +122,15 @@ public class TripDetailsViewModel(
                 tripData?.vehicle?.takeIf { it.id == filters?.vehicleId }
             )
         }
+
+        val state =
+            remember(context, tripData, stopList, awaitingPredictionsAfterBackground) {
+                State(
+                    tripData,
+                    stopList,
+                    context is Context.TripDetails && awaitingPredictionsAfterBackground,
+                )
+            }
 
         return state
     }

@@ -170,6 +170,9 @@ public class StopDetailsViewModel(
                 routeCardData = null
                 routeData = null
                 return@LaunchedEffect
+            } else if (routeData?.filters?.stopId != filters?.stopId) {
+                routeCardData = null
+                routeData = null
             }
 
             routeCardData =
