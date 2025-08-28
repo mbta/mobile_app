@@ -26,19 +26,22 @@ struct DepartureTile: View {
     // Calculating the size based on an approach taken in
     // https://nilcoalescing.com/blog/AdaptiveLayoutsWithViewThatFits/#expandable-text-with-line-limit
     // the ideal width is measured on the background in the initial render, then used on subsequent renders.
-    @State var computedMultilineSize: CGSize? = nil
+    @State var computedMultilineWidth: CGFloat? = nil
 
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
+                let _ = print("KB: Headsign \(data.headsign)")
+
                 if let headsign = data.headsign {
-                    if let computedMultilineSize {
+                    if let computedMultilineWidth {
                         Text(headsign)
                             .fixedSize(horizontal: false, vertical: true)
-                            .frame(width: computedMultilineSize.width)
+                            .frame(width: computedMultilineWidth)
                             .font(Typography.footnoteSemibold)
                             .multilineTextAlignment(.leading)
                     } else {
+                        let _ = print("KB: Computing size \(headsign)")
                         Text(headsign)
                             .lineLimit(1)
                             .frame(maxWidth: 195)
@@ -50,7 +53,15 @@ struct DepartureTile: View {
                                     .background(
                                         GeometryReader { geo in
                                             Color.clear.onAppear {
-                                                computedMultilineSize = geo.size
+                                                let width = geo.size.width
+                                                // Sometimes width is 0, setting to default of 195 is better
+                                                // than 0 which stretches the tiles really tall, but why
+                                                // is this happening??
+                                                //      if width < 195.0 && width > 0.0 {
+                                                computedMultilineWidth = width
+                                                //   } else {
+                                                //       computedMultilineWidth = 195
+                                                //    }
                                             }
                                         }
                                     ).hidden()
