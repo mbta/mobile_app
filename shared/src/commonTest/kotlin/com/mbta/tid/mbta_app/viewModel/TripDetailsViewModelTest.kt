@@ -216,11 +216,11 @@ class TripDetailsViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying { it.tripData?.trip?.id == trip.id }
             assertEquals(1, predictionLoadCount)
-            assertEquals(3, predictionDisconnectCount)
+            assertEquals(1, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
             advanceUntilIdle()
             assertEquals(1, predictionLoadCount)
-            assertEquals(5, predictionDisconnectCount)
+            assertEquals(3, predictionDisconnectCount)
             awaitItem()
         }
     }

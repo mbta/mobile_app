@@ -101,7 +101,6 @@ internal fun subscribeToPredictions(
     LaunchedEffect(predictions) { checkStale() }
     LaunchedEffect(staleTimer) { checkStale() }
 
-    // when becoming active, if predictions should be forgotten, reset predictions
     LaunchedEffect(active) {
         if (
             active &&

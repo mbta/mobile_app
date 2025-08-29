@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripDetailsStopList
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -51,12 +52,6 @@ public class TripDetailsViewModel(
     public sealed class Event {
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) :
             Event()
-
-        public data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event()
-
-        public data class SetContext(val context: Context) : Event()
-
-        public data class SetFilters(val filters: TripDetailsPageFilter?) : Event()
     }
 
     public data class State(
@@ -70,14 +65,16 @@ public class TripDetailsViewModel(
         TripDetails,
     }
 
+    @set:JvmName("setAlertsState")
+    private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    @set:JvmName("setContextState") private var context by mutableStateOf<Context?>(null)
+    @set:JvmName("setFiltersState")
+    private var filters by mutableStateOf<TripDetailsPageFilter?>(null)
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
-        var context: Context? by remember { mutableStateOf(null) }
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
-
         var active: Boolean by remember { mutableStateOf(true) }
-        var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
-        var filters: TripDetailsPageFilter? by remember { mutableStateOf(null) }
 
         val errorKey = "TripDetailsViewModel"
         val globalData =
@@ -108,9 +105,6 @@ public class TripDetailsViewModel(
                             awaitingPredictionsAfterBackground = true
                         }
                     }
-                    is Event.SetAlerts -> alerts = event.alerts
-                    is Event.SetContext -> context = event.context
-                    is Event.SetFilters -> filters = event.filters
                 }
             }
         }
@@ -142,13 +136,17 @@ public class TripDetailsViewModel(
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         fireEvent(Event.SetActive(active, wasSentToBackground))
 
-    override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit =
-        fireEvent(Event.SetAlerts(alerts))
+    override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit {
+        this.alerts = alerts
+    }
 
-    override fun setContext(context: Context): Unit = fireEvent(Event.SetContext(context))
+    override fun setContext(context: Context): Unit {
+        this.context = context
+    }
 
-    override fun setFilters(filters: TripDetailsPageFilter?): Unit =
-        fireEvent(Event.SetFilters(filters))
+    override fun setFilters(filters: TripDetailsPageFilter?): Unit {
+        this.filters = filters
+    }
 }
 
 public class MockTripDetailsViewModel

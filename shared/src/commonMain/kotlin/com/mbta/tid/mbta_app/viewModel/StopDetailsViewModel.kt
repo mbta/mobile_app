@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -56,15 +57,6 @@ public class StopDetailsViewModel(
     public sealed class Event {
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) :
             Event()
-
-        public data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event()
-
-        public data class SetAlertSummaries(val alertSummaries: Map<String, AlertSummary?>) :
-            Event()
-
-        public data class SetFilters(val filters: StopDetailsPageFilters) : Event()
-
-        public data class SetNow(val now: EasternTimeInstant) : Event()
     }
 
     public data class State(
@@ -92,17 +84,21 @@ public class StopDetailsViewModel(
                 }
     }
 
+    @set:JvmName("setAlertsState")
+    private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    @set:JvmName("setAlertSummariesState")
+    private var alertSummaries by mutableStateOf<Map<String, AlertSummary?>>(emptyMap())
+    @set:JvmName("setFiltersState")
+    private var filters by mutableStateOf<StopDetailsPageFilters?>(null)
+    @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var routeData: RouteData? by remember { mutableStateOf(null) }
-        var alertSummaries: Map<String, AlertSummary?> by remember { mutableStateOf(emptyMap()) }
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
         var active: Boolean by remember { mutableStateOf(true) }
-        var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
-        var filters: StopDetailsPageFilters? by remember { mutableStateOf(null) }
-        var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
         val errorKey = "StopDetailsViewModel"
         val globalData =
@@ -146,14 +142,6 @@ public class StopDetailsViewModel(
                             awaitingPredictionsAfterBackground = true
                         }
                     }
-                    is Event.SetAlerts -> alerts = event.alerts
-                    is Event.SetAlertSummaries -> alertSummaries = event.alertSummaries
-                    is Event.SetFilters -> {
-                        filters = event.filters
-                        // If the filter is set, the last pushed update should be cleared
-                        _filterUpdates.tryEmit(null)
-                    }
-                    is Event.SetNow -> now = event.now
                 }
             }
         }
@@ -267,16 +255,23 @@ public class StopDetailsViewModel(
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         fireEvent(Event.SetActive(active, wasSentToBackground))
 
-    override fun setAlerts(alerts: AlertsStreamDataResponse?): Unit =
-        fireEvent(Event.SetAlerts(alerts))
+    override fun setAlerts(alerts: AlertsStreamDataResponse?) {
+        this.alerts = alerts
+    }
 
-    override fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>): Unit =
-        fireEvent(Event.SetAlertSummaries(alertSummaries))
+    override fun setAlertSummaries(alertSummaries: Map<String, AlertSummary?>): Unit {
+        this.alertSummaries = alertSummaries
+    }
 
-    override fun setFilters(filters: StopDetailsPageFilters): Unit =
-        fireEvent(Event.SetFilters(filters))
+    override fun setFilters(filters: StopDetailsPageFilters): Unit {
+        this.filters = filters
+        // If the filter is set, the last pushed update should be cleared
+        _filterUpdates.tryEmit(null)
+    }
 
-    override fun setNow(now: EasternTimeInstant): Unit = fireEvent(Event.SetNow(now))
+    override fun setNow(now: EasternTimeInstant): Unit {
+        this.now = now
+    }
 }
 
 public class MockStopDetailsViewModel
