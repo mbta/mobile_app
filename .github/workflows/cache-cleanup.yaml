@@ -20,3 +20,6 @@ jobs:
             --order asc \
             --jq '.[] | select(.ref | startswith("refs/heads/gh-readonly-queue/")) | .id' | \
             xargs -n1 gh cache delete
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}

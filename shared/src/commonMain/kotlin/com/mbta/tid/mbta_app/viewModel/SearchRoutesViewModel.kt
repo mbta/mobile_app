@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import kotlin.jvm.JvmName
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
@@ -41,8 +42,6 @@ internal constructor(
     ISearchRoutesViewModel {
     public sealed interface Event {
         public data class SetPath internal constructor(val path: RoutePickerPath) : Event
-
-        public data class SetQuery internal constructor(val query: String) : Event
     }
 
     public sealed class State {
@@ -61,10 +60,11 @@ internal constructor(
                 }
     }
 
+    @set:JvmName("setQueryState") private var query by mutableStateOf("")
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         var path: RoutePickerPath? by remember { mutableStateOf(null) }
-        var query by remember { mutableStateOf("") }
 
         var state by remember { mutableStateOf<State>(State.Unfiltered) }
 
@@ -77,7 +77,6 @@ internal constructor(
                         path = event.path
                         state = State.Unfiltered
                     }
-                    is Event.SetQuery -> query = event.query
                 }
             }
         }
@@ -135,7 +134,9 @@ internal constructor(
 
     override fun setPath(path: RoutePickerPath): Unit = fireEvent(Event.SetPath(path))
 
-    override fun setQuery(query: String): Unit = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) {
+        this.query = query
+    }
 
     internal companion object {
         data class FilterParams(val lineIds: List<String>?, val routeTypes: List<RouteType>?)
