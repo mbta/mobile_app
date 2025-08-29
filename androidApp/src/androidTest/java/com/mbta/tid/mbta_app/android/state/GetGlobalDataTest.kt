@@ -61,7 +61,8 @@ class GetGlobalDataTest {
 
         composeTestRule.waitUntil {
             when (val errorState = errorRepo.state.value) {
-                is ErrorBannerState.DataError -> errorState.messages == setOf("errorKey")
+                is ErrorBannerState.DataError ->
+                    errorState.messages == setOf("errorKey.getGlobalData")
                 else -> false
             }
         }

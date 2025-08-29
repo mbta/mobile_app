@@ -1,14 +1,14 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.RouteCardData
-import kotlinx.coroutines.flow.Flow
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -18,7 +18,7 @@ public interface IRouteCardDataViewModel {
     public fun setRouteCardData(data: List<RouteCardData>?)
 }
 
-public class RouteCardDataViewModel :
+public class RouteCardDataViewModel(private val sentryRepository: ISentryRepository) :
     MoleculeViewModel<RouteCardDataViewModel.Event, RouteCardDataViewModel.State>(),
     IRouteCardDataViewModel {
     public sealed class Event {
@@ -31,14 +31,12 @@ public class RouteCardDataViewModel :
         get() = internalModels
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
 
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    is Event.SetRouteCardData -> routeCardData = event.data
-                }
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.SetRouteCardData -> routeCardData = event.data
             }
         }
 

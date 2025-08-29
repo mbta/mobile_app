@@ -28,6 +28,7 @@ public actual fun viewModelModule(): Module = module {
             get(),
             get(),
             get(),
+            get(),
             get(named("coroutineDispatcherDefault")),
             get(named("coroutineDispatcherIO")),
         )
@@ -35,9 +36,27 @@ public actual fun viewModelModule(): Module = module {
     singleOf(::RouteCardDataViewModel).bind(IRouteCardDataViewModel::class)
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)
-    single { StopDetailsViewModel(get(), get(), get(), get(), get(named("coroutineDispatcherIO"))) }
+    single {
+            StopDetailsViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named("coroutineDispatcherIO")),
+            )
+        }
         .bind(IStopDetailsViewModel::class)
     singleOf(::ToastViewModel).bind(IToastViewModel::class)
-    single { TripDetailsViewModel(get(), get(), get(), get(), get(named("coroutineDispatcherIO"))) }
+    single {
+            TripDetailsViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named("coroutineDispatcherIO")),
+            )
+        }
         .bind(ITripDetailsViewModel::class)
 }

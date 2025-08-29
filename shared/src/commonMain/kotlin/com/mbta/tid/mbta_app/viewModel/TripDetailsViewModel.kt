@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
@@ -20,10 +21,10 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripDetailsStopList
 import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -42,6 +43,7 @@ public interface ITripDetailsViewModel {
 
 public class TripDetailsViewModel(
     private val errorBannerRepository: IErrorBannerStateRepository,
+    private val sentryRepository: ISentryRepository,
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
@@ -72,7 +74,7 @@ public class TripDetailsViewModel(
     private var filters by mutableStateOf<TripDetailsPageFilter?>(null)
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var active: Boolean by remember { mutableStateOf(true) }
 
@@ -95,14 +97,12 @@ public class TripDetailsViewModel(
 
         val stopList = getTripDetailsStopList(filters, tripData, alerts, globalData)
 
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    is Event.SetActive -> {
-                        active = event.active
-                        if (event.wasSentToBackground) {
-                            awaitingPredictionsAfterBackground = true
-                        }
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.SetActive -> {
+                    active = event.active
+                    if (event.wasSentToBackground) {
+                        awaitingPredictionsAfterBackground = true
                     }
                 }
             }
