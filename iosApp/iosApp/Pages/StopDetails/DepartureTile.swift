@@ -26,22 +26,24 @@ struct DepartureTile: View {
     // Calculating the size based on an approach taken in
     // https://nilcoalescing.com/blog/AdaptiveLayoutsWithViewThatFits/#expandable-text-with-line-limit
     // the ideal width is measured on the background in the initial render, then used on subsequent renders.
-    @State var computedMultilineSize: CGSize? = nil
+    @State var computedMultilineWidth: CGFloat? = nil
+
+    let maxTileWidth: CGFloat = 195.0
 
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 if let headsign = data.headsign {
-                    if let computedMultilineSize {
+                    if let computedMultilineWidth {
                         Text(headsign)
                             .fixedSize(horizontal: false, vertical: true)
-                            .frame(width: computedMultilineSize.width)
+                            .frame(width: computedMultilineWidth)
                             .font(Typography.footnoteSemibold)
                             .multilineTextAlignment(.leading)
                     } else {
                         Text(headsign)
                             .lineLimit(1)
-                            .frame(maxWidth: 195)
+                            .frame(maxWidth: maxTileWidth)
                             .font(Typography.footnoteSemibold)
                             .multilineTextAlignment(.leading)
                             .background {
@@ -50,7 +52,19 @@ struct DepartureTile: View {
                                     .background(
                                         GeometryReader { geo in
                                             Color.clear.onAppear {
-                                                computedMultilineSize = geo.size
+                                                let width = geo.size.width
+                                                /*
+                                                 Sometimes at large text sizes, when navigating from unfiltered stop
+                                                 details, the first TYPICAL_LEAF_ROWS or BRANCHING_LEAF_ROWS end up
+                                                 with a geo.size.width of 0.0. This results in the tile stretching
+                                                 very tall with no visible headsign. If for some reason the width is
+                                                 0.0, set it to the max width of 195 so that it at least renders.
+                                                 */
+                                                if width > 0.0, width < maxTileWidth {
+                                                    computedMultilineWidth = width
+                                                } else {
+                                                    computedMultilineWidth = maxTileWidth
+                                                }
                                             }
                                         }
                                     ).hidden()
@@ -69,7 +83,7 @@ struct DepartureTile: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
-        .frame(maxWidth: 195, minHeight: 56, maxHeight: .infinity)
+        .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
         .background(isSelected ? Color.fill3 : Color.deselectedToggle2.opacity(0.6))
         .foregroundStyle(isSelected ? Color.text : Color.deselectedToggleText)
         .clipShape(.rect(cornerRadius: 8))
