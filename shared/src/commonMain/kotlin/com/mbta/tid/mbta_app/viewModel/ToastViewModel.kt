@@ -1,11 +1,15 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Toast
-import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.serialization.Serializable
@@ -18,7 +22,7 @@ public interface IToastViewModel {
     public fun showToast(toast: Toast)
 }
 
-public class ToastViewModel internal constructor() :
+public class ToastViewModel internal constructor(private val sentryRepository: ISentryRepository) :
     IToastViewModel, MoleculeViewModel<Event, ToastViewModel.State>() {
 
     /**
@@ -62,17 +66,18 @@ public class ToastViewModel internal constructor() :
     }
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
-        return produceState(State.Hidden as State, events) {
-                events.collect { event ->
-                    value =
-                        when (event) {
-                            is Event.Hide -> State.Hidden
-                            is Event.ShowToast -> State.Visible(event.toast)
-                        }
+    override fun runLogic(): State {
+        var state: State by remember { mutableStateOf(State.Hidden) }
+
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            state =
+                when (event) {
+                    is Event.Hide -> State.Hidden
+                    is Event.ShowToast -> State.Visible(event.toast)
                 }
-            }
-            .value
+        }
+
+        return state
     }
 
     override val models: StateFlow<State>

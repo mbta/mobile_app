@@ -20,12 +20,13 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -76,6 +77,7 @@ public class SearchViewModel(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
+    private val sentryRepository: ISentryRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
     public sealed interface Event {
@@ -163,7 +165,7 @@ public class SearchViewModel(
     @set:JvmName("setQueryState") private var query by mutableStateOf("")
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         val globalData by globalRepository.state.collectAsState()
         var latestVisits by remember { mutableStateOf<List<Visit>?>(null) }
         var state by remember { mutableStateOf<State>(State.Loading) }
@@ -172,11 +174,9 @@ public class SearchViewModel(
 
         LaunchedEffect(null) { latestVisits = visitHistoryUsecase.getLatestVisits() }
 
-        LaunchedEffect(null) {
-            events.collect { event ->
-                when (event) {
-                    Event.RefreshHistory -> latestVisits = visitHistoryUsecase.getLatestVisits()
-                }
+        EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                Event.RefreshHistory -> latestVisits = visitHistoryUsecase.getLatestVisits()
             }
         }
 

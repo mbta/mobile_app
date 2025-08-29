@@ -9,10 +9,18 @@ import org.koin.dsl.module
 public actual fun viewModelModule(): Module = module {
     singleOf(::ErrorBannerViewModel).bind(IErrorBannerViewModel::class)
     single {
-        FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
+        FavoritesViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(named("coroutineDispatcherDefault")),
+            get(),
+        )
     }
     single {
         MapViewModel(
+            get(),
             get(),
             get(),
             get(),

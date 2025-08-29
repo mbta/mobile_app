@@ -14,11 +14,12 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -37,6 +38,7 @@ internal constructor(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
+    private val sentryRepository: ISentryRepository,
 ) :
     MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
     ISearchRoutesViewModel {
@@ -63,20 +65,18 @@ internal constructor(
     @set:JvmName("setQueryState") private var query by mutableStateOf("")
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var path: RoutePickerPath? by remember { mutableStateOf(null) }
 
         var state by remember { mutableStateOf<State>(State.Unfiltered) }
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
 
-        LaunchedEffect(null) {
-            events.collect { event ->
-                when (event) {
-                    is Event.SetPath -> {
-                        path = event.path
-                        state = State.Unfiltered
-                    }
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.SetPath -> {
+                    path = event.path
+                    state = State.Unfiltered
                 }
             }
         }

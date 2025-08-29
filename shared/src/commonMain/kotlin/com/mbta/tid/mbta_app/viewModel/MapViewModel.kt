@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -37,7 +38,6 @@ import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -79,6 +79,7 @@ public interface IMapViewModel {
 public class MapViewModel(
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
+    private val sentryRepository: ISentryRepository,
     private val stopRepository: IStopRepository,
     private val defaultCoroutineDispatcher: CoroutineDispatcher,
     private val iOCoroutineDispatcher: CoroutineDispatcher,
@@ -147,7 +148,7 @@ public class MapViewModel(
     private var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
@@ -193,75 +194,73 @@ public class MapViewModel(
             }
         }
 
-        LaunchedEffect(null) {
-            events.collect { event ->
-                when (event) {
-                    is Event.NavChanged -> {
-                        state =
-                            handleNavChange(
-                                state,
-                                event.currentNavEntry,
-                                previousNavEntry,
-                                globalData,
-                                density,
-                            )
-                        previousNavEntry = event.currentNavEntry
-                    }
-                    is Event.Recenter -> {
-                        when (state) {
-                            is State.Overview,
-                            is State.StopSelected -> {
-                                followPuck(null)
-                            }
-                            is State.TripSelected -> {
-                                when (event.type) {
-                                    RecenterType.CurrentLocation -> followPuck(null)
-                                    RecenterType.Trip -> {
-                                        val currentState = state as State.TripSelected
-                                        handleViewportCentering(currentState, density)
-                                    }
+        EventSink(eventHandlingTimeout = 10.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.NavChanged -> {
+                    state =
+                        handleNavChange(
+                            state,
+                            event.currentNavEntry,
+                            previousNavEntry,
+                            globalData,
+                            density,
+                        )
+                    previousNavEntry = event.currentNavEntry
+                }
+                is Event.Recenter -> {
+                    when (state) {
+                        is State.Overview,
+                        is State.StopSelected -> {
+                            followPuck(null)
+                        }
+                        is State.TripSelected -> {
+                            when (event.type) {
+                                RecenterType.CurrentLocation -> followPuck(null)
+                                RecenterType.Trip -> {
+                                    val currentState = state as State.TripSelected
+                                    handleViewportCentering(currentState, density)
                                 }
                             }
                         }
                     }
-                    is Event.SelectedStop -> {
-                        viewportManager.saveNearbyTransitViewport()
-                        val newState = State.StopSelected(event.stop, event.stopFilter)
+                }
+                is Event.SelectedStop -> {
+                    viewportManager.saveNearbyTransitViewport()
+                    val newState = State.StopSelected(event.stop, event.stopFilter)
+                    handleViewportCentering(newState, density)
+                    state = newState
+                }
+                is Event.SelectedTrip -> {
+                    val currentState = (state as? State.TripSelected)
+                    val newState =
+                        State.TripSelected(
+                            event.stop,
+                            event.stopFilter,
+                            event.tripFilter,
+                            event.vehicle,
+                        )
+                    if (currentState?.vehicle?.id != newState.vehicle?.id) {
                         handleViewportCentering(newState, density)
-                        state = newState
                     }
-                    is Event.SelectedTrip -> {
-                        val currentState = (state as? State.TripSelected)
-                        val newState =
-                            State.TripSelected(
-                                event.stop,
-                                event.stopFilter,
-                                event.tripFilter,
-                                event.vehicle,
-                            )
-                        if (currentState?.vehicle?.id != newState.vehicle?.id) {
-                            handleViewportCentering(newState, density)
-                        }
-                        state = newState
+                    state = newState
+                }
+                is Event.MapStyleLoaded -> {
+                    layerManager?.run {
+                        addLayers(
+                            allRailRouteShapes ?: return@run,
+                            stopLayerGeneratorState,
+                            globalData ?: return@run,
+                            if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
+                        )
                     }
-                    is Event.MapStyleLoaded -> {
-                        layerManager?.run {
-                            addLayers(
-                                allRailRouteShapes ?: return@run,
-                                stopLayerGeneratorState,
-                                globalData ?: return@run,
-                                if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
-                            )
-                        }
-                    }
-                    is Event.LayerManagerInitialized -> {
-                        layerManager = event.layerManager
-                    }
-                    is Event.LocationPermissionsChanged -> {
-                        if (event.hasPermission && viewportManager.isDefault()) {
-                            followPuck(0)
-                            layerManager?.run { resetPuckPosition() }
-                        }
+                }
+                is Event.LayerManagerInitialized -> {
+                    layerManager = event.layerManager
+                }
+                is Event.LocationPermissionsChanged -> {
+                    if (event.hasPermission && viewportManager.isDefault()) {
+                        followPuck(0)
+                        layerManager?.run { resetPuckPosition() }
                     }
                 }
             }
