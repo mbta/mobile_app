@@ -17,10 +17,12 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -51,7 +53,12 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
@@ -94,7 +101,12 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
@@ -133,7 +145,12 @@ class SubscribeToPredictionsTest {
             )
 
         var predictions: PredictionsStreamDataResponse? = null
-        val errorBannerViewModel = ErrorBannerViewModel(MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             val predictionsVM =
@@ -162,7 +179,8 @@ class SubscribeToPredictionsTest {
             MockErrorBannerStateRepository(
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
-        val errorBannerViewModel = ErrorBannerViewModel(mockErrorRepo)
+        val errorBannerViewModel =
+            ErrorBannerViewModel(mockErrorRepo, MockSentryRepository(), Clock.System)
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }

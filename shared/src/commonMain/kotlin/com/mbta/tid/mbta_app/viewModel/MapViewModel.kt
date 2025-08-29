@@ -34,12 +34,10 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -87,7 +85,6 @@ public class MapViewModel(
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
 
     private lateinit var viewportManager: ViewportManager
-    private val routeCardDataUpdates = MutableStateFlow<List<RouteCardData>?>(null)
 
     public sealed interface Event {
 
@@ -111,12 +108,6 @@ public class MapViewModel(
             Event
 
         public data class Recenter(val type: RecenterType) : Event
-
-        public data class AlertsChanged(val alerts: AlertsStreamDataResponse?) : Event
-
-        public data class ColorPaletteChanged(val isDarkMode: Boolean) : Event
-
-        public data class DensityChanged(val density: Float) : Event
 
         public data object MapStyleLoaded : Event
 
@@ -150,12 +141,16 @@ public class MapViewModel(
         ) : State()
     }
 
+    private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    private var density by mutableStateOf<Float?>(null)
+    private var isDarkMode by mutableStateOf(false)
+    private var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
+
     @Composable
     override fun runLogic(events: Flow<Event>): State {
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
-        val routeCardData by routeCardDataUpdates.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -171,10 +166,7 @@ public class MapViewModel(
             mutableStateOf(StopLayerGenerator.State(null, null))
         }
 
-        var alerts by remember { mutableStateOf<AlertsStreamDataResponse?>(null) }
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
-        var isDarkMode by remember { mutableStateOf<Boolean?>(null) }
-        var density by remember { mutableStateOf<Float?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
         var state by remember { mutableStateOf<State>(State.Overview) }
         val (stopId: String?, stopFilter: StopDetailsFilter?) = state.stop?.id to state.stopFilter
@@ -203,11 +195,7 @@ public class MapViewModel(
 
         LaunchedEffect(null) {
             events.collect { event ->
-                val start = Clock.System.now()
                 when (event) {
-                    is Event.AlertsChanged -> alerts = event.alerts
-                    is Event.ColorPaletteChanged -> isDarkMode = event.isDarkMode
-                    is Event.DensityChanged -> density = event.density
                     is Event.NavChanged -> {
                         state =
                             handleNavChange(
@@ -267,7 +255,7 @@ public class MapViewModel(
                         }
                     }
                     is Event.LayerManagerInitialized -> {
-                        if (layerManager == null) layerManager = event.layerManager
+                        layerManager = event.layerManager
                     }
                     is Event.LocationPermissionsChanged -> {
                         if (event.hasPermission && viewportManager.isDefault()) {
@@ -276,7 +264,6 @@ public class MapViewModel(
                         }
                     }
                 }
-                val end = Clock.System.now()
             }
         }
 
@@ -337,19 +324,21 @@ public class MapViewModel(
 
     override fun recenter(type: RecenterType): Unit = fireEvent(Event.Recenter(type))
 
-    override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit =
-        fireEvent(Event.AlertsChanged(alerts))
-
-    // Route card data is sent through a separate StateFlow rather than the event flow because
-    // frequent updates were causing buffer overflows, and we only care about the latest value.
-    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
-        routeCardDataUpdates.tryEmit(routeCardData)
+    override fun alertsChanged(alerts: AlertsStreamDataResponse?) {
+        this.alerts = alerts
     }
 
-    override fun colorPaletteChanged(isDarkMode: Boolean): Unit =
-        fireEvent(Event.ColorPaletteChanged(isDarkMode))
+    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
+        this.routeCardData = routeCardData
+    }
 
-    override fun densityChanged(density: Float): Unit = fireEvent(Event.DensityChanged(density))
+    override fun colorPaletteChanged(isDarkMode: Boolean) {
+        this.isDarkMode = isDarkMode
+    }
+
+    override fun densityChanged(density: Float) {
+        this.density = density
+    }
 
     override fun mapStyleLoaded(): Unit = fireEvent(Event.MapStyleLoaded)
 

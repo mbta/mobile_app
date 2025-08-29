@@ -125,13 +125,14 @@ struct TripStops: View {
                                 )
                                 .foregroundStyle(Color.text)
                                 .padding(.leading, 0)
-                                .accessibilityLabel(Text(
-                                    "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
-                                    comment: """
-                                    VoiceOver label for how many stops away a vehicle is from a stop,
-                                    ex 'bus is 4 stops away from Harvard'
-                                    """
-                                ))
+                                .accessibilityLabel(nStopsAwayLabel(stopsAway: stopsAway, target: target))
+                                .accessibilityInputLabels([
+                                    Text(
+                                        "\(stopsAway, specifier: "%ld")stops away",
+                                        comment: "Voice Control alias to abbreviate “7 stops away” to “7stops” rather than just “7”"
+                                    ),
+                                    nStopsAwayLabel(stopsAway: stopsAway, target: target),
+                                ])
                                 .accessibilityHint(stopsExpanded ? Text(
                                     "Hides remaining stops",
                                     comment: """
@@ -189,6 +190,16 @@ struct TripStops: View {
         }
         .padding(.horizontal, 10)
         .padding(.bottom, 48)
+    }
+
+    private func nStopsAwayLabel(stopsAway: Int, target: TripDetailsStopList.Entry) -> Text {
+        Text(
+            "\(routeTypeText) is \(stopsAway, specifier: "%ld") stops away from \(target.stop.name)",
+            comment: """
+            VoiceOver label for how many stops away a vehicle is from a stop,
+            ex 'bus is 4 stops away from Harvard'
+            """
+        )
     }
 }
 
