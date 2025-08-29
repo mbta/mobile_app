@@ -635,9 +635,9 @@ public data class RouteCardData(
 
     public companion object {
         // For regular non-branching service, we always show up to 2 departure rows for each leaf
-        internal const val TYPICAL_LEAF_ROWS = 5
+        internal const val TYPICAL_LEAF_ROWS = 2
         // For branching non-bus service we show up to 3 departure or disruption rows for each leaf
-        internal const val BRANCHING_LEAF_ROWS = 5
+        internal const val BRANCHING_LEAF_ROWS = 3
 
         /**
          * Build a sorted list of route cards containing realtime data for the given stops.

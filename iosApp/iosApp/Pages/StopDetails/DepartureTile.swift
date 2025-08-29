@@ -28,11 +28,11 @@ struct DepartureTile: View {
     // the ideal width is measured on the background in the initial render, then used on subsequent renders.
     @State var computedMultilineWidth: CGFloat? = nil
 
+    let maxTileWidth: CGFloat = 195.0
+
     var body: some View {
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
-                let _ = print("KB: Headsign \(data.headsign)")
-
                 if let headsign = data.headsign {
                     if let computedMultilineWidth {
                         Text(headsign)
@@ -41,10 +41,9 @@ struct DepartureTile: View {
                             .font(Typography.footnoteSemibold)
                             .multilineTextAlignment(.leading)
                     } else {
-                        let _ = print("KB: Computing size \(headsign)")
                         Text(headsign)
                             .lineLimit(1)
-                            .frame(maxWidth: 195)
+                            .frame(maxWidth: maxTileWidth)
                             .font(Typography.footnoteSemibold)
                             .multilineTextAlignment(.leading)
                             .background {
@@ -54,14 +53,18 @@ struct DepartureTile: View {
                                         GeometryReader { geo in
                                             Color.clear.onAppear {
                                                 let width = geo.size.width
-                                                // Sometimes width is 0, setting to default of 195 is better
-                                                // than 0 which stretches the tiles really tall, but why
-                                                // is this happening??
-                                                //      if width < 195.0 && width > 0.0 {
-                                                computedMultilineWidth = width
-                                                //   } else {
-                                                //       computedMultilineWidth = 195
-                                                //    }
+                                                /*
+                                                 Sometimes at large text sizes, when navigating from unfiltered stop
+                                                 details, the first TYPICAL_LEAF_ROWS or BRANCHING_LEAF_ROWS end up
+                                                 with a geo.size.width of 0.0. This results in the tile stretching
+                                                 very tall with no visible headsign. If for some reason the width is
+                                                 0.0, set it to the max width of 195 so that it at least renders.
+                                                 */
+                                                if width > 0.0, width < maxTileWidth {
+                                                    computedMultilineWidth = width
+                                                } else {
+                                                    computedMultilineWidth = maxTileWidth
+                                                }
                                             }
                                         }
                                     ).hidden()
@@ -80,7 +83,7 @@ struct DepartureTile: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 10)
-        .frame(maxWidth: 195, minHeight: 56, maxHeight: .infinity)
+        .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
         .background(isSelected ? Color.fill3 : Color.deselectedToggle2.opacity(0.6))
         .foregroundStyle(isSelected ? Color.text : Color.deselectedToggleText)
         .clipShape(.rect(cornerRadius: 8))
