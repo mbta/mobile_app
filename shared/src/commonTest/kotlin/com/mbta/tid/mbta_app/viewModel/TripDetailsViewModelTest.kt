@@ -96,6 +96,7 @@ class TripDetailsViewModelTest : KoinTest {
             awaitItemSatisfying { it.tripData?.tripFilter == filters && it.tripData.trip == trip }
             assertTrue(tripLoaded)
             assertTrue(schedulesLoaded)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -139,7 +140,7 @@ class TripDetailsViewModelTest : KoinTest {
                 it.tripData?.tripFilter == filters && it.tripData.vehicle == vehicle
             }
             assertTrue(vehicleLoaded)
-            awaitItem()
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -178,6 +179,7 @@ class TripDetailsViewModelTest : KoinTest {
                 it.tripData?.tripFilter == filters && it.tripData.tripPredictionsLoaded
             }
             assertTrue(predictionsLoaded)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -221,7 +223,7 @@ class TripDetailsViewModelTest : KoinTest {
             advanceUntilIdle()
             assertEquals(1, predictionLoadCount)
             assertEquals(3, predictionDisconnectCount)
-            awaitItem()
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

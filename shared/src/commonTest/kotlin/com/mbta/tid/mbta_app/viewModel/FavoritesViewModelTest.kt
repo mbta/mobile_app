@@ -723,6 +723,7 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -754,6 +755,7 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

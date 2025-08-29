@@ -202,11 +202,15 @@ class StopDetailsViewModelTest : KoinTest {
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
-        testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Filtered }
+        launch {
+            testViewModelFlow(viewModel).test {
+                awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Filtered }
+            }
         }
 
-        testViewModelFlow(routeCardVM).test { awaitItemSatisfying { it.data != null } }
+        launch { testViewModelFlow(routeCardVM).test { awaitItemSatisfying { it.data != null } } }
+
+        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -266,7 +270,7 @@ class StopDetailsViewModelTest : KoinTest {
             awaitItem()
             advanceTimeBy(6.seconds)
             assertTrue(staleCheckCount > 0)
-            awaitItem()
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -401,24 +405,10 @@ class StopDetailsViewModelTest : KoinTest {
         val filters =
             StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 0, false), null)
 
-        viewModel.setActive(active = true, wasSentToBackground = false)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
-
-        launch {
-            testViewModelFlow(viewModel).test {
-                awaitItemSatisfying(5.seconds) { it.routeData != null }
-                viewModel.setFilters(
-                    StopDetailsPageFilters(
-                        "place-rugg",
-                        StopDetailsFilter("Orange", 1, false),
-                        null,
-                    )
-                )
-                awaitItem()
-            }
-        }
+        viewModel.setActive(active = true, wasSentToBackground = false)
 
         launch {
             viewModel.filterUpdates.test {
@@ -426,6 +416,20 @@ class StopDetailsViewModelTest : KoinTest {
                 awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
                 awaitItem()
                 awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
+            }
+        }
+
+        launch {
+            testViewModelFlow(viewModel).test {
+                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
+                viewModel.setFilters(
+                    StopDetailsPageFilters(
+                        "place-rugg",
+                        StopDetailsFilter("Orange", 1, false),
+                        null,
+                    )
+                )
+                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
             }
         }
 
