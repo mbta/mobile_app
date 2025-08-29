@@ -34,7 +34,6 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -394,8 +393,9 @@ internal class MapViewModelTests : KoinTest {
             advanceUntilIdle()
             verify {
                 sentryRepository.captureException(
-                    matching<TimeoutCancellationException> {
-                        it.message?.startsWith("Timed out after 10s") == true
+                    matching<MoleculeViewModel.TimeoutException> {
+                        it.message ==
+                            "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
                     }
                 )
             }

@@ -33,7 +33,7 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
             onBufferOverflow = BufferOverflow.SUSPEND,
         )
 
-    private class TimeoutException(
+    internal class TimeoutException(
         className: String?,
         event: Any?,
         timeout: TimeoutCancellationException,
