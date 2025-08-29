@@ -25,10 +25,8 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
-import com.mbta.tid.mbta_app.model.stopDetailsPage.StopData
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -320,18 +318,9 @@ class StopDetailsFilteredDeparturesViewTest {
                 RouteCardData.Context.StopDetailsFiltered,
             )
         val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
-        val routeCardData = RouteCardData(lineOrRoute, listOf(routeStopData), now)
 
         val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
         val tripFilter = TripDetailsFilter(trip.id, null, null, false)
-
-        val stopData =
-            StopData(
-                stop.id,
-                ScheduleResponse(objects),
-                PredictionsByStopJoinResponse(objects),
-                true,
-            )
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -583,14 +572,6 @@ class StopDetailsFilteredDeparturesViewTest {
         val leaf = routeStopData.data.first { it.directionId == 0 }
         val alertSummaries =
             mapOf(alert.id to alert.summary(stop.id, 0, listOf(alertPattern), now, global))
-
-        val stopData =
-            StopData(
-                stop.id,
-                ScheduleResponse(objects),
-                PredictionsByStopJoinResponse(objects),
-                true,
-            )
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(

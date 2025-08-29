@@ -61,7 +61,7 @@ fun RoutePickerView(
     errorBannerViewModel: IErrorBannerViewModel,
     searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
-    val globalData = getGlobalData("RoutePickerView.globalData")
+    val globalData = getGlobalData("RoutePickerView")
     var searchInputState by rememberSaveable { mutableStateOf("") }
     var searchInputFocused by rememberSaveable { mutableStateOf(false) }
     val searchVMState by searchRoutesViewModel.models.collectAsState()

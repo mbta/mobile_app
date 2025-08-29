@@ -111,7 +111,7 @@ public class FavoritesViewModel(
         var active: Boolean by remember { mutableStateOf(true) }
 
         val errorKey = "FavoritesViewModel"
-        val globalData = getGlobalData("$errorKey.getGlobalData")
+        val globalData = getGlobalData(errorKey)
         val stopIds =
             remember(favorites, globalData) {
                 val stops = favorites?.mapNotNull { globalData?.getStop(it.stop) }

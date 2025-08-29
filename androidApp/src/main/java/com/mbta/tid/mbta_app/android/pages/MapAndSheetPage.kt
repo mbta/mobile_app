@@ -146,7 +146,7 @@ fun MapAndSheetPage(
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
-    val viewModel: NearbyTransitTabViewModel = viewModel()
+    val nearbyTabViewModel: NearbyTransitTabViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -163,7 +163,7 @@ fun MapAndSheetPage(
     val now by timer(updateInterval = 5.seconds)
 
     fun updateStopDetailsFilters(filters: StopDetailsPageFilters) {
-        viewModel.setStopDetailsFilters(
+        nearbyTabViewModel.setStopDetailsFilters(
             currentNavEntry,
             filters,
             { navController.popBackStack() },
@@ -172,7 +172,7 @@ fun MapAndSheetPage(
     }
 
     fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
-        viewModel.setStopFilter(
+        nearbyTabViewModel.setStopFilter(
             currentNavEntry,
             stopId,
             stopFilter,
@@ -182,7 +182,7 @@ fun MapAndSheetPage(
     }
 
     fun updateTripFilter(stopId: String, tripFilter: TripDetailsFilter?) {
-        viewModel.setTripFilter(
+        nearbyTabViewModel.setTripFilter(
             currentNavEntry,
             stopId,
             tripFilter,
@@ -754,11 +754,13 @@ fun MapAndSheetPage(
                     searchFocusRequester,
                     onBarGloballyPositioned = { layoutCoordinates ->
                         with(density) {
-                            viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
+                            nearbyTabViewModel.setSearchBarHeight(
+                                layoutCoordinates.size.height.toDp()
+                            )
                         }
                     },
                 ) {
-                    val searchBarHeight by viewModel.searchBarHeight.collectAsState()
+                    val searchBarHeight by nearbyTabViewModel.searchBarHeight.collectAsState()
                     val mapPadding =
                         remember(sheetPadding, searchBarHeight) {
                             sheetPadding.plus(

@@ -63,7 +63,7 @@ fun SaveFavoritesFlow(
     onClose: () -> Unit,
 ) {
 
-    val global = getGlobalData("SaveFavoritesFlow.getGlobalData")
+    val global = getGlobalData("SaveFavoritesFlow")
     val isUnFavoriting =
         directions.any { it.id == selectedDirection } &&
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))

@@ -101,8 +101,7 @@ public class StopDetailsViewModel(
         var active: Boolean by remember { mutableStateOf(true) }
 
         val errorKey = "StopDetailsViewModel"
-        val globalData =
-            getGlobalData("$errorKey.getGlobalData", coroutineDispatcher = coroutineDispatcher)
+        val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val stopIds =
             remember(filters, globalData) {

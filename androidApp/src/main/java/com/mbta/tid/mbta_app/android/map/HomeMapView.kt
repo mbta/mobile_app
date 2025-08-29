@@ -85,7 +85,7 @@ fun HomeMapView(
     viewModel: IMapViewModel,
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
-    val globalData = getGlobalData("HomeMapView.getGlobalData")
+    val globalData = getGlobalData("HomeMapView")
     val state by viewModel.models.collectAsState()
     var isTargeting by isTargetingState
 

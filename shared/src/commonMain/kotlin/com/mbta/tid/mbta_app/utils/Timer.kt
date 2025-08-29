@@ -30,7 +30,7 @@ internal class ClockTickHandler {
                         while (true) {
                             val now = EasternTimeInstant.now(clock)
                             _clockFlow.emit(now)
-                            val untilNextSecond = 1000 - now.instant.toEpochMilliseconds() % 1000
+                            val untilNextSecond = 1000 - now.toEpochMilliseconds() % 1000
                             delay(untilNextSecond)
                         }
                     }

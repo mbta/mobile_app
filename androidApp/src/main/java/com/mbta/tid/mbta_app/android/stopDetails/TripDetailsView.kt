@@ -56,7 +56,7 @@ fun TripDetailsView(
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
-    val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
+    val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView")
     val state by tripDetailsVM.models.collectAsState()
     val tripData: TripData? = state.tripData
     val stopList = state.stopList

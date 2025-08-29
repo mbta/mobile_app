@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
@@ -49,7 +48,12 @@ internal fun getGlobalData(
 ): GlobalResponse? {
     val globalResponse: GlobalResponse? by globalRepository.state.collectAsState()
     LaunchedEffect(Unit) {
-        fetchGlobalData(errorKey, errorBannerRepository, globalRepository, coroutineDispatcher)
+        fetchGlobalData(
+            "$errorKey.getGlobalData",
+            errorBannerRepository,
+            globalRepository,
+            coroutineDispatcher,
+        )
     }
     return globalResponse
 }

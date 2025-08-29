@@ -51,7 +51,7 @@ fun getGlobalData(
     val viewModel: GlobalDataViewModel =
         viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))
 
-    LaunchedEffect(Unit) { viewModel.getGlobalData(errorKey) }
+    LaunchedEffect(Unit) { viewModel.getGlobalData("$errorKey.getGlobalData") }
 
     return globalRepository.state.collectAsState().value
 }

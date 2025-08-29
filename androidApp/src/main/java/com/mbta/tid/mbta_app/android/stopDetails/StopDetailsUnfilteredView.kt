@@ -35,7 +35,7 @@ fun StopDetailsUnfilteredView(
     errorBannerViewModel: IErrorBannerViewModel,
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
-    val globalResponse = getGlobalData("StopDetailsUnfilteredView.getGlobalData")
+    val globalResponse = getGlobalData("StopDetailsUnfilteredView")
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()

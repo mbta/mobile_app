@@ -69,7 +69,7 @@ fun StopDetailsFilteredDeparturesView(
     viewModel: IStopDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
-    val global = getGlobalData("StopDetailsFilteredDeparturesView.getGlobalData")
+    val global = getGlobalData("StopDetailsFilteredDeparturesView")
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)
     val noPredictionsStatus = leafFormat.noPredictionsStatus()

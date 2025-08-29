@@ -77,8 +77,7 @@ public class TripDetailsViewModel(
         var active: Boolean by remember { mutableStateOf(true) }
 
         val errorKey = "TripDetailsViewModel"
-        val globalData =
-            getGlobalData("$errorKey.getGlobalData", coroutineDispatcher = coroutineDispatcher)
+        val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val tripData =
             getTripData(

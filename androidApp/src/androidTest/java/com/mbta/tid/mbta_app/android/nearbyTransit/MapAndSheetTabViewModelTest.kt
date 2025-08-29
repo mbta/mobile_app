@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
+import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import junit.framework.TestCase.assertFalse
 import junit.framework.TestCase.assertTrue
@@ -8,6 +10,41 @@ import kotlin.test.assertEquals
 import org.junit.Test
 
 class MapAndSheetTabViewModelTest {
+
+    @Test
+    fun testUpdatesStopDetailsPageFilterUpdates() {
+        val vm = NearbyTransitTabViewModel()
+        val initialFilter =
+            StopDetailsPageFilters(
+                "stop1",
+                StopDetailsFilter("route_1", 1),
+                TripDetailsFilter("trip_1", null, 0, false),
+            )
+        val initialNav =
+            SheetRoutes.StopDetails(
+                initialFilter.stopId,
+                initialFilter.stopFilter,
+                initialFilter.tripFilter,
+            )
+        val newFilter =
+            StopDetailsPageFilters(
+                "stop1",
+                StopDetailsFilter("route_1", 0),
+                TripDetailsFilter("trip_2", null, 0, false),
+            )
+        val newNav =
+            SheetRoutes.StopDetails(newFilter.stopId, newFilter.stopFilter, newFilter.tripFilter)
+
+        var popCalled = false
+        var pushedRoute: SheetRoutes? = null
+
+        vm.setStopDetailsFilters(null, initialFilter, { popCalled = true }, { pushedRoute = it })
+        assertEquals(initialNav, pushedRoute)
+        assertFalse(popCalled)
+        vm.setStopDetailsFilters(pushedRoute, newFilter, { popCalled = true }, { pushedRoute = it })
+        assertEquals(newNav, pushedRoute)
+        assertTrue(popCalled)
+    }
 
     @Test
     fun testSetStopDetailsFilterPushedWhenNotInStopDetails() {
