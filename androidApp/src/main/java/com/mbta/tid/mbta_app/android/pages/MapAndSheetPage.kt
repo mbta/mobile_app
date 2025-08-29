@@ -70,7 +70,6 @@ import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
 import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
-import com.mbta.tid.mbta_app.android.stopDetails.stopDetailsManagedVM
 import com.mbta.tid.mbta_app.android.typeMap
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -98,6 +97,9 @@ import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
 import kotlin.time.Clock
@@ -139,9 +141,12 @@ fun MapAndSheetPage(
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
+    routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
+    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
-    val viewModel: NearbyTransitTabViewModel = viewModel()
+    val nearbyTabViewModel: NearbyTransitTabViewModel = viewModel()
 
     val coroutineScope = rememberCoroutineScope()
     val navController = rememberNavController()
@@ -157,8 +162,17 @@ fun MapAndSheetPage(
 
     val now by timer(updateInterval = 5.seconds)
 
+    fun updateStopDetailsFilters(filters: StopDetailsPageFilters) {
+        nearbyTabViewModel.setStopDetailsFilters(
+            currentNavEntry,
+            filters,
+            { navController.popBackStack() },
+            { navController.navigate(it) },
+        )
+    }
+
     fun updateStopFilter(stopId: String, stopFilter: StopDetailsFilter?) {
-        viewModel.setStopFilter(
+        nearbyTabViewModel.setStopFilter(
             currentNavEntry,
             stopId,
             stopFilter,
@@ -168,7 +182,7 @@ fun MapAndSheetPage(
     }
 
     fun updateTripFilter(stopId: String, tripFilter: TripDetailsFilter?) {
-        viewModel.setTripFilter(
+        nearbyTabViewModel.setTripFilter(
             currentNavEntry,
             stopId,
             tripFilter,
@@ -187,23 +201,16 @@ fun MapAndSheetPage(
                 )
             else -> null
         })
-    val stopDetailsVM =
-        stopDetailsManagedVM(
-            filters = filters,
-            globalResponse = nearbyTransit.globalResponse,
-            alertData = nearbyTransit.alertData,
-            updateStopFilter = ::updateStopFilter,
-            updateTripFilter = ::updateTripFilter,
-            setMapSelectedVehicle = { vehicle ->
-                val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
-                filters?.tripFilter?.let {
-                    mapViewModel.selectedTrip(filters.stopFilter, stop, it, vehicle)
-                }
-            },
-            now = now,
-        )
 
-    val routeCardData by viewModel.routeCardData.collectAsState()
+    val selectedVehicleUpdate by tripDetailsViewModel.selectedVehicleUpdates.collectAsState()
+    LaunchedEffect(selectedVehicleUpdate) {
+        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
+        filters?.tripFilter?.let {
+            mapViewModel.selectedTrip(filters.stopFilter, stop, it, selectedVehicleUpdate)
+        }
+    }
+
+    val routeCardDataState by routeCardDataViewModel.models.collectAsState()
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
@@ -218,14 +225,16 @@ fun MapAndSheetPage(
         }
     }
 
+    val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsState()
+    LaunchedEffect(filterUpdates) { filterUpdates?.let { updateStopDetailsFilters(it) } }
+
     val vehiclesData: List<Vehicle> =
         subscribeToVehicles(
             routeDirection =
                 when (currentNavEntry) {
                     is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
                     else -> null
-                },
-            routeCardData = routeCardData,
+                }
         )
 
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
@@ -298,6 +307,7 @@ fun MapAndSheetPage(
 
     fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
+        val routeCardData = routeCardDataState.data
         val (stopId, stopFilter, tripFilter) =
             when (currentNavEntry) {
                 is SheetRoutes.StopDetails ->
@@ -309,8 +319,7 @@ fun MapAndSheetPage(
                 else -> null
             } ?: return
         if (stopFilter == null || tripFilter?.tripId == tripId) return
-        val routeCard =
-            viewModel.routeCardData.value?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
+        val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
         val upcoming =
             routeCard
@@ -504,13 +513,11 @@ fun MapAndSheetPage(
         SheetPage(colorResource(R.color.fill2)) {
             StopDetailsPage(
                 modifier = modifier,
-                viewModel = stopDetailsVM,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
                 onClose = { navController.popBackStack() },
                 updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                 updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
-                updateRouteCardData = { viewModel.setRouteCardData(it) },
                 tileScrollState = tileScrollState,
                 openModal = ::openModal,
                 openSheetRoute = navController::navigate,
@@ -747,11 +754,13 @@ fun MapAndSheetPage(
                     searchFocusRequester,
                     onBarGloballyPositioned = { layoutCoordinates ->
                         with(density) {
-                            viewModel.setSearchBarHeight(layoutCoordinates.size.height.toDp())
+                            nearbyTabViewModel.setSearchBarHeight(
+                                layoutCoordinates.size.height.toDp()
+                            )
                         }
                     },
                 ) {
-                    val searchBarHeight by viewModel.searchBarHeight.collectAsState()
+                    val searchBarHeight by nearbyTabViewModel.searchBarHeight.collectAsState()
                     val mapPadding =
                         remember(sheetPadding, searchBarHeight) {
                             sheetPadding.plus(
@@ -773,7 +782,6 @@ fun MapAndSheetPage(
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = ::handleVehicleTap,
                         vehiclesData = vehiclesData,
-                        routeCardData = routeCardData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,
                     )

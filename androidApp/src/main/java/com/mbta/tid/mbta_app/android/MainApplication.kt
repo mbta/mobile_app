@@ -9,14 +9,12 @@ import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
-import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsViewModel
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
-import kotlinx.coroutines.Dispatchers
 import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
@@ -50,9 +48,6 @@ class MainApplication : Application() {
             single { SettingsCache(get()) }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
-            viewModel {
-                StopDetailsViewModel(get(), get(), get(), get(), get(), get(), Dispatchers.Default)
-            }
         }
     }
 }

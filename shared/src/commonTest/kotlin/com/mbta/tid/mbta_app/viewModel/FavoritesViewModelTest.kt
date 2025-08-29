@@ -34,6 +34,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -105,12 +106,6 @@ internal class FavoritesViewModelTest : KoinTest {
     ) {
         startKoin {
             modules(
-                module {
-                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
-                        coroutineDispatcher
-                    }
-                    single<Analytics> { analytics }
-                },
                 repositoriesModule(
                     MockRepositories().apply {
                         useObjects(objects)
@@ -120,6 +115,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     }
                 ),
                 viewModelModule(),
+                module {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        coroutineDispatcher
+                    }
+                    single<Analytics> { analytics }
+                    single<Clock> { Clock.System }
+                },
             )
         }
     }
@@ -721,6 +723,7 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -752,6 +755,7 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

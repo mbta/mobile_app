@@ -12,21 +12,25 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.StopDetailsFilter
-import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
-import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.MockTripDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -60,7 +64,16 @@ class TripDetailsViewTest {
     val globalResponse = GlobalResponse(objects)
     val alertData = AlertsStreamDataResponse(objects)
 
-    val tripFilter = TripDetailsFilter(trip.id, vehicle.id, stopSequence)
+    val tripFilter = TripDetailsPageFilter(trip.id, vehicle.id, route.id, 0, stop.id, stopSequence)
+    val tripData =
+        TripData(
+            tripFilter,
+            trip,
+            TripSchedulesResponse.Schedules(listOf(schedule)),
+            PredictionsStreamDataResponse(objects),
+            true,
+            vehicle,
+        )
 
     val koinApplication = testKoinApplication(objects)
 
@@ -72,36 +85,32 @@ class TripDetailsViewTest {
             MockAnalytics(
                 onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
             )
+        val tripDetailsStopList = runBlocking {
+            TripDetailsStopList.fromPieces(
+                trip,
+                tripData.tripSchedules,
+                tripData.tripPredictions,
+                vehicle,
+                alertData,
+                globalResponse,
+            )
+        }
+
+        val tripVMState = TripDetailsViewModel.State(tripData, tripDetailsStopList)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                val viewModel =
-                    stopDetailsManagedVM(
-                        filters =
-                            StopDetailsPageFilters(
-                                stop.id,
-                                StopDetailsFilter(route.id, routePattern.directionId),
-                                tripFilter,
-                            ),
-                        globalResponse,
-                        alertData,
-                        updateStopFilter = { _, _ -> },
-                        updateTripFilter = { _, _ -> },
-                        setMapSelectedVehicle = {},
-                        now,
-                    )
-
                 TripDetailsView(
                     tripFilter,
-                    stopId = stop.id,
                     allAlerts = alertData,
                     alertSummaries = emptyMap(),
-                    stopDetailsVM = viewModel,
                     onOpenAlertDetails = {},
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
-                    analytics,
+                    tripDetailsVM = viewModel,
+                    analytics = analytics,
                 )
             }
         }
@@ -154,35 +163,33 @@ class TripDetailsViewTest {
             )
         }
 
+        val alerts = AlertsStreamDataResponse(objects)
+        val tripDetailsStopList = runBlocking {
+            TripDetailsStopList.fromPieces(
+                trip,
+                tripData.tripSchedules,
+                tripData.tripPredictions,
+                vehicle,
+                alerts,
+                globalResponse,
+            )
+        }
+
+        val tripVMState = TripDetailsViewModel.State(tripData, tripDetailsStopList)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
+
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                val viewModel =
-                    stopDetailsManagedVM(
-                        filters =
-                            StopDetailsPageFilters(
-                                stop.id,
-                                StopDetailsFilter(route.id, routePattern.directionId),
-                                tripFilter,
-                            ),
-                        globalResponse,
-                        AlertsStreamDataResponse(objects),
-                        updateStopFilter = { _, _ -> },
-                        updateTripFilter = { _, _ -> },
-                        setMapSelectedVehicle = {},
-                        now,
-                    )
-
                 TripDetailsView(
                     tripFilter,
-                    stopId = stop.id,
-                    allAlerts = AlertsStreamDataResponse(objects),
+                    allAlerts = alerts,
                     alertSummaries = emptyMap(),
-                    stopDetailsVM = viewModel,
                     onOpenAlertDetails = {},
                     openSheetRoute = openedSheetRoutes::add,
                     openModal = {},
                     now,
-                    analytics,
+                    tripDetailsVM = viewModel,
+                    analytics = analytics,
                 )
             }
         }
@@ -204,7 +211,7 @@ class TripDetailsViewTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                TripDetailsView(
+                TripDetails(
                     trip = trip,
                     headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                     onHeaderTap = null,
@@ -212,9 +219,8 @@ class TripDetailsViewTest {
                     onFollowTrip = { onFollowCalled = true },
                     onTapStop = {},
                     route = route,
-                    stopId = stop.id,
-                    stops = TripDetailsStopList(trip, emptyList()),
-                    tripFilter = TripDetailsFilter(trip.id, vehicle.id, null),
+                    tripFilter = tripFilter,
+                    stopList = TripDetailsStopList(trip, emptyList()),
                     now = now,
                     alertSummaries = emptyMap(),
                     globalResponse = GlobalResponse(objects),
@@ -238,7 +244,7 @@ class TripDetailsViewTest {
 
         composeTestRule.setContent {
             KoinContext(koinApplication.koin) {
-                TripDetailsView(
+                TripDetails(
                     trip = trip,
                     headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                     onHeaderTap = null,
@@ -246,9 +252,8 @@ class TripDetailsViewTest {
                     onFollowTrip = {},
                     onTapStop = {},
                     route = route,
-                    stopId = stop.id,
-                    stops = TripDetailsStopList(trip, emptyList()),
-                    tripFilter = TripDetailsFilter(trip.id, vehicle.id, null),
+                    tripFilter = tripFilter,
+                    stopList = TripDetailsStopList(trip, emptyList()),
                     now = now,
                     alertSummaries = emptyMap(),
                     globalResponse = GlobalResponse(objects),

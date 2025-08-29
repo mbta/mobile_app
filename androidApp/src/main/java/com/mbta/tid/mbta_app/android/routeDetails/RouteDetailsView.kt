@@ -25,7 +25,7 @@ fun RouteDetailsView(
     onClose: () -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
-    val globalData = getGlobalData("RouteDetailsView.globalData")
+    val globalData = getGlobalData("RouteDetailsView")
     val lineOrRoute = globalData?.getLineOrRoute(selectionId)
     if (lineOrRoute == null) {
         LoadingRouteStopListView(context, errorBannerViewModel)

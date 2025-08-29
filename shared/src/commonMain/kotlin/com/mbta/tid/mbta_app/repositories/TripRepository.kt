@@ -85,12 +85,16 @@ constructor(
     internal var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
     internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
     internal var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList())),
+    internal val onGetTrip: (String) -> Unit = {},
+    internal val onGetTripSchedules: (String) -> Unit = {},
 ) : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
+        onGetTripSchedules(tripId)
         return ApiResult.Ok(tripSchedulesResponse)
     }
 
     override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
+        onGetTrip(tripId)
         return ApiResult.Ok(tripResponse)
     }
 

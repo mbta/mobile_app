@@ -77,6 +77,7 @@ public interface IMapViewModel {
 }
 
 public class MapViewModel(
+    routeCardDataViewModel: IRouteCardDataViewModel,
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
@@ -146,12 +147,14 @@ public class MapViewModel(
     private var density by mutableStateOf<Float?>(null)
     private var isDarkMode by mutableStateOf(false)
     private var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
+    private val routeCardVMUpdates = routeCardDataViewModel.models
 
     @Composable
     override fun runLogic(): State {
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
+        val routeCardDataVMState by routeCardVMUpdates.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -193,6 +196,10 @@ public class MapViewModel(
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
             }
         }
+
+        /* TODO: Replace routeCardUpdates with routeCardDataViewModel.models once iOS adopts
+        the shared StopDetailsViewModel, until then it needs to be compatible with both */
+        LaunchedEffect(routeCardDataVMState) { routeCardData = routeCardDataVMState.data }
 
         EventSink(eventHandlingTimeout = 10.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {

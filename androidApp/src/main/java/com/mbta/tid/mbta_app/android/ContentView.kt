@@ -71,7 +71,7 @@ fun ContentView(
     }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
-    val globalResponse = getGlobalData("ContentView.getGlobalData")
+    val globalResponse = getGlobalData("ContentView")
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value

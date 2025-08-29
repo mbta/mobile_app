@@ -36,7 +36,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -49,9 +48,7 @@ fun StopDetailsFilteredPickerView(
     tripFilter: TripDetailsFilter?,
     routeStopData: RouteCardData.RouteStopData,
     allAlerts: AlertsStreamDataResponse?,
-    global: GlobalResponse?,
     now: EasternTimeInstant,
-    viewModel: StopDetailsViewModel,
     errorBannerViewModel: IErrorBannerViewModel,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -85,7 +82,6 @@ fun StopDetailsFilteredPickerView(
                 directions.filter { it.id in availableDirections },
                 selectedDirection = stopFilter.directionId,
                 context = EditFavoritesContext.StopDetails,
-                global = global,
                 updateFavorites = { newValues ->
                     updateFavorites(newValues, stopFilter.directionId)
                 },
@@ -130,9 +126,7 @@ fun StopDetailsFilteredPickerView(
                         leaf = leaf,
                         selectedDirection = directions[stopFilter.directionId],
                         allAlerts = allAlerts,
-                        global = global,
                         now = now,
-                        viewModel = viewModel,
                         updateTripFilter = updateTripFilter,
                         tileScrollState = tileScrollState,
                         isFavorite = isFavorite(rsd) ?: false,
@@ -159,9 +153,7 @@ fun StopDetailsFilteredPickerView(
                                 leaf = placeholderLeaf,
                                 selectedDirection = stopData.directions.first(),
                                 allAlerts = AlertsStreamDataResponse(emptyMap()),
-                                global = global,
                                 now = now,
-                                viewModel = viewModel,
                                 updateTripFilter = {},
                                 tileScrollState = rememberScrollState(),
                                 isFavorite = false,

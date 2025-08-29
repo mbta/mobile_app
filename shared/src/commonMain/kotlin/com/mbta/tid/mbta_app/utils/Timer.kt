@@ -28,8 +28,10 @@ internal class ClockTickHandler {
                 job =
                     CoroutineScope(Dispatchers.IO).launch {
                         while (true) {
-                            _clockFlow.emit(EasternTimeInstant.now(clock))
-                            delay(500)
+                            val now = EasternTimeInstant.now(clock)
+                            _clockFlow.emit(now)
+                            val untilNextSecond = 1000 - now.toEpochMilliseconds() % 1000
+                            delay(untilNextSecond)
                         }
                     }
             }
