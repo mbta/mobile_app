@@ -89,6 +89,7 @@ final class SearchResultViewTests: XCTestCase {
                 analytics: MockAnalytics(),
                 globalRepository: MockGlobalRepository(),
                 searchResultRepository: FakeRepo(getSearchResultsExpectation: getSearchResultsExpectation),
+                sentryRepository: MockSentryRepository(),
                 visitHistoryUsecase: .init(repository: MockVisitHistoryRepository())
             )
         )

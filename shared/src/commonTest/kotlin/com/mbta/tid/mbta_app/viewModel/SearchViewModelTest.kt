@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.IVisitHistoryRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.utils.TestData
@@ -85,6 +86,7 @@ class SearchViewModelTest {
                         return ApiResult.Ok(searchResults)
                     }
                 },
+                MockSentryRepository(),
                 VisitHistoryUsecase(visitHistoryRepo),
             )
 
@@ -182,6 +184,7 @@ class SearchViewModelTest {
                 MockAnalytics(),
                 MockGlobalRepository(GlobalResponse(objects)),
                 MockSearchResultRepository(),
+                MockSentryRepository(),
                 VisitHistoryUsecase(
                     MockVisitHistoryRepository(
                         VisitHistory().apply {
