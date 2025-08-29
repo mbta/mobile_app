@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
@@ -22,8 +23,8 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -54,6 +55,7 @@ public interface IFavoritesViewModel {
 public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
+    private val sentryRepository: ISentryRepository,
     private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
@@ -97,7 +99,7 @@ public class FavoritesViewModel(
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
 
@@ -138,25 +140,23 @@ public class FavoritesViewModel(
             tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
         }
 
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    Event.ReloadFavorites ->
-                        favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-                    is Event.SetActive -> {
-                        active = event.active
-                        if (event.wasSentToBackground) {
-                            awaitingPredictionsAfterBackground = true
-                        }
+        EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                Event.ReloadFavorites ->
+                    favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+                is Event.SetActive -> {
+                    active = event.active
+                    if (event.wasSentToBackground) {
+                        awaitingPredictionsAfterBackground = true
                     }
-                    is Event.UpdateFavorites -> {
-                        favoritesUsecases.updateRouteStopDirections(
-                            event.updatedFavorites,
-                            event.context,
-                            event.defaultDirection,
-                        )
-                        reloadFavorites()
-                    }
+                }
+                is Event.UpdateFavorites -> {
+                    favoritesUsecases.updateRouteStopDirections(
+                        event.updatedFavorites,
+                        event.context,
+                        event.defaultDirection,
+                    )
+                    reloadFavorites()
                 }
             }
         }

@@ -12,11 +12,13 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mapbox.maps.plugin.viewport.ViewportStatus
 import com.mapbox.maps.plugin.viewport.state.OverviewViewportState
+import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -26,6 +28,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeout
 import org.junit.Rule
 import org.junit.Test
@@ -121,5 +124,13 @@ class ViewportProviderTest {
             EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter),
             viewportInnerState.options.padding,
         )
+    }
+
+    @Test
+    fun testLockTimeout() = runBlocking {
+        val viewportProvider = ViewportProvider(MapViewportState())
+        withTimeout(MapAnimationDefaults.duration * 3) {
+            assertNull(viewportProvider.withViewport<Nothing> { suspendCancellableCoroutine {} })
+        }
     }
 }

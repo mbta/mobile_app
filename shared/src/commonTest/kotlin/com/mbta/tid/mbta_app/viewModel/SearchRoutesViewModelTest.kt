@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -44,6 +45,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                MockSentryRepository(),
             )
 
         testViewModelFlow(searchVM).test {
@@ -82,6 +84,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                MockSentryRepository(),
             )
 
         testViewModelFlow(searchVM).test {
@@ -114,6 +117,7 @@ class SearchRoutesViewModelTest {
                         fail("Standard search should not be called here")
                     }
                 },
+                MockSentryRepository(),
             )
 
         testViewModelFlow(searchVM).test {
