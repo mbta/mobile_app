@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 
@@ -41,14 +40,13 @@ class GetGlobalDataTest {
                 }
             }
 
-        var actualData: GlobalResponse? = globalData
+        var actualData: GlobalResponse? = null
         composeTestRule.setContent { actualData = getGlobalData("errorKey", globalRepo) }
-
-        composeTestRule.awaitIdle()
-        assertNull(actualData)
+        // Data should be set immediately from the repo, even before getGlobalData has completed
+        composeTestRule.waitUntil { globalData == actualData }
+        assertEquals(globalData, actualData)
 
         requestSync.send(Unit)
-        composeTestRule.awaitIdle()
         composeTestRule.waitUntil { globalData == actualData }
         assertEquals(globalData, actualData)
     }
@@ -63,7 +61,8 @@ class GetGlobalDataTest {
 
         composeTestRule.waitUntil {
             when (val errorState = errorRepo.state.value) {
-                is ErrorBannerState.DataError -> errorState.messages == setOf("errorKey")
+                is ErrorBannerState.DataError ->
+                    errorState.messages == setOf("errorKey.getGlobalData")
                 else -> false
             }
         }

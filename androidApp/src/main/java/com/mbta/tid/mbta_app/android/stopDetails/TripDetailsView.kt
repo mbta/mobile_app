@@ -5,11 +5,14 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.DebugView
@@ -25,7 +28,6 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.Trip
-import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -36,26 +38,42 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import io.sentry.kotlin.multiplatform.Sentry
 import org.koin.compose.koinInject
 
 @Composable
 fun TripDetailsView(
-    tripFilter: TripDetailsFilter?,
-    stopId: String,
+    tripFilter: TripDetailsPageFilter?,
     allAlerts: AlertsStreamDataResponse?,
     alertSummaries: Map<String, AlertSummary?>,
-    stopDetailsVM: StopDetailsViewModel,
     onOpenAlertDetails: (Alert) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: EasternTimeInstant,
-    analytics: Analytics = koinInject(),
     modifier: Modifier = Modifier,
+    tripDetailsVM: ITripDetailsViewModel = koinInject(),
+    analytics: Analytics = koinInject(),
 ) {
-    val tripData: TripData? = stopDetailsVM.tripData.collectAsState().value
-    val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView.getGlobalData")
+    val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView")
+    val state by tripDetailsVM.models.collectAsState()
+    val tripData: TripData? = state.tripData
+    val stopList = state.stopList
     val vehicle = tripData?.vehicle
+
+    LaunchedEffect(tripFilter) { tripDetailsVM.setFilters(tripFilter) }
+    LaunchedEffect(allAlerts) { tripDetailsVM.setAlerts(allAlerts) }
+
+    LaunchedEffect(Unit) {
+        tripDetailsVM.setContext(TripDetailsViewModel.Context.StopDetails)
+        tripDetailsVM.setActive(active = true, wasSentToBackground = false)
+    }
+
+    LifecycleResumeEffect(Unit) {
+        tripDetailsVM.setActive(active = true, wasSentToBackground = false)
+        onPauseOrDispose { tripDetailsVM.setActive(active = false, wasSentToBackground = true) }
+    }
 
     fun getParentFor(stopId: String?, globalResponse: GlobalResponse): Stop? {
         return stopId.let { globalResponse.getStop(stopId)?.resolveParent(globalResponse) }
@@ -73,13 +91,14 @@ fun TripDetailsView(
         )
     }
 
-    val stops =
-        stopDetailsVM
-            .getTripDetailsStopList(tripFilter, allAlerts, globalResponse)
-            .collectAsState()
-            .value
-
-    if (tripFilter != null && tripData != null && globalResponse != null && stops != null) {
+    if (
+        tripFilter != null &&
+            tripData != null &&
+            globalResponse != null &&
+            stopList != null &&
+            tripData.tripFilter == tripFilter &&
+            stopList.trip.id == tripData.trip.id
+    ) {
         val route =
             globalResponse.getRoute(tripData.trip.routeId)
                 ?: run {
@@ -93,7 +112,7 @@ fun TripDetailsView(
             if (vehicle != null) getParentFor(vehicle.stopId, globalResponse) else null
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
-            TripHeaderSpec.getSpec(tripId, stops, terminalStop, vehicle, vehicleStop)
+            TripHeaderSpec.getSpec(tripId, stopList, terminalStop, vehicle, vehicleStop)
 
         val explainerType: ExplainerType? =
             when (headerSpec) {
@@ -122,14 +141,14 @@ fun TripDetailsView(
                         tripData.tripFilter.vehicleId,
                         tripData.trip.routeId,
                         tripData.trip.directionId,
-                        stopId,
+                        tripFilter.stopId,
                         tripData.tripFilter.stopSequence,
                     )
                 )
             )
         }
 
-        TripDetailsView(
+        TripDetails(
             tripData.trip,
             headerSpec,
             onHeaderTap,
@@ -137,9 +156,8 @@ fun TripDetailsView(
             onFollowTrip,
             onOpenAlertDetails,
             route,
-            stopId,
-            stops,
             tripFilter,
+            stopList,
             now,
             alertSummaries,
             globalResponse,
@@ -161,7 +179,7 @@ fun TripDetailsView(
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             Column(modifier = modifier.loadingShimmer()) {
-                TripDetailsView(
+                TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,
                     null,
@@ -169,9 +187,8 @@ fun TripDetailsView(
                     onFollowTrip = {},
                     onOpenAlertDetails = {},
                     placeholderTripInfo.route,
-                    stopId,
+                    TripDetailsPageFilter("", "", "", 0, "", null),
                     placeholderTripStops,
-                    tripFilter,
                     now,
                     emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
@@ -182,7 +199,7 @@ fun TripDetailsView(
 }
 
 @Composable
-fun TripDetailsView(
+fun TripDetails(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
     onHeaderTap: (() -> Unit)?,
@@ -190,9 +207,8 @@ fun TripDetailsView(
     onFollowTrip: (() -> Unit),
     onOpenAlertDetails: (Alert) -> Unit,
     route: Route,
-    stopId: String,
-    stops: TripDetailsStopList,
-    tripFilter: TripDetailsFilter?,
+    tripFilter: TripDetailsPageFilter,
+    stopList: TripDetailsStopList,
     now: EasternTimeInstant,
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
@@ -207,15 +223,15 @@ fun TripDetailsView(
                 Modifier.align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("trip id: ${tripFilter?.tripId ?: "null"}")
-                Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
+                Text("trip id: ${tripFilter.tripId}")
+                Text("vehicle id: ${tripFilter.vehicleId ?: "null"}")
             }
         }
         Column(Modifier.zIndex(1F)) {
             TripHeaderCard(
                 trip,
                 headerSpec,
-                stopId,
+                tripFilter.stopId,
                 route,
                 routeAccents,
                 now,
@@ -228,9 +244,9 @@ fun TripDetailsView(
         }
         Column(Modifier.offset(y = (-16).dp)) {
             TripStops(
-                stopId,
-                stops,
-                tripFilter?.stopSequence,
+                tripFilter.stopId,
+                stopList,
+                tripFilter.stopSequence,
                 headerSpec,
                 now,
                 alertSummaries,

@@ -17,10 +17,12 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
+import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsFilteredView(
@@ -29,7 +31,6 @@ fun StopDetailsFilteredView(
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
-    viewModel: StopDetailsViewModel,
     isFavorite: (RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
     onClose: () -> Unit,
@@ -39,9 +40,14 @@ fun StopDetailsFilteredView(
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
+    stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
-    val globalResponse by viewModel.globalResponse.collectAsState()
-    val routeStopData by viewModel.filteredRouteStopData.collectAsState()
+    val state by stopDetailsViewModel.models.collectAsState()
+    val routeStopData =
+        when (val data = state.routeData) {
+            is StopDetailsViewModel.RouteData.Filtered -> data.stopData
+            else -> null
+        }
 
     routeStopData?.let {
         StopDetailsFilteredPickerView(
@@ -50,9 +56,7 @@ fun StopDetailsFilteredView(
             tripFilter = tripFilter,
             routeStopData = it,
             allAlerts = allAlerts,
-            global = globalResponse,
             now = now,
-            viewModel = viewModel,
             errorBannerViewModel = errorBannerViewModel,
             updateStopFilter = updateStopFilter,
             updateTripFilter = updateTripFilter,
@@ -63,17 +67,7 @@ fun StopDetailsFilteredView(
             openSheetRoute = openSheetRoute,
             onClose = onClose,
         )
-    }
-        ?: Loading(
-            stopId,
-            stopFilter,
-            tripFilter,
-            now,
-            viewModel,
-            onClose,
-            errorBannerViewModel,
-            globalResponse,
-        )
+    } ?: Loading(stopId, stopFilter, tripFilter, now, onClose, errorBannerViewModel)
 }
 
 @Composable
@@ -82,10 +76,8 @@ private fun Loading(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     now: EasternTimeInstant,
-    viewModel: StopDetailsViewModel,
     onClose: () -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
-    globalResponse: GlobalResponse?,
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
         Column(modifier = Modifier.loadingShimmer()) {
@@ -103,9 +95,7 @@ private fun Loading(
                 tripFilter = tripFilter,
                 routeStopData = stopData,
                 allAlerts = null,
-                global = globalResponse,
                 now = now,
-                viewModel = viewModel,
                 errorBannerViewModel = errorBannerViewModel,
                 updateStopFilter = {},
                 updateTripFilter = {},
@@ -114,7 +104,7 @@ private fun Loading(
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                onClose = onClose,
             )
         }
     }

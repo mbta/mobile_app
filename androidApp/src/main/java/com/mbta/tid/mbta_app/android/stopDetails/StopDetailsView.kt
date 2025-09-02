@@ -2,39 +2,36 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
-import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
-import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.koinInject
 
 @Composable
 fun StopDetailsView(
     modifier: Modifier = Modifier,
     stopId: String,
-    viewModel: StopDetailsViewModel,
     stopFilter: StopDetailsFilter?,
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
+    now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
-    updateTripDetailsFilter: (TripDetailsFilter?) -> Unit,
+    updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
-    val now by timer(updateInterval = 5.seconds)
     val analytics: Analytics = koinInject()
 
     fun openModalAndRecord(modal: ModalRoutes) {
@@ -55,12 +52,11 @@ fun StopDetailsView(
             tripFilter,
             allAlerts,
             now,
-            viewModel,
             isFavorite,
             updateFavorites,
             onClose,
             updateStopFilter,
-            updateTripDetailsFilter,
+            updateTripFilter,
             tileScrollState,
             ::openModalAndRecord,
             openSheetRoute,
@@ -70,7 +66,6 @@ fun StopDetailsView(
         StopDetailsUnfilteredView(
             stopId,
             now,
-            viewModel,
             isFavorite,
             onClose,
             updateStopFilter,

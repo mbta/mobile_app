@@ -51,7 +51,7 @@ fun AlertDetailsPage(
     goBack: () -> Unit,
 ) {
     val alert = getAlert(alerts, alertId, goBack)
-    val globalResponse = getGlobalData("AlertDetailsPage.loadGlobal")
+    val globalResponse = getGlobalData("AlertDetailsPage")
     val now by timer(5.seconds)
 
     val line = globalResponse?.getLine(lineId)

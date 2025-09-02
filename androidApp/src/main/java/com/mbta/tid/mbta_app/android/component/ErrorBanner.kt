@@ -93,16 +93,7 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
             )
         }
         is ErrorBannerState.StalePredictions -> {
-            if (state.loadingWhenPredictionsStale) {
-                Row(
-                    modifier = modifier.heightIn(60.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Spacer(modifier = Modifier.weight(1f))
-                    IndeterminateLoadingIndicator(Modifier.width(48.dp))
-                    Spacer(modifier = Modifier.weight(1f))
-                }
-            } else {
+            if (!state.loadingWhenPredictionsStale) {
                 ErrorCard(
                     modifier,
                     details = {
