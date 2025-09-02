@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-struct Explainer {
+public struct Explainer {
     let type: ExplainerType
     let routeAccents: TripRouteAccents
 }
