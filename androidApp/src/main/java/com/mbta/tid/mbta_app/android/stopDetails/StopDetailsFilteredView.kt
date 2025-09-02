@@ -31,7 +31,7 @@ fun StopDetailsFilteredView(
     tripFilter: TripDetailsFilter?,
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
-    isFavorite: (RouteStopDirection) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,

@@ -28,7 +28,7 @@ import org.koin.compose.koinInject
 fun StopDetailsUnfilteredView(
     stopId: String,
     now: EasternTimeInstant,
-    isFavorite: (RouteStopDirection) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
