@@ -402,10 +402,9 @@ class StopDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: StopDetailsViewModel = get()
-        val filters =
+        val initialFilters =
             StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 0, false), null)
 
-        viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setActive(active = true, wasSentToBackground = false)
@@ -421,6 +420,7 @@ class StopDetailsViewModelTest : KoinTest {
 
         launch {
             testViewModelFlow(viewModel).test {
+                viewModel.setFilters(initialFilters)
                 awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
                 viewModel.setFilters(
                     StopDetailsPageFilters(

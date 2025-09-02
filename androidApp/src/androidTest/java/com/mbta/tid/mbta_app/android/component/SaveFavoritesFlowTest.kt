@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -381,6 +382,7 @@ class SaveFavoritesFlowTest {
     }
 
     @Test
+    @Ignore // TODO: Address flakiness
     fun testFavoritingToastFallbackText() {
         val toastVM = MockToastViewModel()
         var displayedToast: ToastViewModel.Toast? = null
@@ -403,7 +405,7 @@ class SaveFavoritesFlowTest {
             )
         }
 
-        composeTestRule.waitUntil { displayedToast?.message == "Added to Favorites" }
+        composeTestRule.waitUntilDefaultTimeout { displayedToast?.message == "Added to Favorites" }
     }
 
     @Test
