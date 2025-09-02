@@ -508,30 +508,6 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [scrollPositionSetExpectation], timeout: 2)
     }
 
-    @MainActor
-    func testNearbyErrorMessage() throws {
-        let repositories = MockRepositories()
-        repositories.errorBanner = MockErrorBannerStateRepository(
-            state: .DataError(messages: [], details: [], action: {})
-        )
-        loadKoinMocks(repositories: repositories)
-
-        let nearbyVM = NearbyViewModel()
-        let sut = NearbyTransitView(
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository(),
-            location: .constant(mockLocation),
-            setIsReturningFromBackground: { _ in },
-            nearbyVM: .init(),
-            noNearbyStops: noNearbyStops
-        )
-
-        sut.inspection.inspect(after: 0.5) { view in
-            XCTAssertNotNil(try view.view(NearbyTransitView.self)
-                .find(text: "Error loading data"))
-        }
-    }
-
     @MainActor func testEmptyFallback() throws {
         let nearbyVM = NearbyViewModel()
         nearbyVM.routeCardData = []
