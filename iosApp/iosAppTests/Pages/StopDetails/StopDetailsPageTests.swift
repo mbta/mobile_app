@@ -61,7 +61,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
@@ -99,7 +99,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         ).withFixedSettings([:])
@@ -141,7 +141,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
@@ -196,7 +196,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
@@ -265,7 +265,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
@@ -364,7 +364,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )
@@ -434,7 +434,7 @@ final class StopDetailsPageTests: XCTestCase {
             ),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: viewportProvider
         )

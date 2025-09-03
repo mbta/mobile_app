@@ -10,7 +10,7 @@ public interface ViewportManager {
 
     public suspend fun stopCenter(stop: Stop)
 
-    public suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
+    public suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?)
 
     public suspend fun follow(transitionAnimationDuration: Long?)
 

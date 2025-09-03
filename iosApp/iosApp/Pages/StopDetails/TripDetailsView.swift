@@ -19,7 +19,7 @@ struct TripDetailsView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @State var explainer: Explainer?
@@ -40,7 +40,7 @@ struct TripDetailsView: View {
         now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         stopDetailsVM: StopDetailsViewModel,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         analytics: Analytics = AnalyticsProvider.shared
@@ -72,12 +72,12 @@ struct TripDetailsView: View {
                 if stopDetailsVM.tripData?.tripFilter == tripFilter || tripFilter == nil {
                     stopDetailsVM.clearTripDetails()
                 }
-                clearMapVehicle()
             }
             .onChange(of: tripFilter) { nextTripFilter in stopDetailsVM.handleTripFilterChange(nextTripFilter)
                 updateStops()
             }
-            .onChange(of: stopDetailsVM.tripData?.vehicle) { vehicle in mapVM.selectedVehicle = vehicle
+            .onChange(of: stopDetailsVM.tripData?.vehicle) { vehicle in
+                setVehicle(vehicle)
                 updateStops()
             }
             .onChange(of: stopDetailsVM.tripData?.tripFilter) { _ in updateStops() }
@@ -236,10 +236,11 @@ struct TripDetailsView: View {
         }
     }
 
-    private func clearMapVehicle() {
-        if mapVM.selectedVehicle?.id == tripFilter?.vehicleId {
-            mapVM.selectedVehicle = nil
-        }
+    private func setVehicle(_ vehicle: Vehicle?) {
+        guard let tripFilter, let global = stopDetailsVM.global else { return }
+        let stop = global.getStop(stopId: stopId)
+        let stopFilter = nearbyVM.navigationStack.lastStopDetailsFilter
+        mapVM.selectedTrip(stopFilter: stopFilter, stop: stop, tripFilter: tripFilter, vehicle: vehicle)
     }
 
     func onTapStop(stop: TripDetailsStopList.Entry) {

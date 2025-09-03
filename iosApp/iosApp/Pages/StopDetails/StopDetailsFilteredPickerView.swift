@@ -25,7 +25,7 @@ struct StopDetailsFilteredPickerView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -41,7 +41,7 @@ struct StopDetailsFilteredPickerView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         stopData: RouteCardData.RouteStopData, favorite: Bool, now: Date,
-        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: iosApp.MapViewModel,
+        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
         stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId

@@ -27,7 +27,7 @@ struct StopDetailsView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     let inspection = Inspection<Self>()
@@ -44,7 +44,7 @@ struct StopDetailsView: View {
         onUpdateFavorites: @escaping () -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         stopDetailsVM: StopDetailsViewModel
     ) {
         self.stopId = stopId

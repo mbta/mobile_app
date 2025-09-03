@@ -80,7 +80,7 @@ final class TripDetailsViewTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             onOpenAlertDetails: { _ in }
         )
@@ -149,7 +149,7 @@ final class TripDetailsViewTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             onOpenAlertDetails: { _ in }
         )
@@ -233,7 +233,7 @@ final class TripDetailsViewTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             onOpenAlertDetails: { _ in }
         )
@@ -313,7 +313,7 @@ final class TripDetailsViewTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             onOpenAlertDetails: { _ in }
         )
