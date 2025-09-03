@@ -11,7 +11,7 @@ import Combine
 import Shared
 import SwiftUI
 
-class ViewportProvider: ObservableObject {
+class ViewportProvider: ObservableObject, Shared.ViewportManager {
     enum Defaults {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
@@ -48,14 +48,14 @@ class ViewportProvider: ObservableObject {
         self.isManuallyCentering = isManuallyCentering
     }
 
-    func follow(animation: ViewportAnimation = Defaults.animation) {
+    @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {
         isFollowingPuck = true
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
     }
 
-    func vehicleOverview(vehicle: Vehicle, stop: Stop) {
+    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop) {
         animateTo(viewport: .overview(
             geometry: MultiPoint([vehicle.coordinate, stop.coordinate]),
             geometryPadding: Defaults.overviewPadding,
@@ -67,26 +67,16 @@ class ViewportProvider: ObservableObject {
         viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false
     }
 
-    func animateTo(
-        coordinates: CLLocationCoordinate2D,
-        animation: ViewportAnimation = Defaults.animation,
-        zoom: CGFloat? = nil
-    ) {
-        animateTo(
-            viewport: .camera(
-                center: coordinates,
-                zoom: zoom == nil ? cameraStateSubject.value.zoom : zoom
-            ),
-            animation: animation
-        )
+    @MainActor func stopCenter(stop: Stop) {
+        animateTo(coordinates: stop.coordinate)
     }
 
-    func animateTo(viewport: Viewport, animation: ViewportAnimation = Defaults.animation) {
-        withViewportAnimation(animation) {
-            self.viewport = viewport
-        } completion: { _ in
-            Task { @MainActor in self.isManuallyCentering = false }
-        }
+    @MainActor func panToDefaultCenter() {
+        setIsManuallyCentering(true)
+        animateTo(
+            coordinates: ViewportProvider.Defaults.center,
+            zoom: 13.75
+        )
     }
 
     func updateCameraState(_ location: CLLocation?) {
@@ -109,36 +99,32 @@ class ViewportProvider: ObservableObject {
         }
     }
 
-    func saveNearbyTransitViewport() {
-        savedNearbyTransitViewport = viewport
-        // When the user is panning the map, the viewport is idle,
-        // and to actually restore anything, we need to save the values from the most recent camera state.
-        if savedNearbyTransitViewport == .idle {
-            let cameraState = cameraStateSubject.value
-            savedNearbyTransitViewport = .camera(center: cameraState.center, zoom: cameraState.zoom)
-        }
-    }
-
-    func restoreNearbyTransitViewport() {
-        if let saved = savedNearbyTransitViewport {
-            withViewportAnimation(Defaults.animation) {
-                let currentZoom = cameraStateSubject.value.zoom
-                self.viewport = if let camera = saved.camera {
-                    .camera(center: camera.center, zoom: currentZoom)
-                } else if let _ = saved.followPuck {
-                    .followPuck(zoom: currentZoom)
-                } else {
-                    saved
-                }
-            }
-        }
-        savedNearbyTransitViewport = nil
-    }
-
     func setIsManuallyCentering(_ isManuallyCentering: Bool) {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
             isFollowingPuck = false
+        }
+    }
+
+    @MainActor func animateTo(
+        coordinates: CLLocationCoordinate2D,
+        animation: ViewportAnimation = Defaults.animation,
+        zoom: CGFloat? = nil
+    ) {
+        animateTo(
+            viewport: .camera(
+                center: coordinates,
+                zoom: zoom == nil ? cameraStateSubject.value.zoom : zoom
+            ),
+            animation: animation
+        )
+    }
+
+    @MainActor private func animateTo(viewport: Viewport, animation: ViewportAnimation = Defaults.animation) {
+        withViewportAnimation(animation) {
+            self.viewport = viewport
+        } completion: { _ in
+            Task { @MainActor in self.isManuallyCentering = false }
         }
     }
 
@@ -161,4 +147,60 @@ class ViewportProvider: ObservableObject {
     }
 
     private static func reflect(point: Double, reflected: Double) -> Double { (2 * point) - reflected }
+
+    // MARK: ViewportManager Conformance
+
+    // swiftlint:disable:next identifier_name
+    func __isDefault() async throws -> KotlinBoolean {
+        KotlinBoolean(bool: viewport.camera?.center?.isRoughlyEqualTo(Defaults.center) ?? false)
+    }
+
+    // swiftlint:disable:next identifier_name
+    @MainActor func __restoreNearbyTransitViewport() async throws {
+        if let saved = savedNearbyTransitViewport {
+            withViewportAnimation(Defaults.animation) {
+                let currentZoom = cameraStateSubject.value.zoom
+                self.viewport = if let camera = saved.camera {
+                    .camera(center: camera.center, zoom: currentZoom)
+                } else if let _ = saved.followPuck {
+                    .followPuck(zoom: currentZoom)
+                } else {
+                    saved
+                }
+            }
+        }
+        savedNearbyTransitViewport = nil
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __saveNearbyTransitViewport() async throws {
+        savedNearbyTransitViewport = viewport
+        // When the user is panning the map, the viewport is idle,
+        // and to actually restore anything, we need to save the values from the most recent camera state.
+        if savedNearbyTransitViewport == .idle {
+            let cameraState = cameraStateSubject.value
+            savedNearbyTransitViewport = .camera(center: cameraState.center, zoom: cameraState.zoom)
+        }
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __follow(transitionAnimationDuration: KotlinLong?) async throws {
+        let animation = if let transitionAnimationDuration {
+            ViewportAnimation.default(maxDuration: TimeInterval(truncating: transitionAnimationDuration))
+        } else {
+            ViewportAnimation.default
+        }
+        await follow(animation: animation)
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __stopCenter(stop: Stop) async throws {
+        await animateTo(coordinates: stop.coordinate)
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __vehicleOverview(vehicle: Vehicle, stop: Stop?, density _: KotlinFloat?) async throws {
+        guard let stop else { return }
+        await vehicleOverview(vehicle: vehicle, stop: stop)
+    }
 }

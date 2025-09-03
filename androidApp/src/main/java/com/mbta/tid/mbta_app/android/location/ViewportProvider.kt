@@ -64,7 +64,7 @@ interface IViewportProvider {
 
     suspend fun follow(transitionAnimationDuration: Long? = null)
 
-    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
+    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?)
 
     suspend fun stopCenter(stop: Stop)
 
@@ -217,12 +217,12 @@ class ViewportProvider(
         }
     }
 
-    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float) {
+    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) {
         isVehicleOverview = true
         isFollowingPuck = false
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
-        } else {
+        } else if (density != null) {
             animateToOverview({
                 OverviewViewportStateOptions.Builder()
                     .padding(lastEdgeInsets)

@@ -39,7 +39,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
                                           now: Date.now,
                                           errorBannerVM: MockErrorBannerViewModel(),
                                           nearbyVM: .init(),
-                                          mapVM: .init(),
+                                          mapVM: MockMapViewModel(),
                                           stopDetailsVM: stopDetailsVM)
 
         let tappedPublisher = PassthroughSubject<Void, Never>()

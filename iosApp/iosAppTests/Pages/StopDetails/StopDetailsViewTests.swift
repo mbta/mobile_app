@@ -56,7 +56,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(
                 globalRepository: MockGlobalRepository(response: .init(objects: objects))
             )
@@ -95,7 +95,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 
@@ -145,7 +145,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 
@@ -207,7 +207,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 
@@ -234,7 +234,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 
@@ -262,7 +262,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 
@@ -289,7 +289,7 @@ final class StopDetailsViewTests: XCTestCase {
             now: Date.now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init()
         )
 

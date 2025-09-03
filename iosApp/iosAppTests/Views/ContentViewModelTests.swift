@@ -17,12 +17,19 @@ final class ContentViewModelTests: XCTestCase {
 
     func testLoadConfigSetsConfig() async {
         let expectedResult = ApiResultOk<ConfigResponse>(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
-        let contentVM = ContentViewModel(configUseCase: ConfigUseCase(
-            configRepo: MockConfigRepository(response: expectedResult),
-            sentryRepo: MockSentryRepository()
-        ))
+        var configResponse: String?
+        let mapboxConfigManager = MapboxConfigManager(
+            configUsecase: ConfigUseCase(
+                configRepo: MockConfigRepository(response: expectedResult),
+                sentryRepo: MockSentryRepository()
+            ),
+            configureMapboxToken: { token in
+                configResponse = token
+            }
+        )
+        let contentVM = ContentViewModel(mapboxConfigManager: mapboxConfigManager)
         await contentVM.loadConfig()
-        XCTAssertEqual(contentVM.configResponse, expectedResult)
+        XCTAssertEqual(configResponse, expectedResult.data.mapboxPublicToken)
     }
 
     func testLoadFeaturePromoSetsFeaturePromo() async {

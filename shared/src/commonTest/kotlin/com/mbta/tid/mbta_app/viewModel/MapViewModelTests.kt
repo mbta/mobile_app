@@ -54,7 +54,8 @@ internal class MapViewModelTests : KoinTest {
         private val saveNearbyTransitViewportCalled: () -> Unit = {},
         private val restoreNearbyTransitViewportCalled: () -> Unit = {},
         private val stopCenterCalled: (stop: Stop) -> Unit = {},
-        private val vehicleOverviewCalled: (vehicle: Vehicle, stop: Stop?, density: Float) -> Unit =
+        private val vehicleOverviewCalled:
+            (vehicle: Vehicle, stop: Stop?, density: Float?) -> Unit =
             { _, _, _ ->
             },
         private val followCalled: (transitionAnimationDuration: Long?) -> Unit = {},
@@ -66,7 +67,7 @@ internal class MapViewModelTests : KoinTest {
 
         override suspend fun stopCenter(stop: Stop) = stopCenterCalled(stop)
 
-        override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float) =
+        override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) =
             vehicleOverviewCalled(vehicle, stop, density)
 
         override suspend fun follow(transitionAnimationDuration: Long?) =
