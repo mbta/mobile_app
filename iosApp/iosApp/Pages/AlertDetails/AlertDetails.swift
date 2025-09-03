@@ -9,7 +9,6 @@
 import Shared
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct AlertDetails: View {
     var analytics: Analytics = AnalyticsProvider.shared
     var alert: Shared.Alert
@@ -290,9 +289,9 @@ struct AlertDetails: View {
     let stop = objects.stop { $0.name = "Park Street" }
     let alert = objects.alert { alert in
         alert.effect = .elevatorClosure
-        alert
-            .header =
-            "Elevator 804 (Government Center & North lobby to Tremont Street, Winter Street) unavailable on Thu Feb 6 due to maintenance"
+        alert.header =
+            "Elevator 804 (Government Center & North lobby to Tremont Street, Winter Street)"
+                + "unavailable on Thu Feb 6 due to maintenance"
         alert.cause = .maintenance
         alert.activePeriod(
             start: now.minus(hours: 3 * 24),

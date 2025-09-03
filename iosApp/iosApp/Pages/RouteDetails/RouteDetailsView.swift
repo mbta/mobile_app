@@ -19,7 +19,6 @@ struct RouteDetailsView: View {
 
     @State var globalData: GlobalResponse?
     @State private var lineOrRoute: RouteCardData.LineOrRoute?
-    let globalRepository: IGlobalRepository = RepositoryDI().global
 
     var body: some View {
         ScrollView([]) {
@@ -44,31 +43,9 @@ struct RouteDetailsView: View {
                 loadingBody()
             }
         }
-        .onAppear {
-            getGlobal()
-        }
+        .global($globalData, errorKey: "RouteDetailsView")
         .onChange(of: globalData) { globalData in
             lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
-        }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-        }
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: "NearbyTransitView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: { @MainActor in getGlobal() }
-            )
         }
     }
 

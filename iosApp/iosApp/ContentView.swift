@@ -84,7 +84,6 @@ struct ContentView: View {
             case nil: nil
             }
         }
-
         .onChange(of: selectedTab) { nextTab in
             if let nextTab {
                 nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)

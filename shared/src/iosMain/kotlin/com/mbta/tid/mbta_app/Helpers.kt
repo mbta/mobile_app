@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.experimental.ExperimentalObjCName
@@ -62,6 +63,15 @@ public fun initKoin(appVariant: AppVariant, nativeModule: Module) {
 Load the Koin mock repositories and use cases, overriding their existing definitions
  */
 public fun loadKoinMocks(repositories: IRepositories) {
+    loadKoinModules(listOf(repositoriesModule(repositories)))
+}
+
+/*
+Load the Koin mock repositories using the provided objects
+ */
+public fun loadKoinMocks(objects: ObjectCollectionBuilder) {
+    val repositories = MockRepositories()
+    repositories.useObjects(objects)
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 

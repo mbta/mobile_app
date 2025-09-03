@@ -27,7 +27,6 @@ struct RoutePickerView: View {
 
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
-    let globalRepository: IGlobalRepository = RepositoryDI().global
 
     let scrollSubject = PassthroughSubject<String, Never>()
 
@@ -126,8 +125,8 @@ struct RoutePickerView: View {
                 }
             }.ignoresSafeArea(.keyboard, edges: .bottom)
         }
+        .global($globalData, errorKey: "RoutePickerView")
         .onAppear {
-            getGlobal()
             searchRoutesViewModel.setPath(path: path)
         }
         .onChange(of: globalData) { globalData in
@@ -220,26 +219,6 @@ struct RoutePickerView: View {
                     .font(Typography.body)
             }
             .frame(maxWidth: .infinity)
-        }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-        }
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: "RoutePickerView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: { @MainActor in getGlobal() }
-            )
         }
     }
 }

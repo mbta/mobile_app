@@ -93,16 +93,15 @@ final class AlertDetailsPageTests: XCTestCase {
         nearbyVM.alerts = .init(alerts: [alert.id: alert])
 
         let globalDataLoaded = PassthroughSubject<Void, Never>()
+        let mockRepos = MockRepositories()
+        mockRepos.global = MockGlobalRepository(response: .init(objects: objects), onGet: { globalDataLoaded.send() })
+        loadKoinMocks(repositories: mockRepos)
 
         let sut = AlertDetailsPage(
             alertId: alert.id,
             line: nil,
             routes: [route],
-            nearbyVM: nearbyVM,
-            globalRepository: MockGlobalRepository(
-                response: .init(objects: objects, patternIdsByStop: [:]),
-                onGet: { globalDataLoaded.send() }
-            )
+            nearbyVM: nearbyVM
         )
 
         let exp = sut.inspection.inspect(onReceive: globalDataLoaded, after: 1) { view in
@@ -117,6 +116,7 @@ final class AlertDetailsPageTests: XCTestCase {
             XCTAssertNil(try? view.find(text: "Stop 2a"))
         }
         ViewHosting.host(view: sut)
+
         wait(for: [exp], timeout: 5)
     }
 }

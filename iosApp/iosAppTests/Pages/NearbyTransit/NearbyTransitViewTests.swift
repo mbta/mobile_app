@@ -66,7 +66,7 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(ViewportProvider.Defaults.center),
             setIsReturningFromBackground: { _ in },
-            globalRepository: MockGlobalRepository(),
+            globalData: .init(objects: .init()),
             nearbyVM: FakeNearbyVM(getNearbyExpectation),
             noNearbyStops: noNearbyStops
         )
@@ -114,7 +114,6 @@ final class NearbyTransitViewTests: XCTestCase {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
         let now = EasternTimeInstant.now()
         let distantMinutes = 10
-        let distantInstant = now.plus(minutes: Int32(distantMinutes))
         let objects = TestData.clone()
 
         let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
@@ -149,16 +148,15 @@ final class NearbyTransitViewTests: XCTestCase {
                                                          globalData: GlobalResponse(objects: objects))],
                                         at: now)]
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
             setIsReturningFromBackground: { _ in },
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
-            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            now: now.toNSDateLosingTimeZone(),
             predictionsByStop: .init(objects: objects),
             noNearbyStops: noNearbyStops
         ).withFixedSettings([:])
@@ -180,7 +178,7 @@ final class NearbyTransitViewTests: XCTestCase {
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: ["place-davis"])
         nearbyVM.routeCardData = []
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(onConnectV2: { stopIds in
                 if stopIds == ["place-davis"] {
                     davisExp.fulfill()
@@ -192,11 +190,10 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
             setIsReturningFromBackground: { _ in },
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
-            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            now: now.toNSDateLosingTimeZone(),
             predictionsByStop: .init(objects: objects),
             noNearbyStops: noNearbyStops
         ).withFixedSettings([:])
@@ -224,7 +221,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                      stopIds: ["place-davis", "place-alfcl"])
         nearbyVM.routeCardData = []
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(onConnectV2: { stopIds in
                 if stopIds == ["place-davis", "place-alfcl"] {
                     initialJoinExp.fulfill()
@@ -236,11 +233,10 @@ final class NearbyTransitViewTests: XCTestCase {
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
             setIsReturningFromBackground: { _ in },
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
             globalData: .init(objects: objects),
             nearbyVM: nearbyVM,
             scheduleResponse: .init(objects: objects),
-            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            now: now.toNSDateLosingTimeZone(),
             predictionsByStop: .init(objects: objects),
             noNearbyStops: noNearbyStops
         ).withFixedSettings([:])
@@ -277,7 +273,6 @@ final class NearbyTransitViewTests: XCTestCase {
             predictionsByStop: .init(objects: objects),
             noNearbyStops: noNearbyStops
         )
-        sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
 
         let hasAppeared = sut.on(\.didAppear) { view in
             let cards = view.findAll(RouteCard.self)
@@ -322,7 +317,7 @@ final class NearbyTransitViewTests: XCTestCase {
                                      stopIds: ["141"])
         nearbyVM.routeCardData = []
 
-        var sut = NearbyTransitView(
+        let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
             location: .constant(mockLocation),
@@ -370,7 +365,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let objects = TestData.clone()
+//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
@@ -400,7 +395,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
 
-        let objects = TestData.clone()
+//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
@@ -433,7 +428,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let objects = TestData.clone()
+//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
@@ -467,7 +462,6 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
         let stop = objects.getStop(id: "141")
-        let trip = objects.getTrip(id: "68596786")
         nearbyVM.routeCardData = [.init(lineOrRoute: route,
                                         stopData: [.init(lineOrRoute: route,
                                                          stop: stop,

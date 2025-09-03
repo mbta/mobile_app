@@ -29,13 +29,14 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @State var global: GlobalResponse?
     @State var inSaveFavoritesFlow = false
 
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
 
-    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
+    var stop: Stop? { global?.getStop(stopId: stopId) }
     var nowInstant: EasternTimeInstant { now.toEasternInstant() }
 
     let inspection = Inspection<Self>()
@@ -106,6 +107,7 @@ struct StopDetailsFilteredView: View {
             }
         }
         .accessibilityHidden(inSaveFavoritesFlow)
+        .global($global, errorKey: "StopDetailsFilteredView")
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
@@ -124,7 +126,7 @@ struct StopDetailsFilteredView: View {
                                       .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
                                   selectedDirection: routeStopDirection.direction,
                                   context: .stopDetails,
-                                  global: stopDetailsVM.global,
+                                  global: global,
                                   isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
                                   updateFavorites: { newFavorites in
                                       Task {
@@ -166,7 +168,6 @@ struct StopDetailsFilteredView: View {
             now: nowInstant
         )
         let stopData = routeData.stopData.first!
-        let leaf = stopData.data.first!
 
         StopDetailsFilteredPickerView(
             stopId: stopId,

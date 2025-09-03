@@ -42,6 +42,7 @@
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
         "NearbyTransitViewTests\/testDisplaysWheelchairNotAccessibile()",
         "OnboardingPageTests\/testFlow()",
+        "StopDetailsViewModelTests\/testGetRouteCardData()",
         "StopDetailsViewModelTests\/testHandleStopChange()",
         "StopDetailsViewModelTests\/testLoadTripData()",
         "StopDetailsViewModelTests\/testSkipLoadingRedundantVehicle()"

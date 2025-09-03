@@ -86,12 +86,12 @@ struct EditFavoritesPage: View {
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
-                loadGlobal()
             }
             .onDisappear {
                 toastVM.hideToast()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .global($globalResponse, errorKey: "AlertDetailsPage")
             .task {
                 for await model in viewModel.models {
                     favoritesVMState = model
@@ -101,26 +101,6 @@ struct EditFavoritesPage: View {
                     }
                 }
             }
-        }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            globalResponse = globalData
-        }
-    }
-
-    private func loadGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: "EditDetailsPage.loadGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadGlobal
-            )
         }
     }
 }

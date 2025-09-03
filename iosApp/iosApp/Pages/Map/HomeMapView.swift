@@ -23,8 +23,6 @@ struct HomeMapView: View {
 
     var errorBannerRepository: IErrorBannerStateRepository
 
-    var globalRepository: IGlobalRepository
-
     var railRouteShapeRepository: IRailRouteShapeRepository
     @State var railRouteShapes: MapFriendlyRouteResponse?
 
@@ -52,7 +50,6 @@ struct HomeMapView: View {
     }
 
     init(
-        globalRepository: IGlobalRepository = RepositoryDI().global,
         contentVM: ContentViewModel,
         mapVM: iosApp.MapViewModel,
         nearbyVM: NearbyViewModel,
@@ -66,7 +63,6 @@ struct HomeMapView: View {
         sheetHeight: Binding<CGFloat>,
         globalMapData: GlobalMapData? = nil
     ) {
-        self.globalRepository = globalRepository
         self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
@@ -88,7 +84,7 @@ struct HomeMapView: View {
                     crosshairs
                 }
             }
-            .task { loadGlobalData() }
+            .global($mapVM.globalData, errorKey: "HomeMapView")
             .task { loadRouteShapes() }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)

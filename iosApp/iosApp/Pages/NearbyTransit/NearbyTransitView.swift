@@ -13,14 +13,12 @@ import os
 import Shared
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct NearbyTransitView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
-    var globalRepository = RepositoryDI().global
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
@@ -51,6 +49,7 @@ struct NearbyTransitView: View {
                 loadingBody()
             }
         }
+        .global($globalData, errorKey: "NearbyTransitView")
         .onAppear {
             loadEverything()
             didAppear?(self)
@@ -176,34 +175,9 @@ struct NearbyTransitView: View {
     var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
-        getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(nearbyVM.nearbyState.stopIds)
         getSchedule()
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-            Task {
-                // this should be handled by the onChange but in tests it just isn't
-                getNearby(location: location, globalData: globalData)
-            }
-        }
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: "NearbyTransitView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: { @MainActor in loadEverything() }
-            )
-        }
     }
 
     func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {

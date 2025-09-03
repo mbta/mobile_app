@@ -37,6 +37,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var analytics: Analytics = AnalyticsProvider.shared
 
+    @State var global: GlobalResponse?
     @State var leafFormat: LeafFormat
 
     var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
@@ -51,7 +52,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream(tripId: tripFilter?.tripId) }
 
-    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
+    var stop: Stop? { global?.getStop(stopId: stopId) }
 
     var routeColor: Color { Color(hex: leaf.lineOrRoute.backgroundColor) }
     var routeTextColor: Color { Color(hex: leaf.lineOrRoute.textColor) }
@@ -108,7 +109,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
 
-        leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
+        leafFormat = leaf.format(now: now, globalData: nil)
     }
 
     var body: some View {
@@ -167,11 +168,12 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
             }
         }
+        .global($global, errorKey: "StopDetailsFilteredDepartureDetails")
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
             setAlertSummaries(
                 AlertSummaryParams(
-                    global: stopDetailsVM.global,
+                    global: global,
                     alerts: alerts,
                     downstreamAlerts: downstreamAlerts,
                     stopId: stopId,
@@ -187,13 +189,13 @@ struct StopDetailsFilteredDepartureDetails: View {
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
         .onChange(of: leaf) { leaf in
-            leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
+            leafFormat = leaf.format(now: now, globalData: global)
         }
         .onChange(of: now) { now in
-            leafFormat = leaf.format(now: now, globalData: stopDetailsVM.global)
+            leafFormat = leaf.format(now: now, globalData: global)
         }
         .onChange(of: AlertSummaryParams(
-            global: stopDetailsVM.global,
+            global: global,
             alerts: alerts,
             downstreamAlerts: downstreamAlerts,
             stopId: stopId,
@@ -203,7 +205,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         )) { newParams in
             setAlertSummaries(newParams)
         }
-        .onChange(of: stopDetailsVM.global) { global in
+        .onChange(of: global) { global in
             leafFormat = leaf.format(now: now, globalData: global)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
