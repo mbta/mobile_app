@@ -22,6 +22,7 @@ struct TripDetailsView: View {
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
+    @State var explainer: Explainer?
     @State var stops: TripDetailsStopList?
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -51,7 +52,6 @@ struct TripDetailsView: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
         self.onOpenAlertDetails = onOpenAlertDetails
-
         self.analytics = analytics
     }
 
@@ -61,6 +61,7 @@ struct TripDetailsView: View {
 
     var body: some View {
         content
+            .explainer($explainer)
             .task { stopDetailsVM.handleTripFilterChange(tripFilter) }
             .onAppear { updateStops() }
             .onDisappear {
@@ -153,7 +154,7 @@ struct TripDetailsView: View {
         default: nil
         }
         let onHeaderTap: (() -> Void)? = if let explainerType { {
-            stopDetailsVM.explainer = .init(type: explainerType, routeAccents: routeAccents)
+            explainer = .init(type: explainerType, routeAccents: routeAccents)
         } } else { nil }
 
         VStack(spacing: 0) {
