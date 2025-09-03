@@ -57,14 +57,12 @@ import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.toPoint
-import com.mbta.tid.mbta_app.dependencyInjection.RepositoryDI
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.Vehicle
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -84,12 +82,10 @@ fun HomeMapView(
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
     vehiclesData: List<Vehicle>,
-    routeCardData: List<RouteCardData>?,
     viewModel: IMapViewModel,
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
-    globalRepository: IGlobalRepository = RepositoryDI().global,
 ) {
-    val globalData by globalRepository.state.collectAsState()
+    val globalData = getGlobalData("HomeMapView")
     val state by viewModel.models.collectAsState()
     var isTargeting by isTargetingState
 
@@ -139,7 +135,6 @@ fun HomeMapView(
     }
     LaunchedEffect(isDarkMode) { viewModel.colorPaletteChanged(isDarkMode) }
     LaunchedEffect(density) { viewModel.densityChanged(density.density) }
-    LaunchedEffect(routeCardData) { viewModel.routeCardDataChanged(routeCardData) }
     LaunchedEffect(currentNavEntry) { viewModel.navChanged(currentNavEntry) }
     Box(contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case

@@ -66,6 +66,21 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [showedError], timeout: 1)
     }
 
+    @MainActor func testWhenDataError() throws {
+        let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
+                                                                           errorState: .DataError(messages: [],
+                                                                                                  details: [],
+                                                                                                  action: {}))))
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        let showedError = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "Error loading data"))
+        }
+
+        wait(for: [showedError], timeout: 1)
+    }
+
     @MainActor func testLoadingWhenPredictionsStale() throws {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: true,
                                                                            errorState: .StalePredictions(

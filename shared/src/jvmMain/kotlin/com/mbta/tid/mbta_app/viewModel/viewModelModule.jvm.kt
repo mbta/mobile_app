@@ -9,10 +9,19 @@ import org.koin.dsl.module
 public actual fun viewModelModule(): Module = module {
     singleOf(::ErrorBannerViewModel).bind(IErrorBannerViewModel::class)
     single {
-        FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
+        FavoritesViewModel(
+            get(),
+            get(),
+            get(),
+            get(),
+            get(named("coroutineDispatcherDefault")),
+            get(),
+        )
     }
     single {
         MapViewModel(
+            get(),
+            get(),
             get(),
             get(),
             get(),
@@ -20,7 +29,30 @@ public actual fun viewModelModule(): Module = module {
             get(named("coroutineDispatcherIO")),
         )
     }
+    singleOf(::RouteCardDataViewModel).bind(IRouteCardDataViewModel::class)
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)
+    single {
+            StopDetailsViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named("coroutineDispatcherIO")),
+            )
+        }
+        .bind(IStopDetailsViewModel::class)
     singleOf(::ToastViewModel).bind(IToastViewModel::class)
+    single {
+            TripDetailsViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named("coroutineDispatcherIO")),
+            )
+        }
+        .bind(ITripDetailsViewModel::class)
 }

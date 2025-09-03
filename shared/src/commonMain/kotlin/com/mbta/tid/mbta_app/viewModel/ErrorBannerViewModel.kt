@@ -16,7 +16,7 @@ import io.sentry.kotlin.multiplatform.SentryLevel
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.flow.Flow
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -66,7 +66,7 @@ public class ErrorBannerViewModel(
     private var awaitingPredictionsAfterBackground: Boolean by mutableStateOf(false)
 
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var sheetRoute: SheetRoutes? by remember { mutableStateOf(null) }
 
         var errorState: ErrorBannerState? by remember { mutableStateOf(null) }
@@ -126,16 +126,14 @@ public class ErrorBannerViewModel(
             }
         }
 
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    is Event.ClearState -> errorRepository.clearState()
-                    is Event.SetSheetRoute -> {
-                        if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
-                            errorRepository.clearState()
-                        }
-                        sheetRoute = event.sheetRoute
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.ClearState -> errorRepository.clearState()
+                is Event.SetSheetRoute -> {
+                    if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
+                        errorRepository.clearState()
                     }
+                    sheetRoute = event.sheetRoute
                 }
             }
         }

@@ -61,7 +61,9 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
 
     public fun secondsHasDivisor(divisor: Long): Boolean = this.instant.epochSeconds % divisor == 0L
 
-    internal fun toEpochFracSeconds() = this.instant.toEpochMilliseconds() / 1000.0
+    public fun toEpochMilliseconds(): Long = this.instant.toEpochMilliseconds()
+
+    internal fun toEpochFracSeconds() = this.toEpochMilliseconds() / 1000.0
 
     public operator fun plus(duration: Duration): EasternTimeInstant =
         EasternTimeInstant(instant + duration)

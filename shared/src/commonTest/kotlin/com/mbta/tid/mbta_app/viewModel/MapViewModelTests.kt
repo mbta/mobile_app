@@ -10,16 +10,20 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.matcher.matching
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
+import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
@@ -31,6 +35,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -38,6 +43,7 @@ import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
@@ -69,22 +75,29 @@ internal class MapViewModelTests : KoinTest {
         override suspend fun isDefault(): Boolean = isDefaultCalled()
     }
 
-    fun setUpKoin(coroutineDispatcher: CoroutineDispatcher) {
+    fun setUpKoin(
+        coroutineDispatcher: CoroutineDispatcher,
+        configureRepositories: MockRepositories.() -> Unit = {},
+    ) {
         startKoin {
             modules(
+                repositoriesModule(
+                    MockRepositories().apply {
+                        useObjects(TestData.clone())
+                        configureRepositories()
+                    }
+                ),
+                viewModelModule(),
                 module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         coroutineDispatcher
                     }
-                },
-                module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         coroutineDispatcher
                     }
+                    single<Clock> { Clock.System }
+                    single { MockRouteCardDataViewModel() }.bind(IRouteCardDataViewModel::class)
                 },
-                repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
-                viewModelModule(),
-                module { single<Clock> { Clock.System } },
             )
         }
     }
@@ -358,6 +371,35 @@ internal class MapViewModelTests : KoinTest {
                     any(),
                 )
             }
+        }
+    }
+
+    @Test
+    fun `applies timeout to events`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val sentryRepository = mock<ISentryRepository>(MockMode.autofill)
+        setUpKoin(dispatcher) { sentry = sentryRepository }
+
+        val viewportManager =
+            mock<ViewportManager>(MockMode.autofill) {
+                everySuspend { isDefault() } calls { suspendCancellableCoroutine {} }
+            }
+
+        val viewModel: MapViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            viewModel.setViewportManager(viewportManager)
+            viewModel.locationPermissionsChanged(true)
+            advanceUntilIdle()
+            verify {
+                sentryRepository.captureException(
+                    matching<MoleculeViewModel.TimeoutException> {
+                        it.message ==
+                            "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
+                    }
+                )
+            }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 }

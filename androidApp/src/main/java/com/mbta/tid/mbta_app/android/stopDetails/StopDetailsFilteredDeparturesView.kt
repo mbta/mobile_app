@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
@@ -41,12 +42,13 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
@@ -58,16 +60,16 @@ fun StopDetailsFilteredDeparturesView(
     leaf: RouteCardData.Leaf,
     selectedDirection: Direction,
     allAlerts: AlertsStreamDataResponse?,
-    global: GlobalResponse?,
     now: EasternTimeInstant,
-    viewModel: StopDetailsViewModel,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     isFavorite: Boolean,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
+    viewModel: IStopDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
+    val global = getGlobalData("StopDetailsFilteredDeparturesView")
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)
     val noPredictionsStatus = leafFormat.noPredictionsStatus()
@@ -76,7 +78,8 @@ fun StopDetailsFilteredDeparturesView(
     val lineOrRoute = leaf.lineOrRoute
     val stop = leaf.stop
 
-    val alertSummaries by viewModel.alertSummaries.collectAsState()
+    val state by viewModel.models.collectAsState()
+    val alertSummaries = state.alertSummaries
 
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
@@ -132,9 +135,8 @@ fun StopDetailsFilteredDeparturesView(
 
     suspend fun updateAlertSummaries(clearExisting: Boolean = false) {
         if (global == null) return
-        if (clearExisting) {
-            viewModel.setAlertSummaries(emptyMap())
-        }
+        if (clearExisting) viewModel.setAlertSummaries(emptyMap())
+
         viewModel.setAlertSummaries(
             (alertsHere + downstreamAlerts).associate {
                 it.id to it.summary(stopId, stopFilter.directionId, patternsHere, now, global)
@@ -258,12 +260,14 @@ fun StopDetailsFilteredDeparturesView(
                 )
             }
         } else {
+            val tripDetailsPageFilter =
+                remember(stopId, stopFilter, tripFilter) {
+                    tripFilter?.let { TripDetailsPageFilter(stopId, stopFilter, it) }
+                }
             TripDetailsView(
-                tripFilter = tripFilter,
-                stopId = stopId,
+                tripFilter = tripDetailsPageFilter,
                 allAlerts = allAlerts,
                 alertSummaries = alertSummaries,
-                stopDetailsVM = viewModel,
                 onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,

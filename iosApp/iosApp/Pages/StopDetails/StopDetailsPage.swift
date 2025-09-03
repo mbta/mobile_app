@@ -79,19 +79,6 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
-            .fullScreenCover(
-                isPresented: .init(
-                    get: { stopDetailsVM.explainer != nil },
-                    set: { value in if !value { stopDetailsVM.explainer = nil } }
-                )
-            ) {
-                if let explainer = stopDetailsVM.explainer {
-                    ExplainerPage(
-                        explainer: explainer,
-                        onClose: { stopDetailsVM.explainer = nil }
-                    )
-                }
-            }
             .onChange(of: stopFilter) { newStopFilter in
                 if newStopFilter == nil {
                     internalRouteCardData = nil
@@ -101,12 +88,14 @@ struct StopDetailsPage: View {
                 errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: !(stopData?.predictionsLoaded ?? true))
             }
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
-            .onChange(of: RouteCardParams(alerts: nearbyVM.alerts,
-                                          global: stopDetailsVM.global,
-                                          now: now,
-                                          stopData: stopDetailsVM.stopData,
-                                          stopFilter: stopFilter,
-                                          stopId: stopId)) { newParams in
+            .onChange(of: RouteCardParams(
+                alerts: nearbyVM.alerts,
+                global: stopDetailsVM.global,
+                now: now,
+                stopData: stopDetailsVM.stopData,
+                stopFilter: stopFilter,
+                stopId: stopId
+            )) { newParams in
                 updateDepartures(routeCardParams: newParams)
             }
             .onChange(of: internalRouteCardData) { newInternalRouteCardData in
