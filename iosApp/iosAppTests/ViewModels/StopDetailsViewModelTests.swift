@@ -25,10 +25,8 @@ final class StopDetailsViewModelTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel(
             globalRepository: MockGlobalRepository(response: global, onGet: { exp.fulfill() })
         )
-        _ = stopDetailsVM.loadGlobalData()
+        stopDetailsVM.loadGlobalData()
         await fulfillment(of: [exp], timeout: 1)
-        try await Task.sleep(for: .seconds(1))
-        XCTAssertEqual(stopDetailsVM.global, global)
     }
 
     func testHandleStopChange() async throws {
@@ -152,14 +150,28 @@ final class StopDetailsViewModelTests: XCTestCase {
             id: 1
         )
 
+        let globalLoadExp = expectation(description: "global data loaded")
+
+        let mockRepos = MockRepositories()
+        mockRepos.useObjects(objects: objects)
+        mockRepos.global = MockGlobalRepository(response: .init(
+            objects: objects,
+            patternIdsByStop: [stop.id: [pattern0.id, pattern1.id]]
+        ), onGet: { globalLoadExp.fulfill() })
+
+        loadKoinMocks(objects: objects)
+
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = .init(objects: objects, patternIdsByStop: [stop.id: [pattern0.id, pattern1.id]])
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),
             predictionsByStop: .init(objects: objects),
             predictionsLoaded: true
         )
+        stopDetailsVM.handleStopAppear(stop.id)
+        stopDetailsVM.loadGlobalData()
+
+        await fulfillment(of: [globalLoadExp], timeout: 1)
 
         let routeCardData = await stopDetailsVM.getRouteCardData(
             stopId: stop.id,

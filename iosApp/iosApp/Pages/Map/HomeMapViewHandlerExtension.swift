@@ -69,30 +69,6 @@ extension HomeMapView {
     }
 
     @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            mapVM.globalData = globalData
-        }
-    }
-
-    func fetchGlobalData() {
-        Task {
-            await fetchApi(
-                errorKey: "HomeMapView.loadGlobalData",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: fetchGlobalData
-            )
-        }
-    }
-
-    func loadGlobalData() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        fetchGlobalData()
-    }
-
-    @MainActor
     func activateRouteShapeListener() async {
         for await railRouteShapes in railRouteShapeRepository.state {
             self.railRouteShapes = railRouteShapes

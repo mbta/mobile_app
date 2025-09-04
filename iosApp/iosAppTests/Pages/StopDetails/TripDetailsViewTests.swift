@@ -17,6 +17,7 @@ final class TripDetailsViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor
     func testDisplaysVehicleCard() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -42,6 +43,8 @@ final class TripDetailsViewTests: XCTestCase {
             prediction.vehicleId = vehicle.id
         }
 
+        loadKoinMocks(objects: objects)
+
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
@@ -55,7 +58,7 @@ final class TripDetailsViewTests: XCTestCase {
             ),
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
-        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.handleStopAppear(targetStop.id)
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -90,6 +93,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testDisplaysScheduleCard() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -108,6 +112,8 @@ final class TripDetailsViewTests: XCTestCase {
             schedule.trip = trip
         }
 
+        loadKoinMocks(objects: objects)
+
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
@@ -120,7 +126,7 @@ final class TripDetailsViewTests: XCTestCase {
                 tripResponse: .init(trip: trip)
             )
         )
-        stopDetailsVM.global = .init(objects: objects)
+
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -135,6 +141,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripPredictionsLoaded: true,
             vehicle: nil
         )
+        stopDetailsVM.handleStopAppear(firstStop.id)
 
         var sut = TripDetailsView(
             tripFilter: stopDetailsVM.tripData?.tripFilter,
@@ -147,6 +154,7 @@ final class TripDetailsViewTests: XCTestCase {
             onOpenAlertDetails: { _ in }
         )
 
+        sut.global = .init(objects: objects)
         let exp = sut.on(\.didLoadData) { view in
             let card = try view.find(TripHeaderCard.self)
             try debugPrint(card.findAll(ViewType.Text.self).map { try $0.string() })
@@ -157,6 +165,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testDisplaysStopList() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -182,6 +191,8 @@ final class TripDetailsViewTests: XCTestCase {
             prediction.vehicleId = vehicle.id
         }
 
+        loadKoinMocks(objects: objects)
+
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
@@ -195,7 +206,7 @@ final class TripDetailsViewTests: XCTestCase {
             ),
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
-        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.handleStopAppear(targetStop.id)
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -234,6 +245,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testTappingDownstreamStopAppendsToNavStack() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -258,8 +270,10 @@ final class TripDetailsViewTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 5)
             prediction.vehicleId = vehicle.id
         }
-        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
 
+        loadKoinMocks(objects: objects)
+
+        let oldNavEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
         let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry])
         nearbyVM.alerts = .init(objects: objects)
 
@@ -273,7 +287,6 @@ final class TripDetailsViewTests: XCTestCase {
             ),
             vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
         )
-        stopDetailsVM.global = .init(objects: objects)
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),

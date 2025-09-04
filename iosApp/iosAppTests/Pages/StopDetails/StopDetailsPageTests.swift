@@ -161,11 +161,13 @@ final class StopDetailsPageTests: XCTestCase {
         let route = objects.route()
         let stop = objects.stop { _ in }
         let prediction = objects.prediction { _ in }
-        let pattern = objects.routePattern(route: route) { _ in }
+        objects.routePattern(route: route) { _ in }
         objects.trip { trip in
             trip.id = prediction.tripId
             trip.stopIds = [stop.id]
         }
+
+        loadKoinMocks(objects: objects)
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let stopFilter: StopDetailsFilter? = .init(routeId: route.id, directionId: 0)
@@ -175,13 +177,16 @@ final class StopDetailsPageTests: XCTestCase {
         )
         nearbyVM.alerts = .init(alerts: [:])
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(),
-            predictionsRepository: MockPredictionsRepository(),
-            schedulesRepository: MockScheduleRepository()
+        let stopDetailsVM = StopDetailsViewModel()
+        XCTAssertNil(nearbyVM.routeCardData)
+
+        stopDetailsVM.handleStopAppear(stop.id)
+        stopDetailsVM.stopData = .init(
+            stopId: stop.id,
+            schedules: .init(objects: objects),
+            predictionsByStop: .init(objects: objects),
+            predictionsLoaded: true
         )
-        stopDetailsVM.global = .init(objects: objects, patternIdsByStop: [stop.id: [pattern.id]])
-        stopDetailsVM.stopData = nil
 
         let sut = StopDetailsPage(
             filters: .init(
@@ -199,12 +204,6 @@ final class StopDetailsPageTests: XCTestCase {
         XCTAssertNil(nearbyVM.routeCardData)
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        stopDetailsVM.stopData = .init(
-            stopId: stop.id,
-            schedules: .init(objects: objects),
-            predictionsByStop: .init(objects: objects),
-            predictionsLoaded: true
-        )
 
         let hasSetDepartures = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(nearbyVM.routeCardData)
@@ -240,22 +239,17 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
+        loadKoinMocks(objects: objects)
+
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            schedulesRepository: MockScheduleRepository(
-                scheduleResponse: .init(objects: objects),
-                callback: { _ in }
-            )
-        )
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.handleStopAppear(stop.id)
 
-        stopDetailsVM.global = .init(objects: objects)
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),
@@ -288,12 +282,18 @@ final class StopDetailsPageTests: XCTestCase {
 
         let onChangeCalledExp = sut.inspection.inspect(after: 1) { view in
             nowLater = Date.now
-            XCTAssertLessThan(nearbyVM.routeCardData!.first!.at.toNSDateLosingTimeZone(), nowLater!)
+            XCTAssertNotNil(nearbyVM.routeCardData?.first)
+            XCTAssertNotNil(nowLater)
+            if let rcdTime = nearbyVM.routeCardData?.first?.at.toNSDateLosingTimeZone(), let nowLater {
+                XCTAssertLessThan(rcdTime, nowLater)
+            } else {
+                XCTFail("RouteCardData did not exist")
+            }
             XCTAssertEqual(nearbyVM.routeCardData, try view.actualView().internalRouteCardData)
 
             try view.findAndCallOnChange(newValue: RouteCardParams(
                 alerts: nearbyVM.alerts,
-                global: stopDetailsVM.global,
+                global: .init(objects: objects),
                 now: nowLater!,
                 stopData: stopDetailsVM.stopData,
                 stopFilter: nil,
@@ -338,22 +338,17 @@ final class StopDetailsPageTests: XCTestCase {
             schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
+        loadKoinMocks(objects: objects)
+
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            schedulesRepository: MockScheduleRepository(
-                scheduleResponse: .init(objects: objects),
-                callback: { _ in }
-            )
-        )
+        let stopDetailsVM = StopDetailsViewModel()
+        stopDetailsVM.handleStopAppear(stop.id)
 
-        stopDetailsVM.global = .init(objects: objects)
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),
@@ -412,6 +407,8 @@ final class StopDetailsPageTests: XCTestCase {
             prediction.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
 
+        loadKoinMocks(objects: objects)
+
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let nearbyVM: NearbyViewModel = .init(
@@ -419,13 +416,9 @@ final class StopDetailsPageTests: XCTestCase {
         )
         nearbyVM.alerts = .init(alerts: [:])
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            schedulesRepository: MockScheduleRepository(scheduleResponse: .init(objects: objects), callback: { _ in })
-        )
+        let stopDetailsVM = StopDetailsViewModel()
 
-        stopDetailsVM.global = .init(objects: objects)
+        stopDetailsVM.handleStopAppear(stop.id)
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),

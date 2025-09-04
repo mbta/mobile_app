@@ -23,6 +23,7 @@ struct TripDetailsView: View {
     @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @State var explainer: Explainer?
+    @State var global: GlobalResponse?
     @State var stops: TripDetailsStopList?
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -55,13 +56,16 @@ struct TripDetailsView: View {
         self.analytics = analytics
     }
 
-    func getParentFor(_ stopId: String?, global: GlobalResponse) -> Stop? {
-        global.getStop(stopId: stopId)?.resolveParent(global: global)
+    func getParentFor(_ stopId: String?) -> Stop? {
+        if let global {
+            global.getStop(stopId: stopId)?.resolveParent(global: global)
+        } else { nil }
     }
 
     var body: some View {
         content
             .explainer($explainer)
+            .global($global, errorKey: "TripDetailsView")
             .task { stopDetailsVM.handleTripFilterChange(tripFilter) }
             .onAppear { updateStops() }
             .onDisappear {
@@ -108,11 +112,10 @@ struct TripDetailsView: View {
                let tripData = stopDetailsVM.tripData,
                tripData.tripFilter == tripFilter,
                tripData.tripPredictionsLoaded,
-               let global = stopDetailsVM.global,
                let route = stopDetailsVM.getTripRoute(),
                let stops {
-                let terminalStop = getParentFor(tripData.trip.stopIds?.first, global: global)
-                let vehicleStop = getParentFor(vehicle?.stopId, global: global)
+                let terminalStop = getParentFor(tripData.trip.stopIds?.first)
+                let vehicleStop = getParentFor(vehicle?.stopId)
                 tripDetails(tripData.trip, stops, terminalStop, vehicle, vehicleStop, route)
                     .onAppear { didLoadData?(self) }
             } else {
@@ -171,7 +174,7 @@ struct TripDetailsView: View {
                 onOpenAlertDetails: onOpenAlertDetails,
                 route: route,
                 routeAccents: routeAccents,
-                global: stopDetailsVM.global
+                global: global
             )
             .padding(.top, -56)
         }
@@ -218,7 +221,7 @@ struct TripDetailsView: View {
                let tripData = stopDetailsVM.tripData,
                tripData.tripFilter == tripFilter,
                tripData.tripPredictionsLoaded,
-               let global = stopDetailsVM.global {
+               let global {
                 stops = try await TripDetailsStopList.companion.fromPieces(
                     trip: tripData.trip,
                     tripSchedules: tripData.tripSchedules,
@@ -240,7 +243,7 @@ struct TripDetailsView: View {
     }
 
     func onTapStop(stop: TripDetailsStopList.Entry) {
-        let parentStop = if let global = stopDetailsVM.global { stop.stop.resolveParent(global: global) }
+        let parentStop = if let global { stop.stop.resolveParent(global: global) }
         else { stop.stop }
         nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(

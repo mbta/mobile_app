@@ -25,6 +25,8 @@ struct StopDetailsUnfilteredView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
 
+    @State var global: GlobalResponse?
+
     var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
@@ -59,7 +61,7 @@ struct StopDetailsUnfilteredView: View {
     }
 
     var stop: Stop? {
-        stopDetailsVM.global?.getStop(stopId: stopId)
+        global?.getStop(stopId: stopId)
     }
 
     var elevatorAlerts: [Shared.Alert]? {
@@ -138,7 +140,7 @@ struct StopDetailsUnfilteredView: View {
                                 }
                             }
 
-                            if let routeCardData, let global = stopDetailsVM.global {
+                            if let routeCardData, let global {
                                 ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
                                     RouteCard(
                                         cardData: routeCardData,
@@ -160,6 +162,8 @@ struct StopDetailsUnfilteredView: View {
                 }
             }
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .global($global, errorKey: "StopDetailsUnfilteredView")
     }
 
     @ViewBuilder private func loadingBody() -> some View {
@@ -168,7 +172,7 @@ struct StopDetailsUnfilteredView: View {
             ForEach(placeholderCards, id: \.id) { card in
                 RouteCard(
                     cardData: card,
-                    global: stopDetailsVM.global,
+                    global: global,
                     now: now,
                     isFavorite: { _ in false },
                     pushNavEntry: { _ in },

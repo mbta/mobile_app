@@ -22,10 +22,10 @@ struct RouteCardParams: Equatable {
 struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
 
+    @State var global: GlobalResponse?
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective departures rather than both showing the departures for the newly presented stop.
-
     @State var internalRouteCardData: [RouteCardData]?
     @State var now = Date.now
 
@@ -79,6 +79,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
+            .global($global, errorKey: "StopDetailsPage")
             .onChange(of: stopFilter) { newStopFilter in
                 if newStopFilter == nil {
                     internalRouteCardData = nil
@@ -90,7 +91,7 @@ struct StopDetailsPage: View {
             .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
             .onChange(of: RouteCardParams(
                 alerts: nearbyVM.alerts,
-                global: stopDetailsVM.global,
+                global: global,
                 now: now,
                 stopData: stopDetailsVM.stopData,
                 stopFilter: stopFilter,
@@ -177,7 +178,7 @@ struct StopDetailsPage: View {
             stopFilter: filters.stopFilter,
             currentTripFilter: filters.tripFilter,
             filterAtTime: now.toEasternInstant(),
-            globalData: stopDetailsVM.global
+            globalData: global
         )
 
         if let previousFilter = filters.tripFilter, tripFilter != previousFilter {
@@ -208,7 +209,7 @@ struct StopDetailsPage: View {
     // Testing convenience
     func updateDepartures() {
         updateDepartures(routeCardParams: RouteCardParams(alerts: nearbyVM.alerts,
-                                                          global: stopDetailsVM.global,
+                                                          global: global,
                                                           now: now,
                                                           stopData: stopDetailsVM.stopData,
                                                           stopFilter: stopFilter,

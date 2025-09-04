@@ -101,10 +101,12 @@ import XCTest
             objects: builder!,
             patternIdsByStop: [stop!.id: [routePatternOne!.id, routePatternTwo!.id]]
         )
+        loadKoinMocks(objects: builder!)
     }
 
     private let errorBannerViewModel = MockErrorBannerViewModel()
 
+    @MainActor
     func testGroupsByDirection() async throws {
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
             stopIds: [stop!.id] + stop!.childStopIds,
@@ -119,7 +121,7 @@ import XCTest
 
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = globalResponse!
+        stopDetailsVM.handleStopAppear(stop!.id)
 
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,
@@ -129,12 +131,17 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([:])
+        )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Sample Route"))
-        XCTAssertNotNil(try sut.inspect().find(text: "Sample Headsign"))
-        XCTAssertNotNil(try sut.inspect().find(text: "1 min"))
-        XCTAssertThrowsError(try sut.inspect().find(text: "This stop is not accessible"))
+        let exp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "Sample Route"))
+            XCTAssertNotNil(try view.find(text: "Sample Headsign"))
+            XCTAssertNotNil(try view.find(text: "1 min"))
+            XCTAssertThrowsError(try view.find(text: "This stop is not accessible"))
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+        await fulfillment(of: [exp], timeout: 2)
     }
 
     func testInaccessibleByDirection() async throws {
@@ -151,7 +158,7 @@ import XCTest
 
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = globalResponse!
+        stopDetailsVM.handleStopAppear(stop!.id)
 
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
@@ -161,9 +168,13 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([.stationAccessibility: true])
+        )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
+        let exp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(text: "This stop is not accessible"))
+        }
+        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
+        await fulfillment(of: [exp], timeout: 2)
     }
 
     func testShowsElevatorAlertsWhenGroupedByDirection() async throws {
@@ -181,6 +192,7 @@ import XCTest
                 trip: nil
             )
         }
+
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
             stopIds: [stop!.id] + stop!.childStopIds,
             globalData: globalResponse!,
@@ -194,9 +206,9 @@ import XCTest
 
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = globalResponse!
+        stopDetailsVM.handleStopAppear(stop!.id)
 
-        let sut = StopDetailsUnfilteredView(
+        let unfilteredView = StopDetailsUnfilteredView(
             stopId: stop!.id,
             setStopFilter: { _ in },
             routeCardData: routeCardData,
@@ -204,7 +216,9 @@ import XCTest
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM,
             stopDetailsVM: stopDetailsVM
-        ).withFixedSettings([.stationAccessibility: true])
+        )
+
+        let sut = unfilteredView.withFixedSettings([.stationAccessibility: true])
         XCTAssertNotNil(try sut.inspect().find(text: "Elevator alert"))
     }
 }

@@ -166,6 +166,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [updateNowExp], timeout: 2)
     }
 
+    @MainActor
     func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
@@ -198,6 +199,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 7)
         })
 
+        loadKoinMocks(objects: objects)
+
         let leaf = makeLeaf(
             line: line,
             routes: [routeB, routeC],
@@ -208,7 +211,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         )
 
         let stopDetailsVM = iosApp.StopDetailsViewModel()
-        stopDetailsVM.global = .init(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -225,13 +227,18 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             mapVM: .init(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
-        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        )
 
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: trip1.headsign))
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
-        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
-        XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
+        let departuresExp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(DepartureTile.self).find(text: trip1.headsign))
+            XCTAssertNotNil(try view.find(DepartureTile.self).find(RoutePill.self))
+            XCTAssertNotNil(try view.find(text: "ARR"))
+            XCTAssertNotNil(try view.find(text: "3 min"))
+            XCTAssertNotNil(try view.find(text: "7 min"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        wait(for: [departuresExp], timeout: 2)
     }
 
     func testShowsTripDetails() throws {
@@ -391,10 +398,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let nearbyVM = NearbyViewModel()
+        loadKoinMocks(objects: objects)
 
+        let nearbyVM = NearbyViewModel()
         let stopDetailsVM: iosApp.StopDetailsViewModel = .init()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
@@ -449,10 +456,11 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
+        loadKoinMocks(objects: objects)
+
         let nearbyVM = NearbyViewModel()
 
         let stopDetailsVM: iosApp.StopDetailsViewModel = .init()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(
             route: route,
@@ -622,9 +630,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
+        loadKoinMocks(objects: objects)
+
         let nearbyVM = NearbyViewModel()
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
@@ -703,6 +712,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             }
         })
 
+        loadKoinMocks(objects: objects)
+
         let global = GlobalResponse(objects: objects)
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
             stopIds: [stop.id] + stop.childStopIds,
@@ -718,7 +729,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let leaf = routeStopData.data.first { $0.directionId == 0 }!
 
         let stopDetailsVM = iosApp.StopDetailsViewModel()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,

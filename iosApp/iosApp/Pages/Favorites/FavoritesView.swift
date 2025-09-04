@@ -63,6 +63,7 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
+        .global($globalData, errorKey: "FavoritesView")
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
@@ -70,7 +71,6 @@ struct FavoritesView: View {
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toEasternInstant())
             favoritesVM.reloadFavorites()
-            loadEverything()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .task {
@@ -114,17 +114,6 @@ struct FavoritesView: View {
         )
     }
 
-    private func loadEverything() {
-        getGlobal()
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-        }
-    }
-
     func showFirstTimeToast() {
         toastVM.showToast(toast:
             .init(message:
@@ -136,19 +125,6 @@ struct FavoritesView: View {
                     .ToastActionClose(onClose: { favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
                         toastVM.hideToast()
                     })))
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorKey: "FavoritesView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadEverything
-            )
-        }
     }
 
     private func onAddStops() {

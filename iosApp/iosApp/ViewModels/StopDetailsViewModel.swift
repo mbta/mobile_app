@@ -48,7 +48,7 @@ struct TripRouteAccents: Hashable {
 
 // swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
-    @Published var global: GlobalResponse?
+    private var global: GlobalResponse?
     @Published var favorites: Favorites = .init(routeStopDirection: [])
     @Published var alertSummaries: [String: AlertSummary?] = [:]
 
