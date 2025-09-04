@@ -16,9 +16,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
-import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertIs
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.milliseconds
@@ -119,17 +117,11 @@ class ViewportProviderTest {
 
         composeTestRule.waitUntilDefaultTimeout {
             mapViewportState.mapViewportStatus is ViewportStatus.State &&
-                (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
-                    OverviewViewportState
+                ((mapViewportState.mapViewportStatus as ViewportStatus.State).state
+                        as OverviewViewportState)
+                    .options
+                    .padding == EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter)
         }
-
-        val viewportStatus = assertIs<ViewportStatus.State>(mapViewportState.mapViewportStatus)
-        val viewportInnerState = assertIs<OverviewViewportState>(viewportStatus.state)
-
-        assertEquals(
-            EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter),
-            viewportInnerState.options.padding,
-        )
     }
 
     @Test
