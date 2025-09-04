@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app.android.location
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -118,16 +117,12 @@ class ViewportProviderTest {
 
         withTimeout(10.seconds) { awaitAll(stopCenter, setPadding, vehicleOverview) }
 
-        try {
-            composeTestRule.waitUntilDefaultTimeout {
-                mapViewportState.mapViewportStatus is ViewportStatus.State &&
-                    (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
-                        OverviewViewportState
-            }
-        } catch (e: ComposeTimeoutException) {
-            println("retryableTest timeout caught: ${mapViewportState.mapViewportStatus}")
-            throw e
+        composeTestRule.waitUntilDefaultTimeout {
+            mapViewportState.mapViewportStatus is ViewportStatus.State &&
+                (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
+                    OverviewViewportState
         }
+
         val viewportStatus = assertIs<ViewportStatus.State>(mapViewportState.mapViewportStatus)
         val viewportInnerState = assertIs<OverviewViewportState>(viewportStatus.state)
 
