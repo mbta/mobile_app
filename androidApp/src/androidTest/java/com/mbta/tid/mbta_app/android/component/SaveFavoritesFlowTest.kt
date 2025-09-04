@@ -314,7 +314,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message ==
                 "<b>Westbound Green Line</b> at <b>Boylston</b> added to Favorites"
         }
@@ -348,7 +348,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Green Line</b> at <b>Boylston</b> added to Favorites"
         }
     }
@@ -380,7 +380,7 @@ class SaveFavoritesFlowTest {
             }
         }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Outbound 15 bus</b> at <b>Ruggles</b> added to Favorites"
         }
     }

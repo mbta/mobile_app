@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
@@ -36,8 +37,8 @@ class SubscribeToAlertsTest {
 
         var actualData: AlertsStreamDataResponse? = null
         composeRule.setContent { actualData = subscribeToAlerts(alertsUsecase) }
-        composeRule.waitUntil { connectCount == 1 }
-        composeRule.waitUntil { alertsStreamDataResponse == actualData }
+        composeRule.waitUntilDefaultTimeout { connectCount == 1 }
+        composeRule.waitUntilDefaultTimeout { alertsStreamDataResponse == actualData }
         assertEquals(alertsStreamDataResponse, actualData)
     }
 
@@ -72,17 +73,17 @@ class SubscribeToAlertsTest {
             }
         }
 
-        composeRule.waitUntil { connectCount == 1 }
+        composeRule.waitUntilDefaultTimeout { connectCount == 1 }
         Assert.assertEquals(0, disconnectCount)
 
         composeRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        composeRule.waitUntil { disconnectCount == 1 }
+        composeRule.waitUntilDefaultTimeout { disconnectCount == 1 }
         Assert.assertEquals(1, connectCount)
 
         composeRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeRule.waitUntil { connectCount == 2 }
+        composeRule.waitUntilDefaultTimeout { connectCount == 2 }
         Assert.assertEquals(1, disconnectCount)
     }
 }

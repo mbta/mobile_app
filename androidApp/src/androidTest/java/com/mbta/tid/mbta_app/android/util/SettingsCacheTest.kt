@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
@@ -45,7 +46,7 @@ class SettingsCacheTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { gotSettings }
+        composeTestRule.waitUntilDefaultTimeout { gotSettings }
         assertEquals(listOf(false, true), hideMapsValues)
         assertEquals(listOf(false, false), debugModeValues)
     }
@@ -73,7 +74,7 @@ class SettingsCacheTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { gotSettings }
+        composeTestRule.waitUntilDefaultTimeout { gotSettings }
         assertEquals(listOf(true), hideMapsValues)
     }
 
@@ -103,9 +104,9 @@ class SettingsCacheTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { gotSettings }
+        composeTestRule.waitUntilDefaultTimeout { gotSettings }
         composeTestRule.onNodeWithText("Hide maps").performClick()
-        composeTestRule.waitUntil { savedSettings }
+        composeTestRule.waitUntilDefaultTimeout { savedSettings }
         composeTestRule.waitForIdle()
         // false while loading and still false after loading
         assertEquals(listOf(false, false, true), hideMapsValues)

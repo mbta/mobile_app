@@ -46,7 +46,7 @@ class ViewportProviderTest {
         viewportProvider.isVehicleOverview = true
 
         composeTestRule.setContent { LaunchedEffect(Unit) { viewportProvider.follow() } }
-        composeTestRule.waitUntil { viewportProvider.isFollowingPuck }
+        composeTestRule.waitUntilDefaultTimeout { viewportProvider.isFollowingPuck }
         assertTrue(viewportProvider.isFollowingPuck)
         assertFalse(viewportProvider.isVehicleOverview)
     }
