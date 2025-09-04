@@ -49,7 +49,7 @@ fun RouteCard(
     data: RouteCardData,
     globalData: GlobalResponse?,
     now: EasternTimeInstant,
-    isFavorite: (RouteStopDirection) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     showStopHeader: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {

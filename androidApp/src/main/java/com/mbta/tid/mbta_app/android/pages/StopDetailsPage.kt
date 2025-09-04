@@ -50,8 +50,8 @@ fun StopDetailsPage(
     val awaitingPredictionsAfterBackground =
         stopDetailsViewModel.models.collectAsState().value.awaitingPredictionsAfterBackground
 
-    fun isFavorite(routeStopDirection: RouteStopDirection): Boolean {
-        return favorites?.contains(routeStopDirection) ?: false
+    fun isFavorite(routeStopDirection: RouteStopDirection): Boolean? {
+        return favorites?.contains(routeStopDirection)
     }
 
     fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>, defaultDirection: Int) {

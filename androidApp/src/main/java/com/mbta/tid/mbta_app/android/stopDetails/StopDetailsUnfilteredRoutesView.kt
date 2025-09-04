@@ -57,7 +57,7 @@ fun StopDetailsUnfilteredRoutesView(
     errorBannerViewModel: IErrorBannerViewModel,
     now: EasternTimeInstant,
     globalData: GlobalResponse?,
-    isFavorite: (RouteStopDirection) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     onClose: () -> Unit,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
