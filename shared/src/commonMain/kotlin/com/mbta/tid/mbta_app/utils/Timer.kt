@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
 internal class ClockTickHandler {
     companion object {
@@ -43,7 +42,7 @@ internal class ClockTickHandler {
 @Composable
 internal fun timer(
     updateInterval: Duration = 5.seconds,
-    clock: Clock = koinInject(),
+    clock: Clock = Clock.System,
 ): State<EasternTimeInstant> {
     val timerFlow = remember {
         ClockTickHandler.getClockFlow(clock).filter {

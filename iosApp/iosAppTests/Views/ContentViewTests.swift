@@ -117,23 +117,6 @@ final class ContentViewTests: XCTestCase {
         wait(for: [configFetchedExpectation], timeout: 6)
     }
 
-    func testSetsMapboxTokenConfigOnConfigChange() throws {
-        let tokenConfigExpectation = XCTestExpectation(description: "mapbox token configured")
-
-        let fakeVM = FakeContentVM(
-            configMapboxCallback: { tokenConfigExpectation.fulfill() }
-        )
-        let sut = withDefaultEnvironmentObjects(sut: ContentView(contentVM: fakeVM))
-
-        ViewHosting.host(view: sut)
-
-        let newConfig: ApiResult<ConfigResponse>? = ApiResultOk(data: .init(mapboxPublicToken: "FAKE_TOKEN"))
-
-        try sut.inspect().implicitAnyView().find(ContentView.self).find(ViewType.GeometryReader.self)
-            .callOnChange(newValue: newConfig)
-        wait(for: [tokenConfigExpectation], timeout: 5)
-    }
-
     @MainActor func testFetchesConfigOnMapboxError() throws {
         let loadConfigCallback = XCTestExpectation(description: "load config called")
         loadConfigCallback.expectedFulfillmentCount = 2
@@ -144,7 +127,11 @@ final class ContentViewTests: XCTestCase {
         let sut = ContentView(contentVM: fakeVM)
 
         let hasAppeared = sut.inspection.inspect(after: 2) { view in
-            try view.actualView().mapVM.lastMapboxErrorSubject.send(Date.now)
+            try view
+                .actualView()
+                .contentVM
+                .mapboxConfigManager
+                .lastMapboxErrorSubject.send(Date.now)
         }
 
         ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
@@ -234,10 +221,6 @@ final class ContentViewTests: XCTestCase {
         }
 
         override func loadConfig() async { loadConfigCallback() }
-
-        override func configureMapboxToken(token _: String) {
-            configMapboxCallback()
-        }
     }
 
     class FakeSocket: MockSocket {
