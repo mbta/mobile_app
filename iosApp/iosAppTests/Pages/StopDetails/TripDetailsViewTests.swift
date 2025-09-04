@@ -17,6 +17,7 @@ final class TripDetailsViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor
     func testDisplaysVehicleCard() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -92,6 +93,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testDisplaysScheduleCard() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -163,6 +165,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testDisplaysStopList() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
@@ -242,6 +245,7 @@ final class TripDetailsViewTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
+    @MainActor
     func testTappingDownstreamStopAppendsToNavStack() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
