@@ -124,7 +124,7 @@ final class TripDetailsViewTests: XCTestCase {
                 tripResponse: .init(trip: trip)
             )
         )
-        stopDetailsVM.handleStopAppear(firstStop.id)
+
         stopDetailsVM.stopData = .init(
             stopId: targetStop.id,
             schedules: .init(objects: objects),
@@ -139,6 +139,7 @@ final class TripDetailsViewTests: XCTestCase {
             tripPredictionsLoaded: true,
             vehicle: nil
         )
+        stopDetailsVM.handleStopAppear(firstStop.id)
 
         var sut = TripDetailsView(
             tripFilter: stopDetailsVM.tripData?.tripFilter,

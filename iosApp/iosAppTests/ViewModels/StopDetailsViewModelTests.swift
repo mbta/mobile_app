@@ -150,24 +150,28 @@ final class StopDetailsViewModelTests: XCTestCase {
             id: 1
         )
 
+        let globalLoadExp = expectation(description: "global data loaded")
+
         let mockRepos = MockRepositories()
         mockRepos.useObjects(objects: objects)
         mockRepos.global = MockGlobalRepository(response: .init(
             objects: objects,
             patternIdsByStop: [stop.id: [pattern0.id, pattern1.id]]
-        ))
+        ), onGet: { globalLoadExp.fulfill() })
+
         loadKoinMocks(objects: objects)
 
         let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.handleStopAppear(stop.id)
         stopDetailsVM.stopData = .init(
             stopId: stop.id,
             schedules: .init(objects: objects),
             predictionsByStop: .init(objects: objects),
             predictionsLoaded: true
         )
+        stopDetailsVM.handleStopAppear(stop.id)
+        stopDetailsVM.loadGlobalData()
 
-        try await Task.sleep(for: .seconds(1))
+        await fulfillment(of: [globalLoadExp], timeout: 1)
 
         let routeCardData = await stopDetailsVM.getRouteCardData(
             stopId: stop.id,
