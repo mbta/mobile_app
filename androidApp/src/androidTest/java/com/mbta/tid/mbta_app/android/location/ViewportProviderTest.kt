@@ -117,6 +117,8 @@ class ViewportProviderTest {
 
         composeTestRule.waitUntilDefaultTimeout {
             mapViewportState.mapViewportStatus is ViewportStatus.State &&
+                (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
+                    OverviewViewportState &&
                 ((mapViewportState.mapViewportStatus as ViewportStatus.State).state
                         as OverviewViewportState)
                     .options
