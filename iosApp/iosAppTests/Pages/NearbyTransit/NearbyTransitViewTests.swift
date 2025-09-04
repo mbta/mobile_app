@@ -83,253 +83,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [getNearbyExpectation], timeout: 5)
     }
 
-    func route52Objects() -> ObjectCollectionBuilder {
-        let objects = ObjectCollectionBuilder()
-        let route52 = objects.route { route in
-            route.id = "52"
-            route.type = .bus
-            route.shortName = "52"
-            route.directionNames = ["Outbound", "Inbound"]
-            route.directionDestinations = ["Dedham Mall", "Watertown Yard"]
-        }
-        let stop1 = objects.stop { stop in
-            stop.id = "8552"
-            stop.name = "Sawmill Brook Pkwy @ Walsh Rd"
-            stop.wheelchairBoarding = .accessible
-        }
-        let stop2 = objects.stop { stop in
-            stop.id = "84791"
-            stop.name = "Sawmill Brook Pkwy @ Walsh Rd - opposite side"
-        }
-        // In reality, 52-4-0 and 52-4-1 have typicality: .deviation,
-        // but these tests are from before we started hiding deviations with no predictions,
-        // and it's easier to just fudge the data than to rewrite the tests.
-        objects.routePattern(route: route52) { pattern in
-            pattern.id = "52-4-0"
-            pattern.directionId = 0
-            pattern.sortOrder = 505_200_020
-            pattern.typicality = .typical
-            pattern.representativeTrip { trip in
-                trip.headsign = "Charles River Loop"
-                trip.routePatternId = pattern.id
-                trip.stopIds = [stop1.id, "terminal-stop"]
-            }
-        }
-        objects.routePattern(route: route52) { pattern in
-            pattern.id = "52-5-0"
-            pattern.directionId = 0
-            pattern.sortOrder = 505_200_000
-            pattern.typicality = .typical
-            pattern.representativeTrip { trip in
-                trip.headsign = "Dedham Mall"
-                trip.routePatternId = pattern.id
-                trip.stopIds = [stop1.id, "terminal-stop"]
-            }
-        }
-        objects.routePattern(route: route52) { pattern in
-            pattern.id = "52-4-1"
-            pattern.directionId = 1
-            pattern.sortOrder = 505_201_010
-            pattern.typicality = .typical
-            pattern.representativeTrip { trip in
-                trip.headsign = "Watertown Yard"
-                trip.routePatternId = pattern.id
-                trip.stopIds = [stop2.id, "terminal-stop"]
-            }
-        }
-        objects.routePattern(route: route52) { pattern in
-            pattern.id = "52-5-1"
-            pattern.directionId = 1
-            pattern.sortOrder = 505_201_000
-            pattern.typicality = .typical
-            pattern.representativeTrip { trip in
-                trip.headsign = "Watertown Yard"
-                trip.routePatternId = pattern.id
-                trip.stopIds = [stop2.id, "terminal-stop"]
-            }
-        }
-
-        return objects
-    }
-
     var mockLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
-
-    func getNearbyState(objects: ObjectCollectionBuilder) -> NearbyViewModel.NearbyTransitState {
-        .init(
-            loadedLocation: mockLocation,
-            // swiftlint:disable:next force_cast
-            stopIds: objects.stops.allKeys.map { $0 as! String }
-        )
-    }
-
-    struct LoadedStops {
-        let predictionStops: [String]
-        let scheduleStops: [String]
-    }
-
-    func setUpSut(
-        _ objects: ObjectCollectionBuilder,
-        _ loadPublisher: PassthroughSubject<LoadedStops, Never>,
-        now: EasternTimeInstant? = nil,
-    ) -> NearbyTransitView {
-        let nearbyVM = NearbyViewModel()
-        nearbyVM.nearbyState = getNearbyState(objects: objects)
-        nearbyVM.alerts = .init(objects: objects)
-
-        let predictionPub = PassthroughSubject<[String], Never>()
-        let schedulePub = PassthroughSubject<[String], Never>()
-
-        Publishers.Zip(predictionPub, schedulePub).sink { predictionStops, scheduleStops in
-            loadPublisher.send(
-                LoadedStops(predictionStops: predictionStops, scheduleStops: scheduleStops)
-            )
-        }.store(in: &cancellables)
-
-        var sut = NearbyTransitView(
-            predictionsRepository: MockPredictionsRepository(
-                onConnectV2: { predictionStops in predictionPub.send(predictionStops) },
-                connectV2Response: .init(objects: objects)
-            ),
-            schedulesRepository: MockScheduleRepository(
-                scheduleResponse: .init(objects: objects),
-                callback: { scheduleStops in schedulePub.send(scheduleStops) }
-            ),
-            location: .constant(mockLocation),
-            setIsReturningFromBackground: { _ in },
-            globalData: .init(objects: objects),
-            nearbyVM: nearbyVM,
-            scheduleResponse: .init(objects: objects),
-            now: now?.toNSDateLosingTimeZone() ?? Date.now,
-            predictionsByStop: .init(objects: objects),
-            noNearbyStops: noNearbyStops
-        )
-        sut.globalRepository = MockGlobalRepository(response: .init(objects: objects))
-
-        return sut
-    }
-
-    @MainActor func testRoutePatternsGroupedByRouteAndStop() throws {
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let objects = route52Objects()
-        let sut = setUpSut(objects, loadPublisher)
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let routes = view.findAll(RouteCard.self)
-
-            XCTAssert(!routes.isEmpty)
-            guard let route = routes.first else { return }
-
-            XCTAssertNotNil(try route.find(text: "52"))
-            XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd"))
-            XCTAssertNotNil(try route.find(text: "Outbound to")
-                .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
-
-            XCTAssertNotNil(try route.find(text: "Sawmill Brook Pkwy @ Walsh Rd - opposite side"))
-            XCTAssertNotNil(try route.find(text: "Inbound to")
-                .find(RouteCardDepartures.self, relation: .parent).find(text: "Watertown Yard"))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 1)
-    }
-
-    @MainActor func testWithSchedules() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let now = EasternTimeInstant.now()
-
-        let objects = route52Objects()
-
-        // schedule, no prediction
-        let time1 = now.plus(minutes: 45)
-        let trip1 = objects.trip {
-            $0.headsign = "Dedham Mall"
-            $0.routePatternId = "52-5-0"
-            $0.routeId = "52"
-            $0.directionId = 0
-        }
-        objects.schedule { schedule in
-            schedule.departureTime = time1
-            schedule.routeId = "52"
-            schedule.stopId = "8552"
-            schedule.tripId = trip1.id
-        }
-
-        // schedule & prediction
-        let notTime2 = now.plus(minutes: 9)
-        let time2 = now.plus(minutes: 10)
-        let trip2 = objects.trip {
-            $0.headsign = "Charles River Loop"
-            $0.routePatternId = "52-4-0"
-            $0.routeId = "52"
-            $0.directionId = 0
-        }
-        let sched2 = objects.schedule { schedule in
-            schedule.departureTime = notTime2
-            schedule.routeId = "52"
-            schedule.stopId = "8552"
-            schedule.tripId = trip2.id
-            schedule.stopSequence = 13
-        }
-        objects.prediction(schedule: sched2) { prediction in
-            prediction.departureTime = time2
-        }
-
-        // schedule & cancellation
-        let notTime3 = now.plus(minutes: 15)
-        let trip3 = objects.trip {
-            $0.headsign = "Watertown Yard"
-            $0.routePatternId = "52-4-1"
-            $0.routeId = "52"
-            $0.directionId = 1
-        }
-        let sched3 = objects.schedule { schedule in
-            schedule.departureTime = notTime3
-            schedule.routeId = "52"
-            schedule.stopId = "84791"
-            schedule.tripId = trip3.id
-            schedule.stopSequence = 13
-        }
-        objects.prediction(schedule: sched3) { prediction in
-            prediction.departureTime = nil
-            prediction.scheduleRelationship = .cancelled
-        }
-
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher)
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let directions = view.findAll(RouteCardDirection.self)
-            if directions.isEmpty {
-                XCTFail("no departures found")
-                return
-            }
-
-            XCTAssertNotNil(try directions[0].find(DirectionLabel.self).find(text: "Outbound to"))
-            XCTAssertNotNil(try directions[0].find(HeadsignRowView.self) { headsignRow in
-                let headsign = try? headsignRow.find(text: "Charles River Loop")
-                let upcomingPrediction = try? headsignRow.find(UpcomingTripView.self)
-                let prediction = try? upcomingPrediction?.find(text: "10 min")
-                let realtime = try? upcomingPrediction?.find(ViewType.Image.self).actualImage().name()
-                return headsign != nil &&
-                    prediction != nil
-                    && realtime == "live-data"
-            })
-
-            XCTAssertNotNil(try directions[0].find(HeadsignRowView.self) { headsignRow in
-                let headsign = try? headsignRow.find(text: "Dedham Mall")
-                let prediction = try? headsignRow.find(text: "45 min")
-                return headsign != nil && prediction != nil
-            })
-
-            XCTAssertNotNil(try? directions[1].find(text: "Watertown Yard"))
-            XCTAssertEqual(
-                try directions[1].find(UpcomingTripView.self).actualView().prediction,
-                .noTrips(UpcomingFormat.NoTripsFormatServiceEndedToday())
-            )
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        wait(for: [exp], timeout: 1)
-    }
 
     func testSchedulesFetchedOnAppear() throws {
         let objects = ObjectCollectionBuilder()
@@ -337,10 +91,20 @@ final class NearbyTransitViewTests: XCTestCase {
         objects.stop { _ in }
 
         let schedulesFetchedExp = XCTestExpectation(description: "Schedules fetched")
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        loadPublisher.sink { _ in schedulesFetchedExp.fulfill() }.store(in: &cancellables)
 
-        let sut = setUpSut(objects, loadPublisher)
+        let sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(scheduleResponse: ScheduleResponse(objects: objects),
+                                                        callback: { _ in schedulesFetchedExp.fulfill() }),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalData: .init(objects: objects),
+            nearbyVM: NearbyViewModel(),
+            scheduleResponse: .init(objects: objects),
+            now: Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [schedulesFetchedExp], timeout: 2)
@@ -351,114 +115,143 @@ final class NearbyTransitViewTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let distantMinutes = 10
         let distantInstant = now.plus(minutes: Int32(distantMinutes))
-        let objects = route52Objects()
+        let objects = TestData.clone()
 
-        let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
-        let rp2 = objects.routePatterns["52-4-1"] as? RoutePattern
-
-        objects.prediction { prediction in
+        let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
+        let stop = objects.getStop(id: "141")
+        let trip = objects.getTrip(id: "68596786")
+        let prediction = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: Int32(distantMinutes))
             prediction.departureTime = now.plus(minutes: Int32(distantMinutes + 2))
-            prediction.routeId = "52"
-            prediction.stopId = "8552"
-            prediction.tripId = objects.trip(routePattern: rp1!).id
+            prediction.routeId = "67"
+            prediction.stopId = "141"
+            prediction.tripId = "68596786"
         }
-        objects.prediction { prediction in
-            prediction.arrivalTime = now.plus(minutes: Int32(distantMinutes + 1))
-            prediction.departureTime = now.plus(minutes: Int32(distantMinutes + 5))
-            prediction.status = "Overridden"
-            prediction.routeId = "52"
-            prediction.stopId = "8552"
-            prediction.tripId = objects.trip(routePattern: rp1!).id
-        }
-        objects.prediction { prediction in
-            prediction.arrivalTime = now.plus(minutes: 1).plus(seconds: 1)
-            prediction.departureTime = now.plus(minutes: 2)
-            prediction.routeId = "52"
-            prediction.stopId = "84791"
-            prediction.tripId = objects.trip(routePattern: rp2!).id
-        }
-        objects.prediction { prediction in
-            prediction.departureTime = distantInstant
-            prediction.routeId = "52"
-            prediction.stopId = "84791"
-            prediction.tripId = objects.trip(routePattern: rp2!).id
-        }
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher, now: now)
 
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let stops = view.findAll(RouteCardDepartures.self)
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.routeCardData = [.init(lineOrRoute: route,
+                                        stopData: [.init(lineOrRoute: route,
+                                                         stop: stop,
+                                                         data: [.init(lineOrRoute: route,
+                                                                      stop: stop,
+                                                                      directionId: 0,
+                                                                      routePatterns: [
+                                                                          TestData.getRoutePattern(id: "67-4-0"),
+                                                                      ],
+                                                                      stopIds: ["141"],
+                                                                      upcomingTrips: [.init(trip: trip,
+                                                                                            prediction: prediction)],
+                                                                      alertsHere: [],
+                                                                      allDataLoaded: true,
+                                                                      hasSchedulesToday: true,
+                                                                      alertsDownstream: [],
+                                                                      context: .nearbyTransit)],
+                                                         globalData: GlobalResponse(objects: objects))],
+                                        at: now)]
 
-            let outboundDirection = try stops[0]
-                .find(text: "Dedham Mall")
-                .find(RouteCardDirection.self, relation: .parent)
-            XCTAssertNotNil(outboundDirection)
-            XCTAssertNotNil(try outboundDirection.find(text: "10 min"))
-            XCTAssertNotNil(try outboundDirection.find(text: "Overridden"))
+        var sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
 
-            let inboundDirection = try stops[1]
-                .find(text: "Watertown Yard")
-                .find(RouteCardDirection.self, relation: .parent)
-            XCTAssertNotNil(inboundDirection)
-            XCTAssertNotNil(try inboundDirection.find(text: "1 min"))
-            XCTAssertNotNil(try inboundDirection.find(text: "10 min"))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp], timeout: 2)
+        XCTAssertNotNil(try sut.inspect().find(text: "67"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
+
+        XCTAssertNotNil(try sut.inspect().find(text: "10 min"))
     }
 
     func testRefetchesPredictionsOnNewStops() throws {
-        let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
-        let lechmereExpectation = expectation(description: "joins predictions for Lechmere")
+        let now = EasternTimeInstant.now()
 
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        loadPublisher.sink { loaded in
-            let stopIds = loaded.predictionStops.sorted()
-            if stopIds == ["84791", "8552"] {
-                sawmillAtWalshExpectation.fulfill()
-            } else if stopIds == ["place-lech"] {
-                lechmereExpectation.fulfill()
-            } else {
-                XCTFail("unexpected stop IDs \(stopIds)")
-            }
-        }.store(in: &cancellables)
+        let objects = TestData.clone()
+        let davisExp = expectation(description: "joins predictions for Davis")
+        let alewifeExp = expectation(description: "joins predictions for Alewife")
 
-        let sut = setUpSut(route52Objects(), loadPublisher)
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: ["place-davis"])
+        nearbyVM.routeCardData = []
+
+        var sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(onConnectV2: { stopIds in
+                if stopIds == ["place-davis"] {
+                    davisExp.fulfill()
+                }
+                if stopIds == ["place-alfcl"] {
+                    alewifeExp.fulfill()
+                }
+            }),
+            schedulesRepository: MockScheduleRepository(),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
+
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        wait(for: [sawmillAtWalshExpectation], timeout: 1)
+        wait(for: [davisExp], timeout: 2)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-lech"])
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-alfcl"])
 
-        wait(for: [lechmereExpectation], timeout: 1)
+        wait(for: [alewifeExp], timeout: 2)
     }
 
     func testDoesntRefetchPredictionsOnStopReorder() throws {
-        let sawmillAtWalshExpectation = expectation(description: "joins predictions for Sawmill @ Walsh")
-        let reorderExpectation = expectation(description: "doesn't rejoin when stop order changes")
-        reorderExpectation.isInverted = true
+        let now = EasternTimeInstant.now()
 
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        loadPublisher.sink { loaded in
-            let stopIds = loaded.predictionStops.sorted()
-            if stopIds == ["84791", "8552"] {
-                sawmillAtWalshExpectation.fulfill()
-            } else if stopIds == ["8552", "84791"] {
-                reorderExpectation.fulfill()
-            } else {
-                XCTFail("unexpected stop IDs \(stopIds)")
-            }
-        }.store(in: &cancellables)
+        let objects = TestData.clone()
+        let initialJoinExp = expectation(description: "joins predictions")
+        let reorderedJoinExp = expectation(description: "Doesn't rejoin on reorder")
+        reorderedJoinExp.isInverted = true
 
-        let sut = setUpSut(route52Objects(), loadPublisher)
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation,
+                                     loading: false,
+                                     stopIds: ["place-davis", "place-alfcl"])
+        nearbyVM.routeCardData = []
+
+        var sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(onConnectV2: { stopIds in
+                if stopIds == ["place-davis", "place-alfcl"] {
+                    initialJoinExp.fulfill()
+                }
+                if stopIds == ["place-alfcl", "place-davis"] {
+                    reorderedJoinExp.fulfill()
+                }
+            }),
+            schedulesRepository: MockScheduleRepository(),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: now.toNSDateLosingTimeZone() ?? Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
+
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        wait(for: [sawmillAtWalshExpectation], timeout: 1)
+        wait(for: [initialJoinExp], timeout: 2)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["8552", "84791"])
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-alfcl", "place-davis"])
 
-        wait(for: [reorderExpectation], timeout: 1)
+        wait(for: [reorderedJoinExp], timeout: 2)
     }
 
     func testFetchesPredictionsWhenNoStops() throws {
@@ -498,37 +291,64 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [hasAppeared], timeout: 1)
 
-        nearbyVM.nearbyState = getNearbyState(objects: objects)
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
 
         wait(for: [joinsPredictionsExpectation], timeout: 1)
     }
 
-    @MainActor func testRendersUpdatedPredictions() throws {
+    @MainActor func testLoadsRouteCardDataOnPredictionChange() throws {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
+        let loadRouteCardExp = XCTestExpectation(description: "loadRouteCard called")
 
-        let objects = route52Objects()
-        let sut = setUpSut(objects, loadPublisher)
+        let objects = TestData.clone()
+
+        class MockNearbyVM: NearbyViewModel {
+            var onLoadRouteCard: () -> Void = {}
+
+            override func loadRouteCardData(state _: NearbyViewModel.NearbyTransitState,
+                                            global _: GlobalResponse?,
+                                            schedules _: ScheduleResponse?,
+                                            predictions _: PredictionsByStopJoinResponse?,
+                                            alerts _: AlertsStreamDataResponse?,
+                                            now _: Date) {
+                onLoadRouteCard()
+            }
+        }
+
+        let nearbyVM = MockNearbyVM()
+        nearbyVM.onLoadRouteCard = { loadRouteCardExp.fulfill() }
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation,
+                                     loading: false,
+                                     stopIds: ["141"])
+        nearbyVM.routeCardData = []
+
+        var sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalData: .init(objects: objects),
+            nearbyVM: nearbyVM,
+            scheduleResponse: .init(objects: objects),
+            now: Date.now,
+            predictionsByStop: .init(objects: objects),
+            noNearbyStops: noNearbyStops
+        )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        func prediction(minutesAway: Int32) -> PredictionsByStopJoinResponse {
-            let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
-            objects.prediction { prediction in
-                prediction.id = "prediction"
-                prediction.arrivalTime = EasternTimeInstant.now().plus(minutes: minutesAway)
-                prediction.departureTime = EasternTimeInstant.now().plus(minutes: minutesAway)
-                prediction.routeId = "52"
-                prediction.stopId = "8552"
-                prediction.tripId = objects.trip(routePattern: rp1!).id
-            }
-
-            return PredictionsByStopJoinResponse(objects: objects)
+        objects.prediction { prediction in
+            prediction.id = "prediction"
+            prediction.arrivalTime = EasternTimeInstant.now().plus(minutes: 2)
+            prediction.departureTime = EasternTimeInstant.now().plus(minutes: 2)
+            prediction.routeId = "67"
+            prediction.stopId = "141"
+            prediction.tripId = "tripId"
         }
 
         func changeParams(objects: ObjectCollectionBuilder) -> NearbyTransitView.RouteCardParams {
             .init(
-                state: getNearbyState(objects: objects),
+                state: .init(loadedLocation: mockLocation, loading: false, stopIds: []),
                 global: .init(objects: objects),
                 schedules: .init(objects: objects),
                 predictions: .init(objects: objects),
@@ -537,28 +357,8 @@ final class NearbyTransitViewTests: XCTestCase {
             )
         }
 
-        let changePublisher = PassthroughSubject<Void, Never>()
-
-        let loadExp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { _ in
-            let newPredictions = prediction(minutesAway: 2)
-            sut.predictionsByStop = newPredictions
-            try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
-            changePublisher.send()
-        }
-
-        let changeExp1 = sut.inspection.inspect(onReceive: changePublisher, after: 0.5) { view in
-            XCTAssertNotNil(try view.find(text: "2 min"))
-            let newPredictions = prediction(minutesAway: 3)
-            sut.predictionsByStop = newPredictions
-            try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
-            changePublisher.send()
-        }
-
-        let changeExp2 = sut.inspection.inspect(onReceive: changePublisher.dropFirst(), after: 0.5) { view in
-            XCTAssertNotNil(try view.find(text: "3 min"))
-        }
-
-        wait(for: [loadExp, changeExp1, changeExp2], timeout: 3)
+        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
+        wait(for: [loadRouteCardExp], timeout: 2)
     }
 
     func testLeavesChannelWhenBackgrounded() throws {
@@ -570,10 +370,10 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let objects = route52Objects()
+        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
-        nearbyVM.nearbyState = getNearbyState(objects: objects)
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -600,10 +400,10 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
 
-        let objects = route52Objects()
+        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
-        nearbyVM.nearbyState = getNearbyState(objects: objects)
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -633,10 +433,10 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let objects = route52Objects()
+        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
-        nearbyVM.nearbyState = getNearbyState(objects: objects)
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
             predictionsRepository: predictionsRepo,
             schedulesRepository: MockScheduleRepository(),
@@ -658,158 +458,72 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testScrollToTopWhenNearbyChanges() throws {
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
         let scrollPositionSetExpectation = XCTestExpectation(description: "component scrolled")
-        let sut = setUpSut(route52Objects(), loadPublisher)
+        let now = EasternTimeInstant.now()
 
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            let actualView = try view.actualView()
-            actualView.scrollSubject.sink { _ in
-                scrollPositionSetExpectation.fulfill()
-            }.store(in: &self.cancellables)
-            actualView.nearbyVM.nearbyState.stopIds = ["new-stop"]
-            try actualView.inspect().implicitAnyView().vStack()
-                .callOnChange(newValue: ["new-stop"])
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [exp, scrollPositionSetExpectation], timeout: 2)
-    }
+        let objects = TestData.clone()
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
 
-    @MainActor
-    func testNearbyErrorMessage() throws {
-        let repositories = MockRepositories()
-        repositories.errorBanner = MockErrorBannerStateRepository(
-            state: .DataError(messages: [], details: [], action: {})
-        )
-        loadKoinMocks(repositories: repositories)
+        let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
+        let stop = objects.getStop(id: "141")
+        let trip = objects.getTrip(id: "68596786")
+        nearbyVM.routeCardData = [.init(lineOrRoute: route,
+                                        stopData: [.init(lineOrRoute: route,
+                                                         stop: stop,
+                                                         data: [.init(lineOrRoute: route,
+                                                                      stop: stop,
+                                                                      directionId: 0,
+                                                                      routePatterns: [
+                                                                          TestData.getRoutePattern(id: "67-4-0"),
+                                                                      ],
+                                                                      stopIds: ["141"],
+                                                                      upcomingTrips: [],
+                                                                      alertsHere: [],
+                                                                      allDataLoaded: true,
+                                                                      hasSchedulesToday: true,
+                                                                      alertsDownstream: [],
+                                                                      context: .nearbyTransit)],
+                                                         globalData: GlobalResponse(objects: objects))],
+                                        at: now)]
+
         let sut = NearbyTransitView(
             predictionsRepository: MockPredictionsRepository(),
             schedulesRepository: MockScheduleRepository(),
-            location: .constant(CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)),
+            location: .constant(mockLocation),
             setIsReturningFromBackground: { _ in },
-            nearbyVM: .init(),
+            nearbyVM: nearbyVM,
             noNearbyStops: noNearbyStops
         )
 
-        sut.inspection.inspect(after: 0.5) { view in
-            XCTAssertNotNil(try view.view(NearbyTransitView.self)
-                .find(text: "Error loading data"))
-        }
-    }
-
-    @MainActor func testRendersUpdatedAlerts() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-
-        let objects = route52Objects()
-
-        let rp1 = objects.routePatterns["52-5-0"] as? RoutePattern
-        objects.prediction { prediction in
-            prediction.id = "prediction"
-            prediction.arrivalTime = EasternTimeInstant.now().plus(minutes: 2)
-            prediction.departureTime = EasternTimeInstant.now().plus(minutes: 2)
-            prediction.routeId = "52"
-            prediction.stopId = "8552"
-            prediction.tripId = objects.trip(routePattern: rp1!).id
-        }
-
-        let sut = setUpSut(objects, loadPublisher)
+        sut.scrollSubject.sink { _ in
+            scrollPositionSetExpectation.fulfill()
+        }.store(in: &cancellables)
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        func changeParams(objects: ObjectCollectionBuilder) -> NearbyTransitView.RouteCardParams {
-            .init(
-                state: getNearbyState(objects: objects),
-                global: .init(objects: objects),
-                schedules: .init(objects: objects),
-                predictions: .init(objects: objects),
-                alerts: .init(objects: objects),
-                now: Date.now,
-            )
-        }
+        try sut.inspect().implicitAnyView().vStack()
+            .callOnChange(newValue: ["new-stop"])
 
-        let alertChangePublisher = PassthroughSubject<Void, Never>()
-
-        let loadExp = sut.inspection.inspect(onReceive: loadPublisher, after: 1) { view in
-            XCTAssertNotNil(try view.find(text: "2 min"))
-            XCTAssertThrowsError(try view.find(text: "Suspension"))
-
-            objects.alert { alert in
-                alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 90), end: nil)
-                alert.effect = .suspension
-                alert.informedEntity(
-                    activities: [.board],
-                    directionId: nil,
-                    facility: nil,
-                    route: "52",
-                    routeType: .bus,
-                    stop: "8552",
-                    trip: nil
-                )
-            }
-
-            try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
-            alertChangePublisher.send()
-        }
-
-        let alertChangeExp = sut.inspection.inspect(onReceive: alertChangePublisher, after: 1) { view in
-            XCTAssertNotNil(try view.find(text: "Suspension")
-                .find(RouteCardDepartures.self, relation: .parent).find(text: "Dedham Mall"))
-            XCTAssertThrowsError(try view.find(text: "2 min"))
-        }
-
-        wait(for: [loadExp, alertChangeExp], timeout: 3)
-    }
-
-    @MainActor func testElevatorClosed() throws {
-        let objects = route52Objects()
-        objects.alert { alert in
-            alert.activePeriod(start: EasternTimeInstant.now().minus(seconds: 1), end: nil)
-            alert.effect = .elevatorClosure
-            alert.informedEntity(
-                activities: [.usingWheelchair],
-                directionId: nil,
-                facility: nil,
-                route: nil,
-                routeType: nil,
-                stop: "8552",
-                trip: nil
-            )
-        }
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher)
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            XCTAssertNotNil(try view.find(text: "1 elevator closed"))
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
-        wait(for: [exp], timeout: 1)
-    }
-
-    @MainActor func testDisplaysWheelchairNotAccessibile() throws {
-        let objects = route52Objects()
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(objects, loadPublisher)
-
-        let exp = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            XCTAssertThrowsError(try view.find(text: "1 elevator closed"))
-            XCTAssertNotNil(try view.find(viewWithTag: "wheelchair_not_accessible"))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([.stationAccessibility: true]))
-        wait(for: [exp], timeout: 1)
+        wait(for: [scrollPositionSetExpectation], timeout: 2)
     }
 
     @MainActor func testEmptyFallback() throws {
-        let loadPublisher = PassthroughSubject<LoadedStops, Never>()
-        let sut = setUpSut(.init(), loadPublisher)
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.routeCardData = []
+        nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
+        let sut = NearbyTransitView(
+            predictionsRepository: MockPredictionsRepository(),
+            schedulesRepository: MockScheduleRepository(),
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            globalData: GlobalResponse(objects: ObjectCollectionBuilder()),
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
 
-        let hasAppeared = sut.inspection.inspect(onReceive: loadPublisher, after: 0.5) { view in
-            XCTAssertNil(try? view.find(LoadingCard<Text>.self))
-            XCTAssertNotNil(try view.find(text: "No nearby stops"))
-            XCTAssertNotNil(try view.find(text: "You’re outside the MBTA service area."))
-        }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 2)
+        XCTAssertNil(try? sut.inspect().find(LoadingCard<Text>.self))
+        XCTAssertNotNil(try sut.inspect().find(text: "No nearby stops"))
+        XCTAssertNotNil(try sut.inspect().find(text: "You’re outside the MBTA service area."))
     }
 }

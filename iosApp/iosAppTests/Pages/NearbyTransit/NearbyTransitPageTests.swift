@@ -148,4 +148,20 @@ final class NearbyTransitPageTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
     }
+
+    @MainActor func testErrorBanner() {
+        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
+
+        let sut = NearbyTransitPage(
+            errorBannerVM: MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
+                                                                        errorState: .DataError(messages: [],
+                                                                                               details: [],
+                                                                                               action: {}))),
+            nearbyVM: NearbyViewModel(),
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(ErrorBanner.self))
+    }
 }
