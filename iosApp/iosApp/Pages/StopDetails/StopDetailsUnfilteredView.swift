@@ -28,7 +28,6 @@ struct StopDetailsUnfilteredView: View {
     @EnvironmentObject var settingsCache: SettingsCache
 
     @State var global: GlobalResponse?
-    @State var loadingFavorites = true
 
     var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
