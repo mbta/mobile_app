@@ -22,11 +22,13 @@ struct RouteCardParams: Equatable {
 struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
 
+    @State var favorites: Favorites = LoadedFavorites.last
     @State var global: GlobalResponse?
     // StopDetailsPage maintains its own internal state of the departures presented.
     // This way, when transitioning between one StopDetailsPage and another, each separate page shows
     // their respective departures rather than both showing the departures for the newly presented stop.
     @State var internalRouteCardData: [RouteCardData]?
+    @State var loadingFavorites = true
     @State var now = Date.now
 
     var errorBannerVM: IErrorBannerViewModel
@@ -69,7 +71,9 @@ struct StopDetailsPage: View {
             setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
             routeCardData: internalRouteCardData,
+            favorites: favorites,
             now: now,
+            onUpdateFavorites: { loadingFavorites = true },
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
@@ -79,6 +83,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
+            .favorites($favorites, awaitingUpdate: $loadingFavorites)
             .global($global, errorKey: "StopDetailsPage")
             .onChange(of: stopFilter) { newStopFilter in
                 if newStopFilter == nil {

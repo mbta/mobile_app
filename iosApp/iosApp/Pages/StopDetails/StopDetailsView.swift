@@ -21,7 +21,9 @@ struct StopDetailsView: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var routeCardData: [RouteCardData]?
+    var favorites: Favorites
     var now: Date
+    var onUpdateFavorites: () -> Void
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -37,7 +39,9 @@ struct StopDetailsView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
+        favorites: Favorites,
         now: Date,
+        onUpdateFavorites: @escaping () -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
@@ -49,7 +53,9 @@ struct StopDetailsView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.routeCardData = routeCardData
+        self.favorites = favorites
         self.now = now
+        self.onUpdateFavorites = onUpdateFavorites
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -65,7 +71,9 @@ struct StopDetailsView: View {
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
                 routeCardData: routeCardData,
+                favorites: favorites,
                 now: now,
+                onUpdateFavorites: onUpdateFavorites,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 mapVM: mapVM,
@@ -77,6 +85,7 @@ struct StopDetailsView: View {
                 stopId: stopId,
                 setStopFilter: setStopFilter,
                 routeCardData: routeCardData,
+                favorites: favorites,
                 now: now.toEasternInstant(),
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,

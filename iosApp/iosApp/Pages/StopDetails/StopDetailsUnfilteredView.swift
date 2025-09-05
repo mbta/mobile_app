@@ -13,10 +13,12 @@ import SwiftUI
 
 struct StopDetailsUnfilteredView: View {
     var stopId: String
-    var now: EasternTimeInstant
     var setStopFilter: (StopDetailsFilter?) -> Void
-
     var routeCardData: [RouteCardData]?
+
+    var favorites: Favorites
+    var now: EasternTimeInstant
+
     var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
 
     var errorBannerVM: IErrorBannerViewModel
@@ -26,6 +28,7 @@ struct StopDetailsUnfilteredView: View {
     @EnvironmentObject var settingsCache: SettingsCache
 
     @State var global: GlobalResponse?
+    @State var loadingFavorites = true
 
     var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
@@ -37,6 +40,7 @@ struct StopDetailsUnfilteredView: View {
         stopId: String,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
+        favorites: Favorites,
         now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -45,10 +49,11 @@ struct StopDetailsUnfilteredView: View {
         self.stopId = stopId
         self.setStopFilter = setStopFilter
         self.routeCardData = routeCardData
+        self.favorites = favorites
+        self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.stopDetailsVM = stopDetailsVM
-        self.now = now
 
         if let routeCardData {
             servedRoutes = routeCardData.map { routeCardData in
@@ -146,7 +151,7 @@ struct StopDetailsUnfilteredView: View {
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
+                                        isFavorite: { favorites.isFavorite($0) },
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
