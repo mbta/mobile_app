@@ -30,17 +30,21 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stopDetailsVM = StopDetailsViewModel(
             favoritesRepository: favoritesRepository,
         )
-        let sut = StopDetailsFilteredView(stopId: stop.id,
-                                          stopFilter: .init(routeId: route.id, directionId: directionId),
-                                          tripFilter: nil,
-                                          setStopFilter: { _ in },
-                                          setTripFilter: { _ in },
-                                          routeCardData: [],
-                                          now: Date.now,
-                                          errorBannerVM: MockErrorBannerViewModel(),
-                                          nearbyVM: .init(),
-                                          mapVM: .init(),
-                                          stopDetailsVM: stopDetailsVM)
+        let sut = StopDetailsFilteredView(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: directionId),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            routeCardData: [],
+            favorites: .init(routeStopDirection: []),
+            now: Date.now,
+            onUpdateFavorites: {},
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: .init(),
+            stopDetailsVM: stopDetailsVM
+        )
 
         let tappedPublisher = PassthroughSubject<Void, Never>()
 

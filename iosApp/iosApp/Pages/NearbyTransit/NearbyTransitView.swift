@@ -19,11 +19,14 @@ struct NearbyTransitView: View {
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
+    @State var favorites: Favorites = LoadedFavorites.last
+    @State var loadingFavorites = true
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var now = Date.now
     @State var predictionsByStop: PredictionsByStopJoinResponse?
+
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
 
@@ -49,6 +52,7 @@ struct NearbyTransitView: View {
                 loadingBody()
             }
         }
+        .favorites($favorites, awaitingUpdate: $loadingFavorites)
         .global($globalData, errorKey: "NearbyTransitView")
         .onAppear {
             loadEverything()
@@ -131,9 +135,7 @@ struct NearbyTransitView: View {
                                 cardData: cardData,
                                 global: global,
                                 now: now.toEasternInstant(),
-                                isFavorite: { rsd in
-                                    nearbyVM.favorites.routeStopDirection?.contains(where: { rsd == $0 }) ?? false
-                                },
+                                isFavorite: { favorites.isFavorite($0) },
                                 pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                 showStopHeader: true
                             )
