@@ -80,7 +80,8 @@ struct SearchResultView_Previews: PreviewProvider {
                                 textColor: "#FFFFFF",
                                 routeColor: "#ED8B00",
                                 content: RoutePillSpecContentText(text: "OL"),
-                                size: RoutePillSpec.Size.flexPillSmall,
+                                height: .small,
+                                width: .flex,
                                 shape: RoutePillSpec.Shape.capsule,
                                 contentDescription: nil
                             ),
@@ -95,7 +96,8 @@ struct SearchResultView_Previews: PreviewProvider {
                             textColor: "#000000",
                             routeColor: "#FFC72C",
                             content: RoutePillSpecContentText(text: "428"),
-                            size: .fixedPill,
+                            height: .medium,
+                            width: .fixed,
                             shape: .rectangle,
                             contentDescription: nil
                         )

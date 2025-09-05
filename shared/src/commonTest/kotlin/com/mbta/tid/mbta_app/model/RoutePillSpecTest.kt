@@ -2,12 +2,13 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.route
+import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class RoutePillSpecTest {
     @Test
-    fun `test bus`() {
+    fun `test bus`() = parametricTest {
         val busRoute = route {
             type = RouteType.BUS
             color = "FFC72C"
@@ -15,42 +16,37 @@ class RoutePillSpecTest {
             textColor = "000000"
         }
 
-        val fixedPill = RoutePillSpec(busRoute, null, RoutePillSpec.Type.Fixed)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val pill = RoutePillSpec(busRoute, null, type, height)
+
+        val expectedWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "000000",
                 "FFC72C",
                 RoutePillSpec.Content.Text("62/76"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Rectangle,
             ),
-            fixedPill,
-        )
-        val flexPill = RoutePillSpec(busRoute, null, RoutePillSpec.Type.Flex)
-        assertEquals(
-            RoutePillSpec(
-                "000000",
-                "FFC72C",
-                RoutePillSpec.Content.Text("62/76"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Rectangle,
-            ),
-            flexPill,
+            pill,
         )
 
         val searchStationPill =
-            RoutePillSpec(
-                busRoute,
-                null,
-                RoutePillSpec.Type.FlexCompact,
-                RoutePillSpec.Context.SearchStation,
-            )
+            RoutePillSpec(busRoute, null, type, height, RoutePillSpec.Context.SearchStation)
         assertEquals(
             RoutePillSpec(
                 "000000",
                 "FFC72C",
                 RoutePillSpec.Content.ModeImage(RouteType.BUS),
-                RoutePillSpec.Size.FlexPillSmall,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Rectangle,
             ),
             searchStationPill,
@@ -58,7 +54,7 @@ class RoutePillSpecTest {
     }
 
     @Test
-    fun `test heavy rail`() {
+    fun `test heavy rail`() = parametricTest {
         val redLine = route {
             type = RouteType.HEAVY_RAIL
             color = "DA291C"
@@ -72,77 +68,43 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
 
-        val redLineFixed = RoutePillSpec(redLine, null, RoutePillSpec.Type.Fixed)
-        val redLineFlex = RoutePillSpec(redLine, null, RoutePillSpec.Type.Flex)
-        val redLineFlexCompact = RoutePillSpec(redLine, null, RoutePillSpec.Type.FlexCompact)
-        val blueLineFixed = RoutePillSpec(blueLine, null, RoutePillSpec.Type.Fixed)
-        val blueLineFlex = RoutePillSpec(blueLine, null, RoutePillSpec.Type.Flex)
-        val blueLineFlexCompact = RoutePillSpec(blueLine, null, RoutePillSpec.Type.FlexCompact)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val redLinePill = RoutePillSpec(redLine, null, type, height)
+        val blueLinePill = RoutePillSpec(blueLine, null, type, height)
 
+        val expectedWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "DA291C",
                 RoutePillSpec.Content.Text("RL"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            redLineFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("RL"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            redLineFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("RL"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            redLineFlexCompact,
+            redLinePill,
         )
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "003DA5",
                 RoutePillSpec.Content.Text("BL"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            blueLineFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "003DA5",
-                RoutePillSpec.Content.Text("BL"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            blueLineFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "003DA5",
-                RoutePillSpec.Content.Text("BL"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            blueLineFlexCompact,
+            blueLinePill,
         )
     }
 
     @Test
-    fun `test light rail`() {
+    fun `test light rail`() = parametricTest {
         val greenLineC = route {
             type = RouteType.LIGHT_RAIL
             color = "00843D"
@@ -157,77 +119,55 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
 
-        val greenLineCFixed = RoutePillSpec(greenLineC, null, RoutePillSpec.Type.Fixed)
-        val greenLineCFlex = RoutePillSpec(greenLineC, null, RoutePillSpec.Type.Flex)
-        val greenLineCFlexCompact = RoutePillSpec(greenLineC, null, RoutePillSpec.Type.FlexCompact)
-        val mattapanFixed = RoutePillSpec(mattapan, null, RoutePillSpec.Type.Fixed)
-        val mattapanFlex = RoutePillSpec(mattapan, null, RoutePillSpec.Type.Flex)
-        val mattapanFlexCompact = RoutePillSpec(mattapan, null, RoutePillSpec.Type.FlexCompact)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val greenLineCPill = RoutePillSpec(greenLineC, null, type, height)
+        val mattapanPill = RoutePillSpec(mattapan, null, type, height)
 
+        val expectedContent =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Content.Text("GL C")
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Content.Text("C")
+            }
+        val expectedGLWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Circle
+            }
+        val expectedMattapanWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "00843D",
-                RoutePillSpec.Content.Text("GL C"),
-                RoutePillSpec.Size.FixedPill,
+                expectedContent,
+                height,
+                expectedGLWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            greenLineCFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "00843D",
-                RoutePillSpec.Content.Text("C"),
-                RoutePillSpec.Size.Circle,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            greenLineCFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "00843D",
-                RoutePillSpec.Content.Text("C"),
-                RoutePillSpec.Size.CircleSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            greenLineCFlexCompact,
+            greenLineCPill,
         )
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "DA291C",
                 RoutePillSpec.Content.Text("M"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedMattapanWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            mattapanFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("M"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            mattapanFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("M"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            mattapanFlexCompact,
+            mattapanPill,
         )
     }
 
     @Test
-    fun `test commuter rail`() {
+    fun `test commuter rail`() = parametricTest {
         val middleborough = route {
             type = RouteType.COMMUTER_RAIL
             color = "80276C"
@@ -241,78 +181,49 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
 
-        val middleboroughFixed = RoutePillSpec(middleborough, null, RoutePillSpec.Type.Fixed)
-        val middleboroughFlex = RoutePillSpec(middleborough, null, RoutePillSpec.Type.Flex)
-        val middleboroughFlexCompact =
-            RoutePillSpec(middleborough, null, RoutePillSpec.Type.FlexCompact)
-        val providenceFixed = RoutePillSpec(providence, null, RoutePillSpec.Type.Fixed)
-        val providenceFlex = RoutePillSpec(providence, null, RoutePillSpec.Type.Flex)
-        val providenceFlexCompact = RoutePillSpec(providence, null, RoutePillSpec.Type.FlexCompact)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val middleboroughPill = RoutePillSpec(middleborough, null, type, height)
+        val providencePill = RoutePillSpec(providence, null, type, height)
 
+        val modePillContent =
+            when (type) {
+                RoutePillSpec.Type.Fixed,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Content.Text("CR")
+                RoutePillSpec.Type.Flex -> null
+            }
+        val expectedWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "80276C",
-                RoutePillSpec.Content.Text("CR"),
-                RoutePillSpec.Size.FixedPill,
+                modePillContent ?: RoutePillSpec.Content.Text("Middleborough/Lakeville"),
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            middleboroughFixed,
+            middleboroughPill,
         )
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "80276C",
-                RoutePillSpec.Content.Text("Middleborough/Lakeville"),
-                RoutePillSpec.Size.FlexPill,
+                modePillContent ?: RoutePillSpec.Content.Text("Providence/Stoughton"),
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            middleboroughFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "80276C",
-                RoutePillSpec.Content.Text("CR"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            middleboroughFlexCompact,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "80276C",
-                RoutePillSpec.Content.Text("CR"),
-                RoutePillSpec.Size.FixedPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            providenceFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "80276C",
-                RoutePillSpec.Content.Text("Providence/Stoughton"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            providenceFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "80276C",
-                RoutePillSpec.Content.Text("CR"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            providenceFlexCompact,
+            providencePill,
         )
     }
 
     @Test
-    fun `test ferry`() {
+    fun `test ferry`() = parametricTest {
         val ferry = route {
             type = RouteType.FERRY
             color = "008EAA"
@@ -320,44 +231,37 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
 
-        val ferryFixed = RoutePillSpec(ferry, null, RoutePillSpec.Type.Fixed)
-        val ferryFlex = RoutePillSpec(ferry, null, RoutePillSpec.Type.Flex)
-        val ferryFlexCompact = RoutePillSpec(ferry, null, RoutePillSpec.Type.FlexCompact)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val ferryPill = RoutePillSpec(ferry, null, type, height)
 
+        val modePillContent =
+            when (type) {
+                RoutePillSpec.Type.Fixed,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Content.ModeImage(RouteType.FERRY)
+                RoutePillSpec.Type.Flex -> null
+            }
+        val expectedWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "008EAA",
-                RoutePillSpec.Content.ModeImage(RouteType.FERRY),
-                RoutePillSpec.Size.FixedPill,
+                modePillContent ?: RoutePillSpec.Content.Text("Hingham/Hull Ferry"),
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            ferryFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "008EAA",
-                RoutePillSpec.Content.Text("Hingham/Hull Ferry"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            ferryFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "008EAA",
-                RoutePillSpec.Content.ModeImage(RouteType.FERRY),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            ferryFlexCompact,
+            ferryPill,
         )
     }
 
     @Test
-    fun `test lines`() {
+    fun `test lines`() = parametricTest {
         val redLine = line {
             color = "DA291C"
             longName = "Red Line"
@@ -369,72 +273,38 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
 
-        val rlFixed = RoutePillSpec(null, redLine, RoutePillSpec.Type.Fixed)
-        val rlFlex = RoutePillSpec(null, redLine, RoutePillSpec.Type.Flex)
-        val rlFlexCompact = RoutePillSpec(null, redLine, RoutePillSpec.Type.FlexCompact)
-        val glFixed = RoutePillSpec(null, greenLine, RoutePillSpec.Type.Fixed)
-        val glFlex = RoutePillSpec(null, greenLine, RoutePillSpec.Type.Flex)
-        val glFlexCompact = RoutePillSpec(null, greenLine, RoutePillSpec.Type.FlexCompact)
+        val type: RoutePillSpec.Type = anyEnumValue()
+        val height: RoutePillSpec.Height = anyEnumValue()
+        val rlPill = RoutePillSpec(null, redLine, type, height)
+        val glPill = RoutePillSpec(null, greenLine, type, height)
 
+        val expectedWidth =
+            when (type) {
+                RoutePillSpec.Type.Fixed -> RoutePillSpec.Width.Fixed
+                RoutePillSpec.Type.Flex,
+                RoutePillSpec.Type.FlexCompact -> RoutePillSpec.Width.Flex
+            }
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "DA291C",
                 RoutePillSpec.Content.Text("Red Line"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            rlFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("Red Line"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            rlFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "DA291C",
-                RoutePillSpec.Content.Text("Red Line"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            rlFlexCompact,
+            rlPill,
         )
         assertEquals(
             RoutePillSpec(
                 "FFFFFF",
                 "00843D",
                 RoutePillSpec.Content.Text("GL"),
-                RoutePillSpec.Size.FixedPill,
+                height,
+                expectedWidth,
                 RoutePillSpec.Shape.Capsule,
             ),
-            glFixed,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "00843D",
-                RoutePillSpec.Content.Text("GL"),
-                RoutePillSpec.Size.FlexPill,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            glFlex,
-        )
-        assertEquals(
-            RoutePillSpec(
-                "FFFFFF",
-                "00843D",
-                RoutePillSpec.Content.Text("GL"),
-                RoutePillSpec.Size.FlexPillSmall,
-                RoutePillSpec.Shape.Capsule,
-            ),
-            glFlexCompact,
+            glPill,
         )
     }
 }

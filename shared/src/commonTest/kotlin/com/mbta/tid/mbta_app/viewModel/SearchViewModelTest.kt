@@ -213,7 +213,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "DA291C",
                                 RoutePillSpec.Content.Text("RL"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Capsule,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     redLine.label,
@@ -225,7 +226,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "7C878E",
                                 RoutePillSpec.Content.ModeImage(RouteType.BUS),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "Silver Line",
@@ -237,7 +239,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "80276C",
                                 RoutePillSpec.Content.Text("CR"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Capsule,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "Commuter Rail",
@@ -249,7 +252,8 @@ class SearchViewModelTest {
                                 textColor = "000000",
                                 routeColor = "FFC72C",
                                 RoutePillSpec.Content.ModeImage(RouteType.BUS),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     null,
@@ -268,7 +272,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "DA291C",
                                 RoutePillSpec.Content.Text("RL"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Capsule,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     redLine.label,
@@ -280,7 +285,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "7C878E",
                                 RoutePillSpec.Content.Text("SL1"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "SL1",
@@ -292,7 +298,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "7C878E",
                                 RoutePillSpec.Content.Text("SL2"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "SL2",
@@ -304,7 +311,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "80276C",
                                 RoutePillSpec.Content.Text("CR"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Capsule,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     crFitchburg.longName,
@@ -316,7 +324,8 @@ class SearchViewModelTest {
                                 textColor = "FFFFFF",
                                 routeColor = "80276C",
                                 RoutePillSpec.Content.Text("CR"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Capsule,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     crHaverhill.longName,
@@ -328,7 +337,8 @@ class SearchViewModelTest {
                                 textColor = "000000",
                                 routeColor = "FFC72C",
                                 RoutePillSpec.Content.Text("15"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "15",
@@ -340,7 +350,8 @@ class SearchViewModelTest {
                                 textColor = "000000",
                                 routeColor = "FFC72C",
                                 RoutePillSpec.Content.Text("67"),
-                                RoutePillSpec.Size.FlexPillSmall,
+                                RoutePillSpec.Height.Small,
+                                RoutePillSpec.Width.Flex,
                                 RoutePillSpec.Shape.Rectangle,
                                 RoutePillSpec.ContentDescription.StopSearchResultRoute(
                                     "67",

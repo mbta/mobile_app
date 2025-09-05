@@ -15,7 +15,6 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,11 +38,14 @@ import com.mbta.tid.mbta_app.model.RouteType
 
 typealias RoutePillType = RoutePillSpec.Type
 
+typealias RoutePillHeight = RoutePillSpec.Height
+
 @Composable
 fun RoutePill(
     route: Route?,
     line: Line? = null,
     type: RoutePillType,
+    height: RoutePillHeight = RoutePillHeight.Medium,
     isActive: Boolean = true,
     contentDescription: RoutePillSpec.ContentDescription? = null,
     modifier: Modifier = Modifier,
@@ -52,7 +54,7 @@ fun RoutePill(
         route,
         line,
         isActive,
-        RoutePillSpec(route, line, type, contentDescription = contentDescription),
+        RoutePillSpec(route, line, type, height, contentDescription = contentDescription),
         modifier,
     )
 }
@@ -77,28 +79,27 @@ fun RoutePill(
         }
 
     val fontSize =
-        when (spec.size) {
-            RoutePillSpec.Size.CircleSmall,
-            RoutePillSpec.Size.FlexPillSmall -> 12.sp
-            else -> 16.sp
+        when (spec.height) {
+            RoutePillHeight.Small -> 12.sp
+            RoutePillHeight.Medium -> 16.sp
+            RoutePillHeight.Large -> 20.sp
         }
 
-    val iconSize =
-        when (spec.size) {
-            RoutePillSpec.Size.CircleSmall,
-            RoutePillSpec.Size.FlexPillSmall -> 16.dp
-            else -> 24.dp
+    val pillHeight =
+        when (spec.height) {
+            RoutePillHeight.Small -> 16.dp
+            RoutePillHeight.Medium -> 24.dp
+            RoutePillHeight.Large -> 32.dp
         }
 
     fun Modifier.withSizePadding() =
-        when (spec.size) {
-            RoutePillSpec.Size.FixedPill -> size(width = 50.dp, height = 24.dp)
-            RoutePillSpec.Size.Circle -> size(24.dp)
-            RoutePillSpec.Size.CircleSmall -> size(16.dp)
-            RoutePillSpec.Size.FlexPill ->
-                height(24.dp).padding(horizontal = 12.dp).widthIn(min = (48 - 12 * 2).dp)
-            RoutePillSpec.Size.FlexPillSmall ->
-                padding(horizontal = 8.dp).height(16.dp).widthIn(min = (36 - 8 * 2).dp)
+        when (spec.width) {
+            RoutePillSpec.Width.Fixed -> size(width = (pillHeight + 1.dp) * 2, height = pillHeight)
+            RoutePillSpec.Width.Circle -> size(pillHeight)
+            RoutePillSpec.Width.Flex ->
+                height(pillHeight)
+                    .padding(horizontal = pillHeight / 2)
+                    .widthIn(min = pillHeight / 2 + 12.dp)
         }
 
     fun Modifier.withColor() =
@@ -143,7 +144,7 @@ fun RoutePill(
             Icon(
                 painter = painter,
                 contentDescription = contentDescription,
-                modifier = finalModifier.size(iconSize),
+                modifier = finalModifier.size(pillHeight),
                 tint = if (isActive) textColor else LocalContentColor.current,
             )
         }
@@ -167,7 +168,12 @@ private fun RoutePillPreviews() {
             RoutePill(route = route, line = line, type = RoutePillType.Fixed, isActive = false)
             RoutePill(route = route, line = line, type = RoutePillType.Fixed)
             RoutePill(route = route, line = line, type = RoutePillType.Flex)
-            RoutePill(route = route, line = line, type = RoutePillType.FlexCompact)
+            RoutePill(
+                route = route,
+                line = line,
+                type = RoutePillType.FlexCompact,
+                height = RoutePillHeight.Small,
+            )
         }
     }
 

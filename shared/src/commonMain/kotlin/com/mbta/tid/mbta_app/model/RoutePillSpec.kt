@@ -6,7 +6,8 @@ public data class RoutePillSpec(
     val textColor: String,
     val routeColor: String,
     val content: Content,
-    val size: Size,
+    val height: Height,
+    val width: Width,
     val shape: Shape,
     val contentDescription: ContentDescription? = null,
 ) {
@@ -24,12 +25,16 @@ public data class RoutePillSpec(
         public data class ModeImage internal constructor(val mode: RouteType) : Content
     }
 
-    public enum class Size {
-        FixedPill,
+    public enum class Height {
+        Small,
+        Medium,
+        Large,
+    }
+
+    public enum class Width {
         Circle,
-        CircleSmall,
-        FlexPill,
-        FlexPillSmall,
+        Fixed,
+        Flex,
     }
 
     public enum class Shape {
@@ -55,6 +60,7 @@ public data class RoutePillSpec(
         route: Route?,
         line: Line?,
         type: Type,
+        height: Height = Height.Medium,
         context: Context = Context.Default,
         contentDescription: ContentDescription? = null,
     ) : this(
@@ -68,16 +74,11 @@ public data class RoutePillSpec(
             RouteType.BUS -> busPillContent(route, type, context)
             RouteType.FERRY -> ferryPillContent(route, type)
         },
+        height,
         when {
-            type == Type.Fixed -> Size.FixedPill
-            route?.longName?.startsWith("Green Line ") ?: false ->
-                if (type == Type.FlexCompact) {
-                    Size.CircleSmall
-                } else {
-                    Size.Circle
-                }
-            type == Type.FlexCompact -> Size.FlexPillSmall
-            else -> Size.FlexPill
+            type == Type.Fixed -> Width.Fixed
+            route?.longName?.startsWith("Green Line ") ?: false -> Width.Circle
+            else -> Width.Flex
         },
         when {
             route?.type == RouteType.BUS && !route.isShuttle -> Shape.Rectangle

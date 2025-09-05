@@ -124,6 +124,7 @@ public class SearchViewModel(
                             route,
                             line,
                             RoutePillSpec.Type.FlexCompact,
+                            RoutePillSpec.Height.Small,
                             context,
                             stopRouteContentDescription(isStation, route),
                         )
@@ -150,7 +151,7 @@ public class SearchViewModel(
                         route,
                         line,
                         RoutePillSpec.Type.Fixed,
-                        RoutePillSpec.Context.Default,
+                        context = RoutePillSpec.Context.Default,
                     )
 
                 return RouteResult(

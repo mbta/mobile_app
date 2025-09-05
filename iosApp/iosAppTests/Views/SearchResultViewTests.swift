@@ -302,7 +302,8 @@ final class SearchResultViewTests: XCTestCase {
                             textColor: "000000",
                             routeColor: "000000",
                             content: RoutePillSpecContentEmpty.shared,
-                            size: .circle,
+                            height: .medium,
+                            width: .circle,
                             shape: .capsule,
                             contentDescription: nil
                         )

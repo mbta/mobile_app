@@ -150,7 +150,8 @@ public object LoadingPlaceholders {
                 textColor = "8A9199",
                 routeColor = "8A9199",
                 content = RoutePillSpec.Content.Text("Loading"),
-                size = RoutePillSpec.Size.FlexPillSmall,
+                height = RoutePillSpec.Height.Small,
+                width = RoutePillSpec.Width.Flex,
                 shape = RoutePillSpec.Shape.Capsule,
                 contentDescription = null,
             )
