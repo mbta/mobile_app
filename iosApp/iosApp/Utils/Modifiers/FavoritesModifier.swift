@@ -19,7 +19,6 @@ struct FavoritesModifier: ViewModifier {
     @Binding var awaitingUpdate: Bool
 
     func loadFavorites() {
-        guard awaitingUpdate else { return }
         favorites = LoadedFavorites.last
         Task {
             do {
@@ -41,7 +40,10 @@ struct FavoritesModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .onAppear { loadFavorites() }
-            .onChange(of: awaitingUpdate) { _ in loadFavorites() }
+            .onChange(of: awaitingUpdate) { shouldUpdate in
+                guard shouldUpdate else { return }
+                loadFavorites()
+            }
     }
 }
 
