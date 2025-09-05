@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.location
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.test.ComposeTimeoutException
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
@@ -16,6 +17,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.MapAnimationDefaults
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
+import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
@@ -114,15 +116,30 @@ class ViewportProviderTest {
             }
 
         withTimeout(10.seconds) { awaitAll(stopCenter, setPadding, vehicleOverview) }
-
-        composeTestRule.waitUntilDefaultTimeout {
-            mapViewportState.mapViewportStatus is ViewportStatus.State &&
-                (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
-                    OverviewViewportState &&
+        try {
+            composeTestRule.waitUntilDefaultTimeout {
+                mapViewportState.mapViewportStatus is ViewportStatus.State &&
+                    (mapViewportState.mapViewportStatus as ViewportStatus.State).state is
+                        OverviewViewportState &&
+                    ((mapViewportState.mapViewportStatus as ViewportStatus.State).state
+                            as OverviewViewportState)
+                        .options
+                        .padding ==
+                        EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter)
+            }
+        } catch (e: ComposeTimeoutException) {
+            assertTrue(mapViewportState.mapViewportStatus is ViewportStatus.State)
+            assertTrue(
+                (mapViewportState.mapViewportStatus as ViewportStatus.State).state
+                    is OverviewViewportState
+            )
+            assertEquals(
                 ((mapViewportState.mapViewportStatus as ViewportStatus.State).state
                         as OverviewViewportState)
                     .options
-                    .padding == EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter)
+                    .padding,
+                EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter),
+            )
         }
     }
 
