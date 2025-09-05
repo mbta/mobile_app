@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class Favorites(val routeStopDirection: Set<RouteStopDirection>? = null) {
-    public fun isFavorite(rsd: RouteStopDirection): Boolean =
+    public fun isFavorite(@ObjCName(swiftName = "_") rsd: RouteStopDirection): Boolean =
         routeStopDirection?.contains(rsd) ?: false
 }
 
