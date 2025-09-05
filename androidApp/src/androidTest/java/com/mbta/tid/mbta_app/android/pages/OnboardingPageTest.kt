@@ -4,6 +4,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import kotlin.test.assertEquals
@@ -35,19 +36,19 @@ class OnboardingPageTest {
         }
 
         composeTestRule.onNodeWithText("Continue").performClick()
-        composeTestRule.waitUntil { completedScreens.size == 1 }
+        composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 1 }
         assertEquals(1, completedScreens.size)
 
         composeTestRule.onNodeWithText("Continue").performClick()
-        composeTestRule.waitUntil { completedScreens.size == 2 }
+        composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 2 }
         assertEquals(2, completedScreens.size)
 
         composeTestRule.onNodeWithText("Continue").performClick()
-        composeTestRule.waitUntil { completedScreens.size == 3 }
+        composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 3 }
         assertEquals(3, completedScreens.size)
 
         composeTestRule.onNodeWithText("Get started").performClick()
-        composeTestRule.waitUntil { completedScreens.size == 4 }
+        composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 4 }
         assertEquals(OnboardingScreen.entries.toSet(), completedScreens)
         assertTrue(finished)
     }

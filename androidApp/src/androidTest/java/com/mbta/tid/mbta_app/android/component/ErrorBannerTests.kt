@@ -1,7 +1,10 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -12,6 +15,7 @@ import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class ErrorBannerTests {
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -23,11 +27,11 @@ class ErrorBannerTests {
 
         composeTestRule.setContent { ErrorBanner(viewModel) }
 
-        composeTestRule.onNodeWithText("Unable to connect").assertExists()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Unable to connect"))
 
         errorRepo.mutableFlow.tryEmit(ErrorBannerState.DataError(emptySet(), emptySet(), {}))
 
-        composeTestRule.onNodeWithText("Error loading data").assertExists()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Error loading data"))
 
         errorRepo.mutableFlow.tryEmit(
             ErrorBannerState.StalePredictions(
@@ -36,7 +40,7 @@ class ErrorBannerTests {
             )
         )
 
-        composeTestRule.onNodeWithText("Updated 2 minutes ago").assertExists()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Updated 2 minutes ago"))
     }
 
     @Test

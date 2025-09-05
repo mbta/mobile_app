@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
@@ -56,6 +57,6 @@ class ManageFavoritesTest {
         assertEquals(setOf(rsd0), managedFavorites!!.favoriteRoutes)
         composeTestRule.onNodeWithText("Click me").performClick()
         composeTestRule.awaitIdle()
-        composeTestRule.waitUntil { managedFavorites!!.favoriteRoutes == setOf(rsd1) }
+        composeTestRule.waitUntilDefaultTimeout { managedFavorites!!.favoriteRoutes == setOf(rsd1) }
     }
 }

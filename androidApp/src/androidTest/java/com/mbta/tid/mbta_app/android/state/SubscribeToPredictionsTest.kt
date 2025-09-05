@@ -67,9 +67,9 @@ class SubscribeToPredictionsTest {
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
-        composeTestRule.waitUntil { connectProps == listOf("place-a") }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == listOf("place-a") }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             predictions != null &&
                 predictions == predictionsOnJoin.toPredictionsStreamDataResponse()
         }
@@ -77,9 +77,9 @@ class SubscribeToPredictionsTest {
         assertEquals(0, disconnectCount)
 
         stopIds.value = listOf("place-b")
-        composeTestRule.waitUntil { disconnectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 1 }
 
-        composeTestRule.waitUntil { connectProps == listOf("place-b") }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == listOf("place-b") }
     }
 
     @Test
@@ -117,17 +117,17 @@ class SubscribeToPredictionsTest {
             }
         }
 
-        composeTestRule.waitUntil { connectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 1 }
         assertEquals(0, disconnectCount)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        composeTestRule.waitUntil { disconnectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 1 }
         assertEquals(1, connectCount)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeTestRule.waitUntil { connectCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 2 }
         assertEquals(1, disconnectCount)
     }
 
@@ -158,7 +158,7 @@ class SubscribeToPredictionsTest {
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
-        composeTestRule.waitUntil { predictions != null }
+        composeTestRule.waitUntilDefaultTimeout { predictions != null }
         assertNotNull(predictions)
         assertTrue(connected)
     }

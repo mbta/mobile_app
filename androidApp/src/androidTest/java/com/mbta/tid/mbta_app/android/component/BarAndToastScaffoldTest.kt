@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.flow.update
@@ -34,7 +35,7 @@ class BarAndToastScaffoldTest {
         toastVM.showToast(ToastViewModel.Toast(message = "Toast message", isTip = true))
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { toastShown }
+        composeTestRule.waitUntilDefaultTimeout { toastShown }
         composeTestRule.onNodeWithText("Toast message", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("Tip: Toast message", useUnmergedTree = true)
@@ -58,7 +59,7 @@ class BarAndToastScaffoldTest {
         toastVM.showToast(ToastViewModel.Toast(message = "Toast message", isTip = false))
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { toastShown }
+        composeTestRule.waitUntilDefaultTimeout { toastShown }
         composeTestRule.onNodeWithText("Toast message", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule
             .onNodeWithContentDescription("Toast message", useUnmergedTree = true)
@@ -95,7 +96,7 @@ class BarAndToastScaffoldTest {
         )
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { toastShown }
+        composeTestRule.waitUntilDefaultTimeout { toastShown }
         composeTestRule
             .onNodeWithText("Action", useUnmergedTree = true)
             .assertIsDisplayed()

@@ -15,12 +15,16 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import dev.mokkery.MockMode
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import org.junit.Ignore
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.KoinContext
@@ -310,7 +314,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message ==
                 "<b>Westbound Green Line</b> at <b>Boylston</b> added to Favorites"
         }
@@ -344,7 +348,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Green Line</b> at <b>Boylston</b> added to Favorites"
         }
     }
@@ -376,36 +380,42 @@ class SaveFavoritesFlowTest {
             }
         }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Outbound 15 bus</b> at <b>Ruggles</b> added to Favorites"
         }
     }
 
     @Test
-    @Ignore // TODO: Address flakiness
-    fun testFavoritingToastFallbackText() {
-        val toastVM = MockToastViewModel()
-        var displayedToast: ToastViewModel.Toast? = null
-        toastVM.onShowToast = { displayedToast = it }
+    fun testFavoritingToastFallbackText() = runBlocking {
+        val toastVM = mock<IToastViewModel>(MockMode.autofill)
 
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
+        // no TestData for getting the appropriate labels for this favorite
+        val koin = testKoinApplication()
 
         composeTestRule.setContent {
-            SaveFavoritesFlow(
-                lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
-                stop = busStop,
-                directions = listOf(direction0),
-                selectedDirection = 0,
-                context = EditFavoritesContext.Favorites,
-                toastViewModel = toastVM,
-                isFavorite = { false },
-                updateFavorites = {},
-                onClose = {},
+            KoinContext(koin.koin) {
+                SaveFavoritesFlow(
+                    lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
+                    stop = busStop,
+                    directions = listOf(direction0),
+                    selectedDirection = 0,
+                    context = EditFavoritesContext.Favorites,
+                    toastViewModel = toastVM,
+                    isFavorite = { false },
+                    updateFavorites = {},
+                    onClose = {},
+                )
+            }
+        }
+        composeTestRule.awaitIdle()
+
+        verify {
+            toastVM.showToast(
+                ToastViewModel.Toast("Added to Favorites", duration = ToastViewModel.Duration.Short)
             )
         }
-
-        composeTestRule.waitUntilDefaultTimeout { displayedToast?.message == "Added to Favorites" }
     }
 
     @Test

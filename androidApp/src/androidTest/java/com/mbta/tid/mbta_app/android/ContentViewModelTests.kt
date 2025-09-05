@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
@@ -41,7 +42,7 @@ class ContentViewModelTests : KoinTest {
                 )
         }
 
-        composeTestRule.waitUntil { vm.defaultTab.value == DefaultTab.Nearby }
+        composeTestRule.waitUntilDefaultTimeout { vm.defaultTab.value == DefaultTab.Nearby }
     }
 
     @Test
@@ -63,6 +64,6 @@ class ContentViewModelTests : KoinTest {
                 )
         }
 
-        composeTestRule.waitUntil { vm.defaultTab.value == DefaultTab.Favorites }
+        composeTestRule.waitUntilDefaultTimeout { vm.defaultTab.value == DefaultTab.Favorites }
     }
 }

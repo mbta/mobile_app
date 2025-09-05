@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteResult
@@ -523,7 +524,7 @@ class RoutePickerViewTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { setPath == RoutePickerPath.Bus }
+        composeTestRule.waitUntilDefaultTimeout { setPath == RoutePickerPath.Bus }
     }
 
     @OptIn(ExperimentalTestApi::class)

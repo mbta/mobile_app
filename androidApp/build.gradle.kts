@@ -163,6 +163,7 @@ spotless {
                         for (fnText in
                             arrayOf(
                                 "waitUntil(",
+                                "waitUntil {",
                                 "waitUntilAtLeastOneExists(",
                                 "waitUntilDoesNotExist(",
                                 "waitUntilExactlyOneExists(",
@@ -171,7 +172,7 @@ spotless {
                             val column = line.value.indexOf(fnText, 0, false)
                             if (column != -1) {
                                 throw IllegalStateException(
-                                    "${file.path}:${line.index + 1}:${column + 1} calls $fnText. Replace with ${fnText.dropLast(1)}DefaultTimeout( to prevent CI flakiness."
+                                    "${file.path}:${line.index + 1}:${column + 1} calls $fnText. Replace with ${fnText.dropLast(1)}DefaultTimeout to prevent CI flakiness."
                                 )
                             }
                         }

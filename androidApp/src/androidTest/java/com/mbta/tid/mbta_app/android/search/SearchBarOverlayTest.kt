@@ -16,6 +16,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
 import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilAtLeastOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
@@ -128,7 +129,7 @@ class SearchBarOverlayTest : KoinTest {
         searchNode.performTextInput("sto")
         composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(searchedStop.name))
         composeTestRule.onNodeWithText(searchedStop.name).performClick()
-        composeTestRule.waitUntil { navigated.value }
+        composeTestRule.waitUntilDefaultTimeout { navigated.value }
     }
 
     @Test
@@ -200,7 +201,7 @@ class SearchBarOverlayTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Routes"))
         composeTestRule.onNodeWithText("3½").assertIsDisplayed()
         composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
-        composeTestRule.waitUntil { navigated }
+        composeTestRule.waitUntilDefaultTimeout { navigated }
     }
 
     @Test

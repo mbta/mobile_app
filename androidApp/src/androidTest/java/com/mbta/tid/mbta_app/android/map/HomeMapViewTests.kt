@@ -3,8 +3,10 @@ package com.mbta.tid.mbta_app.android.map
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -17,6 +19,8 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -40,6 +44,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class HomeMapViewTests {
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -115,9 +120,9 @@ class HomeMapViewTests {
                 configManager,
             )
         }
-        composeTestRule
-            .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsNotDisplayed()
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(
+            hasContentDescription("Recenter map on my location")
+        )
     }
 
     @Test
@@ -355,7 +360,9 @@ class HomeMapViewTests {
             )
         }
 
-        composeTestRule.waitUntil { composeTestRule.onNodeWithTag("recenterButton").isDisplayed() }
+        composeTestRule.waitUntilDefaultTimeout {
+            composeTestRule.onNodeWithTag("recenterButton").isDisplayed()
+        }
         composeTestRule.onNodeWithTag("recenterButton").assertIsDisplayed()
     }
 

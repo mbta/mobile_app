@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
@@ -31,7 +32,7 @@ class GetStopMapDataTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { stopMapResponse == actualStopMapResponse }
+        composeTestRule.waitUntilDefaultTimeout { stopMapResponse == actualStopMapResponse }
         assertEquals(stopMapResponse, actualStopMapResponse)
     }
 }

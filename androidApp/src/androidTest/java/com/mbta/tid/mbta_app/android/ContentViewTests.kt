@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.model.FeaturePromo
@@ -110,14 +111,14 @@ class ContentViewTests : KoinTest {
             }
         }
 
-        composeTestRule.waitUntil { onAttachCount == 1 && onDetatchCount == 0 }
+        composeTestRule.waitUntilDefaultTimeout { onAttachCount == 1 && onDetatchCount == 0 }
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        composeTestRule.waitUntil { onAttachCount == 1 && onDetatchCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { onAttachCount == 1 && onDetatchCount == 1 }
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeTestRule.waitUntil { onAttachCount == 2 && onDetatchCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { onAttachCount == 2 && onDetatchCount == 1 }
     }
 }
