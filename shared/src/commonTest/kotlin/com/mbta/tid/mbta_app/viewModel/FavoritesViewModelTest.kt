@@ -388,16 +388,13 @@ internal class FavoritesViewModelTest : KoinTest {
                 awaitItem(),
             )
             // static data usually loads before realtime, but not always
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favorites.routeStopDirection,
-                    routeCardData = expectedRealtimeData,
-                    staticRouteCardData = expectedStaticData,
-                    loadedLocation = stop1.position,
-                ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
-            )
+            awaitItemSatisfying {
+                (it.routeCardData == expectedRealtimeData &&
+                    it.staticRouteCardData == expectedStaticData) &&
+                    !it.awaitingPredictionsAfterBackground &&
+                    it.favorites == favorites.routeStopDirection &&
+                    it.loadedLocation == stop1.position
+            }
         }
     }
 
