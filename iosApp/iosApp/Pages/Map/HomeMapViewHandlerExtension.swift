@@ -100,10 +100,10 @@ extension HomeMapView {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        guard let tripId = vehicle.tripId else { return }
-        guard case let .stopDetails(stopId, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe()
+        guard let tripId = vehicle.tripId,
+              case let .stopDetails(_, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe(),
+              stopFilter != nil || tripFilter?.tripId == tripId
         else { return }
-        guard stopFilter != nil || tripFilter?.tripId == tripId else { return }
         let routeCard = nearbyVM.routeCardData?.first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
             .stopData
@@ -121,8 +121,6 @@ extension HomeMapView {
             stopSequence: stopSequence,
             selectionLock: true
         )
-        let stop = globalData?.getStop(stopId: stopId)
         nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
-        mapVM.selectedTrip(stopFilter: stopFilter, stop: stop, tripFilter: newTripFilter, vehicle: vehicle)
     }
 }

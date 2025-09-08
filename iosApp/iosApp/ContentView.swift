@@ -192,7 +192,7 @@ struct ContentView: View {
                                     }
                                 }
                                 if !viewportProvider.viewport.isOverview,
-                                   let routeType = recenterOnVehicleButtonInfo() {
+                                   let routeType = vehicleRouteType() {
                                     RecenterButton(icon: routeIconResource(routeType), size: 32) {
                                         mapVM.recenter(type: .trip)
                                     }
@@ -527,13 +527,9 @@ struct ContentView: View {
         ).ignoresSafeArea(.all)
     }
 
-    private func recenterOnVehicleButtonInfo() -> RouteType? {
-        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: tripFilter) = nearbyVM
-            .navigationStack.lastSafe(),
-            let selectedVehicle,
-            tripFilter?.vehicleId == selectedVehicle.id,
-            let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
-            let route = stopDetailsVM.global?.getRoute(routeId: routeId)
+    private func vehicleRouteType() -> RouteType? {
+        guard let routeId = selectedVehicle?.routeId,
+              let route = stopDetailsVM.global?.getRoute(routeId: routeId)
         else { return nil }
         return route.type
     }
