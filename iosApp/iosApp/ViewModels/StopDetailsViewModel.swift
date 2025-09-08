@@ -49,7 +49,6 @@ struct TripRouteAccents: Hashable {
 // swiftlint:disable:next type_body_length
 class StopDetailsViewModel: ObservableObject {
     private var global: GlobalResponse?
-    @Published var favorites: Favorites = .init(routeStopDirection: [])
     @Published var alertSummaries: [String: AlertSummary?] = [:]
 
     @Published var stopData: StopData?
@@ -182,7 +181,6 @@ class StopDetailsViewModel: ObservableObject {
     func handleStopAppear(_ stopId: String) {
         Task {
             loadGlobalData()
-            loadFavorites()
             await handleStopChange(stopId)
         }
     }
@@ -354,20 +352,6 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func loadFavorites() {
-        Task {
-            do {
-                let nextFavorites = try await favoritesRepository.getFavorites()
-                Task { @MainActor in self.favorites = nextFavorites }
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getFavorites shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
     func loadStopDetails(stopId: String) async {
         let schedules = await loadStopSchedules(stopId: stopId)
         let task = Task { @MainActor in
@@ -473,11 +457,11 @@ class StopDetailsViewModel: ObservableObject {
         }
     }
 
-    func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
-        favorites.routeStopDirection?.contains(routeStopDirection) ?? false
-    }
-
-    func updateFavorites(_ updatedFavorites: [RouteStopDirection: Bool], _ defaultDirection: Int32) async -> Bool {
+    func updateFavorites(
+        _ updatedFavorites: [RouteStopDirection: Bool],
+        _ defaultDirection: Int32,
+        _ onSuccess: @escaping () -> Void,
+    ) async -> Bool {
         let task = Task<Bool, Error> {
             do {
                 try await self.favoritesUsecases.updateRouteStopDirections(
@@ -485,9 +469,8 @@ class StopDetailsViewModel: ObservableObject {
                     context: .stopDetails,
                     defaultDirection: defaultDirection
                 )
-                self.loadFavorites()
+                onSuccess()
                 return false
-
             } catch is CancellationError {
                 // do nothing on cancellation
             } catch {

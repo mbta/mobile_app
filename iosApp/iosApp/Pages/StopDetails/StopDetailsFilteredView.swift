@@ -18,7 +18,9 @@ struct StopDetailsFilteredView: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var routeCardData: [RouteCardData]?
+    var favorites: Favorites
     var now: Date
+    var onUpdateFavorites: () -> Void
 
     var stopData: RouteCardData.RouteStopData?
 
@@ -48,7 +50,9 @@ struct StopDetailsFilteredView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         routeCardData: [RouteCardData]?,
+        favorites: Favorites,
         now: Date,
+        onUpdateFavorites: @escaping () -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: iosApp.MapViewModel,
@@ -60,7 +64,9 @@ struct StopDetailsFilteredView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.routeCardData = routeCardData
+        self.favorites = favorites
         self.now = now
+        self.onUpdateFavorites = onUpdateFavorites
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -74,9 +80,7 @@ struct StopDetailsFilteredView: View {
         .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
     }
 
-    var isFavorite: Bool {
-        stopDetailsVM.isFavorite(routeStopDirection)
-    }
+    var isFavorite: Bool { favorites.isFavorite(routeStopDirection) }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -118,25 +122,27 @@ struct StopDetailsFilteredView: View {
         default: nil
         }
         VStack(spacing: 0) {
-            if let stopData,
-               inSaveFavoritesFlow {
-                SaveFavoritesFlow(lineOrRoute: stopData.lineOrRoute,
-                                  stop: stopData.stop,
-                                  directions: stopData.directions
-                                      .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
-                                  selectedDirection: routeStopDirection.direction,
-                                  context: .stopDetails,
-                                  global: global,
-                                  isFavorite: { rsd in stopDetailsVM.isFavorite(rsd) },
-                                  updateFavorites: { newFavorites in
-                                      Task {
-                                          await stopDetailsVM.updateFavorites(newFavorites,
-                                                                              stopFilter.directionId)
-                                      }
-                                  },
-                                  onClose: {
-                                      inSaveFavoritesFlow = false
-                                  })
+            if let stopData, inSaveFavoritesFlow {
+                SaveFavoritesFlow(
+                    lineOrRoute: stopData.lineOrRoute,
+                    stop: stopData.stop,
+                    directions: stopData.directions
+                        .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
+                    selectedDirection: routeStopDirection.direction,
+                    context: .stopDetails,
+                    global: global,
+                    isFavorite: { favorites.isFavorite($0) },
+                    updateFavorites: { newFavorites in
+                        Task {
+                            await stopDetailsVM.updateFavorites(newFavorites, stopFilter.directionId) {
+                                onUpdateFavorites()
+                            }
+                        }
+                    },
+                    onClose: {
+                        inSaveFavoritesFlow = false
+                    }
+                )
             }
 
             VStack(spacing: 8) {
@@ -145,14 +151,10 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    isFavorite: stopDetailsVM.isFavorite(routeStopDirection),
+                    isFavorite: isFavorite,
                     onFavorite: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
-                /*  DebugView {
-                      Text(verbatim: "stop id: \(stopId)")
-                  }.padding(.horizontal, 16)
-                 */
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
             }
             .fixedSize(horizontal: false, vertical: true)
