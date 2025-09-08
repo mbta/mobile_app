@@ -41,6 +41,7 @@ struct ContentView: View {
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
     @State private var selectedVehicle: Vehicle?
+    @State private var globalData: GlobalResponse?
 
     struct AnalyticsParams: Equatable {
         let stopId: String?
@@ -69,13 +70,7 @@ struct ContentView: View {
                 analytics.track(screen: screen)
             }
         }
-        .task {
-            // We can't set stale caches in ResponseCache on init because of our Koin setup,
-            // so this is here to get the cached data into the global flow and kick off an async request asap.
-            do {
-                _ = try await RepositoryDI().global.getGlobalData()
-            } catch {}
-        }
+        .global($globalData, errorKey: "ContentView")
         .onAppear {
             readDeepLinkState()
         }
@@ -529,7 +524,7 @@ struct ContentView: View {
 
     private func vehicleRouteType() -> RouteType? {
         guard let routeId = selectedVehicle?.routeId,
-              let route = stopDetailsVM.global?.getRoute(routeId: routeId)
+              let route = globalData?.getRoute(routeId: routeId)
         else { return nil }
         return route.type
     }

@@ -237,7 +237,7 @@ struct TripDetailsView: View {
     }
 
     private func setVehicle(_ vehicle: Vehicle?) {
-        guard let tripFilter, let global = stopDetailsVM.global else { return }
+        guard let tripFilter, let global else { return }
         let stop = global.getStop(stopId: stopId)
         let stopFilter = nearbyVM.navigationStack.lastStopDetailsFilter
         mapVM.selectedTrip(stopFilter: stopFilter, stop: stop, tripFilter: tripFilter, vehicle: vehicle)
