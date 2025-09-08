@@ -27,7 +27,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -202,15 +201,11 @@ class StopDetailsViewModelTest : KoinTest {
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(EasternTimeInstant.now())
 
-        launch {
-            testViewModelFlow(viewModel).test {
-                awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Filtered }
-            }
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Filtered }
         }
 
-        launch { testViewModelFlow(routeCardVM).test { awaitItemSatisfying { it.data != null } } }
-
-        testScheduler.advanceUntilIdle()
+        testViewModelFlow(routeCardVM).test { awaitItemSatisfying { it.data != null } }
     }
 
     @Test
@@ -298,18 +293,11 @@ class StopDetailsViewModelTest : KoinTest {
         viewModel.setNow(EasternTimeInstant.now())
         viewModel.setActive(active = true, wasSentToBackground = false)
 
-        launch {
-            testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
-        }
+        testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
 
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.stopFilter == StopDetailsFilter("87", 1, true) }
-            }
+        viewModel.filterUpdates.test {
+            awaitItemSatisfying { it?.stopFilter == StopDetailsFilter("87", 1, true) }
         }
-
-        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -346,19 +334,11 @@ class StopDetailsViewModelTest : KoinTest {
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
+        testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
 
-        launch {
-            testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
+        viewModel.filterUpdates.test {
+            awaitItemSatisfying { it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false) }
         }
-
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false) }
-            }
-        }
-
-        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -409,30 +389,15 @@ class StopDetailsViewModelTest : KoinTest {
         viewModel.setNow(now)
         viewModel.setActive(active = true, wasSentToBackground = false)
 
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
-            }
+        testViewModelFlow(viewModel).test {
+            viewModel.setFilters(initialFilters)
+            awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
+            viewModel.setFilters(
+                StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 1, false), null)
+            )
+            awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
         }
 
-        launch {
-            testViewModelFlow(viewModel).test {
-                viewModel.setFilters(initialFilters)
-                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
-                viewModel.setFilters(
-                    StopDetailsPageFilters(
-                        "place-rugg",
-                        StopDetailsFilter("Orange", 1, false),
-                        null,
-                    )
-                )
-                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
-            }
-        }
-
-        testScheduler.advanceUntilIdle()
+        viewModel.filterUpdates.test { awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id } }
     }
 }
