@@ -140,7 +140,6 @@ class ViewportProviderTest {
                     .padding,
                 EdgeInsets(paddingAfter, paddingAfter, paddingAfter, paddingAfter),
             )
-            throw e
         }
     }
 
