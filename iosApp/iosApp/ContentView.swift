@@ -22,11 +22,13 @@ struct ContentView: View {
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
+    @State var routeCardDataVM = ViewModelDI().routeCardData
+    @State var stopDetailsVM = ViewModelDI().stopDetails
+    @State var toastVM = ViewModelDI().toast
+
     @StateObject var nearbyVM = NearbyViewModel()
     @StateObject var mapVM = iosApp.MapViewModel()
     @StateObject var settingsVM = SettingsViewModel()
-    @StateObject var stopDetailsVM = StopDetailsViewModel()
-    @State var toastVM = ViewModelDI().toast
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
@@ -282,6 +284,7 @@ struct ContentView: View {
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
+                            routeCardDataVM: routeCardDataVM,
                             stopDetailsVM: stopDetailsVM,
                             viewportProvider: viewportProvider
                         )
@@ -292,9 +295,6 @@ struct ContentView: View {
                     .id(stopId)
                     .transition(transition)
                     .animation(.easeOut, value: stopId)
-                    .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
-                    .onAppear { stopDetailsVM.handleStopAppear(stopId) }
-                    .onDisappear { stopDetailsVM.leaveStopPredictions() }
 
                 default: EmptyView()
                 }

@@ -13,21 +13,18 @@ import SwiftUI
 
 struct StopDetailsUnfilteredView: View {
     var stopId: String
-    var setStopFilter: (StopDetailsFilter?) -> Void
-    var routeCardData: [RouteCardData]?
 
+    var routeData: StopDetailsViewModel.RouteData?
     var favorites: Favorites
+    var global: GlobalResponse?
     var now: EasternTimeInstant
 
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
+    var setStopFilter: (StopDetailsFilter?) -> Void
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @EnvironmentObject var settingsCache: SettingsCache
-
-    @State var global: GlobalResponse?
 
     var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
@@ -37,36 +34,36 @@ struct StopDetailsUnfilteredView: View {
 
     init(
         stopId: String,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
-        routeCardData: [RouteCardData]?,
+        routeData: StopDetailsViewModel.RouteData?,
         favorites: Favorites,
+        global: GlobalResponse?,
         now: EasternTimeInstant,
+        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
-        stopDetailsVM: StopDetailsViewModel
+        nearbyVM: NearbyViewModel
     ) {
         self.stopId = stopId
-        self.setStopFilter = setStopFilter
-        self.routeCardData = routeCardData
+        self.routeData = routeData
         self.favorites = favorites
+        self.global = global
         self.now = now
+        self.setStopFilter = setStopFilter
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
-        self.stopDetailsVM = stopDetailsVM
-
-        if let routeCardData {
-            servedRoutes = routeCardData.map { routeCardData in
-                switch onEnum(of: routeCardData.lineOrRoute) {
-                case let .line(line): .line(line.line)
-                case let .route(route): .route(route.route)
-                }
-            }
-        }
     }
 
     var stop: Stop? {
         global?.getStop(stopId: stopId)
     }
+
+    var routeCardData: [RouteCardData]? {
+        if case let .unfiltered(data) = onEnum(of: routeData),
+           data.filteredWith.stopId == stopId {
+            data.routeCards
+        } else { nil }
+    }
+
+    var servedRoutes: [StopDetailsFilterPills.FilterBy] { routeCardData?.servedRouteFilters ?? [] }
 
     var elevatorAlerts: [Shared.Alert]? {
         if let routeCardData {
@@ -167,7 +164,6 @@ struct StopDetailsUnfilteredView: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
-        .global($global, errorKey: "StopDetailsUnfilteredView")
     }
 
     @ViewBuilder private func loadingBody() -> some View {

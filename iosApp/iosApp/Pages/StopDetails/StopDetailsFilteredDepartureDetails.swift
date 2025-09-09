@@ -18,6 +18,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var leaf: RouteCardData.Leaf
+    var alertSummaries: [String: AlertSummary?]
     var selectedDirection: Direction
 
     var favorite: Bool
@@ -27,7 +28,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
+    var stopDetailsVM: IStopDetailsViewModel
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -91,9 +92,10 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter? = nil,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
+        leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],
+        selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: iosApp.MapViewModel,
-        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
+        stopDetailsVM: IStopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -101,6 +103,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.leaf = leaf
+        self.alertSummaries = alertSummaries
         self.selectedDirection = selectedDirection
         self.favorite = favorite
         self.now = now
@@ -120,8 +123,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
                         .onAppear { if let id = tiles.first(where: { $0.isSelected(tripFilter: tripFilter) })?.id {
                             view.scrollTo(id)
-                        }
-                        }
+                        } }
                         .onChange(of: tripFilter) { filter in
                             if let id = tiles.first(where: { $0.isSelected(tripFilter: filter) })?.id {
                                 view.scrollTo(id)
@@ -156,15 +158,17 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
                 .accessibilityHeading(.h4)
             } else {
+                let tripPageFilter: TripDetailsPageFilter? = if let tripFilter {
+                    .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+                } else { nil }
                 TripDetailsView(
-                    tripFilter: tripFilter,
-                    stopId: stopId,
+                    tripFilter: tripPageFilter,
                     now: now,
+                    alertSummaries: alertSummaries,
+                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
-                    stopDetailsVM: stopDetailsVM,
-                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() }
                 )
             }
         }
@@ -194,6 +198,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         .onChange(of: now) { now in
             leafFormat = leaf.format(now: now, globalData: global)
         }
+        .onChange(of: global) { global in
+            leafFormat = leaf.format(now: now, globalData: global)
+        }
         .onChange(of: AlertSummaryParams(
             global: global,
             alerts: alerts,
@@ -204,9 +211,6 @@ struct StopDetailsFilteredDepartureDetails: View {
             now: now
         )) { newParams in
             setAlertSummaries(newParams)
-        }
-        .onChange(of: global) { global in
-            leafFormat = leaf.format(now: now, globalData: global)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
@@ -271,7 +275,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     private func setAlertSummaries(_ alertSummaryParams: AlertSummaryParams) {
         Task {
             let summaries = await alertSummaries(alertSummaryParams)
-            stopDetailsVM.setAlertSummaries(summaries)
+            stopDetailsVM.setAlertSummaries(alertSummaries: summaries as? [String: Any] ?? [:])
         }
     }
 
@@ -356,13 +360,13 @@ struct StopDetailsFilteredDepartureDetails: View {
             (settingsCache.get(.stationAccessibility) && hasAccessibilityWarning) {
             VStack(spacing: 16) {
                 ForEach(alerts, id: \.id) { alert in
-                    if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
-                        alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil)
+                    if alertSummaries.keys.contains(alert.id) {
+                        alertCard(alert, alertSummaries[alert.id] ?? nil)
                     }
                 }
                 ForEach(downstreamAlerts, id: \.id) { alert in
-                    if stopDetailsVM.alertSummaries.keys.contains(alert.id) {
-                        alertCard(alert, stopDetailsVM.alertSummaries[alert.id] ?? nil, .downstream)
+                    if alertSummaries.keys.contains(alert.id) {
+                        alertCard(alert, alertSummaries[alert.id] ?? nil, .downstream)
                     }
                 }
                 if settingsCache.get(.stationAccessibility), hasAccessibilityWarning {
