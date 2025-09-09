@@ -10,7 +10,7 @@ import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -30,10 +30,11 @@ import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
+import org.koin.core.context.loadKoinModules
 import org.koin.dsl.bind
 import org.koin.dsl.module
 
@@ -110,9 +111,12 @@ class StopDetailsViewTest {
     val settingsRepository =
         MockSettingsRepository(settings = mapOf(Pair(Settings.StationAccessibility, true)))
 
-    val koinApplication = testKoinApplication(builder) { settings = settingsRepository }
-
     @get:Rule val composeTestRule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        loadKoinMocks(builder) { settings = settingsRepository }
+    }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -155,30 +159,26 @@ class StopDetailsViewTest {
                 )
             )
 
+        loadKoinModules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
+
         composeTestRule.setContent {
-            KoinContext(
-                koinApplication
-                    .modules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
-                    .koin
-            ) {
-                val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
-                StopDetailsView(
-                    stopId = stop.id,
-                    isFavorite = { false },
-                    updateFavorites = { _, _ -> },
-                    onClose = {},
-                    stopFilter = null,
-                    tripFilter = null,
-                    allAlerts = null,
-                    now = now,
-                    updateStopFilter = filterState::value::set,
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = koinInject(),
-                    openModal = {},
-                    openSheetRoute = {},
-                )
-            }
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+            StopDetailsView(
+                stopId = stop.id,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                onClose = {},
+                stopFilter = null,
+                tripFilter = null,
+                allAlerts = null,
+                now = now,
+                updateStopFilter = filterState::value::set,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                errorBannerViewModel = koinInject(),
+                openModal = {},
+                openSheetRoute = {},
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Stop"))
@@ -222,32 +222,28 @@ class StopDetailsViewTest {
                 )
             )
 
+        loadKoinModules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
+
         composeTestRule.setContent {
-            KoinContext(
-                koinApplication
-                    .modules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
-                    .koin
-            ) {
-                val filterState = remember {
-                    mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
-                }
-                StopDetailsView(
-                    stopId = stop.id,
-                    isFavorite = { false },
-                    updateFavorites = { _, _ -> },
-                    onClose = {},
-                    stopFilter = filterState.value,
-                    tripFilter = null,
-                    allAlerts = null,
-                    now = now,
-                    updateStopFilter = filterState::value::set,
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = koinInject(),
-                    openModal = {},
-                    openSheetRoute = {},
-                )
+            val filterState = remember {
+                mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
             }
+            StopDetailsView(
+                stopId = stop.id,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                onClose = {},
+                stopFilter = filterState.value,
+                tripFilter = null,
+                allAlerts = null,
+                now = now,
+                updateStopFilter = filterState::value::set,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                errorBannerViewModel = koinInject(),
+                openModal = {},
+                openSheetRoute = {},
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("at Sample Stop"))
@@ -313,30 +309,26 @@ class StopDetailsViewTest {
                 )
             )
 
+        loadKoinModules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
+
         composeTestRule.setContent {
-            KoinContext(
-                koinApplication
-                    .modules(module { single { unfilteredVM }.bind(IStopDetailsViewModel::class) })
-                    .koin
-            ) {
-                val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
-                StopDetailsView(
-                    stopId = stop.id,
-                    isFavorite = { false },
-                    updateFavorites = { _, _ -> },
-                    onClose = {},
-                    stopFilter = filterState.value,
-                    tripFilter = null,
-                    allAlerts = AlertsStreamDataResponse(builder),
-                    now = now,
-                    updateStopFilter = filterState::value::set,
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = koinInject(),
-                    openModal = {},
-                    openSheetRoute = {},
-                )
-            }
+            val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
+            StopDetailsView(
+                stopId = stop.id,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                onClose = {},
+                stopFilter = filterState.value,
+                tripFilter = null,
+                allAlerts = AlertsStreamDataResponse(builder),
+                now = now,
+                updateStopFilter = filterState::value::set,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                errorBannerViewModel = koinInject(),
+                openModal = {},
+                openSheetRoute = {},
+            )
         }
 
         composeTestRule.onNodeWithText(alert.header!!).assertExists()
@@ -385,32 +377,27 @@ class StopDetailsViewTest {
                     ),
                 )
             )
+        loadKoinModules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
         composeTestRule.setContent {
-            KoinContext(
-                koinApplication
-                    .modules(module { single { filteredVM }.bind(IStopDetailsViewModel::class) })
-                    .koin
-            ) {
-                val filterState = remember {
-                    mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
-                }
-                StopDetailsView(
-                    stopId = stop.id,
-                    stopFilter = filterState.value,
-                    tripFilter = null,
-                    allAlerts = AlertsStreamDataResponse(builder),
-                    now = now,
-                    isFavorite = { false },
-                    updateFavorites = { _, _ -> },
-                    onClose = {},
-                    updateStopFilter = filterState::value::set,
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    errorBannerViewModel = koinInject(),
-                    openModal = {},
-                    openSheetRoute = {},
-                )
+            val filterState = remember {
+                mutableStateOf<StopDetailsFilter?>(StopDetailsFilter(route.id, 0))
             }
+            StopDetailsView(
+                stopId = stop.id,
+                stopFilter = filterState.value,
+                tripFilter = null,
+                allAlerts = AlertsStreamDataResponse(builder),
+                now = now,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                onClose = {},
+                updateStopFilter = filterState::value::set,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                errorBannerViewModel = koinInject(),
+                openModal = {},
+                openSheetRoute = {},
+            )
         }
 
         composeTestRule.onNodeWithText(alert.header!!).assertExists()

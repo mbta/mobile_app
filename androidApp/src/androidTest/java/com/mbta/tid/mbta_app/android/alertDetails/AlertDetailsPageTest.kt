@@ -4,7 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 class AlertDetailsPageTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -116,19 +115,17 @@ class AlertDetailsPageTest {
                 )
             }
 
-        val koin = testKoinApplication(objects)
+        loadKoinMocks(objects)
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                AlertDetailsPage(
-                    alertId = alert.id,
-                    lineId = null,
-                    routeIds = listOf(route.id),
-                    stopId = null,
-                    alerts = AlertsStreamDataResponse(objects),
-                    goBack = {},
-                )
-            }
+            AlertDetailsPage(
+                alertId = alert.id,
+                lineId = null,
+                routeIds = listOf(route.id),
+                stopId = null,
+                alerts = AlertsStreamDataResponse(objects),
+                goBack = {},
+            )
         }
 
         composeTestRule.waitForIdle()

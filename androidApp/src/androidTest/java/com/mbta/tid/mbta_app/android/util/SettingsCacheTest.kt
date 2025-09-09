@@ -8,7 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertEquals
@@ -16,7 +16,6 @@ import kotlin.test.fail
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
 class SettingsCacheTest {
@@ -30,18 +29,16 @@ class SettingsCacheTest {
                 mapOf(Settings.HideMaps to true),
                 onGetSettings = { gotSettings = true },
             )
-        val koin = testKoinApplication { settings = settingsRepo }
+        loadKoinMocks { settings = settingsRepo }
 
         val hideMapsValues = mutableListOf<Boolean>()
         val debugModeValues = mutableListOf<Boolean>()
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                val cache: SettingsCache = koinInject()
-                val hideMaps = cache.get(Settings.HideMaps)
-                hideMapsValues.add(hideMaps)
-                val debugMode = cache.get(Settings.DevDebugMode)
-                debugModeValues.add(debugMode)
-            }
+            val cache: SettingsCache = koinInject()
+            val hideMaps = cache.get(Settings.HideMaps)
+            hideMapsValues.add(hideMaps)
+            val debugMode = cache.get(Settings.DevDebugMode)
+            debugModeValues.add(debugMode)
         }
 
         composeTestRule.waitForIdle()
@@ -58,17 +55,15 @@ class SettingsCacheTest {
                 mapOf(Settings.HideMaps to true),
                 onGetSettings = { gotSettings = true },
             )
-        val koin = testKoinApplication { settings = settingsRepo }
+        loadKoinMocks { settings = settingsRepo }
 
         val hideMapsValues = mutableListOf<Boolean>()
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                val cache: SettingsCache = koinInject()
-                cache.get(Settings.StationAccessibility)
-                if (gotSettings) {
-                    val hideMaps = cache.get(Settings.HideMaps)
-                    hideMapsValues.add(hideMaps)
-                }
+            val cache: SettingsCache = koinInject()
+            cache.get(Settings.StationAccessibility)
+            if (gotSettings) {
+                val hideMaps = cache.get(Settings.HideMaps)
+                hideMapsValues.add(hideMaps)
             }
         }
 
@@ -90,16 +85,14 @@ class SettingsCacheTest {
                     savedSettings = true
                 },
             )
-        val koin = testKoinApplication { settings = settingsRepo }
+        loadKoinMocks { settings = settingsRepo }
 
         val hideMapsValues = mutableListOf<Boolean>()
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                val cache: SettingsCache = koinInject()
-                val hideMaps = cache.get(Settings.HideMaps)
-                hideMapsValues.add(hideMaps)
-                Button({ cache.set(Settings.HideMaps, true) }) { Text("Hide maps") }
-            }
+            val cache: SettingsCache = koinInject()
+            val hideMaps = cache.get(Settings.HideMaps)
+            hideMapsValues.add(hideMaps)
+            Button({ cache.set(Settings.HideMaps, true) }) { Text("Hide maps") }
         }
 
         composeTestRule.waitForIdle()
@@ -119,16 +112,14 @@ class SettingsCacheTest {
                 mapOf(Settings.HideMaps to false),
                 onGetSettings = { fail("Should not be getting settings from repo") },
             )
-        val koin = testKoinApplication { settings = settingsRepo }
+        loadKoinMocks { settings = settingsRepo }
 
         val settingValues = mutableListOf<Boolean>()
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                val cache: SettingsCache = koinInject()
-                settingValues.add(cache.get(Settings.HideMaps))
-                cache.set(Settings.HideMaps, true)
-                settingValues.add(cache.get(Settings.HideMaps))
-            }
+            val cache: SettingsCache = koinInject()
+            settingValues.add(cache.get(Settings.HideMaps))
+            cache.set(Settings.HideMaps, true)
+            settingValues.add(cache.get(Settings.HideMaps))
         }
 
         composeTestRule.waitForIdle()

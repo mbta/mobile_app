@@ -23,9 +23,9 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalTestApi::class)
@@ -36,17 +36,18 @@ class ContentViewTests : KoinTest {
         GrantPermissionRule.grant(android.Manifest.permission.ACCESS_FINE_LOCATION)
     @get:Rule val composeTestRule = createComposeRule()
 
-    val koinApplication = testKoinApplication()
+    @Before
+    fun setUp() {
+        loadKoinMocks()
+    }
 
     @Test
     fun testSwitchingTabs() {
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient()
-                ) {
-                    ContentView()
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                ContentView()
             }
         }
 
@@ -73,12 +74,10 @@ class ContentViewTests : KoinTest {
             )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient()
-                ) {
-                    ContentView(viewModel = vm)
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                ContentView(viewModel = vm)
             }
         }
 
@@ -94,19 +93,14 @@ class ContentViewTests : KoinTest {
         var onAttachCount = 0
         var onDetatchCount = 0
 
-        val koinApplication =
-            testKoinApplication(
-                socket = MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 })
-            )
+        loadKoinMocks(socket = MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 }))
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
-                    LocalLifecycleOwner provides lifecycleOwner,
-                ) {
-                    ContentView()
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+                LocalLifecycleOwner provides lifecycleOwner,
+            ) {
+                ContentView()
             }
         }
 

@@ -7,7 +7,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
@@ -23,7 +23,6 @@ import kotlin.test.assertTrue
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalTestApi::class)
 class SaveFavoritesFlowTest {
@@ -289,22 +288,20 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
-        val koin = testKoinApplication(TestData)
+        loadKoinMocks(TestData)
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                SaveFavoritesFlow(
-                    lineOrRoute = line,
-                    stop = stop,
-                    directions = listOf(direction0, direction1),
-                    selectedDirection = 0,
-                    context = EditFavoritesContext.Favorites,
-                    toastViewModel = toastVM,
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    onClose = {},
-                )
-            }
+            SaveFavoritesFlow(
+                lineOrRoute = line,
+                stop = stop,
+                directions = listOf(direction0, direction1),
+                selectedDirection = 0,
+                context = EditFavoritesContext.Favorites,
+                toastViewModel = toastVM,
+                isFavorite = { false },
+                updateFavorites = {},
+                onClose = {},
+            )
         }
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
@@ -322,22 +319,20 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
-        val koin = testKoinApplication(TestData)
+        loadKoinMocks(TestData)
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                SaveFavoritesFlow(
-                    lineOrRoute = line,
-                    stop = stop,
-                    directions = listOf(direction0, direction1),
-                    selectedDirection = 0,
-                    context = EditFavoritesContext.Favorites,
-                    toastViewModel = toastVM,
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    onClose = {},
-                )
-            }
+            SaveFavoritesFlow(
+                lineOrRoute = line,
+                stop = stop,
+                directions = listOf(direction0, direction1),
+                selectedDirection = 0,
+                context = EditFavoritesContext.Favorites,
+                toastViewModel = toastVM,
+                isFavorite = { false },
+                updateFavorites = {},
+                onClose = {},
+            )
         }
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("East", substring = true).performClick()
@@ -358,22 +353,20 @@ class SaveFavoritesFlowTest {
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
 
-        val koin = testKoinApplication(TestData)
+        loadKoinMocks(TestData)
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                SaveFavoritesFlow(
-                    lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
-                    stop = busStop,
-                    directions = listOf(direction0),
-                    selectedDirection = 0,
-                    context = EditFavoritesContext.Favorites,
-                    toastViewModel = toastVM,
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    onClose = {},
-                )
-            }
+            SaveFavoritesFlow(
+                lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
+                stop = busStop,
+                directions = listOf(direction0),
+                selectedDirection = 0,
+                context = EditFavoritesContext.Favorites,
+                toastViewModel = toastVM,
+                isFavorite = { false },
+                updateFavorites = {},
+                onClose = {},
+            )
         }
 
         composeTestRule.waitUntil {
