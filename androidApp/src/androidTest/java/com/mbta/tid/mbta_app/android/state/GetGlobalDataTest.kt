@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -43,11 +44,11 @@ class GetGlobalDataTest {
         var actualData: GlobalResponse? = null
         composeTestRule.setContent { actualData = getGlobalData("errorKey", globalRepo) }
         // Data should be set immediately from the repo, even before getGlobalData has completed
-        composeTestRule.waitUntil { globalData == actualData }
+        composeTestRule.waitUntilDefaultTimeout { globalData == actualData }
         assertEquals(globalData, actualData)
 
         requestSync.send(Unit)
-        composeTestRule.waitUntil { globalData == actualData }
+        composeTestRule.waitUntilDefaultTimeout { globalData == actualData }
         assertEquals(globalData, actualData)
     }
 
@@ -59,7 +60,7 @@ class GetGlobalDataTest {
 
         composeTestRule.setContent { getGlobalData("errorKey", globalRepo, errorRepo) }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             when (val errorState = errorRepo.state.value) {
                 is ErrorBannerState.DataError ->
                     errorState.messages == setOf("errorKey.getGlobalData")

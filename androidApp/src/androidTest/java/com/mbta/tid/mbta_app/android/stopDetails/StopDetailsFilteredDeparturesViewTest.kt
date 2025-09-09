@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
@@ -250,7 +251,7 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("1 min").assertExists().performClick()
-        composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
+        composeTestRule.waitUntilDefaultTimeout { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
     }
