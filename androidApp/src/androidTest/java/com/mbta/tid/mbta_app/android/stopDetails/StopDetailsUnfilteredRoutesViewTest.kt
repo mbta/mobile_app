@@ -5,7 +5,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -25,7 +25,6 @@ import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 
 class StopDetailsUnfilteredRoutesViewTest {
@@ -129,27 +128,25 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
-        val koin = testKoinApplication {
+        loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            KoinContext(koin.koin) {
-                StopDetailsUnfilteredRoutesView(
-                    stop = stop,
-                    routeCardData = routeCardData,
-                    servedRoutes = emptyList(),
-                    errorBannerViewModel = koinInject(),
-                    now = now,
-                    globalData = globalResponse,
-                    isFavorite = { false },
-                    onClose = {},
-                    onTapRoutePill = {},
-                    updateStopFilter = filterState::value::set,
-                    openModal = {},
-                )
-            }
+            StopDetailsUnfilteredRoutesView(
+                stop = stop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = koinInject(),
+                now = now,
+                globalData = globalResponse,
+                isFavorite = { false },
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
         }
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
@@ -174,27 +171,25 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
-        val koin = testKoinApplication {
+        loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            KoinContext(koin.koin) {
-                StopDetailsUnfilteredRoutesView(
-                    stop = inaccessibleStop,
-                    routeCardData = routeCardData,
-                    servedRoutes = emptyList(),
-                    errorBannerViewModel = koinInject(),
-                    now = now,
-                    globalData = globalResponse,
-                    isFavorite = { false },
-                    onClose = {},
-                    onTapRoutePill = {},
-                    updateStopFilter = filterState::value::set,
-                    openModal = {},
-                )
-            }
+            StopDetailsUnfilteredRoutesView(
+                stop = inaccessibleStop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = koinInject(),
+                now = now,
+                globalData = globalResponse,
+                isFavorite = { false },
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
@@ -226,27 +221,25 @@ class StopDetailsUnfilteredRoutesViewTest {
                 )
             )
 
-        val koin = testKoinApplication {
+        loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
 
-            KoinContext(koin.koin) {
-                StopDetailsUnfilteredRoutesView(
-                    stop = stop,
-                    routeCardData = routeCardData,
-                    servedRoutes = emptyList(),
-                    errorBannerViewModel = koinInject(),
-                    now = now,
-                    globalData = globalResponse,
-                    isFavorite = { false },
-                    onClose = {},
-                    onTapRoutePill = {},
-                    updateStopFilter = filterState::value::set,
-                    openModal = {},
-                )
-            }
+            StopDetailsUnfilteredRoutesView(
+                stop = stop,
+                routeCardData = routeCardData,
+                servedRoutes = emptyList(),
+                errorBannerViewModel = koinInject(),
+                now = now,
+                globalData = globalResponse,
+                isFavorite = { false },
+                onClose = {},
+                onTapRoutePill = {},
+                updateStopFilter = filterState::value::set,
+                openModal = {},
+            )
         }
 
         composeTestRule.onNodeWithText("Elevator alert").assertIsDisplayed()

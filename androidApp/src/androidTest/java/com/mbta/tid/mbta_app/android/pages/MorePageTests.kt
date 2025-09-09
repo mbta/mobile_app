@@ -8,7 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Dependency
@@ -18,7 +18,6 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 class MorePageTests : KoinTest {
@@ -38,7 +37,7 @@ class MorePageTests : KoinTest {
     fun testSettings() {
         var hideMapValue = false
 
-        val koinApplication = testKoinApplication {
+        loadKoinMocks {
             settings =
                 MockSettingsRepository(
                     onSaveSettings = { settings ->
@@ -48,9 +47,7 @@ class MorePageTests : KoinTest {
                     }
                 )
         }
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
-        }
+        composeTestRule.setContent { MorePage(bottomBar = {}) }
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Settings"))
@@ -66,10 +63,8 @@ class MorePageTests : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testLinksExist() {
-        val koinApplication = testKoinApplication()
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
-        }
+        loadKoinMocks()
+        composeTestRule.setContent { MorePage(bottomBar = {}) }
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Send App Feedback"))
@@ -93,10 +88,8 @@ class MorePageTests : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testSoftwareLicenses() {
-        val koinApplication = testKoinApplication()
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { MorePage(bottomBar = {}) }
-        }
+        loadKoinMocks()
+        composeTestRule.setContent { MorePage(bottomBar = {}) }
 
         val dependencies = Dependency.getAllDependencies()
         val dependency = dependencies.first()

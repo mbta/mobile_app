@@ -8,8 +8,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
-import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
@@ -33,9 +33,9 @@ import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 class EditFavoritesPageTest : KoinTest {
@@ -246,9 +246,12 @@ class EditFavoritesPageTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    val koinApplication = testKoinApplication(builder)
-
     @get:Rule val composeTestRule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        loadKoinMocks(builder)
+    }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -266,9 +269,7 @@ class EditFavoritesPageTest : KoinTest {
                 )
             )
 
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
-        }
+        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
@@ -287,9 +288,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(false, emptySet(), false, emptyList(), emptyList(), null)
             )
 
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
-        }
+        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("No stops added"))
@@ -332,9 +331,7 @@ class EditFavoritesPageTest : KoinTest {
             updatedWith = update
         }
 
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) { EditFavoritesPage(globalResponse, viewModel) {} }
-        }
+        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
@@ -406,11 +403,7 @@ class EditFavoritesPageTest : KoinTest {
         toastVM.onHideToast = { displayedToast = null }
         toastVM.onShowToast = { displayedToast = it }
 
-        composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                EditFavoritesPage(globalResponse, viewModel, toastVM) {}
-            }
-        }
+        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel, toastVM) {} }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
