@@ -272,6 +272,7 @@ fun StopDetailsFilteredDeparturesView(
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,
                 now = now,
+                isTripDetailsPage = false,
                 modifier = Modifier.padding(horizontal = 10.dp),
             )
         }

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +50,7 @@ fun RoutePill(
     isActive: Boolean = true,
     contentDescription: RoutePillSpec.ContentDescription? = null,
     modifier: Modifier = Modifier,
+    border: BorderStroke? = null,
 ) {
     RoutePill(
         route,
@@ -56,6 +58,7 @@ fun RoutePill(
         isActive,
         RoutePillSpec(route, line, type, height, contentDescription = contentDescription),
         modifier,
+        border,
     )
 }
 
@@ -66,6 +69,7 @@ fun RoutePill(
     isActive: Boolean = true,
     spec: RoutePillSpec,
     modifier: Modifier = Modifier,
+    border: BorderStroke? = null,
 ) {
     val textColor = Color.fromHex(spec.textColor)
     val routeColor = Color.fromHex(spec.routeColor)
@@ -105,6 +109,7 @@ fun RoutePill(
     fun Modifier.withColor() =
         if (isActive) {
             background(routeColor, shape)
+                .then(if (border != null) Modifier.border(border, shape) else Modifier)
         } else {
             border(1.dp, routeColor, shape).padding(1.dp)
         }
