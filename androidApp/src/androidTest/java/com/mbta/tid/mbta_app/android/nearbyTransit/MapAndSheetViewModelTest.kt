@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
@@ -64,11 +65,11 @@ class MapAndSheetViewModelTest {
             }
         }
 
-        composeTestRule.waitUntil { nearbyVM.nearbyStopIds != null }
+        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyStopIds != null }
         assertEquals(response1, nearbyVM.nearbyStopIds)
 
         position = position2
-        composeTestRule.waitUntil { nearbyVM.nearbyStopIds != response1 }
+        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyStopIds != response1 }
         assertEquals(response2, nearbyVM.nearbyStopIds)
     }
 }

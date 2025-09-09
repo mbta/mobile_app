@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
@@ -55,7 +56,7 @@ class MorePageTests : KoinTest {
         composeTestRule.onNodeWithText("Map Display").assertIsOn().performClick()
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { hideMapValue }
+        composeTestRule.waitUntilDefaultTimeout { hideMapValue }
         assertTrue { hideMapValue }
     }
 

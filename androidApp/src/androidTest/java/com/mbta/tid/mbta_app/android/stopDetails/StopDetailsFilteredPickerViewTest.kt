@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
@@ -229,7 +230,7 @@ class StopDetailsFilteredPickerViewTest {
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists().performClick()
-        composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
+        composeTestRule.waitUntilDefaultTimeout { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
     }
@@ -380,7 +381,7 @@ class StopDetailsFilteredPickerViewTest {
 
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             updatedFavorites ==
                 Pair(
                     mapOf(
@@ -444,7 +445,7 @@ class StopDetailsFilteredPickerViewTest {
 
         composeTestRule.onNodeWithText("Add").assertDoesNotExist()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             updatedFavorites == Pair(mapOf(RouteStopDirection(route.id, stop.id, 0) to false), 0)
         }
     }

@@ -1,11 +1,10 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
@@ -56,7 +55,7 @@ class StopDetailsPageTest : KoinTest {
             )
         }
 
-        composeTestRule.waitUntil { activeSet && alertsSet && filtersSet && nowSet }
+        composeTestRule.waitUntilDefaultTimeout { activeSet && alertsSet && filtersSet && nowSet }
 
         assertTrue(activeSet && alertsSet && filtersSet && nowSet)
     }

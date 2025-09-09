@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.LocationType
@@ -347,7 +348,7 @@ class EditFavoritesPageTest : KoinTest {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
 
-        composeTestRule.waitUntil { update == updatedWith }
+        composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
         // Should be deleted
         composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
@@ -415,7 +416,7 @@ class EditFavoritesPageTest : KoinTest {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
 
-        composeTestRule.waitUntil { update == updatedWith }
+        composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
 
         composeTestRule.onNodeWithText("Sample Route").assertIsNotDisplayed()
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
@@ -432,7 +433,7 @@ class EditFavoritesPageTest : KoinTest {
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0)
         }
-        composeTestRule.waitUntil { undo == updatedWith }
+        composeTestRule.waitUntilDefaultTimeout { undo == updatedWith }
 
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.viewModel
 
 import app.cash.turbine.test
+import app.cash.turbine.turbineScope
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -27,7 +28,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -198,19 +198,18 @@ class StopDetailsViewModelTest : KoinTest {
         val viewModel: StopDetailsViewModel = get()
         val filters =
             StopDetailsPageFilters("place-gover", StopDetailsFilter("line-Green", 0, false), null)
-        viewModel.setFilters(filters)
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(EasternTimeInstant.now())
 
-        launch {
-            testViewModelFlow(viewModel).test {
-                awaitItemSatisfying { it.routeData is StopDetailsViewModel.RouteData.Filtered }
+        turbineScope {
+            val routeCardTurbine = testViewModelFlow(routeCardVM).testIn(backgroundScope)
+            val modelTurbine = testViewModelFlow(viewModel).testIn(backgroundScope)
+            viewModel.setFilters(filters)
+            viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+            viewModel.setNow(EasternTimeInstant.now())
+            modelTurbine.awaitItemSatisfying {
+                it.routeData is StopDetailsViewModel.RouteData.Filtered
             }
+            routeCardTurbine.awaitItemSatisfying { it.data != null }
         }
-
-        launch { testViewModelFlow(routeCardVM).test { awaitItemSatisfying { it.data != null } } }
-
-        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -293,23 +292,19 @@ class StopDetailsViewModelTest : KoinTest {
         val viewModel: StopDetailsViewModel = get()
         val filters = StopDetailsPageFilters("2595", null, null)
 
-        viewModel.setFilters(filters)
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(EasternTimeInstant.now())
-        viewModel.setActive(active = true, wasSentToBackground = false)
+        turbineScope {
+            val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
+            val modelTurbine = testViewModelFlow(viewModel).testIn(backgroundScope)
+            viewModel.setFilters(filters)
+            viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+            viewModel.setNow(EasternTimeInstant.now())
+            viewModel.setActive(active = true, wasSentToBackground = false)
 
-        launch {
-            testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
-        }
-
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.stopFilter == StopDetailsFilter("87", 1, true) }
+            modelTurbine.awaitItemSatisfying { it.routeData != null }
+            filterUpdatesTurbine.awaitItemSatisfying {
+                it?.stopFilter == StopDetailsFilter("87", 1, true)
             }
         }
-
-        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -342,23 +337,18 @@ class StopDetailsViewModelTest : KoinTest {
         val viewModel: StopDetailsViewModel = get()
         val filters = StopDetailsPageFilters(stop.id, null, null)
 
-        viewModel.setActive(active = true, wasSentToBackground = false)
-        viewModel.setFilters(filters)
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(now)
-
-        launch {
-            testViewModelFlow(viewModel).test { awaitItemSatisfying { it.routeData != null } }
-        }
-
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false) }
+        turbineScope {
+            val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
+            val modelTurbine = testViewModelFlow(viewModel).testIn(backgroundScope)
+            viewModel.setActive(active = true, wasSentToBackground = false)
+            viewModel.setFilters(filters)
+            viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+            viewModel.setNow(now)
+            modelTurbine.awaitItemSatisfying { it.routeData != null }
+            filterUpdatesTurbine.awaitItemSatisfying {
+                it?.tripFilter == TripDetailsFilter(trip.id, null, 0, false)
             }
         }
-
-        testScheduler.advanceUntilIdle()
     }
 
     @Test
@@ -405,34 +395,22 @@ class StopDetailsViewModelTest : KoinTest {
         val initialFilters =
             StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 0, false), null)
 
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(now)
-        viewModel.setActive(active = true, wasSentToBackground = false)
+        turbineScope {
+            val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
+            val modelTurbine = testViewModelFlow(viewModel).testIn(backgroundScope)
+            viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+            viewModel.setNow(now)
+            viewModel.setActive(active = true, wasSentToBackground = false)
+            viewModel.setFilters(initialFilters)
 
-        launch {
-            viewModel.filterUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
-                awaitItem()
-                awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
-            }
+            modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
+            filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
+            viewModel.setFilters(
+                StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 1, false), null)
+            )
+            modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
+
+            filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip1.id }
         }
-
-        launch {
-            testViewModelFlow(viewModel).test {
-                viewModel.setFilters(initialFilters)
-                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
-                viewModel.setFilters(
-                    StopDetailsPageFilters(
-                        "place-rugg",
-                        StopDetailsFilter("Orange", 1, false),
-                        null,
-                    )
-                )
-                awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
-            }
-        }
-
-        testScheduler.advanceUntilIdle()
     }
 }

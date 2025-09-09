@@ -372,10 +372,10 @@ class MapAndSheetPageTest : KoinTest {
             hasContentDescription("Loading...", substring = true)
         )
 
-        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 1 }
         mockConfigManager.mutableLastErrorTimestamp.value = EasternTimeInstant.now()
 
-        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 2 }
     }
 
     @Test

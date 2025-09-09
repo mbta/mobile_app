@@ -12,6 +12,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -202,7 +203,7 @@ class RouteStopListViewTest {
             )
         }
 
-        composeTestRule.waitUntil { lastSelectedRoute != null }
+        composeTestRule.waitUntilDefaultTimeout { lastSelectedRoute != null }
         assertEquals(route2.id, lastSelectedRoute)
 
         composeTestRule.onNodeWithText(route3.shortName).performClick()

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.state
 
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -56,7 +57,9 @@ class GetRailRouteShapesTest {
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { mapFriendlyRouteResponse == actualRailRouteShapes }
+        composeTestRule.waitUntilDefaultTimeout {
+            mapFriendlyRouteResponse == actualRailRouteShapes
+        }
         assertEquals(mapFriendlyRouteResponse, actualRailRouteShapes)
     }
 }
