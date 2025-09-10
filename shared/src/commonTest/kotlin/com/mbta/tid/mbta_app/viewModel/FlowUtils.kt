@@ -2,15 +2,9 @@ package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.MonotonicFrameClock
 import app.cash.turbine.ReceiveTurbine
-import kotlin.test.fail
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.TestCoroutineScheduler
 import kotlinx.coroutines.test.TestScope
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeoutOrNull
 
 /** Gets a state flow from a [MoleculeViewModel] in the context of a [TestScope] from `runTest`. */
 internal fun <Event, Model> TestScope.testViewModelFlow(
@@ -25,21 +19,11 @@ private class TestFrameClock(private val scheduler: TestCoroutineScheduler) : Mo
     }
 }
 
-suspend fun <T> ReceiveTurbine<T>.awaitItemSatisfying(
-    timeout: Duration = 2.seconds,
-    predicate: (T) -> Boolean,
-): T {
-    val itemsSkipped = mutableListOf<T>()
-    while (true) {
-        val item: T =
-            withContext(Dispatchers.Default.limitedParallelism(1)) {
-                withTimeoutOrNull(timeout) { awaitItem() }
-            } ?: break
-        if (predicate(item)) {
-            return item
-        } else {
-            itemsSkipped.add(item)
-        }
+suspend fun <T> ReceiveTurbine<T>.awaitItemSatisfying(predicate: (T) -> Boolean): T {
+    val item: T = awaitItem()
+    if (predicate(item)) {
+        return item
+    } else {
+        return awaitItemSatisfying(predicate)
     }
-    fail("Did not receive satisfying item after ${timeout}, skipped over $itemsSkipped")
 }

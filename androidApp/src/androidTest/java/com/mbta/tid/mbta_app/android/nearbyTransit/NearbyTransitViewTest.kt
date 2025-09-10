@@ -8,7 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
@@ -27,7 +27,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.compose.koinInject
 import org.koin.test.KoinTest
 
@@ -162,8 +161,12 @@ class NearbyTransitViewTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    val koinApplication =
-        testKoinApplication(
+    @get:Rule val composeTestRule = createComposeRule()
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testNearbyTransitViewDisplaysCorrectly() {
+        loadKoinMocks(
             builder,
             repositoryOverrides = {
                 nearby =
@@ -174,24 +177,17 @@ class NearbyTransitViewTest : KoinTest {
             },
         )
 
-    @get:Rule val composeTestRule = createComposeRule()
-
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    fun testNearbyTransitViewDisplaysCorrectly() {
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = koinInject(),
-                )
-            }
+            NearbyTransitView(
+                alertData = AlertsStreamDataResponse(emptyMap()),
+                globalResponse = globalResponse,
+                targetLocation = Position(0.0, 0.0),
+                setLastLocation = {},
+                setIsTargeting = {},
+                onOpenStopDetails = { _, _ -> },
+                noNearbyStopsView = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
@@ -211,45 +207,42 @@ class NearbyTransitViewTest : KoinTest {
     fun testRouteCardAnalyticsPinnedWithEnhanced() {
         var analyticsLoggedProps: Map<String, String> = mapOf()
 
-        val koinApplication =
-            testKoinApplication(
-                builder,
-                analytics = MockAnalytics({ _event, props -> analyticsLoggedProps = props }),
-                repositoryOverrides = {
-                    nearby =
-                        MockNearbyRepository(
-                            stopIds = listOf(sampleStop.id, greenLineStop.id),
-                            response = NearbyResponse(builder),
-                        )
-                    settings = MockSettingsRepository(settings = mapOf())
-                    favorites =
-                        MockFavoritesRepository(
-                            Favorites(
-                                setOf(
-                                    RouteStopDirection(
-                                        route.id,
-                                        sampleStop.id,
-                                        routePatternOne.directionId,
-                                    )
+        loadKoinMocks(
+            builder,
+            analytics = MockAnalytics({ _event, props -> analyticsLoggedProps = props }),
+            repositoryOverrides = {
+                nearby =
+                    MockNearbyRepository(
+                        stopIds = listOf(sampleStop.id, greenLineStop.id),
+                        response = NearbyResponse(builder),
+                    )
+                settings = MockSettingsRepository(settings = mapOf())
+                favorites =
+                    MockFavoritesRepository(
+                        Favorites(
+                            setOf(
+                                RouteStopDirection(
+                                    route.id,
+                                    sampleStop.id,
+                                    routePatternOne.directionId,
                                 )
                             )
                         )
-                },
-            )
+                    )
+            },
+        )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = {},
-                    errorBannerViewModel = koinInject(),
-                )
-            }
+            NearbyTransitView(
+                alertData = AlertsStreamDataResponse(emptyMap()),
+                globalResponse = globalResponse,
+                targetLocation = Position(0.0, 0.0),
+                setLastLocation = {},
+                setIsTargeting = {},
+                onOpenStopDetails = { _, _ -> },
+                noNearbyStopsView = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
@@ -262,20 +255,18 @@ class NearbyTransitViewTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testNearbyTransitViewNoNearbyStops() {
-        val emptyNearbyKoinApplication = testKoinApplication()
+        loadKoinMocks()
         composeTestRule.setContent {
-            KoinContext(emptyNearbyKoinApplication.koin) {
-                NearbyTransitView(
-                    alertData = AlertsStreamDataResponse(emptyMap()),
-                    globalResponse = globalResponse,
-                    targetLocation = Position(0.0, 0.0),
-                    setLastLocation = {},
-                    setIsTargeting = {},
-                    onOpenStopDetails = { _, _ -> },
-                    noNearbyStopsView = { Text("This would be the no nearby stops view") },
-                    errorBannerViewModel = koinInject(),
-                )
-            }
+            NearbyTransitView(
+                alertData = AlertsStreamDataResponse(emptyMap()),
+                globalResponse = globalResponse,
+                targetLocation = Position(0.0, 0.0),
+                setLastLocation = {},
+                setIsTargeting = {},
+                onOpenStopDetails = { _, _ -> },
+                noNearbyStopsView = { Text("This would be the no nearby stops view") },
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()

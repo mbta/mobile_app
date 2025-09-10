@@ -10,7 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.MapStopRoute
@@ -29,7 +29,6 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 class TripStopRowTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -269,24 +268,22 @@ class TripStopRowTest {
                 elevatorAlerts = elevatorAlerts,
             )
 
-        val koin = testKoinApplication {
+        loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
 
         var testEntry by mutableStateOf(entry(inaccessibleStop))
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                TripStopRow(
-                    testEntry,
-                    trip,
-                    now,
-                    onTapLink = {},
-                    onOpenAlertDetails = {},
-                    route,
-                    TripRouteAccents(route),
-                    alertSummaries = emptyMap(),
-                )
-            }
+            TripStopRow(
+                testEntry,
+                trip,
+                now,
+                onTapLink = {},
+                onOpenAlertDetails = {},
+                route,
+                TripRouteAccents(route),
+                alertSummaries = emptyMap(),
+            )
         }
 
         composeTestRule

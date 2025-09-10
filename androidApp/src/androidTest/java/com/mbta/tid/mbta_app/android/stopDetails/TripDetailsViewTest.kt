@@ -7,7 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -31,9 +31,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 @OptIn(ExperimentalTestApi::class)
 class TripDetailsViewTest {
@@ -75,7 +75,10 @@ class TripDetailsViewTest {
             vehicle,
         )
 
-    val koinApplication = testKoinApplication(objects)
+    @Before
+    fun setUp() {
+        loadKoinMocks(objects)
+    }
 
     @Test
     fun testOpensDownstreamStop() {
@@ -100,19 +103,17 @@ class TripDetailsViewTest {
         val viewModel = MockTripDetailsViewModel(tripVMState)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                TripDetailsView(
-                    tripFilter,
-                    allAlerts = alertData,
-                    alertSummaries = emptyMap(),
-                    onOpenAlertDetails = {},
-                    openSheetRoute = openedSheetRoutes::add,
-                    openModal = {},
-                    now,
-                    tripDetailsVM = viewModel,
-                    analytics = analytics,
-                )
-            }
+            TripDetailsView(
+                tripFilter,
+                allAlerts = alertData,
+                alertSummaries = emptyMap(),
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -179,19 +180,17 @@ class TripDetailsViewTest {
         val viewModel = MockTripDetailsViewModel(tripVMState)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                TripDetailsView(
-                    tripFilter,
-                    allAlerts = alerts,
-                    alertSummaries = emptyMap(),
-                    onOpenAlertDetails = {},
-                    openSheetRoute = openedSheetRoutes::add,
-                    openModal = {},
-                    now,
-                    tripDetailsVM = viewModel,
-                    analytics = analytics,
-                )
-            }
+            TripDetailsView(
+                tripFilter,
+                allAlerts = alerts,
+                alertSummaries = emptyMap(),
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -201,31 +200,27 @@ class TripDetailsViewTest {
 
     @Test
     fun testFollowButtonWhenTrackThisTrip() {
-
-        val koinApplication =
-            testKoinApplication(objects) {
-                settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-            }
+        loadKoinMocks(objects) {
+            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
+        }
 
         var onFollowCalled = false
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                TripDetails(
-                    trip = trip,
-                    headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                    onHeaderTap = null,
-                    onOpenAlertDetails = {},
-                    onFollowTrip = { onFollowCalled = true },
-                    onTapStop = {},
-                    route = route,
-                    tripFilter = tripFilter,
-                    stopList = TripDetailsStopList(trip, emptyList()),
-                    now = now,
-                    alertSummaries = emptyMap(),
-                    globalResponse = GlobalResponse(objects),
-                )
-            }
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = { onFollowCalled = true },
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                alertSummaries = emptyMap(),
+                globalResponse = GlobalResponse(objects),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -236,29 +231,23 @@ class TripDetailsViewTest {
 
     @Test
     fun testNoFollowButtonByDefault() {
-
-        val koinApplication =
-            testKoinApplication(objects) {
-                settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to false))
-            }
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to false)) }
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                TripDetails(
-                    trip = trip,
-                    headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                    onHeaderTap = null,
-                    onOpenAlertDetails = {},
-                    onFollowTrip = {},
-                    onTapStop = {},
-                    route = route,
-                    tripFilter = tripFilter,
-                    stopList = TripDetailsStopList(trip, emptyList()),
-                    now = now,
-                    alertSummaries = emptyMap(),
-                    globalResponse = GlobalResponse(objects),
-                )
-            }
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = {},
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                alertSummaries = emptyMap(),
+                globalResponse = GlobalResponse(objects),
+            )
         }
 
         composeTestRule.waitForIdle()

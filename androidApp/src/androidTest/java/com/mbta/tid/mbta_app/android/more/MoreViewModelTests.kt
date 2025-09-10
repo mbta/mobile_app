@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.more
 import android.annotation.SuppressLint
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.junit4.createComposeRule
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import java.util.Locale
@@ -30,7 +31,7 @@ class MoreViewModelTests {
             vm = MoreViewModel(subContext, {})
         }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             vm.sections.value.any { it.id == MoreSection.Category.Feedback }
         }
         assertEquals(

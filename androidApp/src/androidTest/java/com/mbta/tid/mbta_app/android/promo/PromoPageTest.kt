@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.promo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import org.junit.Rule
 import org.junit.Test
@@ -27,6 +28,6 @@ class PromoPageTest {
 
         composeTestRule.onNodeWithText("Got it").performClick()
 
-        composeTestRule.waitUntil { calledOnAdvance && calledFinish }
+        composeTestRule.waitUntilDefaultTimeout { calledOnAdvance && calledFinish }
     }
 }

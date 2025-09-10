@@ -14,8 +14,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.requestFocus
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilAtLeastOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
@@ -33,7 +34,6 @@ import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 @ExperimentalTestApi
@@ -55,30 +55,26 @@ class SearchBarOverlayTest : KoinTest {
     fun testSearchBarOverlayBehavesCorrectly() {
         val mockVisitHistoryRepository = MockVisitHistoryRepository()
 
-        val koinApplication =
-            testKoinApplication(builder) {
-                visitHistory = mockVisitHistoryRepository
-                searchResults =
-                    MockSearchResultRepository(
-                        stopResults =
-                            listOf(
-                                StopResult(
-                                    id = searchedStop.id,
-                                    rank = 2,
-                                    name = searchedStop.name,
-                                    zone = "stopZone",
-                                    isStation = false,
-                                    routes =
-                                        listOf(
-                                            StopResultRoute(
-                                                type = RouteType.BUS,
-                                                icon = "routeIcon",
-                                            )
-                                        ),
-                                )
+        loadKoinMocks(builder) {
+            visitHistory = mockVisitHistoryRepository
+            searchResults =
+                MockSearchResultRepository(
+                    stopResults =
+                        listOf(
+                            StopResult(
+                                id = searchedStop.id,
+                                rank = 2,
+                                name = searchedStop.name,
+                                zone = "stopZone",
+                                isStation = false,
+                                routes =
+                                    listOf(
+                                        StopResultRoute(type = RouteType.BUS, icon = "routeIcon")
+                                    ),
                             )
-                    )
-            }
+                        )
+                )
+        }
 
         val navigated = mutableStateOf(false)
         val expanded = mutableStateOf(false)
@@ -86,18 +82,16 @@ class SearchBarOverlayTest : KoinTest {
         val currentNavEntry = mutableStateOf<SheetRoutes?>(null)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                val focusRequester = remember { FocusRequester() }
-                SearchBarOverlay(
-                    expanded.value,
-                    currentNavEntry.value?.showSearchBar ?: true,
-                    { expanded.value = it },
-                    onStopNavigation = { navigated.value = true },
-                    onRouteNavigation = {},
-                    inputFieldFocusRequester = focusRequester,
-                ) {
-                    Text("Content")
-                }
+            val focusRequester = remember { FocusRequester() }
+            SearchBarOverlay(
+                expanded.value,
+                currentNavEntry.value?.showSearchBar ?: true,
+                { expanded.value = it },
+                onStopNavigation = { navigated.value = true },
+                onRouteNavigation = {},
+                inputFieldFocusRequester = focusRequester,
+            ) {
+                Text("Content")
             }
         }
 
@@ -128,30 +122,26 @@ class SearchBarOverlayTest : KoinTest {
         searchNode.performTextInput("sto")
         composeTestRule.waitUntilAtLeastOneExistsDefaultTimeout(hasText(searchedStop.name))
         composeTestRule.onNodeWithText(searchedStop.name).performClick()
-        composeTestRule.waitUntil { navigated.value }
+        composeTestRule.waitUntilDefaultTimeout { navigated.value }
     }
 
     @Test
     fun testHidesRoutesByDefault() {
-        val koinApplication =
-            testKoinApplication(builder) {
-                searchResults =
-                    MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
-            }
+        loadKoinMocks(builder) {
+            searchResults = MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
+        }
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                val focusRequester = remember { FocusRequester() }
-                SearchBarOverlay(
-                    expanded = true,
-                    showSearchBar = true,
-                    onExpandedChange = {},
-                    onStopNavigation = {},
-                    onRouteNavigation = {},
-                    inputFieldFocusRequester = focusRequester,
-                    content = {},
-                )
-            }
+            val focusRequester = remember { FocusRequester() }
+            SearchBarOverlay(
+                expanded = true,
+                showSearchBar = true,
+                onExpandedChange = {},
+                onStopNavigation = {},
+                onRouteNavigation = {},
+                inputFieldFocusRequester = focusRequester,
+                content = {},
+            )
         }
 
         val searchNode = composeTestRule.onNode(hasSetTextAction())
@@ -166,28 +156,24 @@ class SearchBarOverlayTest : KoinTest {
 
     @Test
     fun testShowsRoutesWhenEnabled() {
-        val koinApplication =
-            testKoinApplication(builder) {
-                searchResults =
-                    MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
-                settings = MockSettingsRepository(mapOf(Settings.SearchRouteResults to true))
-            }
+        loadKoinMocks(builder) {
+            searchResults = MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
+            settings = MockSettingsRepository(mapOf(Settings.SearchRouteResults to true))
+        }
 
         var navigated = false
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                val focusRequester = remember { FocusRequester() }
-                SearchBarOverlay(
-                    expanded = true,
-                    showSearchBar = true,
-                    onExpandedChange = {},
-                    onStopNavigation = {},
-                    onRouteNavigation = { navigated = true },
-                    inputFieldFocusRequester = focusRequester,
-                    content = {},
-                )
-            }
+            val focusRequester = remember { FocusRequester() }
+            SearchBarOverlay(
+                expanded = true,
+                showSearchBar = true,
+                onExpandedChange = {},
+                onStopNavigation = {},
+                onRouteNavigation = { navigated = true },
+                inputFieldFocusRequester = focusRequester,
+                content = {},
+            )
         }
 
         val searchNode = composeTestRule.onNode(hasSetTextAction())
@@ -200,33 +186,29 @@ class SearchBarOverlayTest : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Routes"))
         composeTestRule.onNodeWithText("3½").assertIsDisplayed()
         composeTestRule.onNodeWithText("Here - There").assertIsDisplayed().performClick()
-        composeTestRule.waitUntil { navigated }
+        composeTestRule.waitUntilDefaultTimeout { navigated }
     }
 
     @Test
     fun testOnExpandedChangeNotCalledOnFirstLoad() {
-        val koinApplication =
-            testKoinApplication(builder) {
-                searchResults =
-                    MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
-                settings = MockSettingsRepository(mapOf(Settings.SearchRouteResults to true))
-            }
+        loadKoinMocks(builder) {
+            searchResults = MockSearchResultRepository(routeResults = listOf(RouteResult(route)))
+            settings = MockSettingsRepository(mapOf(Settings.SearchRouteResults to true))
+        }
 
         var onExpandedCalledWith: Boolean? = null
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                val focusRequester = remember { FocusRequester() }
-                SearchBarOverlay(
-                    expanded = false,
-                    showSearchBar = true,
-                    onExpandedChange = { expandedVal -> onExpandedCalledWith = expandedVal },
-                    onStopNavigation = {},
-                    onRouteNavigation = {},
-                    inputFieldFocusRequester = focusRequester,
-                    content = {},
-                )
-            }
+            val focusRequester = remember { FocusRequester() }
+            SearchBarOverlay(
+                expanded = false,
+                showSearchBar = true,
+                onExpandedChange = { expandedVal -> onExpandedCalledWith = expandedVal },
+                onStopNavigation = {},
+                onRouteNavigation = {},
+                inputFieldFocusRequester = focusRequester,
+                content = {},
+            )
         }
 
         val searchNode = composeTestRule.onNode(hasSetTextAction())
