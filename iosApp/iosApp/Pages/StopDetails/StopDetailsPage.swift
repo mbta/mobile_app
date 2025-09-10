@@ -27,7 +27,7 @@ struct StopDetailsPage: View {
     @State var loadingFavorites = true
     @State var now = Date.now
     // Used only for VO notifications, VM state data is used for displaying other stop details content
-    @State var routeCardData: [RouteCardData]?
+    @State var routeCardDataState: RouteCardDataViewModel.State?
     @State var vmState: StopDetailsViewModel.State?
 
     var errorBannerVM: IErrorBannerViewModel
@@ -86,11 +86,7 @@ struct StopDetailsPage: View {
             .favorites($favorites, awaitingUpdate: $loadingFavorites)
             .global($global, errorKey: "StopDetailsPage")
             .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
-            .task {
-                for await routeCardDataState in routeCardDataVM.models {
-                    routeCardData = routeCardDataState.data
-                }
-            }
+            .manageVM(routeCardDataVM, $routeCardDataState)
             .task {
                 for await filterUpdate in stopDetailsVM.filterUpdates {
                     if let filterUpdate {
@@ -112,7 +108,7 @@ struct StopDetailsPage: View {
 
     func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
         guard let context = StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
-            routeCardData: routeCardData,
+            routeCardData: routeCardDataState?.data,
             previousFilters: previousFilters
         ) else { return }
         let routeType = context.routeType.typeText(isOnly: true)

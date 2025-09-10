@@ -38,13 +38,18 @@ struct StopDetailsFilteredPickerView: View {
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
-        tripFilter: TripDetailsFilter? = nil,
+        tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        stopData: RouteCardData.RouteStopData, alertSummaries: [String: AlertSummary?],
-        favorite: Bool, now: Date,
-        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: iosApp.MapViewModel,
-        stopDetailsVM: IStopDetailsViewModel, viewportProvider _: ViewportProvider
+        stopData: RouteCardData.RouteStopData,
+        alertSummaries: [String: AlertSummary?],
+        favorite: Bool,
+        now: Date,
+        errorBannerVM: IErrorBannerViewModel,
+        nearbyVM: NearbyViewModel,
+        mapVM: iosApp.MapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
+        viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter

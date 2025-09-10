@@ -43,6 +43,13 @@ struct StopDetailsManageVMModifier: ViewModifier {
                 onInactive: { viewModel.setActive(active: false, wasSentToBackground: false) },
                 onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) },
             )
+            .onDisappear {
+                // Only set to inactive if the loaded filter matches the current value, this will be true
+                // when the page is closed, but not when the loading view disappears or the filter is changed
+                if let selectedFilters = vmState?.routeData?.filters, filters == selectedFilters {
+                    viewModel.setActive(active: false, wasSentToBackground: false)
+                }
+            }
     }
 }
 

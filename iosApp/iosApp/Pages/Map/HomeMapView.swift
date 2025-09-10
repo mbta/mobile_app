@@ -17,6 +17,7 @@ struct HomeMapView: View {
     @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var mapVM: iosApp.MapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
+    var routeCardDataVM: IRouteCardDataViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
@@ -29,6 +30,7 @@ struct HomeMapView: View {
     var stopRepository: IStopRepository
     @State var globalMapData: GlobalMapData?
     @State var stopMapData: StopMapResponse?
+    @State var routeCardDataState: RouteCardDataViewModel.State?
 
     @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
@@ -53,6 +55,7 @@ struct HomeMapView: View {
         contentVM: ContentViewModel,
         mapVM: iosApp.MapViewModel,
         nearbyVM: NearbyViewModel,
+        routeCardDataVM: IRouteCardDataViewModel = ViewModelDI().routeCardData,
         viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
@@ -66,6 +69,7 @@ struct HomeMapView: View {
         self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
+        self.routeCardDataVM = routeCardDataVM
         self.viewportProvider = viewportProvider
         self.errorBannerRepository = errorBannerRepository
         self.railRouteShapeRepository = railRouteShapeRepository
@@ -85,6 +89,7 @@ struct HomeMapView: View {
                 }
             }
             .global($mapVM.globalData, errorKey: "HomeMapView")
+            .manageVM(routeCardDataVM, $routeCardDataState)
             .task { loadRouteShapes() }
             .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
                 handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
@@ -123,9 +128,9 @@ struct HomeMapView: View {
             .onChange(of: nearbyVM.alerts) { _ in
                 handleGlobalMapDataChange(now: now)
             }
-            .onChange(of: nearbyVM.routeCardData) { _ in
+            .onChange(of: routeCardDataState?.data) { routeCardData in
                 if case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _) = lastNavEntry, let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
+                    updateStopDetailsLayers(stopMapData, filter, routeCardData)
                 }
             }
             .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in

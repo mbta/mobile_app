@@ -89,7 +89,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
-        tripFilter: TripDetailsFilter? = nil,
+        tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],

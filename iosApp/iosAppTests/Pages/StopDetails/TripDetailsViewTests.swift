@@ -38,7 +38,7 @@ final class TripDetailsViewTests: XCTestCase {
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
-        objects.prediction(schedule: schedule) { prediction in
+        let prediction = objects.prediction(schedule: schedule) { prediction in
             prediction.departureTime = now.plus(seconds: 5)
             prediction.vehicleId = vehicle.id
         }
@@ -48,41 +48,45 @@ final class TripDetailsViewTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            tripPredictionsRepository: MockTripPredictionsRepository(),
-            tripRepository: MockTripRepository(
-                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
-                tripResponse: .init(trip: trip)
-            ),
-            vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
-        )
-        stopDetailsVM.handleStopAppear(targetStop.id)
-        stopDetailsVM.stopData = .init(
+        let tripFilter = TripDetailsPageFilter(
+            tripId: trip.id,
+            vehicleId: vehicle.id,
+            routeId: route.id,
+            directionId: 0,
             stopId: targetStop.id,
-            schedules: .init(objects: objects),
-            predictionsByStop: .init(objects: objects),
-            predictionsLoaded: true
+            stopSequence: nil
         )
-        stopDetailsVM.tripData = TripData(
-            tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 0, selectionLock: false),
-            trip: trip,
-            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
-            tripPredictions: .init(objects: objects),
-            tripPredictionsLoaded: true,
-            vehicle: vehicle
-        )
+        let tripDetailsVM = MockTripDetailsViewModel(initialState: .init(
+            tripData: .init(
+                tripFilter: tripFilter,
+                trip: trip,
+                tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripPredictions: .init(objects: objects),
+                tripPredictionsLoaded: true,
+                vehicle: vehicle
+            ),
+            stopList: .init(trip: trip, stops: [.init(
+                stop: targetStop,
+                stopSequence: 0,
+                disruption: nil,
+                schedule: schedule,
+                prediction: prediction,
+                predictionStop: targetStop,
+                vehicle: vehicle,
+                routes: [route]
+            )]),
+            awaitingPredictionsAfterBackground: false
+        ))
 
         var sut = TripDetailsView(
-            tripFilter: stopDetailsVM.tripData?.tripFilter,
-            stopId: targetStop.id,
+            tripFilter: tripFilter,
             now: now,
+            alertSummaries: [:],
+            onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            onOpenAlertDetails: { _ in }
+            tripDetailsVM: tripDetailsVM,
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -104,6 +108,7 @@ final class TripDetailsViewTests: XCTestCase {
         let targetStop = objects.stop { _ in }
         let trip = objects.trip(routePattern: pattern) { trip in
             trip.stopIds = [firstStop.id, targetStop.id]
+            trip.routeId = route.id
         }
 
         let schedule = objects.schedule { schedule in
@@ -117,44 +122,59 @@ final class TripDetailsViewTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .companion.empty),
-            tripPredictionsRepository: MockTripPredictionsRepository(),
-            tripRepository: MockTripRepository(
-                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
-                tripResponse: .init(trip: trip)
-            )
-        )
-
-        stopDetailsVM.stopData = .init(
+        let tripFilter = TripDetailsPageFilter(
+            tripId: trip.id,
+            vehicleId: nil,
+            routeId: route.id,
+            directionId: 0,
             stopId: targetStop.id,
-            schedules: .init(objects: objects),
-            predictionsByStop: .init(objects: objects),
-            predictionsLoaded: true
+            stopSequence: nil
         )
-        stopDetailsVM.tripData = TripData(
-            tripFilter: .init(tripId: trip.id, vehicleId: nil, stopSequence: 0, selectionLock: false),
-            trip: trip,
-            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
-            tripPredictions: .init(objects: objects),
-            tripPredictionsLoaded: true,
-            vehicle: nil
+        let firstStopEntry = TripDetailsStopList.Entry(
+            stop: firstStop,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: nil,
+            prediction: nil,
+            vehicle: nil,
+            routes: [route]
         )
-        stopDetailsVM.handleStopAppear(firstStop.id)
+        let tripDetailsVM = MockTripDetailsViewModel(initialState: .init(
+            tripData: .init(
+                tripFilter: tripFilter,
+                trip: trip,
+                tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripPredictions: .init(objects: objects),
+                tripPredictionsLoaded: true,
+                vehicle: nil
+            ),
+            stopList: .init(trip: trip, stops: [
+                firstStopEntry,
+                .init(
+                    stop: targetStop,
+                    stopSequence: 1,
+                    disruption: nil,
+                    schedule: schedule,
+                    prediction: nil,
+                    predictionStop: targetStop,
+                    vehicle: nil,
+                    routes: [route]
+                ),
+            ], startTerminalEntry: firstStopEntry),
+            awaitingPredictionsAfterBackground: false
+        ))
 
         var sut = TripDetailsView(
-            tripFilter: stopDetailsVM.tripData?.tripFilter,
-            stopId: targetStop.id,
+            tripFilter: tripFilter,
             now: now,
+            alertSummaries: [:],
+            onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            onOpenAlertDetails: { _ in }
+            tripDetailsVM: tripDetailsVM,
         )
 
-        sut.global = .init(objects: objects)
         let exp = sut.on(\.didLoadData) { view in
             let card = try view.find(TripHeaderCard.self)
             try debugPrint(card.findAll(ViewType.Text.self).map { try $0.string() })
@@ -196,46 +216,45 @@ final class TripDetailsViewTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            tripPredictionsRepository: MockTripPredictionsRepository(),
-            tripRepository: MockTripRepository(
-                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
-                tripResponse: .init(trip: trip)
-            ),
-            vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
-        )
-        stopDetailsVM.handleStopAppear(targetStop.id)
-        stopDetailsVM.stopData = .init(
+        let tripFilter = TripDetailsPageFilter(
+            tripId: trip.id,
+            vehicleId: vehicle.id,
+            routeId: route.id,
+            directionId: 0,
             stopId: targetStop.id,
-            schedules: .init(objects: objects),
-            predictionsByStop: .init(objects: objects),
-            predictionsLoaded: true
+            stopSequence: nil
         )
-        stopDetailsVM.tripData = TripData(
-            tripFilter: .init(
-                tripId: trip.id,
-                vehicleId: vehicle.id,
-                stopSequence: nil,
-                selectionLock: false
+        let tripDetailsVM = MockTripDetailsViewModel(initialState: .init(
+            tripData: .init(
+                tripFilter: tripFilter,
+                trip: trip,
+                tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripPredictions: .init(objects: objects),
+                tripPredictionsLoaded: true,
+                vehicle: vehicle
             ),
-            trip: trip,
-            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
-            tripPredictions: .init(objects: objects),
-            tripPredictionsLoaded: true,
-            vehicle: vehicle
-        )
+            stopList: .init(trip: trip, stops: [.init(
+                stop: targetStop,
+                stopSequence: 0,
+                disruption: nil,
+                schedule: schedule,
+                prediction: nil,
+                predictionStop: targetStop,
+                vehicle: nil,
+                routes: [route]
+            )]),
+            awaitingPredictionsAfterBackground: false
+        ))
 
         var sut = TripDetailsView(
-            tripFilter: stopDetailsVM.tripData?.tripFilter,
-            stopId: targetStop.id,
+            tripFilter: tripFilter,
             now: now,
+            alertSummaries: [:],
+            onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            onOpenAlertDetails: { _ in }
+            tripDetailsVM: tripDetailsVM,
         )
 
         let exp = sut.on(\.didLoadData) { view in
@@ -277,45 +296,45 @@ final class TripDetailsViewTests: XCTestCase {
         let nearbyVM = NearbyViewModel(navigationStack: [oldNavEntry])
         nearbyVM.alerts = .init(objects: objects)
 
-        let stopDetailsVM = StopDetailsViewModel(
-            globalRepository: MockGlobalRepository(response: .init(objects: objects)),
-            predictionsRepository: MockPredictionsRepository(connectV2Response: .init(objects: objects)),
-            tripPredictionsRepository: MockTripPredictionsRepository(),
-            tripRepository: MockTripRepository(
-                tripSchedulesResponse: TripSchedulesResponse.Schedules(schedules: [schedule]),
-                tripResponse: .init(trip: trip)
-            ),
-            vehicleRepository: MockVehicleRepository(outcome: ApiResultOk(data: .init(vehicle: vehicle)))
-        )
-        stopDetailsVM.stopData = .init(
+        let tripFilter = TripDetailsPageFilter(
+            tripId: trip.id,
+            vehicleId: vehicle.id,
+            routeId: route.id,
+            directionId: 0,
             stopId: targetStop.id,
-            schedules: .init(objects: objects),
-            predictionsByStop: .init(objects: objects),
-            predictionsLoaded: true
+            stopSequence: nil
         )
-        stopDetailsVM.tripData = TripData(
-            tripFilter: .init(
-                tripId: trip.id,
-                vehicleId: vehicle.id,
-                stopSequence: nil,
-                selectionLock: false
+        let tripDetailsVM = MockTripDetailsViewModel(initialState: .init(
+            tripData: .init(
+                tripFilter: tripFilter,
+                trip: trip,
+                tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
+                tripPredictions: .init(objects: objects),
+                tripPredictionsLoaded: true,
+                vehicle: vehicle
             ),
-            trip: trip,
-            tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
-            tripPredictions: .init(objects: objects),
-            tripPredictionsLoaded: true,
-            vehicle: vehicle
-        )
+            stopList: .init(trip: trip, stops: [.init(
+                stop: targetStop,
+                stopSequence: 0,
+                disruption: nil,
+                schedule: schedule,
+                prediction: nil,
+                predictionStop: targetStop,
+                vehicle: nil,
+                routes: [route]
+            )]),
+            awaitingPredictionsAfterBackground: false
+        ))
 
         let sut = TripDetailsView(
-            tripFilter: stopDetailsVM.tripData?.tripFilter,
-            stopId: targetStop.id,
+            tripFilter: tripFilter,
             now: now,
+            alertSummaries: [:],
+            onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
-            onOpenAlertDetails: { _ in }
+            tripDetailsVM: tripDetailsVM,
         )
 
         let newNavEntry: SheetNavigationStackEntry = .stopDetails(
