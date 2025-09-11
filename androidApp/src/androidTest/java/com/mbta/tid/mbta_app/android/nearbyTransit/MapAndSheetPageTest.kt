@@ -13,6 +13,7 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -76,7 +77,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.test.KoinTest
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
 class MapAndSheetPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
@@ -409,6 +410,39 @@ class MapAndSheetPageTest : KoinTest {
         }
 
         composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertDoesNotExist()
+    }
+
+    @Test
+    fun testLocationServicesButtonWhenMapHidden() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        loadMocks(hideMaps = true)
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Location Services is off"))
     }
 
     @Test
