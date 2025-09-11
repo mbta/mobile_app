@@ -1,10 +1,11 @@
 package com.mbta.tid.mbta_app.repositories
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.datastore.DataStore
+import com.mbta.tid.mbta_app.datastore.Preferences
+import com.mbta.tid.mbta_app.datastore.PreferencesKey
+import com.mbta.tid.mbta_app.datastore.booleanPreferencesKey
+import com.mbta.tid.mbta_app.datastore.edit
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
@@ -36,7 +37,7 @@ internal class SettingsRepository : ISettingsRepository, KoinComponent {
 }
 
 public enum class Settings(
-    internal val dataStoreKey: Preferences.Key<Boolean>,
+    internal val dataStoreKey: PreferencesKey<Boolean>,
     public val override: Boolean? = null,
 ) {
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),

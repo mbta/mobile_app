@@ -1,10 +1,10 @@
 package com.mbta.tid.mbta_app.repositories
 
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.datastore.DataStore
+import com.mbta.tid.mbta_app.datastore.Preferences
+import com.mbta.tid.mbta_app.datastore.edit
+import com.mbta.tid.mbta_app.datastore.stringPreferencesKey
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.json
 import kotlinx.coroutines.flow.first

@@ -86,7 +86,6 @@ kotlin {
                 api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
-                implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
@@ -113,7 +112,10 @@ kotlin {
                 implementation(libs.turbine)
             }
         }
-        val notJsMain by creating { dependsOn(commonMain) }
+        val notJsMain by creating {
+            dependsOn(commonMain)
+            dependencies { implementation(libs.androidx.datastore.preferences.core) }
+        }
         val notJsTest by creating { dependsOn(commonTest) }
         androidMain {
             dependsOn(notJsMain)
