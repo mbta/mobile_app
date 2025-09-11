@@ -44,9 +44,11 @@ internal expect val fileSystem: FileSystem
 internal expect val ioDispatcher: CoroutineDispatcher
 
 /** Define the koin module with the resources to use in dependency injection */
-internal fun appModule(appVariant: AppVariant) = module {
+internal fun appModule(appVariant: AppVariant) = appModule(appVariant.backendRoot)
+
+internal fun appModule(backendRoot: String) = module {
     includes(
-        module { single { MobileBackendClient(appVariant) } },
+        module { single { MobileBackendClient(backendRoot) } },
         module { single { fileSystem } },
         module {
             single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }

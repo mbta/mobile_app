@@ -22,8 +22,17 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 
-internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
-    constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
+internal class MobileBackendClient(engine: HttpClientEngine, val backendRoot: String) {
+    constructor(
+        engine: HttpClientEngine,
+        appVariant: AppVariant,
+    ) : this(engine, appVariant.backendRoot)
+
+    constructor(backendRoot: String) : this(getPlatform().httpClientEngine, backendRoot)
+
+    constructor(
+        appVariant: AppVariant
+    ) : this(getPlatform().httpClientEngine, appVariant.backendRoot)
 
     private val httpClient =
         HttpClient(engine) {
@@ -31,7 +40,7 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
             install(HttpTimeout) { requestTimeoutMillis = 8000 }
-            defaultRequest { url(appVariant.backendRoot) }
+            defaultRequest { url(backendRoot) }
             HttpResponseValidator {
                 validateResponse { response ->
                     when (response.status.value) {
