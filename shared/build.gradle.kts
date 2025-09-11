@@ -9,9 +9,11 @@ import java.io.Serializable
 import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
+import org.gradle.kotlin.dsl.withType
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.process.internal.ExecException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
@@ -47,6 +49,14 @@ kotlin {
     iosSimulatorArm64()
 
     jvm { mainRun { mainClass.set("com.mbta.tid.mbta_app.ProjectUtilsKt") } }
+
+    js {
+        // browser {} causes tests to not work, but nodejs {} makes less sense in principle
+        nodejs {}
+        outputModuleName = "mbta-go-shared"
+        binaries.executable()
+        generateTypeScriptDefinitions()
+    }
 
     cocoapods {
         summary = "Common library for the MBTA mobile app"
@@ -103,21 +113,37 @@ kotlin {
                 implementation(libs.turbine)
             }
         }
-        val androidMain by getting {
+        val notJsMain by creating { dependsOn(commonMain) }
+        val notJsTest by creating { dependsOn(commonTest) }
+        androidMain {
+            dependsOn(notJsMain)
             dependencies {
                 implementation(libs.androidx.lifecycle.viewmodel.android)
                 implementation(libs.koin.androidxCompose)
                 implementation(libs.ktor.client.okhttp)
             }
         }
-        val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
-        val jvmMain by getting {
+        androidUnitTest { dependsOn(notJsTest) }
+        iosMain {
+            dependsOn(notJsMain)
+            dependencies { implementation(libs.ktor.client.darwin) }
+        }
+        iosTest { dependsOn(notJsTest) }
+        jsMain {
+            dependencies {
+                implementation(libs.ktor.client.js)
+                implementation(npm("@js-joda/timezone", "2.22.0"))
+            }
+        }
+        jvmMain {
+            dependsOn(notJsMain)
             dependencies {
                 implementation(kotlin("reflect"))
                 implementation(libs.kotlinpoet)
                 implementation(libs.ktor.client.java)
             }
         }
+        jvmTest { dependsOn(notJsTest) }
     }
 }
 
@@ -472,3 +498,5 @@ mokkery {
 }
 
 sentryKmp { autoInstall.commonMain.enabled = false }
+
+tasks.withType<KotlinJsCompile>().configureEach { compilerOptions { target = "es2015" } }

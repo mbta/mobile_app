@@ -21,6 +21,7 @@ import dev.mokkery.verifyNoMoreCalls
 import io.sentry.kotlin.multiplatform.Scope
 import io.sentry.kotlin.multiplatform.SentryLevel
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
+import kotlin.js.JsName
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -223,7 +224,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         val clock =
             object : Clock {
-                var now = Clock.System.now()
+                @JsName("currentInstant") var now = Clock.System.now()
 
                 override fun now() = now
             }
@@ -285,7 +286,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         val clock =
             object : Clock {
-                var now = Clock.System.now()
+                @JsName("currentInstant") var now = Clock.System.now()
 
                 override fun now() = now
             }
