@@ -3,7 +3,7 @@ package com.mbta.tid.mbta_app.parametric
 import kotlin.enums.enumEntries
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 /**
  * Sometimes there are values that don't matter in your individual test, and you want to run the
@@ -83,10 +83,8 @@ class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
     }
 }
 
-fun parametricTest(block: suspend ParametricTest.() -> Unit) {
-    runBlocking {
-        val test = ParametricTest(block)
-        test.gatherParameters()
-        test.executeAll()
-    }
+fun parametricTest(block: suspend ParametricTest.() -> Unit) = runTest {
+    val test = ParametricTest(block)
+    test.gatherParameters()
+    test.executeAll()
 }

@@ -13,7 +13,7 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -21,7 +21,7 @@ import org.koin.test.KoinTest
 
 class RouteStopsRepositoryTest : KoinTest {
     @Test
-    fun testGetNewSegments() {
+    fun testGetNewSegments() = runTest {
         lateinit var requestUrl: Url
         val mockEngine = MockEngine { request ->
             requestUrl = request.url
@@ -472,236 +472,235 @@ class RouteStopsRepositoryTest : KoinTest {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = RouteStopsRepository().getRouteSegments("Orange", 0)
-            assertEquals("/api/route/stop-graph", requestUrl.encodedPath)
-            assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
-            assertEquals(
-                ApiResult.Ok(
-                    RouteStopsResult(
-                        "Orange",
-                        0,
-                        listOf(
-                            RouteBranchSegment(
-                                listOf(
-                                    RouteBranchSegment.BranchStop(
-                                        "place-ogmnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        listOf(
-                                            RouteBranchSegment.StickConnection(
-                                                fromStop = "place-ogmnl",
-                                                fromLane = RouteBranchSegment.Lane.Center,
-                                                fromVPos = RouteBranchSegment.VPos.Center,
-                                                toStop = "place-mlmnl",
-                                                toLane = RouteBranchSegment.Lane.Center,
-                                                toVPos = RouteBranchSegment.VPos.Bottom,
-                                            )
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-mlmnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-ogmnl",
-                                            "place-mlmnl",
-                                            "place-welln",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-welln",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-mlmnl",
-                                            "place-welln",
-                                            "place-astao",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-astao",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-welln",
-                                            "place-astao",
-                                            "place-sull",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-sull",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-astao",
-                                            "place-sull",
-                                            "place-ccmnl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-ccmnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-sull",
-                                            "place-ccmnl",
-                                            "place-north",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-north",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-ccmnl",
-                                            "place-north",
-                                            "place-haecl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-haecl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-north",
-                                            "place-haecl",
-                                            "place-state",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-state",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-haecl",
-                                            "place-state",
-                                            "place-dwnxg",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-dwnxg",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-state",
-                                            "place-dwnxg",
-                                            "place-chncl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-chncl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-dwnxg",
-                                            "place-chncl",
-                                            "place-tumnl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-tumnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-chncl",
-                                            "place-tumnl",
-                                            "place-bbsta",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-bbsta",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-tumnl",
-                                            "place-bbsta",
-                                            "place-masta",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-masta",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-bbsta",
-                                            "place-masta",
-                                            "place-rugg",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-rugg",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-masta",
-                                            "place-rugg",
-                                            "place-rcmnl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-rcmnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-rugg",
-                                            "place-rcmnl",
-                                            "place-jaksn",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-jaksn",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-rcmnl",
-                                            "place-jaksn",
-                                            "place-sbmnl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-sbmnl",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-jaksn",
-                                            "place-sbmnl",
-                                            "place-grnst",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-grnst",
-                                        RouteBranchSegment.Lane.Center,
-                                        RouteBranchSegment.StickConnection.forward(
-                                            "place-sbmnl",
-                                            "place-grnst",
-                                            "place-forhl",
-                                            RouteBranchSegment.Lane.Center,
-                                        ),
-                                    ),
-                                    RouteBranchSegment.BranchStop(
-                                        "place-forhl",
-                                        RouteBranchSegment.Lane.Center,
-                                        listOf(
-                                            RouteBranchSegment.StickConnection(
-                                                fromStop = "place-grnst",
-                                                fromLane = RouteBranchSegment.Lane.Center,
-                                                fromVPos = RouteBranchSegment.VPos.Top,
-                                                toStop = "place-forhl",
-                                                toLane = RouteBranchSegment.Lane.Center,
-                                                toVPos = RouteBranchSegment.VPos.Center,
-                                            )
-                                        ),
+        val response = RouteStopsRepository().getRouteSegments("Orange", 0)
+        assertEquals("/api/route/stop-graph", requestUrl.encodedPath)
+        assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
+        assertEquals(
+            ApiResult.Ok(
+                RouteStopsResult(
+                    "Orange",
+                    0,
+                    listOf(
+                        RouteBranchSegment(
+                            listOf(
+                                RouteBranchSegment.BranchStop(
+                                    "place-ogmnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    listOf(
+                                        RouteBranchSegment.StickConnection(
+                                            fromStop = "place-ogmnl",
+                                            fromLane = RouteBranchSegment.Lane.Center,
+                                            fromVPos = RouteBranchSegment.VPos.Center,
+                                            toStop = "place-mlmnl",
+                                            toLane = RouteBranchSegment.Lane.Center,
+                                            toVPos = RouteBranchSegment.VPos.Bottom,
+                                        )
                                     ),
                                 ),
-                                name = null,
-                                isTypical = true,
-                            )
-                        ),
-                    )
-                ),
-                response,
-            )
-        }
+                                RouteBranchSegment.BranchStop(
+                                    "place-mlmnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-ogmnl",
+                                        "place-mlmnl",
+                                        "place-welln",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-welln",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-mlmnl",
+                                        "place-welln",
+                                        "place-astao",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-astao",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-welln",
+                                        "place-astao",
+                                        "place-sull",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-sull",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-astao",
+                                        "place-sull",
+                                        "place-ccmnl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-ccmnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-sull",
+                                        "place-ccmnl",
+                                        "place-north",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-north",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-ccmnl",
+                                        "place-north",
+                                        "place-haecl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-haecl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-north",
+                                        "place-haecl",
+                                        "place-state",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-state",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-haecl",
+                                        "place-state",
+                                        "place-dwnxg",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-dwnxg",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-state",
+                                        "place-dwnxg",
+                                        "place-chncl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-chncl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-dwnxg",
+                                        "place-chncl",
+                                        "place-tumnl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-tumnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-chncl",
+                                        "place-tumnl",
+                                        "place-bbsta",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-bbsta",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-tumnl",
+                                        "place-bbsta",
+                                        "place-masta",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-masta",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-bbsta",
+                                        "place-masta",
+                                        "place-rugg",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-rugg",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-masta",
+                                        "place-rugg",
+                                        "place-rcmnl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-rcmnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-rugg",
+                                        "place-rcmnl",
+                                        "place-jaksn",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-jaksn",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-rcmnl",
+                                        "place-jaksn",
+                                        "place-sbmnl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-sbmnl",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-jaksn",
+                                        "place-sbmnl",
+                                        "place-grnst",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-grnst",
+                                    RouteBranchSegment.Lane.Center,
+                                    RouteBranchSegment.StickConnection.forward(
+                                        "place-sbmnl",
+                                        "place-grnst",
+                                        "place-forhl",
+                                        RouteBranchSegment.Lane.Center,
+                                    ),
+                                ),
+                                RouteBranchSegment.BranchStop(
+                                    "place-forhl",
+                                    RouteBranchSegment.Lane.Center,
+                                    listOf(
+                                        RouteBranchSegment.StickConnection(
+                                            fromStop = "place-grnst",
+                                            fromLane = RouteBranchSegment.Lane.Center,
+                                            fromVPos = RouteBranchSegment.VPos.Top,
+                                            toStop = "place-forhl",
+                                            toLane = RouteBranchSegment.Lane.Center,
+                                            toVPos = RouteBranchSegment.VPos.Center,
+                                        )
+                                    ),
+                                ),
+                            ),
+                            name = null,
+                            isTypical = true,
+                        )
+                    ),
+                )
+            ),
+            response,
+        )
+
         stopKoin()
     }
 }

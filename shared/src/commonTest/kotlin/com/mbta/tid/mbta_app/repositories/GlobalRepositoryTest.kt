@@ -24,7 +24,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import okio.FileSystem
 import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
@@ -39,7 +39,7 @@ class GlobalRepositoryTest : KoinTest {
     }
 
     @Test
-    fun testGetGlobalData() {
+    fun testGetGlobalData() = runTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content =
@@ -147,85 +147,83 @@ class GlobalRepositoryTest : KoinTest {
                 }
             )
         }
-        runBlocking {
-            val repo = GlobalRepository()
-            assertNull(repo.state.value)
-            val response = repo.getGlobalData()
-            val facility =
-                Facility(
-                    id = "808",
-                    longName =
-                        "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
-                    shortName =
-                        "Red Line center platform to Government Center & North platform, Winter Street Concourse",
-                    type = Facility.Type.Elevator,
-                )
-            val line =
-                Line(
-                    id = "line-Green",
-                    color = "00843D",
-                    longName = "Green Line",
-                    shortName = "",
-                    sortOrder = 10032,
-                    textColor = "FFFFFF",
-                )
-            val route =
-                Route(
-                    id = "Shuttle-AirportGovernmentCenterLocal",
-                    type = RouteType.BUS,
-                    color = "FFC72C",
-                    directionNames = listOf("West", "East"),
-                    directionDestinations = listOf("Bowdoin", "Wonderland"),
-                    isListedRoute = false,
-                    longName = "Airport - Government Center (Local)",
-                    shortName = "Blue Line Shuttle",
-                    sortOrder = 60208,
-                    textColor = "000000",
-                    routePatternIds = null,
-                )
-            val routePattern =
-                RoutePattern(
-                    id = "39-3-0",
-                    name = "Back Bay Station - Forest Hills Station",
-                    directionId = 0,
-                    routeId = "39",
-                    sortOrder = 503900000,
-                    typicality = RoutePattern.Typicality.Typical,
-                    representativeTripId = "61945832",
-                )
-            val stop =
-                Stop(
-                    id = "3992",
-                    name = "S Franklin St @ Emery St",
-                    longitude = -71.011556,
-                    latitude = 42.125615,
-                    vehicleType = RouteType.BUS,
-                    childStopIds = emptyList(),
-                    connectingStopIds = emptyList(),
-                    locationType = LocationType.STOP,
-                )
-            val trip =
-                Trip(
-                    id = "62145526_2",
-                    directionId = 0,
-                    routeId = "37",
-                    routePatternId = "37-D-0",
-                    stopIds = listOf("10642", "596"),
-                    headsign = "LaGrange & Corey",
-                    shapeId = "370137-2",
-                )
-            val expectedResponse =
-                GlobalResponse(
-                    facilities = mapOf("808" to facility),
-                    lines = mapOf("line-Green" to line),
-                    patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
-                    routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
-                    routePatterns = mapOf("39-3-0" to routePattern),
-                    stops = mapOf("3992" to stop),
-                    trips = mapOf("62145526_2" to trip),
-                )
-            assertEquals(ApiResult.Ok(expectedResponse), response)
-            assertEquals(expectedResponse, repo.state.value)
-        }
+        val repo = GlobalRepository()
+        assertNull(repo.state.value)
+        val response = repo.getGlobalData()
+        val facility =
+            Facility(
+                id = "808",
+                longName =
+                    "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
+                shortName =
+                    "Red Line center platform to Government Center & North platform, Winter Street Concourse",
+                type = Facility.Type.Elevator,
+            )
+        val line =
+            Line(
+                id = "line-Green",
+                color = "00843D",
+                longName = "Green Line",
+                shortName = "",
+                sortOrder = 10032,
+                textColor = "FFFFFF",
+            )
+        val route =
+            Route(
+                id = "Shuttle-AirportGovernmentCenterLocal",
+                type = RouteType.BUS,
+                color = "FFC72C",
+                directionNames = listOf("West", "East"),
+                directionDestinations = listOf("Bowdoin", "Wonderland"),
+                isListedRoute = false,
+                longName = "Airport - Government Center (Local)",
+                shortName = "Blue Line Shuttle",
+                sortOrder = 60208,
+                textColor = "000000",
+                routePatternIds = null,
+            )
+        val routePattern =
+            RoutePattern(
+                id = "39-3-0",
+                name = "Back Bay Station - Forest Hills Station",
+                directionId = 0,
+                routeId = "39",
+                sortOrder = 503900000,
+                typicality = RoutePattern.Typicality.Typical,
+                representativeTripId = "61945832",
+            )
+        val stop =
+            Stop(
+                id = "3992",
+                name = "S Franklin St @ Emery St",
+                longitude = -71.011556,
+                latitude = 42.125615,
+                vehicleType = RouteType.BUS,
+                childStopIds = emptyList(),
+                connectingStopIds = emptyList(),
+                locationType = LocationType.STOP,
+            )
+        val trip =
+            Trip(
+                id = "62145526_2",
+                directionId = 0,
+                routeId = "37",
+                routePatternId = "37-D-0",
+                stopIds = listOf("10642", "596"),
+                headsign = "LaGrange & Corey",
+                shapeId = "370137-2",
+            )
+        val expectedResponse =
+            GlobalResponse(
+                facilities = mapOf("808" to facility),
+                lines = mapOf("line-Green" to line),
+                patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
+                routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
+                routePatterns = mapOf("39-3-0" to routePattern),
+                stops = mapOf("3992" to stop),
+                trips = mapOf("62145526_2" to trip),
+            )
+        assertEquals(ApiResult.Ok(expectedResponse), response)
+        assertEquals(expectedResponse, repo.state.value)
     }
 }

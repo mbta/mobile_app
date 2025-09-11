@@ -14,7 +14,6 @@ import io.github.dellisd.spatialk.turf.destination
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
 
 internal class NearbyRepositoryTest {
     val searchPoint = Position(latitude = 42.3513706803105, longitude = -71.06649626809957)
@@ -68,12 +67,11 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
         val repo = NearbyRepository()
-        val stopIds = runBlocking {
+        val stopIds =
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
-        }
 
         assertEquals(listOf(nearbySubwayStop.id, nearbyCRStop.id), stopIds)
     }
@@ -107,12 +105,11 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
         val repo = NearbyRepository()
-        val stopIdsIncludingRedundant = runBlocking {
+        val stopIdsIncludingRedundant =
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
-        }
 
         assertEquals(listOf(stop1.id), stopIdsIncludingRedundant)
     }
@@ -163,12 +160,11 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
         val repo = NearbyRepository()
-        val stopIdsExcludingRedundant = runBlocking {
+        val stopIdsExcludingRedundant =
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
-        }
 
         assertEquals(listOf(stop1.id, stop3.id), stopIdsExcludingRedundant)
     }
@@ -197,12 +193,11 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
         val repo = NearbyRepository()
-        val stopIds = runBlocking {
+        val stopIds =
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
-        }
 
         assertEquals(listOf(nearbySubwayStop.id, nearbyCRStop.id), stopIds)
     }
@@ -222,12 +217,11 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop)
 
         val repo = NearbyRepository()
-        val stopIds = runBlocking {
+        val stopIds =
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
-        }
 
         assertEquals(emptyList(), stopIds)
     }

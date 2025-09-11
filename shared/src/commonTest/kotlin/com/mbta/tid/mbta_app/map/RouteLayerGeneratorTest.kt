@@ -4,12 +4,12 @@ import com.mbta.tid.mbta_app.parametric.parametricTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonPrimitive
 
 class RouteLayerGeneratorTest {
     @Test
-    fun `route layers are created`(): Unit = runBlocking {
+    fun `route layers are created`() = runTest {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
@@ -38,7 +38,7 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `layers have offset`(): Unit = runBlocking {
+    fun `layers have offset`() = runTest {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
@@ -52,7 +52,7 @@ class RouteLayerGeneratorTest {
     }
 
     @Test
-    fun `base layer color matches data`() = runBlocking {
+    fun `base layer color matches data`() = runTest {
         val routeLayers =
             RouteLayerGenerator.createAllRouteLayers(
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,

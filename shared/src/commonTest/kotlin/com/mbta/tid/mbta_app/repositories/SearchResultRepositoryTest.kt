@@ -17,7 +17,7 @@ import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -30,7 +30,7 @@ class SearchResultRepositoryTest : KoinTest {
     }
 
     @Test
-    fun testGetSearchResults() {
+    fun testGetSearchResults() = runTest {
         val testQuery = "Red"
         val mockEngine = MockEngine { request ->
             assertEquals("query=$testQuery", request.url.encodedQuery)
@@ -90,45 +90,43 @@ class SearchResultRepositoryTest : KoinTest {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = SearchResultRepository().getSearchResults(testQuery)
-            val expectedResponse =
-                SearchResults(
-                    listOf(
-                        RouteResult(
-                            "132",
-                            5,
-                            "Redstone Shopping Center - Malden Center Station",
-                            "132",
-                            RouteType.BUS,
-                        ),
-                        RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL),
+        val response = SearchResultRepository().getSearchResults(testQuery)
+        val expectedResponse =
+            SearchResults(
+                listOf(
+                    RouteResult(
+                        "132",
+                        5,
+                        "Redstone Shopping Center - Malden Center Station",
+                        "132",
+                        RouteType.BUS,
                     ),
-                    listOf(
-                        StopResult(
-                            "25989",
-                            5,
-                            "Redstone Shopping Center Access Rd",
-                            null,
-                            false,
-                            listOf(StopResultRoute(RouteType.BUS, "bus")),
-                        ),
-                        StopResult(
-                            "15989",
-                            5,
-                            "Redstone Shopping Center",
-                            null,
-                            false,
-                            listOf(StopResultRoute(RouteType.BUS, "bus")),
-                        ),
+                    RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL),
+                ),
+                listOf(
+                    StopResult(
+                        "25989",
+                        5,
+                        "Redstone Shopping Center Access Rd",
+                        null,
+                        false,
+                        listOf(StopResultRoute(RouteType.BUS, "bus")),
                     ),
-                )
-            assertEquals(ApiResult.Ok(expectedResponse), response)
-        }
+                    StopResult(
+                        "15989",
+                        5,
+                        "Redstone Shopping Center",
+                        null,
+                        false,
+                        listOf(StopResultRoute(RouteType.BUS, "bus")),
+                    ),
+                ),
+            )
+        assertEquals(ApiResult.Ok(expectedResponse), response)
     }
 
     @Test
-    fun testRouteSearchParams() {
+    fun testRouteSearchParams() = runTest {
         val testQuery = "Red"
         val mockEngine = MockEngine { request ->
             assertEquals(
@@ -164,20 +162,18 @@ class SearchResultRepositoryTest : KoinTest {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response =
-                SearchResultRepository()
-                    .getRouteFilterResults(
-                        testQuery,
-                        listOf("Red"),
-                        listOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL),
-                    )
-            val expectedResponse =
-                SearchResults(
-                    listOf(RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL)),
-                    emptyList(),
+        val response =
+            SearchResultRepository()
+                .getRouteFilterResults(
+                    testQuery,
+                    listOf("Red"),
+                    listOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL),
                 )
-            assertEquals(ApiResult.Ok(expectedResponse), response)
-        }
+        val expectedResponse =
+            SearchResults(
+                listOf(RouteResult("Red", 2, "Red Line", "Red Line", RouteType.HEAVY_RAIL)),
+                emptyList(),
+            )
+        assertEquals(ApiResult.Ok(expectedResponse), response)
     }
 }

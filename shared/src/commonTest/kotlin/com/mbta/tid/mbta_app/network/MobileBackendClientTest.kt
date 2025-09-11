@@ -12,13 +12,13 @@ import io.ktor.http.path
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.test.KoinTest
 
 class MobileBackendClientTest : KoinTest {
 
     @Test
-    fun testGet() {
+    fun testGet() = runTest {
         val mockEngine = MockEngine { request ->
             respond(
                 content =
@@ -38,15 +38,13 @@ class MobileBackendClientTest : KoinTest {
             )
         }
 
-        runBlocking {
-            val response: HttpResponse =
-                MobileBackendClient(mockEngine, AppVariant.Staging).get {
-                    url { path("api/schedules") }
-                }
+        val response: HttpResponse =
+            MobileBackendClient(mockEngine, AppVariant.Staging).get {
+                url { path("api/schedules") }
+            }
 
-            assertEquals(HttpStatusCode.OK, response.status)
-            assertEquals("/api/schedules", response.request.url.encodedPath)
-            assertEquals(AppVariant.Staging.backendHost, response.request.url.host)
-        }
+        assertEquals(HttpStatusCode.OK, response.status)
+        assertEquals("/api/schedules", response.request.url.encodedPath)
+        assertEquals(AppVariant.Staging.backendHost, response.request.url.host)
     }
 }

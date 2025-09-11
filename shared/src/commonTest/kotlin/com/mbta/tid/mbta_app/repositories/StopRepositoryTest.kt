@@ -19,7 +19,7 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -27,7 +27,7 @@ import org.koin.test.KoinTest
 
 class StopRepositoryTest : KoinTest {
     @Test
-    fun testGetStopData() {
+    fun testGetStopData() = runTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content =
@@ -87,66 +87,62 @@ class StopRepositoryTest : KoinTest {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = StopRepository().getStopMapData(stopId = "place-wondl")
-            assertEquals(
-                ApiResult.Ok(
-                    StopMapResponse(
-                        routeShapes =
-                            listOf(
-                                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
-                                    routeId = "Blue",
-                                    segmentedShapes =
-                                        listOf(
-                                            SegmentedRouteShape(
-                                                sourceRoutePatternId = "Blue-6-0",
-                                                sourceRouteId = "Blue",
-                                                directionId = 0,
-                                                routeSegments =
-                                                    listOf(
-                                                        RouteSegment(
-                                                            id = "place-wondl-place-bomnl",
-                                                            sourceRouteId = "Blue",
-                                                            stopIds =
-                                                                listOf(
-                                                                    "place-wondl",
-                                                                    "place-bomnl",
-                                                                ),
-                                                            otherPatternsByStopId = mapOf(),
-                                                            sourceRoutePatternId = "Blue-6-0",
-                                                        )
-                                                    ),
-                                                shape =
-                                                    Shape(
-                                                        id = "canonical-946_0013",
-                                                        polyline = "s|zaG~phpLpBwO",
-                                                    ),
-                                            )
-                                        ),
-                                )
-                            ),
-                        childStops =
-                            mapOf(
-                                Pair(
-                                    "70060",
-                                    Stop(
-                                        id = "70060",
-                                        name = "Wonderland",
-                                        description = "Wonderland - Blue Line - Exit Only",
-                                        locationType = LocationType.STOP,
-                                        latitude = 42.413361,
-                                        longitude = -70.991685,
-                                        platformName = "Exit Only",
-                                        vehicleType = RouteType.HEAVY_RAIL,
-                                        parentStationId = "place-wondl",
+        val response = StopRepository().getStopMapData(stopId = "place-wondl")
+        assertEquals(
+            ApiResult.Ok(
+                StopMapResponse(
+                    routeShapes =
+                        listOf(
+                            MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                routeId = "Blue",
+                                segmentedShapes =
+                                    listOf(
+                                        SegmentedRouteShape(
+                                            sourceRoutePatternId = "Blue-6-0",
+                                            sourceRouteId = "Blue",
+                                            directionId = 0,
+                                            routeSegments =
+                                                listOf(
+                                                    RouteSegment(
+                                                        id = "place-wondl-place-bomnl",
+                                                        sourceRouteId = "Blue",
+                                                        stopIds =
+                                                            listOf("place-wondl", "place-bomnl"),
+                                                        otherPatternsByStopId = mapOf(),
+                                                        sourceRoutePatternId = "Blue-6-0",
+                                                    )
+                                                ),
+                                            shape =
+                                                Shape(
+                                                    id = "canonical-946_0013",
+                                                    polyline = "s|zaG~phpLpBwO",
+                                                ),
+                                        )
                                     ),
-                                )
-                            ),
-                    )
-                ),
-                response,
-            )
-        }
+                            )
+                        ),
+                    childStops =
+                        mapOf(
+                            Pair(
+                                "70060",
+                                Stop(
+                                    id = "70060",
+                                    name = "Wonderland",
+                                    description = "Wonderland - Blue Line - Exit Only",
+                                    locationType = LocationType.STOP,
+                                    latitude = 42.413361,
+                                    longitude = -70.991685,
+                                    platformName = "Exit Only",
+                                    vehicleType = RouteType.HEAVY_RAIL,
+                                    parentStationId = "place-wondl",
+                                ),
+                            )
+                        ),
+                )
+            ),
+            response,
+        )
+
         stopKoin()
     }
 }

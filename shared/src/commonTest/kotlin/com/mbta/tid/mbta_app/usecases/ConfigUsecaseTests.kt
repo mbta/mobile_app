@@ -6,20 +6,17 @@ import com.mbta.tid.mbta_app.repositories.MockConfigRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class ConfigUsecaseTests {
     @Test
-    fun testGetConfigSuccess() {
-
+    fun testGetConfigSuccess() = runTest {
         val configRepo =
             MockConfigRepository(ApiResult.Ok(ConfigResponse(mapboxPublicToken = "fake_token")))
         val mockSentryRepo = MockSentryRepository()
 
-        runBlocking {
-            val response = ConfigUseCase(configRepo, mockSentryRepo).getConfig()
+        val response = ConfigUseCase(configRepo, mockSentryRepo).getConfig()
 
-            assertEquals(response, ApiResult.Ok(ConfigResponse("fake_token")))
-        }
+        assertEquals(response, ApiResult.Ok(ConfigResponse("fake_token")))
     }
 }

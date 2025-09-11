@@ -6,7 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.hours
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
@@ -15,7 +15,7 @@ import kotlinx.datetime.plus
 
 class AlertSummaryTest {
     @Test
-    fun `summary is null when there is no timeframe or location`() = runBlocking {
+    fun `summary is null when there is no timeframe or location`() = runTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
         val alert =
@@ -32,7 +32,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with later today timeframe`() = runBlocking {
+    fun `summary with later today timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
         val endTime = now.plus(1.hours)
@@ -52,7 +52,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with end of service timeframe`() = runBlocking {
+    fun `summary with end of service timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
 
@@ -76,7 +76,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with alt end of service timeframe`() = runBlocking {
+    fun `summary with alt end of service timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
 
@@ -100,7 +100,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with tomorrow timeframe`() = runBlocking {
+    fun `summary with tomorrow timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
 
@@ -125,7 +125,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with this week timeframe`() = runBlocking {
+    fun `summary with this week timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
         val now = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
@@ -150,7 +150,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with later date timeframe`() = runBlocking {
+    fun `summary with later date timeframe`() = runTest {
         val objects = ObjectCollectionBuilder()
         // Fixed time so we can have a specific day of the week (wed)
         val now = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
@@ -175,7 +175,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with single stop`() = runBlocking {
+    fun `summary with single stop`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -215,7 +215,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with successive stops`() = runBlocking {
+    fun `summary with successive stops`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -264,7 +264,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with successive bus stops`() = runBlocking {
+    fun `summary with successive bus stops`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -307,7 +307,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with branching stops ahead`() = runBlocking {
+    fun `summary with branching stops ahead`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -386,7 +386,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with branching stops behind`() = runBlocking {
+    fun `summary with branching stops behind`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -465,7 +465,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with branching GL stops ahead`() = runBlocking {
+    fun `summary with branching GL stops ahead`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -544,7 +544,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with branching GL on branch`() = runBlocking {
+    fun `summary with branching GL on branch`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -616,7 +616,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with branching GL on opposite and disconnected branch`() = runBlocking {
+    fun `summary with branching GL on opposite and disconnected branch`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()

@@ -9,13 +9,13 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Month
 
 class StopDetailsUtilsTest {
     @Test
     fun `autoStopFilter provides a default StopDetailsFilter given a single route and direction`() =
-        runBlocking {
+        runTest {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
             val route = objects.route()
@@ -50,7 +50,7 @@ class StopDetailsUtilsTest {
 
     @Test
     fun `autoStopFilter provides a null stop filter value given multiple routes and directions`() =
-        runBlocking {
+        runTest {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
             val route1 = objects.route()
@@ -86,7 +86,7 @@ class StopDetailsUtilsTest {
         }
 
     @Test
-    fun `autoTripFilter provides a trip filter with the first trip selected`() = runBlocking {
+    fun `autoTripFilter provides a trip filter with the first trip selected`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route()
@@ -161,7 +161,7 @@ class StopDetailsUtilsTest {
     }
 
     @Test
-    fun `autoTripFilter provides a null trip filter when no stop filter exists`() = runBlocking {
+    fun `autoTripFilter provides a null trip filter when no stop filter exists`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route()
@@ -200,7 +200,7 @@ class StopDetailsUtilsTest {
     }
 
     @Test
-    fun `autoTripFilter provides a null trip filter when no trips exists`() = runBlocking {
+    fun `autoTripFilter provides a null trip filter when no trips exists`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route()
@@ -246,7 +246,7 @@ class StopDetailsUtilsTest {
     }
 
     @Test
-    fun `autoTripFilter provides current trip filter when trip is still upcoming`() = runBlocking {
+    fun `autoTripFilter provides current trip filter when trip is still upcoming`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route()
@@ -340,7 +340,7 @@ class StopDetailsUtilsTest {
     }
 
     @Test
-    fun `autoTripFilter sets vehicle when vehicle is newly assigned`() = runBlocking {
+    fun `autoTripFilter sets vehicle when vehicle is newly assigned`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route()
@@ -400,7 +400,7 @@ class StopDetailsUtilsTest {
     }
 
     @Test
-    fun `autoTripFilter provides next trip when current trip has passed the stop`() = runBlocking {
+    fun `autoTripFilter provides next trip when current trip has passed the stop`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route1 = objects.route()
@@ -502,7 +502,7 @@ class StopDetailsUtilsTest {
 
     @Test
     fun `autoTripFilter provides current trip when current trip has passed the stop and is locked`() =
-        runBlocking {
+        runTest {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
             val route1 = objects.route()
@@ -606,7 +606,7 @@ class StopDetailsUtilsTest {
         }
 
     @Test
-    fun `autoTripFilter skips cancelled trips`() = runBlocking {
+    fun `autoTripFilter skips cancelled trips`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop()
         val route = objects.route { type = RouteType.COMMUTER_RAIL }
@@ -695,7 +695,7 @@ class StopDetailsUtilsTest {
 
     @Test
     fun `autoTripFilter selects the first cancelled trip if there are only cancelled trips`() =
-        runBlocking {
+        runTest {
             val objects = ObjectCollectionBuilder()
             val stop = objects.stop()
             val route = objects.route { type = RouteType.FERRY }
@@ -769,7 +769,7 @@ class StopDetailsUtilsTest {
         }
 
     @Test
-    fun `filterVehiclesByUpcoming filters vehicles by relevant routes`() = runBlocking {
+    fun `filterVehiclesByUpcoming filters vehicles by relevant routes`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val stop = objects.stop()

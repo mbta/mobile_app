@@ -15,11 +15,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class StopLayerGeneratorTest {
     @Test
-    fun `stop layers are created`() = runBlocking {
+    fun `stop layers are created`() = runTest {
         val stopLayers =
             StopLayerGenerator.createStopLayers(ColorPalette.light, StopLayerGenerator.State())
 
@@ -38,7 +38,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `North Station with alerts has correct properties`() = runBlocking {
+    fun `North Station with alerts has correct properties`() = runTest {
         val northStation = TestData.getStop("place-north")
         val routes =
             mapOf(
@@ -139,7 +139,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `state selected stop applies correctly`() = runBlocking {
+    fun `state selected stop applies correctly`() = runTest {
         val mapStops =
             mapOf(
                 MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife,
@@ -173,7 +173,7 @@ class StopLayerGeneratorTest {
     }
 
     @Test
-    fun `state stop details filter applies correctly`() = runBlocking {
+    fun `state stop details filter applies correctly`() = runTest {
         val objects = ObjectCollectionBuilder()
         val subwayRoute =
             objects.route {

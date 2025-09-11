@@ -7,12 +7,12 @@ import com.mbta.tid.mbta_app.repositories.MockVisitHistoryRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class VisitHistoryUsecaseTest {
 
     @Test
-    fun testAddVisits() = runBlocking {
+    fun testAddVisits() = runTest {
         val repository = MockVisitHistoryRepository()
         val usecase = VisitHistoryUsecase(repository)
 
@@ -36,7 +36,7 @@ class VisitHistoryUsecaseTest {
     }
 
     @Test
-    fun testLimitReturned() = runBlocking {
+    fun testLimitReturned() = runTest {
         val repository = MockVisitHistoryRepository()
         val usecase = VisitHistoryUsecase(repository)
 

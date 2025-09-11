@@ -8,11 +8,11 @@ import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class FeaturePromoUsecaseTest {
     @Test
-    fun `empty when no current version`() = runBlocking {
+    fun `empty when no current version`() = runTest {
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(null),
@@ -22,7 +22,7 @@ class FeaturePromoUsecaseTest {
     }
 
     @Test
-    fun `writes current and returns empty when no last launched version`() = runBlocking {
+    fun `writes current and returns empty when no last launched version`() = runTest {
         var savedVersion: AppVersion? = null
         val useCase =
             FeaturePromoUseCase(
@@ -34,10 +34,9 @@ class FeaturePromoUsecaseTest {
     }
 
     @Test
-    fun `returns new features when version bumped`() = runBlocking {
+    fun `returns new features when version bumped`() = runTest {
         // instead of an @Ignore we may forget, skip the test if there are no features
-        if (FeaturePromo.entries.all { it.addedInVersion == AppVersion(0u, 0u, 0u) })
-            return@runBlocking
+        if (FeaturePromo.entries.all { it.addedInVersion == AppVersion(0u, 0u, 0u) }) return@runTest
 
         val useCase =
             FeaturePromoUseCase(
@@ -51,9 +50,9 @@ class FeaturePromoUsecaseTest {
     }
 
     @Test
-    fun `skips promos when too many`() = runBlocking {
+    fun `skips promos when too many`() = runTest {
         // instead of an @Ignore we may forget, skip the test if there aren't enough features
-        if (FeaturePromo.entries.size <= FeaturePromoUseCase.MAX_PROMOS) return@runBlocking
+        if (FeaturePromo.entries.size <= FeaturePromoUseCase.MAX_PROMOS) return@runTest
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),

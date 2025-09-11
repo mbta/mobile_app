@@ -16,7 +16,7 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -24,7 +24,7 @@ import org.koin.test.KoinTest
 
 class TripRepositoryTest : KoinTest {
     @Test
-    fun `gets trip schedules`() {
+    fun `gets trip schedules`() = runTest {
         val mockEngine = MockEngine {
             respond(
                 """{"type": "stop_ids", "stop_ids": ["1", "2", "3"]}""",
@@ -36,20 +36,15 @@ class TripRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
 
-        runBlocking {
-            val response = TripRepository().getTripSchedules(tripId = "12345")
+        val response = TripRepository().getTripSchedules(tripId = "12345")
 
-            assertEquals(
-                ApiResult.Ok(TripSchedulesResponse.StopIds(listOf("1", "2", "3"))),
-                response,
-            )
-        }
+        assertEquals(ApiResult.Ok(TripSchedulesResponse.StopIds(listOf("1", "2", "3"))), response)
 
         stopKoin()
     }
 
     @Test
-    fun `gets trip shape when shaped found`() {
+    fun `gets trip shape when shaped found`() = runTest {
         val mockEngine = MockEngine {
             respond(
                 """
@@ -72,31 +67,29 @@ class TripRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
 
-        runBlocking {
-            val response = TripRepository().getTripShape(tripId = "12345")
+        val response = TripRepository().getTripShape(tripId = "12345")
 
-            assertEquals(
-                ApiResult.Ok(
-                    TripShape(
-                        shapeWithStops =
-                            ShapeWithStops(
-                                directionId = 1,
-                                routeId = "66",
-                                routePatternId = "66_rp",
-                                shape = Shape(id = "shape_id", polyline = "shape_polyline"),
-                                stopIds = listOf("1", "2", "3"),
-                            )
-                    )
-                ),
-                response,
-            )
-        }
+        assertEquals(
+            ApiResult.Ok(
+                TripShape(
+                    shapeWithStops =
+                        ShapeWithStops(
+                            directionId = 1,
+                            routeId = "66",
+                            routePatternId = "66_rp",
+                            shape = Shape(id = "shape_id", polyline = "shape_polyline"),
+                            stopIds = listOf("1", "2", "3"),
+                        )
+                )
+            ),
+            response,
+        )
 
         stopKoin()
     }
 
     @Test
-    fun `getsTripShape error response when not found`() {
+    fun `getsTripShape error response when not found`() = runTest {
         val mockEngine = MockEngine {
             respond(
                 """
@@ -115,19 +108,17 @@ class TripRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
 
-        runBlocking {
-            val apiResult = TripRepository().getTripShape(tripId = "12345")
+        val apiResult = TripRepository().getTripShape(tripId = "12345")
 
-            assertIs<ApiResult.Error<*>>(apiResult)
-            assertEquals(404, apiResult.code)
-            assertContains(apiResult.message, "not_found")
-        }
+        assertIs<ApiResult.Error<*>>(apiResult)
+        assertEquals(404, apiResult.code)
+        assertContains(apiResult.message, "not_found")
 
         stopKoin()
     }
 
     @Test
-    fun `getsTripShape when parsing error`() {
+    fun `getsTripShape when parsing error`() = runTest {
         val mockEngine = MockEngine {
             respond(
                 """{"field": "Can't parse me!"}
@@ -141,12 +132,10 @@ class TripRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
 
-        runBlocking {
-            val apiResult = TripRepository().getTripShape(tripId = "12345")
-            assertIs<ApiResult.Error<*>>(apiResult)
+        val apiResult = TripRepository().getTripShape(tripId = "12345")
+        assertIs<ApiResult.Error<*>>(apiResult)
 
-            assertContains(apiResult.message, "Field 'shape_with_stops' is required for type")
-        }
+        assertContains(apiResult.message, "Field 'shape_with_stops' is required for type")
 
         stopKoin()
     }

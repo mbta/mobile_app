@@ -10,11 +10,11 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class StopFeaturesBuilderTest {
     @Test
-    fun `stop sources are created`() = runBlocking {
+    fun `stop sources are created`() = runTest {
         val objects = TestData.clone()
 
         val stop1 = objects.getStop("place-aqucl")
@@ -96,7 +96,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stops are snapped to routes`() = runBlocking {
+    fun `stops are snapped to routes`() = runTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -124,7 +124,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stops features have service status`() = runBlocking {
+    fun `stops features have service status`() = runTest {
         val objects = MapTestDataHelper.objects
 
         val stops = objects.stops.filterKeys { it in setOf("70061", "place-alfcl", "place-astao") }
@@ -191,7 +191,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have routes`() = runBlocking {
+    fun `stop features have routes`() = runTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -231,7 +231,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have names`() = runBlocking {
+    fun `stop features have names`() = runTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAssembly.id to MapTestDataHelper.mapStopAssembly,
@@ -255,7 +255,7 @@ class StopFeaturesBuilderTest {
     }
 
     @Test
-    fun `stop features have terminals`() = runBlocking {
+    fun `stop features have terminals`() = runTest {
         val stops =
             mapOf(
                 MapTestDataHelper.stopAlewife.id to MapTestDataHelper.mapStopAlewife,

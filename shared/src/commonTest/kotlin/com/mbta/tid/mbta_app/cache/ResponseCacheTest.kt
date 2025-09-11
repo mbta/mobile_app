@@ -28,7 +28,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import okio.FileSystem
 import okio.fakefilesystem.FakeFileSystem
@@ -41,7 +41,7 @@ class ResponseCacheTest {
     @AfterTest fun `stop koin`() = run { stopKoin() }
 
     @Test
-    fun `fetches data if empty`() = runBlocking {
+    fun `fetches data if empty`() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.stop()
         objects.stop()
@@ -82,7 +82,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `returns data within timeout`() = runBlocking {
+    fun `returns data within timeout`() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.stop()
         objects.stop()
@@ -111,7 +111,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `fetches data beyond timeout`() = runBlocking {
+    fun `fetches data beyond timeout`() = runTest {
         val oldObjects = ObjectCollectionBuilder()
         val oldData = GlobalResponse(oldObjects, emptyMap())
 
@@ -162,7 +162,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `returns existing data when etag matches`() = runBlocking {
+    fun `returns existing data when etag matches`() = runTest {
         val oldObjects = ObjectCollectionBuilder()
         val oldData = GlobalResponse(oldObjects, emptyMap())
 
@@ -258,7 +258,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `returns data from disk`() = runBlocking {
+    fun `returns data from disk`() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.stop()
         objects.stop()
@@ -302,7 +302,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `fetches data when disk cache is stale`() = runBlocking {
+    fun `fetches data when disk cache is stale`() = runTest {
         val oldObjects = ObjectCollectionBuilder()
         val oldData = GlobalResponse(oldObjects, emptyMap())
 
@@ -362,7 +362,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `passes stale data into flow immediately`() = runBlocking {
+    fun `passes stale data into flow immediately`() = runTest {
         val oldObjects = ObjectCollectionBuilder()
         val oldData = GlobalResponse(oldObjects, emptyMap())
 
@@ -427,7 +427,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `writes to disk cache on load`() = runBlocking {
+    fun `writes to disk cache on load`() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.stop()
         objects.stop()
@@ -496,7 +496,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `writes full json even when some of it isn't parsed`() = runBlocking {
+    fun `writes full json even when some of it isn't parsed`() = runTest {
         @Serializable data class PartialObject(val a: String, val b: Int)
         @Serializable data class CompleteObject(val a: String, val b: Int, val c: Double)
         @Serializable
@@ -563,7 +563,7 @@ class ResponseCacheTest {
     }
 
     @Test
-    fun `cache is invalidated by changing the invalidation key`() = runBlocking {
+    fun `cache is invalidated by changing the invalidation key`() = runTest {
         val objects = ObjectCollectionBuilder()
         objects.stop()
         objects.stop()

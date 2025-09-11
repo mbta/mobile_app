@@ -9,7 +9,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Month
 
 class TripDetailsStopListTest {
@@ -155,7 +155,7 @@ class TripDetailsStopListTest {
         fun predictions() = PredictionsStreamDataResponse(objects)
     }
 
-    private fun test(block: suspend TestBuilder.() -> Unit) = runBlocking {
+    private fun test(block: suspend TestBuilder.() -> Unit) = runTest {
         val builder = TestBuilder()
         builder.block()
     }
@@ -355,7 +355,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces can deduplicate predictions by stop sequence from real data`() = runBlocking {
+    fun `fromPieces can deduplicate predictions by stop sequence from real data`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val p1 =
@@ -470,7 +470,7 @@ class TripDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces handles happy path with schedules and vehicles`() = runBlocking {
+    fun `fromPieces handles happy path with schedules and vehicles`() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }

@@ -15,7 +15,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertTrue
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -27,7 +27,7 @@ class ConfigRepositoryTests {
     }
 
     @Test
-    fun testGetConfigSuccess() {
+    fun testGetConfigSuccess() = runTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content =
@@ -47,15 +47,13 @@ class ConfigRepositoryTests {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = ConfigRepository().getConfig()
+        val response = ConfigRepository().getConfig()
 
-            assertEquals(ApiResult.Ok(ConfigResponse("fake_token")), response)
-        }
+        assertEquals(ApiResult.Ok(ConfigResponse("fake_token")), response)
     }
 
     @Test
-    fun testGetConfigApiError() {
+    fun testGetConfigApiError() = runTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content =
@@ -73,12 +71,10 @@ class ConfigRepositoryTests {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = ConfigRepository().getConfig()
+        val response = ConfigRepository().getConfig()
 
-            assertIs<ApiResult.Error<*>>(response)
-            assertEquals(401, response.code)
-            assertTrue(response.message.contains("{\"message\": \"oh no\"}"))
-        }
+        assertIs<ApiResult.Error<*>>(response)
+        assertEquals(401, response.code)
+        assertTrue(response.message.contains("{\"message\": \"oh no\"}"))
     }
 }

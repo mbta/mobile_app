@@ -15,7 +15,7 @@ import io.ktor.http.headersOf
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Month
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -25,7 +25,7 @@ import org.koin.test.KoinTest
 class SchedulesRepositoryTest : KoinTest {
 
     @Test
-    fun testGetSchedule() {
+    fun testGetSchedule() = runTest {
         val mockEngine = MockEngine { request ->
             respond(
                 content =
@@ -68,46 +68,43 @@ class SchedulesRepositoryTest : KoinTest {
         startKoin {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
-        runBlocking {
-            val response = SchedulesRepository().getSchedule(stopIds = listOf("place-davis"))
-            assertEquals(
-                ApiResult.Ok(
-                    ScheduleResponse(
-                        schedules =
-                            listOf(
-                                Schedule(
-                                    id = "sched1",
-                                    arrivalTime =
-                                        EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 5),
-                                    departureTime =
-                                        EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 6),
-                                    dropOffType = Schedule.StopEdgeType.Regular,
-                                    pickUpType = Schedule.StopEdgeType.Regular,
-                                    stopHeadsign = "Stop Headsign",
-                                    stopSequence = 0,
+        val response = SchedulesRepository().getSchedule(stopIds = listOf("place-davis"))
+        assertEquals(
+            ApiResult.Ok(
+                ScheduleResponse(
+                    schedules =
+                        listOf(
+                            Schedule(
+                                id = "sched1",
+                                arrivalTime = EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 5),
+                                departureTime = EasternTimeInstant(2024, Month.JANUARY, 2, 3, 4, 6),
+                                dropOffType = Schedule.StopEdgeType.Regular,
+                                pickUpType = Schedule.StopEdgeType.Regular,
+                                stopHeadsign = "Stop Headsign",
+                                stopSequence = 0,
+                                routeId = "Red",
+                                stopId = "70064",
+                                tripId = "trip1",
+                            )
+                        ),
+                    trips =
+                        mapOf(
+                            "trip1" to
+                                Trip(
+                                    id = "trip1",
+                                    directionId = 0,
+                                    headsign = "Alewife",
                                     routeId = "Red",
-                                    stopId = "70064",
-                                    tripId = "trip1",
+                                    routePatternId = "rp1",
+                                    shapeId = "shape1",
+                                    stopIds = listOf("70064", "70065"),
                                 )
-                            ),
-                        trips =
-                            mapOf(
-                                "trip1" to
-                                    Trip(
-                                        id = "trip1",
-                                        directionId = 0,
-                                        headsign = "Alewife",
-                                        routeId = "Red",
-                                        routePatternId = "rp1",
-                                        shapeId = "shape1",
-                                        stopIds = listOf("70064", "70065"),
-                                    )
-                            ),
-                    )
-                ),
-                response,
-            )
-        }
+                        ),
+                )
+            ),
+            response,
+        )
+
         stopKoin()
     }
 }

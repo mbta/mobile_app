@@ -21,12 +21,12 @@ import io.github.dellisd.spatialk.turf.lineSlice
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 @OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {
     @Test
-    fun `creates route source data`() = runBlocking {
+    fun `creates route source data`() = runTest {
         val routeSources =
             RouteFeaturesBuilder.generateRouteSources(
                 routeData = MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
@@ -91,7 +91,7 @@ class RouteFeaturesBuilderTest {
     }
 
     @Test
-    fun `splits for alerts`() = runBlocking {
+    fun `splits for alerts`() = runTest {
         val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()

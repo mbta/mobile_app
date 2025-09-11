@@ -5,7 +5,7 @@ import com.mbta.tid.mbta_app.repositories.RouteStopsResult
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 
 class RouteDetailsStopListTest {
     @Test
@@ -361,7 +361,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces finds transfer stops`() = runBlocking {
+    fun `fromPieces finds transfer stops`() = runTest {
         val objects = ObjectCollectionBuilder()
         val connectingStop = objects.stop()
         val mainStop = objects.stop { connectingStopIds = listOf(connectingStop.id) }
@@ -423,7 +423,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces returns null if direction doesn't match`() = runBlocking {
+    fun `fromPieces returns null if direction doesn't match`() = runTest {
         val objects = ObjectCollectionBuilder()
         val mainStop = objects.stop {}
         val mainRoute = objects.route()
@@ -457,7 +457,7 @@ class RouteDetailsStopListTest {
     }
 
     @Test
-    fun `fromPieces breaks segments by typicality`() = runBlocking {
+    fun `fromPieces breaks segments by typicality`() = runTest {
         val objects = ObjectCollectionBuilder()
         val stop0 = objects.stop { id = "stop0" }
         val stop1 = objects.stop { id = "stop1" }

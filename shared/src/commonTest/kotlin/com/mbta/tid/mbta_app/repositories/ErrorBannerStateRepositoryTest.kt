@@ -18,7 +18,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -27,13 +27,13 @@ class ErrorBannerStateRepositoryTest {
     @AfterTest fun `stop koin`() = run { stopKoin() }
 
     @Test
-    fun `initial state is null`() = runBlocking {
+    fun `initial state is null`() = runTest {
         val repo = ErrorBannerStateRepository()
         assertEquals(repo.state.value, null)
     }
 
     @Test
-    fun `updates if predictions are stale`() = runBlocking {
+    fun `updates if predictions are stale`() = runTest {
         val repo = ErrorBannerStateRepository()
 
         val lastUpdated = EasternTimeInstant.now() - 3.minutes
@@ -75,7 +75,7 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
-    fun `clears if predictions stop being stale`() = runBlocking {
+    fun `clears if predictions stop being stale`() = runTest {
         val repo = ErrorBannerStateRepository()
 
         repo.checkPredictionsStale(EasternTimeInstant.now() - 3.minutes, 1) {}
@@ -88,7 +88,7 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
-    fun `clears if no predictions`() = runBlocking {
+    fun `clears if no predictions`() = runTest {
         val repo = ErrorBannerStateRepository()
 
         val lastUpdated = EasternTimeInstant.now() - 2.days
@@ -103,7 +103,7 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
-    fun `streams in flow`() = runBlocking {
+    fun `streams in flow`() = runTest {
         val repo = ErrorBannerStateRepository()
 
         // pass events from the flow back into this channel so we can assert as we update
