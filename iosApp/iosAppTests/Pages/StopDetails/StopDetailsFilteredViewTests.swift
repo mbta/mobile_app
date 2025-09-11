@@ -42,7 +42,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             onUpdateFavorites: {},
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM
         )
 

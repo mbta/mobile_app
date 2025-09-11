@@ -41,6 +41,12 @@ extension iosApp.IMapLayerManager {
     }
 }
 
+extension ColorPalette {
+    var colorScheme: ColorScheme {
+        self == ColorPalette.companion.light ? .light : .dark
+    }
+}
+
 struct MapImageError: Error {}
 
 class MapLayerManager: iosApp.IMapLayerManager {
@@ -209,5 +215,47 @@ class MapLayerManager: iosApp.IMapLayerManager {
 
     func updateSourceData(stopData: MapboxMaps.FeatureCollection) {
         updateSourceData(sourceId: StopFeaturesBuilder.shared.stopSourceId, data: stopData)
+    }
+}
+
+extension MapLayerManager: Shared.IMapLayerManager {
+    // swiftlint:disable:next identifier_name
+    func __addLayers(
+        mapFriendlyRouteResponse: MapFriendlyRouteResponse,
+        state: StopLayerGenerator.State,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ) async throws {
+        addLayers(
+            mapFriendlyRouteResponse: mapFriendlyRouteResponse,
+            state: state,
+            globalResponse: globalResponse,
+            colorScheme: colorPalette.colorScheme
+        )
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __addLayers(
+        routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
+        state: StopLayerGenerator.State,
+        globalResponse: GlobalResponse,
+        colorPalette: ColorPalette
+    ) async throws {
+        addLayers(
+            routes: routes,
+            state: state,
+            globalResponse: globalResponse,
+            colorScheme: colorPalette.colorScheme
+        )
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __updateRouteSourceData(routeData: [RouteSourceData]) async throws {
+        updateSourceData(routeData: routeData)
+    }
+
+    // swiftlint:disable:next identifier_name
+    func __updateStopSourceData(stopData: Shared.FeatureCollection) async throws {
+        updateSourceData(stopData: stopData.toMapbox())
     }
 }

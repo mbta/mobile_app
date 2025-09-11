@@ -15,7 +15,7 @@ import SwiftUI
 struct HomeMapView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    @State var mapVM: Shared.IMapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -23,22 +23,15 @@ struct HomeMapView: View {
 
     var errorBannerRepository: IErrorBannerStateRepository
 
-    var railRouteShapeRepository: IRailRouteShapeRepository
-    @State var railRouteShapes: MapFriendlyRouteResponse?
-
-    var stopRepository: IStopRepository
-    @State var globalMapData: GlobalMapData?
-    @State var stopMapData: StopMapResponse?
-
     @State var vehiclesRepository: IVehiclesRepository
     @State var vehiclesData: [Vehicle]?
 
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
-    @State private var recenterButton: ViewAnnotation?
-    @State private var now = Date.now
-    @State var lastNavEntry: SheetNavigationStackEntry?
+    @State var mapVMState: Shared.MapViewModel.State = Shared.MapViewModel.StateOverview.shared
+    @State var globalData: GlobalResponse?
+    @Binding var selectedVehicle: Vehicle?
 
     let inspection = Inspection<Self>()
     let log = Logger()
@@ -51,30 +44,27 @@ struct HomeMapView: View {
 
     init(
         contentVM: ContentViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: Shared.IMapViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
-        railRouteShapeRepository: IRailRouteShapeRepository = RepositoryDI().railRouteShapes,
-        stopRepository: IStopRepository = RepositoryDI().stop,
         vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
         locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
-        globalMapData: GlobalMapData? = nil
+        globalMapData _: GlobalMapData? = nil,
+        selectedVehicle: Binding<Vehicle?>
     ) {
         self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
         self.viewportProvider = viewportProvider
         self.errorBannerRepository = errorBannerRepository
-        self.railRouteShapeRepository = railRouteShapeRepository
-        self.stopRepository = stopRepository
         self.vehiclesData = vehiclesData
         self.vehiclesRepository = vehiclesRepository
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
-        _globalMapData = State(wrappedValue: globalMapData)
+        _selectedVehicle = selectedVehicle
     }
 
     var body: some View {
@@ -84,20 +74,12 @@ struct HomeMapView: View {
                     crosshairs
                 }
             }
-            .global($mapVM.globalData, errorKey: "HomeMapView")
-            .task { loadRouteShapes() }
-            .onChange(of: lastNavEntry) { [oldNavEntry = lastNavEntry] nextNavEntry in
-                handleLastNavChange(oldNavEntry: oldNavEntry, nextNavEntry: nextNavEntry)
-            }
-            .onChange(of: mapVM.routeSourceData) { _ in
-                updateRouteSource()
-                if let layerManager = mapVM.layerManager {
-                    addLayers(layerManager)
-                }
-            }
-            .onChange(of: mapVM.stopLayerState) { _ in
-                if let layerManager = mapVM.layerManager {
-                    addLayers(layerManager)
+            .global($globalData, errorKey: "HomeMapView")
+            .onChange(of: nearbyVM.navigationStack) { navStack in
+                Task {
+                    let currentNavEntry = navStack.lastSafe().toSheetRoute()
+                    mapVM.navChanged(currentNavEntry: currentNavEntry)
+                    handleNavStackChange(navigationStack: navStack)
                 }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -112,8 +94,20 @@ struct HomeMapView: View {
             .onAppear {
                 checkOnboardingLoaded()
             }
-            .onDisappear {
-                mapVM.layerManager = nil
+            .task {
+                for await state in mapVM.models {
+                    mapVMState = state
+                }
+            }
+            .onChange(of: colorScheme) { newColorScheme in
+                mapVM.colorPaletteChanged(isDarkMode: newColorScheme == .dark)
+            }
+            .onChange(of: mapVMState) { state in
+                if case let .tripSelected(tripState) = onEnum(of: state) {
+                    selectedVehicle = tripState.vehicle
+                } else {
+                    selectedVehicle = nil
+                }
             }
     }
 
@@ -121,18 +115,10 @@ struct HomeMapView: View {
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
             .onChange(of: nearbyVM.alerts) { _ in
-                handleGlobalMapDataChange(now: now)
+                mapVM.alertsChanged(alerts: nearbyVM.alerts)
             }
             .onChange(of: nearbyVM.routeCardData) { _ in
-                if case let .stopDetails(stopId: _, stopFilter: filter, tripFilter: _) = lastNavEntry, let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
-                }
-            }
-            .onChange(of: mapVM.selectedVehicle) { [weak previousVehicle = mapVM.selectedVehicle] nextVehicle in
-                handleSelectedVehicleChange(previousVehicle, nextVehicle)
-            }
-            .onChange(of: globalMapData) { _ in
-                updateGlobalMapDataSources()
+                mapVM.routeCardDataChanged(routeCardData: nearbyVM.routeCardData)
             }
             .onDisappear {
                 leaveVehiclesChannel()
@@ -140,20 +126,12 @@ struct HomeMapView: View {
             }
             .withScenePhaseHandlers(
                 onActive: {
-                    if let lastNavEntry {
-                        joinVehiclesChannel(navStackEntry: lastNavEntry)
-                    }
+                    let lastNavEntry = nearbyVM.navigationStack.lastSafe()
+                    joinVehiclesChannel(navStackEntry: lastNavEntry)
                 },
                 onInactive: leaveVehiclesChannel,
                 onBackground: leaveVehiclesChannel
             )
-            .task {
-                while !Task.isCancelled {
-                    now = Date.now
-                    handleGlobalMapDataChange(now: now)
-                    try? await Task.sleep(for: .seconds(30))
-                }
-            }
     }
 
     @ViewBuilder
@@ -161,41 +139,30 @@ struct HomeMapView: View {
         ProxyModifiedMap(
             mapContent: AnyView(annotatedMap),
             handleAppear: handleAppear,
-            handleTryLayerInit: handleTryLayerInit,
             handleAccessTokenLoaded: handleAccessTokenLoaded,
-            globalMapData: globalMapData
         )
-        .onChange(of: mapVM.globalData) { _ in
-            handleGlobalMapDataChange(now: now)
-        }
         .onChange(of: locationDataManager.authorizationStatus) { status in
-            guard status == .authorizedAlways || status == .authorizedWhenInUse,
-                  viewportProvider.isDefault() else { return }
-            viewportProvider.follow(animation: .easeInOut(duration: 0))
-            mapVM.layerManager?.resetPuckPosition()
-        }
-        .onChange(of: nearbyVM.navigationStack) { nextNavStack in
-            handleNavStackChange(navigationStack: nextNavStack)
+            Task {
+                guard status == .authorizedAlways || status == .authorizedWhenInUse,
+                      viewportProvider.isDefault() else { return }
+                mapVM.locationPermissionsChanged(hasPermission: true)
+            }
         }
     }
 
     @ViewBuilder
     var annotatedMap: some View {
         let nav = nearbyVM.navigationStack.last
-        let selectedVehicle: Vehicle? = if case .stopDetails = nav {
-            mapVM.selectedVehicle
-        } else { nil }
         let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
-            stopMapData: stopMapData,
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
             targetedLocation: shouldShowLoadedLocation ? nearbyVM.lastLoadedLocation : nil,
-            globalData: mapVM.globalData,
+            globalData: globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
             vehicles: vehicles,
             handleCameraChange: handleCameraChange,
-            handleStyleLoaded: refreshMap,
+            handleStyleLoaded: { mapVM.mapStyleLoaded() },
             handleTapStopLayer: handleTapStopLayer,
             handleTapVehicle: handleTapVehicle,
             viewportProvider: viewportProvider
@@ -216,26 +183,13 @@ struct HomeMapView: View {
 struct ProxyModifiedMap: View {
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
-    var handleTryLayerInit: (_ map: MapboxMap?) -> Void
     var handleAccessTokenLoaded: (_ map: MapboxMap?) -> Void
-    var globalData: GlobalResponse?
-    var railRouteShapes: MapFriendlyRouteResponse?
-    var globalMapData: GlobalMapData?
 
     var body: some View {
         MapReader { proxy in
             mapContent
                 .onAppear {
                     handleAppear(proxy.location, proxy.map)
-                }
-                .onChange(of: globalData) { _ in
-                    handleTryLayerInit(proxy.map)
-                }
-                .onChange(of: railRouteShapes) { _ in
-                    handleTryLayerInit(proxy.map)
-                }
-                .onChange(of: globalMapData) { _ in
-                    handleTryLayerInit(proxy.map)
                 }
                 .onChange(of: MapboxOptions.accessToken) { _ in
                     handleAccessTokenLoaded(proxy.map)

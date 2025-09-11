@@ -23,7 +23,7 @@ struct ContentView: View {
     @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
     @StateObject var nearbyVM = NearbyViewModel()
-    @StateObject var mapVM = iosApp.MapViewModel()
+    @State var mapVM = ViewModelDI().map
     @StateObject var settingsVM = SettingsViewModel()
     @StateObject var stopDetailsVM = StopDetailsViewModel()
     @State var toastVM = ViewModelDI().toast
@@ -40,6 +40,8 @@ struct ContentView: View {
     @State private var selectedTab: SelectedTab? = nil
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
+    @State private var selectedVehicle: Vehicle?
+    @State private var globalData: GlobalResponse?
 
     struct AnalyticsParams: Equatable {
         let stopId: String?
@@ -56,6 +58,7 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
+            mapVM.setViewportManager(viewportManager: viewportProvider)
             Task { await contentVM.loadPendingFeaturePromosAndTabPreferences() }
             Task { await contentVM.loadOnboardingScreens() }
             analytics.recordSession(colorScheme: colorScheme)
@@ -67,13 +70,7 @@ struct ContentView: View {
                 analytics.track(screen: screen)
             }
         }
-        .task {
-            // We can't set stale caches in ResponseCache on init because of our Koin setup,
-            // so this is here to get the cached data into the global flow and kick off an async request asap.
-            do {
-                _ = try await RepositoryDI().global.getGlobalData()
-            } catch {}
-        }
+        .global($globalData, errorKey: "ContentView")
         .onAppear {
             readDeepLinkState()
         }
@@ -120,20 +117,16 @@ struct ContentView: View {
         .onChange(of: hideMaps) { _ in
             analytics.recordSession(hideMaps: hideMaps)
         }
-        .onChange(of: contentVM.configResponse) { response in
-            switch onEnum(of: response) {
-            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
-            default: debugPrint("Skipping mapbox token configuration")
-            }
-        }
         .onChange(of: contentVM.featurePromosPending) { promos in
             if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
                 favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
             }
         }
-        .onReceive(mapVM.lastMapboxErrorSubject
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task { await contentVM.loadConfig() }
+        .onReceive(
+            contentVM.mapboxConfigManager.lastMapboxErrorSubject
+                .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+        ) { _ in
+            Task { await contentVM.loadConfig() }
         }
     }
 
@@ -190,13 +183,13 @@ struct ContentView: View {
                                 if !viewportProvider.viewport.isFollowing,
                                    locationDataManager.currentLocation != nil {
                                     RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
-                                        viewportProvider.follow()
+                                        mapVM.recenter(type: .currentLocation)
                                     }
                                 }
                                 if !viewportProvider.viewport.isOverview,
-                                   let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                                   let routeType = vehicleRouteType() {
                                     RecenterButton(icon: routeIconResource(routeType), size: 32) {
-                                        viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                                        mapVM.recenter(type: .trip)
                                     }
                                 }
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
@@ -402,11 +395,7 @@ struct ContentView: View {
             noNearbyStops: { NoNearbyStopsView(
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
-                    viewportProvider.setIsManuallyCentering(true)
-                    viewportProvider.animateTo(
-                        coordinates: ViewportProvider.Defaults.center,
-                        zoom: 13.75
-                    )
+                    viewportProvider.panToDefaultCenter()
                 }
             ) }
         )
@@ -420,7 +409,8 @@ struct ContentView: View {
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
-            sheetHeight: $sheetHeight
+            sheetHeight: $sheetHeight,
+            selectedVehicle: $selectedVehicle
         ).accessibilityHidden(searchObserver.isSearching)
     }
 
@@ -532,22 +522,18 @@ struct ContentView: View {
         ).ignoresSafeArea(.all)
     }
 
+    private func vehicleRouteType() -> RouteType? {
+        guard let routeId = selectedVehicle?.routeId,
+              let route = globalData?.getRoute(routeId: routeId)
+        else { return nil }
+        return route.type
+    }
+
     private func readDeepLinkState() {
         switch onEnum(of: AppDelegate.deepLinkState) {
         case .none: break
         }
         AppDelegate.deepLinkState = .None.shared
-    }
-
-    private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
-        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: tripFilter) = nearbyVM
-            .navigationStack.lastSafe(),
-            let selectedVehicle = mapVM.selectedVehicle, tripFilter?.vehicleId == selectedVehicle.id,
-            let globalData = mapVM.globalData,
-            let stop = nearbyVM.getTargetStop(global: globalData),
-            let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
-            let route = globalData.getRoute(routeId: routeId) else { return nil }
-        return (route.type, selectedVehicle, stop)
     }
 
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {

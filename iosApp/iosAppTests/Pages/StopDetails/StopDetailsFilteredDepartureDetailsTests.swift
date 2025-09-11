@@ -112,7 +112,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -150,7 +150,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(),
             viewportProvider: .init()
         )
@@ -224,7 +224,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
@@ -283,7 +283,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -340,7 +340,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -370,7 +370,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: .init(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -417,7 +417,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
@@ -482,7 +482,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
@@ -555,7 +555,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
@@ -599,7 +599,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
@@ -649,7 +649,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
@@ -742,7 +742,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
