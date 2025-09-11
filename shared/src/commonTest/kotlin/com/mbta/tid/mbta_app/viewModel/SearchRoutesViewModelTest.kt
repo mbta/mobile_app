@@ -17,6 +17,7 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 
 class SearchRoutesViewModelTest {
@@ -46,6 +47,7 @@ class SearchRoutesViewModelTest {
                     }
                 },
                 MockSentryRepository(),
+                StandardTestDispatcher(testScheduler),
             )
 
         testViewModelFlow(searchVM).test {
@@ -85,6 +87,7 @@ class SearchRoutesViewModelTest {
                     }
                 },
                 MockSentryRepository(),
+                StandardTestDispatcher(testScheduler),
             )
 
         testViewModelFlow(searchVM).test {
@@ -118,6 +121,7 @@ class SearchRoutesViewModelTest {
                     }
                 },
                 MockSentryRepository(),
+                StandardTestDispatcher(testScheduler),
             )
 
         testViewModelFlow(searchVM).test {

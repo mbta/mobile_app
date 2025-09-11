@@ -9,10 +9,9 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.koin.core.qualifier.named
 
 private fun fetchGlobalData(
     errorKey: String,
@@ -44,7 +43,7 @@ internal fun getGlobalData(
     errorKey: String,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    coroutineDispatcher: CoroutineDispatcher = koinInject(named("coroutineDispatcherIO")),
 ): GlobalResponse? {
     val globalResponse: GlobalResponse? by globalRepository.state.collectAsState()
     LaunchedEffect(Unit) {

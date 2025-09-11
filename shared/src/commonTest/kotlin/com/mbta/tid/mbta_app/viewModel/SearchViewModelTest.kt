@@ -31,6 +31,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.timeout
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 
 class SearchViewModelTest {
@@ -88,6 +89,7 @@ class SearchViewModelTest {
                 },
                 MockSentryRepository(),
                 VisitHistoryUsecase(visitHistoryRepo),
+                StandardTestDispatcher(testScheduler),
             )
 
         testViewModelFlow(searchVM).test {
@@ -193,6 +195,7 @@ class SearchViewModelTest {
                         }
                     )
                 ),
+                StandardTestDispatcher(testScheduler),
             )
 
         val state =

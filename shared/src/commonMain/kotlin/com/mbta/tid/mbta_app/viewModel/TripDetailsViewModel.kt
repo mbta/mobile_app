@@ -23,10 +23,10 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripDetailsStopLis
 import kotlin.jvm.JvmName
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.qualifier.named
+import org.koin.mp.KoinPlatform.getKoin
 
 public interface ITripDetailsViewModel {
     public val models: StateFlow<TripDetailsViewModel.State>
@@ -47,7 +47,8 @@ public class TripDetailsViewModel(
     private val tripPredictionsRepository: ITripPredictionsRepository,
     private val tripRepository: ITripRepository,
     private val vehicleRepository: IVehicleRepository,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val coroutineDispatcher: CoroutineDispatcher =
+        getKoin().get(named("coroutineDispatcherIO")),
 ) :
     MoleculeViewModel<TripDetailsViewModel.Event, TripDetailsViewModel.State>(),
     ITripDetailsViewModel {

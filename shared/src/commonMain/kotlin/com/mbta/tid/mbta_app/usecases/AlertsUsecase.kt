@@ -7,18 +7,19 @@ import com.mbta.tid.mbta_app.repositories.IAlertsRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.qualifier.named
+import org.koin.mp.KoinPlatform.getKoin
 
 public class AlertsUsecase
 @DefaultArgumentInterop.Enabled
 constructor(
     private val alertsRepository: IAlertsRepository,
     globalRepository: IGlobalRepository,
-    private val globalUpdateDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val globalUpdateDispatcher: CoroutineDispatcher =
+        getKoin().get(named("coroutineDispatcherIO")),
 ) : KoinComponent {
 
     private var lastOkResult: ApiResult.Ok<AlertsStreamDataResponse>? = null

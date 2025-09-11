@@ -12,10 +12,9 @@ import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+import org.koin.core.qualifier.named
 
 private fun fetchSchedules(
     stopIds: List<String>,
@@ -51,7 +50,7 @@ internal fun getSchedules(
     errorKey: String,
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
-    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    coroutineDispatcher: CoroutineDispatcher = koinInject(named("coroutineDispatcherIO")),
 ): ScheduleResponse? {
     val errorKey = "$errorKey.getSchedules"
     var result: ScheduleResponse? by remember { mutableStateOf(null) }

@@ -25,10 +25,10 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPrediction
 import kotlin.jvm.JvmName
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.koin.core.qualifier.named
+import org.koin.mp.KoinPlatform.getKoin
 
 public interface IStopDetailsViewModel {
     public val models: StateFlow<StopDetailsViewModel.State>
@@ -52,7 +52,8 @@ public class StopDetailsViewModel(
     private val predictionsRepository: IPredictionsRepository,
     private val sentryRepository: ISentryRepository,
     private val schedulesRepository: ISchedulesRepository,
-    private val coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val coroutineDispatcher: CoroutineDispatcher =
+        getKoin().get(named("coroutineDispatcherIO")),
 ) :
     MoleculeViewModel<StopDetailsViewModel.Event, StopDetailsViewModel.State>(),
     IStopDetailsViewModel {

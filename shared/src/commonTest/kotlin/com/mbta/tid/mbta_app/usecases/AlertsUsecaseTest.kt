@@ -14,6 +14,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -35,7 +36,12 @@ class AlertsUsecaseTest {
         val alertResponse = AlertsStreamDataResponse(objects)
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
         val mockAlertsRepository = MockAlertsRepository(alertResponse)
-        val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
+        val usecase =
+            AlertsUsecase(
+                mockAlertsRepository,
+                mockGlobalRepository,
+                globalUpdateDispatcher = Dispatchers.Default,
+            )
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
 
@@ -67,7 +73,12 @@ class AlertsUsecaseTest {
 
         val mockGlobalRepository = MockGlobalRepository(GlobalResponse(objects))
         val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
-        val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
+        val usecase =
+            AlertsUsecase(
+                mockAlertsRepository,
+                mockGlobalRepository,
+                globalUpdateDispatcher = Dispatchers.Default,
+            )
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
 
@@ -106,7 +117,12 @@ class AlertsUsecaseTest {
     fun `error responses are passed through`() {
         val mockGlobalRepository = IdleGlobalRepository()
         val mockAlertsRepository = MockAlertsRepository(ApiResult.Error(message = "Error"))
-        val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
+        val usecase =
+            AlertsUsecase(
+                mockAlertsRepository,
+                mockGlobalRepository,
+                globalUpdateDispatcher = Dispatchers.Default,
+            )
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
 
@@ -124,7 +140,12 @@ class AlertsUsecaseTest {
 
         val mockGlobalRepository = IdleGlobalRepository()
         val mockAlertsRepository = MockAlertsRepository(AlertsStreamDataResponse(objects))
-        val usecase = AlertsUsecase(mockAlertsRepository, mockGlobalRepository)
+        val usecase =
+            AlertsUsecase(
+                mockAlertsRepository,
+                mockGlobalRepository,
+                globalUpdateDispatcher = Dispatchers.Default,
+            )
 
         var result: ApiResult<AlertsStreamDataResponse>? = null
 

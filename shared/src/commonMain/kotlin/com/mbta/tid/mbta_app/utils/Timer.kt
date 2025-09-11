@@ -9,7 +9,6 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +25,7 @@ internal class ClockTickHandler {
         fun getClockFlow(clock: Clock): SharedFlow<EasternTimeInstant> {
             if (job == null) {
                 job =
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.Default).launch {
                         while (true) {
                             val now = EasternTimeInstant.now(clock)
                             _clockFlow.emit(now)

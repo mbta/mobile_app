@@ -24,12 +24,13 @@ import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlin.jvm.JvmName
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import org.koin.core.qualifier.named
+import org.koin.mp.KoinPlatform.getKoin
 
 private fun stopRouteContentDescription(
     isStation: Boolean,
@@ -79,6 +80,7 @@ public class SearchViewModel(
     private val searchResultRepository: ISearchResultRepository,
     private val sentryRepository: ISentryRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
+    private val ioDispatcher: CoroutineDispatcher = getKoin().get(named("coroutineDispatcherIO")),
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
     public sealed interface Event {
         public data object RefreshHistory : Event
@@ -186,7 +188,7 @@ public class SearchViewModel(
             if (query.isNotEmpty()) {
                 // explicitly not in dependencies to avoid thrashing every frame
                 if (state is State.RecentStops) state = State.Loading
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     delay(500)
                     when (val data = searchResultRepository.getSearchResults(query)) {
                         is ApiResult.Ok ->

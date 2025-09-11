@@ -35,12 +35,13 @@ import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import okio.FileSystem
 import okio.SYSTEM
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
+
+internal expect val ioDispatcher: CoroutineDispatcher
 
 /** Define the koin module with the resources to use in dependency injection */
 internal fun appModule(appVariant: AppVariant) = module {
@@ -50,7 +51,7 @@ internal fun appModule(appVariant: AppVariant) = module {
         module {
             single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
         },
-        module { single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO } },
+        module { single(named("coroutineDispatcherIO")) { ioDispatcher } },
         repositoriesModule(RealRepositories()),
     )
 }

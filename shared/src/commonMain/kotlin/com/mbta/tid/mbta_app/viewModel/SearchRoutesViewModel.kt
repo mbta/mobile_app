@@ -17,12 +17,13 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import kotlin.jvm.JvmName
 import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import org.koin.core.qualifier.named
+import org.koin.mp.KoinPlatform.getKoin
 
 public interface ISearchRoutesViewModel {
 
@@ -39,6 +40,7 @@ internal constructor(
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
     private val sentryRepository: ISentryRepository,
+    private val ioDispatcher: CoroutineDispatcher = getKoin().get(named("coroutineDispatcherIO")),
 ) :
     MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
     ISearchRoutesViewModel {
@@ -84,7 +86,7 @@ internal constructor(
         LaunchedEffect(query) {
             analytics.performedRouteFilter(query)
             if (query.isNotEmpty()) {
-                withContext(Dispatchers.IO) {
+                withContext(ioDispatcher) {
                     delay(500)
                     val params = getParamsForPath(path)
                     when (
