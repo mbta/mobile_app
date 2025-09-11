@@ -15,8 +15,9 @@ import SwiftUI
 struct HomeMapView: View {
     var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
-    @State var mapVM: Shared.IMapViewModel
+    var mapVM: IMapViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
+    var routeCardDataVM: IRouteCardDataViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
@@ -29,9 +30,10 @@ struct HomeMapView: View {
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
-    @State var mapVMState: Shared.MapViewModel.State = Shared.MapViewModel.StateOverview.shared
+    @State var mapVMState: MapViewModel.State = MapViewModel.StateOverview.shared
     @State var globalData: GlobalResponse?
     @Binding var selectedVehicle: Vehicle?
+    @State var routeCardDataState: RouteCardDataViewModel.State?
 
     let inspection = Inspection<Self>()
     let log = Logger()
@@ -44,8 +46,9 @@ struct HomeMapView: View {
 
     init(
         contentVM: ContentViewModel,
-        mapVM: Shared.IMapViewModel,
+        mapVM: IMapViewModel,
         nearbyVM: NearbyViewModel,
+        routeCardDataVM: IRouteCardDataViewModel,
         viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         vehiclesData: [Vehicle]? = nil,
@@ -58,6 +61,7 @@ struct HomeMapView: View {
         self.contentVM = contentVM
         self.mapVM = mapVM
         self.nearbyVM = nearbyVM
+        self.routeCardDataVM = routeCardDataVM
         self.viewportProvider = viewportProvider
         self.errorBannerRepository = errorBannerRepository
         self.vehiclesData = vehiclesData
@@ -75,6 +79,20 @@ struct HomeMapView: View {
                 }
             }
             .global($globalData, errorKey: "HomeMapView")
+            .task {
+                for await state in mapVM.models {
+                    mapVMState = state
+                }
+            }
+            .onChange(of: mapVMState) { state in
+                let filteredVehicle = nearbyVM.navigationStack.lastTripDetailsFilter?.vehicleId
+                if case let .tripSelected(tripState) = onEnum(of: state),
+                   filteredVehicle == tripState.vehicle?.id {
+                    selectedVehicle = tripState.vehicle
+                } else {
+                    selectedVehicle = nil
+                }
+            }
             .onChange(of: nearbyVM.navigationStack) { navStack in
                 Task {
                     let currentNavEntry = navStack.lastSafe().toSheetRoute()
@@ -82,7 +100,6 @@ struct HomeMapView: View {
                     handleNavStackChange(navigationStack: navStack)
                 }
             }
-            .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 guard isManuallyCentering, nearbyVM.navigationStack.lastSafe().allowTargeting else { return }
                 // This will be set to false after nearby is loaded to avoid the crosshair dissapearing and re-appearing
@@ -94,31 +111,18 @@ struct HomeMapView: View {
             .onAppear {
                 checkOnboardingLoaded()
             }
-            .task {
-                for await state in mapVM.models {
-                    mapVMState = state
-                }
-            }
             .onChange(of: colorScheme) { newColorScheme in
                 mapVM.colorPaletteChanged(isDarkMode: newColorScheme == .dark)
             }
-            .onChange(of: mapVMState) { state in
-                if case let .tripSelected(tripState) = onEnum(of: state) {
-                    selectedVehicle = tripState.vehicle
-                } else {
-                    selectedVehicle = nil
-                }
-            }
+            .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder
     var realtimeResponsiveMap: some View {
         staticResponsiveMap
+            .manageVM(routeCardDataVM, $routeCardDataState)
             .onChange(of: nearbyVM.alerts) { _ in
                 mapVM.alertsChanged(alerts: nearbyVM.alerts)
-            }
-            .onChange(of: nearbyVM.routeCardData) { _ in
-                mapVM.routeCardDataChanged(routeCardData: nearbyVM.routeCardData)
             }
             .onDisappear {
                 leaveVehiclesChannel()

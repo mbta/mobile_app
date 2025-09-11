@@ -117,21 +117,22 @@ import XCTest
             alerts: .init(alerts: [:]),
             now: now!,
             context: .stopDetailsUnfiltered
-        )
+        )!
 
         let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.handleStopAppear(stop!.id)
 
         let sut = StopDetailsUnfilteredView(
             stopId: stop!.id,
-            setStopFilter: { _ in },
-            routeCardData: routeCardData,
+            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+                filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
+                routeCards: routeCardData
+            ),
             favorites: .init(routeStopDirection: []),
+            global: .init(objects: builder!),
             now: now!,
+            setStopFilter: { _ in },
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM,
-            stopDetailsVM: stopDetailsVM
+            nearbyVM: nearbyVM
         )
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -155,21 +156,22 @@ import XCTest
             alerts: .init(alerts: [:]),
             now: now!,
             context: .stopDetailsUnfiltered
-        )
+        )!
 
         let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.handleStopAppear(stop!.id)
 
         let sut = StopDetailsUnfilteredView(
             stopId: inaccessibleStop!.id,
-            setStopFilter: { _ in },
-            routeCardData: routeCardData,
+            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+                filteredWith: .init(stopId: inaccessibleStop!.id, stopFilter: nil, tripFilter: nil),
+                routeCards: routeCardData
+            ),
             favorites: .init(routeStopDirection: []),
+            global: .init(objects: builder!),
             now: now!,
+            setStopFilter: { _ in },
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM,
-            stopDetailsVM: stopDetailsVM
+            nearbyVM: nearbyVM
         )
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -204,21 +206,22 @@ import XCTest
             alerts: .init(alerts: [alert.id: alert]),
             now: now!,
             context: .stopDetailsUnfiltered
-        )
+        )!
 
         let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.handleStopAppear(stop!.id)
 
         let unfilteredView = StopDetailsUnfilteredView(
             stopId: stop!.id,
-            setStopFilter: { _ in },
-            routeCardData: routeCardData,
+            routeData: StopDetailsViewModel.RouteDataUnfiltered(
+                filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
+                routeCards: routeCardData
+            ),
             favorites: .init(routeStopDirection: []),
+            global: .init(objects: builder!),
             now: now!,
+            setStopFilter: { _ in },
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM,
-            stopDetailsVM: stopDetailsVM
+            nearbyVM: nearbyVM
         )
 
         let sut = unfilteredView.withFixedSettings([.stationAccessibility: true])

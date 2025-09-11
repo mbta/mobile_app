@@ -24,17 +24,17 @@ struct StopDetailsPage: View {
 
     @State var favorites: Favorites = LoadedFavorites.last
     @State var global: GlobalResponse?
-    // StopDetailsPage maintains its own internal state of the departures presented.
-    // This way, when transitioning between one StopDetailsPage and another, each separate page shows
-    // their respective departures rather than both showing the departures for the newly presented stop.
-    @State var internalRouteCardData: [RouteCardData]?
     @State var loadingFavorites = true
     @State var now = Date.now
+    // Used only for VO notifications, VM state data is used for displaying other stop details content
+    @State var routeCardDataState: RouteCardDataViewModel.State?
+    @State var vmState: StopDetailsViewModel.State?
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
+    var routeCardDataVM: IRouteCardDataViewModel
+    var stopDetailsVM: IStopDetailsViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -50,14 +50,15 @@ struct StopDetailsPage: View {
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
-        stopDetailsVM: StopDetailsViewModel,
+        routeCardDataVM: IRouteCardDataViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
         viewportProvider: ViewportProvider
     ) {
         self.filters = filters
-
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
+        self.routeCardDataVM = routeCardDataVM
         self.stopDetailsVM = stopDetailsVM
         self.viewportProvider = viewportProvider
     }
@@ -65,15 +66,14 @@ struct StopDetailsPage: View {
     @ViewBuilder
     var stopDetails: some View {
         StopDetailsView(
-            stopId: stopId,
-            stopFilter: stopFilter,
-            tripFilter: tripFilter,
-            setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
-            setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
-            routeCardData: internalRouteCardData,
+            filters: filters,
+            routeData: vmState?.routeData,
             favorites: favorites,
+            global: global,
             now: now,
             onUpdateFavorites: { loadingFavorites = true },
+            setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
+            setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
@@ -85,53 +85,30 @@ struct StopDetailsPage: View {
         stopDetails
             .favorites($favorites, awaitingUpdate: $loadingFavorites)
             .global($global, errorKey: "StopDetailsPage")
-            .onChange(of: stopFilter) { newStopFilter in
-                if newStopFilter == nil {
-                    internalRouteCardData = nil
+            .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
+            .manageVM(routeCardDataVM, $routeCardDataState)
+            .task {
+                for await filterUpdate in stopDetailsVM.filterUpdates {
+                    if let filterUpdate {
+                        nearbyVM.setLastStopDetailsPageFilter(filterUpdate)
+                    }
                 }
             }
-            .onChange(of: stopDetailsVM.stopData) { stopData in
-                errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: !(stopData?.predictionsLoaded ?? true))
-            }
-            .onChange(of: filters) { nextFilters in setTripFilter(filters: nextFilters) }
-            .onChange(of: RouteCardParams(
-                alerts: nearbyVM.alerts,
-                global: global,
-                now: now,
-                stopData: stopDetailsVM.stopData,
-                stopFilter: stopFilter,
-                stopId: stopId
-            )) { newParams in
-                updateDepartures(routeCardParams: newParams)
-            }
-            .onChange(of: internalRouteCardData) { newInternalRouteCardData in
-                let nextStopFilter = setStopFilter(newInternalRouteCardData)
-                setTripFilter(filters: .init(stopId: stopId, stopFilter: nextStopFilter, tripFilter: tripFilter))
+            .onChange(of: vmState?.awaitingPredictionsAfterBackground ?? true) { isLoading in
+                errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: isLoading)
             }
             .task(id: stopId) {
                 while !Task.isCancelled {
                     now = Date.now
-                    stopDetailsVM.checkStopPredictionsStale()
                     try? await Task.sleep(for: .seconds(5))
                 }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .withScenePhaseHandlers(
-                onActive: {
-                    stopDetailsVM.returnFromBackground()
-                    stopDetailsVM.joinStopPredictions(stopId)
-                },
-                onInactive: stopDetailsVM.leaveStopPredictions,
-                onBackground: {
-                    stopDetailsVM.leaveStopPredictions()
-                    errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: true)
-                }
-            )
     }
 
     func announceDeparture(_ previousFilters: StopDetailsPageFilters) {
         guard let context = StopDetailsUtils.shared.getScreenReaderTripDepartureContext(
-            routeCardData: internalRouteCardData,
+            routeCardData: routeCardDataState?.data,
             previousFilters: previousFilters
         ) else { return }
         let routeType = context.routeType.typeText(isOnly: true)
@@ -167,57 +144,5 @@ struct StopDetailsPage: View {
                 argument: announcementString
             )
         }
-    }
-
-    func setStopFilter(_ routeCardData: [RouteCardData]?) -> StopDetailsFilter? {
-        let nextStopFilter = stopFilter ?? StopDetailsUtils.shared.autoStopFilter(routeCardData: routeCardData)
-        if stopFilter != nextStopFilter {
-            nearbyVM.setLastStopDetailsFilter(stopId, nextStopFilter)
-        }
-        return nextStopFilter
-    }
-
-    func setTripFilter(filters: StopDetailsPageFilters) {
-        let tripFilter = StopDetailsUtils.shared.autoTripFilter(
-            routeCardData: internalRouteCardData,
-            stopFilter: filters.stopFilter,
-            currentTripFilter: filters.tripFilter,
-            filterAtTime: now.toEasternInstant(),
-            globalData: global
-        )
-
-        if let previousFilter = filters.tripFilter, tripFilter != previousFilter {
-            announceDeparture(filters)
-        }
-
-        nearbyVM.setLastTripDetailsFilter(stopId, tripFilter)
-    }
-
-    func updateDepartures(routeCardParams: RouteCardParams) {
-        Task {
-            if routeCardParams.stopId != routeCardParams.stopData?.stopId {
-                return
-            }
-            let nextRouteCardData = await stopDetailsVM.getRouteCardData(
-                stopId: routeCardParams.stopId,
-                alerts: routeCardParams.alerts,
-                now: routeCardParams.now.toEasternInstant(),
-                isFiltered: routeCardParams.stopFilter != nil
-            )
-            Task { @MainActor in
-                nearbyVM.setRouteCardData(routeCardParams.stopId, nextRouteCardData)
-                internalRouteCardData = nextRouteCardData
-            }
-        }
-    }
-
-    // Testing convenience
-    func updateDepartures() {
-        updateDepartures(routeCardParams: RouteCardParams(alerts: nearbyVM.alerts,
-                                                          global: global,
-                                                          now: now,
-                                                          stopData: stopDetailsVM.stopData,
-                                                          stopFilter: stopFilter,
-                                                          stopId: stopId))
     }
 }
