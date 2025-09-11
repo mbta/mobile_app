@@ -98,8 +98,8 @@ internal fun subscribeToPredictions(
         }
     }
 
-    LaunchedEffect(predictions) { checkStale() }
-    LaunchedEffect(staleTimer) { checkStale() }
+    LaunchedEffect(predictions) { if (active) checkStale() }
+    LaunchedEffect(staleTimer) { if (active) checkStale() }
 
     LaunchedEffect(active) {
         if (
