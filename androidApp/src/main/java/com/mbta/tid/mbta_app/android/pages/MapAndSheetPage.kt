@@ -87,6 +87,7 @@ import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -306,6 +307,16 @@ fun MapAndSheetPage(
         }
     }
 
+    fun handleTripDetailsNavigation(
+        stopId: String,
+        tripDetailsFilter: TripDetailsFilter,
+        stopDetailsFilter: StopDetailsFilter,
+        vehicle: Vehicle? = null,
+    ) {
+        val filter = TripDetailsPageFilter(stopId, stopDetailsFilter, tripDetailsFilter, vehicle)
+        navController.navigate(SheetRoutes.TripDetails(filter))
+    }
+
     fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
         val routeCardData = routeCardDataState.data
@@ -335,12 +346,7 @@ fun MapAndSheetPage(
 
         val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence, true)
 
-        updateTripFilter(stopId, newTripFilter)
-        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
-
-        // We know the exact vehicle, so set that now rather than waiting for the next vehicle
-        // data update to set it
-        mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle)
+        handleTripDetailsNavigation(stopId, newTripFilter, stopFilter, vehicle)
     }
 
     val popUp: NavOptionsBuilder.() -> Unit = {

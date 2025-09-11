@@ -259,7 +259,7 @@ public class MapViewModel(
                             allRailRouteShapes ?: return@run,
                             stopLayerGeneratorState,
                             globalData ?: return@run,
-                            if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
+                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                         )
                     }
                 }
@@ -372,6 +372,11 @@ public class MapViewModel(
                 is SheetRoutes.StopDetails -> newNavEntry
                 else -> null
             }
+        val currentNavEntryTripDetails =
+            when (newNavEntry) {
+                is SheetRoutes.TripDetails -> newNavEntry
+                else -> null
+            }
         val stop = globalResponse?.getStop(currentNavEntryStopDetails?.stopId)
         val routePickerOrDetails =
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
@@ -379,6 +384,13 @@ public class MapViewModel(
             if (routePickerOrDetails && currentState is State.TripSelected) {
                 currentState.stop?.let { State.StopSelected(it, currentState.stopFilter) }
                     ?: State.Overview
+            } else if (currentNavEntryTripDetails != null) {
+                State.TripSelected(
+                    stop,
+                    currentNavEntryTripDetails.filter.stopFilter,
+                    currentNavEntryTripDetails.filter.tripDetailsFilter,
+                    currentNavEntryTripDetails.filter.vehicle,
+                )
             } else if (currentNavEntryStopDetails == null) {
                 State.Overview
             } else {

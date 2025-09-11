@@ -5,7 +5,9 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
@@ -133,6 +135,15 @@ internal class MapViewModelTests : KoinTest {
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
+            val stopFilter = StopDetailsFilter("", 0)
+            val tripFilter = TripDetailsFilter("", "", 0)
+            viewModel.navChanged(
+                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
+            )
+            assertEquals(
+                MapViewModel.State.TripSelected(null, stopFilter, tripFilter, null),
+                awaitItem(),
+            )
         }
     }
 
