@@ -27,7 +27,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
 
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -94,7 +94,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],
         selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
-        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: iosApp.MapViewModel,
+        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel, viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
@@ -225,13 +225,9 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func setViewportToStop(midZoom: Bool = false) {
-        if let stop {
-            viewportProvider.animateTo(
-                coordinates: stop.coordinate,
-                zoom: midZoom ? MapDefaults.shared.midZoomThreshold : nil
-            )
-        }
+    func setViewportToStop(midZoom _: Bool = false) {
+        guard let stop else { return }
+        viewportProvider.stopCenter(stop: stop)
     }
 
     @ViewBuilder

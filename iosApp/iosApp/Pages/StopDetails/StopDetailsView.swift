@@ -27,7 +27,7 @@ struct StopDetailsView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
 
     let inspection = Inspection<Self>()
@@ -43,8 +43,8 @@ struct StopDetailsView: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
-        stopDetailsVM: IStopDetailsViewModel
+        mapVM: IMapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
     ) {
         self.filters = filters
         self.routeData = routeData

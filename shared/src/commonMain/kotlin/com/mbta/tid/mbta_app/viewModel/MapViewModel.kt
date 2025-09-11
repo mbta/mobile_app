@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.ColorPalette
 import com.mbta.tid.mbta_app.map.RouteFeaturesBuilder
 import com.mbta.tid.mbta_app.map.RouteSourceData
@@ -38,6 +39,7 @@ import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -391,7 +393,6 @@ public class MapViewModel(
                             null,
                         )
                     } else {
-
                         State.StopSelected(stop, currentNavEntryStopDetails.stopFilter)
                     }
                 }
@@ -421,9 +422,7 @@ public class MapViewModel(
                         // if there is a vehicle id associated with the trip but there
                         // isn't a vehicle yet, wait for one to load before centering
                         state.vehicle?.let {
-                            if (density != null) {
-                                viewportManager.vehicleOverview(it, state.stop, density)
-                            }
+                            viewportManager.vehicleOverview(it, state.stop, density)
                         }
                     }
                 }
@@ -573,4 +572,60 @@ public class MapViewModel(
                 is ApiResult.Error -> null
             }
         }
+}
+
+public class MockMapViewModel
+@DefaultArgumentInterop.Enabled
+constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IMapViewModel {
+
+    public var onSelectedStop: (Stop, StopDetailsFilter?) -> Unit = { _, _ -> }
+    public var onSelectedTrip: (StopDetailsFilter?, Stop?, TripDetailsFilter, Vehicle?) -> Unit =
+        { _, _, _, _ ->
+        }
+    public var onNavChanged: (SheetRoutes?) -> Unit = {}
+    public var onRecenter: (RecenterType) -> Unit = {}
+    public var onAlertsChanged: (AlertsStreamDataResponse?) -> Unit = {}
+    public var onRouteCardDataChanged: (List<RouteCardData>?) -> Unit = {}
+    public var onColorPaletteChanged: (Boolean) -> Unit = {}
+    public var onDensityChanged: (Float) -> Unit = {}
+    public var onMapStyleLoaded: () -> Unit = {}
+    public var onLayerManagerInitialized: (IMapLayerManager) -> Unit = {}
+    public var onLocationPermissionsChanged: (Boolean) -> Unit = {}
+    public var onSetViewportManager: (ViewportManager) -> Unit = {}
+
+    override val models: MutableStateFlow<MapViewModel.State> = MutableStateFlow(initialState)
+
+    override fun selectedStop(stop: Stop, stopFilter: StopDetailsFilter?): Unit =
+        onSelectedStop(stop, stopFilter)
+
+    override fun selectedTrip(
+        stopFilter: StopDetailsFilter?,
+        stop: Stop?,
+        tripFilter: TripDetailsFilter,
+        vehicle: Vehicle?,
+    ): Unit = onSelectedTrip(stopFilter, stop, tripFilter, vehicle)
+
+    override fun navChanged(currentNavEntry: SheetRoutes?): Unit = onNavChanged(currentNavEntry)
+
+    override fun recenter(type: RecenterType): Unit = onRecenter(type)
+
+    override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit = onAlertsChanged(alerts)
+
+    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?): Unit =
+        onRouteCardDataChanged(routeCardData)
+
+    override fun colorPaletteChanged(isDarkMode: Boolean): Unit = onColorPaletteChanged(isDarkMode)
+
+    override fun densityChanged(density: Float): Unit = onDensityChanged(density)
+
+    override fun mapStyleLoaded(): Unit = onMapStyleLoaded()
+
+    override fun layerManagerInitialized(layerManager: IMapLayerManager): Unit =
+        onLayerManagerInitialized(layerManager)
+
+    override fun locationPermissionsChanged(hasPermission: Boolean): Unit =
+        onLocationPermissionsChanged(hasPermission)
+
+    override fun setViewportManager(viewportManager: ViewportManager): Unit =
+        onSetViewportManager(viewportManager)
 }

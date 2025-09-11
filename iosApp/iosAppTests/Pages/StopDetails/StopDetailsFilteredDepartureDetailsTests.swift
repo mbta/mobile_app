@@ -113,7 +113,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -152,7 +152,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
@@ -225,7 +225,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
@@ -285,7 +285,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -343,7 +343,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -374,7 +374,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
@@ -412,7 +412,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
         let stopDetailsVM = MockStopDetailsViewModel()
 
         let summarySetExp = expectation(description: "summaries set with expected value")
@@ -435,8 +434,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
         )
@@ -488,7 +487,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
@@ -548,7 +547,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
@@ -620,7 +619,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
@@ -647,8 +646,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.trip = objects.trip { _ in }
             prediction.departureTime = now.plus(seconds: 15)
         })
-        let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = MockStopDetailsViewModel()
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], objects: objects)
 
@@ -664,9 +661,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
@@ -698,9 +695,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = MockStopDetailsViewModel()
-
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
@@ -715,9 +709,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 
@@ -795,8 +789,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let routeStopData = routeCardData.stopData.first!
         let leaf = routeStopData.data.first { $0.directionId == 0 }!
 
-        let stopDetailsVM = MockStopDetailsViewModel()
-
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: line.id, directionId: 0),
@@ -814,8 +806,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 

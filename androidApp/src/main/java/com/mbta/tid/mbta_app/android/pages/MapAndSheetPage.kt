@@ -69,6 +69,7 @@ import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
 import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
 import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
 import com.mbta.tid.mbta_app.android.search.SearchBarOverlay
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.typeMap
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
@@ -536,8 +537,18 @@ fun MapAndSheetPage(
             analytics.track(AnalyticsScreen.TripDetails)
         }
 
-        SheetPage(colorResource(R.color.fill2)) {
-            TripDetailsPage(filter = navRoute.filter, onClose = { navController.popBackStack() })
+        val global = getGlobalData("TripDetailsSheetContents")
+        val route = global?.getRoute(navRoute.filter.routeId)
+        val routeColor = route?.color?.let { Color.fromHex(it) }
+
+        SheetPage(routeColor ?: colorResource(R.color.fill2)) {
+            TripDetailsPage(
+                filter = navRoute.filter,
+                allAlerts = nearbyTransit.alertData,
+                openModal = ::openModal,
+                openSheetRoute = navController::navigate,
+                onClose = { navController.popBackStack() },
+            )
         }
     }
 

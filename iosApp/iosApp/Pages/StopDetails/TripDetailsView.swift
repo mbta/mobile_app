@@ -21,7 +21,7 @@ struct TripDetailsView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var tripDetailsVM: ITripDetailsViewModel
 
     @State var explainer: Explainer?
@@ -41,7 +41,7 @@ struct TripDetailsView: View {
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
         analytics: Analytics = AnalyticsProvider.shared
     ) {
@@ -71,14 +71,13 @@ struct TripDetailsView: View {
                 $tripDetailsVMState,
                 alerts: nearbyVM.alerts,
                 context: .stopDetails,
-                filters: tripFilter
+                filters: tripFilter,
             )
-            .task {
+            .task(id: global) {
                 for await vehicleUpdate in tripDetailsVM.selectedVehicleUpdates {
-                    mapVM.selectedVehicle = vehicleUpdate
+                    setVehicle(vehicleUpdate)
                 }
             }
-            .onDisappear { clearMapVehicle() }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
@@ -208,9 +207,17 @@ struct TripDetailsView: View {
         ).loadingPlaceholder()
     }
 
-    private func clearMapVehicle() {
-        if mapVM.selectedVehicle?.id == tripFilter?.vehicleId {
-            mapVM.selectedVehicle = nil
+    private func setVehicle(_ vehicle: Vehicle?) {
+        let stop = global?.getStop(stopId: nearbyVM.navigationStack.lastStopId)
+        let stopFilter = nearbyVM.navigationStack.lastStopDetailsFilter
+        let tripDetailsFilter = nearbyVM.navigationStack.lastTripDetailsFilter
+        if let tripDetailsFilter {
+            mapVM.selectedTrip(
+                stopFilter: stopFilter,
+                stop: stop,
+                tripFilter: tripDetailsFilter,
+                vehicle: vehicle
+            )
         }
     }
 

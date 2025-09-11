@@ -52,6 +52,7 @@ fun TripDetailsView(
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: EasternTimeInstant,
+    isTripDetailsPage: Boolean,
     modifier: Modifier = Modifier,
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
@@ -161,6 +162,7 @@ fun TripDetailsView(
             now,
             alertSummaries,
             globalResponse,
+            isTripDetailsPage,
             modifier,
         )
     } else {
@@ -192,6 +194,7 @@ fun TripDetailsView(
                     now,
                     emptyMap(),
                     globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
+                    isTripDetailsPage,
                 )
             }
         }
@@ -212,6 +215,7 @@ fun TripDetails(
     now: EasternTimeInstant,
     alertSummaries: Map<String, AlertSummary?>,
     globalResponse: GlobalResponse,
+    isTripDetailsPage: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val routeAccents = TripRouteAccents(route)
@@ -237,7 +241,7 @@ fun TripDetails(
                 now,
                 onTap = onHeaderTap,
                 onFollowTrip =
-                    if (hasTrackThisTrip) {
+                    if (hasTrackThisTrip && !isTripDetailsPage) {
                         onFollowTrip
                     } else null,
             )

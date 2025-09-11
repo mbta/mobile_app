@@ -40,8 +40,8 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: MockStopDetailsViewModel()
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
         )
 
         let tappedPublisher = PassthroughSubject<Void, Never>()

@@ -26,7 +26,7 @@ struct StopDetailsFilteredView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
     var favoritesUsecases: FavoritesUsecases
 
@@ -52,7 +52,7 @@ struct StopDetailsFilteredView: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases
     ) {

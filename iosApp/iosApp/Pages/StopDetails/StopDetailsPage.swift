@@ -32,7 +32,7 @@ struct StopDetailsPage: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var routeCardDataVM: IRouteCardDataViewModel
     var stopDetailsVM: IStopDetailsViewModel
     @ObservedObject var viewportProvider: ViewportProvider
@@ -49,7 +49,7 @@ struct StopDetailsPage: View {
         filters: StopDetailsPageFilters,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
         stopDetailsVM: IStopDetailsViewModel,
         viewportProvider: ViewportProvider

@@ -33,7 +33,7 @@ final class StopDetailsViewTests: XCTestCase {
         }
         let stop = objects.stop { _ in }
 
-        let nearbyVM = NearbyViewModel()
+        loadKoinMocks(objects: objects)
 
         let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
 
@@ -61,8 +61,8 @@ final class StopDetailsViewTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -105,7 +105,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -161,7 +161,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -228,7 +228,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -259,7 +259,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -291,7 +291,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 
@@ -322,7 +322,7 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
         )
 

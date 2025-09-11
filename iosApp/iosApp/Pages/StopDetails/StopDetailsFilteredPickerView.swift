@@ -26,7 +26,7 @@ struct StopDetailsFilteredPickerView: View {
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
+    var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
 
     @EnvironmentObject var viewportProvider: ViewportProvider
@@ -47,7 +47,7 @@ struct StopDetailsFilteredPickerView: View {
         now: Date,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
+        mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
         viewportProvider _: ViewportProvider
     ) {

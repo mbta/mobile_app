@@ -111,6 +111,7 @@ class TripDetailsViewTest {
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
                 now,
+                isTripDetailsPage = false,
                 tripDetailsVM = viewModel,
                 analytics = analytics,
             )
@@ -188,6 +189,7 @@ class TripDetailsViewTest {
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
                 now,
+                isTripDetailsPage = false,
                 tripDetailsVM = viewModel,
                 analytics = analytics,
             )
@@ -218,6 +220,7 @@ class TripDetailsViewTest {
                 tripFilter = tripFilter,
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
+                isTripDetailsPage = false,
                 alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )
@@ -245,6 +248,35 @@ class TripDetailsViewTest {
                 tripFilter = tripFilter,
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
+                isTripDetailsPage = false,
+                alertSummaries = emptyMap(),
+                globalResponse = GlobalResponse(objects),
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
+    }
+
+    @Test
+    fun testNoFollowButtonWhenOnTripDetails() {
+        loadKoinMocks(objects) {
+            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
+        }
+
+        composeTestRule.setContent {
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = {},
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                isTripDetailsPage = true,
                 alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )

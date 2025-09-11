@@ -44,6 +44,7 @@ public actual fun viewModelModule(): Module = module {
         }
         .bind(IStopDetailsViewModel::class)
     singleOf(::ToastViewModel).bind(IToastViewModel::class)
+    singleOf(::TripDetailsPageViewModel).bind(ITripDetailsPageViewModel::class)
     single {
             TripDetailsViewModel(
                 get(),
