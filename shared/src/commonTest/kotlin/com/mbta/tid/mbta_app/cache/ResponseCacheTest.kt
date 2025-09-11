@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.cache
 
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.fs.FakeFileSystem
+import com.mbta.tid.mbta_app.fs.FileSystem
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -30,8 +32,6 @@ import kotlin.time.TimeSource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
-import okio.FileSystem
-import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -271,17 +271,16 @@ class ResponseCacheTest {
         val fileSystem = FakeFileSystem()
         val directory = mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY
         fileSystem.createDirectories(directory)
-        fileSystem.write(directory / "test-meta.json") {
-            writeUtf8(
-                json.encodeToString(
-                    ResponseMetadata(
-                        null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
-                    )
+        fileSystem.write(
+            directory / "test-meta.json",
+            json.encodeToString(
+                ResponseMetadata(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge - 1.minutes),
                 )
-            )
-        }
-        fileSystem.write(directory / "test.json") { writeUtf8(json.encodeToString(globalData)) }
+            ),
+        )
+        fileSystem.write(directory / "test.json", json.encodeToString(globalData))
 
         startKoin {
             modules(
@@ -326,19 +325,19 @@ class ResponseCacheTest {
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
         fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
-        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
-            writeUtf8(
-                json.encodeToString(
-                    ResponseMetadata(
-                        null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
-                    )
+        fileSystem.write(
+            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json",
+            json.encodeToString(
+                ResponseMetadata(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
                 )
-            )
-        }
-        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-            writeUtf8(json.encodeToString(oldData))
-        }
+            ),
+        )
+        fileSystem.write(
+            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json",
+            json.encodeToString(oldData),
+        )
 
         startKoin {
             modules(
@@ -386,19 +385,20 @@ class ResponseCacheTest {
         val mockPaths = MockSystemPaths(data = "data", cache = "cache")
         val fileSystem = FakeFileSystem()
         fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
-        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
-            writeUtf8(
-                json.encodeToString(
-                    ResponseMetadata(
-                        null,
-                        TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
-                    )
+        fileSystem.write(
+            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json",
+            json.encodeToString(
+                ResponseMetadata(
+                    null,
+                    TimeSource.Monotonic.markNow().minus(cache.maxAge + 1.minutes),
                 )
-            )
-        }
-        fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-            writeUtf8(json.encodeToString(oldData))
-        }
+            ),
+        )
+
+        fileSystem.write(
+            mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json",
+            json.encodeToString(oldData),
+        )
 
         startKoin {
             modules(
@@ -479,18 +479,14 @@ class ResponseCacheTest {
                 .decodeFromString<ResponseMetadata>(
                     fileSystem.read(
                         mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
-                    ) {
-                        readUtf8()
-                    }
+                    )
                 )
                 .etag,
         )
         assertEquals(
             cache.data!!.body,
             json.decodeFromString(
-                fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-                    readUtf8()
-                }
+                fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json")
             ),
         )
     }
@@ -549,9 +545,7 @@ class ResponseCacheTest {
         assertEquals(
             future,
             json.decodeFromString(
-                fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json") {
-                    readUtf8()
-                }
+                fileSystem.read(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test.json")
             ),
         )
 
@@ -615,9 +609,7 @@ class ResponseCacheTest {
             json.decodeFromString<ResponseMetadata>(
                 fileSystem.read(
                     mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json"
-                ) {
-                    readUtf8()
-                }
+                )
             )
 
         assertEquals(responseEtag, metadataFromDisk().etag)

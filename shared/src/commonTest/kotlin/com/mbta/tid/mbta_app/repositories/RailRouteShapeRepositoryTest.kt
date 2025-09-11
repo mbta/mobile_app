@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.fs.FakeFileSystem
+import com.mbta.tid.mbta_app.fs.FileSystem
 import com.mbta.tid.mbta_app.model.RoutePatternKey
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
@@ -21,8 +23,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlinx.coroutines.test.runTest
-import okio.FileSystem
-import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module

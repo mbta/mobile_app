@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.fs.FileSystem
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
@@ -35,19 +36,18 @@ import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import okio.FileSystem
-import okio.SYSTEM
 import org.koin.core.module.Module
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
+internal expect val fileSystem: FileSystem
 internal expect val ioDispatcher: CoroutineDispatcher
 
 /** Define the koin module with the resources to use in dependency injection */
 internal fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
-        module { single { FileSystem.SYSTEM } },
+        module { single { fileSystem } },
         module {
             single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
         },

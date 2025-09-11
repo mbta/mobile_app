@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.cache
 
+import com.mbta.tid.mbta_app.fs.FileSystem
+import com.mbta.tid.mbta_app.fs.Path
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.utils.SystemPaths
@@ -17,8 +19,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import okio.FileSystem
-import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -112,11 +112,11 @@ internal class ResponseCache<T : Any>(
     private fun readData(): Response<T>? {
         try {
             val diskMetadata: ResponseMetadata =
-                json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
+                json.decodeFromString(fileSystem.read(cacheMetadataFilePath))
             if (diskMetadata.invalidationKey != invalidationKey) {
                 return null
             }
-            val diskData = decodeString(fileSystem.read(cacheFilePath) { readUtf8() })
+            val diskData = decodeString(fileSystem.read(cacheFilePath))
             this.data = Response(diskMetadata, diskData)
             return this.data
         } catch (error: Exception) {
@@ -127,7 +127,7 @@ internal class ResponseCache<T : Any>(
     private fun writeData(metadata: ResponseMetadata, responseBody: String) {
         try {
             fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) { writeUtf8(responseBody) }
+            fileSystem.write(cacheFilePath, responseBody)
             writeMetadata(metadata)
         } catch (error: Exception) {
             println("Writing to '$cacheFilePath' failed. $error")
@@ -136,7 +136,7 @@ internal class ResponseCache<T : Any>(
 
     private fun writeMetadata(metadata: ResponseMetadata) {
         try {
-            fileSystem.write(cacheMetadataFilePath) { writeUtf8(json.encodeToString(metadata)) }
+            fileSystem.write(cacheMetadataFilePath, json.encodeToString(metadata))
         } catch (error: Exception) {
             println("Writing to '${cacheMetadataFilePath}' failed. $error")
         }

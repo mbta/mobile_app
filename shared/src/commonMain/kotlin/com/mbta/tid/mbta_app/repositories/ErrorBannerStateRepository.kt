@@ -8,7 +8,6 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import okio.ArrayIndexOutOfBoundsException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -93,7 +92,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         predictionsStale = null
         try {
             dataErrors.clear()
-        } catch (e: ArrayIndexOutOfBoundsException) {
+        } catch (e: RuntimeException) {
             // ignore race condition if clearing multiple times
         }
         flow.value = null

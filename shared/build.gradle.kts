@@ -97,7 +97,6 @@ kotlin {
                 implementation(libs.ktor.client.websockets)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.molecule.runtime)
-                implementation(libs.okio)
                 implementation(libs.skie.configuration.annotations)
                 implementation(libs.spatialk.turf)
             }
@@ -114,7 +113,10 @@ kotlin {
         }
         val notJsMain by creating {
             dependsOn(commonMain)
-            dependencies { implementation(libs.androidx.datastore.preferences.core) }
+            dependencies {
+                implementation(libs.androidx.datastore.preferences.core)
+                implementation(libs.okio)
+            }
         }
         val notJsTest by creating { dependsOn(commonTest) }
         androidMain {
