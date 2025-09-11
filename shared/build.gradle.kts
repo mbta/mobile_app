@@ -12,6 +12,7 @@ import org.cyclonedx.model.LicenseChoice
 import org.gradle.kotlin.dsl.withType
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.gradle.process.internal.ExecException
+import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -20,6 +21,7 @@ plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.compose)
     alias(libs.plugins.cycloneDx)
+    alias(libs.plugins.dokka)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
@@ -56,6 +58,11 @@ kotlin {
         outputModuleName = "mbta-go-shared"
         binaries.executable()
         generateTypeScriptDefinitions()
+        compilations["main"].packageJson {
+            version = "0.0.1"
+            customField("private", "true")
+            customField("types", "types.d.ts")
+        }
     }
 
     cocoapods {
@@ -505,3 +512,46 @@ mokkery {
 sentryKmp { autoInstall.commonMain.enabled = false }
 
 tasks.withType<KotlinJsCompile>().configureEach { compilerOptions { target = "es2015" } }
+
+task<Exec>("jsConcatTypes") {
+    dependsOn("jsProductionExecutableCompileSync")
+    executable("zsh")
+    args("-c", "cat **/*.export.d.ts > types.d.ts")
+    workingDir(rootProject.layout.buildDirectory.dir("js/packages/mbta-go-shared"))
+}
+
+task<Exec>("jsDist") {
+    dependsOn("jsConcatTypes")
+    executable("npm")
+    args("pack", "--pack-destination", rootProject.projectDir)
+    workingDir(rootProject.layout.buildDirectory.dir("js/packages/mbta-go-shared"))
+}
+
+tasks.withType<DokkaTask>().configureEach {
+    dokkaSourceSets {
+        configureEach {
+            perPackageOption {
+                matchingRegex = ".*"
+                suppress = true
+            }
+        }
+        named("jsMain") {
+            perPackageOption {
+                matchingRegex = ".*wrapper"
+                suppress = false
+                reportUndocumented = true
+            }
+        }
+    }
+}
+
+task<Zip>("docsDist") {
+    dependsOn(tasks.dokkaHtml)
+    from(layout.buildDirectory.dir("dokka/html"))
+    destinationDirectory = rootProject.projectDir
+    archiveFileName = "docs.zip"
+}
+
+task("dotcomBuild") { dependsOn("jsProductionExecutableCompileSync", tasks.dokkaHtml) }
+
+task("dotcomDist") { dependsOn("jsDist", "docsDist") }
