@@ -18,6 +18,7 @@ public actual fun viewModelModule(): Module = module {
             get(),
         )
     }
+    singleOf(::FilteredStopDetailsViewModel).bind(IFilteredStopDetailsViewModel::class)
     single {
         MapViewModel(
             get(),

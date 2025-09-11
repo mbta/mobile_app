@@ -35,7 +35,7 @@ kotlin {
     explicitApi()
 
     compilerOptions {
-        optIn.add("kotlin.time.ExperimentalTime")
+        optIn.addAll("kotlin.js.ExperimentalJsExport", "kotlin.time.ExperimentalTime")
         freeCompilerArgs.addAll(
             "-Xexpect-actual-classes",
             "-Xconsistent-data-class-copy-visibility",
@@ -137,6 +137,7 @@ kotlin {
             dependencies {
                 implementation(libs.ktor.client.js)
                 implementation(npm("@js-joda/timezone", "2.22.0"))
+                implementation(npm("phoenix", "*"))
             }
         }
         jvmMain {

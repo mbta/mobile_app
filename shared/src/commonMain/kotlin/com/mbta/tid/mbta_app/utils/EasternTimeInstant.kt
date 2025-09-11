@@ -38,6 +38,9 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
         second: Int = 0,
     ) : this(LocalDateTime(year, month, day, hour, minute, second))
 
+    internal val instantWhichIPromiseNotToDisplayInTheWrongTimeZone: Instant
+        get() = instant
+
     /** The time component becomes irrelevant after this coercion and should be ignored */
     public fun coerceInServiceDay(): EasternTimeInstant {
         if (local.date == serviceDate) return this
