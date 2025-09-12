@@ -2,6 +2,8 @@ package com.mbta.tid.mbta_app.wrapper
 
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteBranchSegment
+import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.TripInstantDisplay
@@ -96,3 +98,32 @@ internal fun TripDetailsStopList.Entry.wrapped(
         this.stop.name,
         this.format(trip, now, route)?.wrapped(),
     )
+
+internal fun RouteDetailsStopList.wrapped(route: Route?) =
+    RouteDetails.State(route?.color ?: "ba75c7", this.segments.map { it.wrapped() })
+
+internal fun RouteDetailsStopList.Segment.wrapped() =
+    RouteDetails.State.Segment(
+        this.stops.map { it.wrapped() },
+        this.isTypical,
+        if (!this.isTypical) this.twistedConnections()?.map { it.wrapped() } else null,
+    )
+
+internal fun RouteDetailsStopList.Entry.wrapped() =
+    RouteDetails.State.Stop(
+        this.stop.name,
+        this.stopLane.wrapped(),
+        this.stickConnections.map { it.wrapped() },
+    )
+
+internal fun Pair<RouteBranchSegment.StickConnection, Boolean>.wrapped() =
+    RouteDetails.State.TwistedConnection(this.first.wrapped(), this.second)
+
+internal fun RouteBranchSegment.StickConnection.wrapped() = RouteDetails.State.StickConnection(this)
+
+internal fun RouteBranchSegment.Lane.wrapped() =
+    when (this) {
+        RouteBranchSegment.Lane.Left -> RouteDetails.State.Lane.Left
+        RouteBranchSegment.Lane.Center -> RouteDetails.State.Lane.Center
+        RouteBranchSegment.Lane.Right -> RouteDetails.State.Lane.Right
+    }

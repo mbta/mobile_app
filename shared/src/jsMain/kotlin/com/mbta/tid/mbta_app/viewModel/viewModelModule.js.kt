@@ -31,6 +31,7 @@ public actual fun viewModelModule(): Module = module {
         )
     }
     singleOf(::RouteCardDataViewModel).bind(IRouteCardDataViewModel::class)
+    singleOf(::RouteDetailsViewModel).bind(IRouteDetailsViewModel::class)
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)
     single {
