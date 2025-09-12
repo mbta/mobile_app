@@ -394,7 +394,7 @@ public class MapViewModel(
             } else if (currentNavEntryTripDetails != null) {
                 val vehicle =
                     currentNavEntryTripDetails.filter.vehicleId?.let { vehicleId ->
-                        vehiclesData.first { it.id == vehicleId }
+                        vehiclesData.firstOrNull { it.id == vehicleId }
                     }
                 State.TripSelected(
                     stop,
