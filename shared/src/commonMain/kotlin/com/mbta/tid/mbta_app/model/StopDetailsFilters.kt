@@ -61,6 +61,12 @@ public data class TripDetailsPageFilter(
     val stopId: String,
     val stopSequence: Int?,
 ) {
+    val tripDetailsFilter: TripDetailsFilter
+        get() = TripDetailsFilter(tripId, vehicleId = vehicleId, stopSequence = stopSequence)
+
+    val stopFilter: StopDetailsFilter
+        get() = StopDetailsFilter(routeId = routeId, directionId = directionId)
+
     public constructor(
         stopId: String,
         stopFilter: StopDetailsFilter,
