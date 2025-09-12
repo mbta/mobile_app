@@ -65,8 +65,6 @@ public interface IMapViewModel {
 
     public fun vehiclesChanged(vehicles: List<Vehicle>)
 
-    public fun routeCardDataChanged(routeCardData: List<RouteCardData>?)
-
     public fun colorPaletteChanged(isDarkMode: Boolean)
 
     public fun densityChanged(density: Float)
@@ -81,7 +79,7 @@ public interface IMapViewModel {
 }
 
 public class MapViewModel(
-    routeCardDataViewModel: IRouteCardDataViewModel,
+    private val routeCardDataViewModel: IRouteCardDataViewModel,
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
@@ -151,15 +149,13 @@ public class MapViewModel(
     private var vehiclesData by mutableStateOf<List<Vehicle>>(emptyList())
     private var density by mutableStateOf<Float?>(null)
     private var isDarkMode by mutableStateOf(false)
-    private var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
-    private val routeCardVMUpdates = routeCardDataViewModel.models
 
     @Composable
     override fun runLogic(): State {
         val now by timer(updateInterval = 300.seconds)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
-        val routeCardDataVMState by routeCardVMUpdates.collectAsState()
+        val routeCardData by routeCardDataViewModel.models.collectAsState()
 
         // Cached sources to display in overview mode
         var allRailRouteSourceData by remember { mutableStateOf<List<RouteSourceData>?>(null) }
@@ -201,10 +197,6 @@ public class MapViewModel(
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
             }
         }
-
-        /* TODO: Replace routeCardUpdates with routeCardDataViewModel.models once iOS adopts
-        the shared StopDetailsViewModel, until then it needs to be compatible with both */
-        LaunchedEffect(routeCardDataVMState) { routeCardData = routeCardDataVMState.data }
 
         EventSink(eventHandlingTimeout = 10.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
@@ -278,7 +270,14 @@ public class MapViewModel(
             }
         }
 
-        LaunchedEffect(stopId, stopFilter, allRailRouteShapes, globalData, globalMapData) {
+        LaunchedEffect(
+            stopId,
+            stopFilter,
+            allRailRouteShapes,
+            globalData,
+            globalMapData,
+            routeCardData.data,
+        ) {
             if (stopId != null) {
                 val featuresToDisplayForStop =
                     featuresToDisplayForStop(
@@ -287,7 +286,7 @@ public class MapViewModel(
                         stopId = stopId,
                         stopFilter = stopFilter,
                         globalMapData = globalMapData,
-                        routeCardData = routeCardData,
+                        routeCardData = routeCardData.data,
                     )
                 featuresToDisplayForStop?.let {
                     routeSourceData = it.first
@@ -341,10 +340,6 @@ public class MapViewModel(
 
     override fun vehiclesChanged(vehicles: List<Vehicle>) {
         this.vehiclesData = vehicles
-    }
-
-    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
-        this.routeCardData = routeCardData
     }
 
     override fun colorPaletteChanged(isDarkMode: Boolean) {
@@ -609,7 +604,6 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     public var onRecenter: (RecenterType) -> Unit = {}
     public var onAlertsChanged: (AlertsStreamDataResponse?) -> Unit = {}
     public var onVehiclesChanged: (List<Vehicle>) -> Unit = {}
-    public var onRouteCardDataChanged: (List<RouteCardData>?) -> Unit = {}
     public var onColorPaletteChanged: (Boolean) -> Unit = {}
     public var onDensityChanged: (Float) -> Unit = {}
     public var onMapStyleLoaded: () -> Unit = {}
@@ -636,9 +630,6 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit = onAlertsChanged(alerts)
 
     override fun vehiclesChanged(vehicles: List<Vehicle>): Unit = onVehiclesChanged(vehicles)
-
-    override fun routeCardDataChanged(routeCardData: List<RouteCardData>?): Unit =
-        onRouteCardDataChanged(routeCardData)
 
     override fun colorPaletteChanged(isDarkMode: Boolean): Unit = onColorPaletteChanged(isDarkMode)
 
