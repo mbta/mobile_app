@@ -159,6 +159,17 @@ class NearbyViewModel: ObservableObject {
     /**
      set the filter for the given stop if it is the last stop in the stack
      */
+    func setLastStopDetailsPageFilter(_ filters: StopDetailsPageFilters) {
+        if filters.stopId == navigationStack.lastStopId,
+           navigationStack.lastStopDetailsFilter != filters.stopFilter || navigationStack
+           .lastTripDetailsFilter != filters.tripFilter {
+            navigationStack.lastStopDetailsPageFilters = filters
+        }
+    }
+
+    /**
+     set the filter for the given stop if it is the last stop in the stack
+     */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
         if stopId == navigationStack.lastStopId, navigationStack.lastStopDetailsFilter != filter {
             navigationStack.lastStopDetailsFilter = filter

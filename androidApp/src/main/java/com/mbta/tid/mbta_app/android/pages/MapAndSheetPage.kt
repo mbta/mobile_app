@@ -29,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -53,6 +54,7 @@ import com.mbta.tid.mbta_app.android.alertDetails.AlertDetailsPage
 import com.mbta.tid.mbta_app.android.component.BarAndToastScaffold
 import com.mbta.tid.mbta_app.android.component.DragHandle
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
+import com.mbta.tid.mbta_app.android.component.LocationAuthButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
 import com.mbta.tid.mbta_app.android.component.sheet.BottomSheetScaffold
@@ -760,13 +762,35 @@ fun MapAndSheetPage(
                 searchFocusRequester,
                 onBarGloballyPositioned = {},
             ) {
-                SheetContent(
-                    Modifier.background(colorResource(R.color.sheet_background))
-                        .padding(outerSheetPadding)
-                        .padding(top = if (showSearchBar) 64.dp else 0.dp)
-                        .statusBarsPadding()
-                        .fillMaxSize()
-                )
+                Column(modifier = Modifier.background(colorResource(R.color.sheet_background))) {
+                    val shouldShowAuthButton =
+                        !nearbyTransit.locationDataManager.hasPermission &&
+                            (currentNavEntry?.allowTargeting == true)
+                    if (shouldShowAuthButton) {
+                        LocationAuthButton(
+                            nearbyTransit.locationDataManager,
+                            modifier =
+                                Modifier.align(Alignment.CenterHorizontally)
+                                    .padding(top = 80.dp)
+                                    .statusBarsPadding(),
+                        )
+                    }
+                    SheetContent(
+                        Modifier.background(colorResource(R.color.sheet_background))
+                            .padding(outerSheetPadding)
+                            .padding(
+                                top = if (showSearchBar && !shouldShowAuthButton) 80.dp else 0.dp
+                            )
+                            .then(
+                                if (showSearchBar) {
+                                    Modifier
+                                } else {
+                                    Modifier.statusBarsPadding()
+                                }
+                            )
+                            .fillMaxSize()
+                    )
+                }
             }
         } else {
             BottomSheetScaffold(

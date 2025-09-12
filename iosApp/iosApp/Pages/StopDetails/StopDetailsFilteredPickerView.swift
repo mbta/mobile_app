@@ -17,6 +17,7 @@ struct StopDetailsFilteredPickerView: View {
     var setTripFilter: (TripDetailsFilter?) -> Void
 
     var stopData: RouteCardData.RouteStopData
+    var alertSummaries: [String: AlertSummary?]
     var leaf: RouteCardData.Leaf?
 
     var favorite: Bool
@@ -26,7 +27,7 @@ struct StopDetailsFilteredPickerView: View {
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
+    var stopDetailsVM: IStopDetailsViewModel
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -37,12 +38,18 @@ struct StopDetailsFilteredPickerView: View {
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
-        tripFilter: TripDetailsFilter? = nil,
+        tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        stopData: RouteCardData.RouteStopData, favorite: Bool, now: Date,
-        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
-        stopDetailsVM: StopDetailsViewModel, viewportProvider _: ViewportProvider
+        stopData: RouteCardData.RouteStopData,
+        alertSummaries: [String: AlertSummary?],
+        favorite: Bool,
+        now: Date,
+        errorBannerVM: IErrorBannerViewModel,
+        nearbyVM: NearbyViewModel,
+        mapVM: IMapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
+        viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -50,6 +57,7 @@ struct StopDetailsFilteredPickerView: View {
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
         self.stopData = stopData
+        self.alertSummaries = alertSummaries
         self.favorite = favorite
         self.now = now
         self.errorBannerVM = errorBannerVM
@@ -87,6 +95,7 @@ struct StopDetailsFilteredPickerView: View {
                             setStopFilter: setStopFilter,
                             setTripFilter: setTripFilter,
                             leaf: leaf,
+                            alertSummaries: alertSummaries,
                             selectedDirection: stopData.directions[Int(stopFilter.directionId)],
                             favorite: favorite,
                             now: now.toEasternInstant(),
@@ -112,6 +121,7 @@ struct StopDetailsFilteredPickerView: View {
                             setStopFilter: { _ in },
                             setTripFilter: { _ in },
                             leaf: leaf,
+                            alertSummaries: alertSummaries,
                             selectedDirection: stopData.directions[0],
                             favorite: false,
                             now: now.toEasternInstant(),

@@ -21,23 +21,7 @@
     {
       "skippedTests" : [
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
-        "NearbyTransitViewTests\/testDisplaysWheelchairNotAccessibile()",
-        "OnboardingPageTests\/testFlow()",
-        "StopDetailsPageTests\/testUpdatesRouteCardDataOnPredictionsChange()",
-        "StopDetailsPageTests\/testUpdatesRouteCardDataWhenParamsChange()",
-        "StopDetailsViewModelTests",
-        "StopDetailsViewModelTests\/testGetRouteCardData()",
-        "StopDetailsViewModelTests\/testHandleStopChange()",
-        "StopDetailsViewModelTests\/testLoadGlobalData()",
-        "StopDetailsViewModelTests\/testLoadPredictions()",
-        "StopDetailsViewModelTests\/testLoadTripData()",
-        "StopDetailsViewModelTests\/testNilTripFilter()",
-        "StopDetailsViewModelTests\/testSkipLoadingRedundantTrip()",
-        "StopDetailsViewModelTests\/testSkipLoadingRedundantVehicle()",
-        "StopDetailsViewModelTests\/testSkipLoadingTripData()",
-        "TripDetailsViewTests\/testDisplaysScheduleCard()",
-        "TripDetailsViewTests\/testDisplaysStopList()",
-        "TripDetailsViewTests\/testDisplaysVehicleCard()"
+        "OnboardingPageTests\/testFlow()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",

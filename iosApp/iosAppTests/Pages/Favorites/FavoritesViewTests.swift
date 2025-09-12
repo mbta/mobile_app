@@ -113,6 +113,9 @@ final class FavoritesViewTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
         let globalData = GlobalResponse(objects: objects)
+
+        loadKoinMocks(objects: objects)
+
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0)],

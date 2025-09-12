@@ -53,6 +53,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: viewportProvider,
             locationDataManager: .init(),
             sheetHeight: sheetHeight,
@@ -72,6 +73,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
@@ -92,6 +94,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
@@ -108,6 +111,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
+    @MainActor
     func testVehicleTapping() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
@@ -122,14 +126,18 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt.loadKoinMocks(repositories: repositories)
 
         let objectCollection = ObjectCollectionBuilder()
+        let route = MapTestDataHelper.shared.routeOrange
+        objectCollection.routes[route.id] = route
+        let pattern = MapTestDataHelper.shared.patternOrange30
+        objectCollection.routePatterns[pattern.id] = pattern
         let stop = objectCollection.stop { stop in
             stop.id = "1"
             stop.latitude = 1
             stop.longitude = 1
         }
         let trip = objectCollection.trip { trip in
-            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
-            trip.routeId = MapTestDataHelper.shared.routeOrange.id
+            trip.routePatternId = pattern.id
+            trip.routeId = route.id
             trip.id = "1"
             trip.directionId = 0
         }
@@ -143,21 +151,21 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.id = "1"
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = trip.id
-            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
+            vehicle.routeId = route.id
             vehicle.directionId = 0
         }
 
-        let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
-            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+        let routeCardData: [RouteCardData] = [.init(
+            lineOrRoute: .route(route),
             stopData: [
-                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
+                .init(route: route, stop: stop, data: [
                     .init(
-                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        lineOrRoute: .route(route),
                         stop: stop,
                         directionId: 0,
-                        routePatterns: [MapTestDataHelper.shared.patternOrange30],
+                        routePatterns: [pattern],
                         stopIds: [stop.id],
-                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction, vehicle: vehicle)],
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
@@ -167,7 +175,9 @@ final class HomeMapViewTests: XCTestCase {
                 ], globalData: .init(objects: objectCollection)),
             ],
             at: EasternTimeInstant.now()
-        )])
+        )]
+        let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
+        let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stopId: stop.id,
@@ -180,6 +190,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: nearbyVM,
+            routeCardDataVM: routeCardDataVM,
             viewportProvider: ViewportProvider(),
             vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
             locationDataManager: locationDataManager,
@@ -187,7 +198,7 @@ final class HomeMapViewTests: XCTestCase {
             selectedVehicle: .constant(nil)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let hasAppeared = sut.inspection.inspect(after: 1) { sut in
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
             XCTAssertEqual(
@@ -229,6 +240,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
             sheetHeight: .constant(0),
@@ -262,7 +274,7 @@ final class HomeMapViewTests: XCTestCase {
                     tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
                 ),
             ]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
@@ -291,7 +303,7 @@ final class HomeMapViewTests: XCTestCase {
                 stopFilter: .init(routeId: "routeId", directionId: 0),
                 tripFilter: nil
             )]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
@@ -318,6 +330,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
@@ -346,7 +359,7 @@ final class HomeMapViewTests: XCTestCase {
                 stopFilter: .init(routeId: "routeId", directionId: 0),
                 tripFilter: nil
             )]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
             locationDataManager: .init(),
@@ -377,7 +390,7 @@ final class HomeMapViewTests: XCTestCase {
             nearbyVM: .init(navigationStack: [
                 .stopDetails(stopId: stop.id, stopFilter: .init(routeId: "routeId", directionId: 0), tripFilter: nil),
             ]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesData: [vehicle],
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
@@ -423,6 +436,7 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: contentVM,
             mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: .init(),
             locationDataManager: .init(locationFetcher: locationFetcher),
             sheetHeight: .constant(0),

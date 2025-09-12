@@ -64,7 +64,7 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                if let routeCardData = nearbyVM.routeCardData {
+                if let routeCardData = routeCardDataState?.data {
                     vehiclesData = Array(StopDetailsUtils.shared.filterVehiclesByUpcoming(
                         routeCardData: routeCardData,
                         vehicles: result.data
@@ -104,7 +104,8 @@ extension HomeMapView {
               case let .stopDetails(_, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe(),
               stopFilter != nil || tripFilter?.tripId == tripId
         else { return }
-        let routeCard = nearbyVM.routeCardData?.first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
+        let routeCard = routeCardDataState?.data?
+            .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
             .stopData
             .flatMap(\.data)
