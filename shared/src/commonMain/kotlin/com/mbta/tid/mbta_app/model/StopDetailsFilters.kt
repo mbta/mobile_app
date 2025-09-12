@@ -58,25 +58,22 @@ public data class TripDetailsPageFilter(
     val stopId: String,
     val stopSequence: Int?,
 ) {
-    lateinit var stopFilter: StopDetailsFilter
-    lateinit var tripDetailsFilter: TripDetailsFilter
-    var vehicle: Vehicle? = null
+    val tripDetailsFilter: TripDetailsFilter
+        get() = TripDetailsFilter(tripId, vehicleId = vehicleId, stopSequence = stopSequence)
+
+    val stopFilter: StopDetailsFilter
+        get() = StopDetailsFilter(routeId = routeId, directionId = directionId)
 
     public constructor(
         stopId: String,
         stopFilter: StopDetailsFilter,
         tripFilter: TripDetailsFilter,
-        vehicle: Vehicle? = null,
     ) : this(
         tripFilter.tripId,
-        vehicle?.id ?: tripFilter.vehicleId,
+        tripFilter.vehicleId,
         stopFilter.routeId,
         stopFilter.directionId,
         stopId,
         tripFilter.stopSequence,
-    ) {
-        this.stopFilter = stopFilter
-        this.tripDetailsFilter = tripFilter
-        this.vehicle = vehicle
-    }
+    )
 }
