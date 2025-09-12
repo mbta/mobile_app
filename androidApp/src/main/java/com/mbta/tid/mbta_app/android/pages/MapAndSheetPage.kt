@@ -313,11 +313,15 @@ fun MapAndSheetPage(
     }
 
     fun handleTripDetailsNavigation(
+        tripId: String,
+        vehicleId: String?,
+        routeId: String,
+        directionId: Int,
         stopId: String,
-        tripDetailsFilter: TripDetailsFilter,
-        stopDetailsFilter: StopDetailsFilter,
+        stopSequence: Int?,
     ) {
-        val filter = TripDetailsPageFilter(stopId, stopDetailsFilter, tripDetailsFilter)
+        val filter =
+            TripDetailsPageFilter(tripId, vehicleId, routeId, directionId, stopId, stopSequence)
         navController.navigate(SheetRoutes.TripDetails(filter))
     }
 
@@ -358,9 +362,12 @@ fun MapAndSheetPage(
         val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
         if (hasTrackThisTrip) {
             handleTripDetailsNavigation(
-                stopId,
-                newTripFilter.copy(selectionLock = true),
-                stopFilter.copy(routeId = vehicle.routeId ?: stopFilter.routeId),
+                tripId = tripId,
+                vehicleId = vehicle.id,
+                routeId = vehicle.routeId ?: stopFilter.routeId,
+                directionId = stopFilter.directionId,
+                stopId = stopId,
+                stopSequence = tripFilter?.stopSequence,
             )
         } else {
             updateTripFilter(stopId, newTripFilter)
