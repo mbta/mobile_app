@@ -63,6 +63,8 @@ public interface IMapViewModel {
 
     public fun alertsChanged(alerts: AlertsStreamDataResponse?)
 
+    public fun vehiclesChanged(vehicles: List<Vehicle>)
+
     public fun routeCardDataChanged(routeCardData: List<RouteCardData>?)
 
     public fun colorPaletteChanged(isDarkMode: Boolean)
@@ -146,6 +148,7 @@ public class MapViewModel(
     }
 
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    private var vehiclesData by mutableStateOf<List<Vehicle>>(emptyList())
     private var density by mutableStateOf<Float?>(null)
     private var isDarkMode by mutableStateOf(false)
     private var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
@@ -259,7 +262,7 @@ public class MapViewModel(
                             allRailRouteShapes ?: return@run,
                             stopLayerGeneratorState,
                             globalData ?: return@run,
-                            if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
+                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                         )
                     }
                 }
@@ -336,6 +339,10 @@ public class MapViewModel(
         this.alerts = alerts
     }
 
+    override fun vehiclesChanged(vehicles: List<Vehicle>) {
+        this.vehiclesData = vehicles
+    }
+
     override fun routeCardDataChanged(routeCardData: List<RouteCardData>?) {
         this.routeCardData = routeCardData
     }
@@ -372,6 +379,11 @@ public class MapViewModel(
                 is SheetRoutes.StopDetails -> newNavEntry
                 else -> null
             }
+        val currentNavEntryTripDetails =
+            when (newNavEntry) {
+                is SheetRoutes.TripDetails -> newNavEntry
+                else -> null
+            }
         val stop = globalResponse?.getStop(currentNavEntryStopDetails?.stopId)
         val routePickerOrDetails =
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
@@ -379,6 +391,17 @@ public class MapViewModel(
             if (routePickerOrDetails && currentState is State.TripSelected) {
                 currentState.stop?.let { State.StopSelected(it, currentState.stopFilter) }
                     ?: State.Overview
+            } else if (currentNavEntryTripDetails != null) {
+                val vehicle =
+                    currentNavEntryTripDetails.filter.vehicleId?.let { vehicleId ->
+                        vehiclesData.firstOrNull { it.id == vehicleId }
+                    }
+                State.TripSelected(
+                    stop,
+                    currentNavEntryTripDetails.filter.stopFilter,
+                    currentNavEntryTripDetails.filter.tripDetailsFilter,
+                    vehicle,
+                )
             } else if (currentNavEntryStopDetails == null) {
                 State.Overview
             } else {
@@ -585,6 +608,7 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     public var onNavChanged: (SheetRoutes?) -> Unit = {}
     public var onRecenter: (RecenterType) -> Unit = {}
     public var onAlertsChanged: (AlertsStreamDataResponse?) -> Unit = {}
+    public var onVehiclesChanged: (List<Vehicle>) -> Unit = {}
     public var onRouteCardDataChanged: (List<RouteCardData>?) -> Unit = {}
     public var onColorPaletteChanged: (Boolean) -> Unit = {}
     public var onDensityChanged: (Float) -> Unit = {}
@@ -610,6 +634,8 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     override fun recenter(type: RecenterType): Unit = onRecenter(type)
 
     override fun alertsChanged(alerts: AlertsStreamDataResponse?): Unit = onAlertsChanged(alerts)
+
+    override fun vehiclesChanged(vehicles: List<Vehicle>): Unit = onVehiclesChanged(vehicles)
 
     override fun routeCardDataChanged(routeCardData: List<RouteCardData>?): Unit =
         onRouteCardDataChanged(routeCardData)
