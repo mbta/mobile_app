@@ -9,14 +9,12 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.isNullOrEmpty
 import com.mbta.tid.mbta_app.usecases.AlertsUsecase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
 import org.koin.compose.koinInject
 
 class AlertsViewModel(private val alertsUsecase: AlertsUsecase) : ViewModel() {
@@ -27,11 +25,7 @@ class AlertsViewModel(private val alertsUsecase: AlertsUsecase) : ViewModel() {
         alertsUsecase.connect {
             when (it) {
                 is ApiResult.Ok -> {
-                    val oldAlerts = _alerts.value
-
                     _alerts.value = it.data
-                    if (oldAlerts.isNullOrEmpty() && !it.data.isEmpty())
-                        synchronized(alertFlow) { alertFlow.notifyAll() }
                 }
                 is ApiResult.Error -> {
                     Log.e("AlertsViewModel", "subscribeToAlerts failed: $it")
