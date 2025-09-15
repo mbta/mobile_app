@@ -1,9 +1,9 @@
 PODS:
-  - Sentry (8.53.2):
-    - Sentry/Core (= 8.53.2)
-  - Sentry/Core (8.53.2)
+  - Sentry (8.55.1):
+    - Sentry/Core (= 8.55.1)
+  - Sentry/Core (8.55.1)
   - shared (1.0):
-    - Sentry (~> 8.53.2)
+    - Sentry (~> 8.55.1)
 
 DEPENDENCIES:
   - shared (from `../shared/`)
@@ -17,8 +17,8 @@ EXTERNAL SOURCES:
     :path: "../shared/"
 
 SPEC CHECKSUMS:
-  Sentry: 59993bffde4a1ac297ba6d268dc4bbce068d7c1b
-  shared: e1769c5a488a6da57b0f3a82ecedf311572b1680
+  Sentry: 6c92b12db0634612f6a66757890fea97e788fe12
+  shared: 83e3532eb62af35ce14bb1b7aee95ba0f8170bb0
 
 PODFILE CHECKSUM: 8b77545532cdf4b25adfa1dd92b4b893e9371c67
 
