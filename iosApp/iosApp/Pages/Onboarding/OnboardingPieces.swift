@@ -9,6 +9,11 @@
 import SwiftUI
 
 enum OnboardingPieces {
+    enum Context {
+        case onboarding
+        case promo
+    }
+
     struct PageDescription<FocusValue: Hashable>: View {
         let headerText: Text
         let bodyText: Text
@@ -19,18 +24,22 @@ enum OnboardingPieces {
         let bodyDynamicTypeSize: DynamicTypeSize?
         let bodyAccessibilityHint: Text?
 
+        let context: Context
+
         init(
             headerText: Text,
             bodyText: Text,
             focusBinding: AccessibilityFocusState<FocusValue>.Binding,
             focusValue: FocusValue,
+            context: OnboardingPieces.Context,
             bodyAccessibilityHint: Text? = nil,
-            bodyDynamicTypeSize: DynamicTypeSize? = nil
+            bodyDynamicTypeSize: DynamicTypeSize? = nil,
         ) {
             self.headerText = headerText
             self.bodyText = bodyText
             self.focusBinding = focusBinding
             self.focusValue = focusValue
+            self.context = context
             self.bodyAccessibilityHint = bodyAccessibilityHint
             self.bodyDynamicTypeSize = bodyDynamicTypeSize
         }
@@ -39,6 +48,7 @@ enum OnboardingPieces {
             VStack(alignment: .leading, spacing: 16) {
                 headerText
                     .font(Typography.title1Bold)
+                    .accessibilityLabel(context == .promo ? Text("New feature. \(headerText)") : headerText)
                     .accessibilityHeading(.h1)
                     .accessibilityAddTraits(.isHeader)
                     .accessibilityFocused(focusBinding, equals: focusValue)

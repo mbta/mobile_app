@@ -9,73 +9,79 @@ import kotlin.jvm.JvmName
  * bit of a nuisance to work with in a more type-safe language like Kotlin. Mapbox for iOS defines
  * an enum like this.
  */
-sealed interface JSONValue {
-    data class Array(val data: JSONArray) : JSONValue
+public sealed interface JSONValue {
+    public data class Array internal constructor(val data: JSONArray) : JSONValue
 
-    data class Boolean(val data: kotlin.Boolean) : JSONValue
+    public data class Boolean internal constructor(val data: kotlin.Boolean) : JSONValue
 
-    data class Number(val data: Double) : JSONValue
+    public data class Number internal constructor(val data: Double) : JSONValue
 
-    data class Object(val data: JSONObject) : JSONValue
+    public data class Object internal constructor(val data: JSONObject) : JSONValue
 
-    data class String(val data: kotlin.String) : JSONValue
+    public data class String internal constructor(val data: kotlin.String) : JSONValue
 }
 
-val JSONValue.array: JSONArray
+internal val JSONValue.array: JSONArray
     get() {
         check(this is JSONValue.Array)
         return this.data
     }
 
-val JSONValue.boolean: Boolean
+internal val JSONValue.boolean: Boolean
     get() {
         check(this is JSONValue.Boolean)
         return this.data
     }
 
-val JSONValue.number: Number
+internal val JSONValue.number: Number
     get() {
         check(this is JSONValue.Number)
         return this.data
     }
 
-val JSONValue.`object`: JSONObject
+internal val JSONValue.`object`: JSONObject
     get() {
         check(this is JSONValue.Object)
         return this.data
     }
-val JSONValue.string: String
+internal val JSONValue.string: String
     get() {
         check(this is JSONValue.String)
         return this.data
     }
 
-typealias JSONArray = List<JSONValue>
+public typealias JSONArray = List<JSONValue>
 
-typealias JSONObject = Map<String, JSONValue>
+public typealias JSONObject = Map<String, JSONValue>
 
-data class FeatureProperties(val data: JSONObject) {
-    operator fun get(property: FeatureProperty<Boolean>): Boolean? = data[property.key]?.boolean
+public data class FeatureProperties internal constructor(val data: JSONObject) {
+    internal operator fun get(property: FeatureProperty<Boolean>): Boolean? =
+        data[property.key]?.boolean
 
-    operator fun get(property: FeatureProperty<Number>): Number? = data[property.key]?.number
+    internal operator fun get(property: FeatureProperty<Number>): Number? =
+        data[property.key]?.number
 
-    operator fun get(property: FeatureProperty<String>): String? = data[property.key]?.string
+    internal operator fun get(property: FeatureProperty<String>): String? =
+        data[property.key]?.string
 
-    operator fun get(property: FeatureProperty<List<String>>): List<String>? =
+    internal operator fun get(property: FeatureProperty<List<String>>): List<String>? =
         data[property.key]?.array?.map { it.string }
 
     @JvmName("getMapStringString")
-    operator fun get(property: FeatureProperty<Map<String, String>>): Map<String, String>? =
-        data[property.key]?.`object`?.mapValues { it.value.string }
+    internal operator fun get(
+        property: FeatureProperty<Map<String, String>>
+    ): Map<String, String>? = data[property.key]?.`object`?.mapValues { it.value.string }
 
     @JvmName("getMapStringListString")
-    operator fun get(
+    internal operator fun get(
         property: FeatureProperty<Map<String, List<String>>>
     ): Map<String, List<String>>? =
         data[property.key]?.`object`?.mapValues { it.value.array.map { it.string } }
 }
 
-class FeaturePropertiesBuilder(private val data: MutableMap<String, JSONValue> = mutableMapOf()) {
+internal class FeaturePropertiesBuilder(
+    private val data: MutableMap<String, JSONValue> = mutableMapOf()
+) {
     fun put(property: FeatureProperty<Boolean>, value: Boolean) {
         data[property.key] = JSONValue.Boolean(value)
     }
@@ -115,7 +121,9 @@ class FeaturePropertiesBuilder(private val data: MutableMap<String, JSONValue> =
     fun built() = FeatureProperties(data)
 }
 
-inline fun buildFeatureProperties(block: FeaturePropertiesBuilder.() -> Unit): FeatureProperties {
+internal inline fun buildFeatureProperties(
+    block: FeaturePropertiesBuilder.() -> Unit
+): FeatureProperties {
     val builder = FeaturePropertiesBuilder()
     builder.block()
     return builder.built()

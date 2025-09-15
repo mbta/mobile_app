@@ -17,5 +17,7 @@ updates:
     open-pull-requests-limit: 100
     rebase-strategy: disabled
     ignore:
-      - dependency-name: "agp"
+      - dependency-name: "com.android.application"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "com.android.library"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]

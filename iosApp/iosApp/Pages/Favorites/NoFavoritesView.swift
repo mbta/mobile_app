@@ -9,7 +9,7 @@
 import SwiftUI
 
 struct NoFavoritesView: View {
-    var onAddStops: (() -> Void)? = nil
+    var onAddStops: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 32) {

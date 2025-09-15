@@ -32,15 +32,17 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 interface IViewportProvider {
     var isManuallyCentering: Boolean
@@ -62,7 +64,7 @@ interface IViewportProvider {
 
     suspend fun follow(transitionAnimationDuration: Long? = null)
 
-    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float)
+    suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?)
 
     suspend fun stopCenter(stop: Stop)
 
@@ -132,9 +134,17 @@ class ViewportProvider(
      * Queues an operation to run on the viewport once all previously queued animations have
      * finished. Runs on a background thread.
      */
-    suspend fun <T> withViewport(operation: suspend (MapViewportState) -> T): T {
+    suspend fun <T> withViewport(operation: suspend (MapViewportState) -> T): T? {
         return viewportLock.withLock {
-            withContext(Dispatchers.Default) { operation(_rawViewport) }
+            // the follow animation sometimes completely drops its CompletionListener, like if it’s
+            // interrupted by switching to the More tab, so we need to release the lock by timing
+            // out if the operation gets stuck
+            withTimeoutOrNull(MapAnimationDefaults.duration * 2) {
+                withContext(Dispatchers.Default) {
+                    ensureActive()
+                    operation(_rawViewport)
+                }
+            }
         }
     }
 
@@ -144,9 +154,11 @@ class ViewportProvider(
      */
     private suspend fun animateViewport(operation: (MapViewportState, CompletionListener) -> Unit) {
         withViewport { viewport ->
-            suspendCoroutine { continuation ->
+            suspendCancellableCoroutine { continuation ->
                 runningAnimation = continuation
                 operation(viewport, CompletionListener { continuation.tryResume() })
+                // interrupting the animation can only be done from the UI thread, and it can look
+                // bad, so we don’t interrupt the animation on cancel
             }
         }
     }
@@ -167,10 +179,12 @@ class ViewportProvider(
             }
 
         withViewport { viewport ->
-            withContext(Dispatchers.Main) { viewport.setCameraOptions { padding(insets) } }
+            withContext(Dispatchers.Main) {
+                ensureActive()
+                viewport.setCameraOptions { padding(insets) }
+            }
+            lastEdgeInsets = insets
         }
-
-        lastEdgeInsets = insets
     }
 
     override suspend fun follow(transitionAnimationDuration: Long?) {
@@ -183,30 +197,33 @@ class ViewportProvider(
         isFollowingPuck = true
         isVehicleOverview = false
         isAnimating = true
-        animateViewport { viewport, completionListener ->
-            viewport.transitionToFollowPuckState(
-                followPuckViewportStateOptions =
-                    FollowPuckViewportStateOptions.Builder()
-                        .apply {
-                            bearing(null)
-                            pitch(null)
-                            zoom(_cameraState.value.zoom)
-                        }
-                        .build(),
-                defaultTransitionOptions = transitionOptions,
-                completionListener,
-            )
+        try {
+            animateViewport { viewport, completionListener ->
+                viewport.transitionToFollowPuckState(
+                    followPuckViewportStateOptions =
+                        FollowPuckViewportStateOptions.Builder()
+                            .apply {
+                                bearing(null)
+                                pitch(null)
+                                zoom(_cameraState.value.zoom)
+                            }
+                            .build(),
+                    defaultTransitionOptions = transitionOptions,
+                    completionListener,
+                )
+            }
+        } finally {
+            isAnimating = false
         }
-        isAnimating = false
     }
 
-    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float) {
+    override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) {
         isVehicleOverview = true
         isFollowingPuck = false
         if (stop == null) {
             animateTo(vehicle.position.toMapbox())
-        } else {
-            animateToOverview(
+        } else if (density != null) {
+            animateToOverview({
                 OverviewViewportStateOptions.Builder()
                     .padding(lastEdgeInsets)
                     .geometry(
@@ -217,7 +234,7 @@ class ViewportProvider(
                     .geometryPadding(Defaults.overviewPadding(density))
                     .maxZoom(16.0)
                     .build()
-            )
+            })
         }
     }
 
@@ -228,9 +245,9 @@ class ViewportProvider(
     }
 
     // if camera state's center is null, then treat it like it is at the default center
-    override suspend fun isDefault() = withViewport { viewport ->
-        viewport.cameraState?.center?.isRoughlyEqualTo(Defaults.center) != false
-    }
+    override suspend fun isDefault() =
+        withViewport { viewport -> viewport.cameraState }?.center?.isRoughlyEqualTo(Defaults.center)
+            ?: true
 
     override suspend fun panToDefaultCenter() {
         isManuallyCentering = true
@@ -244,43 +261,46 @@ class ViewportProvider(
         zoom: Double? = null,
     ) {
         isAnimating = true
-        animateToCamera(
-            options =
-                CameraOptions.Builder()
-                    .center(coordinates)
-                    .zoom(zoom ?: _cameraState.value.zoom)
-                    .build(),
-            animation = animation,
-        )
-        isAnimating = false
+        try {
+            animateToCamera(
+                options =
+                    CameraOptions.Builder()
+                        .center(coordinates)
+                        .zoom(zoom ?: _cameraState.value.zoom)
+                        .build(),
+                animation = animation,
+            )
+        } finally {
+            isAnimating = false
+        }
     }
 
     private suspend fun animateToCamera(options: CameraOptions, animation: MapAnimationOptions) {
-        animateViewport { viewport, completionListener ->
-            viewport.easeTo(
-                options,
-                animation,
-                { isFinished ->
-                    isManuallyCentering = false
-                    completionListener.onComplete(isFinished)
-                },
-            )
+        try {
+            animateViewport { viewport, completionListener ->
+                viewport.easeTo(options, animation, completionListener)
+            }
+        } finally {
+            isManuallyCentering = false
         }
     }
 
     private suspend fun animateToOverview(
-        options: OverviewViewportStateOptions,
+        options: () -> OverviewViewportStateOptions,
         defaultTransitionOptions: DefaultViewportTransitionOptions = Defaults.viewportTransition,
     ) {
         isAnimating = true
-        animateViewport { viewport, completionListener ->
-            viewport.transitionToOverviewState(
-                options,
-                defaultTransitionOptions,
-                completionListener,
-            )
+        try {
+            animateViewport { viewport, completionListener ->
+                viewport.transitionToOverviewState(
+                    options(),
+                    defaultTransitionOptions,
+                    completionListener,
+                )
+            }
+        } finally {
+            isAnimating = false
         }
-        isAnimating = false
     }
 
     override fun updateCameraState(location: Location?) {
@@ -320,11 +340,14 @@ class ViewportProvider(
     override suspend fun restoreNearbyTransitViewport() {
         isFollowingPuck = savedNearbyTransitViewport?.isFollowingPuck ?: false
         isAnimating = true
-        animateViewport { viewport, completionListener ->
-            savedNearbyTransitViewport?.restoreOn(viewport, completionListener)
+        try {
+            animateViewport { viewport, completionListener ->
+                savedNearbyTransitViewport?.restoreOn(viewport, completionListener)
+            }
+        } finally {
+            isAnimating = false
+            savedNearbyTransitViewport = null
         }
-        isAnimating = false
-        savedNearbyTransitViewport = null
     }
 
     override fun setIsManuallyCentering(isManuallyCentering: Boolean) {

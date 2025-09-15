@@ -53,7 +53,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         if: ${{ !inputs.skip-everything }}
       - uses: ./.github/actions/setup
         if: ${{ !inputs.skip-everything }}
@@ -106,13 +106,13 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Lowercase build parameters
         id: lowercase
         run: |
           flavor="${{ inputs.flavor }}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release

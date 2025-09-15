@@ -11,13 +11,13 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ILastLaunchedAppVersionRepository {
-    suspend fun getLastLaunchedAppVersion(): AppVersion?
+public interface ILastLaunchedAppVersionRepository {
+    public suspend fun getLastLaunchedAppVersion(): AppVersion?
 
-    suspend fun setLastLaunchedAppVersion(version: AppVersion)
+    public suspend fun setLastLaunchedAppVersion(version: AppVersion)
 }
 
-class LastLaunchedAppVersionRepository : ILastLaunchedAppVersionRepository, KoinComponent {
+internal class LastLaunchedAppVersionRepository : ILastLaunchedAppVersionRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     private val lastLaunchedAppVersionKey = stringPreferencesKey("last_launched_app_version")
@@ -34,13 +34,13 @@ class LastLaunchedAppVersionRepository : ILastLaunchedAppVersionRepository, Koin
     }
 }
 
-class MockLastLaunchedAppVersionRepository
+public class MockLastLaunchedAppVersionRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private var lastLaunchedAppVersion: AppVersion?,
     private var onSet: (AppVersion) -> Unit = {},
 ) : ILastLaunchedAppVersionRepository {
-    override suspend fun getLastLaunchedAppVersion() = lastLaunchedAppVersion
+    override suspend fun getLastLaunchedAppVersion(): AppVersion? = lastLaunchedAppVersion
 
     override suspend fun setLastLaunchedAppVersion(version: AppVersion) {
         onSet(version)

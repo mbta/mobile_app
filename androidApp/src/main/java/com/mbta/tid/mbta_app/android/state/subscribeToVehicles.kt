@@ -3,17 +3,18 @@ package com.mbta.tid.mbta_app.android.state
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDirection
 import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -64,9 +65,12 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
 @Composable
 fun subscribeToVehicles(
     routeDirection: RouteDirection?,
-    routeCardData: List<RouteCardData>?,
+    routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     vehiclesRepository: IVehiclesRepository = koinInject(),
 ): List<Vehicle> {
+    val routeCardDataState by routeCardDataViewModel.models.collectAsState()
+    val routeCardData = routeCardDataState.data
+
     val viewModel: VehiclesViewModel =
         viewModel(factory = VehiclesViewModel.Factory(vehiclesRepository))
 
@@ -74,7 +78,6 @@ fun subscribeToVehicles(
 
     LifecycleResumeEffect(routeDirection) {
         CoroutineScope(Dispatchers.IO).launch { viewModel.connectToVehicles(routeDirection) }
-
         onPauseOrDispose { viewModel.disconnect() }
     }
 

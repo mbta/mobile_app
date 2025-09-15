@@ -50,7 +50,6 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
         predictions: PredictionsStreamDataResponse?,
         alerts: AlertsStreamDataResponse?,
         now: EasternTimeInstant,
-        pinnedRoutes: Set<String>?,
     ) {
         val stopIds = nearbyStopIds
         if (global == null || location == null || stopIds == null) {
@@ -66,7 +65,6 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
                     predictions,
                     alerts,
                     now,
-                    pinnedRoutes ?: emptySet(),
                     RouteCardData.Context.NearbyTransit,
                 )
         }

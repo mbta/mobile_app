@@ -3,15 +3,15 @@ package com.mbta.tid.mbta_app.history
 import kotlinx.serialization.Serializable
 
 @Serializable
-class VisitHistory {
-    companion object {
+public class VisitHistory {
+    internal companion object {
         const val RETRIEVE_COUNT = 10
         const val SAVE_COUNT = 50
     }
 
     private var visits: MutableList<Visit> = mutableListOf()
 
-    fun add(visit: Visit) {
+    public fun add(visit: Visit) {
         visits.remove(visit)
         visits.add(0, visit)
         if (visits.size > SAVE_COUNT) {
@@ -19,7 +19,7 @@ class VisitHistory {
         }
     }
 
-    fun latest(n: Int = RETRIEVE_COUNT): List<Visit> {
+    internal fun latest(n: Int = RETRIEVE_COUNT): List<Visit> {
         return visits.take(n)
     }
 }

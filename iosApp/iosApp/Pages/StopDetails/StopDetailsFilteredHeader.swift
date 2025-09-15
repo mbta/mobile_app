@@ -14,14 +14,18 @@ struct StopDetailsFilteredHeader: View {
     var line: Line?
     var stop: Stop?
     var direction: Int32
-    var pinned: Bool = false
-    var onPin: () -> Void = {}
+    var isFavorite: Bool = false
+    var onFavorite: () -> Void = {}
     var onClose: () -> Void = {}
 
     var body: some View {
-        let accessibilityLabel = if let route, let stop {
+        let routeLabel = line?.longName ?? route?.label
+        let routeTypeLabel = if let type = route?.type, type != .ferry {
+            type.typeText(isOnly: true)
+        } else { "" }
+        let accessibilityLabel = if let routeLabel, let stop {
             Text(
-                "\(route.label) \(route.type.typeText(isOnly: true)) at \(stop.name)",
+                "\(routeLabel) \(routeTypeLabel) at \(stop.name)",
                 comment: """
                 VoiceOver text for the stop details page header,
                 describes the selected route and and stop, ex '[Red Line] [train] at [Porter]'
@@ -35,10 +39,14 @@ struct StopDetailsFilteredHeader: View {
         }
         HStack(alignment: .center, spacing: 16) {
             HStack(alignment: .center, spacing: 8) {
+                let pillAccessibilityLabel =
+                    routeModeLabel(line: line, route: route)
                 if let line {
                     RoutePill(route: nil, line: line, type: .fixed)
+                        .accessibilityLabel(pillAccessibilityLabel)
                 } else if let route {
                     RoutePill(route: route, type: .fixed)
+                        .accessibilityLabel(pillAccessibilityLabel)
                 }
                 if let stop {
                     Text(stopLabel(stop)).font(Typography.headline).layoutPriority(1)
@@ -51,7 +59,7 @@ struct StopDetailsFilteredHeader: View {
             .accessibilityLabel(accessibilityLabel)
 
             HStack(alignment: .center, spacing: 16) {
-                StarButton(starred: pinned, color: Color.text, action: onPin)
+                StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
                     .id(direction) // don’t play animation when switching between favorited direction and unfavorited
                     // direction
                     .fixedSize(horizontal: false, vertical: true)

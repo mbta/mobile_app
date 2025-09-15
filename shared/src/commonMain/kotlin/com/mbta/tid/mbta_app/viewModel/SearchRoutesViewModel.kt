@@ -14,44 +14,46 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
 
-interface ISearchRoutesViewModel {
+public interface ISearchRoutesViewModel {
 
-    val models: StateFlow<SearchRoutesViewModel.State>
+    public val models: StateFlow<SearchRoutesViewModel.State>
 
-    fun setPath(path: RoutePickerPath)
+    public fun setPath(path: RoutePickerPath)
 
-    fun setQuery(query: String)
+    public fun setQuery(query: String)
 }
 
-class SearchRoutesViewModel(
+public class SearchRoutesViewModel
+internal constructor(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
+    private val sentryRepository: ISentryRepository,
 ) :
     MoleculeViewModel<SearchRoutesViewModel.Event, SearchRoutesViewModel.State>(),
     ISearchRoutesViewModel {
-    sealed interface Event {
-        data class SetPath(val path: RoutePickerPath) : Event
-
-        data class SetQuery(val query: String) : Event
+    public sealed interface Event {
+        public data class SetPath internal constructor(val path: RoutePickerPath) : Event
     }
 
-    sealed class State {
-        data object Unfiltered : State()
+    public sealed class State {
+        public data object Unfiltered : State()
 
-        data class Results(val routeIds: List<String>) : State()
+        public data class Results(val routeIds: List<String>) : State()
 
-        data object Error : State()
+        public data object Error : State()
 
-        val isEmpty: Boolean
+        public val isEmpty: Boolean
             get() =
                 when (this) {
                     Unfiltered -> false
@@ -60,23 +62,21 @@ class SearchRoutesViewModel(
                 }
     }
 
+    @set:JvmName("setQueryState") private var query by mutableStateOf("")
+
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var path: RoutePickerPath? by remember { mutableStateOf(null) }
-        var query by remember { mutableStateOf("") }
 
         var state by remember { mutableStateOf<State>(State.Unfiltered) }
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
 
-        LaunchedEffect(null) {
-            events.collect { event ->
-                when (event) {
-                    is Event.SetPath -> {
-                        path = event.path
-                        state = State.Unfiltered
-                    }
-                    is Event.SetQuery -> query = event.query
+        EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                is Event.SetPath -> {
+                    path = event.path
+                    state = State.Unfiltered
                 }
             }
         }
@@ -129,14 +129,16 @@ class SearchRoutesViewModel(
         return state
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun setPath(path: RoutePickerPath) = fireEvent(Event.SetPath(path))
+    override fun setPath(path: RoutePickerPath): Unit = fireEvent(Event.SetPath(path))
 
-    override fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) {
+        this.query = query
+    }
 
-    companion object {
+    internal companion object {
         data class FilterParams(val lineIds: List<String>?, val routeTypes: List<RouteType>?)
 
         fun getParamsForPath(path: RoutePickerPath?) =
@@ -155,16 +157,17 @@ class SearchRoutesViewModel(
     }
 }
 
-class MockSearchRoutesViewModel
+public class MockSearchRoutesViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: SearchRoutesViewModel.State = SearchRoutesViewModel.State.Unfiltered) :
     ISearchRoutesViewModel {
-    var onSetPath = { _: RoutePickerPath -> }
-    var onSetQuery = { _: String -> }
+    public var onSetPath: (RoutePickerPath) -> Unit = {}
+    public var onSetQuery: (String) -> Unit = {}
 
-    override val models = MutableStateFlow(initialState)
+    override val models: MutableStateFlow<SearchRoutesViewModel.State> =
+        MutableStateFlow(initialState)
 
-    override fun setPath(path: RoutePickerPath) = onSetPath(path)
+    override fun setPath(path: RoutePickerPath): Unit = onSetPath(path)
 
-    override fun setQuery(query: String) = onSetQuery(query)
+    override fun setQuery(query: String): Unit = onSetQuery(query)
 }

@@ -14,42 +14,46 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
-    var stopId: String
-    var stopFilter: StopDetailsFilter?
-    var tripFilter: TripDetailsFilter?
+    var filters: StopDetailsPageFilters
+
+    var routeData: StopDetailsViewModel.RouteData?
+    var favorites: Favorites
+    var global: GlobalResponse?
+    var now: Date
+
+    var onUpdateFavorites: () -> Void
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var routeCardData: [RouteCardData]?
-    var now: Date
-
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
+    var mapVM: IMapViewModel
+    var stopDetailsVM: IStopDetailsViewModel
 
     let inspection = Inspection<Self>()
 
     init(
-        stopId: String,
-        stopFilter: StopDetailsFilter?,
-        tripFilter: TripDetailsFilter?,
+        filters: StopDetailsPageFilters,
+        routeData: StopDetailsViewModel.RouteData?,
+        favorites: Favorites,
+        global: GlobalResponse?,
+        now: Date,
+        onUpdateFavorites: @escaping () -> Void,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        routeCardData: [RouteCardData]?,
-        now: Date,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
-        stopDetailsVM: StopDetailsViewModel
+        mapVM: IMapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
     ) {
-        self.stopId = stopId
-        self.stopFilter = stopFilter
-        self.tripFilter = tripFilter
+        self.filters = filters
+        self.routeData = routeData
+        self.favorites = favorites
+        self.global = global
+        self.now = now
+        self.onUpdateFavorites = onUpdateFavorites
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.routeCardData = routeCardData
-        self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -57,15 +61,18 @@ struct StopDetailsView: View {
     }
 
     var body: some View {
-        if let stopFilter {
+        if let stopFilter = filters.stopFilter {
             StopDetailsFilteredView(
-                stopId: stopId,
+                stopId: filters.stopId,
                 stopFilter: stopFilter,
-                tripFilter: tripFilter,
+                tripFilter: filters.tripFilter,
+                routeData: routeData,
+                favorites: favorites,
+                global: global,
+                now: now,
+                onUpdateFavorites: onUpdateFavorites,
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
-                routeCardData: routeCardData,
-                now: now,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 mapVM: mapVM,
@@ -74,13 +81,14 @@ struct StopDetailsView: View {
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         } else {
             StopDetailsUnfilteredView(
-                stopId: stopId,
-                setStopFilter: setStopFilter,
-                routeCardData: routeCardData,
+                stopId: filters.stopId,
+                routeData: routeData,
+                favorites: favorites,
+                global: global,
                 now: now.toEasternInstant(),
+                setStopFilter: setStopFilter,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
-                stopDetailsVM: stopDetailsVM
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
         }

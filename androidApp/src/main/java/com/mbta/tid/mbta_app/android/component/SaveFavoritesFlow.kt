@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.getLabels
@@ -43,7 +44,6 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -57,13 +57,13 @@ fun SaveFavoritesFlow(
     directions: List<Direction>,
     selectedDirection: Int,
     context: EditFavoritesContext,
-    global: GlobalResponse?,
     toastViewModel: IToastViewModel = koinInject(),
     isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
     onClose: () -> Unit,
 ) {
 
+    val global = getGlobalData("SaveFavoritesFlow")
     val isUnFavoriting =
         directions.any { it.id == selectedDirection } &&
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))

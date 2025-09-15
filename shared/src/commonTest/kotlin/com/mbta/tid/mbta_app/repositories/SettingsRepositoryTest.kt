@@ -15,7 +15,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
-class SettingsRepositoryTest : KoinTest {
+internal class SettingsRepositoryTest : KoinTest {
     val defaultSettings = Settings.entries.associateWith { false }
 
     @AfterTest
@@ -41,7 +41,7 @@ class SettingsRepositoryTest : KoinTest {
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
                 Settings.HideMaps to false,
-                Settings.EnhancedFavorites to false,
+                Settings.TrackThisTrip to false,
             ),
             repo.getSettings(),
         )

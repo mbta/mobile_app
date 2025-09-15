@@ -20,11 +20,13 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
@@ -62,37 +64,37 @@ private fun stopRouteContentDescription(
     }
 }
 
-interface ISearchViewModel {
+public interface ISearchViewModel {
 
-    val models: StateFlow<SearchViewModel.State>
+    public val models: StateFlow<SearchViewModel.State>
 
-    fun setQuery(query: String)
+    public fun setQuery(query: String)
 
-    fun refreshHistory()
+    public fun refreshHistory()
 }
 
-class SearchViewModel(
+public class SearchViewModel(
     private val analytics: Analytics,
     private val globalRepository: IGlobalRepository,
     private val searchResultRepository: ISearchResultRepository,
+    private val sentryRepository: ISentryRepository,
     private val visitHistoryUsecase: VisitHistoryUsecase,
 ) : MoleculeViewModel<SearchViewModel.Event, SearchViewModel.State>(), ISearchViewModel {
-    sealed interface Event {
-        data class SetQuery(val query: String) : Event
-
-        data object RefreshHistory : Event
+    public sealed interface Event {
+        public data object RefreshHistory : Event
     }
 
-    sealed class State {
-        data object Loading : State()
+    public sealed class State {
+        public data object Loading : State()
 
-        data class RecentStops(val stops: List<StopResult>) : State()
+        public data class RecentStops(val stops: List<StopResult>) : State()
 
-        data class Results(val stops: List<StopResult>, val routes: List<RouteResult>) : State()
+        public data class Results(val stops: List<StopResult>, val routes: List<RouteResult>) :
+            State()
 
-        data object Error : State()
+        public data object Error : State()
 
-        fun isEmpty(includeRoutes: Boolean): Boolean =
+        public fun isEmpty(includeRoutes: Boolean): Boolean =
             when (this) {
                 Loading -> false
                 is RecentStops -> false
@@ -101,13 +103,13 @@ class SearchViewModel(
             }
     }
 
-    data class StopResult(
+    public data class StopResult(
         val id: String,
         val isStation: Boolean,
         val name: String,
         val routePills: List<RoutePillSpec>,
     ) {
-        companion object {
+        internal companion object {
             fun forStop(stopId: String, globalData: GlobalResponse?): StopResult? {
                 val stop = globalData?.getStop(stopId) ?: return null
                 val isStation = stop.locationType == LocationType.STATION
@@ -122,6 +124,7 @@ class SearchViewModel(
                             route,
                             line,
                             RoutePillSpec.Type.FlexCompact,
+                            RoutePillSpec.Height.Small,
                             context,
                             stopRouteContentDescription(isStation, route),
                         )
@@ -137,9 +140,9 @@ class SearchViewModel(
         }
     }
 
-    data class RouteResult(val id: String, val name: String, val routePill: RoutePillSpec) {
-        companion object {
-            fun forLineOrRoute(objectId: String, globalData: GlobalResponse?): RouteResult? {
+    public data class RouteResult(val id: String, val name: String, val routePill: RoutePillSpec) {
+        public companion object {
+            public fun forLineOrRoute(objectId: String, globalData: GlobalResponse?): RouteResult? {
                 val route = globalData?.getRoute(objectId)
                 val line = globalData?.getLine(objectId)
 
@@ -148,7 +151,7 @@ class SearchViewModel(
                         route,
                         line,
                         RoutePillSpec.Type.Fixed,
-                        RoutePillSpec.Context.Default,
+                        context = RoutePillSpec.Context.Default,
                     )
 
                 return RouteResult(
@@ -160,23 +163,21 @@ class SearchViewModel(
         }
     }
 
+    @set:JvmName("setQueryState") private var query by mutableStateOf("")
+
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         val globalData by globalRepository.state.collectAsState()
         var latestVisits by remember { mutableStateOf<List<Visit>?>(null) }
-        var query by remember { mutableStateOf("") }
         var state by remember { mutableStateOf<State>(State.Loading) }
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
 
         LaunchedEffect(null) { latestVisits = visitHistoryUsecase.getLatestVisits() }
 
-        LaunchedEffect(null) {
-            events.collect { event ->
-                when (event) {
-                    is Event.SetQuery -> query = event.query
-                    Event.RefreshHistory -> latestVisits = visitHistoryUsecase.getLatestVisits()
-                }
+        EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                Event.RefreshHistory -> latestVisits = visitHistoryUsecase.getLatestVisits()
             }
         }
 
@@ -223,21 +224,23 @@ class SearchViewModel(
         return state
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun setQuery(query: String) = fireEvent(Event.SetQuery(query))
+    override fun setQuery(query: String) {
+        this.query = query
+    }
 
-    override fun refreshHistory() = fireEvent(Event.RefreshHistory)
+    override fun refreshHistory(): Unit = fireEvent(Event.RefreshHistory)
 }
 
-class MockSearchViewModel
+public class MockSearchViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: SearchViewModel.State = SearchViewModel.State.Loading) :
     ISearchViewModel {
-    var onSetQuery = { _: String -> }
-    var onRefreshHistory = {}
-    override val models = MutableStateFlow(initialState)
+    public var onSetQuery: (String) -> Unit = {}
+    internal var onRefreshHistory = {}
+    override val models: MutableStateFlow<SearchViewModel.State> = MutableStateFlow(initialState)
 
     override fun setQuery(query: String) {
         onSetQuery(query)

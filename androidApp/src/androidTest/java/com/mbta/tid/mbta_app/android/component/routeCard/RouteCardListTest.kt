@@ -8,7 +8,7 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -23,9 +23,9 @@ import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
 class RouteCardListTest : KoinTest {
@@ -157,9 +157,12 @@ class RouteCardListTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
-    val koinApplication = testKoinApplication(builder)
-
     @get:Rule val composeTestRule = createComposeRule()
+
+    @Before
+    fun setUp() {
+        loadKoinMocks(builder)
+    }
 
     @OptIn(ExperimentalTestApi::class)
     @Test
@@ -173,23 +176,19 @@ class RouteCardListTest : KoinTest {
                 predictions = PredictionsStreamDataResponse(builder),
                 AlertsStreamDataResponse(emptyMap()),
                 now,
-                emptySet(),
                 RouteCardData.Context.NearbyTransit,
             )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                Column {
-                    RouteCardList(
-                        routeCardData = routeCardData,
-                        emptyView = { Text("This would be the empty view") },
-                        global = globalResponse,
-                        now = EasternTimeInstant.now(),
-                        isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
-                        onOpenStopDetails = { _, _ -> },
-                    )
-                }
+            Column {
+                RouteCardList(
+                    routeCardData = routeCardData,
+                    emptyView = { Text("This would be the empty view") },
+                    global = globalResponse,
+                    now = EasternTimeInstant.now(),
+                    isFavorite = { false },
+                    onOpenStopDetails = { _, _ -> },
+                )
             }
         }
 
@@ -207,20 +206,17 @@ class RouteCardListTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testRouteCardListShowsEmptyView() {
-        val emptyNearbyKoinApplication = testKoinApplication()
+        loadKoinMocks()
         composeTestRule.setContent {
-            KoinContext(emptyNearbyKoinApplication.koin) {
-                Column {
-                    RouteCardList(
-                        routeCardData = emptyList(),
-                        emptyView = { Text("This would be the empty view") },
-                        global = globalResponse,
-                        now = EasternTimeInstant.now(),
-                        isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
-                        onOpenStopDetails = { _, _ -> },
-                    )
-                }
+            Column {
+                RouteCardList(
+                    routeCardData = emptyList(),
+                    emptyView = { Text("This would be the empty view") },
+                    global = globalResponse,
+                    now = EasternTimeInstant.now(),
+                    isFavorite = { false },
+                    onOpenStopDetails = { _, _ -> },
+                )
             }
         }
 
@@ -243,24 +239,20 @@ class RouteCardListTest : KoinTest {
                 predictions = PredictionsStreamDataResponse(builder),
                 AlertsStreamDataResponse(emptyMap()),
                 now,
-                emptySet(),
                 RouteCardData.Context.NearbyTransit,
             )
 
         var clickedStopId: String? = null
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                Column {
-                    RouteCardList(
-                        routeCardData = routeCardData,
-                        emptyView = { Text("This would be the empty view") },
-                        global = globalResponse,
-                        now = EasternTimeInstant.now(),
-                        isFavorite = { false },
-                        togglePinnedRoute = { _ -> },
-                        onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
-                    )
-                }
+            Column {
+                RouteCardList(
+                    routeCardData = routeCardData,
+                    emptyView = { Text("This would be the empty view") },
+                    global = globalResponse,
+                    now = EasternTimeInstant.now(),
+                    isFavorite = { false },
+                    onOpenStopDetails = { stopId, _ -> clickedStopId = stopId },
+                )
             }
         }
 

@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Line(
+public data class Line(
     override val id: String,
     val color: String,
     @SerialName("long_name") val longName: String,
@@ -13,9 +13,9 @@ data class Line(
     @SerialName("text_color") val textColor: String,
 ) : BackendObject {
     /** Grouped lines are displayed as though they are different branches of a single route. */
-    val isGrouped = this.id in groupedIds
+    val isGrouped: Boolean = this.id in groupedIds
 
-    companion object {
+    internal companion object {
         val groupedIds = setOf("line-Green")
     }
 }

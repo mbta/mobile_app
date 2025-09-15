@@ -26,7 +26,7 @@ final class ViewportProviderTest: XCTestCase {
     func testFollowViewport() async throws {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
-        provider.follow()
+        await provider.follow()
         XCTAssertNil(provider.viewport.camera)
         XCTAssertNotNil(provider.viewport.followPuck)
     }
@@ -38,49 +38,49 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
 
-    func testAnimateToPreservesZoomIfNotGiven() throws {
+    func testAnimateToPreservesZoomIfNotGiven() async throws {
         let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
 
-        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1))
+        await provider.animateTo(coordinates: .init(latitude: 1, longitude: 1))
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
         XCTAssertEqual(provider.viewport.camera?.zoom, 14.0)
     }
 
-    func testAnimateToSetsZoom() throws {
+    func testAnimateToSetsZoom() async throws {
         let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
 
-        provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
+        await provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 1, longitude: 1))
         XCTAssertEqual(provider.viewport.camera?.zoom, 17.0)
     }
 
-    func testSaveFollowing() throws {
+    func testSaveFollowing() async throws {
         let provider = ViewportProvider(viewport: .followPuck(zoom: 16.0))
 
         let newCenter: CLLocationCoordinate2D = .init(latitude: 1, longitude: 1)
         let newZoom: CGFloat = 17.0
-        provider.saveNearbyTransitViewport()
-        provider.animateTo(coordinates: newCenter, zoom: newZoom)
+        try await provider.saveNearbyTransitViewport()
+        await provider.animateTo(coordinates: newCenter, zoom: newZoom)
         provider.updateCameraState(
             .init(center: newCenter, padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
         )
-        provider.restoreNearbyTransitViewport()
+        try await provider.restoreNearbyTransitViewport()
 
         XCTAssertEqual(provider.viewport.followPuck?.zoom, newZoom)
     }
 
-    func testSaveCameraLocation() throws {
+    func testSaveCameraLocation() async throws {
         let startCenter: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
         let provider = ViewportProvider(viewport: .camera(center: startCenter, zoom: 16.0))
 
         let newCenter: CLLocationCoordinate2D = .init(latitude: 1, longitude: 1)
         let newZoom: CGFloat = 14.0
-        provider.saveNearbyTransitViewport()
-        provider.animateTo(coordinates: newCenter, zoom: newZoom)
+        try await provider.saveNearbyTransitViewport()
+        await provider.animateTo(coordinates: newCenter, zoom: newZoom)
         provider.updateCameraState(
             .init(center: newCenter, padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
         )
-        provider.restoreNearbyTransitViewport()
+        try await provider.restoreNearbyTransitViewport()
 
         XCTAssertEqual(provider.viewport.camera?.center, startCenter)
         XCTAssertEqual(provider.viewport.camera?.zoom, newZoom)
@@ -102,26 +102,26 @@ final class ViewportProviderTest: XCTestCase {
         cancelSink.cancel()
     }
 
-    func testSavePanned() throws {
+    func testSavePanned() async throws {
         let provider = ViewportProvider(viewport: .idle)
 
         let center = CLLocationCoordinate2D(latitude: 1, longitude: 2)
         let zoom = 16.0
         provider.updateCameraState(.init(center: center, padding: .zero, zoom: zoom, bearing: .zero, pitch: .zero))
-        provider.saveNearbyTransitViewport()
-        provider.animateTo(coordinates: .init(latitude: 3, longitude: 4), zoom: 17.0)
-        provider.restoreNearbyTransitViewport()
+        try await provider.saveNearbyTransitViewport()
+        await provider.animateTo(coordinates: .init(latitude: 3, longitude: 4), zoom: 17.0)
+        try await provider.restoreNearbyTransitViewport()
 
         XCTAssertEqual(provider.viewport.camera?.center, center)
         XCTAssertEqual(provider.viewport.camera?.zoom, zoom)
     }
 
-    func testRestoreWithoutSave() throws {
+    func testRestoreWithoutSave() async throws {
         // this shouldn't be possible, but if we implement e.g. deep linking in a way that makes this possible,
         // it's important that this not crash
         let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0)))
 
-        provider.restoreNearbyTransitViewport()
+        try await provider.restoreNearbyTransitViewport()
 
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
@@ -158,10 +158,10 @@ final class ViewportProviderTest: XCTestCase {
         }
     }
 
-    func testViewportIsDefault() throws {
+    func testViewportIsDefault() async throws {
         let provider = ViewportProvider()
         XCTAssert(provider.isDefault())
-        provider.animateTo(coordinates: .init(latitude: 0.0, longitude: 0.0))
+        await provider.animateTo(coordinates: .init(latitude: 0.0, longitude: 0.0))
         XCTAssertFalse(provider.isDefault())
 
         let initializedProvider = ViewportProvider(viewport: .followPuck(zoom: 12.0))

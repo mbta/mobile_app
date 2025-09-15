@@ -34,6 +34,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -48,7 +49,7 @@ import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class FavoritesViewModelTest : KoinTest {
+internal class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
         objects.stop {
@@ -105,12 +106,6 @@ class FavoritesViewModelTest : KoinTest {
     ) {
         startKoin {
             modules(
-                module {
-                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
-                        coroutineDispatcher
-                    }
-                    single<Analytics> { analytics }
-                },
                 repositoriesModule(
                     MockRepositories().apply {
                         useObjects(objects)
@@ -120,6 +115,13 @@ class FavoritesViewModelTest : KoinTest {
                     }
                 ),
                 viewModelModule(),
+                module {
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        coroutineDispatcher
+                    }
+                    single<Analytics> { analytics }
+                    single<Clock> { Clock.System }
+                },
             )
         }
     }
@@ -145,9 +147,13 @@ class FavoritesViewModelTest : KoinTest {
 
     @Test
     fun `loads empty favorites`() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        setUpKoin(objects, dispatcher) {
-            favorites = MockFavoritesRepository(Favorites(emptySet()))
+        try {
+            val dispatcher = StandardTestDispatcher(testScheduler)
+            setUpKoin(objects, dispatcher) {
+                favorites = MockFavoritesRepository(Favorites(emptySet()))
+            }
+        } catch (e: Exception) {
+            TODO("Not yet implemented")
         }
         val viewModel: FavoritesViewModel = get()
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
@@ -382,16 +388,17 @@ class FavoritesViewModelTest : KoinTest {
                 awaitItem(),
             )
             // static data usually loads before realtime, but not always
-            assertEquals(
-                FavoritesViewModel.State(
-                    awaitingPredictionsAfterBackground = false,
-                    favorites = favorites.routeStopDirection,
-                    routeCardData = expectedRealtimeData,
-                    staticRouteCardData = expectedStaticData,
-                    loadedLocation = stop1.position,
-                ),
-                awaitItemSatisfying { it.routeCardData != null && it.staticRouteCardData != null },
-            )
+            awaitItemSatisfying {
+                it ==
+                    FavoritesViewModel.State(
+                        false,
+                        favorites.routeStopDirection,
+                        false,
+                        expectedRealtimeData,
+                        expectedStaticData,
+                        stop1.position,
+                    )
+            }
         }
     }
 
@@ -717,6 +724,7 @@ class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 listOf(stop2, stop1) == it.routeCardData!!.flatMap { it.stopData }.map { it.stop }
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 
@@ -748,6 +756,7 @@ class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying {
                 it.routeCardData?.map { card -> card.at }?.distinct() == listOf(later)
             }
+            cancelAndIgnoreRemainingEvents()
         }
     }
 

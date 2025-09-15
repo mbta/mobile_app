@@ -35,11 +35,12 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.DeepLinkState
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
@@ -49,6 +50,7 @@ import org.koin.compose.koinInject
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentView(
+    deepLinkState: DeepLinkState = DeepLinkState.None,
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
@@ -58,23 +60,18 @@ fun ContentView(
 
     val defaultTab by viewModel.defaultTab.collectAsState()
     val navController = rememberNavController()
-    val enhancedFavorites = SettingsCache.getNullable(Settings.EnhancedFavorites)
 
     var sheetNavEntrypoint: SheetRoutes.Entrypoint? by
-        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) {
-            mutableStateOf(if (enhancedFavorites == false) SheetRoutes.NearbyTransit else null)
-        }
+        rememberSaveable(stateSaver = SheetRoutes.EntrypointSaver) { mutableStateOf(null) }
 
-    LaunchedEffect(defaultTab, enhancedFavorites) {
-        if (sheetNavEntrypoint == null && enhancedFavorites == true) {
+    LaunchedEffect(defaultTab) {
+        if (sheetNavEntrypoint == null) {
             sheetNavEntrypoint = defaultTab?.entrypoint
-        } else if (sheetNavEntrypoint == null && enhancedFavorites == false) {
-            sheetNavEntrypoint = SheetRoutes.NearbyTransit
         }
     }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
-    val globalResponse = getGlobalData("ContentView.getGlobalData")
+    val globalResponse = getGlobalData("ContentView")
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
@@ -97,6 +94,12 @@ fun ContentView(
     var navBarVisible by remember { mutableStateOf(true) }
 
     LaunchedEffect(Unit) { mapViewModel.setViewportManager(viewportProvider) }
+
+    LaunchedEffect(deepLinkState) {
+        when (deepLinkState) {
+            DeepLinkState.None -> {}
+        }
+    }
 
     LifecycleResumeEffect(null) {
         socket.attach()

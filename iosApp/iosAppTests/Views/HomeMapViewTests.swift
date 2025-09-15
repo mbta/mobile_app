@@ -51,11 +51,13 @@ final class HomeMapViewTests: XCTestCase {
 
         let sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: viewportProvider,
             locationDataManager: .init(),
-            sheetHeight: sheetHeight
+            sheetHeight: sheetHeight,
+            selectedVehicle: .constant(nil)
         )
 
         let exp = sut.inspection.inspect { view in
@@ -69,11 +71,13 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
     }
@@ -88,11 +92,13 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { _ in
@@ -105,320 +111,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [hasAppeared], timeout: 5)
     }
 
-    func testFetchData() throws {
-        let getRailRouteShapeExpectation = expectation(description: "getRailRouteShapes")
-        let railRouteShapeRepository = MockRailRouteShapeRepository(onGet: { getRailRouteShapeExpectation.fulfill() })
-
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: .init(),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            railRouteShapeRepository: railRouteShapeRepository,
-            locationDataManager: .init(),
-            sheetHeight: .constant(0)
-        )
-        let hasAppeared = sut.on(\.didAppear) { _ in }
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 5)
-        wait(for: [getRailRouteShapeExpectation], timeout: 1)
-    }
-
-    func testCentersOnStopWhenNewSelectedStop() throws {
-        let objectCollection = ObjectCollectionBuilder()
-        let stop = objectCollection.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: .init(globalData: .init(objects: objectCollection)),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { view in
-            XCTAssertEqual(
-                ViewportProvider.Defaults.center,
-                try view.actualView().viewportProvider.viewport.camera!.center
-            )
-            XCTAssertEqual(ViewportProvider.Defaults.zoom, try view.actualView().viewportProvider.viewport.camera!.zoom)
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 1)
-
-        let newZoom = 10.0
-        sut.viewportProvider.updateCameraState(
-            .init(center: .init(latitude: 0, longitude: 0), padding: .zero, zoom: newZoom, bearing: 0, pitch: 0)
-        )
-
-        let newEntry: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
-
-        try sut.inspect().find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newEntry)
-        XCTAssertEqual(stop.coordinate, sut.viewportProvider.viewport.camera!.center)
-        XCTAssertEqual(newZoom, sut.viewportProvider.viewport.camera!.zoom)
-    }
-
-    func testUpdatesStopLayersWhenStopSelected() throws {
-        let repositories = MockRepositories()
-        repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let objectCollection = ObjectCollectionBuilder()
-        let stop = objectCollection.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-
-        let mapVM: iosApp.MapViewModel = .init(
-            layerManager: MockLayerManager(),
-            globalData: .init(objects: objectCollection)
-        )
-
-        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: mapVM,
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            railRouteShapeRepository: railRouteShapeRepository,
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            XCTAssertEqual(mapVM.stopLayerState, .init())
-            let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-            XCTAssertEqual(mapVM.stopLayerState, .init(selectedStopId: stop.id))
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
-    @MainActor func testUpdatesRouteAndChildStopsWhenStopSelected() throws {
-        let globalLoadSubject = PassthroughSubject<Void, Never>()
-
-        let objects = MapTestDataHelper.shared.objects
-        let stop = objects.stop { stop in
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-
-        let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-        let repositories = MockRepositories()
-        repositories.global = MockGlobalRepository(
-            response: .init(objects: objects),
-            onGet: { globalLoadSubject.send() }
-        )
-        repositories.stop = FilteredStopRepository(
-            filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-            onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-        )
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
-
-        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: mapVM,
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            railRouteShapeRepository: railRouteShapeRepository,
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
-            let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
-            XCTAssertFalse(mapVM.routeSourceData.isEmpty)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
-        }
-        wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
-    @MainActor func testSetsRouteSourceWhenStopSelectedWithRouteFilter() throws {
-        let globalLoadSubject = PassthroughSubject<Void, Never>()
-        let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-
-        let objects = MapTestDataHelper.shared.objects
-        let stop = objects.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-
-        let repositories = MockRepositories()
-        repositories.global = MockGlobalRepository(
-            response: .init(objects: objects),
-            onGet: { globalLoadSubject.send() }
-        )
-        repositories.stop = FilteredStopRepository(
-            filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id],
-            onGetStopMapData: { stopMapDetailsLoadedPublisher.send() }
-        )
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
-
-        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
-
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: mapVM,
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            railRouteShapeRepository: railRouteShapeRepository,
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
-            let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(
-                    stopId: stop.id,
-                    stopFilter: .init(
-                        routeId: MapTestDataHelper.shared.routeOrange.id,
-                        directionId: MapTestDataHelper.shared.patternOrange30.directionId
-                    ),
-                    tripFilter: nil
-                )
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-        }
-
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
-            XCTAssertFalse(mapVM.routeSourceData.isEmpty)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.routeId == MapTestDataHelper.shared.routeOrange.id })
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
-    @MainActor func testUpdatesRouteSourceWhenStopSelectedWithRouteFilterAndUpcomingDepartures() throws {
-        let globalLoadSubject = PassthroughSubject<Void, Never>()
-        let stopMapDetailsLoadedPublisher = PassthroughSubject<Void, Never>()
-
-        let objects = MapTestDataHelper.shared.objects
-        let stop = objects.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-        let trip = objects.trip { trip in
-            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
-        }
-        let prediction = objects.prediction { prediction in
-            prediction.trip = trip
-        }
-
-        let repositories = MockRepositories()
-        repositories.global = MockGlobalRepository(
-            response: .init(objects: objects),
-            onGet: { globalLoadSubject.send() }
-        )
-        repositories.stop = FilteredStopRepository(onGetStopMapData: { stopMapDetailsLoadedPublisher.send() })
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let mapVM: iosApp.MapViewModel = .init(layerManager: MockLayerManager())
-        mapVM.allRailSourceData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
-
-        let railRouteShapeRepository = MockRailRouteShapeRepository(response: MapTestDataHelper.shared.routeResponse)
-
-        let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
-            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
-            stopData: [
-                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
-                    .init(
-                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [MapTestDataHelper.shared.patternOrange30],
-                        stopIds: [stop.id],
-                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: true,
-                        alertsDownstream: [],
-                        context: .stopDetailsFiltered
-                    ),
-                ], globalData: .init(objects: objects)),
-            ],
-            at: EasternTimeInstant.now()
-        )])
-
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: mapVM,
-            nearbyVM: nearbyVM,
-            viewportProvider: ViewportProvider(),
-            railRouteShapeRepository: railRouteShapeRepository,
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.inspection.inspect(onReceive: globalLoadSubject, after: 1) { sut in
-            let newNavStackEntry: SheetNavigationStackEntry =
-                .stopDetails(
-                    stopId: stop.id,
-                    stopFilter: .init(
-                        routeId: MapTestDataHelper.shared.routeOrange.id,
-                        directionId: MapTestDataHelper.shared.patternOrange30.directionId
-                    ),
-                    tripFilter: nil
-                )
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: newNavStackEntry)
-        }
-
-        let stopRelatedDataSet = sut.inspection.inspect(onReceive: stopMapDetailsLoadedPublisher, after: 1) { _ in
-            XCTAssertFalse(mapVM.routeSourceData.isEmpty)
-            XCTAssertTrue(mapVM.routeSourceData.allSatisfy { $0.segmentedShapes.allSatisfy { segment in
-                segment.sourceRoutePatternId == MapTestDataHelper.shared.patternOrange30.id
-            } })
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared, stopRelatedDataSet], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
+    @MainActor
     func testVehicleTapping() throws {
         class FakeStopRepository: IStopRepository {
             func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
@@ -433,14 +126,18 @@ final class HomeMapViewTests: XCTestCase {
         HelpersKt.loadKoinMocks(repositories: repositories)
 
         let objectCollection = ObjectCollectionBuilder()
+        let route = MapTestDataHelper.shared.routeOrange
+        objectCollection.routes[route.id] = route
+        let pattern = MapTestDataHelper.shared.patternOrange30
+        objectCollection.routePatterns[pattern.id] = pattern
         let stop = objectCollection.stop { stop in
             stop.id = "1"
             stop.latitude = 1
             stop.longitude = 1
         }
         let trip = objectCollection.trip { trip in
-            trip.routePatternId = MapTestDataHelper.shared.patternOrange30.id
-            trip.routeId = MapTestDataHelper.shared.routeOrange.id
+            trip.routePatternId = pattern.id
+            trip.routeId = route.id
             trip.id = "1"
             trip.directionId = 0
         }
@@ -454,21 +151,21 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.id = "1"
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = trip.id
-            vehicle.routeId = MapTestDataHelper.shared.patternOrange30.routeId
+            vehicle.routeId = route.id
             vehicle.directionId = 0
         }
 
-        let nearbyVM: NearbyViewModel = .init(routeCardData: [.init(
-            lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+        let routeCardData: [RouteCardData] = [.init(
+            lineOrRoute: .route(route),
             stopData: [
-                .init(route: MapTestDataHelper.shared.routeOrange, stop: stop, data: [
+                .init(route: route, stop: stop, data: [
                     .init(
-                        lineOrRoute: .route(MapTestDataHelper.shared.routeOrange),
+                        lineOrRoute: .route(route),
                         stop: stop,
                         directionId: 0,
-                        routePatterns: [MapTestDataHelper.shared.patternOrange30],
+                        routePatterns: [pattern],
                         stopIds: [stop.id],
-                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction)],
+                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction, vehicle: vehicle)],
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
@@ -478,7 +175,9 @@ final class HomeMapViewTests: XCTestCase {
                 ], globalData: .init(objects: objectCollection)),
             ],
             at: EasternTimeInstant.now()
-        )])
+        )]
+        let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
+        let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
 
         let initialNav: SheetNavigationStackEntry = .stopDetails(
             stopId: stop.id,
@@ -489,15 +188,17 @@ final class HomeMapViewTests: XCTestCase {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: nearbyVM,
+            routeCardDataVM: routeCardDataVM,
             viewportProvider: ViewportProvider(),
             vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
-        let hasAppeared = sut.on(\.didAppear) { sut in
+        let hasAppeared = sut.inspection.inspect(after: 1) { sut in
             XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
             try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
             XCTAssertEqual(
@@ -508,50 +209,6 @@ final class HomeMapViewTests: XCTestCase {
                     tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 100, selectionLock: true)
                 )
             )
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
-    func testShowsAllRailShapesWhenSelectedStopCleared() throws {
-        let repositories = MockRepositories()
-        repositories.stop = FilteredStopRepository(filteredRouteIds: [MapTestDataHelper.shared.routeOrange.id])
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let objectCollection = ObjectCollectionBuilder()
-        let stop = objectCollection.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-
-        let mapVM: iosApp.MapViewModel = .init(
-            allRailSourceData: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
-            layerManager: MockLayerManager()
-        )
-
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: mapVM,
-            nearbyVM: .init(navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(
-                relation: .parent,
-                newValue: nil as SheetNavigationStackEntry?
-            )
-            XCTAssertTrue(mapVM.routeSourceData == MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes)
-            XCTAssertEqual(mapVM.stopLayerState, .init())
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -577,14 +234,17 @@ final class HomeMapViewTests: XCTestCase {
             }
         }
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation: updateCameraExpectation)
+        let viewportProvider: ViewportProvider = FakeViewportProvider(updateCameraExpectation:
+            updateCameraExpectation)
         let sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         sut.handleCameraChange(.init(
@@ -601,103 +261,12 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [updateCameraExpectation], timeout: 5)
     }
 
-    func testLayersNotReInitWhenAlertsChanges() throws {
-        let addLayersNotCalledExpectation = XCTestExpectation(description: "Add layers not called")
-        addLayersNotCalledExpectation.isInverted = true
-        let updateRouteSourcesExpectation = XCTestExpectation(description: "Update route source called")
-        let updateStopSourceExpectation = XCTestExpectation(description: "Update stop source called")
-
-        let layerManager = MockLayerManager(
-            addLayersCallback: { addLayersNotCalledExpectation.fulfill() },
-            updateRouteDataCallback: { _ in
-                updateRouteSourcesExpectation.fulfill()
-            },
-            updateStopDataCallback: { _ in
-                updateStopSourceExpectation.fulfill()
-            }
-        )
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: .init(layerManager: layerManager),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            globalMapData: GlobalMapData(mapStops: [:], alertsByStop: [:])
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(
-                relation: .parent,
-                newValue: GlobalMapData(mapStops: [:], alertsByStop: [:])
-            )
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared,
-                   addLayersNotCalledExpectation,
-                   updateRouteSourcesExpectation,
-                   updateStopSourceExpectation], timeout: 5)
-    }
-
-    func testUpdatesSourcesWhenRouteDataChanges() {
-        let updateSourcesCalledExpectation = XCTestExpectation(description: "Update layers called")
-
-        let layerManager = MockLayerManager(updateRouteDataCallback: { _ in
-            updateSourcesCalledExpectation.fulfill()
-        })
-
-        let routeData = MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: .init(layerManager: layerManager),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: .init(),
-            sheetHeight: .constant(0)
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: routeData)
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared, updateSourcesCalledExpectation], timeout: 5)
-    }
-
-    func testUpdatesStopLayersWhenStateChanges() {
-        let addLayersCalledExpectation = XCTestExpectation(description: "Add layers called")
-
-        let layerManager = MockLayerManager(addLayersCallback: {
-            addLayersCalledExpectation.fulfill()
-        })
-
-        let state: StopLayerGenerator.State = .init(selectedStopId: "stop1")
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: .init(layerManager: layerManager, globalData: .init(objects: .init())),
-            nearbyVM: .init(),
-            viewportProvider: ViewportProvider(),
-            locationDataManager: .init(),
-            sheetHeight: .constant(0),
-            globalMapData: .init(mapStops: [:], alertsByStop: [:])
-        )
-
-        let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: state)
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        wait(for: [hasAppeared, addLayersCalledExpectation], timeout: 5)
-    }
-
     func testJoinsVehiclesChannelOnActiveWhenTripDetails() {
         let joinsVehiclesExp = XCTestExpectation(description: "Joins vehicles channel")
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [
                 .stopDetails(
                     stopId: "stop",
@@ -705,11 +274,12 @@ final class HomeMapViewTests: XCTestCase {
                     tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
                 ),
             ]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -727,17 +297,18 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(
                 stopId: stop.id,
                 stopFilter: .init(routeId: "routeId", directionId: 0),
                 tripFilter: nil
             )]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -757,12 +328,14 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(connectExp: joinsVehiclesExp),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
@@ -780,21 +353,23 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(
                 stopId: stop.id,
                 stopFilter: .init(routeId: "routeId", directionId: 0),
                 tripFilter: nil
             )]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { sut in
-            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue: ScenePhase.background)
+            try sut.find(ProxyModifiedMap.self).findAndCallOnChange(relation: .parent, newValue:
+                ScenePhase.background)
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -811,23 +386,24 @@ final class HomeMapViewTests: XCTestCase {
 
         var sut = HomeMapView(
             contentVM: .init(),
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [
                 .stopDetails(stopId: stop.id, stopFilter: .init(routeId: "routeId", directionId: 0), tripFilter: nil),
             ]),
-
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
             vehiclesData: [vehicle],
             vehiclesRepository: CallbackVehiclesRepo(disconnectExp: leavesVehiclesExp),
 
             locationDataManager: .init(),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
 
         let hasAppeared = sut.on(\.didAppear) { view in
             try view.find(ProxyModifiedMap.self).findAndCallOnChange(
                 relation: .parent,
-                newValue: nil as SheetNavigationStackEntry?
+                newValue: [SheetNavigationStackEntry]()
             )
             XCTAssertEqual(try view.actualView().vehiclesData, [vehicle])
         }
@@ -858,11 +434,13 @@ final class HomeMapViewTests: XCTestCase {
         let locationFetcher = FakeLocationFetcher()
         var sut = HomeMapView(
             contentVM: contentVM,
-            mapVM: .init(),
+            mapVM: MockMapViewModel(),
             nearbyVM: .init(),
+            routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: .init(),
             locationDataManager: .init(locationFetcher: locationFetcher),
-            sheetHeight: .constant(0)
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
         )
         let exp = sut.on(\.didAppear) { view in
             XCTAssertFalse(locationFetcher.didRequestAuthorization)

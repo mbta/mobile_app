@@ -1,17 +1,24 @@
 package com.mbta.tid.mbta_app.repositories
 
+import io.sentry.kotlin.multiplatform.Scope
 import io.sentry.kotlin.multiplatform.Sentry
 
-interface ISentryRepository {
+public interface ISentryRepository {
 
-    fun captureMessage(msg: String)
+    public fun captureMessage(msg: String)
 
-    fun captureException(throwable: Throwable)
+    public fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit)
+
+    public fun captureException(throwable: Throwable)
 }
 
-class SentryRepository : ISentryRepository {
+internal class SentryRepository : ISentryRepository {
     override fun captureMessage(msg: String) {
         Sentry.captureMessage(msg)
+    }
+
+    override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit) {
+        Sentry.captureMessage(msg) { it.additionalDetails() }
     }
 
     override fun captureException(throwable: Throwable) {
@@ -19,8 +26,12 @@ class SentryRepository : ISentryRepository {
     }
 }
 
-class MockSentryRepository : ISentryRepository {
+public class MockSentryRepository : ISentryRepository {
     override fun captureMessage(msg: String) {
+        TODO("Not yet implemented")
+    }
+
+    override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit) {
         TODO("Not yet implemented")
     }
 

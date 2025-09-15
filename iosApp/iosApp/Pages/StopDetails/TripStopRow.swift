@@ -15,13 +15,14 @@ struct TripStopRow: View {
     var now: EasternTimeInstant
     var onTapLink: (TripDetailsStopList.Entry) -> Void
     var onOpenAlertDetails: (Shared.Alert) -> Void
+    var route: Route
     var routeAccents: TripRouteAccents
     var alertSummaries: [String: AlertSummary?]
     var showDownstreamAlert: Bool = false
     var targeted: Bool = false
     var firstStop: Bool = false
     var lastStop: Bool = false
-    var background: Color? = nil
+    var background: Color?
 
     var activeElevatorAlerts: [Shared.Alert] {
         stop.activeElevatorAlerts(now: now)
@@ -86,7 +87,7 @@ struct TripStopRow: View {
     }
 
     var upcomingTripViewState: UpcomingTripView.State? {
-        guard let formatted = stop.format(trip: trip, now: now, routeType: routeAccents.type) else { return nil }
+        guard let formatted = stop.format(trip: trip, now: now, route: route) else { return nil }
         switch onEnum(of: formatted) {
         case let .disruption(disruption): return .disruption(
                 .init(alert: disruption.alert),
@@ -102,6 +103,12 @@ struct TripStopRow: View {
     let objects = ObjectCollectionBuilder()
     let trip = objects.trip { _ in }
     let now = EasternTimeInstant.now()
+    let red = objects.route { route in
+        route.color = "DA291C"
+        route.longName = "Red Line"
+        route.textColor = "FFFFFF"
+        route.type = .heavyRail
+    }
     VStack(spacing: 0) {
         TripStopRow(
             stop: .init(
@@ -115,11 +122,7 @@ struct TripStopRow: View {
                 prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
                 vehicle: nil,
                 routes: [
-                    objects.route { route in
-                        route.longName = "Red Line"
-                        route.color = "DA291C"
-                        route.textColor = "FFFFFF"
-                    },
+                    red,
                     objects.route { route in
                         route.longName = "Green Line"
                         route.color = "00843D"
@@ -131,10 +134,8 @@ struct TripStopRow: View {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
-            routeAccents: TripRouteAccents(
-                color: Color(hex: "DA291C"),
-                type: .heavyRail
-            ),
+            route: red,
+            routeAccents: .init(route: red),
             alertSummaries: [:]
         )
         TripStopRow(
@@ -146,11 +147,7 @@ struct TripStopRow: View {
                 prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                 vehicle: nil,
                 routes: [
-                    objects.route { route in
-                        route.longName = "Red Line"
-                        route.color = "DA291C"
-                        route.textColor = "FFFFFF"
-                    },
+                    red,
                     objects.route { route in
                         route.longName = "Green Line"
                         route.color = "00843D"
@@ -162,10 +159,8 @@ struct TripStopRow: View {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
-            routeAccents: TripRouteAccents(
-                color: Color(hex: "DA291C"),
-                type: .heavyRail
-            ),
+            route: red,
+            routeAccents: .init(route: red),
             alertSummaries: [:]
         )
         TripStopRow(
@@ -191,10 +186,8 @@ struct TripStopRow: View {
             now: now,
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
-            routeAccents: TripRouteAccents(
-                color: Color(hex: "DA291C"),
-                type: .heavyRail
-            ),
+            route: red,
+            routeAccents: .init(route: red),
             alertSummaries: [:]
         )
     }
@@ -207,6 +200,12 @@ struct TripStopRow: View {
     let objects = ObjectCollectionBuilder()
     let trip = objects.trip { _ in }
     let now = EasternTimeInstant.now()
+    let red = objects.route { route in
+        route.color = "DA291C"
+        route.longName = "Red Line"
+        route.textColor = "FFFFFF"
+        route.type = .heavyRail
+    }
     ZStack {
         Color.fill3.padding(6)
         VStack(spacing: 0) {
@@ -223,11 +222,7 @@ struct TripStopRow: View {
                     prediction: objects.prediction { $0.status = "Stopped 5 stops away" },
                     vehicle: nil,
                     routes: [
-                        objects.route { route in
-                            route.longName = "Red Line"
-                            route.color = "DA291C"
-                            route.textColor = "FFFFFF"
-                        },
+                        red,
                         objects.route { route in
                             route.longName = "Green Line"
                             route.color = "00843D"
@@ -239,10 +234,8 @@ struct TripStopRow: View {
                 now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
-                routeAccents: TripRouteAccents(
-                    color: Color(hex: "DA291C"),
-                    type: .heavyRail
-                ),
+                route: red,
+                routeAccents: .init(route: red),
                 alertSummaries: [:]
             )
             TripStopRow(
@@ -255,11 +248,7 @@ struct TripStopRow: View {
                     prediction: objects.prediction { $0.departureTime = now.plus(minutes: 5) },
                     vehicle: nil,
                     routes: [
-                        objects.route { route in
-                            route.longName = "Red Line"
-                            route.color = "DA291C"
-                            route.textColor = "FFFFFF"
-                        },
+                        red,
                         objects.route { route in
                             route.longName = "Green Line"
                             route.color = "00843D"
@@ -271,10 +260,8 @@ struct TripStopRow: View {
                 now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
-                routeAccents: TripRouteAccents(
-                    color: Color(hex: "DA291C"),
-                    type: .heavyRail
-                ),
+                route: red,
+                routeAccents: .init(route: red),
                 alertSummaries: [:]
             )
             TripStopRow(
@@ -295,10 +282,8 @@ struct TripStopRow: View {
                 now: now,
                 onTapLink: { _ in },
                 onOpenAlertDetails: { _ in },
-                routeAccents: TripRouteAccents(
-                    color: Color(hex: "DA291C"),
-                    type: .heavyRail
-                ),
+                route: red,
+                routeAccents: .init(route: red),
                 alertSummaries: [:],
                 showDownstreamAlert: true
             )

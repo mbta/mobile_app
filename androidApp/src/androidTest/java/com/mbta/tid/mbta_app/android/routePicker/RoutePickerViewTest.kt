@@ -12,8 +12,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteResult
@@ -22,7 +22,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
 import com.mbta.tid.mbta_app.viewModel.MockSearchRoutesViewModel
@@ -30,30 +29,26 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class RoutePickerViewTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun testDisplaysLoadingIndicator() {
-        val koin =
-            testKoinApplication(ObjectCollectionBuilder()) { global = IdleGlobalRepository() }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(ObjectCollectionBuilder()) { global = IdleGlobalRepository() }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -68,23 +63,19 @@ class RoutePickerViewTest {
             type = RouteType.HEAVY_RAIL
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -96,23 +87,19 @@ class RoutePickerViewTest {
     fun testDisplaysModePaths() {
         val objects = ObjectCollectionBuilder()
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -130,23 +117,19 @@ class RoutePickerViewTest {
             type = RouteType.HEAVY_RAIL
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -165,23 +148,19 @@ class RoutePickerViewTest {
             type = RouteType.LIGHT_RAIL
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -213,23 +192,19 @@ class RoutePickerViewTest {
             type = RouteType.LIGHT_RAIL
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -256,23 +231,19 @@ class RoutePickerViewTest {
             type = RouteType.BUS
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Silver,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Silver,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -290,23 +261,19 @@ class RoutePickerViewTest {
             type = RouteType.COMMUTER_RAIL
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.CommuterRail,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.CommuterRail,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -321,23 +288,19 @@ class RoutePickerViewTest {
             type = RouteType.FERRY
         }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Ferry,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Ferry,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -356,26 +319,22 @@ class RoutePickerViewTest {
         var selectedRouteId: String? = null
         var selectedContext: RouteDetailsContext? = null
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { routeId, context ->
-                        selectedRouteId = routeId
-                        selectedContext = context
-                    },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { routeId, context ->
+                    selectedRouteId = routeId
+                    selectedContext = context
+                },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -396,23 +355,19 @@ class RoutePickerViewTest {
 
         var backCalled = false
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = { backCalled = true },
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = { backCalled = true },
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -432,23 +387,19 @@ class RoutePickerViewTest {
 
         var closeCalled = false
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Root,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = { closeCalled = true },
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Root,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = { closeCalled = true },
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -475,27 +426,23 @@ class RoutePickerViewTest {
                 type = RouteType.BUS
             }
 
-        val koin =
-            testKoinApplication(objects) {
-                global = MockGlobalRepository(GlobalResponse(objects))
-                searchResults =
-                    MockSearchResultRepository(routeResults = listOf(RouteResult(route = route1)))
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) {
+            global = MockGlobalRepository(GlobalResponse(objects))
+            searchResults =
+                MockSearchResultRepository(routeResults = listOf(RouteResult(route = route1)))
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -517,29 +464,24 @@ class RoutePickerViewTest {
         val searchVM = MockSearchRoutesViewModel()
         searchVM.onSetPath = { setPath = it }
 
-        val koin =
-            testKoinApplication(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
-
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    searchRoutesViewModel = searchVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                searchRoutesViewModel = searchVM,
+            )
         }
 
         composeTestRule.waitForIdle()
-        composeTestRule.waitUntil { setPath == RoutePickerPath.Bus }
+        composeTestRule.waitUntilDefaultTimeout { setPath == RoutePickerPath.Bus }
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -559,26 +501,22 @@ class RoutePickerViewTest {
                 type = RouteType.BUS
             }
 
-        val koin =
-            testKoinApplication(objects) {
-                global = MockGlobalRepository(GlobalResponse(objects))
-                searchResults = MockSearchResultRepository(routeResults = emptyList())
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) {
+            global = MockGlobalRepository(GlobalResponse(objects))
+            searchResults = MockSearchResultRepository(routeResults = emptyList())
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -600,28 +538,24 @@ class RoutePickerViewTest {
     fun testFilterFocusCallback() {
         val objects = ObjectCollectionBuilder()
 
-        val koin =
-            testKoinApplication(objects) {
-                global = MockGlobalRepository(GlobalResponse(objects))
-                searchResults = MockSearchResultRepository(routeResults = emptyList())
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) {
+            global = MockGlobalRepository(GlobalResponse(objects))
+            searchResults = MockSearchResultRepository(routeResults = emptyList())
+        }
 
         var filterExpanded = false
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RoutePickerView(
-                    path = RoutePickerPath.Bus,
-                    context = RouteDetailsContext.Favorites,
-                    onOpenPickerPath = { _, _ -> },
-                    onOpenRouteDetails = { _, _ -> },
-                    onRouteSearchExpandedChange = { filterExpanded = it },
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
+            RoutePickerView(
+                path = RoutePickerPath.Bus,
+                context = RouteDetailsContext.Favorites,
+                onOpenPickerPath = { _, _ -> },
+                onOpenRouteDetails = { _, _ -> },
+                onRouteSearchExpandedChange = { filterExpanded = it },
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+            )
         }
 
         composeTestRule.waitForIdle()

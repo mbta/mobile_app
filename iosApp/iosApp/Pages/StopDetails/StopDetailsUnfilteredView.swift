@@ -13,15 +13,16 @@ import SwiftUI
 
 struct StopDetailsUnfilteredView: View {
     var stopId: String
+
+    var routeData: StopDetailsViewModel.RouteData?
+    var favorites: Favorites
+    var global: GlobalResponse?
     var now: EasternTimeInstant
+
     var setStopFilter: (StopDetailsFilter?) -> Void
 
-    var routeCardData: [RouteCardData]?
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
-
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -33,34 +34,36 @@ struct StopDetailsUnfilteredView: View {
 
     init(
         stopId: String,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
-        routeCardData: [RouteCardData]?,
+        routeData: StopDetailsViewModel.RouteData?,
+        favorites: Favorites,
+        global: GlobalResponse?,
         now: EasternTimeInstant,
-        errorBannerVM: ErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
-        stopDetailsVM: StopDetailsViewModel
+        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        errorBannerVM: IErrorBannerViewModel,
+        nearbyVM: NearbyViewModel
     ) {
         self.stopId = stopId
+        self.routeData = routeData
+        self.favorites = favorites
+        self.global = global
+        self.now = now
         self.setStopFilter = setStopFilter
-        self.routeCardData = routeCardData
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
-        self.stopDetailsVM = stopDetailsVM
-        self.now = now
-
-        if let routeCardData {
-            servedRoutes = routeCardData.map { routeCardData in
-                switch onEnum(of: routeCardData.lineOrRoute) {
-                case let .line(line): .line(line.line)
-                case let .route(route): .route(route.route)
-                }
-            }
-        }
     }
 
     var stop: Stop? {
-        stopDetailsVM.global?.getStop(stopId: stopId)
+        global?.getStop(stopId: stopId)
     }
+
+    var routeCardData: [RouteCardData]? {
+        if case let .unfiltered(data) = onEnum(of: routeData),
+           data.filteredWith.stopId == stopId {
+            data.routeCards
+        } else { nil }
+    }
+
+    var servedRoutes: [StopDetailsFilterPills.FilterBy] { routeCardData?.servedRouteFilters ?? [] }
 
     var elevatorAlerts: [Shared.Alert]? {
         if let routeCardData {
@@ -138,22 +141,13 @@ struct StopDetailsUnfilteredView: View {
                                 }
                             }
 
-                            if let routeCardData, let global = stopDetailsVM.global {
+                            if let routeCardData, let global {
                                 ForEach(routeCardData, id: \.lineOrRoute.id) { routeCardData in
                                     RouteCard(
                                         cardData: routeCardData,
                                         global: global,
                                         now: now,
-                                        onPin: { routeId in Task {
-                                            await stopDetailsVM.updateFavorites(
-                                                .Pinned(routeId: routeId),
-                                                enhancedFavorites: false
-                                            )
-                                        } },
-                                        pinned: stopDetailsVM.isFavorite(
-                                            .Pinned(routeId: routeCardData.lineOrRoute.id),
-                                            enhancedFavorites: false
-                                        ),
+                                        isFavorite: { favorites.isFavorite($0) },
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
@@ -169,6 +163,7 @@ struct StopDetailsUnfilteredView: View {
                 }
             }
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder private func loadingBody() -> some View {
@@ -177,10 +172,9 @@ struct StopDetailsUnfilteredView: View {
             ForEach(placeholderCards, id: \.id) { card in
                 RouteCard(
                     cardData: card,
-                    global: stopDetailsVM.global,
+                    global: global,
                     now: now,
-                    onPin: { _ in },
-                    pinned: false,
+                    isFavorite: { _ in false },
                     pushNavEntry: { _ in },
                     showStopHeader: false
                 )

@@ -11,7 +11,7 @@ import SwiftUI
 struct SearchInput: View {
     @ObservedObject var searchObserver: TextFieldObserver
     var hint: String
-    var onClear: (() -> Void)? = nil
+    var onClear: (() -> Void)?
 
     // Don't update this FocusState isFocused directly, only toggle through searchObserver.isFocused,
     // otherwise it's possible for the update in searchObserver to get skipped. It's also not

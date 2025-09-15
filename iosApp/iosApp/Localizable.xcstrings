@@ -992,7 +992,7 @@
       }
     },
     "%@ %@" : {
-      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels\nFirst value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
+      "comment" : "First value is the route label, second value is an alert effect, resulting in something like 'Red Line Suspension' or 'Green Line Shuttle'",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2595,6 +2595,155 @@
         }
       }
     },
+    "%ldstops away" : {
+      "comment" : "Voice Control alias to abbreviate “7 stops away” to “7stops” rather than just “7”",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ldstop away"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%ldstops away"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldparada antes de"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldparadas antes de"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldarrêt restant"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldarrêts restants"
+                }
+              }
+            }
+          }
+        },
+        "ht" : {
+          "variations" : {
+            "plural" : {
+              "few" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldkanpe lwen"
+                }
+              },
+              "many" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldkanpe lwen"
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldkanpe lwen"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldkanpe lwen"
+                }
+              },
+              "two" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldkanpe lwen"
+                }
+              }
+            }
+          }
+        },
+        "pt-BR" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldparada"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldparadas"
+                }
+              }
+            }
+          }
+        },
+        "vi" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "%ldđiểm dừng nữa"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hans-CN" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "还有%ld站"
+                }
+              }
+            }
+          }
+        },
+        "zh-Hant-TW" : {
+          "variations" : {
+            "plural" : {
+              "other" : {
+                "stringUnit" : {
+                  "state" : "needs_review",
+                  "value" : "還有%ld站"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "711 for TTY callers; VRS for ASL callers" : {
       "comment" : "Footnote under the More page support phone number, these are the instructions for accessible support via teletypewriter or video relay service",
       "localizations" : {
@@ -3315,6 +3464,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "附加服務"
+          }
+        }
+      }
+    },
+    "Adds to favorites" : {
+      "comment" : "VoiceOver hint for favorite button when a route is not favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Añade a favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute aux favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ajoute nan favorites"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Adicionar aos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thêm vào mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "添加到收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "加入收藏夾"
           }
         }
       }
@@ -7296,6 +7492,53 @@
         }
       }
     },
+    "Dismiss" : {
+      "comment" : "VoiceOver label for a dismiss  button",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Despedir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Rejeter"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ranvwaye"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Liberar"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Miễn nhiệm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "解雇"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "解僱"
+          }
+        }
+      }
+    },
     "display more information" : {
       "comment" : "Android talk back hint for tapping on the trip details header on the stop page",
       "extractionState" : "manual",
@@ -9706,6 +9949,54 @@
         }
       }
     },
+    "Follow" : {
+      "comment" : "Text on a button to enter a focused view that follows a single vehicle on a trip",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Suivre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Swiv"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seguir"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Theo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跟随"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "跟隨"
+          }
+        }
+      }
+    },
     "freight train interference" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -10940,6 +11231,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : " 至%1$@"
+          }
+        }
+      }
+    },
+    "key/route_mode_label" : {
+      "comment" : "A route label and route type pair,\nex 'Red Line train' or '73 bus', used in connecting stop labels",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%2$@ %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
           }
         }
       }
@@ -12306,6 +12650,52 @@
         }
       }
     },
+    "New feature. %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nueva función. %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nouvelle fonctionnalité. %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nouvo karakteristik. %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Novo recurso. %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tính năng mới. %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "新功能。%@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "新功能。 %@"
+          }
+        }
+      }
+    },
     "Next stop" : {
       "comment" : "Label for a vehicle's next stop. For example: Next stop Alewife",
       "localizations" : {
@@ -13534,53 +13924,6 @@
         }
       }
     },
-    "Pins route to the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is not favorited",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fija la ruta en la parte superior de la lista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Épingler le trajet en haut de la liste"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mete wout nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fixa rota no topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ghim lộ trình lên đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "将线路置顶"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "將線路置頂"
-          }
-        }
-      }
-    },
     "Plan a route with Trip Planner" : {
       "localizations" : {
         "es" : {
@@ -14657,6 +15000,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "已從我的最愛中移除"
+          }
+        }
+      }
+    },
+    "Removes from favorites" : {
+      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Elimina de favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Supprime des favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Retire nan pi renmen yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Remove dos favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xóa khỏi mục yêu thích"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从收藏夹中移除"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從收藏夾移除"
           }
         }
       }
@@ -19118,6 +19508,53 @@
         }
       }
     },
+    "Tip: %1$@" : {
+      "comment" : "Voice over text for a tip that will appear in a pop-up message. ex: 'Tip: tap stops to add to favorites'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Propina: %1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Astuce : %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Konsèy: %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dica: %1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mẹo: %1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示：%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提示：%1$@"
+          }
+        }
+      }
+    },
     "To find stops, select a route first" : {
       "comment" : "Hint text on the route picker page when a search term has been entered in the filter input, in case people are searching a stop name and are trying to understand why it isn't showing up",
       "extractionState" : "manual",
@@ -20137,53 +20574,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "bỏ ghim tuyến đường khỏi đầu danh sách"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "在列表中取消置顶路线"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "從清單頂部取消固定線路"
-          }
-        }
-      }
-    },
-    "Unpins route from the top of the list" : {
-      "comment" : "VoiceOver hint for favorite button when a route is already favorited",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desancla la ruta de la parte superior de la lista"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Désépingler le trajet du haut de la liste"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Detache wout la soti nan tèt lis la"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desafixa a rota do topo da lista"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gỡ ghim tuyến đường khỏi đầu danh sách"
           }
         },
         "zh-Hans-CN" : {

@@ -16,7 +16,7 @@ import com.mbta.tid.mbta_app.utils.resolveParentId
  * The trip might also neither arrive nor depart if the stop is skipped or the trip is dropped. For
  * this reason, a prediction that exists but has null times should overwrite scheduled times.
  */
-data class UpcomingTrip
+public data class UpcomingTrip
 @DefaultArgumentInterop.Enabled
 constructor(
     val trip: Trip,
@@ -28,15 +28,15 @@ constructor(
     val vehicle: Vehicle? = null,
 ) : Comparable<UpcomingTrip> {
 
-    constructor(
+    public constructor(
         trip: Trip,
         prediction: Prediction?,
         predictionStop: Stop? = null,
     ) : this(trip, null, prediction, predictionStop, null)
 
-    val id = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
+    val id: String = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
 
-    val time =
+    internal val time =
         if (
             prediction != null &&
                 prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled &&
@@ -47,7 +47,7 @@ constructor(
             schedule?.stopTime
         }
 
-    val stopId: String? = run {
+    internal val stopId: String? = run {
         // don't check that they match since prediction may be physical stop ID and schedule logical
         prediction?.stopId ?: schedule?.stopId
     }
@@ -67,24 +67,27 @@ constructor(
             schedule?.stopTime != null &&
                 prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled
 
-    val trackNumber: String? =
+    internal val trackNumber: String? =
         if (predictionStop?.shouldShowTrackNumber == true) predictionStop.platformCode else null
 
     /** Checks if a trip has a time */
-    fun isUpcoming() = time != null
+    internal fun isUpcoming() = time != null
 
     /**
      * Checks if a trip exists in the near future, or the recent past if the vehicle has not yet
      * left this stop or a custom status string is still set.
      */
-    fun isUpcomingWithin(currentTime: EasternTimeInstant, cutoffTime: EasternTimeInstant): Boolean =
+    internal fun isUpcomingWithin(
+        currentTime: EasternTimeInstant,
+        cutoffTime: EasternTimeInstant,
+    ): Boolean =
         time != null &&
             time < cutoffTime &&
             (time >= currentTime ||
                 (prediction != null &&
                     (prediction.stopId == vehicle?.stopId || prediction.status != null)))
 
-    override fun compareTo(other: UpcomingTrip) =
+    override fun compareTo(other: UpcomingTrip): Int =
         nullsLast<EasternTimeInstant>().compare(time, other.time)
 
     /**
@@ -96,7 +99,7 @@ constructor(
      * and would be incorrect. Returning `false` would show headsigns with added trips even if those
      * trips have been cancelled, which would be incorrect.
      */
-    fun isArrivalOnly(): Boolean? {
+    internal fun isArrivalOnly(): Boolean? {
         val hasArrival =
             if (schedule != null) {
                 schedule.dropOffType != Schedule.StopEdgeType.Unavailable
@@ -114,32 +117,35 @@ constructor(
         } else !hasDeparture
     }
 
-    fun display(
+    internal fun display(
         now: EasternTimeInstant,
         routeType: RouteType?,
         context: TripInstantDisplay.Context,
     ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
 
-    fun format(now: EasternTimeInstant, routeType: RouteType, context: TripInstantDisplay.Context) =
-        format(now, routeType, context, routeType.isSubway())
+    internal fun format(
+        now: EasternTimeInstant,
+        route: Route,
+        context: TripInstantDisplay.Context,
+    ) = format(now, route.type, context, route.type.isSubway() || route.id in silverRoutes)
 
-    fun format(
+    internal fun format(
         now: EasternTimeInstant,
         routeType: RouteType,
         context: TripInstantDisplay.Context,
-        isSubway: Boolean,
+        hideSchedule: Boolean,
     ): UpcomingFormat.Some.FormattedTrip? {
         return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context).takeUnless {
             it.format is TripInstantDisplay.Hidden ||
                 it.format is TripInstantDisplay.Skipped ||
                 // API best practices call for hiding scheduled times on subway
-                (isSubway &&
+                (hideSchedule &&
                     (it.format is TripInstantDisplay.ScheduleTime ||
                         it.format is TripInstantDisplay.ScheduleMinutes))
         }
     }
 
-    companion object {
+    internal companion object {
         fun <Key> tripsMappedBy(
             stops: Map<String, Stop>,
             schedules: ScheduleResponse?,
@@ -268,7 +274,7 @@ constructor(
     }
 }
 
-fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
+internal fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
     /**
      * Checks if this upcoming trips end at this stop, i.e. all trips are arrival-only.
      *
@@ -286,14 +292,14 @@ fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
 /**
  * Associate each upcoming trip with its format. Omits any upcoming trip that shouldn't be shown.
  */
-fun List<UpcomingTrip>.withFormat(
+internal fun List<UpcomingTrip>.withFormat(
     now: EasternTimeInstant,
-    routeType: RouteType,
+    route: Route,
     context: TripInstantDisplay.Context,
     limit: Int?,
 ): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
     return this.mapNotNull {
-            val format = it.format(now, routeType, context) ?: return@mapNotNull null
+            val format = it.format(now, route, context) ?: return@mapNotNull null
             Pair(it, format)
         }
         .run { if (limit != null) take(limit) else this }

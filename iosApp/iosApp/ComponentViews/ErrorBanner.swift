@@ -10,21 +10,30 @@ import Shared
 import SwiftUI
 
 struct ErrorBanner: View {
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
+    @State var errorBannerVMState: ErrorBannerViewModel.State = .init()
 
     let minHeight = 60.0
     let inspection = Inspection<Self>()
 
-    init(_ errorBannerVM: ErrorBannerViewModel) {
+    init(_ errorBannerVM: IErrorBannerViewModel) {
         self.errorBannerVM = errorBannerVM
     }
 
     var body: some View {
-        content.onReceive(inspection.notice) { inspection.visit(self, $0) }
+        VStack {
+            content
+        }
+        .task {
+            for await model in errorBannerVM.models {
+                errorBannerVMState = model
+            }
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
     @ViewBuilder private var content: some View {
-        let state = errorBannerVM.errorState
+        let state = errorBannerVMState.errorState
         switch onEnum(of: state) {
         case let .dataError(state):
             ErrorCard {
@@ -46,7 +55,7 @@ struct ErrorBanner: View {
             }
             .frame(minHeight: minHeight)
         case let .stalePredictions(state):
-            if errorBannerVM.loadingWhenPredictionsStale {
+            if errorBannerVMState.loadingWhenPredictionsStale {
                 ProgressView().frame(minHeight: minHeight)
             } else {
                 ErrorCard {
@@ -80,21 +89,23 @@ struct ErrorBanner: View {
 
 #Preview {
     VStack(spacing: 16) {
-        ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
-            state: .DataError(messages: Set(), action: {})
+        ErrorBanner(MockErrorBannerViewModel(initialState: .init(
+            loadingWhenPredictionsStale: false,
+            errorState: .DataError(messages: Set(), details: Set(), action: {})
         )))
-        ErrorBanner(ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository(
-            state: .StalePredictions(lastUpdated: EasternTimeInstant.now().minus(minutes: 2), action: {})
-        )))
-        ErrorBanner(ErrorBannerViewModel(
-            errorRepository: MockErrorBannerStateRepository(
-                state: .StalePredictions(
-                    lastUpdated: EasternTimeInstant.now().minus(minutes: 2),
-                    action: {}
-                )
-            ),
-            initialLoadingWhenPredictionsStale: true
-        ))
+        ErrorBanner(MockErrorBannerViewModel(initialState:
+            .init(loadingWhenPredictionsStale: false,
+                  errorState: .StalePredictions(
+                      lastUpdated: EasternTimeInstant.now()
+                          .minus(minutes: 2),
+                      action: {}
+                  ))))
+        ErrorBanner(MockErrorBannerViewModel(initialState:
+            .init(loadingWhenPredictionsStale: true,
+                  errorState: .StalePredictions(
+                      lastUpdated: EasternTimeInstant.now().minus(minutes: 2),
+                      action: {}
+                  ))))
     }
     .withFixedSettings([:])
 }

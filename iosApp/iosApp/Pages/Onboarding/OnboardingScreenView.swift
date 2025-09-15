@@ -73,6 +73,7 @@ struct OnboardingScreenView: View {
                         ),
                         focusBinding: $focusHeader,
                         focusValue: .feedback,
+                        context: .onboarding,
                         bodyAccessibilityHint: Text("Use the \"More\" navigation tab to send app feedback"),
                         bodyDynamicTypeSize: .accessibility3
                     )
@@ -90,7 +91,6 @@ struct OnboardingScreenView: View {
                 })
 
             case .hideMaps:
-
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
                     OnboardingPieces.PageDescription(
@@ -102,7 +102,8 @@ struct OnboardingScreenView: View {
                             "When using VoiceOver, we can hide maps to make the app easier to navigate."
                         ),
                         focusBinding: $focusHeader,
-                        focusValue: .hideMaps
+                        focusValue: .hideMaps,
+                        context: .onboarding,
                     )
                     .padding(32)
                     .background(Color.fill2)
@@ -134,7 +135,8 @@ struct OnboardingScreenView: View {
                         headerText: Text("See transit near you"),
                         bodyText: Text("We use your location to show you nearby transit options."),
                         focusBinding: $focusHeader,
-                        focusValue: .location
+                        focusValue: .location,
+                        context: .onboarding,
                     )
                     .padding(.bottom, 8)
                     if typeSize >= illustrationCutoff, typeSize < .accessibility3 {
@@ -168,15 +170,18 @@ struct OnboardingScreenView: View {
                             "By opting in, we can show you which stations are inaccessible or have elevator closures."
                         ),
                         focusBinding: $focusHeader,
-                        focusValue: .stationAccessibility
+                        focusValue: .stationAccessibility,
+                        context: .onboarding,
                     )
                     .padding(.bottom, 8)
-                    OnboardingPieces.SettingsToggle(getSetting: { settingsCache.get(.stationAccessibility) },
-                                                    toggleSetting: { settingsCache.set(
-                                                        .stationAccessibility,
-                                                        !settingsCache.get(.stationAccessibility)
-                                                    ) },
-                                                    label: Text("Station Accessibility Info"))
+                    OnboardingPieces.SettingsToggle(
+                        getSetting: { settingsCache.get(.stationAccessibility) },
+                        toggleSetting: { settingsCache.set(
+                            .stationAccessibility,
+                            !settingsCache.get(.stationAccessibility)
+                        ) },
+                        label: Text("Station Accessibility Info")
+                    )
                     OnboardingPieces.KeyButton(text: Text(
                         "Continue",
                         comment: "Button to advance to next scren in onboarding flow"

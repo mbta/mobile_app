@@ -6,7 +6,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -21,7 +21,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 class DeparturesTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -288,17 +287,12 @@ class DeparturesTest {
         var tapAnalytics: Pair<String, Map<String, String>>? = null
         var onClickCalled = false
 
-        val koinApplication =
-            testKoinApplication(
-                analytics = MockAnalytics({ event, props -> tapAnalytics = Pair(event, props) })
-            )
+        loadKoinMocks(
+            analytics = MockAnalytics({ event, props -> tapAnalytics = Pair(event, props) })
+        )
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                Departures(stopData, GlobalResponse(objects), now, { true }) {
-                    onClickCalled = true
-                }
-            }
+            Departures(stopData, GlobalResponse(objects), now, { true }) { onClickCalled = true }
         }
 
         composeTestRule.onNodeWithText(aTrip.headsign).assertIsDisplayed().performClick()

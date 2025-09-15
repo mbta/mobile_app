@@ -9,67 +9,69 @@ import kotlin.time.DurationUnit
  *
  * Can be localized in the frontend layer, except for `Overridden` which is always English.
  */
-sealed class TripInstantDisplay {
-    data class Overridden(val text: String) : TripInstantDisplay()
+public sealed class TripInstantDisplay {
+    public data class Overridden(val text: String) : TripInstantDisplay()
 
-    data object Hidden : TripInstantDisplay()
+    public data object Hidden : TripInstantDisplay()
 
-    data object Boarding : TripInstantDisplay()
+    public data object Boarding : TripInstantDisplay()
 
-    data object Arriving : TripInstantDisplay()
+    public data object Arriving : TripInstantDisplay()
 
-    data object Approaching : TripInstantDisplay()
+    public data object Approaching : TripInstantDisplay()
 
-    data object Now : TripInstantDisplay()
+    public data object Now : TripInstantDisplay()
 
-    data class Time(val predictionTime: EasternTimeInstant, val headline: Boolean = false) :
+    public data class Time(val predictionTime: EasternTimeInstant, val headline: Boolean = false) :
         TripInstantDisplay()
 
-    data class TimeWithStatus(
+    public data class TimeWithStatus(
         val predictionTime: EasternTimeInstant,
         val status: String,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
-    data class TimeWithSchedule(
+    public data class TimeWithSchedule(
         val predictionTime: EasternTimeInstant,
         val scheduledTime: EasternTimeInstant,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
-    data class Minutes(val minutes: Int) : TripInstantDisplay()
+    public data class Minutes(val minutes: Int) : TripInstantDisplay()
 
-    data class ScheduleTime(val scheduledTime: EasternTimeInstant, val headline: Boolean = false) :
-        TripInstantDisplay()
+    public data class ScheduleTime(
+        val scheduledTime: EasternTimeInstant,
+        val headline: Boolean = false,
+    ) : TripInstantDisplay()
 
-    data class ScheduleTimeWithStatusColumn(
+    public data class ScheduleTimeWithStatusColumn(
         val scheduledTime: EasternTimeInstant,
         val status: String,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
-    data class ScheduleTimeWithStatusRow(
+    public data class ScheduleTimeWithStatusRow(
         val scheduledTime: EasternTimeInstant,
         val status: String,
     ) : TripInstantDisplay()
 
-    data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
+    public data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
 
-    data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
+    public data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
 
-    data class Cancelled(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
+    public data class Cancelled(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
 
-    enum class Context {
+    public enum class Context {
         NearbyTransit,
         StopDetailsUnfiltered,
         StopDetailsFiltered,
         TripDetails,
     }
 
-    companion object {
-        val delayStatuses = setOf("Delay", "Delayed", "Late")
+    public companion object {
+        public val delayStatuses: Set<String> = setOf("Delay", "Delayed", "Late")
 
-        fun from(
+        internal fun from(
             prediction: Prediction?,
             schedule: Schedule?,
             vehicle: Vehicle?,

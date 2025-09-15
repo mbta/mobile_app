@@ -35,7 +35,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let onClick: (RouteDetailsRowContext) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     let defaultSelectedRouteId: String?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
@@ -58,7 +58,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         onClick: @escaping (RouteDetailsRowContext) -> Void,
         onBack: @escaping () -> Void,
         onClose: @escaping () -> Void,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         defaultSelectedRouteId: String? = nil,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         routeStopsRepository: IRouteStopsRepository = RepositoryDI().routeStops,
@@ -154,7 +154,6 @@ struct RouteStopListView<RightSideContent: View>: View {
     private func loadRouteStops(routeId: String, directionId: Int32) {
         Task {
             await fetchApi(
-                errorBannerVM.errorRepository,
                 errorKey: "RouteStopListView.loadRouteStops",
                 getData: { try await routeStopsRepository.getRouteSegments(
                     routeId: routeId,
@@ -197,7 +196,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let onClick: (RouteDetailsRowContext) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
 
@@ -224,7 +223,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         onClick: @escaping (RouteDetailsRowContext) -> Void,
         onBack: @escaping () -> Void,
         onClose: @escaping () -> Void,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
         toastVM: IToastViewModel = ViewModelDI().toast
@@ -270,6 +269,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         VStack(spacing: 0) {
             SheetHeader(
                 title: lineOrRoute.name,
+                titleAccessibilityLabel: lineOrRoute.labelWithModeIfBus,
                 titleColor: textColor,
                 buttonColor: Color.translucentContrast,
                 onBack: onBack,
@@ -320,6 +320,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 let toast = ToastViewModel.Toast(
                     message: NSLocalizedString("Tap stops to add to Favorites", comment: ""),
                     duration: .indefinite,
+                    isTip: true,
                     action: ToastViewModel.ToastActionClose(onClose: { showFirstTimeFavoritesToast = false })
                 )
                 toastVM.showToast(toast: toast)

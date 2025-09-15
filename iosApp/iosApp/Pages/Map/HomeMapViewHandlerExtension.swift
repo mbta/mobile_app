@@ -16,7 +16,6 @@ import SwiftUI
  */
 extension HomeMapView {
     func handleAppear(location: LocationManager?, map: MapboxMap?) {
-        lastNavEntry = nearbyVM.navigationStack.last
         handleTryLayerInit(map: map)
 
         // Set MapBox to use the current location to display puck
@@ -30,21 +29,7 @@ extension HomeMapView {
         if locationDataManager.currentLocation != nil, viewportProvider.isDefault() {
             viewportProvider.follow(animation: .easeInOut(duration: .zero))
         }
-
         didAppear?(self)
-    }
-
-    func handleGlobalMapDataChange(now: Date) {
-        guard let globalData = mapVM.globalData else { return }
-
-        Task(priority: .high) {
-            let newMapData = GlobalMapData(
-                globalData: globalData,
-                alerts: nearbyVM.alerts,
-                filterAtTime: now.toEasternInstant()
-            )
-            DispatchQueue.main.async { globalMapData = newMapData }
-        }
     }
 
     func handleCameraChange(_ change: CameraChanged) {
@@ -58,64 +43,12 @@ extension HomeMapView {
             leaveVehiclesChannel()
             vehiclesData = []
         }
-
-        lastNavEntry = navigationStack.last
     }
 
     func checkOnboardingLoaded() {
         if contentVM.onboardingScreensPending == [] {
             locationDataManager.requestWhenInUseAuthorization()
         }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            mapVM.globalData = globalData
-        }
-    }
-
-    func fetchGlobalData() {
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "HomeMapView.loadGlobalData",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: fetchGlobalData
-            )
-        }
-    }
-
-    func loadGlobalData() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        fetchGlobalData()
-    }
-
-    @MainActor
-    func activateRouteShapeListener() async {
-        for await railRouteShapes in railRouteShapeRepository.state {
-            self.railRouteShapes = railRouteShapes
-        }
-    }
-
-    func fetchRouteShapes() {
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "HomeMapView.handleAppear",
-                getData: { try await railRouteShapeRepository.getRailRouteShapes() },
-                onRefreshAfterError: fetchRouteShapes
-            )
-        }
-    }
-
-    func loadRouteShapes() {
-        Task(priority: .high) {
-            await activateRouteShapeListener()
-        }
-        fetchRouteShapes()
     }
 
     func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
@@ -131,7 +64,7 @@ extension HomeMapView {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
-                if let routeCardData = nearbyVM.routeCardData {
+                if let routeCardData = routeCardDataState?.data {
                     vehiclesData = Array(StopDetailsUtils.shared.filterVehiclesByUpcoming(
                         routeCardData: routeCardData,
                         vehicles: result.data
@@ -145,65 +78,16 @@ extension HomeMapView {
         vehiclesRepository.disconnect()
     }
 
-    func handleLastNavChange(oldNavEntry: SheetNavigationStackEntry?, nextNavEntry: SheetNavigationStackEntry?) {
-        if oldNavEntry == nil || oldNavEntry?.isEntrypoint == true {
-            viewportProvider.saveNearbyTransitViewport()
-        }
-        if case let .stopDetails(stopId, stopFilter, _) = nextNavEntry {
-            if oldNavEntry?.stopId() != stopId {
-                if let stop = mapVM.globalData?.getStop(stopId: stopId) {
-                    handleStopDetailsChange(stop, stopFilter)
-                }
-            }
-
-            handleRouteFilterChange(stopFilter)
-        }
-
-        if nextNavEntry == nil || nextNavEntry?.isEntrypoint == true {
-            clearSelectedStop()
-            viewportProvider.restoreNearbyTransitViewport()
-            mapVM.routeSourceData = mapVM.allRailSourceData
-            if let layerManager = mapVM.layerManager {
-                addLayers(layerManager)
-            }
-        }
-    }
-
-    func handleStopDetailsChange(_ stop: Stop, _ filter: StopDetailsFilter?) {
-        mapVM.stopLayerState = .init(selectedStopId: stop.id, stopFilter: filter)
-        viewportProvider.animateTo(coordinates: stop.coordinate)
-
-        Task {
-            if case let .ok(result) = try await onEnum(of: stopRepository.getStopMapData(stopId: stop.id)) {
-                stopMapData = result.data
-                if let stopMapData {
-                    updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
-                }
-            }
-        }
-    }
-
-    func handleRouteFilterChange(_ filter: StopDetailsFilter?) {
-        if let stopMapData {
-            updateStopDetailsLayers(stopMapData, filter, nearbyVM.routeCardData)
-        }
-    }
-
-    func clearSelectedStop() {
-        stopMapData = nil
-        resetDefaultSources()
-    }
-
-    func handleTapStopLayer(feature: QueriedFeature, _: InteractionContext) -> Bool {
-        guard case let .string(stopId) = feature.feature.properties?[StopFeaturesBuilder.shared.propIdKey.key] else {
-            let featureId = feature.feature.identifier.debugDescription
+    func handleTapStopLayer(feature: FeaturesetFeature, _: InteractionContext) -> Bool {
+        guard case let .string(stopId) = feature.properties[StopFeaturesBuilder.shared.propIdKey.key] else {
+            let featureId = feature.id.debugDescription
             log.error("""
-                Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop. sourceId=\(feature.source)
+                Stop icon featureId=`\(featureId)` was tapped, but had invalid stop id prop.
             """)
             return false
         }
-        guard let stop = mapVM.globalData?.getStop(stopId: stopId) else {
-            let featureId = feature.feature.identifier.debugDescription
+        guard let stop = globalData?.getStop(stopId: stopId) else {
+            let featureId = feature.id.debugDescription
             log.error("""
                 Stop icon featureId=`\(featureId)` was tapped but stopId=\(stopId) didn't exist in global stops.
             """)
@@ -216,38 +100,28 @@ extension HomeMapView {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        guard let tripId = vehicle.tripId else { return }
-        guard case .stopDetails = nearbyVM.navigationStack.lastSafe() else { return }
-
-        let routeCardData = nearbyVM.routeCardData
-        let route = routeCardData?.first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
-        let stop = route?.stopData.first
-        let allTrips = stop?.data.flatMap(\.upcomingTrips)
-        let trip = allTrips?.first(where: { upcoming in
-            upcoming.trip.id == tripId
-        })
-        let stopSequence = trip?.stopSequence
-        let routeId = trip?.trip.routeId ?? vehicle.routeId ?? route?.lineOrRoute.id
+        guard let tripId = vehicle.tripId,
+              case let .stopDetails(_, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe(),
+              stopFilter != nil || tripFilter?.tripId == tripId
+        else { return }
+        let routeCard = routeCardDataState?.data?
+            .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
+        let upcoming = routeCard?
+            .stopData
+            .flatMap(\.data)
+            .flatMap(\.upcomingTrips)
+            .first { upcoming in upcoming.trip.id == tripId }
+        let stopSequence = upcoming?.stopSequence
+        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id
 
         if let routeId { analytics.tappedVehicle(routeId: routeId) }
 
-        nearbyVM.navigationStack.lastTripDetailsFilter = .init(
+        let newTripFilter = TripDetailsFilter(
             tripId: tripId,
             vehicleId: vehicle.id,
             stopSequence: stopSequence,
             selectionLock: true
         )
-    }
-
-    func handleSelectedVehicleChange(_ previousVehicle: Vehicle?, _ nextVehicle: Vehicle?) {
-        guard let globalData = mapVM.globalData else { return }
-        guard let stop = nearbyVM.getTargetStop(global: globalData) else { return }
-        guard let nextVehicle else {
-            viewportProvider.animateTo(coordinates: stop.coordinate)
-            return
-        }
-        if previousVehicle == nil || previousVehicle?.id != nextVehicle.id {
-            viewportProvider.vehicleOverview(vehicle: nextVehicle, stop: stop)
-        }
+        nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
     }
 }

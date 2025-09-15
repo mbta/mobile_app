@@ -8,11 +8,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.FavoriteUpdateBridge
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -25,7 +24,6 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertEquals
@@ -35,7 +33,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class StopDetailsFilteredPickerViewTest {
     val builder = ObjectCollectionBuilder()
@@ -131,8 +129,6 @@ class StopDetailsFilteredPickerViewTest {
             ),
         )
 
-    private val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
-
     private val settings = mutableMapOf<Settings, Boolean>()
     private val settingsRepository =
         object : ISettingsRepository {
@@ -141,16 +137,17 @@ class StopDetailsFilteredPickerViewTest {
             override suspend fun setSettings(settings: Map<Settings, Boolean>) {}
         }
 
-    private val koinApplication = testKoinApplication { settings = settingsRepository }
-
     @get:Rule val composeTestRule = createComposeRule()
 
-    @Before fun resetSettings() = settings.clear()
+    @Before
+    fun setUp() {
+        loadKoinMocks(builder) { settings = settingsRepository }
+        settings.clear()
+    }
 
     @Test
     fun testStopDetailsRouteViewDisplaysCorrectly(): Unit = runBlocking {
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
         val routeCardData =
             checkNotNull(
                 RouteCardData.routeCardsForStopList(
@@ -161,35 +158,29 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = stop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = stop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
@@ -201,7 +192,6 @@ class StopDetailsFilteredPickerViewTest {
         var tripFilter: TripDetailsFilter? = null
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -213,40 +203,34 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = stop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = { tripFilter = it },
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = stop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = { tripFilter = it },
+                tileScrollState = rememberScrollState(),
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule.onNodeWithText("at ${stop.name}").assertExists()
         composeTestRule.onNodeWithText("1 min").assertExists().performClick()
-        composeTestRule.waitUntil { tripFilter?.tripId == trip.id }
+        composeTestRule.waitUntilDefaultTimeout { tripFilter?.tripId == trip.id }
 
         assertEquals(tripFilter?.tripId, trip.id)
     }
@@ -262,7 +246,6 @@ class StopDetailsFilteredPickerViewTest {
         }
 
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -274,35 +257,29 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(builder),
                     now,
-                    emptySet(),
                     context = RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = stop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = stop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule.onNodeWithText("Elevator Alert Header").assertIsDisplayed()
@@ -312,7 +289,6 @@ class StopDetailsFilteredPickerViewTest {
     fun testShowsNotAccessibleAlert(): Unit = runBlocking {
         settings[Settings.StationAccessibility] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -324,35 +300,29 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = inaccessibleStop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { false },
-                    updateFavorites = {},
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = inaccessibleStop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
@@ -361,9 +331,7 @@ class StopDetailsFilteredPickerViewTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testStarSavesEnhancedFavoritesWithDialogBehindFlag(): Unit = runBlocking {
-        settings[Settings.EnhancedFavorites] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -375,37 +343,33 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
-        var updatedFavorites: FavoriteUpdateBridge? = null
+        var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = stop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { false },
-                    updateFavorites = { updatedFavorites = it },
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = stop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = { false },
+                updateFavorites = { favMap, direction ->
+                    updatedFavorites = Pair(favMap, direction)
+                },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule
@@ -417,9 +381,9 @@ class StopDetailsFilteredPickerViewTest {
 
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             updatedFavorites ==
-                FavoriteUpdateBridge.Favorites(
+                Pair(
                     mapOf(
                         RouteStopDirection(route.id, stop.id, 0) to true,
                         RouteStopDirection(route.id, stop.id, 1) to false,
@@ -431,9 +395,7 @@ class StopDetailsFilteredPickerViewTest {
 
     @Test
     fun testUnfavoriteWithoutDialogBehindFlag(): Unit = runBlocking {
-        settings[Settings.EnhancedFavorites] = true
         val filterState = StopDetailsFilter(routeId = route.id, directionId = 0)
-        val viewModel = StopDetailsViewModel.mocked()
 
         val routeCardData =
             checkNotNull(
@@ -445,37 +407,33 @@ class StopDetailsFilteredPickerViewTest {
                     PredictionsStreamDataResponse(builder),
                     AlertsStreamDataResponse(emptyMap()),
                     now,
-                    emptySet(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
             )
         val routeStopData = routeCardData.single().stopData.single()
-        viewModel.setRouteCardData(routeCardData)
 
-        var updatedFavorites: FavoriteUpdateBridge? = null
+        var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                StopDetailsFilteredPickerView(
-                    stopId = stop.id,
-                    stopFilter = filterState,
-                    tripFilter = null,
-                    routeStopData = routeStopData,
-                    allAlerts = null,
-                    global = globalResponse,
-                    now = now,
-                    viewModel = viewModel,
-                    errorBannerViewModel = errorBannerViewModel,
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    tileScrollState = rememberScrollState(),
-                    isFavorite = { true },
-                    updateFavorites = { updatedFavorites = it },
-                    openModal = {},
-                    openSheetRoute = {},
-                    onClose = {},
-                )
-            }
+            StopDetailsFilteredPickerView(
+                stopId = stop.id,
+                stopFilter = filterState,
+                tripFilter = null,
+                routeStopData = routeStopData,
+                allAlerts = null,
+                now = now,
+                errorBannerViewModel = koinInject(),
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = { true },
+                updateFavorites = { favMap, direction ->
+                    updatedFavorites = Pair(favMap, direction)
+                },
+                openModal = {},
+                openSheetRoute = {},
+                onClose = {},
+            )
         }
 
         composeTestRule
@@ -487,12 +445,8 @@ class StopDetailsFilteredPickerViewTest {
 
         composeTestRule.onNodeWithText("Add").assertDoesNotExist()
 
-        composeTestRule.waitUntil {
-            updatedFavorites ==
-                FavoriteUpdateBridge.Favorites(
-                    mapOf(RouteStopDirection(route.id, stop.id, 0) to false),
-                    0,
-                )
+        composeTestRule.waitUntilDefaultTimeout {
+            updatedFavorites == Pair(mapOf(RouteStopDirection(route.id, stop.id, 0) to false), 0)
         }
     }
 }

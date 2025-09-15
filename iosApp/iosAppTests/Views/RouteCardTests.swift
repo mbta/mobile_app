@@ -31,8 +31,7 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -61,8 +60,7 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -87,11 +85,10 @@ final class RouteCardTests: XCTestCase {
             cardData: routeCardData,
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
-        ).withFixedSettings([.enhancedFavorites: true])
+        ).withFixedSettings([:])
 
         XCTAssertThrowsError(
             try sut.inspect().find(viewWithAccessibilityIdentifier: "starButton")
@@ -122,8 +119,7 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -142,8 +138,7 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: false
         ).withFixedSettings([:])
@@ -181,8 +176,7 @@ final class RouteCardTests: XCTestCase {
             ),
             global: .init(objects: objects),
             now: EasternTimeInstant.now(),
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])
@@ -196,8 +190,7 @@ final class RouteCardTests: XCTestCase {
             cardData: data.GL5(),
             global: data.global,
             now: data.now,
-            onPin: { _ in },
-            pinned: false,
+            isFavorite: { _ in false },
             pushNavEntry: { _ in },
             showStopHeader: true
         ).withFixedSettings([:])

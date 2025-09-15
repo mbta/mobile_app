@@ -9,22 +9,23 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
-import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.network.receiveAll
 import com.mbta.tid.mbta_app.phoenix.VehiclesOnRouteChannel
 import org.koin.core.component.KoinComponent
 
-interface IVehiclesRepository {
-    fun connect(
+public interface IVehiclesRepository {
+    public fun connect(
         routeId: String,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     )
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepository, KoinComponent {
+internal class VehiclesRepository(private val socket: PhoenixSocket) :
+    IVehiclesRepository, KoinComponent {
     var channel: PhoenixChannel? = null
 
     override fun connect(
@@ -52,13 +53,14 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
             ?.attach()
-            ?.receive(PhoenixPushStatus.Ok) { message ->
-                println("joined channel ${message.subject}")
-                handleNewDataMessage(message, onReceive)
-            }
-            ?.receive(PhoenixPushStatus.Error) {
-                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
-            }
+            ?.receiveAll(
+                onOk = { message ->
+                    println("joined channel ${message.subject}")
+                    handleNewDataMessage(message, onReceive)
+                },
+                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
+                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
+            )
     }
 
     override fun disconnect() {
@@ -88,18 +90,18 @@ class VehiclesRepository(private val socket: PhoenixSocket) : IVehiclesRepositor
     }
 }
 
-class MockVehiclesRepository
+public class MockVehiclesRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    val response: VehiclesStreamDataResponse,
-    val onConnect: (routeId: String, directionId: Int) -> Unit = { _: String, _: Int -> },
-    val onDisconnect: () -> Unit = {},
+    internal val response: VehiclesStreamDataResponse,
+    internal val onConnect: (routeId: String, directionId: Int) -> Unit = { _: String, _: Int -> },
+    internal val onDisconnect: () -> Unit = {},
 ) : IVehiclesRepository {
-    constructor(
+    public constructor(
         vehicles: List<Vehicle> = emptyList()
     ) : this(response = VehiclesStreamDataResponse(vehicles.associateBy { it.id }))
 
-    constructor(
+    internal constructor(
         objects: ObjectCollectionBuilder
     ) : this(response = VehiclesStreamDataResponse(objects.vehicles))
 

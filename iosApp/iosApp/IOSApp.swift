@@ -6,6 +6,8 @@ import SwiftPhoenixClient
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate {
+    static var deepLinkState: DeepLinkState = .None.shared
+
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -26,17 +28,14 @@ class AppDelegate: NSObject, UIApplicationDelegate {
     ) -> Bool {
         // Get URL components from the incoming user activity.
         guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
-              let incomingURL = userActivity.webpageURL,
-              let components = NSURLComponents(url: incomingURL, resolvingAgainstBaseURL: true) else {
+              let incomingURL = userActivity.webpageURL else {
             return false
         }
 
-        if components.path == "/" {
-            // just opening app, let default route happen
+        if let deepLinkState = DeepLinkState.companion.from(url: incomingURL.absoluteString) {
+            Self.deepLinkState = deepLinkState
             return true
         } else {
-            // unhandled path
-            debugPrint("Unhandled deep link URI", components)
             return false
         }
     }

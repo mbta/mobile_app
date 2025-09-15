@@ -4,20 +4,28 @@ import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
+import dev.mokkery.everySuspend
+import dev.mokkery.matcher.any
 import dev.mokkery.matcher.matching
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
+import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
 import dev.mokkery.verifySuspend
 import kotlin.test.AfterTest
@@ -29,6 +37,7 @@ import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -36,17 +45,19 @@ import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
+import org.koin.dsl.bind
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class MapViewModelTests : KoinTest {
+internal class MapViewModelTests : KoinTest {
 
     class MockViewportManager(
         private val saveNearbyTransitViewportCalled: () -> Unit = {},
         private val restoreNearbyTransitViewportCalled: () -> Unit = {},
         private val stopCenterCalled: (stop: Stop) -> Unit = {},
-        private val vehicleOverviewCalled: (vehicle: Vehicle, stop: Stop?, density: Float) -> Unit =
+        private val vehicleOverviewCalled:
+            (vehicle: Vehicle, stop: Stop?, density: Float?) -> Unit =
             { _, _, _ ->
             },
         private val followCalled: (transitionAnimationDuration: Long?) -> Unit = {},
@@ -58,7 +69,7 @@ class MapViewModelTests : KoinTest {
 
         override suspend fun stopCenter(stop: Stop) = stopCenterCalled(stop)
 
-        override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float) =
+        override suspend fun vehicleOverview(vehicle: Vehicle, stop: Stop?, density: Float?) =
             vehicleOverviewCalled(vehicle, stop, density)
 
         override suspend fun follow(transitionAnimationDuration: Long?) =
@@ -67,22 +78,29 @@ class MapViewModelTests : KoinTest {
         override suspend fun isDefault(): Boolean = isDefaultCalled()
     }
 
-    fun setUpKoin(coroutineDispatcher: CoroutineDispatcher) {
+    fun setUpKoin(
+        coroutineDispatcher: CoroutineDispatcher,
+        configureRepositories: MockRepositories.() -> Unit = {},
+    ) {
         startKoin {
             modules(
+                repositoriesModule(
+                    MockRepositories().apply {
+                        useObjects(TestData.clone())
+                        configureRepositories()
+                    }
+                ),
+                viewModelModule(),
                 module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
                         coroutineDispatcher
                     }
-                },
-                module {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         coroutineDispatcher
                     }
+                    single<Clock> { Clock.System }
+                    single { MockRouteCardDataViewModel() }.bind(IRouteCardDataViewModel::class)
                 },
-                repositoriesModule(MockRepositories().apply { useObjects(TestData.clone()) }),
-                viewModelModule(),
-                module { single<Clock> { Clock.System } },
             )
         }
     }
@@ -117,6 +135,15 @@ class MapViewModelTests : KoinTest {
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
+            val stopFilter = StopDetailsFilter("", 0)
+            val tripFilter = TripDetailsFilter("", "", 0)
+            viewModel.navChanged(
+                SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
+            )
+            assertEquals(
+                MapViewModel.State.TripSelected(null, stopFilter, tripFilter, null),
+                awaitItem(),
+            )
         }
     }
 
@@ -322,5 +349,69 @@ class MapViewModelTests : KoinTest {
         advanceUntilIdle()
 
         verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+    }
+
+    @Test
+    fun `layer manager can change`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+
+        val layerManager1 = mock<IMapLayerManager>(MockMode.autofill)
+        val layerManager2 = mock<IMapLayerManager>(MockMode.autofill)
+
+        val viewModel: MapViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            viewModel.layerManagerInitialized(layerManager1)
+            awaitItem()
+            advanceUntilIdle()
+            verifySuspend {
+                layerManager1.addLayers(
+                    any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                    any(),
+                    any(),
+                    any(),
+                )
+            }
+            viewModel.layerManagerInitialized(layerManager2)
+            advanceUntilIdle()
+            verifySuspend {
+                layerManager2.addLayers(
+                    any<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>>(),
+                    any(),
+                    any(),
+                    any(),
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `applies timeout to events`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val sentryRepository = mock<ISentryRepository>(MockMode.autofill)
+        setUpKoin(dispatcher) { sentry = sentryRepository }
+
+        val viewportManager =
+            mock<ViewportManager>(MockMode.autofill) {
+                everySuspend { isDefault() } calls { suspendCancellableCoroutine {} }
+            }
+
+        val viewModel: MapViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            viewModel.setViewportManager(viewportManager)
+            viewModel.locationPermissionsChanged(true)
+            advanceUntilIdle()
+            verify {
+                sentryRepository.captureException(
+                    matching<MoleculeViewModel.TimeoutException> {
+                        it.message ==
+                            "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
+                    }
+                )
+            }
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 }

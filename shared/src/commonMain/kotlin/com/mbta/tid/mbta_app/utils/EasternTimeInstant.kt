@@ -22,14 +22,14 @@ import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
 @Serializable(with = EasternTimeInstant.Serializer::class)
-class EasternTimeInstant
-private constructor(private val instant: Instant, val local: LocalDateTime) :
+public class EasternTimeInstant
+private constructor(private val instant: Instant, public val local: LocalDateTime) :
     Comparable<EasternTimeInstant> {
-    constructor(instant: Instant) : this(instant, instant.toLocalDateTime(timeZone))
+    public constructor(instant: Instant) : this(instant, instant.toLocalDateTime(timeZone))
 
-    constructor(local: LocalDateTime) : this(local.toInstant(timeZone), local)
+    internal constructor(local: LocalDateTime) : this(local.toInstant(timeZone), local)
 
-    constructor(
+    public constructor(
         year: Int,
         month: Month,
         day: Int,
@@ -39,19 +39,19 @@ private constructor(private val instant: Instant, val local: LocalDateTime) :
     ) : this(LocalDateTime(year, month, day, hour, minute, second))
 
     /** The time component becomes irrelevant after this coercion and should be ignored */
-    fun coerceInServiceDay(): EasternTimeInstant {
+    public fun coerceInServiceDay(): EasternTimeInstant {
         if (local.date == serviceDate) return this
         val instant = this.instant - 24.hours
         return EasternTimeInstant(instant)
     }
 
-    val serviceDate: LocalDate
+    internal val serviceDate: LocalDate
         get() = if (local.hour >= 3) local.date else local.date.minus(DatePeriod(days = 1))
 
     // Service end times will be set to 3:00 in Alerts UI, which means that a LocalDateTime
     // representing the end of service on one date will think that it belongs to the next service
     // day, this allows you to specify if you want to round forward or backward in that case.
-    fun serviceDate(rounding: ServiceDateRounding): LocalDate {
+    internal fun serviceDate(rounding: ServiceDateRounding): LocalDate {
         return if (
             rounding == ServiceDateRounding.BACKWARDS && local.hour == 3 && local.minute == 0
         )
@@ -59,15 +59,19 @@ private constructor(private val instant: Instant, val local: LocalDateTime) :
         else serviceDate
     }
 
-    fun secondsHasDivisor(divisor: Long) = this.instant.epochSeconds % divisor == 0L
+    public fun secondsHasDivisor(divisor: Long): Boolean = this.instant.epochSeconds % divisor == 0L
 
-    fun toEpochFracSeconds() = this.instant.toEpochMilliseconds() / 1000.0
+    public fun toEpochMilliseconds(): Long = this.instant.toEpochMilliseconds()
 
-    operator fun plus(duration: Duration) = EasternTimeInstant(instant + duration)
+    internal fun toEpochFracSeconds() = this.toEpochMilliseconds() / 1000.0
 
-    operator fun minus(duration: Duration) = EasternTimeInstant(instant - duration)
+    public operator fun plus(duration: Duration): EasternTimeInstant =
+        EasternTimeInstant(instant + duration)
 
-    operator fun minus(other: EasternTimeInstant) = instant - other.instant
+    public operator fun minus(duration: Duration): EasternTimeInstant =
+        EasternTimeInstant(instant - duration)
+
+    public operator fun minus(other: EasternTimeInstant): Duration = instant - other.instant
 
     override fun compareTo(other: EasternTimeInstant): Int {
         return this.instant.compareTo(other.instant)
@@ -81,14 +85,14 @@ private constructor(private val instant: Instant, val local: LocalDateTime) :
         return instant.hashCode()
     }
 
-    override fun toString() = local.toString() + timeZone.offsetAt(instant).toString()
+    override fun toString(): String = local.toString() + timeZone.offsetAt(instant).toString()
 
-    enum class ServiceDateRounding {
+    internal enum class ServiceDateRounding {
         FORWARDS,
         BACKWARDS,
     }
 
-    object Serializer : KSerializer<EasternTimeInstant> {
+    internal object Serializer : KSerializer<EasternTimeInstant> {
         private val delegateSerializer = Instant.serializer()
 
         override val descriptor =
@@ -108,10 +112,11 @@ private constructor(private val instant: Instant, val local: LocalDateTime) :
         }
     }
 
-    companion object {
-        val timeZone by lazy { TimeZone.Companion.of("America/New_York") }
+    public companion object {
+        internal val timeZone by lazy { TimeZone.Companion.of("America/New_York") }
 
         @DefaultArgumentInterop.Enabled
-        fun now(clock: Clock = Clock.System) = EasternTimeInstant(clock.now())
+        public fun now(clock: Clock = Clock.System): EasternTimeInstant =
+            EasternTimeInstant(clock.now())
     }
 }

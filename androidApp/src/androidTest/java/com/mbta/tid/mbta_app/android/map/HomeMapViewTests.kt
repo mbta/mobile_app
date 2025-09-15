@@ -3,8 +3,10 @@ package com.mbta.tid.mbta_app.android.map
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -17,14 +19,18 @@ import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
-import com.mbta.tid.mbta_app.model.SheetRoutes
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockStopRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.autofill.AutofillProvider
 import dev.mokkery.answering.returns
@@ -38,6 +44,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class HomeMapViewTests {
 
     @get:Rule val composeTestRule = createComposeRule()
@@ -47,8 +54,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -68,7 +77,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -84,8 +92,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -106,14 +116,13 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
         }
-        composeTestRule
-            .onNodeWithContentDescription("Recenter map on my location")
-            .assertIsNotDisplayed()
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(
+            hasContentDescription("Recenter map on my location")
+        )
     }
 
     @Test
@@ -127,8 +136,10 @@ class HomeMapViewTests {
 
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -155,7 +166,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -170,8 +180,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager(null)
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -192,7 +204,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -205,8 +216,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -227,7 +240,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -241,8 +253,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -263,7 +277,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -277,8 +290,10 @@ class HomeMapViewTests {
         val locationManager = MockLocationDataManager()
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -299,7 +314,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )
@@ -341,13 +355,14 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = mapVM,
                 configManager,
             )
         }
 
-        composeTestRule.waitUntil { composeTestRule.onNodeWithTag("recenterButton").isDisplayed() }
+        composeTestRule.waitUntilDefaultTimeout {
+            composeTestRule.onNodeWithTag("recenterButton").isDisplayed()
+        }
         composeTestRule.onNodeWithTag("recenterButton").assertIsDisplayed()
     }
 
@@ -355,8 +370,10 @@ class HomeMapViewTests {
     fun testPlaceholderGrid(): Unit = runBlocking {
         val viewModel =
             MapViewModel(
+                MockRouteCardDataViewModel(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
+                MockSentryRepository(),
                 MockStopRepository(),
                 Dispatchers.Default,
                 Dispatchers.IO,
@@ -386,7 +403,6 @@ class HomeMapViewTests {
                 handleStopNavigation = {},
                 handleVehicleTap = {},
                 vehiclesData = emptyList(),
-                routeCardData = null,
                 viewModel = viewModel,
                 configManager,
             )

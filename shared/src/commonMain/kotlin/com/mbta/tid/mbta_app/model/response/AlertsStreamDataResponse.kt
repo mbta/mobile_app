@@ -5,14 +5,14 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
-    constructor(objects: ObjectCollectionBuilder) : this(objects.alerts)
+public data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
+    public constructor(objects: ObjectCollectionBuilder) : this(objects.alerts)
 
-    fun getAlert(alertId: String) = alerts[alertId]
+    public fun getAlert(alertId: String): Alert? = alerts[alertId]
 
-    fun isEmpty() = alerts.isEmpty()
+    public fun isEmpty(): Boolean = alerts.isEmpty()
 
-    fun injectFacilities(globalResponse: GlobalResponse?): AlertsStreamDataResponse =
+    internal fun injectFacilities(globalResponse: GlobalResponse?): AlertsStreamDataResponse =
         globalResponse?.let { global ->
             AlertsStreamDataResponse(
                 alerts.mapValues { (_, alert) ->
@@ -25,7 +25,7 @@ data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
             )
         } ?: this
 
-    override fun toString() = "[AlertsStreamDataResponse]"
+    override fun toString(): String = "[AlertsStreamDataResponse]"
 }
 
-fun AlertsStreamDataResponse?.isNullOrEmpty() = this == null || this.isEmpty()
+public fun AlertsStreamDataResponse?.isNullOrEmpty(): Boolean = this == null || this.isEmpty()

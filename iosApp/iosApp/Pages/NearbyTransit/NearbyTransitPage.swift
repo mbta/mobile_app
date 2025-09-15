@@ -14,7 +14,7 @@ import Shared
 import SwiftUI
 
 struct NearbyTransitPage: View {
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
 
@@ -25,7 +25,7 @@ struct NearbyTransitPage: View {
     let inspection = Inspection<Self>()
 
     init(
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         viewportProvider: ViewportProvider,
         noNearbyStops: @escaping () -> NoNearbyStopsView
@@ -44,7 +44,7 @@ struct NearbyTransitPage: View {
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
                 NearbyTransitView(
                     location: $location,
-                    isReturningFromBackground: $errorBannerVM.loadingWhenPredictionsStale,
+                    setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },
                     nearbyVM: nearbyVM,
                     noNearbyStops: noNearbyStops
                 )

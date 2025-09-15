@@ -11,15 +11,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
-import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import com.mbta.tid.mbta_app.model.FavoriteBridge
 import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.RouteCardPreviewData
 import org.koin.compose.KoinContext
@@ -30,23 +28,11 @@ import org.koin.dsl.module
 fun RouteCardContainer(
     modifier: Modifier = Modifier,
     data: RouteCardData,
-    isFavorite: (FavoriteBridge) -> Boolean,
-    onPin: (String) -> Unit,
     showStopHeader: Boolean,
     departureContent: @Composable (RouteCardData.RouteStopData) -> Unit,
 ) {
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     Column(modifier.haloContainer(1.dp).semantics { testTag = "RouteCard" }) {
-        TransitHeader(data.lineOrRoute) { color ->
-            if (!enhancedFavorites) {
-                StarButton(
-                    starred = isFavorite(FavoriteBridge.Pinned(data.lineOrRoute.id)),
-                    color = color,
-                ) {
-                    onPin(data.lineOrRoute.id)
-                }
-            }
-        }
+        TransitHeader(data.lineOrRoute) {}
 
         data.stopData.forEach {
             if (showStopHeader) {
@@ -63,30 +49,13 @@ fun RouteCard(
     data: RouteCardData,
     globalData: GlobalResponse?,
     now: EasternTimeInstant,
-    isFavorite: (FavoriteBridge) -> Boolean,
-    onPin: (String) -> Unit,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     showStopHeader: Boolean,
     onOpenStopDetails: (String, StopDetailsFilter) -> Unit,
 ) {
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
-    RouteCardContainer(
-        data = data,
-        isFavorite = isFavorite,
-        onPin = onPin,
-        showStopHeader = showStopHeader,
-    ) {
-        Departures(
-            it,
-            globalData,
-            now,
-            { routeStopDirection ->
-                if (enhancedFavorites) {
-                    isFavorite(FavoriteBridge.Favorite(routeStopDirection))
-                } else {
-                    isFavorite(FavoriteBridge.Pinned(routeStopDirection.route))
-                }
-            },
-        ) { leaf ->
+    RouteCardContainer(data = data, showStopHeader = showStopHeader) {
+        Departures(it, globalData, now, { routeStopDirection -> isFavorite(routeStopDirection) }) {
+            leaf ->
             onOpenStopDetails(it.stop.id, StopDetailsFilter(data.lineOrRoute.id, leaf.directionId))
         }
     }
@@ -112,7 +81,6 @@ class Previews() {
                     data.global,
                     data.now,
                     { false },
-                    onPin = {},
                     showStopHeader = true,
                     onOpenStopDetails = { _, _ -> },
                 )

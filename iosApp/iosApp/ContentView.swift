@@ -10,7 +10,6 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
-    let platform = Platform_iosKt.getPlatform().name
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
     @EnvironmentObject var socketProvider: SocketProvider
@@ -21,17 +20,18 @@ struct ContentView: View {
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
     @State private var sheetHeight: CGFloat =
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
-    @StateObject var errorBannerVM = ErrorBannerViewModel()
+    @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
-    @StateObject var nearbyVM = NearbyViewModel()
-    @StateObject var mapVM = iosApp.MapViewModel()
-    @StateObject var settingsVM = SettingsViewModel()
-    @StateObject var stopDetailsVM = StopDetailsViewModel()
+    @State var routeCardDataVM = ViewModelDI().routeCardData
+    @State var stopDetailsVM = ViewModelDI().stopDetails
     @State var toastVM = ViewModelDI().toast
+
+    @StateObject var nearbyVM = NearbyViewModel()
+    @State var mapVM = ViewModelDI().map
+    @StateObject var settingsVM = SettingsViewModel()
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -42,6 +42,8 @@ struct ContentView: View {
     @State private var selectedTab: SelectedTab? = nil
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
+    @State private var selectedVehicle: Vehicle?
+    @State private var globalData: GlobalResponse?
 
     struct AnalyticsParams: Equatable {
         let stopId: String?
@@ -58,6 +60,7 @@ struct ContentView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
+            mapVM.setViewportManager(viewportManager: viewportProvider)
             Task { await contentVM.loadPendingFeaturePromosAndTabPreferences() }
             Task { await contentVM.loadOnboardingScreens() }
             analytics.recordSession(colorScheme: colorScheme)
@@ -69,12 +72,9 @@ struct ContentView: View {
                 analytics.track(screen: screen)
             }
         }
-        .task {
-            // We can't set stale caches in ResponseCache on init because of our Koin setup,
-            // so this is here to get the cached data into the global flow and kick off an async request asap.
-            do {
-                _ = try await RepositoryDI().global.getGlobalData()
-            } catch {}
+        .global($globalData, errorKey: "ContentView")
+        .onAppear {
+            readDeepLinkState()
         }
         .onChange(of: contentVM.defaultTab) { newTab in
             selectedTab = switch newTab {
@@ -83,7 +83,6 @@ struct ContentView: View {
             case nil: nil
             }
         }
-
         .onChange(of: selectedTab) { nextTab in
             if let nextTab {
                 nearbyVM.pushNavEntry(nextTab.associatedSheetNavEntry)
@@ -105,6 +104,7 @@ struct ContentView: View {
             if newPhase == .active {
                 socketProvider.socket.attach()
                 nearbyVM.joinAlertsChannel()
+                readDeepLinkState()
             } else if newPhase == .background {
                 nearbyVM.leaveAlertsChannel()
                 socketProvider.socket.detach()
@@ -119,20 +119,16 @@ struct ContentView: View {
         .onChange(of: hideMaps) { _ in
             analytics.recordSession(hideMaps: hideMaps)
         }
-        .onChange(of: contentVM.configResponse) { response in
-            switch onEnum(of: response) {
-            case let .ok(response): contentVM.configureMapboxToken(token: response.data.mapboxPublicToken)
-            default: debugPrint("Skipping mapbox token configuration")
-            }
-        }
         .onChange(of: contentVM.featurePromosPending) { promos in
             if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
                 favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
             }
         }
-        .onReceive(mapVM.lastMapboxErrorSubject
-            .debounce(for: .seconds(1), scheduler: DispatchQueue.main)) { _ in
-                Task { await contentVM.loadConfig() }
+        .onReceive(
+            contentVM.mapboxConfigManager.lastMapboxErrorSubject
+                .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+        ) { _ in
+            Task { await contentVM.loadConfig() }
         }
     }
 
@@ -189,13 +185,13 @@ struct ContentView: View {
                                 if !viewportProvider.viewport.isFollowing,
                                    locationDataManager.currentLocation != nil {
                                     RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
-                                        viewportProvider.follow()
+                                        mapVM.recenter(type: .currentLocation)
                                     }
                                 }
                                 if !viewportProvider.viewport.isOverview,
-                                   let (routeType, selectedVehicle, stop) = recenterOnVehicleButtonInfo() {
+                                   let routeType = vehicleRouteType() {
                                     RecenterButton(icon: routeIconResource(routeType), size: 32) {
-                                        viewportProvider.vehicleOverview(vehicle: selectedVehicle, stop: stop)
+                                        mapVM.recenter(type: .trip)
                                     }
                                 }
                             }.frame(maxWidth: .infinity, alignment: .topTrailing)
@@ -207,9 +203,6 @@ struct ContentView: View {
             }
         }
         .background(Color.sheetBackground)
-        .onAppear {
-            Task { await errorBannerVM.activate() }
-        }
     }
 
     @ViewBuilder
@@ -284,6 +277,7 @@ struct ContentView: View {
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
+                            routeCardDataVM: routeCardDataVM,
                             stopDetailsVM: stopDetailsVM,
                             viewportProvider: viewportProvider
                         )
@@ -294,9 +288,6 @@ struct ContentView: View {
                     .id(stopId)
                     .transition(transition)
                     .animation(.easeOut, value: stopId)
-                    .onChange(of: stopId) { nextStopId in stopDetailsVM.handleStopChange(nextStopId) }
-                    .onAppear { stopDetailsVM.handleStopAppear(stopId) }
-                    .onDisappear { stopDetailsVM.leaveStopPredictions() }
 
                 default: EmptyView()
                 }
@@ -348,13 +339,10 @@ struct ContentView: View {
         // when re-opening nearby transit
         VStack {
             TabView(selection: $selectedTab) {
-                if enhancedFavorites {
-                    favoritesPage
-                        .toolbar(tabBarVisibility, for: .tabBar)
-                        .tag(SelectedTab.favorites)
-                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                }
-
+                favoritesPage
+                    .toolbar(tabBarVisibility, for: .tabBar)
+                    .tag(SelectedTab.favorites)
+                    .tabItem { TabLabel(tab: SelectedTab.favorites) }
                 nearbyPage
                     .toolbar(tabBarVisibility, for: .tabBar)
                     .tag(SelectedTab.nearby)
@@ -407,11 +395,7 @@ struct ContentView: View {
             noNearbyStops: { NoNearbyStopsView(
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
-                    viewportProvider.setIsManuallyCentering(true)
-                    viewportProvider.animateTo(
-                        coordinates: ViewportProvider.Defaults.center,
-                        zoom: 13.75
-                    )
+                    viewportProvider.panToDefaultCenter()
                 }
             ) }
         )
@@ -423,9 +407,11 @@ struct ContentView: View {
             contentVM: contentVM,
             mapVM: mapVM,
             nearbyVM: nearbyVM,
+            routeCardDataVM: routeCardDataVM,
             viewportProvider: viewportProvider,
             locationDataManager: locationDataManager,
-            sheetHeight: $sheetHeight
+            sheetHeight: $sheetHeight,
+            selectedVehicle: $selectedVehicle
         ).accessibilityHidden(searchObserver.isSearching)
     }
 
@@ -479,13 +465,13 @@ struct ContentView: View {
                             content: coverContents
                         )
                         .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-
                             if let oldSheetRoute,
                                let newSheetRoute,
                                SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
                                                                             second: newSheetRoute) {
                                 selectedDetent = .medium
                             }
+                            errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
                         }
                         .onAppear { recordSheetHeight(proxy.size.height) }
                         .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
@@ -505,14 +491,11 @@ struct ContentView: View {
 
             case .more:
                 TabView(selection: $selectedTab) {
-                    if enhancedFavorites {
-                        VStack {}
-                            .onAppear { selectedTab = .favorites }
-                            .toolbar(.hidden, for: .tabBar)
-                            .tag(SelectedTab.favorites)
-                            .tabItem { TabLabel(tab: SelectedTab.favorites) }
-                    }
-
+                    VStack {}
+                        .onAppear { selectedTab = .favorites }
+                        .toolbar(.hidden, for: .tabBar)
+                        .tag(SelectedTab.favorites)
+                        .tabItem { TabLabel(tab: SelectedTab.favorites) }
                     VStack {}
                         .onAppear { selectedTab = .nearby }
                         .toolbar(.hidden, for: .tabBar)
@@ -540,15 +523,18 @@ struct ContentView: View {
         ).ignoresSafeArea(.all)
     }
 
-    private func recenterOnVehicleButtonInfo() -> (RouteType, Vehicle, Stop)? {
-        guard case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: tripFilter) = nearbyVM
-            .navigationStack.lastSafe(),
-            let selectedVehicle = mapVM.selectedVehicle, tripFilter?.vehicleId == selectedVehicle.id,
-            let globalData = mapVM.globalData,
-            let stop = nearbyVM.getTargetStop(global: globalData),
-            let routeId = selectedVehicle.routeId ?? stopFilter?.routeId,
-            let route = globalData.getRoute(routeId: routeId) else { return nil }
-        return (route.type, selectedVehicle, stop)
+    private func vehicleRouteType() -> RouteType? {
+        guard let routeId = selectedVehicle?.routeId,
+              let route = globalData?.getRoute(routeId: routeId)
+        else { return nil }
+        return route.type
+    }
+
+    private func readDeepLinkState() {
+        switch onEnum(of: AppDelegate.deepLinkState) {
+        case .none: break
+        }
+        AppDelegate.deepLinkState = .None.shared
     }
 
     private func recordSheetHeight(_ newSheetHeight: CGFloat) {

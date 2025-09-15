@@ -1,61 +1,62 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import junit.framework.TestCase.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 import org.koin.test.KoinTest
 
 class StopDetailsPageTest : KoinTest {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    val koinApplication = testKoinApplication()
+    @Before
+    fun setUp() {
+        loadKoinMocks()
+    }
 
     @Test
-    fun testCallsUpdateRouteCardData() {
-        val viewModel = StopDetailsViewModel.mocked()
-        val filters = mutableStateOf(StopDetailsPageFilters("stop", null, null))
+    fun testUpdatesVM() {
+        var activeSet = false
+        var alertsSet = false
+        var filtersSet = false
+        var nowSet = false
 
-        var routeCardDataUpdated = false
-        val errorBannerVM = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val alerts = AlertsStreamDataResponse(emptyMap())
+        val filters = StopDetailsPageFilters("stop", null, null)
+
+        val viewModel = MockStopDetailsViewModel()
+        viewModel.onSetActive = { active, fromBackground -> activeSet = active && !fromBackground }
+        viewModel.onSetAlerts = { alertsSet = it == alerts }
+        viewModel.onSetFilters = { filtersSet = it == filters }
+        viewModel.onSetNow = { nowSet = true }
 
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                var filters by remember { filters }
-
-                StopDetailsPage(
-                    viewModel = viewModel,
-                    allAlerts = null,
-                    filters = filters,
-                    onClose = {},
-                    updateStopFilter = {},
-                    updateTripFilter = {},
-                    updateRouteCardData = { routeCardDataUpdated = true },
-                    tileScrollState = rememberScrollState(),
-                    openModal = {},
-                    openSheetRoute = {},
-                    errorBannerViewModel = errorBannerVM,
-                )
-            }
-
-            LaunchedEffect(null) { viewModel.setRouteCardData(emptyList()) }
+            StopDetailsPage(
+                allAlerts = alerts,
+                filters = filters,
+                onClose = {},
+                updateStopFilter = {},
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                openModal = {},
+                openSheetRoute = {},
+                errorBannerViewModel = koinInject(),
+                stopDetailsViewModel = viewModel,
+            )
         }
 
-        composeTestRule.waitUntil { routeCardDataUpdated }
+        composeTestRule.waitUntilDefaultTimeout { activeSet && alertsSet && filtersSet && nowSet }
 
-        assertTrue(routeCardDataUpdated)
+        assertTrue(activeSet && alertsSet && filtersSet && nowSet)
     }
 }

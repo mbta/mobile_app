@@ -11,13 +11,8 @@ import SwiftUI
 
 struct RouteCardContainer<Content: View>: View {
     let cardData: RouteCardData
-    let onPin: (String) -> Void
-    let pinned: Bool
     let showStopHeader: Bool
     let departureContent: (RouteCardData.RouteStopData) -> Content
-
-    @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,17 +21,7 @@ struct RouteCardContainer<Content: View>: View {
                 routeType: cardData.lineOrRoute.type,
                 backgroundColor: Color(hex: cardData.lineOrRoute.backgroundColor),
                 textColor: Color(hex: cardData.lineOrRoute.textColor),
-                rightContent: {
-                    HStack {
-                        if !enhancedFavorites {
-                            StarButton(
-                                starred: pinned,
-                                color: Color(hex: cardData.lineOrRoute.textColor),
-                                action: { onPin(cardData.lineOrRoute.id) }
-                            )
-                        }
-                    }
-                }
+                rightContent: { EmptyView() }
             )
             .accessibilityElement(children: .contain)
             ForEach(Array(cardData.stopData.enumerated()), id: \.element) { index, stopData in
@@ -61,27 +46,23 @@ struct RouteCard: View {
     let cardData: RouteCardData
     let global: GlobalResponse?
     let now: EasternTimeInstant
-    let onPin: (String) -> Void
-    let pinned: Bool
+    let isFavorite: (RouteStopDirection) -> Bool
     let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let showStopHeader: Bool
 
     @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
     var showStationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     @ScaledMetric private var modeIconHeight: CGFloat = 24
 
     var body: some View {
         RouteCardContainer(cardData: cardData,
-                           onPin: onPin,
-                           pinned: pinned,
                            showStopHeader: showStopHeader) { stopData in
             RouteCardDepartures(
                 stopData: stopData,
                 global: global,
                 now: now,
-                pinned: pinned,
+                isFavorite: isFavorite,
                 pushNavEntry: pushNavEntry
             )
         }
@@ -93,8 +74,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
         cardData: card,
         global: previewData.global,
         now: previewData.now,
-        onPin: { _ in },
-        pinned: false,
+        isFavorite: { _ in false },
         pushNavEntry: { _ in },
         showStopHeader: true
     )

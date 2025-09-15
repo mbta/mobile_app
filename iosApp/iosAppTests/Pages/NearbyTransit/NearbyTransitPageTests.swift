@@ -18,7 +18,6 @@ import XCTest
 
 // swiftlint:disable:next type_body_length
 final class NearbyTransitPageTests: XCTestCase {
-    private let pinnedRoutesRepository = MockPinnedRoutesRepository()
     private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
 
     override func setUp() {
@@ -35,7 +34,7 @@ final class NearbyTransitPageTests: XCTestCase {
         nearbyVM.routeCardData = []
 
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
@@ -84,7 +83,7 @@ final class NearbyTransitPageTests: XCTestCase {
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
@@ -127,7 +126,7 @@ final class NearbyTransitPageTests: XCTestCase {
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
         let sut = NearbyTransitPage(
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: fakeVM,
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
@@ -148,5 +147,21 @@ final class NearbyTransitPageTests: XCTestCase {
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared, getNearbyNotCalledExpectation], timeout: 5)
+    }
+
+    @MainActor func testErrorBanner() {
+        let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
+
+        let sut = NearbyTransitPage(
+            errorBannerVM: MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
+                                                                        errorState: .DataError(messages: [],
+                                                                                               details: [],
+                                                                                               action: {}))),
+            nearbyVM: NearbyViewModel(),
+            viewportProvider: viewportProvider,
+            noNearbyStops: noNearbyStops
+        ).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(ErrorBanner.self))
     }
 }

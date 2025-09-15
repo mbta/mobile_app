@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-data class TileData(
+public data class TileData(
     val route: Route?,
     val headsign: String?,
     val formatted: UpcomingFormat,
@@ -15,18 +15,18 @@ data class TileData(
 ) {
     val id: String = upcoming.id
 
-    fun isSelected(tripFilter: TripDetailsFilter?): Boolean =
+    public fun isSelected(tripFilter: TripDetailsFilter?): Boolean =
         upcoming.trip.id == tripFilter?.tripId &&
             tripFilter.stopSequence?.let { filterSequence ->
                 upcoming.stopSequence?.let { it == filterSequence }
             } ?: true
 
-    companion object {
+    internal companion object {
         fun fromUpcoming(upcoming: UpcomingTrip, route: Route, now: EasternTimeInstant): TileData? {
             val formattedUpcomingTrip =
                 upcoming.format(
                     now,
-                    route.type,
+                    route,
                     context = TripInstantDisplay.Context.StopDetailsFiltered,
                 )
             val formatted =

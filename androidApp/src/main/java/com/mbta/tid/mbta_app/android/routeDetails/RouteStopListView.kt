@@ -30,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -37,7 +38,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
@@ -55,6 +55,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.android.util.labelWithModeIfBus
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
@@ -75,6 +76,7 @@ import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.flow.map
@@ -99,7 +101,7 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     defaultSelectedRouteId: String? = null,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
@@ -154,7 +156,7 @@ fun RouteStopListView(
 @Composable
 fun LoadingRouteStopListView(
     context: RouteDetailsContext,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -215,7 +217,7 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
@@ -270,6 +272,7 @@ fun RouteStopListView(
                         ToastViewModel.ToastAction.Close(
                             onClose = { showFirstTimeFavoritesToast = false }
                         ),
+                    isTip = true,
                 )
             toastViewModel.showToast(toast)
             firstTimeToast = toast
@@ -306,7 +309,6 @@ fun RouteStopListView(
                 },
                 selectedDirection = selectedDirection,
                 context = EditFavoritesContext.Favorites,
-                global = globalData,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
             ) {
@@ -318,6 +320,7 @@ fun RouteStopListView(
     Column {
         SheetHeader(
             title = lineOrRoute.name,
+            titleContentDescription = lineOrRoute.labelWithModeIfBus(LocalContext.current),
             titleColor = Color.fromHex(lineOrRoute.textColor),
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)

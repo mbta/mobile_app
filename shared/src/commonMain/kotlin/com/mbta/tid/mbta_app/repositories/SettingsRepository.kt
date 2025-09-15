@@ -10,14 +10,14 @@ import kotlinx.coroutines.flow.map
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ISettingsRepository {
+public interface ISettingsRepository {
 
-    suspend fun getSettings(): Map<Settings, Boolean>
+    public suspend fun getSettings(): Map<Settings, Boolean>
 
-    suspend fun setSettings(settings: Map<Settings, Boolean>)
+    public suspend fun setSettings(settings: Map<Settings, Boolean>)
 }
 
-class SettingsRepository : ISettingsRepository, KoinComponent {
+internal class SettingsRepository : ISettingsRepository, KoinComponent {
     private val dataStore: DataStore<Preferences> by inject()
 
     override suspend fun getSettings(): Map<Settings, Boolean> {
@@ -35,15 +35,18 @@ class SettingsRepository : ISettingsRepository, KoinComponent {
     }
 }
 
-enum class Settings(val dataStoreKey: Preferences.Key<Boolean>, val override: Boolean? = null) {
+public enum class Settings(
+    internal val dataStoreKey: Preferences.Key<Boolean>,
+    public val override: Boolean? = null,
+) {
     DevDebugMode(booleanPreferencesKey("dev_debug_mode")),
-    EnhancedFavorites(booleanPreferencesKey("enhanced_favorites_feature_flag"), true),
     HideMaps(booleanPreferencesKey("hide_maps")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
+    TrackThisTrip(booleanPreferencesKey("track_this_trip")),
 }
 
-class MockSettingsRepository
+public class MockSettingsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private var settings: Map<Settings, Boolean> = emptyMap(),
@@ -55,5 +58,6 @@ constructor(
         return settings
     }
 
-    override suspend fun setSettings(settings: Map<Settings, Boolean>) = onSaveSettings(settings)
+    override suspend fun setSettings(settings: Map<Settings, Boolean>): Unit =
+        onSaveSettings(settings)
 }

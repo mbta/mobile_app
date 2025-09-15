@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -14,6 +15,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Month
 import org.junit.Rule
@@ -41,12 +43,43 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
         }
 
         composeTestRule.onNodeWithText(stop.name, useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun testDisplayFollowButtonWhenFollowAction() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Stop Name" }
+        val trip = objects.trip()
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                tripId = trip.id
+            }
+        val route = objects.route {}
+        var followTripClicked = false
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip,
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                "",
+                route,
+                TripRouteAccents(route),
+                now,
+                onFollowTrip = { followTripClicked = true },
+            )
+        }
+
+        composeTestRule.onNodeWithText("Follow").performClick()
+        assertTrue(followTripClicked)
     }
 
     @Test
@@ -71,6 +104,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -113,6 +147,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.FinishingAnotherTrip,
                 "",
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -131,7 +166,7 @@ class TripHeaderCardTest {
         val trip = objects.trip()
 
         composeTestRule.setContent {
-            TripHeaderCard(trip, TripHeaderSpec.NoVehicle, "", TripRouteAccents(route), now)
+            TripHeaderCard(trip, TripHeaderSpec.NoVehicle, "", route, TripRouteAccents(route), now)
         }
         composeTestRule
             .onNodeWithText("Location not available yet", useUnmergedTree = true)
@@ -160,6 +195,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -208,6 +244,7 @@ class TripHeaderCardTest {
                     true,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -274,6 +311,7 @@ class TripHeaderCardTest {
                     false,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -314,6 +352,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -384,6 +423,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -444,6 +484,7 @@ class TripHeaderCardTest {
                     false,
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -480,6 +521,7 @@ class TripHeaderCardTest {
                 trip,
                 TripHeaderSpec.VehicleOnTrip(vehicle, otherStop, null, false),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -523,6 +565,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )
@@ -568,6 +611,7 @@ class TripHeaderCardTest {
                     ),
                 ),
                 stop.id,
+                route,
                 TripRouteAccents(route),
                 now,
             )

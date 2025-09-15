@@ -7,19 +7,24 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import dev.mokkery.MockMode
+import dev.mokkery.mock
+import dev.mokkery.verify
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 
@@ -187,7 +192,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
@@ -213,7 +217,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
@@ -240,7 +243,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { true },
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
@@ -267,7 +269,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },
@@ -291,6 +292,8 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
+        loadKoinMocks(TestData)
+
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -298,7 +301,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0, direction1),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = GlobalResponse(TestData),
                 toastViewModel = toastVM,
                 isFavorite = { false },
                 updateFavorites = {},
@@ -309,7 +311,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message ==
                 "<b>Westbound Green Line</b> at <b>Boylston</b> added to Favorites"
         }
@@ -321,6 +323,8 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
+        loadKoinMocks(TestData)
+
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -328,7 +332,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0, direction1),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = GlobalResponse(TestData),
                 toastViewModel = toastVM,
                 isFavorite = { false },
                 updateFavorites = {},
@@ -340,7 +343,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Add"))
         composeTestRule.onNodeWithText("Add").performClick()
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Green Line</b> at <b>Boylston</b> added to Favorites"
         }
     }
@@ -354,6 +357,8 @@ class SaveFavoritesFlowTest {
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
 
+        loadKoinMocks(TestData)
+
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
@@ -361,7 +366,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = GlobalResponse(TestData),
                 toastViewModel = toastVM,
                 isFavorite = { false },
                 updateFavorites = {},
@@ -369,19 +373,19 @@ class SaveFavoritesFlowTest {
             )
         }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             displayedToast?.message == "<b>Outbound 15 bus</b> at <b>Ruggles</b> added to Favorites"
         }
     }
 
     @Test
-    fun testFavoritingToastFallbackText() {
-        val toastVM = MockToastViewModel()
-        var displayedToast: ToastViewModel.Toast? = null
-        toastVM.onShowToast = { displayedToast = it }
+    fun testFavoritingToastFallbackText() = runBlocking {
+        val toastVM = mock<IToastViewModel>(MockMode.autofill)
 
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
+        // no TestData for getting the appropriate labels for this favorite
+        loadKoinMocks()
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -390,15 +394,19 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction0),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 toastViewModel = toastVM,
                 isFavorite = { false },
                 updateFavorites = {},
                 onClose = {},
             )
         }
+        composeTestRule.awaitIdle()
 
-        composeTestRule.waitUntil { displayedToast?.message == "Added to Favorites" }
+        verify {
+            toastVM.showToast(
+                ToastViewModel.Toast("Added to Favorites", duration = ToastViewModel.Duration.Short)
+            )
+        }
     }
 
     @Test
@@ -412,7 +420,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(),
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = {},
                 onClose = { onCloseCalled = true },
@@ -436,7 +443,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 1,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = {},
                 onClose = {},
@@ -455,7 +461,6 @@ class SaveFavoritesFlowTest {
                 directions = listOf(direction1),
                 selectedDirection = 1,
                 context = EditFavoritesContext.StopDetails,
-                global = null,
                 isFavorite = { false },
                 updateFavorites = {},
                 onClose = {},
@@ -479,7 +484,6 @@ class SaveFavoritesFlowTest {
                 directions = directions,
                 selectedDirection = 0,
                 context = EditFavoritesContext.Favorites,
-                global = null,
                 isFavorite = { rsd -> rsd.direction == 1 },
                 updateFavorites = { updateFavoritesCalledFor = it },
                 onClose = { onCloseCalled = true },

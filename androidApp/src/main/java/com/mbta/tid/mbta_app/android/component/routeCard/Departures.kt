@@ -45,7 +45,7 @@ fun Departures(
     stopData: RouteCardData.RouteStopData,
     globalData: GlobalResponse?,
     now: EasternTimeInstant,
-    isFavorite: (RouteStopDirection) -> Boolean,
+    isFavorite: (RouteStopDirection) -> Boolean?,
     analytics: Analytics = koinInject(),
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
@@ -65,7 +65,7 @@ fun Departures(
                             stopData.stop.id,
                             leaf.directionId,
                         )
-                    ),
+                    ) ?: false,
                     leaf.alertsHere().isNotEmpty(),
                     stopData.lineOrRoute.type,
                     noTrips,

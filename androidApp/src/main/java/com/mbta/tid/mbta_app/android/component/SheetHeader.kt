@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextLayoutResult
@@ -41,6 +42,7 @@ fun Float.toDp(context: Context): Dp = (this / context.resources.displayMetrics.
 fun SheetHeader(
     modifier: Modifier = Modifier,
     title: String? = null,
+    titleContentDescription: String? = null,
     titleColor: Color = colorResource(R.color.text),
     closeText: String? = null,
     onBack: (() -> Unit)? = null,
@@ -92,7 +94,10 @@ fun SheetHeader(
                 title,
                 color = titleColor,
                 modifier =
-                    Modifier.semantics { heading() }
+                    Modifier.semantics {
+                            heading()
+                            contentDescription = titleContentDescription ?: title
+                        }
                         .padding(top = textPadding)
                         .padding(start = if (onBack == null) 8.dp else 0.dp)
                         .weight(1f)

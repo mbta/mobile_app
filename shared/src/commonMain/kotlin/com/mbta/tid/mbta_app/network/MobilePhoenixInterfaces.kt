@@ -2,50 +2,62 @@ package com.mbta.tid.mbta_app.network
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 
-enum class PhoenixPushStatus(val value: String) {
+public enum class PhoenixPushStatus(public val value: String) {
     Ok("ok"),
     Error("error"),
     Timeout("timeout"),
 }
 
-interface PhoenixMessage {
-    val subject: String
-    val body: Map<String, Any?>
-    val jsonBody: String?
+public interface PhoenixMessage {
+    public val subject: String
+    public val body: Map<String, Any?>
+    public val jsonBody: String?
 }
 
-interface PhoenixPush {
-    fun receive(status: PhoenixPushStatus, callback: ((PhoenixMessage) -> Unit)): PhoenixPush
+public interface PhoenixPush {
+    public fun receive(status: PhoenixPushStatus, callback: ((PhoenixMessage) -> Unit)): PhoenixPush
 }
 
-interface PhoenixChannel {
-    fun onEvent(event: String, callback: ((PhoenixMessage) -> Unit))
+// if this is part of the interface then it’s not inherited by the Swift extension
+public fun PhoenixPush.receiveAll(
+    onOk: (PhoenixMessage) -> Unit,
+    onError: (PhoenixMessage) -> Unit,
+    onTimeout: (PhoenixMessage) -> Unit,
+): PhoenixPush =
+    receive(PhoenixPushStatus.Ok, onOk)
+        .receive(PhoenixPushStatus.Error, onError)
+        .receive(PhoenixPushStatus.Timeout, onTimeout)
 
-    fun onFailure(callback: ((message: PhoenixMessage) -> Unit))
+public interface PhoenixChannel {
+    public fun onEvent(event: String, callback: ((PhoenixMessage) -> Unit))
 
-    fun onDetach(callback: ((PhoenixMessage) -> Unit))
+    public fun onFailure(callback: ((message: PhoenixMessage) -> Unit))
 
-    fun attach(): PhoenixPush
+    public fun onDetach(callback: ((PhoenixMessage) -> Unit))
 
-    fun detach(): PhoenixPush
+    public fun attach(): PhoenixPush
+
+    public fun detach(): PhoenixPush
 }
 
-interface PhoenixSocket {
-    fun onAttach(callback: () -> Unit): String
+public interface PhoenixSocket {
+    public fun onAttach(callback: () -> Unit): String
 
-    fun onDetach(callback: () -> Unit): String
+    public fun onDetach(callback: () -> Unit): String
 
-    fun attach()
+    public fun attach()
 
-    fun getChannel(topic: String, params: Map<String, Any>): PhoenixChannel
+    public fun getChannel(topic: String, params: Map<String, Any>): PhoenixChannel
 
-    fun detach()
+    public fun detach()
 }
 
-class MockPhoenixSocket
+public class MockPhoenixSocket
 @DefaultArgumentInterop.Enabled
-constructor(val onAttachCallback: () -> Unit = {}, val onDetatchCallback: () -> Unit = {}) :
-    PhoenixSocket {
+constructor(
+    private val onAttachCallback: () -> Unit = {},
+    private val onDetatchCallback: () -> Unit = {},
+) : PhoenixSocket {
     override fun onAttach(callback: () -> Unit): String {
         return "attached"
     }
@@ -67,7 +79,7 @@ constructor(val onAttachCallback: () -> Unit = {}, val onDetatchCallback: () -> 
     }
 }
 
-class MockPhoenixChannel : PhoenixChannel {
+internal class MockPhoenixChannel : PhoenixChannel {
     override fun onEvent(event: String, callback: (PhoenixMessage) -> Unit) {}
 
     override fun onFailure(callback: (message: PhoenixMessage) -> Unit) {}
@@ -83,7 +95,7 @@ class MockPhoenixChannel : PhoenixChannel {
     }
 }
 
-class MockPush : PhoenixPush {
+internal class MockPush : PhoenixPush {
     override fun receive(
         status: PhoenixPushStatus,
         callback: (PhoenixMessage) -> Unit,

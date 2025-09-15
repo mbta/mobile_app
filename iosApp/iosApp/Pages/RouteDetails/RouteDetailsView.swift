@@ -15,17 +15,14 @@ struct RouteDetailsView: View {
     let onOpenStopDetails: (String) -> Void
     let onBack: () -> Void
     let onClose: () -> Void
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
-    let globalRepository: IGlobalRepository = RepositoryDI().global
-    var errorBannerRepository = RepositoryDI().errorBanner
+    @State private var lineOrRoute: RouteCardData.LineOrRoute?
 
     var body: some View {
         ScrollView([]) {
-            if let globalData, let lineOrRoute = globalData.getLineOrRoute(
-                lineOrRouteId: selectionId
-            ) {
+            if let globalData, let lineOrRoute {
                 RouteStopListView(
                     lineOrRoute: lineOrRoute,
                     context: context,
@@ -46,29 +43,9 @@ struct RouteDetailsView: View {
                 loadingBody()
             }
         }
-        .onAppear {
-            getGlobal()
-        }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-        }
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "NearbyTransitView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: { @MainActor in getGlobal() }
-            )
+        .global($globalData, errorKey: "RouteDetailsView")
+        .onChange(of: globalData) { globalData in
+            lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
         }
     }
 
@@ -104,7 +81,14 @@ struct RouteDetailsView: View {
                 .resizable().frame(width: 8, height: 14).padding(.trailing, 8)
                 .foregroundStyle(Color.deemphasized)
         case let .favorites(isFavorited: isFavorited, onTapStar: _):
-            StarIcon(starred: isFavorited, color: Color.text)
+            var starColor: Color {
+                if let lineOrRoute {
+                    Color(hex: lineOrRoute.backgroundColor)
+                } else {
+                    Color.text
+                }
+            }
+            StarIcon(starred: isFavorited, color: starColor)
                 .padding(.trailing, 8)
                 .accessibilityLabel(isFavorited ? Text("favorite stop") : Text(verbatim: ""))
         }

@@ -6,25 +6,28 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
-import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.network.receiveAll
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
 
-interface ITripPredictionsRepository {
-    fun connect(tripId: String, onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit)
+public interface ITripPredictionsRepository {
+    public fun connect(
+        tripId: String,
+        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
+    )
 
-    var lastUpdated: EasternTimeInstant?
+    public var lastUpdated: EasternTimeInstant?
 
-    fun shouldForgetPredictions(predictionCount: Int): Boolean
+    public fun shouldForgetPredictions(predictionCount: Int): Boolean
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class TripPredictionsRepository(private val socket: PhoenixSocket) :
+internal class TripPredictionsRepository(private val socket: PhoenixSocket) :
     ITripPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
@@ -50,13 +53,14 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
             ?.attach()
-            ?.receive(PhoenixPushStatus.Ok) { message ->
-                println("joined channel ${message.subject}")
-                handleNewDataMessage(message, onReceive)
-            }
-            ?.receive(PhoenixPushStatus.Error) {
-                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
-            }
+            ?.receiveAll(
+                onOk = { message ->
+                    println("joined channel ${message.subject}")
+                    handleNewDataMessage(message, onReceive)
+                },
+                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
+                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
+            )
     }
 
     override fun disconnect() {
@@ -87,12 +91,12 @@ class TripPredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockTripPredictionsRepository
+public class MockTripPredictionsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    var onConnect: () -> Unit = {},
-    var onDisconnect: () -> Unit = {},
-    var response: PredictionsStreamDataResponse =
+    internal var onConnect: () -> Unit = {},
+    internal var onDisconnect: () -> Unit = {},
+    internal var response: PredictionsStreamDataResponse =
         PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
 ) : ITripPredictionsRepository {
 
@@ -106,7 +110,7 @@ constructor(
 
     override var lastUpdated: EasternTimeInstant? = null
 
-    override fun shouldForgetPredictions(predictionCount: Int) = false
+    override fun shouldForgetPredictions(predictionCount: Int): Boolean = false
 
     override fun disconnect() {
         onDisconnect()

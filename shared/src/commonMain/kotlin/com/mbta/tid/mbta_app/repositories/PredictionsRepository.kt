@@ -8,34 +8,34 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
-import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.network.receiveAll
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
 
-interface IPredictionsRepository {
-    fun connect(
+public interface IPredictionsRepository {
+    public fun connect(
         stopIds: List<String>,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     )
 
-    fun connectV2(
+    public fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
 
-    var lastUpdated: EasternTimeInstant?
+    public var lastUpdated: EasternTimeInstant?
 
-    fun shouldForgetPredictions(predictionCount: Int): Boolean
+    public fun shouldForgetPredictions(predictionCount: Int): Boolean
 
-    fun disconnect()
+    public fun disconnect()
 }
 
-class PredictionsRepository(private val socket: PhoenixSocket) :
+internal class PredictionsRepository(private val socket: PhoenixSocket) :
     IPredictionsRepository, KoinComponent {
 
     var channel: PhoenixChannel? = null
@@ -62,13 +62,14 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
             ?.attach()
-            ?.receive(PhoenixPushStatus.Ok) { message ->
-                println("joined channel ${message.subject}")
-                handleNewDataMessage(message, onReceive)
-            }
-            ?.receive(PhoenixPushStatus.Error) {
-                onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
-            }
+            ?.receiveAll(
+                onOk = { message ->
+                    println("joined channel ${message.subject}")
+                    handleNewDataMessage(message, onReceive)
+                },
+                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
+                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
+            )
     }
 
     override fun connectV2(
@@ -87,13 +88,14 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
         channel?.onDetach { message -> println("leaving channel ${message.subject}") }
         channel
             ?.attach()
-            ?.receive(PhoenixPushStatus.Ok) { message ->
-                println("joined channel ${message.subject}")
-                handleV2JoinMessage(message, onJoin)
-            }
-            ?.receive(PhoenixPushStatus.Error) {
-                onJoin(ApiResult.Error(message = SocketError.RECEIVED_ERROR))
-            }
+            ?.receiveAll(
+                onOk = { message ->
+                    println("joined channel ${message.subject}")
+                    handleV2JoinMessage(message, onJoin)
+                },
+                onError = { onJoin(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
+                onTimeout = { onJoin(ApiResult.Error(message = SocketError.TIMEOUT)) },
+            )
     }
 
     override fun disconnect() {
@@ -176,18 +178,18 @@ class PredictionsRepository(private val socket: PhoenixSocket) :
     }
 }
 
-class MockPredictionsRepository
+public class MockPredictionsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    val onConnect: () -> Unit = {},
-    val onConnectV2: (List<String>) -> Unit = {},
-    val onDisconnect: () -> Unit = {},
+    internal val onConnect: () -> Unit = {},
+    internal val onConnectV2: (List<String>) -> Unit = {},
+    internal val onDisconnect: () -> Unit = {},
     private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
     private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null,
 ) : IPredictionsRepository {
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         onConnect: () -> Unit = {},
         onConnectV2: (List<String>) -> Unit = {},
         onDisconnect: () -> Unit = {},
@@ -222,6 +224,7 @@ constructor(
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
+        lastUpdated = EasternTimeInstant.now()
         onConnectV2(stopIds)
         if (connectV2Outcome != null) {
             onJoin(connectV2Outcome)
@@ -229,15 +232,16 @@ constructor(
         this.onMessage = onMessage
     }
 
-    var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
+    internal var onMessage: ((ApiResult<PredictionsByStopMessageResponse>) -> Unit)? = null
 
-    fun sendMessage(message: PredictionsByStopMessageResponse) {
+    internal fun sendMessage(message: PredictionsByStopMessageResponse) {
+        lastUpdated = EasternTimeInstant.now()
         onMessage?.invoke(ApiResult.Ok(message))
     }
 
     override var lastUpdated: EasternTimeInstant? = null
 
-    override fun shouldForgetPredictions(predictionCount: Int) = false
+    override fun shouldForgetPredictions(predictionCount: Int): Boolean = false
 
     override fun disconnect() {
         onDisconnect()

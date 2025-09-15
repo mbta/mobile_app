@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StopResult(
+public data class StopResult(
     val id: String,
     val rank: Int,
     val name: String,
@@ -13,4 +13,4 @@ data class StopResult(
     val routes: List<StopResultRoute>,
 )
 
-@Serializable data class StopResultRoute(val type: RouteType, val icon: String)
+@Serializable public data class StopResultRoute(val type: RouteType, val icon: String)

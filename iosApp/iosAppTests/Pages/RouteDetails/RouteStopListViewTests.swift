@@ -55,7 +55,7 @@ final class RouteStopListViewTests: XCTestCase {
             onGet: { _, _ in gotRouteStops.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RouteStopListView(
             lineOrRoute: .route(mainRoute),
@@ -136,7 +136,7 @@ final class RouteStopListViewTests: XCTestCase {
             onGet: { routeId, _ in lastSelectedRoute = routeId; getRouteStopsSubject.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RouteStopListView(
             lineOrRoute: .line(line, [route1, route2, route3]),
@@ -204,7 +204,7 @@ final class RouteStopListViewTests: XCTestCase {
             onGet: { _, _ in gotRouteStops.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RouteStopListView(
             lineOrRoute: .route(mainRoute),
@@ -264,7 +264,7 @@ final class RouteStopListViewTests: XCTestCase {
             onGet: { _, _ in gotRouteStops.send() }
         )
         HelpersKt.loadKoinMocks(repositories: repositories)
-        let errorBannerVM = ErrorBannerViewModel(errorRepository: MockErrorBannerStateRepository())
+        let errorBannerVM = ViewModelDI().errorBanner
 
         let sut = RouteStopListView(
             lineOrRoute: .route(mainRoute),

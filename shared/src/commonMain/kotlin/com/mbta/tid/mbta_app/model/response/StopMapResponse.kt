@@ -5,10 +5,10 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StopMapResponse(
+public data class StopMapResponse(
     @SerialName("map_friendly_route_shapes")
     val routeShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-    @SerialName("child_stops") val childStops: Map<String, Stop>,
+    @SerialName("child_stops") internal val childStops: Map<String, Stop>,
 ) {
-    override fun toString() = "[StopMapResponse]"
+    override fun toString(): String = "[StopMapResponse]"
 }

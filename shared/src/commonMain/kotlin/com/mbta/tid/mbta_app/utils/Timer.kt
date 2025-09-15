@@ -16,9 +16,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import org.koin.compose.koinInject
 
-class ClockTickHandler {
+internal class ClockTickHandler {
     companion object {
         private val _clockFlow = MutableSharedFlow<EasternTimeInstant>(replay = 0)
         var job: Job? = null
@@ -28,8 +27,10 @@ class ClockTickHandler {
                 job =
                     CoroutineScope(Dispatchers.IO).launch {
                         while (true) {
-                            _clockFlow.emit(EasternTimeInstant.now(clock))
-                            delay(500)
+                            val now = EasternTimeInstant.now(clock)
+                            _clockFlow.emit(now)
+                            val untilNextSecond = 1000 - now.toEpochMilliseconds() % 1000
+                            delay(untilNextSecond)
                         }
                     }
             }
@@ -39,9 +40,9 @@ class ClockTickHandler {
 }
 
 @Composable
-fun timer(
+internal fun timer(
     updateInterval: Duration = 5.seconds,
-    clock: Clock = koinInject(),
+    clock: Clock = Clock.System,
 ): State<EasternTimeInstant> {
     val timerFlow = remember {
         ClockTickHandler.getClockFlow(clock).filter {

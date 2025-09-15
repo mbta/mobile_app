@@ -11,16 +11,18 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -51,7 +53,12 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
@@ -60,9 +67,9 @@ class SubscribeToPredictionsTest {
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
-        composeTestRule.waitUntil { connectProps == listOf("place-a") }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == listOf("place-a") }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             predictions != null &&
                 predictions == predictionsOnJoin.toPredictionsStreamDataResponse()
         }
@@ -70,9 +77,9 @@ class SubscribeToPredictionsTest {
         assertEquals(0, disconnectCount)
 
         stopIds.value = listOf("place-b")
-        composeTestRule.waitUntil { disconnectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 1 }
 
-        composeTestRule.waitUntil { connectProps == listOf("place-b") }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == listOf("place-b") }
     }
 
     @Test
@@ -94,7 +101,12 @@ class SubscribeToPredictionsTest {
         var stopIds = mutableStateOf(listOf("place-a"))
         var predictions: PredictionsStreamDataResponse? =
             PredictionsStreamDataResponse(ObjectCollectionBuilder())
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
@@ -105,17 +117,17 @@ class SubscribeToPredictionsTest {
             }
         }
 
-        composeTestRule.waitUntil { connectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 1 }
         assertEquals(0, disconnectCount)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        composeTestRule.waitUntil { disconnectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 1 }
         assertEquals(1, connectCount)
 
         composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        composeTestRule.waitUntil { connectCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 2 }
         assertEquals(1, disconnectCount)
     }
 
@@ -133,7 +145,12 @@ class SubscribeToPredictionsTest {
             )
 
         var predictions: PredictionsStreamDataResponse? = null
-        val errorBannerViewModel = ErrorBannerViewModel(false, MockErrorBannerStateRepository())
+        val errorBannerViewModel =
+            ErrorBannerViewModel(
+                MockErrorBannerStateRepository(),
+                MockSentryRepository(),
+                Clock.System,
+            )
 
         composeTestRule.setContent {
             val predictionsVM =
@@ -141,7 +158,7 @@ class SubscribeToPredictionsTest {
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
-        composeTestRule.waitUntil { predictions != null }
+        composeTestRule.waitUntilDefaultTimeout { predictions != null }
         assertNotNull(predictions)
         assertTrue(connected)
     }
@@ -162,7 +179,8 @@ class SubscribeToPredictionsTest {
             MockErrorBannerStateRepository(
                 onCheckPredictionsStale = { checkPredictionsStaleCount += 1 }
             )
-        val errorBannerViewModel = ErrorBannerViewModel(false, mockErrorRepo)
+        val errorBannerViewModel =
+            ErrorBannerViewModel(mockErrorRepo, MockSentryRepository(), Clock.System)
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }

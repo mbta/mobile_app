@@ -6,12 +6,12 @@ import com.mbta.tid.mbta_app.map.style.downcastToResolvedImage
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.StopAlertState
 
-object AlertIcons {
-    val alertIconPrefix = "alert-"
-    val alertZoomClosePrefix = "large-"
-    val alertZoomWidePrefix = "small-"
+public object AlertIcons {
+    internal val alertIconPrefix = "alert-"
+    internal val alertZoomClosePrefix = "large-"
+    internal val alertZoomWidePrefix = "small-"
 
-    val all: List<String> =
+    public val all: List<String> =
         listOf(alertZoomClosePrefix, alertZoomWidePrefix).flatMap { zoomPrefix ->
             MapStopRoute.entries.flatMap { routeType ->
                 StopAlertState.entries
@@ -62,7 +62,7 @@ object AlertIcons {
         )
     }
 
-    fun getAlertLayerIcon(index: Int, forBus: Boolean = false): Exp<ResolvedImage> {
+    internal fun getAlertLayerIcon(index: Int, forBus: Boolean = false): Exp<ResolvedImage> {
         return Exp.step(
                 Exp.zoom(),
                 getAlertIconName(alertZoomWidePrefix, index, forBus),

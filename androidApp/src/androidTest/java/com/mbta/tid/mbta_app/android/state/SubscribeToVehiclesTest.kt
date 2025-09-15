@@ -8,10 +8,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.runComposeUiTest
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -20,6 +20,9 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
+import com.mbta.tid.mbta_app.viewModel.RouteCardDataViewModel
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +34,7 @@ class SubscribeToVehiclesTest {
     // Test structure based on lifecycle tests:
     // https://github.com/androidx/androidx/blob/0b709f31b71110fe671ed8b4c03f96ad30a0cd37/lifecycle/lifecycle-runtime-compose/src/androidInstrumentedTest/kotlin/androidx/lifecycle/compose/LifecycleEffectTest.kt#L247
     @Test
-    fun testSubscribeToVehicles() = runComposeUiTest {
+    fun testSubscribeToVehicles() = runTest {
         val vehicle =
             ObjectCollectionBuilder().vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
         var connectProps: Pair<String, Int>? = null
@@ -46,20 +49,20 @@ class SubscribeToVehiclesTest {
 
         var stateFilter = mutableStateOf(StopDetailsFilter("route_1", 1))
 
-        setContent {
+        composeTestRule.setContent {
             var filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
+            vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
         }
 
-        waitUntil { connectProps == Pair("route_1", 1) }
-        waitUntil { listOf(vehicle) == vehicles }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair("route_1", 1) }
+        composeTestRule.waitUntilDefaultTimeout { listOf(vehicle) == vehicles }
 
-        runOnUiThread { stateFilter.value = StopDetailsFilter("route_2", 1) }
-        waitUntil { connectProps == Pair("route_2", 1) }
+        composeTestRule.runOnUiThread { stateFilter.value = StopDetailsFilter("route_2", 1) }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair("route_2", 1) }
     }
 
     @Test
-    fun testDisconnectsOnPause() = runComposeUiTest {
+    fun testDisconnectsOnPause() = runTest {
         val lifecycleOwner = TestLifecycleOwner(Lifecycle.State.RESUMED)
 
         val vehicle =
@@ -78,32 +81,32 @@ class SubscribeToVehiclesTest {
 
         var stateFilter = mutableStateOf(StopDetailsFilter("route_1", 1))
 
-        setContent {
+        composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var filter by remember { stateFilter }
-                vehicles = subscribeToVehicles(filter, null, vehiclesRepo)
+                vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
             }
         }
 
-        waitUntil { connectCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 1 }
         // Disconnect called before connecting
         assertEquals(1, disconnectCount)
 
-        runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE) }
 
-        waitUntil { disconnectCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 2 }
         assertEquals(2, disconnectCount)
         assertEquals(1, connectCount)
 
-        runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
+        composeTestRule.runOnIdle { lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_RESUME) }
 
-        waitUntil { disconnectCount == 3 }
-        waitUntil { connectCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { disconnectCount == 3 }
+        composeTestRule.waitUntilDefaultTimeout { connectCount == 2 }
         assertEquals(2, connectCount)
     }
 
     @Test
-    fun testFiltersIrrelevantVehicles() = runComposeUiTest {
+    fun testFiltersIrrelevantVehicles() = runTest {
         val objects = ObjectCollectionBuilder()
 
         val route1 = objects.route { id = "A" }
@@ -165,12 +168,15 @@ class SubscribeToVehiclesTest {
 
         val stateFilter = mutableStateOf(StopDetailsFilter(line.id, 0))
 
-        setContent {
+        val routeCardDataVM =
+            MockRouteCardDataViewModel(RouteCardDataViewModel.State(routeCardData))
+
+        composeTestRule.setContent {
             val filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, routeCardData, vehiclesRepo)
+            vehicles = subscribeToVehicles(filter, routeCardDataVM, vehiclesRepo)
         }
 
-        waitUntil { connectProps == Pair(line.id, 0) }
-        waitUntil { listOf(vehicle2) == vehicles }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(line.id, 0) }
+        composeTestRule.waitUntilDefaultTimeout { listOf(vehicle2) == vehicles }
     }
 }

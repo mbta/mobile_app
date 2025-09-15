@@ -107,13 +107,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -145,13 +146,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 
@@ -166,6 +168,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [updateNowExp], timeout: 2)
     }
 
+    @MainActor
     func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
@@ -198,6 +201,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 7)
         })
 
+        loadKoinMocks(objects: objects)
+
         let leaf = makeLeaf(
             line: line,
             routes: [routeB, routeC],
@@ -207,9 +212,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             objects: objects
         )
 
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = .init(objects: objects)
-
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
             stopFilter: .init(routeId: line.id, directionId: 0),
@@ -217,21 +219,27 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
-        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        )
 
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(text: trip1.headsign))
-        XCTAssertNotNil(try sut.inspect().find(DepartureTile.self).find(RoutePill.self))
-        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
-        XCTAssertNotNil(try sut.inspect().find(text: "3 min"))
-        XCTAssertNotNil(try sut.inspect().find(text: "7 min"))
+        let departuresExp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(DepartureTile.self).find(text: trip1.headsign))
+            XCTAssertNotNil(try view.find(DepartureTile.self).find(RoutePill.self))
+            XCTAssertNotNil(try view.find(text: "ARR"))
+            XCTAssertNotNil(try view.find(text: "3 min"))
+            XCTAssertNotNil(try view.find(text: "7 min"))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        wait(for: [departuresExp], timeout: 2)
     }
 
     func testShowsTripDetails() throws {
@@ -271,13 +279,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
@@ -328,13 +337,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
@@ -358,19 +368,80 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: .now(),
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
         XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(StopDetailsNoTripCard.self))
+    }
+
+    @MainActor
+    func testSetsAlertSummaries() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = EasternTimeInstant.now()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.header = "Fuchsia Line suspended from Here to There"
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
+        }
+
+        // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
+        // skipped
+        let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { _ in }
+            prediction.departureTime = now.plus(seconds: 15)
+        })
+
+        let stopFilter = StopDetailsFilter(routeId: route.id, directionId: 0)
+
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
+
+        loadKoinMocks(objects: objects)
+
+        let stopDetailsVM = MockStopDetailsViewModel()
+
+        let summarySetExp = expectation(description: "summaries set with expected value")
+
+        stopDetailsVM.onSetAlertSummaries = { summaries in
+            if summaries.keys.contains(alert.id) {
+                summarySetExp.fulfill()
+            }
+        }
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: stopFilter,
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            alertSummaries: [:],
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        )
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+        wait(for: [summarySetExp], timeout: 1)
     }
 
     @MainActor
@@ -382,6 +453,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
@@ -391,35 +466,33 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let nearbyVM = NearbyViewModel()
-
-        let stopDetailsVM: StopDetailsViewModel = .init()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
+        let stopFilter = StopDetailsFilter(routeId: route.id, directionId: 0)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
+        loadKoinMocks(objects: objects)
+
+        let nearbyVM = NearbyViewModel()
+
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
+            stopFilter: stopFilter,
             tripFilter: nil,
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 
-        let departureTileExp = sut.inspection.inspect { _ in
-            XCTAssertThrowsError(try sut.inspect().find(DepartureTile.self))
-        }
-
-        let alertCardExp = sut.inspection.inspect(after: 1) { view in
+        let alertCardExp = sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(AlertCard.self))
             XCTAssertNotNil(try view.find(text: "Suspension"))
             XCTAssertNotNil(try view.find(text: alert.header!))
@@ -431,7 +504,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         }
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        wait(for: [departureTileExp, alertCardExp], timeout: 2)
+        wait(for: [alertCardExp], timeout: 2)
     }
 
     @MainActor
@@ -449,10 +522,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let nearbyVM = NearbyViewModel()
+        loadKoinMocks(objects: objects)
 
-        let stopDetailsVM: StopDetailsViewModel = .init()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
+        let nearbyVM = NearbyViewModel()
 
         let leaf = makeLeaf(
             route: route,
@@ -469,13 +541,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 
@@ -523,8 +596,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         })
 
         let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.setAlertSummaries([alert.id: nil])
 
         let leaf = makeLeaf(
             route: route,
@@ -542,13 +613,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
@@ -574,8 +646,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.trip = objects.trip { _ in }
             prediction.departureTime = now.plus(seconds: 15)
         })
-        let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], objects: objects)
 
@@ -586,13 +656,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [:],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
@@ -622,9 +693,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let nearbyVM = NearbyViewModel()
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
+        loadKoinMocks(objects: objects)
 
         let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip], alerts: [alert], objects: objects)
 
@@ -635,13 +704,14 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [alert.id: nil],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
-            nearbyVM: nearbyVM,
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 
@@ -703,6 +773,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             }
         })
 
+        loadKoinMocks(objects: objects)
+
         let global = GlobalResponse(objects: objects)
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
             stopIds: [stop.id] + stop.childStopIds,
@@ -712,14 +784,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             predictions: PredictionsStreamDataResponse(objects: objects),
             alerts: alertResponse,
             now: now,
-            pinnedRoutes: [],
             context: .stopDetailsFiltered
         )!.first!
         let routeStopData = routeCardData.stopData.first!
         let leaf = routeStopData.data.first { $0.directionId == 0 }!
-
-        let stopDetailsVM = StopDetailsViewModel()
-        stopDetailsVM.global = GlobalResponse(objects: objects)
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -728,13 +796,18 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
+            alertSummaries: [alert.id: AlertSummary(
+                effect: .shuttle,
+                location: AlertSummary.LocationSingleStop(stopName: stop.name),
+                timeframe: nil
+            )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,
             now: now,
-            errorBannerVM: .init(),
+            errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
-            mapVM: .init(),
-            stopDetailsVM: stopDetailsVM,
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
             viewportProvider: .init()
         )
 

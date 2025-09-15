@@ -13,30 +13,25 @@ import os
 import Shared
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 struct NearbyTransitView: View {
     var analytics: Analytics = AnalyticsProvider.shared
-    var togglePinnedUsecase = UsecaseDI().toggledPinnedRouteUsecase
-    var pinnedRouteRepository = RepositoryDI().pinnedRoutes
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
-    @Binding var isReturningFromBackground: Bool
-    var globalRepository = RepositoryDI().global
+    let setIsReturningFromBackground: (Bool) -> Void
+    @State var favorites: Favorites = LoadedFavorites.last
+    @State var loadingFavorites = true
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
     @State var now = Date.now
-    @State var pinnedRoutes: Set<String> = []
     @State var predictionsByStop: PredictionsByStopJoinResponse?
+
     var errorBannerRepository = RepositoryDI().errorBanner
     let noNearbyStops: () -> NoNearbyStopsView
 
     let inspection = Inspection<Self>()
     let scrollSubject = PassthroughSubject<String, Never>()
-
-    @EnvironmentObject var settingsCache: SettingsCache
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
 
     struct RouteCardParams: Equatable {
         let state: NearbyViewModel.NearbyTransitState
@@ -45,7 +40,6 @@ struct NearbyTransitView: View {
         let predictions: PredictionsByStopJoinResponse?
         let alerts: AlertsStreamDataResponse?
         let now: Date
-        let pinnedRoutes: Set<String>
     }
 
     var body: some View {
@@ -58,6 +52,8 @@ struct NearbyTransitView: View {
                 loadingBody()
             }
         }
+        .favorites($favorites, awaitingUpdate: $loadingFavorites)
+        .global($globalData, errorKey: "NearbyTransitView")
         .onAppear {
             loadEverything()
             didAppear?(self)
@@ -84,7 +80,6 @@ struct NearbyTransitView: View {
             predictions: predictionsByStop,
             alerts: nearbyVM.alerts,
             now: now,
-            pinnedRoutes: pinnedRoutes
         )) { newParams in
             DispatchQueue.main.async {
                 nearbyVM.loadRouteCardData(
@@ -94,7 +89,6 @@ struct NearbyTransitView: View {
                     predictions: newParams.predictions,
                     alerts: newParams.alerts,
                     now: newParams.now,
-                    pinnedRoutes: enhancedFavorites ? [] : newParams.pinnedRoutes
                 )
             }
         }
@@ -121,7 +115,7 @@ struct NearbyTransitView: View {
             onInactive: leavePredictions,
             onBackground: {
                 leavePredictions()
-                isReturningFromBackground = true
+                setIsReturningFromBackground(true)
             }
         )
     }
@@ -141,8 +135,7 @@ struct NearbyTransitView: View {
                                 cardData: cardData,
                                 global: global,
                                 now: now.toEasternInstant(),
-                                onPin: { id in toggledPinnedRoute(id) },
-                                pinned: pinnedRoutes.contains(cardData.lineOrRoute.id),
+                                isFavorite: { favorites.isFavorite($0) },
                                 pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                 showStopHeader: true
                             )
@@ -168,8 +161,7 @@ struct NearbyTransitView: View {
                         cardData: LoadingPlaceholders.shared.nearbyRoute(),
                         global: globalData,
                         now: now.toEasternInstant(),
-                        onPin: { _ in },
-                        pinned: false,
+                        isFavorite: { _ in false },
                         pushNavEntry: { _ in },
                         showStopHeader: true
                     )
@@ -185,36 +177,9 @@ struct NearbyTransitView: View {
     var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
-        getGlobal()
         getNearby(location: location, globalData: globalData)
         joinPredictions(nearbyVM.nearbyState.stopIds)
-        updatePinnedRoutes()
         getSchedule()
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-            Task {
-                // this should be handled by the onChange but in tests it just isn't
-                getNearby(location: location, globalData: globalData)
-            }
-        }
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorBannerRepository,
-                errorKey: "NearbyTransitView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: { @MainActor in loadEverything() }
-            )
-        }
     }
 
     func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
@@ -234,7 +199,6 @@ struct NearbyTransitView: View {
         Task {
             guard let stopIds = nearbyVM.nearbyState.stopIds else { return }
             await fetchApi(
-                errorBannerRepository,
                 errorKey: "NearbyTransitView.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },
                 onSuccess: { scheduleResponse = $0 },
@@ -253,7 +217,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
-                isReturningFromBackground = false
+                setIsReturningFromBackground(false)
             }
         }, onMessage: { outcome in
             DispatchQueue.main.async {
@@ -269,7 +233,7 @@ struct NearbyTransitView: View {
                     checkPredictionsStale()
                 case .error: break
                 }
-                isReturningFromBackground = false
+                setIsReturningFromBackground(false)
             }
 
         })
@@ -277,34 +241,6 @@ struct NearbyTransitView: View {
 
     func leavePredictions() {
         predictionsRepository.disconnect()
-    }
-
-    func updatePinnedRoutes() {
-        Task {
-            do {
-                pinnedRoutes = try await pinnedRouteRepository.getPinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getPinnedRoutes shouldn't actually fail
-                debugPrint(error)
-            }
-        }
-    }
-
-    func toggledPinnedRoute(_ routeId: String) {
-        Task {
-            do {
-                let pinned = try await togglePinnedUsecase.execute(route: routeId).boolValue
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: routeId)
-                updatePinnedRoutes()
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // execute shouldn't actually fail
-                debugPrint(error)
-            }
-        }
     }
 
     private func checkPredictionsStale() {

@@ -11,7 +11,7 @@ import Shared
 import SwiftUI
 
 struct FavoritesView: View {
-    var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -22,6 +22,8 @@ struct FavoritesView: View {
     var globalRepository = RepositoryDI().global
     let inspection = Inspection<Self>()
     @State var now = Date.now
+
+    @ScaledMetric private var editButtonHeight: CGFloat = 32
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -34,7 +36,8 @@ struct FavoritesView: View {
                             string: NSLocalizedString("Edit", comment: "Button text to enter edit favorites flow"),
                             backgroundColor: Color.translucentContrast,
                             textColor: Color.fill2,
-                            height: 32
+                            height: editButtonHeight,
+                            width: 64
                         ) {
                             nearbyVM.pushNavEntry(.editFavorites)
                         }
@@ -55,12 +58,12 @@ struct FavoritesView: View {
                 },
                 global: globalData,
                 now: now,
-                isPinned: { _ in false },
-                onPin: { _ in },
+                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0 }) ?? false },
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )
         }
+        .global($globalData, errorKey: "FavoritesView")
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
@@ -68,7 +71,6 @@ struct FavoritesView: View {
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toEasternInstant())
             favoritesVM.reloadFavorites()
-            loadEverything()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .task {
@@ -83,7 +85,7 @@ struct FavoritesView: View {
             }
         }
         .onChange(of: favoritesVMState.awaitingPredictionsAfterBackground) {
-            errorBannerVM.loadingWhenPredictionsStale = $0
+            errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0)
         }
         .onChange(of: favoritesVMState.loadedLocation) {
             nearbyVM.lastLoadedLocation = $0?.coordinate
@@ -112,41 +114,17 @@ struct FavoritesView: View {
         )
     }
 
-    private func loadEverything() {
-        getGlobal()
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            self.globalData = globalData
-        }
-    }
-
     func showFirstTimeToast() {
         toastVM.showToast(toast:
             .init(message:
                 NSLocalizedString("Favorite stops replaces the prior starred routes feature.",
                                   comment: "Explainer the first time a user sees the new favorites feature"),
                 duration: .indefinite,
+                isTip: false,
                 action: ToastViewModel
                     .ToastActionClose(onClose: { favoritesVM.setIsFirstExposureToNewFavorites(isFirst: false)
                         toastVM.hideToast()
                     })))
-    }
-
-    func getGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "FavoritesView.getGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadEverything
-            )
-        }
     }
 
     private func onAddStops() {

@@ -23,16 +23,16 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 @Serializable
-data class ResponseMetadata(
+internal data class ResponseMetadata(
     val etag: String?,
     @Serializable(with = TimeMarkSerializer::class)
     var fetchTime: TimeSource.Monotonic.ValueTimeMark,
     val invalidationKey: String? = null,
 )
 
-@Serializable data class Response<T>(val metadata: ResponseMetadata, val body: T)
+@Serializable internal data class Response<T>(val metadata: ResponseMetadata, val body: T)
 
-class ResponseCache<T : Any>(
+internal class ResponseCache<T : Any>(
     private val cacheKey: String,
     val maxAge: Duration,
     private val serializer: KSerializer<T>,

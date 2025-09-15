@@ -21,11 +21,7 @@
     {
       "skippedTests" : [
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
-        "NearbyTransitViewTests\/testDisplaysWheelchairNotAccessibile()",
-        "OnboardingPageTests\/testFlow()",
-        "StopDetailsViewModelTests\/testHandleStopChange()",
-        "StopDetailsViewModelTests\/testLoadTripData()",
-        "StopDetailsViewModelTests\/testSkipLoadingRedundantVehicle()"
+        "OnboardingPageTests\/testFlow()"
       ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",

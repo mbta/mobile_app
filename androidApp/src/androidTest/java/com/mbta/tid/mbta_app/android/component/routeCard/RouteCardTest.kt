@@ -4,17 +4,13 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
-import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 
 class RouteCardTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -47,7 +43,6 @@ class RouteCardTest {
                 GlobalResponse(objects),
                 now,
                 isFavorite = { false },
-                onPin = {},
                 showStopHeader = true,
             ) { _, _ ->
             }
@@ -68,32 +63,25 @@ class RouteCardTest {
                 type = RouteType.LIGHT_RAIL
             }
 
-        val koinApplication = testKoinApplication {
-            settings = MockSettingsRepository(mapOf(Settings.EnhancedFavorites to true))
-        }
-
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                RouteCard(
-                    RouteCardData(
-                        RouteCardData.LineOrRoute.Route(route),
-                        listOf(
-                            RouteCardData.RouteStopData(
-                                RouteCardData.LineOrRoute.Route(route),
-                                stop,
-                                emptyList(),
-                                emptyList(),
-                            )
-                        ),
-                        now,
+            RouteCard(
+                RouteCardData(
+                    RouteCardData.LineOrRoute.Route(route),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            RouteCardData.LineOrRoute.Route(route),
+                            stop,
+                            emptyList(),
+                            emptyList(),
+                        )
                     ),
-                    GlobalResponse(objects),
                     now,
-                    isFavorite = { false },
-                    onPin = { false },
-                    showStopHeader = true,
-                ) { _, _ ->
-                }
+                ),
+                GlobalResponse(objects),
+                now,
+                isFavorite = { false },
+                showStopHeader = true,
+            ) { _, _ ->
             }
         }
 
@@ -131,7 +119,6 @@ class RouteCardTest {
                 GlobalResponse(objects),
                 now,
                 isFavorite = { false },
-                onPin = {},
                 showStopHeader = false,
             ) { _, _ ->
             }

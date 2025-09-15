@@ -159,6 +159,17 @@ class NearbyViewModel: ObservableObject {
     /**
      set the filter for the given stop if it is the last stop in the stack
      */
+    func setLastStopDetailsPageFilter(_ filters: StopDetailsPageFilters) {
+        if filters.stopId == navigationStack.lastStopId,
+           navigationStack.lastStopDetailsFilter != filters.stopFilter || navigationStack
+           .lastTripDetailsFilter != filters.tripFilter {
+            navigationStack.lastStopDetailsPageFilters = filters
+        }
+    }
+
+    /**
+     set the filter for the given stop if it is the last stop in the stack
+     */
     func setLastStopDetailsFilter(_ stopId: String, _ filter: StopDetailsFilter?) {
         if stopId == navigationStack.lastStopId, navigationStack.lastStopDetailsFilter != filter {
             navigationStack.lastStopDetailsFilter = filter
@@ -211,7 +222,6 @@ class NearbyViewModel: ObservableObject {
         predictions: PredictionsByStopJoinResponse?,
         alerts: AlertsStreamDataResponse?,
         now: Date,
-        pinnedRoutes: Set<String>
     ) {
         Task {
             guard let global, let stopIds = state.stopIds, let location = state.loadedLocation else {
@@ -226,7 +236,6 @@ class NearbyViewModel: ObservableObject {
                 predictions: predictions?.toPredictionsStreamDataResponse(),
                 alerts: alerts,
                 now: now.toEasternInstant(),
-                pinnedRoutes: pinnedRoutes,
                 context: .nearbyTransit
             )
             Task { @MainActor in routeCardData = cardData }

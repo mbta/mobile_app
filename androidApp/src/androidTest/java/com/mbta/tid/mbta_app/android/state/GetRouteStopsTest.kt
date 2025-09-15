@@ -55,12 +55,12 @@ class GetRouteStopsTest {
             actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
         }
 
-        composeTestRule.waitUntil { actualRouteStops != null }
+        composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
         composeTestRule.waitForIdle()
         assertEquals(expectedRouteStops1, actualRouteStops)
 
         directionId = 1
-        composeTestRule.waitUntil { actualRouteStops != null }
+        composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
         composeTestRule.waitForIdle()
         assertEquals(expectedRouteStops2, actualRouteStops)
     }
@@ -106,7 +106,7 @@ class GetRouteStopsTest {
 
         composeTestRule.setContent { getRouteStops("", 0, "errorKey", schedulesRepo, errorRepo) }
 
-        composeTestRule.waitUntil {
+        composeTestRule.waitUntilDefaultTimeout {
             when (val errorState = errorRepo.state.value) {
                 is ErrorBannerState.DataError -> errorState.messages == setOf("errorKey")
                 else -> false

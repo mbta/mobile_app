@@ -2,10 +2,10 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.android.favorites.FavoritesView
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
-import com.mbta.tid.mbta_app.model.SheetRoutes
+import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import org.koin.compose.koinInject
@@ -14,7 +14,7 @@ import org.koin.compose.koinInject
 fun FavoritesPage(
     openSheetRoute: (SheetRoutes) -> Unit,
     favoritesViewModel: IFavoritesViewModel,
-    errorBannerViewModel: ErrorBannerViewModel,
+    errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     nearbyTransit: NearbyTransit,
 ) {

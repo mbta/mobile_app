@@ -11,8 +11,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
-import com.mbta.tid.mbta_app.android.testKoinApplication
+import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -22,7 +22,6 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
-import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
@@ -33,7 +32,7 @@ import kotlin.test.fail
 import kotlinx.coroutines.flow.update
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
+import org.koin.compose.koinInject
 
 class RouteStopListViewTest {
     @get:Rule val composeTestRule = createComposeRule()
@@ -73,59 +72,55 @@ class RouteStopListViewTest {
 
         val clicks = mutableListOf<RouteDetailsRowContext>()
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment(
-                                    listOf(
-                                        RouteBranchSegment.BranchStop(
-                                            stop1.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
-                                        RouteBranchSegment.BranchStop(
-                                            stop2.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
-                                        RouteBranchSegment.BranchStop(
-                                            stop3.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment(
+                                listOf(
+                                    RouteBranchSegment.BranchStop(
+                                        stop1.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
                                     ),
-                                    name = null,
-                                    isTypical = true,
-                                )
-                            ),
-                        routeId = mainRoute.id,
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+                                    RouteBranchSegment.BranchStop(
+                                        stop2.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
+                                    ),
+                                    RouteBranchSegment.BranchStop(
+                                        stop3.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
+                                    ),
+                                ),
+                                name = null,
+                                isTypical = true,
+                            )
+                        ),
+                    routeId = mainRoute.id,
+                )
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(mainRoute),
-                    RouteDetailsContext.Details,
-                    GlobalResponse(objects),
-                    onClick = clicks::add,
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = MockToastViewModel(),
-                    rightSideContent = { context, _ ->
-                        when (context) {
-                            is RouteDetailsRowContext.Details ->
-                                Text("rightSideContent for ${context.stop.name}")
-                            else -> fail("Wrong row context provided")
-                        }
-                    },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(mainRoute),
+                RouteDetailsContext.Details,
+                GlobalResponse(objects),
+                onClick = clicks::add,
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = MockToastViewModel(),
+                rightSideContent = { context, _ ->
+                    when (context) {
+                        is RouteDetailsRowContext.Details ->
+                            Text("rightSideContent for ${context.stop.name}")
+                        else -> fail("Wrong row context provided")
+                    }
+                },
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
@@ -185,34 +180,30 @@ class RouteStopListViewTest {
 
         var lastSelectedRoute: String? = null
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments = listOf(),
-                        onGet = { routeId, _ -> lastSelectedRoute = routeId },
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
-
-        composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
-                    RouteDetailsContext.Details,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = MockToastViewModel(),
-                    defaultSelectedRouteId = route2.id,
-                    rightSideContent = { _, _ -> },
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments = listOf(),
+                    onGet = { routeId, _ -> lastSelectedRoute = routeId },
                 )
-            }
         }
 
-        composeTestRule.waitUntil { lastSelectedRoute != null }
+        composeTestRule.setContent {
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
+                RouteDetailsContext.Details,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = MockToastViewModel(),
+                defaultSelectedRouteId = route2.id,
+                rightSideContent = { _, _ -> },
+            )
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { lastSelectedRoute != null }
         assertEquals(route2.id, lastSelectedRoute)
 
         composeTestRule.onNodeWithText(route3.shortName).performClick()
@@ -256,64 +247,60 @@ class RouteStopListViewTest {
                 }
             }
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment(
-                                    listOf(
-                                        RouteBranchSegment.BranchStop(
-                                            stop1.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
-                                        RouteBranchSegment.BranchStop(
-                                            stop2.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment(
+                                listOf(
+                                    RouteBranchSegment.BranchStop(
+                                        stop1.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
                                     ),
-                                    name = null,
-                                    isTypical = true,
-                                ),
-                                RouteBranchSegment(
-                                    listOf(
-                                        RouteBranchSegment.BranchStop(
-                                            stop3NonTypical.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
-                                        RouteBranchSegment.BranchStop(
-                                            stop4NonTypical.id,
-                                            RouteBranchSegment.Lane.Center,
-                                            emptyList(),
-                                        ),
+                                    RouteBranchSegment.BranchStop(
+                                        stop2.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
                                     ),
-                                    name = null,
-                                    isTypical = false,
                                 ),
+                                name = null,
+                                isTypical = true,
                             ),
-                        routeId = mainRoute.id,
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+                            RouteBranchSegment(
+                                listOf(
+                                    RouteBranchSegment.BranchStop(
+                                        stop3NonTypical.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
+                                    ),
+                                    RouteBranchSegment.BranchStop(
+                                        stop4NonTypical.id,
+                                        RouteBranchSegment.Lane.Center,
+                                        emptyList(),
+                                    ),
+                                ),
+                                name = null,
+                                isTypical = false,
+                            ),
+                        ),
+                    routeId = mainRoute.id,
+                )
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(mainRoute),
-                    RouteDetailsContext.Details,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = MockToastViewModel(),
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(mainRoute),
+                RouteDetailsContext.Details,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = MockToastViewModel(),
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
@@ -348,30 +335,26 @@ class RouteStopListViewTest {
                 representativeTrip { stopIds = listOf(stop1.id, stop2.id) }
             }
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments = listOf(RouteBranchSegment.of(listOf(stop1.id, stop2.id))),
-                        routeId = mainRoute.id,
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments = listOf(RouteBranchSegment.of(listOf(stop1.id, stop2.id))),
+                    routeId = mainRoute.id,
+                )
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(mainRoute),
-                    RouteDetailsContext.Details,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = MockToastViewModel(),
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(mainRoute),
+                RouteDetailsContext.Details,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = MockToastViewModel(),
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(stop1.name))
@@ -387,40 +370,36 @@ class RouteStopListViewTest {
         val objects = TestData.clone()
         val route = RouteCardData.LineOrRoute.Route(objects.getRoute("Red"))
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment.of(
-                                    listOf("place-alfcl", "place-davis", "place-portr")
-                                )
-                            ),
-                        routeId = route.id,
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment.of(
+                                listOf("place-alfcl", "place-davis", "place-portr")
+                            )
+                        ),
+                    routeId = route.id,
+                )
+        }
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    route,
-                    RouteDetailsContext.Favorites,
-                    GlobalResponse(objects),
-                    onClick = {
-                        when (it) {
-                            is RouteDetailsRowContext.Details -> {}
-                            is RouteDetailsRowContext.Favorites -> it.onTapStar()
-                        }
-                    },
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = MockToastViewModel(),
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                route,
+                RouteDetailsContext.Favorites,
+                GlobalResponse(objects),
+                onClick = {
+                    when (it) {
+                        is RouteDetailsRowContext.Details -> {}
+                        is RouteDetailsRowContext.Favorites -> it.onTapStar()
+                    }
+                },
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = MockToastViewModel(),
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Davis"))
@@ -441,19 +420,17 @@ class RouteStopListViewTest {
     fun testTriggersHintToast() {
         val objects = TestData.clone()
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment.of(
-                                    listOf("place-alfcl", "place-davis", "place-portr")
-                                )
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment.of(
+                                listOf("place-alfcl", "place-davis", "place-portr")
                             )
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+                        )
+                )
+        }
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -465,19 +442,17 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             toastState = toastVM.models.collectAsState()
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
-                    RouteDetailsContext.Favorites,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = {},
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = toastVM,
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                RouteDetailsContext.Favorites,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = {},
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = toastVM,
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -493,19 +468,17 @@ class RouteStopListViewTest {
     fun testBackButton() {
         val objects = TestData.clone()
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment.of(
-                                    listOf("place-alfcl", "place-davis", "place-portr")
-                                )
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment.of(
+                                listOf("place-alfcl", "place-davis", "place-portr")
                             )
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+                        )
+                )
+        }
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -520,19 +493,17 @@ class RouteStopListViewTest {
         var backTapped = false
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
-                    RouteDetailsContext.Favorites,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = { backTapped = true },
-                    onClose = {},
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = toastVM,
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                RouteDetailsContext.Favorites,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = { backTapped = true },
+                onClose = {},
+                errorBannerViewModel = koinInject(),
+                toastViewModel = toastVM,
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitForIdle()
@@ -548,19 +519,17 @@ class RouteStopListViewTest {
     fun testCloseButton() {
         val objects = TestData.clone()
 
-        val koin =
-            testKoinApplication(objects) {
-                routeStops =
-                    MockRouteStopsRepository(
-                        segments =
-                            listOf(
-                                RouteBranchSegment.of(
-                                    listOf("place-alfcl", "place-davis", "place-portr")
-                                )
+        loadKoinMocks(objects) {
+            routeStops =
+                MockRouteStopsRepository(
+                    segments =
+                        listOf(
+                            RouteBranchSegment.of(
+                                listOf("place-alfcl", "place-davis", "place-portr")
                             )
-                    )
-            }
-        val errorBannerVM = ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository())
+                        )
+                )
+        }
         val toastVM = MockToastViewModel()
         var toastShown = false
         toastVM.onShowToast = { toast ->
@@ -575,19 +544,17 @@ class RouteStopListViewTest {
         var closeTapped = false
 
         composeTestRule.setContent {
-            KoinContext(koin.koin) {
-                RouteStopListView(
-                    RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
-                    RouteDetailsContext.Favorites,
-                    GlobalResponse(objects),
-                    onClick = {},
-                    onBack = {},
-                    onClose = { closeTapped = true },
-                    errorBannerViewModel = errorBannerVM,
-                    toastViewModel = toastVM,
-                    rightSideContent = { _, _ -> },
-                )
-            }
+            RouteStopListView(
+                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                RouteDetailsContext.Favorites,
+                GlobalResponse(objects),
+                onClick = {},
+                onBack = {},
+                onClose = { closeTapped = true },
+                errorBannerViewModel = koinInject(),
+                toastViewModel = toastVM,
+                rightSideContent = { _, _ -> },
+            )
         }
 
         composeTestRule.waitForIdle()

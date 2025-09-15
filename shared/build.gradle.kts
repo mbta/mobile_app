@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
-import java.io.ByteArrayOutputStream
 import java.io.Serializable
 import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
@@ -22,7 +21,7 @@ plugins {
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
-    alias(libs.plugins.sentry)
+    alias(libs.plugins.sentry.kmp)
     alias(libs.plugins.serialization)
     alias(libs.plugins.skie)
     id("de.undercouch.download").version("5.6.0")
@@ -31,10 +30,14 @@ plugins {
 @OptIn(org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi::class)
 kotlin {
     applyDefaultHierarchyTemplate()
+    explicitApi()
 
     compilerOptions {
         optIn.add("kotlin.time.ExperimentalTime")
-        freeCompilerArgs.add("-Xexpect-actual-classes")
+        freeCompilerArgs.addAll(
+            "-Xexpect-actual-classes",
+            "-Xconsistent-data-class-copy-visibility",
+        )
     }
 
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
@@ -56,8 +59,7 @@ kotlin {
         framework {
             baseName = "Shared"
             binaryOption("bundleId", "com.mbta.tid.mobileapp")
-            export(libs.kotlinx.datetime)
-            export(libs.sentry)
+            export(libs.sentry.kmp)
         }
 
         xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
@@ -71,14 +73,14 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(libs.kotlinx.datetime)
-                api(libs.sentry)
+                api(libs.sentry.kmp)
                 api(libs.spatialk.geojson)
                 implementation(project.dependencies.platform(libs.koin.bom))
                 implementation(libs.androidx.datastore.preferences.core)
                 implementation(libs.koin.compose)
                 implementation(libs.koin.core)
                 implementation(libs.kotlinx.coroutines.core)
+                implementation(libs.kotlinx.datetime)
                 implementation(libs.kotlinx.serialization.json)
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.core)
@@ -121,10 +123,9 @@ kotlin {
 
 android {
     namespace = "com.mbta.tid.mbta_app"
-    compileSdk = 34
+    compileSdk = 35
     defaultConfig { minSdk = 28 }
     testOptions { unitTests.isReturnDefaultValues = true }
-    lint { disable.add("NullSafeMutableLiveData") }
 }
 
 skie {
@@ -211,7 +212,8 @@ task<DependencyCodegenTask>("bomCodegenIos") {
 
 task<CycloneDxBomTransformTask>("bomAndroid") {
     dependsOn(":androidApp:cyclonedxBom")
-    inputPath = projects.androidApp.dependencyProject.layout.buildDirectory.file("reports/bom.json")
+    inputPath =
+        project.project(projects.androidApp.path).layout.buildDirectory.file("reports/bom.json")
     outputPath = layout.buildDirectory.file("boms/bom-android.json")
     transform = {
         components =
@@ -316,12 +318,10 @@ task<Download>("bomCycloneDxCliDownload") {
                 else -> throw IllegalStateException("can't download CycloneDX CLI for $it")
             }
         }
-    src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.27.1/cyclonedx-$os-$arch")
+    src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.29.1/cyclonedx-$os-$arch")
     dest(layout.buildDirectory.file("boms/cyclonedx-cli"))
     onlyIfModified(true)
-    doLast {
-        exec { commandLine("chmod", "+x", layout.buildDirectory.file("boms/cyclonedx-cli").get()) }
-    }
+    doLast { layout.buildDirectory.file("boms/cyclonedx-cli").get().asFile.setExecutable(true) }
 }
 
 task("bomIosKotlinDeps") {
@@ -400,22 +400,19 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             "/license?ref=v"
                         else "/license?ref=",
                     )
-            val ghOutput = ByteArrayOutputStream()
-            try {
-                exec {
-                    commandLine("gh", "api", licenseApiPath)
-                    standardOutput = ghOutput
+            val apiResponse =
+                try {
+                    val gh = providers.exec { commandLine("gh", "api", licenseApiPath) }
+                    gh.standardOutput.asText.get()
+                } catch (e: ExecException) {
+                    throw IllegalStateException(
+                        "\nerror: `gh api $licenseApiPath` failed, ${when {
+                            DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
+                            else -> "install it"
+                        }} and try `gh auth login`",
+                        e,
+                    )
                 }
-            } catch (e: ExecException) {
-                throw IllegalStateException(
-                    "\nerror: `gh api $licenseApiPath` failed, ${when {
-                        DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
-                        else -> "install it"
-                    }} and try `gh auth login`",
-                    e,
-                )
-            }
-            val apiResponse = ghOutput.toString()
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 
             component.licenses.addLicense(

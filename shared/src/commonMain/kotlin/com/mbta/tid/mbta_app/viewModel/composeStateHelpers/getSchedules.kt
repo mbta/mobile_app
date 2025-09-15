@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -21,9 +22,10 @@ private fun fetchSchedules(
     errorKey: String,
     errorBannerRepository: IErrorBannerStateRepository,
     schedulesRepository: ISchedulesRepository,
+    coroutineDispatcher: CoroutineDispatcher,
     onSuccess: (ScheduleResponse) -> Unit,
 ) {
-    CoroutineScope(Dispatchers.IO).launch {
+    CoroutineScope(coroutineDispatcher).launch {
         fetchApi(
             errorBannerRepo = errorBannerRepository,
             errorKey = errorKey,
@@ -35,6 +37,7 @@ private fun fetchSchedules(
                     errorKey,
                     errorBannerRepository,
                     schedulesRepository,
+                    coroutineDispatcher,
                     onSuccess,
                 )
             },
@@ -43,17 +46,26 @@ private fun fetchSchedules(
 }
 
 @Composable
-fun getSchedules(
+internal fun getSchedules(
     stopIds: List<String>?,
     errorKey: String,
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
+    coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ScheduleResponse? {
+    val errorKey = "$errorKey.getSchedules"
     var result: ScheduleResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(stopIds) {
+        result = null
         if (stopIds != null) {
-            fetchSchedules(stopIds, errorKey, errorBannerRepository, schedulesRepository) {
+            fetchSchedules(
+                stopIds,
+                errorKey,
+                errorBannerRepository,
+                schedulesRepository,
+                coroutineDispatcher,
+            ) {
                 result = it
             }
         } else {

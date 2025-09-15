@@ -18,24 +18,32 @@ struct RoutePill: View {
     let spec: RoutePillSpec
 
     private var fontSize: CGFloat {
-        switch spec.size {
-        case .circleSmall, .flexPillSmall: 12
-        default: 16
+        switch spec.height {
+        case .small: 12
+        case .medium: 16
+        case .large: 20
         }
     }
 
-    private var iconSize: CGFloat {
-        switch spec.size {
-        case .circleSmall, .flexPillSmall: 16
-        default: 24
+    private var pillHeight: CGFloat {
+        switch spec.height {
+        case .small: 16
+        case .medium: 24
+        case .large: 32
         }
     }
 
-    init(route: Route?, line: Line? = nil, type: RoutePillSpec.Type_, isActive: Bool = true) {
+    init(
+        route: Route?,
+        line: Line? = nil,
+        type: RoutePillSpec.Type_,
+        height: RoutePillSpec.Height = .medium,
+        isActive: Bool = true
+    ) {
         self.route = route
         self.line = line
         self.isActive = isActive
-        spec = .init(route: route, line: line, type: type)
+        spec = .init(route: route, line: line, type: type, height: height)
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
     }
@@ -56,20 +64,20 @@ struct RoutePill: View {
         case let .modeImage(mode):
             routeIcon(mode.mode)
                 .resizable()
-                .frame(width: iconSize, height: iconSize)
+                .frame(width: pillHeight, height: pillHeight)
         }
     }
 
     private struct FramePaddingModifier: ViewModifier {
         let spec: RoutePillSpec
+        let pillHeight: CGFloat
 
         func body(content: Content) -> some View {
-            switch spec.size {
-            case .fixedPill: content.frame(width: 50, height: 24)
-            case .circle: content.frame(width: 24, height: 24)
-            case .circleSmall: content.frame(width: 16, height: 16)
-            case .flexPill: content.frame(height: 24).padding(.horizontal, 12).frame(minWidth: 44)
-            case .flexPillSmall: content.frame(height: 16).padding(.horizontal, 8).frame(minWidth: 36)
+            switch spec.width {
+            case .fixed: content.frame(width: 2 * pillHeight + 2, height: pillHeight)
+            case .circle: content.frame(width: pillHeight, height: pillHeight)
+            case .flex: content.frame(height: pillHeight).padding(.horizontal, pillHeight / 2)
+                .frame(minWidth: pillHeight * 3 / 2 + 12)
             }
         }
     }
@@ -110,14 +118,13 @@ struct RoutePill: View {
             .textCase(route?.type == .commuterRail ? .none : .uppercase)
             .font(.custom("Helvetica Neue", size: fontSize).bold())
             .tracking(0.5)
-            .modifier(FramePaddingModifier(spec: spec))
+            .modifier(FramePaddingModifier(spec: spec, pillHeight: pillHeight))
+            .minimumScaleFactor(0.4)
             .lineLimit(1)
             .modifier(ColorModifier(pill: self))
             .modifier(ClipShapeModifier(spec: spec))
             .accessibilityElement()
-            .accessibilityLabel(
-                "\(route?.label ?? line?.longName ?? "") \(route?.type.typeText(isOnly: true) ?? "")"
-            )
+            .accessibilityLabel(routeModeLabel(line: line, route: route))
     }
 }
 

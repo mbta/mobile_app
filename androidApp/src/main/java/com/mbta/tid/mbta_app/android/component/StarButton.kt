@@ -41,14 +41,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.cubicTo
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.lineTo
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.moveTo
 import com.mbta.tid.mbta_app.android.util.rect
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.shape.FavoriteStarShape
 import kotlin.math.min
 import kotlin.time.Duration.Companion.seconds
@@ -56,20 +54,11 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun StarButton(starred: Boolean?, color: Color, action: () -> Unit) {
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
     val onClickLabel =
-        if (enhancedFavorites) {
-            if (starred == true) {
-                stringResource(R.string.remove_favorite)
-            } else {
-                stringResource(R.string.add_favorite)
-            }
+        if (starred == true) {
+            stringResource(R.string.remove_favorite)
         } else {
-            if (starred == true) {
-                stringResource(id = R.string.unstar_route_hint)
-            } else {
-                stringResource(id = R.string.star_route_hint)
-            }
+            stringResource(R.string.add_favorite)
         }
     IconToggleButton(
         checked = starred == true,

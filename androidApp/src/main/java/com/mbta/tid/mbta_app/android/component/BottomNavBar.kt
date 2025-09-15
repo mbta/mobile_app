@@ -22,10 +22,8 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.Routes
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.model.SheetRoutes
-import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,24 +34,16 @@ fun BottomNavBar(
     navigateToNearby: () -> Unit,
     navigateToMore: () -> Unit,
 ) {
-    val enhancedFavorites = SettingsCache.get(Settings.EnhancedFavorites)
 
     val selectedTabIndex =
-        if (enhancedFavorites) {
-            when (currentDestination) {
-                is Routes.MapAndSheet ->
-                    when (sheetNavEntrypoint) {
-                        SheetRoutes.Favorites -> 0
-                        SheetRoutes.NearbyTransit -> 1
-                        null -> -1
-                    }
-                is Routes.More -> 2
-            }
-        } else {
-            when (currentDestination) {
-                is Routes.MapAndSheet -> 0
-                is Routes.More -> 1
-            }
+        when (currentDestination) {
+            is Routes.MapAndSheet ->
+                when (sheetNavEntrypoint) {
+                    SheetRoutes.Favorites -> 0
+                    SheetRoutes.NearbyTransit -> 1
+                    null -> -1
+                }
+            is Routes.More -> 2
         }
 
     CompositionLocalProvider(
@@ -67,16 +57,14 @@ fun BottomNavBar(
             )
     ) {
         TabRow(selectedTabIndex = selectedTabIndex, indicator = {}) {
-            if (enhancedFavorites) {
-                BottomNavTab(
-                    selected =
-                        currentDestination is Routes.MapAndSheet &&
-                            sheetNavEntrypoint == SheetRoutes.Favorites,
-                    onClick = { navigateToFavorites() },
-                    icon = painterResource(R.drawable.tab_star),
-                    text = stringResource(R.string.favorites_link),
-                )
-            }
+            BottomNavTab(
+                selected =
+                    currentDestination is Routes.MapAndSheet &&
+                        sheetNavEntrypoint == SheetRoutes.Favorites,
+                onClick = { navigateToFavorites() },
+                icon = painterResource(R.drawable.tab_star),
+                text = stringResource(R.string.favorites_link),
+            )
 
             BottomNavTab(
                 selected =

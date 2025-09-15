@@ -16,15 +16,15 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ITripRepository {
-    suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse>
+public interface ITripRepository {
+    public suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse>
 
-    suspend fun getTrip(tripId: String): ApiResult<TripResponse>
+    public suspend fun getTrip(tripId: String): ApiResult<TripResponse>
 
-    suspend fun getTripShape(tripId: String): ApiResult<TripShape>
+    public suspend fun getTripShape(tripId: String): ApiResult<TripShape>
 }
 
-class TripRepository : ITripRepository, KoinComponent {
+internal class TripRepository : ITripRepository, KoinComponent {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> =
@@ -48,7 +48,6 @@ class TripRepository : ITripRepository, KoinComponent {
                         parameter("trip_id", tripId)
                     }
                 }
-
             return ApiResult.Ok(data = json.decodeFromString(response.body()))
         }
 
@@ -66,7 +65,7 @@ class TripRepository : ITripRepository, KoinComponent {
         }
 }
 
-open class IdleTripRepository : ITripRepository {
+internal open class IdleTripRepository : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
         return suspendCancellableCoroutine {}
     }
@@ -80,18 +79,22 @@ open class IdleTripRepository : ITripRepository {
     }
 }
 
-class MockTripRepository
+public class MockTripRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
-    var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
-    var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList())),
+    internal var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
+    internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
+    internal var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList())),
+    internal val onGetTrip: (String) -> Unit = {},
+    internal val onGetTripSchedules: (String) -> Unit = {},
 ) : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
+        onGetTripSchedules(tripId)
         return ApiResult.Ok(tripSchedulesResponse)
     }
 
     override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
+        onGetTrip(tripId)
         return ApiResult.Ok(tripResponse)
     }
 

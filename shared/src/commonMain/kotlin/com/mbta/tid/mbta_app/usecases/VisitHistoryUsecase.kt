@@ -7,12 +7,12 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import org.koin.core.component.KoinComponent
 
-class VisitHistoryUsecase(private val repository: IVisitHistoryRepository) : KoinComponent {
+public class VisitHistoryUsecase(private val repository: IVisitHistoryRepository) : KoinComponent {
     private val mutex = Mutex()
 
     private val visitHistoryKey = stringPreferencesKey("visit_history")
 
-    suspend fun addVisit(visit: Visit) {
+    public suspend fun addVisit(visit: Visit) {
         mutex.withLock {
             val history = repository.getVisitHistory()
             history.add(visit)
@@ -20,7 +20,7 @@ class VisitHistoryUsecase(private val repository: IVisitHistoryRepository) : Koi
         }
     }
 
-    suspend fun getLatestVisits(): List<Visit> {
+    internal suspend fun getLatestVisits(): List<Visit> {
         mutex.withLock {
             return repository.getVisitHistory().latest()
         }

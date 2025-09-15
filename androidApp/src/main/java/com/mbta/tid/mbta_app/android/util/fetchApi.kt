@@ -25,7 +25,11 @@ suspend fun <T : Any> fetchApi(
     when (result) {
         is ApiResult.Error -> {
             Log.e("fetchApi", "API request $errorKey failed: $result")
-            errorBannerRepo.setDataError(key = errorKey, action = onRefreshAfterError)
+            errorBannerRepo.setDataError(
+                key = errorKey,
+                details = result.toString(),
+                action = onRefreshAfterError,
+            )
         }
         is ApiResult.Ok -> {
             errorBannerRepo.clearDataError(key = errorKey)

@@ -17,7 +17,7 @@ struct EditFavoritesPage: View {
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     @State var favoritesState: [RouteStopDirection: Bool] = [:]
 
-    let errorBannerVM: ErrorBannerViewModel
+    let errorBannerVM: IErrorBannerViewModel
     let toastVM: IToastViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
@@ -39,7 +39,7 @@ struct EditFavoritesPage: View {
                 the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
                 The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
                 """
-            ), labels.direction, labels.route, labels.stop,)
+            ), labels.direction, labels.route, labels.stop)
         } else {
             NSLocalizedString(
                 "Removed from Favorites",
@@ -50,6 +50,7 @@ struct EditFavoritesPage: View {
         toastVM.showToast(toast: .init(
             message: toastMessage,
             duration: .short,
+            isTip: false,
             action: ToastViewModel.ToastActionCustom(
                 actionLabel: NSLocalizedString("Undo",
                                                comment: "Button label to undo an action that was just performed"),
@@ -85,12 +86,12 @@ struct EditFavoritesPage: View {
             }
             .onAppear {
                 viewModel.setContext(context: FavoritesViewModel.ContextEdit())
-                loadGlobal()
             }
             .onDisappear {
                 toastVM.hideToast()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .global($globalResponse, errorKey: "AlertDetailsPage")
             .task {
                 for await model in viewModel.models {
                     favoritesVMState = model
@@ -100,27 +101,6 @@ struct EditFavoritesPage: View {
                     }
                 }
             }
-        }
-    }
-
-    @MainActor
-    func activateGlobalListener() async {
-        for await globalData in globalRepository.state {
-            globalResponse = globalData
-        }
-    }
-
-    private func loadGlobal() {
-        Task(priority: .high) {
-            await activateGlobalListener()
-        }
-        Task {
-            await fetchApi(
-                errorBannerVM.errorRepository,
-                errorKey: "EditDetailsPage.loadGlobal",
-                getData: { try await globalRepository.getGlobalData() },
-                onRefreshAfterError: loadGlobal
-            )
         }
     }
 }
@@ -137,8 +117,6 @@ struct EditFavoritesList: View {
                     ForEach(routeCardData) { cardData in
                         RouteCardContainer(
                             cardData: cardData,
-                            onPin: { _ in },
-                            pinned: false,
                             showStopHeader: true
                         ) { stopData in
                             FavoriteDepartures(
@@ -192,7 +170,6 @@ struct FavoriteDepartures: View {
     var body: some View {
         VStack {
             ForEach(stopData.data.enumerated().sorted(by: { $0.offset < $1.offset }), id: \.element.id) { index, leaf in
-
                 let formatted = leaf.format(now: EasternTimeInstant.now(), globalData: globalData)
                 let direction: Direction = stopData.directions.first(where: { $0.id == leaf.directionId })!
 

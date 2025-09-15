@@ -3,11 +3,12 @@ package com.mbta.tid.mbta_app.android.favorites
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
-import com.mbta.tid.mbta_app.android.component.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
@@ -18,6 +19,7 @@ import dev.mokkery.mock
 import dev.mokkery.resetCalls
 import dev.mokkery.verify
 import dev.mokkery.verify.VerifyMode
+import kotlin.time.Clock
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -49,7 +51,11 @@ class FavoritesViewTest {
                 openSheetRoute = {},
                 favoritesViewModel = favoritesVM,
                 errorBannerViewModel =
-                    ErrorBannerViewModel(errorRepository = MockErrorBannerStateRepository()),
+                    ErrorBannerViewModel(
+                        errorRepository = MockErrorBannerStateRepository(),
+                        MockSentryRepository(),
+                        Clock.System,
+                    ),
                 toastViewModel = toastVM,
                 alertData = AlertsStreamDataResponse(objects),
                 globalResponse = GlobalResponse(objects),

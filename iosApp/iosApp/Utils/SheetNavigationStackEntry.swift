@@ -188,6 +188,43 @@ extension [SheetNavigationStackEntry] {
         }
     }
 
+    var lastStopDetailsPageFilters: StopDetailsPageFilters? {
+        get {
+            switch self.last {
+            case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter):
+                .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+            case _: nil
+            }
+        }
+        set {
+            if case let .stopDetails(
+                stopId: stopId,
+                stopFilter: lastStopFilter,
+                tripFilter: lastTripFilter,
+            ) = self.last {
+                let shouldPop = StopDetailsFilter.companion.shouldPopLastStopEntry(
+                    lastFilter: lastStopFilter,
+                    newFilter: newValue?.stopFilter
+                )
+                if shouldPop || lastTripFilter != newValue?.tripFilter {
+                    _ = self.popLast()
+                }
+                if let newValue {
+                    let shouldSkip = shouldSkipStopFilterUpdate(
+                        newStop: newValue.stopId,
+                        newFilter: newValue.stopFilter
+                    )
+                    if shouldSkip, lastTripFilter == newValue.tripFilter { return }
+                    self.append(.stopDetails(
+                        stopId: newValue.stopId,
+                        stopFilter: newValue.stopFilter,
+                        tripFilter: newValue.tripFilter
+                    ))
+                }
+            }
+        }
+    }
+
     var lastStopId: String? {
         let lastStopEntry: SheetNavigationStackEntry? = self.last { entry in
             switch entry {

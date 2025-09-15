@@ -14,17 +14,17 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-interface ISearchResultRepository {
-    suspend fun getRouteFilterResults(
+public interface ISearchResultRepository {
+    public suspend fun getRouteFilterResults(
         query: String,
         lineIds: List<String>? = null,
         routeTypes: List<RouteType>? = null,
     ): ApiResult<SearchResults>?
 
-    suspend fun getSearchResults(query: String): ApiResult<SearchResults>?
+    public suspend fun getSearchResults(query: String): ApiResult<SearchResults>?
 }
 
-class SearchResultRepository : KoinComponent, ISearchResultRepository {
+internal class SearchResultRepository : KoinComponent, ISearchResultRepository {
     private val mobileBackendClient: MobileBackendClient by inject()
 
     private suspend fun searchRequest(
@@ -65,7 +65,7 @@ class SearchResultRepository : KoinComponent, ISearchResultRepository {
         searchRequest("api/search/query", query)
 }
 
-class MockSearchResultRepository
+public class MockSearchResultRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     private val routeResults: List<RouteResult> = emptyList(),
@@ -88,7 +88,7 @@ constructor(
     }
 }
 
-class IdleSearchResultRepository : ISearchResultRepository {
+internal class IdleSearchResultRepository : ISearchResultRepository {
     override suspend fun getRouteFilterResults(
         query: String,
         lineIds: List<String>?,

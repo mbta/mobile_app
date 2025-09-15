@@ -2,48 +2,53 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 
-data class RoutePillSpec(
+public data class RoutePillSpec(
     val textColor: String,
     val routeColor: String,
     val content: Content,
-    val size: Size,
+    val height: Height,
+    val width: Width,
     val shape: Shape,
     val contentDescription: ContentDescription? = null,
 ) {
-    enum class Type {
+    public enum class Type {
         Fixed,
         Flex,
         FlexCompact,
     }
 
-    sealed interface Content {
-        data object Empty : Content
+    public sealed interface Content {
+        public data object Empty : Content
 
-        data class Text(val text: String) : Content
+        public data class Text(val text: String) : Content
 
-        data class ModeImage(val mode: RouteType) : Content
+        public data class ModeImage internal constructor(val mode: RouteType) : Content
     }
 
-    enum class Size {
-        FixedPill,
+    public enum class Height {
+        Small,
+        Medium,
+        Large,
+    }
+
+    public enum class Width {
         Circle,
-        CircleSmall,
-        FlexPill,
-        FlexPillSmall,
+        Fixed,
+        Flex,
     }
 
-    enum class Shape {
+    public enum class Shape {
         Capsule,
         Rectangle,
     }
 
-    enum class Context {
+    public enum class Context {
         SearchStation,
         Default,
     }
 
-    sealed class ContentDescription {
-        data class StopSearchResultRoute(
+    public sealed class ContentDescription {
+        public data class StopSearchResultRoute(
             val routeName: String?,
             val routeType: RouteType,
             val isOnly: Boolean,
@@ -51,10 +56,11 @@ data class RoutePillSpec(
     }
 
     @DefaultArgumentInterop.Enabled
-    constructor(
+    public constructor(
         route: Route?,
         line: Line?,
         type: Type,
+        height: Height = Height.Medium,
         context: Context = Context.Default,
         contentDescription: ContentDescription? = null,
     ) : this(
@@ -68,16 +74,11 @@ data class RoutePillSpec(
             RouteType.BUS -> busPillContent(route, type, context)
             RouteType.FERRY -> ferryPillContent(route, type)
         },
+        height,
         when {
-            type == Type.Fixed -> Size.FixedPill
-            route?.longName?.startsWith("Green Line ") ?: false ->
-                if (type == Type.FlexCompact) {
-                    Size.CircleSmall
-                } else {
-                    Size.Circle
-                }
-            type == Type.FlexCompact -> Size.FlexPillSmall
-            else -> Size.FlexPill
+            type == Type.Fixed -> Width.Fixed
+            route?.longName?.startsWith("Green Line ") ?: false -> Width.Circle
+            else -> Width.Flex
         },
         when {
             route?.type == RouteType.BUS && !route.isShuttle -> Shape.Rectangle
@@ -86,7 +87,7 @@ data class RoutePillSpec(
         contentDescription = contentDescription,
     )
 
-    companion object {
+    internal companion object {
 
         private fun linePillContent(line: Line): Content =
             if (line.longName == "Green Line") {

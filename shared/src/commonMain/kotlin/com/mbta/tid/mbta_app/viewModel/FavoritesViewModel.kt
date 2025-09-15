@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
@@ -21,72 +22,64 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.jvm.JvmName
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-interface IFavoritesViewModel {
-    val models: StateFlow<FavoritesViewModel.State>
+public interface IFavoritesViewModel {
+    public val models: StateFlow<FavoritesViewModel.State>
 
-    fun reloadFavorites()
+    public fun reloadFavorites()
 
-    fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
+    public fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
 
-    fun setAlerts(alerts: AlertsStreamDataResponse?)
+    public fun setAlerts(alerts: AlertsStreamDataResponse?)
 
-    fun setContext(context: FavoritesViewModel.Context)
+    public fun setContext(context: FavoritesViewModel.Context)
 
-    fun setLocation(location: Position?)
+    public fun setLocation(location: Position?)
 
-    fun setNow(now: EasternTimeInstant)
+    public fun setNow(now: EasternTimeInstant)
 
-    fun setIsFirstExposureToNewFavorites(isFirst: Boolean)
+    public fun setIsFirstExposureToNewFavorites(isFirst: Boolean)
 
-    fun updateFavorites(
+    public fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
         defaultDirection: Int,
     )
 }
 
-class FavoritesViewModel(
+public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
+    private val sentryRepository: ISentryRepository,
     private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
 
-    sealed class Context {
-        data object Favorites : Context()
+    public sealed class Context {
+        public data object Favorites : Context()
 
-        data object Edit : Context()
+        public data object Edit : Context()
     }
 
-    sealed interface Event {
-        data object ReloadFavorites : Event
+    public sealed interface Event {
+        public data object ReloadFavorites : Event
 
-        data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
+        public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
 
-        data class SetAlerts(val alerts: AlertsStreamDataResponse?) : Event
-
-        data class SetContext(val context: Context) : Event
-
-        data class SetLocation(val location: Position?) : Event
-
-        data class SetNow(val now: EasternTimeInstant) : Event
-
-        data class SetFirstExposureToNewFavorites(val isFirstExposure: Boolean = true) : Event
-
-        data class UpdateFavorites(
+        public data class UpdateFavorites(
             val updatedFavorites: Map<RouteStopDirection, Boolean>,
             val context: EditFavoritesContext,
             val defaultDirection: Int,
         ) : Event
     }
 
-    data class State(
+    public data class State(
         val awaitingPredictionsAfterBackground: Boolean,
         val favorites: Set<RouteStopDirection>?,
         val shouldShowFirstTimeToast: Boolean = false,
@@ -94,16 +87,23 @@ class FavoritesViewModel(
         val staticRouteCardData: List<RouteCardData>?,
         val loadedLocation: Position?,
     ) {
-        constructor() : this(false, null, false, null, null, null)
+        public constructor() : this(false, null, false, null, null, null)
     }
 
+    @set:JvmName("setAlertsState")
+    private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    @set:JvmName("setContextState") private var context by mutableStateOf<Context?>(null)
+    @set:JvmName("setIsFirstExposureToNewFavoritesState")
+    private var isFirstExposureToNewFavorites by mutableStateOf(false)
+    @set:JvmName("setLocationState") private var location by mutableStateOf<Position?>(null)
+    @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
+
     @Composable
-    override fun runLogic(events: Flow<Event>): State {
+    override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
 
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
-        var isFirstExposureToNewFavorites: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
 
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
@@ -111,12 +111,9 @@ class FavoritesViewModel(
         var loadedLocation: Position? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(true) }
-        var alerts: AlertsStreamDataResponse? by remember { mutableStateOf(null) }
-        var context: Context? by remember { mutableStateOf(null) }
-        var location: Position? by remember { mutableStateOf(null) }
-        var now: EasternTimeInstant by remember { mutableStateOf(EasternTimeInstant.now()) }
 
-        val globalData = getGlobalData("FavoritesViewModel.getGlobalData")
+        val errorKey = "FavoritesViewModel"
+        val globalData = getGlobalData(errorKey)
         val stopIds =
             remember(favorites, globalData) {
                 val stops = favorites?.mapNotNull { globalData?.getStop(it.stop) }
@@ -125,11 +122,12 @@ class FavoritesViewModel(
                         stop.id
                 }
             }
-        val schedules = getSchedules(stopIds, "FavoritesViewModel.getSchedules")
+        val schedules = getSchedules(stopIds, errorKey)
         val predictions =
             subscribeToPredictions(
                 stopIds,
                 active,
+                errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
             )
 
@@ -142,33 +140,23 @@ class FavoritesViewModel(
             tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
         }
 
-        LaunchedEffect(Unit) {
-            events.collect { event ->
-                when (event) {
-                    Event.ReloadFavorites ->
-                        favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-                    is Event.SetActive -> {
-                        active = event.active
-                        if (event.wasSentToBackground) {
-                            awaitingPredictionsAfterBackground = true
-                        }
+        EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
+            when (event) {
+                Event.ReloadFavorites ->
+                    favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+                is Event.SetActive -> {
+                    active = event.active
+                    if (event.wasSentToBackground) {
+                        awaitingPredictionsAfterBackground = true
                     }
-                    is Event.SetAlerts -> alerts = event.alerts
-                    is Event.SetContext -> context = event.context
-                    is Event.SetLocation -> location = event.location
-                    is Event.SetNow -> now = event.now
-                    is Event.UpdateFavorites -> {
-                        favoritesUsecases.updateRouteStopDirections(
-                            event.updatedFavorites,
-                            event.context,
-                            event.defaultDirection,
-                        )
-                        reloadFavorites()
-                    }
-
-                    is Event.SetFirstExposureToNewFavorites -> {
-                        isFirstExposureToNewFavorites = event.isFirstExposure
-                    }
+                }
+                is Event.UpdateFavorites -> {
+                    favoritesUsecases.updateRouteStopDirections(
+                        event.updatedFavorites,
+                        event.context,
+                        event.defaultDirection,
+                    )
+                    reloadFavorites()
                 }
             }
         }
@@ -197,7 +185,6 @@ class FavoritesViewModel(
                         predictions,
                         alerts,
                         now,
-                        emptySet(),
                         RouteCardData.Context.Favorites,
                         favorites,
                         coroutineDispatcher,
@@ -240,24 +227,32 @@ class FavoritesViewModel(
         )
     }
 
-    override val models
+    override val models: StateFlow<State>
         get() = internalModels
 
-    override fun reloadFavorites() = fireEvent(Event.ReloadFavorites)
+    override fun reloadFavorites(): Unit = fireEvent(Event.ReloadFavorites)
 
-    override fun setActive(active: Boolean, wasSentToBackground: Boolean) =
+    override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         fireEvent(Event.SetActive(active, wasSentToBackground))
 
-    override fun setAlerts(alerts: AlertsStreamDataResponse?) = fireEvent(Event.SetAlerts(alerts))
+    override fun setAlerts(alerts: AlertsStreamDataResponse?) {
+        this.alerts = alerts
+    }
 
-    override fun setContext(context: Context) = fireEvent(Event.SetContext(context))
+    override fun setContext(context: Context) {
+        this.context = context
+    }
 
-    override fun setLocation(location: Position?) = fireEvent(Event.SetLocation(location))
+    override fun setLocation(location: Position?) {
+        this.location = location
+    }
 
-    override fun setNow(now: EasternTimeInstant) = fireEvent(Event.SetNow(now))
+    override fun setNow(now: EasternTimeInstant) {
+        this.now = now
+    }
 
-    override fun setIsFirstExposureToNewFavorites(isFirstExposure: Boolean) {
-        fireEvent(Event.SetFirstExposureToNewFavorites(isFirstExposure))
+    override fun setIsFirstExposureToNewFavorites(isFirst: Boolean) {
+        this.isFirstExposureToNewFavorites = isFirst
     }
 
     override fun updateFavorites(
@@ -269,20 +264,20 @@ class FavoritesViewModel(
     }
 }
 
-class MockFavoritesViewModel
+public class MockFavoritesViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State()) :
     IFavoritesViewModel {
-    var onReloadFavorites = {}
-    var onSetActive = { _: Boolean, _: Boolean -> }
-    var onSetAlerts = { _: AlertsStreamDataResponse? -> }
-    var onSetContext = { _: FavoritesViewModel.Context -> }
-    var onSetLocation = { _: Position? -> }
-    var onSetNow = { _: EasternTimeInstant -> }
-    var onSetIsFirstExposureToNewFavorites = { _: Boolean -> }
-    var onUpdateFavorites = { _: Map<RouteStopDirection, Boolean> -> }
+    public var onReloadFavorites: () -> Unit = {}
+    public var onSetActive: (Boolean, Boolean) -> Unit = { _, _ -> }
+    public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
+    private var onSetContext = { _: FavoritesViewModel.Context -> }
+    public var onSetLocation: (Position?) -> Unit = {}
+    public var onSetNow: (EasternTimeInstant) -> Unit = { _ -> }
+    public var onSetIsFirstExposureToNewFavorites: (Boolean) -> Unit = { _ -> }
+    public var onUpdateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit = { _ -> }
 
-    override val models = MutableStateFlow(initialState)
+    override val models: MutableStateFlow<FavoritesViewModel.State> = MutableStateFlow(initialState)
 
     override fun reloadFavorites() {
         onReloadFavorites()

@@ -14,29 +14,28 @@ struct StopDetailsFilteredView: View {
     var stopId: String
     var stopFilter: StopDetailsFilter
     var tripFilter: TripDetailsFilter?
+
+    var routeData: StopDetailsViewModel.RouteData?
+    var favorites: Favorites
+    var global: GlobalResponse?
+    var now: Date
+
+    var onUpdateFavorites: () -> Void
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var routeCardData: [RouteCardData]?
-    var now: Date
-
-    var stopData: RouteCardData.RouteStopData?
-
-    var servedRoutes: [StopDetailsFilterPills.FilterBy] = []
-
-    @ObservedObject var errorBannerVM: ErrorBannerViewModel
+    var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var mapVM: iosApp.MapViewModel
-    @ObservedObject var stopDetailsVM: StopDetailsViewModel
+    var mapVM: IMapViewModel
+    var stopDetailsVM: IStopDetailsViewModel
+    var favoritesUsecases: FavoritesUsecases
 
     @State var inSaveFavoritesFlow = false
+    @State var alertSummaries: [String: AlertSummary?] = [:]
 
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
-
-    var stop: Stop? { stopDetailsVM.global?.getStop(stopId: stopId) }
-    var nowInstant: EasternTimeInstant { now.toEasternInstant() }
 
     let inspection = Inspection<Self>()
 
@@ -44,70 +43,48 @@ struct StopDetailsFilteredView: View {
         stopId: String,
         stopFilter: StopDetailsFilter,
         tripFilter: TripDetailsFilter?,
+        routeData: StopDetailsViewModel.RouteData?,
+        favorites: Favorites,
+        global: GlobalResponse?,
+        now: Date,
+        onUpdateFavorites: @escaping () -> Void,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        routeCardData: [RouteCardData]?,
-        now: Date,
-        errorBannerVM: ErrorBannerViewModel,
+        errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
-        mapVM: iosApp.MapViewModel,
-        stopDetailsVM: StopDetailsViewModel
+        mapVM: IMapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
+        favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
         self.tripFilter = tripFilter
+        self.routeData = routeData
+        self.favorites = favorites
+        self.global = global
+        self.now = now
+        self.onUpdateFavorites = onUpdateFavorites
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.routeCardData = routeCardData
-        self.now = now
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
-
-        let routeData = routeCardData?.first { $0.lineOrRoute.id == stopFilter.routeId }
-        stopData = routeData?.stopData.first { $0.stop.id == stopId }
+        self.favoritesUsecases = favoritesUsecases
     }
 
-    var enhancedFavorites: Bool { settingsCache.get(.enhancedFavorites) }
-
-    var routeStopDirection: RouteStopDirection {
-        .init(route: stopFilter.routeId, stop: stopId, direction: stopFilter.directionId)
-    }
-
-    var favoriteBridge: FavoriteBridge {
-        if enhancedFavorites {
-            .Favorite(routeStopDirection: routeStopDirection)
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
-    }
-
-    var isFavorite: Bool {
-        stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites)
-    }
-
-    var toggleFavoriteUpdateBridge: FavoriteUpdateBridge {
-        if enhancedFavorites {
-            .Favorites(
-                updatedValues: [routeStopDirection: .init(bool: !isFavorite)],
-                defaultDirection: stopFilter.directionId
-            )
-        } else {
-            .Pinned(routeId: stopFilter.routeId)
-        }
-    }
-
-    func toggleFavorite() {
-        Task {
-            let pinned = await stopDetailsVM.updateFavorites(
-                toggleFavoriteUpdateBridge,
-                enhancedFavorites: enhancedFavorites
-            )
-            if !enhancedFavorites {
-                analytics.toggledPinnedRoute(pinned: pinned, routeId: stopFilter.routeId)
-            }
-        }
+    var isFavorite: Bool { if let routeStopDirection { favorites.isFavorite(routeStopDirection) } else { false }}
+    var nowInstant: EasternTimeInstant { now.toEasternInstant() }
+    var routeStopDirection: RouteStopDirection? { .init(
+        route: stopFilter.routeId,
+        stop: stopId,
+        direction: stopFilter.directionId
+    ) }
+    var stop: Stop? { global?.getStop(stopId: stopId) }
+    var stopData: RouteCardData.RouteStopData? {
+        if case let .filtered(data) = onEnum(of: routeData) {
+            data.stopData
+        } else { nil }
     }
 
     var body: some View {
@@ -126,6 +103,7 @@ struct StopDetailsFilteredView: View {
                     setStopFilter: setStopFilter,
                     setTripFilter: setTripFilter,
                     stopData: stopData,
+                    alertSummaries: alertSummaries,
                     favorite: isFavorite,
                     now: now,
                     errorBannerVM: errorBannerVM,
@@ -136,6 +114,11 @@ struct StopDetailsFilteredView: View {
                 )
             } else {
                 loadingBody()
+            }
+        }
+        .task {
+            for await model in stopDetailsVM.models {
+                alertSummaries = model.alertSummaries as? [String: AlertSummary?] ?? [:]
             }
         }
         .accessibilityHidden(inSaveFavoritesFlow)
@@ -149,34 +132,29 @@ struct StopDetailsFilteredView: View {
         default: nil
         }
         VStack(spacing: 0) {
-            if let stopData,
-               inSaveFavoritesFlow {
-                SaveFavoritesFlow(lineOrRoute: stopData.lineOrRoute,
-                                  stop: stopData.stop,
-                                  directions: stopData.directions
-                                      .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
-                                  selectedDirection: routeStopDirection.direction,
-                                  context: .stopDetails,
-                                  global: stopDetailsVM.global,
-                                  isFavorite: { rsd in
-                                      stopDetailsVM.isFavorite(
-                                          .Favorite(routeStopDirection: rsd),
-                                          enhancedFavorites: true
-                                      )
-                                  },
-                                  updateFavorites: { newFavorites in
-                                      Task {
-                                          await stopDetailsVM.updateFavorites(
-                                              .Favorites(updatedValues: newFavorites
-                                                  .mapValues { KotlinBoolean(bool: $0) },
-                                                  defaultDirection: stopFilter.directionId),
-                                              enhancedFavorites: true
-                                          )
-                                      }
-                                  },
-                                  onClose: {
-                                      inSaveFavoritesFlow = false
-                                  })
+            if let stopData, let routeStopDirection, inSaveFavoritesFlow {
+                SaveFavoritesFlow(
+                    lineOrRoute: stopData.lineOrRoute,
+                    stop: stopData.stop,
+                    directions: stopData.directions
+                        .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
+                    selectedDirection: routeStopDirection.direction,
+                    context: .stopDetails,
+                    global: global,
+                    isFavorite: { favorites.isFavorite($0) },
+                    updateFavorites: { updatedValues in
+                        Task {
+                            try? await favoritesUsecases.updateRouteStopDirections(
+                                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
+                                context: .stopDetails, defaultDirection: routeStopDirection.direction
+                            )
+                            onUpdateFavorites()
+                        }
+                    },
+                    onClose: {
+                        inSaveFavoritesFlow = false
+                    }
+                )
             }
 
             VStack(spacing: 8) {
@@ -185,20 +163,10 @@ struct StopDetailsFilteredView: View {
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
-                    pinned: stopDetailsVM.isFavorite(favoriteBridge, enhancedFavorites: enhancedFavorites),
-                    onPin: {
-                        if favoriteBridge is FavoriteBridge.Pinned {
-                            toggleFavorite()
-                        } else {
-                            inSaveFavoritesFlow = true
-                        }
-                    },
+                    isFavorite: isFavorite,
+                    onFavorite: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
-                /*  DebugView {
-                      Text(verbatim: "stop id: \(stopId)")
-                  }.padding(.horizontal, 16)
-                 */
                 ErrorBanner(errorBannerVM).padding(.horizontal, 16)
             }
             .fixedSize(horizontal: false, vertical: true)
@@ -213,8 +181,6 @@ struct StopDetailsFilteredView: View {
             context: .stopDetailsFiltered,
             now: nowInstant
         )
-        let stopData = routeData.stopData.first!
-        let leaf = stopData.data.first!
 
         StopDetailsFilteredPickerView(
             stopId: stopId,
@@ -222,7 +188,8 @@ struct StopDetailsFilteredView: View {
             tripFilter: tripFilter,
             setStopFilter: setStopFilter,
             setTripFilter: setTripFilter,
-            stopData: stopData,
+            stopData: routeData.stopData.first!,
+            alertSummaries: [:],
             favorite: false,
             now: now,
             errorBannerVM: errorBannerVM,

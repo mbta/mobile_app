@@ -6,12 +6,12 @@ import kotlinx.serialization.json.JsonArrayBuilder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObjectBuilder
 
-interface MapboxStyleObject {
-    fun asJson(): JsonElement
+public interface MapboxStyleObject {
+    public fun asJson(): JsonElement
 
-    fun toJsonString() = json.encodeToString(asJson())
+    public fun toJsonString(): String = json.encodeToString(asJson())
 }
 
-fun JsonArrayBuilder.add(`object`: MapboxStyleObject) = add(`object`.asJson())
+internal fun JsonArrayBuilder.add(`object`: MapboxStyleObject) = add(`object`.asJson())
 
-fun JsonObjectBuilder.put(key: String, value: MapboxStyleObject) = put(key, value.asJson())
+internal fun JsonObjectBuilder.put(key: String, value: MapboxStyleObject) = put(key, value.asJson())

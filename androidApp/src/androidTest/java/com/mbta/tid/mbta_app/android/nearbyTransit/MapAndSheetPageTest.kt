@@ -3,13 +3,17 @@ package com.mbta.tid.mbta_app.android.nearbyTransit
 import android.Manifest
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -23,6 +27,7 @@ import com.mapbox.maps.CameraState
 import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.extension.compose.animation.viewport.MapViewportState
 import com.mbta.tid.mbta_app.android.component.sheet.rememberBottomSheetScaffoldState
+import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.MockFusedLocationProviderClient
 import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
@@ -30,7 +35,6 @@ import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.pages.MapAndSheetPage
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import com.mbta.tid.mbta_app.android.testKoinApplication
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -38,14 +42,16 @@ import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.SheetRoutes
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import dev.mokkery.MockMode
@@ -56,6 +62,7 @@ import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.spy
+import dev.mokkery.verify
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Clock
@@ -68,10 +75,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
-import org.koin.compose.KoinContext
 import org.koin.test.KoinTest
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
 class MapAndSheetPageTest : KoinTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
@@ -198,8 +204,8 @@ class MapAndSheetPageTest : KoinTest {
             ),
         )
 
-    fun koinApplication(hideMaps: Boolean = false) =
-        testKoinApplication(
+    fun loadMocks(hideMaps: Boolean = false) =
+        loadKoinMocks(
             builder,
             repositoryOverrides = {
                 nearby =
@@ -222,32 +228,29 @@ class MapAndSheetPageTest : KoinTest {
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
-        val koinApplication = koinApplication()
+        loadMocks()
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient()
-                ) {
-                    MapAndSheetPage(
-                        Modifier,
-                        NearbyTransit(
-                            alertData = AlertsStreamDataResponse(builder.alerts),
-                            globalResponse = globalResponse,
-                            lastLoadedLocationState =
-                                remember { mutableStateOf(Position(0.0, 0.0)) },
-                            isTargetingState = remember { mutableStateOf(false) },
-                            scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(),
-                            viewportProvider = viewportProvider,
-                        ),
-                        SheetRoutes.NearbyTransit,
-                        false,
-                        {},
-                        {},
-                        bottomBar = {},
-                        mockMapVM,
-                    )
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                )
             }
         }
 
@@ -274,6 +277,52 @@ class MapAndSheetPageTest : KoinTest {
         composeTestRule.onNodeWithText("1 min").assertExists()
     }
 
+    @Test
+    fun testErrorBannerPageChangeCalled() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+
+        val mockErrorVM = mock<IErrorBannerViewModel>(MockMode.autofill)
+        every { mockErrorVM.models } returns MutableStateFlow(ErrorBannerViewModel.State())
+
+        loadMocks()
+        composeTestRule.setContent {
+            var entrypoint by remember {
+                mutableStateOf<SheetRoutes.Entrypoint>(SheetRoutes.NearbyTransit)
+            }
+
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    entrypoint,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                    errorBannerViewModel = mockErrorVM,
+                )
+            }
+
+            LaunchedEffect(Unit) { entrypoint = SheetRoutes.Favorites }
+        }
+
+        composeTestRule.waitForIdle()
+
+        verify { mockErrorVM.setSheetRoute(SheetRoutes.Favorites) }
+    }
+
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testReloadsMapboxConfigOnError() {
@@ -293,33 +342,30 @@ class MapAndSheetPageTest : KoinTest {
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val mockConfigManager = MockConfigManager()
 
-        val koinApplication = koinApplication()
+        loadMocks()
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient()
-                ) {
-                    MapAndSheetPage(
-                        Modifier,
-                        NearbyTransit(
-                            alertData = AlertsStreamDataResponse(builder.alerts),
-                            globalResponse = globalResponse,
-                            lastLoadedLocationState =
-                                remember { mutableStateOf(Position(0.0, 0.0)) },
-                            isTargetingState = remember { mutableStateOf(false) },
-                            scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(),
-                            viewportProvider = viewportProvider,
-                        ),
-                        SheetRoutes.NearbyTransit,
-                        false,
-                        {},
-                        {},
-                        bottomBar = {},
-                        mapViewModel = mockMapVM,
-                        mapboxConfigManager = mockConfigManager,
-                    )
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mapViewModel = mockMapVM,
+                    mapboxConfigManager = mockConfigManager,
+                )
             }
         }
 
@@ -327,46 +373,76 @@ class MapAndSheetPageTest : KoinTest {
             hasContentDescription("Loading...", substring = true)
         )
 
-        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 1 }
+        composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 1 }
         mockConfigManager.mutableLastErrorTimestamp.value = EasternTimeInstant.now()
 
-        composeTestRule.waitUntil { mockConfigManager.loadConfigCalledCount == 2 }
+        composeTestRule.waitUntilDefaultTimeout { mockConfigManager.loadConfigCalledCount == 2 }
     }
 
     @Test
     fun testHidesMap() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
-        val koinApplication = koinApplication(hideMaps = true)
+        loadMocks(hideMaps = true)
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient()
-                ) {
-                    MapAndSheetPage(
-                        Modifier,
-                        NearbyTransit(
-                            alertData = AlertsStreamDataResponse(builder.alerts),
-                            globalResponse = globalResponse,
-                            lastLoadedLocationState =
-                                remember { mutableStateOf(Position(0.0, 0.0)) },
-                            isTargetingState = remember { mutableStateOf(false) },
-                            scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = MockLocationDataManager(),
-                            viewportProvider = viewportProvider,
-                        ),
-                        SheetRoutes.NearbyTransit,
-                        false,
-                        {},
-                        {},
-                        bottomBar = {},
-                        mockMapVM,
-                    )
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                )
             }
         }
 
         composeTestRule.onNodeWithContentDescription("Mapbox Logo").assertDoesNotExist()
+    }
+
+    @Test
+    fun testLocationServicesButtonWhenMapHidden() {
+        val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        loadMocks(hideMaps = true)
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = MockLocationDataManager(),
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                )
+            }
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Location Services is off"))
     }
 
     @Test
@@ -415,34 +491,31 @@ class MapAndSheetPageTest : KoinTest {
 
         everySuspend { viewportProvider.follow(any()) } calls { followCallCount += 1 }
 
-        val koinApplication = testKoinApplication(builder, clock = mockClock)
+        loadKoinMocks(builder, clock = mockClock)
         locationDataManager.hasPermission = true
         composeTestRule.setContent {
-            KoinContext(koinApplication.koin) {
-                CompositionLocalProvider(
-                    LocalLocationClient provides MockFusedLocationProviderClient(),
-                    LocalLifecycleOwner provides lifecycleOwner,
-                ) {
-                    MapAndSheetPage(
-                        Modifier,
-                        NearbyTransit(
-                            alertData = AlertsStreamDataResponse(builder.alerts),
-                            globalResponse = globalResponse,
-                            lastLoadedLocationState =
-                                remember { mutableStateOf(Position(0.0, 0.0)) },
-                            isTargetingState = remember { mutableStateOf(false) },
-                            scaffoldState = rememberBottomSheetScaffoldState(),
-                            locationDataManager = locationDataManager,
-                            viewportProvider = viewportProvider,
-                        ),
-                        SheetRoutes.NearbyTransit,
-                        false,
-                        {},
-                        {},
-                        bottomBar = {},
-                        mockMapVM,
-                    )
-                }
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient(),
+                LocalLifecycleOwner provides lifecycleOwner,
+            ) {
+                MapAndSheetPage(
+                    Modifier,
+                    NearbyTransit(
+                        alertData = AlertsStreamDataResponse(builder.alerts),
+                        globalResponse = globalResponse,
+                        lastLoadedLocationState = remember { mutableStateOf(Position(0.0, 0.0)) },
+                        isTargetingState = remember { mutableStateOf(false) },
+                        scaffoldState = rememberBottomSheetScaffoldState(),
+                        locationDataManager = locationDataManager,
+                        viewportProvider = viewportProvider,
+                    ),
+                    SheetRoutes.NearbyTransit,
+                    false,
+                    {},
+                    {},
+                    bottomBar = {},
+                    mockMapVM,
+                )
             }
         }
 
