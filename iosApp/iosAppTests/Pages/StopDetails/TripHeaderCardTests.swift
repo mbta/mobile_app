@@ -34,7 +34,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: stop.name))
@@ -58,7 +59,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         try XCTAssertNotNil(inTransitSut.inspect().find(text: "Next stop"))
 
@@ -73,7 +75,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         try XCTAssertNotNil(incomingSut.inspect().find(text: "Approaching"))
 
@@ -88,7 +91,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         try XCTAssertNotNil(stoppedSut.inspect().find(text: "Now at"))
     }
@@ -107,7 +111,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         try XCTAssertNotNil(sut.inspect().find(text: "Finishing another trip"))
         try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
@@ -127,7 +132,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         try XCTAssertNotNil(sut.inspect().find(text: "Location not available yet"))
         try XCTAssertThrowsError(sut.inspect().find(text: stop.name))
@@ -152,7 +158,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         XCTAssertNotNil(try targeted.inspect().find(imageName: "stop-pin-indicator"))
@@ -164,7 +171,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         XCTAssertThrowsError(try notTargeted.inspect().find(imageName: "stop-pin-indicator"))
@@ -203,7 +211,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: "Waiting to depart"))
@@ -251,7 +260,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: "Track 4"))
@@ -284,7 +294,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         try XCTAssertNotNil(sut.inspect().find(text: "Scheduled to depart"))
@@ -322,7 +333,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: { tapExpectation.fulfill() },
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
 
         try sut.inspect().find(ViewType.ZStack.self).callOnTapGesture()
@@ -344,7 +356,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertEqual(
             "displays more information",
@@ -358,7 +371,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: nil,
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertEqual(
             "",
@@ -376,7 +390,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertNotNil(try withVehicleAtStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus Approaching stop, selected stop"
@@ -391,7 +406,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertNotNil(try withVehicleAtOtherStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus Approaching other stop"
@@ -416,7 +432,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertNotNil(try withScheduleAtStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus scheduled to depart stop, selected stop"
@@ -438,7 +455,8 @@ final class TripHeaderCardTests: XCTestCase {
             route: route,
             routeAccents: .init(route: route),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertNotNil(try withScheduleAtOtherStop.inspect().find(
             viewWithAccessibilityLabel: "Selected bus scheduled to depart other stop"
@@ -470,11 +488,38 @@ final class TripHeaderCardTests: XCTestCase {
             route: crRoute,
             routeAccents: .init(type: .commuterRail),
             onTap: {},
-            now: now
+            now: now,
+            onFollowTrip: nil,
         )
         XCTAssertNotNil(try withTrackNumber.inspect().find(viewWithAccessibilityLabel: "Boarding on track 4"))
         XCTAssertNotNil(try withTrackNumber.inspect().find(
             viewWithAccessibilityLabel: "Selected train Now at North Station, selected stop"
         ))
+    }
+
+    func testFollowButton() throws {
+        let followExp = expectation(description: "follow button tapped")
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { _ in }
+        let trip = objects.trip { _ in }
+        let vehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+        }
+        let sut = TripHeaderCard(
+            spec: .vehicle(vehicle, stop, nil, false),
+            trip: trip,
+            targetId: "",
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: { followExp.fulfill() }
+        )
+
+        try sut.inspect().find(button: "Follow").tap()
+        wait(for: [followExp])
     }
 }

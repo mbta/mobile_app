@@ -23,6 +23,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case routeDetails(SheetRoutes.RouteDetails)
     case routePicker(SheetRoutes.RoutePicker)
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
+    case tripDetails(filter: TripDetailsPageFilter)
 
     var id: Int {
         hashValue
@@ -49,6 +50,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .nearby: .nearbyTransit
         case .routeDetails: .routeDetails
         case let .stopDetails(_, stopFilter, _): stopFilter == nil ? .stopDetailsUnfiltered : .stopDetailsFiltered
+        case .tripDetails: .tripDetails
         default: nil
         }
     }
@@ -63,6 +65,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .routeDetails: "routeDetails"
         case .routePicker: "routePicker"
         case .stopDetails: "stopDetails"
+        case .tripDetails: "tripDetails"
         }
     }
 
@@ -104,6 +107,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
             )
         case let .routeDetails(sheetRoute): sheetRoute
         case let .routePicker(sheetRoute): sheetRoute
+        case let .tripDetails(filter): SheetRoutes.TripDetails(filter: filter)
         case .alertDetails: nil
         case .more: nil
         }
@@ -126,6 +130,7 @@ struct SheetItem: Identifiable {
         case .routeDetails: "routeDetails"
         case .routePicker: "routePicker"
         case let .stopDetails(stopId, _, _): stopId
+        case let .tripDetails(filter): filter.tripId
         default: ""
         }
     }

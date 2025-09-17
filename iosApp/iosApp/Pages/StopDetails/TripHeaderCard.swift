@@ -26,6 +26,7 @@ struct TripHeaderCard: View {
     let routeAccents: TripRouteAccents
     let onTap: (() -> Void)?
     let now: EasternTimeInstant
+    let onFollowTrip: (() -> Void)?
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -274,7 +275,10 @@ struct TripHeaderCard: View {
         VStack {
             switch spec {
             case .finishingAnotherTrip, .noVehicle: if onTap != nil { InfoIcon() }
-            case .vehicle: liveIndicator
+            case .vehicle:
+                if let onFollowTrip {
+                    FollowButton(action: onFollowTrip, routeAccents: routeAccents)
+                } else { liveIndicator }
             case .scheduled: EmptyView()
             }
 
@@ -365,7 +369,8 @@ struct TripVehicleCard_Previews: PreviewProvider {
                 route: red,
                 routeAccents: TripRouteAccents(route: red),
                 onTap: nil,
-                now: now
+                now: now,
+                onFollowTrip: nil,
             )
         }
         .withFixedSettings([:])
