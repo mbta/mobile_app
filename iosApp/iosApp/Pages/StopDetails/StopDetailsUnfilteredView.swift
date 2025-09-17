@@ -81,17 +81,17 @@ struct StopDetailsUnfilteredView: View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
             VStack(spacing: 0) {
-                VStack(spacing: 16) {
+                VStack(spacing: 0) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
                         onClose: { nearbyVM.goBack() }
-                    )
+                    ).padding(.bottom, 16)
                     if debugMode {
                         DebugView {
                             Text(verbatim: "stop id: \(stopId)")
-                        }
+                        }.padding([.horizontal, .bottom], 16)
                     }
-                    ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+                    ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
                     if servedRoutes.count > 1 {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,

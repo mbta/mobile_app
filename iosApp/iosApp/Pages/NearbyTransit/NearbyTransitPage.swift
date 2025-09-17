@@ -39,9 +39,10 @@ struct NearbyTransitPage: View {
     var body: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
-            VStack(spacing: 16) {
+            VStack(spacing: 0) {
                 SheetHeader(title: NSLocalizedString("Nearby Transit", comment: "Header for nearby transit sheet"))
-                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+                    .padding(.bottom, 16)
+                ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
                 NearbyTransitView(
                     location: $location,
                     setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },

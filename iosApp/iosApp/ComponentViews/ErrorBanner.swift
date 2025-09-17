@@ -9,21 +9,42 @@
 import Shared
 import SwiftUI
 
+struct BannerPadding {
+    let edges: Edge.Set
+    let length: CGFloat?
+
+    init(_ edges: Edge.Set = .all, _ length: CGFloat? = 0) {
+        self.edges = edges
+        self.length = length
+    }
+}
+
 struct ErrorBanner: View {
     let errorBannerVM: IErrorBannerViewModel
+    let padding: BannerPadding
     @State var errorBannerVMState: ErrorBannerViewModel.State = .init()
 
     let minHeight = 60.0
     let inspection = Inspection<Self>()
 
-    init(_ errorBannerVM: IErrorBannerViewModel) {
+    init(
+        _ errorBannerVM: IErrorBannerViewModel,
+        padding: BannerPadding = .init(),
+    ) {
         self.errorBannerVM = errorBannerVM
+        self.padding = padding
     }
+
+    var state: ErrorBannerState? { errorBannerVMState.errorState }
 
     var body: some View {
         VStack {
             content
         }
+        // The content must be wrapped in a VStack so that the task can run when the error banner is
+        // an EmptyView, but applying padding directly to the ErrorBanner will result in that padding
+        // sticking around even when the banner is empty. This removes provided padding when empty.
+        .padding(state != nil ? padding.edges : .all, state != nil ? padding.length : 0)
         .task {
             for await model in errorBannerVM.models {
                 errorBannerVMState = model
@@ -33,7 +54,6 @@ struct ErrorBanner: View {
     }
 
     @ViewBuilder private var content: some View {
-        let state = errorBannerVMState.errorState
         switch onEnum(of: state) {
         case let .dataError(state):
             ErrorCard {
