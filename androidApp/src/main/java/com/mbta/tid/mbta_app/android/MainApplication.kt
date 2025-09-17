@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
 import com.mbta.tid.mbta_app.initKoin
+import com.mbta.tid.mbta_app.network.NetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
 import org.koin.core.module.dsl.*
@@ -36,6 +37,7 @@ class MainApplication : Application() {
                     AnalyticsProvider(Firebase.analytics)
                 else MockAnalytics(),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
+                NetworkConnectivityMonitor(applicationContext),
                 socket.wrapped(),
             ) + koinViewModelModule(),
             this,

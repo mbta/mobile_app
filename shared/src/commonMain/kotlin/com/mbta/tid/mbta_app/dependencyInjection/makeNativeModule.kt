@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.AlertsRepository
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
@@ -21,12 +22,14 @@ public fun makeNativeModule(
     accessibilityStatus: IAccessibilityStatusRepository,
     analytics: Analytics,
     currentAppVersion: ICurrentAppVersionRepository,
+    networkConnectivityMonitor: INetworkConnectivityMonitor,
     socket: PhoenixSocket,
 ): Module {
     return module {
         single<IAccessibilityStatusRepository> { accessibilityStatus }
         single<Analytics> { analytics }
         single<ICurrentAppVersionRepository> { currentAppVersion }
+        single<INetworkConnectivityMonitor> { networkConnectivityMonitor }
         single<PhoenixSocket> { socket }
         factory<IAlertsRepository> { AlertsRepository(get()) }
         factory<IPredictionsRepository> { PredictionsRepository(get()) }

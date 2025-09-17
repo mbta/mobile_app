@@ -96,7 +96,8 @@ struct ProductionAppView: View {
             accessibilityStatus: AccessibilityStatusRepository(),
             analytics: AnalyticsProvider.shared,
             currentAppVersion: CurrentAppVersionRepository(),
-            socket: socket
+            networkConnectivityMonitor: NetworkConnectivityMonitor(),
+            socket: socket,
         )
         HelpersKt.doInitKoin(appVariant: appVariant, nativeModule: nativeModule)
     }
