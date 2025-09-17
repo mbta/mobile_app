@@ -275,7 +275,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 onBack: onBack,
                 onClose: onClose
             )
-            ErrorBanner(errorBannerVM)
+            ErrorBanner(errorBannerVM, padding: .init([.horizontal, .top], 16))
             DirectionPicker(
                 availableDirections: parameters.availableDirections.map { Int32(truncating: $0) },
                 directions: parameters.directions,

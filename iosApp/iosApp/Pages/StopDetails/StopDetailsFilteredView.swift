@@ -157,7 +157,7 @@ struct StopDetailsFilteredView: View {
                 )
             }
 
-            VStack(spacing: 8) {
+            VStack(spacing: 0) {
                 StopDetailsFilteredHeader(
                     route: stopData?.lineOrRoute.sortRoute,
                     line: line,
@@ -167,7 +167,7 @@ struct StopDetailsFilteredView: View {
                     onFavorite: { inSaveFavoritesFlow = true },
                     onClose: { nearbyVM.goBack() }
                 )
-                ErrorBanner(errorBannerVM).padding(.horizontal, 16)
+                ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
             }
             .fixedSize(horizontal: false, vertical: true)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)

@@ -75,7 +75,7 @@ struct RoutePickerView: View {
             path.backgroundColor.edgesIgnoringSafeArea(.all)
             VStack(spacing: 0) {
                 header
-                ErrorBanner(errorBannerVM)
+                ErrorBanner(errorBannerVM, padding: .init([.horizontal, .top], 16))
                 if isRootPath {
                     ScrollView {
                         rootContent

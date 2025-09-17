@@ -26,7 +26,7 @@ struct FavoritesView: View {
     @ScaledMetric private var editButtonHeight: CGFloat = 32
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
                 rightActionContents: {
@@ -43,9 +43,9 @@ struct FavoritesView: View {
                         }
                     }
                 }
-            )
+            ).padding(.bottom, 16)
 
-            ErrorBanner(errorBannerVM)
+            ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
             RouteCardList(
                 routeCardData: favoritesVMState.routeCardData,
                 emptyView: {
