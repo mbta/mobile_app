@@ -47,11 +47,9 @@ internal class ErrorBannerViewModelTest : KoinTest {
     private fun setUpKoin(
         coroutineDispatcher: CoroutineDispatcher,
         clock: Clock = Clock.System,
+        mockNetworkMonitor: INetworkConnectivityMonitor = mock(MockMode.autofill),
         repositoriesBlock: MockRepositories.() -> Unit = {},
     ) {
-
-        val mockNetworkMonitor = mock<INetworkConnectivityMonitor>(MockMode.autofill)
-
         startKoin {
             modules(
                 module {
@@ -306,6 +304,54 @@ internal class ErrorBannerViewModelTest : KoinTest {
             clock.now += 2.minutes
             errorRepo.setDataError("ErrorKey", "error details") {}
             assertIs<ErrorBannerState.DataError>(awaitItem().errorState)
+            verifyNoMoreCalls(sentryRepo)
+        }
+    }
+
+    @Test
+    fun `does not record DataErrors if offline`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        val errorRepo = ErrorBannerStateRepository()
+        val sentryRepo =
+            mock<ISentryRepository>(MockMode.autofill) {
+                every { captureMessage(any(), any()) } throwsErrorWith
+                    "should not have captured Sentry message"
+            }
+
+        val clock =
+            object : Clock {
+                var now = Clock.System.now()
+
+                override fun now() = now
+            }
+
+        val mockNetworkMonitor =
+            object : INetworkConnectivityMonitor {
+                override fun registerListener(
+                    onNetworkAvailable: () -> Unit,
+                    onNetworkLost: () -> Unit,
+                ) {
+                    onNetworkLost()
+                }
+            }
+
+        setUpKoin(dispatcher, clock, mockNetworkMonitor) {
+            errorBanner = errorRepo
+            sentry = sentryRepo
+        }
+
+        val viewModel: ErrorBannerViewModel = get()
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            errorRepo.setDataError("ErrorKey", "error details") {}
+            assertIs<ErrorBannerState.NetworkError>(awaitItem().errorState)
+            viewModel.clearState()
+            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            clock.now += 1.seconds
+            errorRepo.setDataError("ErrorKey", "error details") {}
+            assertIs<ErrorBannerState.NetworkError>(awaitItem().errorState)
             verifyNoMoreCalls(sentryRepo)
         }
     }
