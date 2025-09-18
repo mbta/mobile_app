@@ -141,7 +141,7 @@ internal class MapViewModelTests : KoinTest {
                 SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
             )
             assertEquals(
-                MapViewModel.State.TripSelected(null, stopFilter, tripFilter, null),
+                MapViewModel.State.TripSelected(null, stopFilter, tripFilter, null, true),
                 awaitItem(),
             )
         }
@@ -176,9 +176,9 @@ internal class MapViewModelTests : KoinTest {
             viewModel.recenter()
             delay(10)
             assertEquals(2, timesFollowCalled)
-            viewModel.selectedTrip(null, null, tripDetailsFilter, vehicle)
+            viewModel.selectedTrip(null, null, tripDetailsFilter, vehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(null, null, tripDetailsFilter, vehicle),
+                MapViewModel.State.TripSelected(null, null, tripDetailsFilter, vehicle, false),
                 awaitItem(),
             )
             delay(10)
@@ -205,9 +205,9 @@ internal class MapViewModelTests : KoinTest {
             viewModel.densityChanged(1f)
             assertEquals(MapViewModel.State.Overview, awaitItem())
             val stop = TestData.stops["70113"]!!
-            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle)
+            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle),
+                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
                 awaitItem(),
             )
             viewModel.navChanged(SheetRoutes.RouteDetails("", RouteDetailsContext.Details))

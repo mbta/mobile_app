@@ -216,7 +216,8 @@ struct TripDetailsView: View {
                 stopFilter: stopFilter,
                 stop: stop,
                 tripFilter: tripDetailsFilter,
-                vehicle: vehicle
+                vehicle: vehicle,
+                follow: false
             )
         }
     }

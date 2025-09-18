@@ -55,6 +55,7 @@ public interface IMapViewModel {
         stop: Stop?,
         tripFilter: TripDetailsFilter,
         vehicle: Vehicle?,
+        follow: Boolean,
     )
 
     public fun navChanged(currentNavEntry: SheetRoutes?)
@@ -106,6 +107,7 @@ public class MapViewModel(
             val stopFilter: StopDetailsFilter?,
             val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
+            val follow: Boolean,
         ) : Event
 
         public data class NavChanged internal constructor(val currentNavEntry: SheetRoutes?) :
@@ -142,6 +144,7 @@ public class MapViewModel(
             override val stopFilter: StopDetailsFilter?,
             internal val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
+            val following: Boolean,
         ) : State()
     }
 
@@ -242,8 +245,9 @@ public class MapViewModel(
                             event.stopFilter,
                             event.tripFilter,
                             event.vehicle,
+                            event.follow,
                         )
-                    if (currentState?.vehicle?.id != newState.vehicle?.id) {
+                    if (currentState?.vehicle?.id != newState.vehicle?.id || event.follow) {
                         handleViewportCentering(newState, density)
                     }
                     state = newState
@@ -327,7 +331,8 @@ public class MapViewModel(
         stop: Stop?,
         tripFilter: TripDetailsFilter,
         vehicle: Vehicle?,
-    ): Unit = fireEvent(Event.SelectedTrip(stop, stopFilter, tripFilter, vehicle))
+        follow: Boolean,
+    ): Unit = fireEvent(Event.SelectedTrip(stop, stopFilter, tripFilter, vehicle, follow))
 
     override fun navChanged(currentNavEntry: SheetRoutes?): Unit =
         fireEvent(Event.NavChanged(currentNavEntry))
@@ -396,6 +401,7 @@ public class MapViewModel(
                     currentNavEntryTripDetails.filter.stopFilter,
                     currentNavEntryTripDetails.filter.tripDetailsFilter,
                     vehicle,
+                    true,
                 )
             } else if (currentNavEntryStopDetails == null) {
                 State.Overview
@@ -409,6 +415,7 @@ public class MapViewModel(
                             currentNavEntryStopDetails.stopFilter,
                             currentNavEntryStopDetails.tripFilter,
                             null,
+                            false,
                         )
                     } else {
                         State.StopSelected(stop, currentNavEntryStopDetails.stopFilter)
@@ -437,11 +444,12 @@ public class MapViewModel(
                     if (state.tripFilter.vehicleId == null) {
                         state.stop?.let { viewportManager.stopCenter(it) }
                     } else {
+                        // If we're following a vehicle, exclude the stop so the map follows only
+                        // the vehicle
+                        val stop = if (state.following) null else state.stop
                         // if there is a vehicle id associated with the trip but there
                         // isn't a vehicle yet, wait for one to load before centering
-                        state.vehicle?.let {
-                            viewportManager.vehicleOverview(it, state.stop, density)
-                        }
+                        state.vehicle?.let { viewportManager.vehicleOverview(it, stop, density) }
                     }
                 }
             }
@@ -597,8 +605,9 @@ public class MockMapViewModel
 constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IMapViewModel {
 
     public var onSelectedStop: (Stop, StopDetailsFilter?) -> Unit = { _, _ -> }
-    public var onSelectedTrip: (StopDetailsFilter?, Stop?, TripDetailsFilter, Vehicle?) -> Unit =
-        { _, _, _, _ ->
+    public var onSelectedTrip:
+        (StopDetailsFilter?, Stop?, TripDetailsFilter, Vehicle?, Boolean) -> Unit =
+        { _, _, _, _, _ ->
         }
     public var onNavChanged: (SheetRoutes?) -> Unit = {}
     public var onRecenter: (RecenterType) -> Unit = {}
@@ -621,7 +630,8 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
         stop: Stop?,
         tripFilter: TripDetailsFilter,
         vehicle: Vehicle?,
-    ): Unit = onSelectedTrip(stopFilter, stop, tripFilter, vehicle)
+        follow: Boolean,
+    ): Unit = onSelectedTrip(stopFilter, stop, tripFilter, vehicle, follow)
 
     override fun navChanged(currentNavEntry: SheetRoutes?): Unit = onNavChanged(currentNavEntry)
 
