@@ -9,7 +9,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.network.receiveAll
+import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -35,10 +35,10 @@ public interface IPredictionsRepository {
     public fun disconnect()
 }
 
-internal class PredictionsRepository(private val socket: PhoenixSocket) :
+internal class PredictionsRepository(socket: PhoenixSocket) :
     IPredictionsRepository, KoinComponent {
-
-    var channel: PhoenixChannel? = null
+    private val channelOwner = ChannelOwner(socket)
+    internal var channel: PhoenixChannel? by channelOwner::channel
 
     override var lastUpdated: EasternTimeInstant? = null
 
@@ -50,26 +50,11 @@ internal class PredictionsRepository(private val socket: PhoenixSocket) :
         stopIds: List<String>,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
-        disconnect()
-        val joinPayload = PredictionsForStopsChannel.joinPayload(stopIds)
-        channel = socket.getChannel(PredictionsForStopsChannel.topic, joinPayload)
-
-        channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
-            handleNewDataMessage(message, onReceive)
-        }
-        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
-
-        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
-        channel
-            ?.attach()
-            ?.receiveAll(
-                onOk = { message ->
-                    println("joined channel ${message.subject}")
-                    handleNewDataMessage(message, onReceive)
-                },
-                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
-                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
-            )
+        channelOwner.connect(
+            PredictionsForStopsChannel.V1(stopIds),
+            handleMessage = { handleNewDataMessage(it, onReceive) },
+            handleError = { onReceive(ApiResult.Error(message = it)) },
+        )
     }
 
     override fun connectV2(
@@ -77,30 +62,16 @@ internal class PredictionsRepository(private val socket: PhoenixSocket) :
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
-        disconnect()
-        channel = socket.getChannel(PredictionsForStopsChannel.topicV2(stopIds), mapOf())
-
-        channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
-            handleV2Message(message, onMessage)
-        }
-        channel?.onFailure { onMessage(ApiResult.Error(message = SocketError.FAILURE)) }
-
-        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
-        channel
-            ?.attach()
-            ?.receiveAll(
-                onOk = { message ->
-                    println("joined channel ${message.subject}")
-                    handleV2JoinMessage(message, onJoin)
-                },
-                onError = { onJoin(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
-                onTimeout = { onJoin(ApiResult.Error(message = SocketError.TIMEOUT)) },
-            )
+        channelOwner.connect(
+            PredictionsForStopsChannel.V2(stopIds),
+            handleJoin = { handleV2JoinMessage(it, onJoin) },
+            handleMessage = { handleV2Message(it, onMessage) },
+            handleError = { onMessage(ApiResult.Error(message = it)) },
+        )
     }
 
     override fun disconnect() {
-        channel?.detach()
-        channel = null
+        channelOwner.disconnect()
     }
 
     private fun handleNewDataMessage(

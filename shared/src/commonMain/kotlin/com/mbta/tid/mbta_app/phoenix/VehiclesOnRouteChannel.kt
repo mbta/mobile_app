@@ -3,20 +3,15 @@ package com.mbta.tid.mbta_app.phoenix
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 
-internal object VehiclesOnRouteChannel {
-    val topic = "vehicles:route"
+internal class VehiclesOnRouteChannel(routeIds: List<String>, directionId: Int) : ChannelSpec {
+    override val topic = "vehicles:routes:${routeIds.joinToString(",")}:${directionId}"
+    override val updateEvent = "stream_data"
+    override val params = emptyMap<String, Any>()
 
-    val newDataEvent = "stream_data"
-
-    fun topic(routeIds: List<String>, directionId: Int) =
-        "vehicles:routes:${routeIds.joinToString(",")}:${directionId}"
-
-    fun joinPayload(routeId: String, directionId: Int): Map<String, Any> {
-        return mapOf("route_id" to routeId, "direction_id" to directionId)
-    }
-
-    @Throws(IllegalArgumentException::class)
-    fun parseMessage(payload: String): VehiclesStreamDataResponse {
-        return json.decodeFromString(payload)
+    companion object {
+        @Throws(IllegalArgumentException::class)
+        fun parseMessage(payload: String): VehiclesStreamDataResponse {
+            return json.decodeFromString(payload)
+        }
     }
 }

@@ -10,7 +10,7 @@ import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.network.receiveAll
+import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.VehiclesOnRouteChannel
 import org.koin.core.component.KoinComponent
 
@@ -24,48 +24,27 @@ public interface IVehiclesRepository {
     public fun disconnect()
 }
 
-internal class VehiclesRepository(private val socket: PhoenixSocket) :
-    IVehiclesRepository, KoinComponent {
-    var channel: PhoenixChannel? = null
+internal class VehiclesRepository(socket: PhoenixSocket) : IVehiclesRepository, KoinComponent {
+    var channelOwner = ChannelOwner(socket)
+    internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(
         routeId: String,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
-        disconnect()
-        val topic =
-            VehiclesOnRouteChannel.topic(
-                if (routeId == "line-Green") {
-                    greenRoutes.toList()
-                } else {
-                    listOf(routeId)
-                },
+        channelOwner.connect(
+            VehiclesOnRouteChannel(
+                if (routeId == "line-Green") greenRoutes.toList() else listOf(routeId),
                 directionId,
-            )
-        channel = socket.getChannel(topic, emptyMap())
-
-        channel?.onEvent(VehiclesOnRouteChannel.newDataEvent) { message ->
-            handleNewDataMessage(message, onReceive)
-        }
-        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
-
-        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
-        channel
-            ?.attach()
-            ?.receiveAll(
-                onOk = { message ->
-                    println("joined channel ${message.subject}")
-                    handleNewDataMessage(message, onReceive)
-                },
-                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
-                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
-            )
+            ),
+            handleMessage = { handleNewDataMessage(it, onReceive) },
+            handleError = { onReceive(ApiResult.Error(message = it)) },
+        )
     }
 
     override fun disconnect() {
-        channel?.detach()
-        channel = null
+        channelOwner.disconnect()
     }
 
     private fun handleNewDataMessage(

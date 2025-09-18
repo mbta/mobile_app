@@ -62,8 +62,8 @@ class VehiclesOnRouteChannelTest {
 
     @Test
     fun testTopicInterpolation() {
-        val topic1 = VehiclesOnRouteChannel.topic(listOf("Red"), 0)
-        val topic2 = VehiclesOnRouteChannel.topic(listOf("Green-B", "Green-C", "Green-D"), 1)
+        val topic1 = VehiclesOnRouteChannel(listOf("Red"), 0).topic
+        val topic2 = VehiclesOnRouteChannel(listOf("Green-B", "Green-C", "Green-D"), 1).topic
 
         assertEquals("vehicles:routes:Red:0", topic1)
         assertEquals("vehicles:routes:Green-B,Green-C,Green-D:1", topic2)
