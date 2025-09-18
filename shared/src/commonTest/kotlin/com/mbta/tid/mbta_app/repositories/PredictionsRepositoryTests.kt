@@ -64,7 +64,10 @@ class PredictionsRepositoryTests : KoinTest {
         val predictionsRepo = PredictionsRepository(socket)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         predictionsRepo.channel =
-            socket.getChannel(topic = PredictionsForStopsChannel.topic, params = emptyMap())
+            socket.getChannel(
+                topic = PredictionsForStopsChannel.V1(emptyList()).topic,
+                params = emptyMap(),
+            )
         assertNotNull(predictionsRepo.channel)
 
         predictionsRepo.disconnect()
