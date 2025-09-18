@@ -9951,7 +9951,6 @@
     },
     "Follow" : {
       "comment" : "Text on a button to enter a focused view that follows a single vehicle on a trip",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {

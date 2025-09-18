@@ -35,10 +35,7 @@ struct MorePage: View {
                 .padding(.horizontal, 16)
                 .padding(.vertical, 10)
                 .background(Color.fill3)
-                Rectangle()
-                    .fill(Color.halo)
-                    .frame(height: 2)
-                    .frame(maxWidth: .infinity)
+                HaloSeparator(height: 2)
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {

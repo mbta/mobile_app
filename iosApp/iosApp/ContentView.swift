@@ -289,6 +289,22 @@ struct ContentView: View {
                     .transition(transition)
                     .animation(.easeOut, value: stopId)
 
+                case let .tripDetails(filter: filter):
+                    // Wrapping in a TabView helps the page to animate in as a single unit
+                    // Otherwise only the header animates
+                    TabView {
+                        TripDetailsPage(
+                            filter: filter,
+                            onClose: { nearbyVM.goBack() },
+                        )
+                        .toolbar(.hidden, for: .tabBar)
+                    }
+                    // Set id per trip so that transitioning from one trip to another is handled by removing
+                    // the existing trip view & creating a new one
+                    .id(filter.tripId)
+                    .transition(transition)
+                    .animation(.easeOut, value: filter.tripId)
+
                 default: EmptyView()
                 }
             }

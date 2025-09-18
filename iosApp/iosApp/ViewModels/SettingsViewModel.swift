@@ -75,6 +75,7 @@ class SettingsViewModel: ObservableObject {
                 ),
             ]),
             MoreSection(id: .featureFlags, items: [
+                .toggle(label: "Track this Trip", setting: .trackThisTrip),
                 .toggle(
                     label: NSLocalizedString(
                         "Debug Mode",

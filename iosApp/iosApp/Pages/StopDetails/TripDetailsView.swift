@@ -62,6 +62,12 @@ struct TripDetailsView: View {
         } else { nil }
     }
 
+    func onFollowTrip() {
+        if let dataFilter = tripDetailsVMState?.tripData?.tripFilter, dataFilter == tripFilter {
+            nearbyVM.pushNavEntry(.tripDetails(filter: dataFilter))
+        }
+    }
+
     var body: some View {
         content
             .explainer($explainer)
@@ -175,7 +181,7 @@ struct TripDetailsView: View {
         _ spec: TripHeaderSpec?,
         _ onTap: (() -> Void)?,
         _ route: Route,
-        _ routeAccents: TripRouteAccents
+        _ routeAccents: TripRouteAccents,
     ) -> some View {
         if let spec {
             TripHeaderCard(
@@ -185,7 +191,8 @@ struct TripDetailsView: View {
                 route: route,
                 routeAccents: routeAccents,
                 onTap: onTap,
-                now: now
+                now: now,
+                onFollowTrip: settingsCache.get(.trackThisTrip) ? onFollowTrip : nil,
             )
         }
     }
