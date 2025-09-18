@@ -154,7 +154,7 @@ public class MapViewModel(
 
     @Composable
     override fun runLogic(): State {
-        val timerTime by timer(updateInterval = 300.seconds, clock = clock)
+        val alertCheckTimer by timer(updateInterval = 300.seconds, clock = clock)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
         val routeCardData by routeCardDataViewModel.models.collectAsState()
@@ -180,7 +180,7 @@ public class MapViewModel(
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
-        LaunchedEffect(timerTime, globalData, alerts) {
+        LaunchedEffect(alertCheckTimer, globalData, alerts) {
             globalMapData = globalMapData(EasternTimeInstant.now(clock), globalData, alerts)
         }
         LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
