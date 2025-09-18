@@ -36,6 +36,7 @@ import dev.mokkery.answering.autofill.AutofillProvider
 import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
+import kotlin.time.Clock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -59,6 +60,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -97,6 +99,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -141,6 +144,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -185,6 +189,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -221,6 +226,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -258,6 +264,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -295,6 +302,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
@@ -375,6 +383,7 @@ class HomeMapViewTests {
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
                 MockStopRepository(),
+                Clock.System,
                 Dispatchers.Default,
                 Dispatchers.IO,
             )
