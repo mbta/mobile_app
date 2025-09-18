@@ -203,14 +203,21 @@ fun MapAndSheetPage(
                     currentNavEntry.stopFilter,
                     currentNavEntry.tripFilter,
                 )
+            is SheetRoutes.TripDetails ->
+                StopDetailsPageFilters(
+                    currentNavEntry.filter.stopId,
+                    currentNavEntry.filter.stopFilter,
+                    currentNavEntry.filter.tripDetailsFilter,
+                )
             else -> null
         })
 
     val selectedVehicleUpdate by tripDetailsViewModel.selectedVehicleUpdates.collectAsState()
     LaunchedEffect(selectedVehicleUpdate) {
+        val follow = currentNavEntry is SheetRoutes.TripDetails
         val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
         filters?.tripFilter?.let {
-            mapViewModel.selectedTrip(filters.stopFilter, stop, it, selectedVehicleUpdate)
+            mapViewModel.selectedTrip(filters.stopFilter, stop, it, selectedVehicleUpdate, follow)
         }
     }
 
@@ -371,7 +378,7 @@ fun MapAndSheetPage(
             )
         } else {
             updateTripFilter(stopId, newTripFilter)
-            mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle)
+            mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle, false)
         }
     }
 
