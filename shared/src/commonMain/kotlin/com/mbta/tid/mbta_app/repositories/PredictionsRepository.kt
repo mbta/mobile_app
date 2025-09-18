@@ -5,7 +5,6 @@ import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
@@ -17,11 +16,6 @@ import kotlin.time.Instant
 import org.koin.core.component.KoinComponent
 
 public interface IPredictionsRepository {
-    public fun connect(
-        stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
-    )
-
     public fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
@@ -46,17 +40,6 @@ internal class PredictionsRepository(socket: PhoenixSocket) :
         (EasternTimeInstant.now() - (lastUpdated ?: EasternTimeInstant(Instant.DISTANT_FUTURE))) >
             10.minutes && predictionCount > 0
 
-    override fun connect(
-        stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
-    ) {
-        channelOwner.connect(
-            PredictionsForStopsChannel.V1(stopIds),
-            handleMessage = { handleNewDataMessage(it, onReceive) },
-            handleError = { onReceive(ApiResult.Error(message = it)) },
-        )
-    }
-
     override fun connectV2(
         stopIds: List<String>,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
@@ -72,28 +55,6 @@ internal class PredictionsRepository(socket: PhoenixSocket) :
 
     override fun disconnect() {
         channelOwner.disconnect()
-    }
-
-    private fun handleNewDataMessage(
-        message: PhoenixMessage,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
-    ) {
-        val rawPayload: String? = message.jsonBody
-
-        if (rawPayload != null) {
-            val newPredictions =
-                try {
-                    PredictionsForStopsChannel.parseMessage(rawPayload)
-                } catch (e: IllegalArgumentException) {
-                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
-                    return
-                }
-            println("Received ${newPredictions.predictions.size} predictions")
-            lastUpdated = EasternTimeInstant.now()
-            onReceive(ApiResult.Ok(newPredictions))
-        } else {
-            println("No jsonPayload found for message ${message.body}")
-        }
     }
 
     private fun handleV2JoinMessage(
@@ -152,43 +113,19 @@ internal class PredictionsRepository(socket: PhoenixSocket) :
 public class MockPredictionsRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    internal val onConnect: () -> Unit = {},
     internal val onConnectV2: (List<String>) -> Unit = {},
     internal val onDisconnect: () -> Unit = {},
-    private val connectOutcome: ApiResult<PredictionsStreamDataResponse>? = null,
     private val connectV2Outcome: ApiResult<PredictionsByStopJoinResponse>? = null,
 ) : IPredictionsRepository {
 
     @DefaultArgumentInterop.Enabled
     public constructor(
-        onConnect: () -> Unit = {},
         onConnectV2: (List<String>) -> Unit = {},
         onDisconnect: () -> Unit = {},
-        connectResponse: PredictionsStreamDataResponse? = null,
         // v2 response is required because that's the main one we actually use, and not including
         // a required param results in ambiguous constructor signatures
         connectV2Response: PredictionsByStopJoinResponse,
-    ) : this(
-        onConnect,
-        onConnectV2,
-        onDisconnect,
-        if (connectResponse != null) {
-            ApiResult.Ok(connectResponse)
-        } else {
-            null
-        },
-        ApiResult.Ok(connectV2Response),
-    )
-
-    override fun connect(
-        stopIds: List<String>,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
-    ) {
-        onConnect()
-        if (connectOutcome != null) {
-            onReceive(connectOutcome)
-        }
-    }
+    ) : this(onConnectV2, onDisconnect, ApiResult.Ok(connectV2Response))
 
     override fun connectV2(
         stopIds: List<String>,

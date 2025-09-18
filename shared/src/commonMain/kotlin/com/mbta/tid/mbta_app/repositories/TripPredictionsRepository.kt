@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
-import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.phoenix.PredictionsForTripChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -61,7 +60,7 @@ internal class TripPredictionsRepository(socket: PhoenixSocket) :
         if (rawPayload != null) {
             val newPredictions =
                 try {
-                    PredictionsForStopsChannel.parseMessage(rawPayload)
+                    PredictionsForTripChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
                     onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return

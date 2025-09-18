@@ -3,13 +3,11 @@ package com.mbta.tid.mbta_app.repositories
 import com.mbta.tid.mbta_app.mocks.MockMessage
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPush
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
@@ -29,123 +27,6 @@ import kotlin.time.Instant
 import org.koin.test.KoinTest
 
 class PredictionsRepositoryTests : KoinTest {
-
-    @Test
-    fun testChannelSetOnRun() {
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val channel = mock<PhoenixChannel>(MockMode.autofill)
-        val push = mock<PhoenixPush>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket)
-        every { channel.attach() } returns push
-        every { push.receive(any(), any()) } returns push
-        every { socket.getChannel(any(), any()) } returns channel
-        assertNull(predictionsRepo.channel)
-        predictionsRepo.connect(stopIds = listOf("1"), onReceive = { /* no-op */ })
-        assertNotNull(predictionsRepo.channel)
-    }
-
-    @Test
-    fun testChannelClearedBeforeJoin() {
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val channel = mock<PhoenixChannel>(MockMode.autofill)
-        val push = mock<PhoenixPush>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket)
-        every { channel.attach() } returns push
-        every { push.receive(any(), any()) } returns push
-        every { socket.getChannel(any(), any()) } returns channel
-        predictionsRepo.connect(stopIds = listOf("Test"), onReceive = {})
-        verify { predictionsRepo.disconnect() }
-        verify { channel.detach() }
-    }
-
-    @Test
-    fun testChannelClearedOnLeave() {
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket)
-        every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
-        predictionsRepo.channel =
-            socket.getChannel(
-                topic = PredictionsForStopsChannel.V1(emptyList()).topic,
-                params = emptyMap(),
-            )
-        assertNotNull(predictionsRepo.channel)
-
-        predictionsRepo.disconnect()
-        assertNull(predictionsRepo.channel)
-    }
-
-    @Test
-    fun testSetsPredictionsOnJoinResponse() {
-        class MockPush : PhoenixPush {
-            override fun receive(
-                status: PhoenixPushStatus,
-                callback: (PhoenixMessage) -> Unit,
-            ): PhoenixPush {
-                if (status == PhoenixPushStatus.Ok) {
-                    callback(
-                        MockMessage(
-                            jsonBody = "{\"predictions\": {}, \"trips\": {}, \"vehicles\": {}}"
-                        )
-                    )
-                }
-                return this
-            }
-        }
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket)
-        val channel = mock<PhoenixChannel>(MockMode.autofill)
-        val push = MockPush()
-        every { socket.getChannel(any(), any()) } returns channel
-        every { channel.attach() } returns push
-
-        predictionsRepo.connect(
-            stopIds = listOf("1"),
-            onReceive = { outcome ->
-                assertEquals(
-                    PredictionsStreamDataResponse(emptyMap(), emptyMap(), emptyMap()),
-                    outcome.dataOrThrow(),
-                )
-            },
-        )
-    }
-
-    @Test
-    fun testSetsErrorWhenErrorReceived() {
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket)
-        val push = mock<PhoenixPush>(MockMode.autofill)
-        every { push.receive(any(), any()) } returns push
-        class MockChannel : PhoenixChannel {
-            override fun onEvent(event: String, callback: (PhoenixMessage) -> Unit) {
-                /* no-op */
-            }
-
-            override fun onFailure(callback: (message: PhoenixMessage) -> Unit) {
-                callback(MockMessage())
-            }
-
-            override fun onDetach(callback: (PhoenixMessage) -> Unit) {
-                /* no-op */
-            }
-
-            override fun attach(): PhoenixPush {
-                return push
-            }
-
-            override fun detach(): PhoenixPush {
-                return push
-            }
-        }
-        every { socket.getChannel(any(), any()) } returns MockChannel()
-        predictionsRepo.connect(
-            stopIds = listOf("1"),
-            onReceive = { outcome ->
-                assertIs<ApiResult.Error<*>>(outcome)
-                assertEquals(outcome.message, SocketError.FAILURE)
-            },
-        )
-    }
-
     @Test
     fun testV2ChannelSetOnRun() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
