@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.VehiclesOnRouteChannel
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IVehiclesRepository {
@@ -24,8 +25,9 @@ public interface IVehiclesRepository {
     public fun disconnect()
 }
 
-internal class VehiclesRepository(socket: PhoenixSocket) : IVehiclesRepository, KoinComponent {
-    var channelOwner = ChannelOwner(socket)
+internal class VehiclesRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
+    IVehiclesRepository, KoinComponent {
+    var channelOwner = ChannelOwner(socket, ioDispatcher)
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(

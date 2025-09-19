@@ -20,33 +20,41 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class AlertsRepositoryTests {
-
     @Test
-    fun testChannelSetOnRun() {
+    fun testChannelSetOnRun() = runTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket)
+        val alertsRepo = AlertsRepository(socket, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(alertsRepo.channel)
         alertsRepo.connect(onReceive = { /* no-op */ })
+        advanceUntilIdle()
         assertNotNull(alertsRepo.channel)
     }
 
     @Test
-    fun testChannelClearedBeforeJoin() {
+    fun testChannelClearedBeforeJoin() = runTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket)
+        val alertsRepo = AlertsRepository(socket, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         alertsRepo.connect(onReceive = {})
+        advanceUntilIdle()
         verify { alertsRepo.disconnect() }
         verify { channel.detach() }
     }
@@ -54,7 +62,7 @@ class AlertsRepositoryTests {
     @Test
     fun testChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket)
+        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         alertsRepo.channel = socket.getChannel(topic = AlertsChannel.topic, params = emptyMap())
         assertNotNull(alertsRepo.channel)
@@ -66,7 +74,7 @@ class AlertsRepositoryTests {
     @Test
     fun testSetsAlertsWhenMessageReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket)
+        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -105,7 +113,7 @@ class AlertsRepositoryTests {
     @Test
     fun testSetsErrorWhenErrorReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket)
+        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {

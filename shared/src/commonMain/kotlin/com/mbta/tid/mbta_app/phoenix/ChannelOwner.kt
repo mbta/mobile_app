@@ -5,9 +5,18 @@ import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.network.receiveAll
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
-internal class ChannelOwner(private val socket: PhoenixSocket) {
+internal class ChannelOwner(
+    private val socket: PhoenixSocket,
+    private val dispatcher: CoroutineDispatcher,
+) {
     internal var channel: PhoenixChannel? = null
+    private val connectLock = Mutex()
 
     fun connect(
         spec: ChannelSpec,
@@ -16,22 +25,27 @@ internal class ChannelOwner(private val socket: PhoenixSocket) {
         handleError: (message: String) -> Unit,
     ) {
         disconnect()
-        channel = socket.getChannel(spec.topic, spec.params)
+        CoroutineScope(dispatcher).launch {
+            connectLock.withLock {
+                val channel = socket.getChannel(spec.topic, spec.params)
 
-        channel?.onEvent(spec.updateEvent, handleMessage)
-        channel?.onFailure { handleError(SocketError.FAILURE) }
+                channel.onEvent(spec.updateEvent, handleMessage)
+                channel.onFailure { handleError(SocketError.FAILURE) }
 
-        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
-        channel
-            ?.attach()
-            ?.receiveAll(
-                onOk = { message ->
-                    println("joined channel ${message.subject}")
-                    handleJoin(message)
-                },
-                onError = { handleError(SocketError.RECEIVED_ERROR) },
-                onTimeout = { handleError(SocketError.TIMEOUT) },
-            )
+                channel.onDetach { message -> println("leaving channel ${message.subject}") }
+                channel
+                    .attach()
+                    .receiveAll(
+                        onOk = { message ->
+                            println("joined channel ${message.subject}")
+                            handleJoin(message)
+                        },
+                        onError = { handleError(SocketError.RECEIVED_ERROR) },
+                        onTimeout = { handleError(SocketError.TIMEOUT) },
+                    )
+                this@ChannelOwner.channel = channel
+            }
+        }
     }
 
     fun disconnect() {

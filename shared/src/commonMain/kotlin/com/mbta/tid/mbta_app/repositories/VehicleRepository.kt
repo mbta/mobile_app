@@ -4,10 +4,12 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.VehicleChannel
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IVehicleRepository {
@@ -16,8 +18,10 @@ public interface IVehicleRepository {
     public fun disconnect()
 }
 
-internal class VehicleRepository(socket: PhoenixSocket) : IVehicleRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket)
+internal class VehicleRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
+    IVehicleRepository, KoinComponent {
+    private val channelOwner = ChannelOwner(socket, ioDispatcher)
+    internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(
         vehicleId: String,

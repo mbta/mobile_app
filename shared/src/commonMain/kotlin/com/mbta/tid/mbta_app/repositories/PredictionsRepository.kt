@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IPredictionsRepository {
@@ -29,9 +30,9 @@ public interface IPredictionsRepository {
     public fun disconnect()
 }
 
-internal class PredictionsRepository(socket: PhoenixSocket) :
+internal class PredictionsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
     IPredictionsRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket)
+    private val channelOwner = ChannelOwner(socket, ioDispatcher)
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override var lastUpdated: EasternTimeInstant? = null
