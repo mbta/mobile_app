@@ -49,7 +49,6 @@ struct DirectionPicker: View {
 
     var body: some View {
         if availableDirections.count > 1 {
-            let deselectedBackroundColor = Color.deselectedToggle2.opacity(0.6)
             HStack(alignment: .center, spacing: 2) {
                 ForEach(availableDirections, id: \.hashValue) { direction in
                     let isSelected = selectedDirectionId == direction
@@ -74,14 +73,14 @@ struct DirectionPicker: View {
                         comment: "Screen reader hint for the direction toggle action"
                     ))
                     .background(isSelected ? route.uiColor : Color.clear)
-                    .foregroundStyle(isSelected ? route.uiTextColor : .deselectedToggleText)
+                    .foregroundStyle(isSelected ? route.uiTextColor : Color.routeColorContrastText)
                     .clipShape(.rect(cornerRadius: 6))
                 }
             }
             .accessibilityElement(children: .contain)
             .frame(minHeight: 44)
             .padding(2)
-            .background(deselectedBackroundColor)
+            .background(Color.routeColorContrast)
             .clipShape(.rect(cornerRadius: 8))
         } else if availableDirections.count == 1, let direction = availableDirections.first {
             DirectionLabel(direction: directions[Int(direction)])

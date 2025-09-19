@@ -39,9 +39,7 @@ fun DirectionPicker(
 ) {
     if (availableDirections.size > 1) {
         val deselectedBackgroundColor =
-            colorResource(R.color.deselected_toggle_2)
-                .copy(alpha = 0.6f)
-                .compositeOver(Color.fromHex(route.color))
+            colorResource(R.color.route_color_contrast).compositeOver(Color.fromHex(route.color))
 
         TabRow(
             modifier =
@@ -70,7 +68,7 @@ fun DirectionPicker(
                                 6.dp,
                             ),
                     selectedContentColor = Color.fromHex(route.textColor),
-                    unselectedContentColor = colorResource(R.color.deselected_toggle_text),
+                    unselectedContentColor = colorResource(R.color.route_color_contrast_text),
                 ) {
                     Row(
                         Modifier.fillMaxWidth().heightIn(min = 44.dp).padding(8.dp),

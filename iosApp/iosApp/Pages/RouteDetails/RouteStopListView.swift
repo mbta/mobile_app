@@ -271,7 +271,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 title: lineOrRoute.name,
                 titleAccessibilityLabel: lineOrRoute.labelWithModeIfBus,
                 titleColor: textColor,
-                buttonColor: Color.translucentContrast,
+                buttonColor: .routeColorContrast,
+                buttonTextColor: .routeColorContrastText,
                 onBack: onBack,
                 onClose: onClose
             )
@@ -419,7 +420,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         .accessibilityElement(children: .contain)
         .frame(maxWidth: .infinity)
         .padding(2)
-        .background(Color.deselectedToggle2.opacity(0.6))
+        .background(Color.routeColorContrast)
         .background(Color(hex: line.color))
         .withRoundedBorder(radius: 10, width: 0)
         .padding(.horizontal, 14)
