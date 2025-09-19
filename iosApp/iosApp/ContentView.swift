@@ -296,6 +296,7 @@ struct ContentView: View {
                         TripDetailsPage(
                             filter: filter,
                             onClose: { nearbyVM.goBack() },
+                            nearbyVM: nearbyVM,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }

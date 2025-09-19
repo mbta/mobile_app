@@ -25,3 +25,10 @@ fun ButtonDefaults.key() =
         containerColor = colorResource(R.color.key),
         contentColor = colorResource(R.color.fill3),
     )
+
+@Composable
+fun ButtonDefaults.overRouteColor() =
+    buttonColors(
+        containerColor = colorResource(R.color.route_color_contrast),
+        contentColor = colorResource(R.color.route_color_contrast_text),
+    )

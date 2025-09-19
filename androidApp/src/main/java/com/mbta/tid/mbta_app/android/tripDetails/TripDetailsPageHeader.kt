@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillHeight
 import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.android.util.overRouteColor
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
@@ -59,16 +61,7 @@ fun TripDetailsPageHeader(route: Route?, direction: Direction?, onClose: () -> U
                     modifier =
                         Modifier.semantics { contentDescription = pillDescription }
                             .placeholderIfLoading(),
-                    border =
-                        BorderStroke(
-                            2.dp,
-                            colorResource(
-                                    if (route.id == "Blue" || route.type == RouteType.COMMUTER_RAIL)
-                                        R.color.halo_dark
-                                    else R.color.halo_light
-                                )
-                                .copy(alpha = 0.6f),
-                        ),
+                    border = BorderStroke(2.dp, colorResource(R.color.route_color_contrast)),
                 )
             }
             if (direction != null) {
@@ -82,7 +75,7 @@ fun TripDetailsPageHeader(route: Route?, direction: Direction?, onClose: () -> U
             }
         }
 
-        ActionButton(ActionButtonKind.Close) { onClose() }
+        ActionButton(ActionButtonKind.Close, colors = ButtonDefaults.overRouteColor()) { onClose() }
     }
 }
 

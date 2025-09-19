@@ -163,8 +163,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                 } else { nil }
                 TripDetailsView(
                     tripFilter: tripPageFilter,
-                    now: now,
                     alertSummaries: alertSummaries,
+                    now: now,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
