@@ -43,10 +43,8 @@ class SubscribeToPredictionsTest {
 
         val predictionsRepo =
             MockPredictionsRepository(
-                {},
                 { stops -> connectProps = stops },
                 { disconnectCount += 1 },
-                null,
                 predictionsOnJoin,
             )
 
@@ -91,10 +89,8 @@ class SubscribeToPredictionsTest {
 
         val predictionsRepo =
             MockPredictionsRepository(
-                {},
                 { stopIds -> connectCount += 1 },
                 { disconnectCount += 1 },
-                null,
                 null,
             )
 
@@ -168,7 +164,7 @@ class SubscribeToPredictionsTest {
         val objects = ObjectCollectionBuilder()
         objects.prediction()
         val predictionsOnJoin = PredictionsByStopJoinResponse(objects)
-        val predictionsRepo = MockPredictionsRepository({}, {}, {}, null, predictionsOnJoin)
+        val predictionsRepo = MockPredictionsRepository({}, {}, predictionsOnJoin)
 
         predictionsRepo.lastUpdated = EasternTimeInstant.now()
 

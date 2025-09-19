@@ -4,11 +4,10 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.network.receiveAll
-import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
+import com.mbta.tid.mbta_app.phoenix.ChannelOwner
+import com.mbta.tid.mbta_app.phoenix.PredictionsForTripChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -27,10 +26,9 @@ public interface ITripPredictionsRepository {
     public fun disconnect()
 }
 
-internal class TripPredictionsRepository(private val socket: PhoenixSocket) :
+internal class TripPredictionsRepository(socket: PhoenixSocket) :
     ITripPredictionsRepository, KoinComponent {
-
-    var channel: PhoenixChannel? = null
+    private val channelOwner = ChannelOwner(socket)
 
     override var lastUpdated: EasternTimeInstant? = null
 
@@ -42,30 +40,15 @@ internal class TripPredictionsRepository(private val socket: PhoenixSocket) :
         tripId: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
-        disconnect()
-        channel = socket.getChannel("predictions:trip:$tripId", emptyMap())
-
-        channel?.onEvent(PredictionsForStopsChannel.newDataEvent) { message ->
-            handleNewDataMessage(message, onReceive)
-        }
-        channel?.onFailure { onReceive(ApiResult.Error(message = SocketError.FAILURE)) }
-
-        channel?.onDetach { message -> println("leaving channel ${message.subject}") }
-        channel
-            ?.attach()
-            ?.receiveAll(
-                onOk = { message ->
-                    println("joined channel ${message.subject}")
-                    handleNewDataMessage(message, onReceive)
-                },
-                onError = { onReceive(ApiResult.Error(message = SocketError.RECEIVED_ERROR)) },
-                onTimeout = { onReceive(ApiResult.Error(message = SocketError.TIMEOUT)) },
-            )
+        channelOwner.connect(
+            PredictionsForTripChannel(tripId),
+            handleMessage = { handleNewDataMessage(it, onReceive) },
+            handleError = { onReceive(ApiResult.Error(message = it)) },
+        )
     }
 
     override fun disconnect() {
-        channel?.detach()
-        channel = null
+        channelOwner.disconnect()
     }
 
     private fun handleNewDataMessage(
@@ -77,7 +60,7 @@ internal class TripPredictionsRepository(private val socket: PhoenixSocket) :
         if (rawPayload != null) {
             val newPredictions =
                 try {
-                    PredictionsForStopsChannel.parseMessage(rawPayload)
+                    PredictionsForTripChannel.parseMessage(rawPayload)
                 } catch (e: IllegalArgumentException) {
                     onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
                     return
