@@ -10,20 +10,27 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 
 class TripPredictionsRepositoryTests {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun testChannelClearedBeforeJoin() {
+    fun testChannelClearedBeforeJoin() = runTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val tripPredictionsRepo = TripPredictionsRepository(socket)
+        val tripPredictionsRepo =
+            TripPredictionsRepository(socket, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
+        tripPredictionsRepo.channel = channel
         tripPredictionsRepo.connect(tripId = "Test", onReceive = {})
-        verify { tripPredictionsRepo.disconnect() }
+        advanceUntilIdle()
         verify { channel.detach() }
     }
 }

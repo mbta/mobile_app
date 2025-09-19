@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.repositories.TripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.VehicleRepository
 import com.mbta.tid.mbta_app.repositories.VehiclesRepository
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 public fun makeNativeModule(
@@ -31,10 +32,18 @@ public fun makeNativeModule(
         single<ICurrentAppVersionRepository> { currentAppVersion }
         single<INetworkConnectivityMonitor> { networkConnectivityMonitor }
         single<PhoenixSocket> { socket }
-        factory<IAlertsRepository> { AlertsRepository(get()) }
-        factory<IPredictionsRepository> { PredictionsRepository(get()) }
-        factory<ITripPredictionsRepository> { TripPredictionsRepository(get()) }
-        factory<IVehicleRepository> { VehicleRepository(get()) }
-        factory<IVehiclesRepository> { VehiclesRepository(get()) }
+        factory<IAlertsRepository> { AlertsRepository(get(), get(named("coroutineDispatcherIO"))) }
+        factory<IPredictionsRepository> {
+            PredictionsRepository(get(), get(named("coroutineDispatcherIO")))
+        }
+        factory<ITripPredictionsRepository> {
+            TripPredictionsRepository(get(), get(named("coroutineDispatcherIO")))
+        }
+        factory<IVehicleRepository> {
+            VehicleRepository(get(), get(named("coroutineDispatcherIO")))
+        }
+        factory<IVehiclesRepository> {
+            VehiclesRepository(get(), get(named("coroutineDispatcherIO")))
+        }
     }
 }

@@ -7,14 +7,13 @@ import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.network.receiveAll
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 internal class ChannelOwner(
     private val socket: PhoenixSocket,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val dispatcher: CoroutineDispatcher,
 ) {
     internal var channel: PhoenixChannel? = null
     private val connectLock = Mutex()

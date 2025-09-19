@@ -4,6 +4,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
@@ -11,6 +12,7 @@ import com.mbta.tid.mbta_app.phoenix.PredictionsForTripChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface ITripPredictionsRepository {
@@ -26,9 +28,10 @@ public interface ITripPredictionsRepository {
     public fun disconnect()
 }
 
-internal class TripPredictionsRepository(socket: PhoenixSocket) :
+internal class TripPredictionsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
     ITripPredictionsRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket)
+    private val channelOwner = ChannelOwner(socket, ioDispatcher)
+    internal var channel: PhoenixChannel? by channelOwner::channel
 
     override var lastUpdated: EasternTimeInstant? = null
 

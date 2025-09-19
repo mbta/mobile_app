@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.AlertsChannel
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
+import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IAlertsRepository {
@@ -17,8 +18,9 @@ public interface IAlertsRepository {
     public fun disconnect()
 }
 
-internal class AlertsRepository(socket: PhoenixSocket) : IAlertsRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket)
+internal class AlertsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
+    IAlertsRepository, KoinComponent {
+    private val channelOwner = ChannelOwner(socket, ioDispatcher)
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {
