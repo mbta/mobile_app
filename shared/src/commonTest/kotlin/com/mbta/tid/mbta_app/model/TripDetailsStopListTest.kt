@@ -598,8 +598,8 @@ class TripDetailsStopListTest {
             }
         val routeExcluded =
             objects.route {
-                id = "116117"
                 sortOrder = 0
+                isListedRoute = false
             }
 
         val patternCurrent1 = pattern("V1", routeCurrent, RoutePattern.Typicality.Atypical)
