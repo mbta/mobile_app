@@ -456,9 +456,7 @@ private fun LineRoutePicker(
     onSelect: (String) -> Unit,
 ) {
     val backgroundColor =
-        colorResource(R.color.deselected_toggle_2)
-            .copy(alpha = 0.6f)
-            .compositeOver(Color.fromHex(line.color))
+        colorResource(R.color.route_color_contrast).compositeOver(Color.fromHex(line.color))
 
     Column(
         Modifier.padding(horizontal = 14.dp)
