@@ -100,10 +100,19 @@ extension HomeMapView {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        guard let tripId = vehicle.tripId,
-              case let .stopDetails(_, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe(),
-              stopFilter != nil || tripFilter?.tripId == tripId
-        else { return }
+        guard let tripId = vehicle.tripId else { return }
+        let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+        let (stopId, stopFilter, tripFilter): (String?, StopDetailsFilter?,
+                                               TripDetailsFilter?) = switch currentNavEntry {
+        case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter): (
+                stopId,
+                stopFilter,
+                tripFilter
+            )
+        case let .tripDetails(filter: filter): (filter.stopId, filter.stopFilter, filter.tripDetailsFilter)
+        default: (nil, nil, nil)
+        }
+        guard let stopId, let stopFilter, tripFilter?.tripId != tripId else { return }
         let routeCard = routeCardDataState?.data?
             .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
@@ -111,10 +120,10 @@ extension HomeMapView {
             .flatMap(\.data)
             .flatMap(\.upcomingTrips)
             .first { upcoming in upcoming.trip.id == tripId }
-        let stopSequence = upcoming?.stopSequence
-        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id
+        let stopSequence = upcoming?.stopSequence ?? tripFilter?.stopSequence
+        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? stopFilter.routeId
 
-        if let routeId { analytics.tappedVehicle(routeId: routeId) }
+        analytics.tappedVehicle(routeId: routeId)
 
         let newTripFilter = TripDetailsFilter(
             tripId: tripId,
@@ -122,6 +131,24 @@ extension HomeMapView {
             stopSequence: stopSequence,
             selectionLock: true
         )
-        nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
+        if settingsCache.get(.trackThisTrip) {
+            nearbyVM.navigationStack.append(.tripDetails(filter: .init(
+                tripId: tripId,
+                vehicleId: vehicle.id,
+                routeId: routeId,
+                directionId: stopFilter.directionId,
+                stopId: stopId,
+                stopSequence: stopSequence
+            )))
+        } else {
+            nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
+            mapVM.selectedTrip(
+                stopFilter: stopFilter,
+                stop: globalData?.getStop(stopId: stopId),
+                tripFilter: newTripFilter,
+                vehicle: vehicle,
+                follow: false
+            )
+        }
     }
 }

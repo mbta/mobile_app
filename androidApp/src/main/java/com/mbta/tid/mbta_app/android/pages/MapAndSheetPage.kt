@@ -365,7 +365,7 @@ fun MapAndSheetPage(
 
         if (routeId != null) analytics.tappedVehicle(routeId)
 
-        val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence)
+        val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence, true)
         val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
         if (hasTrackThisTrip) {
             handleTripDetailsNavigation(
