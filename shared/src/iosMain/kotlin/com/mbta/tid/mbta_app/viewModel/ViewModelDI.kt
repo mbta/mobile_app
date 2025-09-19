@@ -14,4 +14,5 @@ public class ViewModelDI : KoinComponent {
     public val stopDetails: StopDetailsViewModel by inject()
     public val toast: ToastViewModel by inject()
     public val tripDetails: TripDetailsViewModel by inject()
+    public val tripDetailsPage: TripDetailsPageViewModel by inject()
 }

@@ -16,12 +16,14 @@ struct RoutePill: View {
     let textColor: Color
     let routeColor: Color
     let spec: RoutePillSpec
+    let borderWidth: CGFloat
+    let borderColor: Color
 
     private var fontSize: CGFloat {
         switch spec.height {
         case .small: 12
         case .medium: 16
-        case .large: 20
+        case .large: spec.width == .circle ? 21 : 16
         }
     }
 
@@ -29,7 +31,7 @@ struct RoutePill: View {
         switch spec.height {
         case .small: 16
         case .medium: 24
-        case .large: 32
+        case .large: spec.width == .circle ? 32 : 24
         }
     }
 
@@ -38,7 +40,9 @@ struct RoutePill: View {
         line: Line? = nil,
         type: RoutePillSpec.Type_,
         height: RoutePillSpec.Height = .medium,
-        isActive: Bool = true
+        isActive: Bool = true,
+        borderWidth: CGFloat = 0,
+        borderColor: Color = .halo,
     ) {
         self.route = route
         self.line = line
@@ -46,15 +50,24 @@ struct RoutePill: View {
         spec = .init(route: route, line: line, type: type, height: height)
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
+        self.borderWidth = borderWidth
+        self.borderColor = borderColor
     }
 
-    init(spec: RoutePillSpec, isActive: Bool = true) {
+    init(
+        spec: RoutePillSpec,
+        isActive: Bool = true,
+        borderWidth: CGFloat = 0,
+        borderColor: Color = .halo,
+    ) {
         route = nil
         line = nil
         self.isActive = isActive
         self.spec = spec
         textColor = .init(hex: spec.textColor)
         routeColor = .init(hex: spec.routeColor)
+        self.borderWidth = borderWidth
+        self.borderColor = borderColor
     }
 
     @ViewBuilder func getPillBase() -> some View {
@@ -113,16 +126,33 @@ struct RoutePill: View {
         }
     }
 
+    private struct BorderModifier: ViewModifier {
+        let spec: RoutePillSpec
+        let borderWidth: CGFloat
+        let borderColor: Color
+
+        func body(content: Content) -> some View {
+            switch spec.shape {
+            case .rectangle: content.background(RoundedRectangle(cornerRadius: 4).stroke(
+                    borderColor,
+                    lineWidth: borderWidth * 2
+                ))
+            case .capsule: content.background(Capsule().stroke(borderColor, lineWidth: borderWidth * 2))
+            }
+        }
+    }
+
     var body: some View {
         getPillBase()
             .textCase(route?.type == .commuterRail ? .none : .uppercase)
             .font(.custom("Helvetica Neue", size: fontSize).bold())
-            .tracking(0.5)
+            .tracking(spec.width != .circle ? 0.5 : 0)
             .modifier(FramePaddingModifier(spec: spec, pillHeight: pillHeight))
             .minimumScaleFactor(0.4)
             .lineLimit(1)
             .modifier(ColorModifier(pill: self))
             .modifier(ClipShapeModifier(spec: spec))
+            .modifier(BorderModifier(spec: spec, borderWidth: borderWidth, borderColor: borderColor))
             .accessibilityElement()
             .accessibilityLabel(routeModeLabel(line: line, route: route))
     }

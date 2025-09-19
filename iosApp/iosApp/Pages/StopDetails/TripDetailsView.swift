@@ -14,8 +14,9 @@ import SwiftUI
 struct TripDetailsView: View {
     var tripFilter: TripDetailsPageFilter?
 
-    var now: EasternTimeInstant
     var alertSummaries: [String: AlertSummary?]
+    var isTripDetailsPage: Bool
+    var now: EasternTimeInstant
 
     let onOpenAlertDetails: (Shared.Alert) -> Void
 
@@ -36,8 +37,9 @@ struct TripDetailsView: View {
 
     init(
         tripFilter: TripDetailsPageFilter?,
-        now: EasternTimeInstant,
         alertSummaries: [String: AlertSummary?],
+        isTripDetailsPage: Bool = false,
+        now: EasternTimeInstant,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -46,8 +48,9 @@ struct TripDetailsView: View {
         analytics: Analytics = AnalyticsProvider.shared
     ) {
         self.tripFilter = tripFilter
-        self.now = now
         self.alertSummaries = alertSummaries
+        self.isTripDetailsPage = isTripDetailsPage
+        self.now = now
         self.onOpenAlertDetails = onOpenAlertDetails
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -63,8 +66,16 @@ struct TripDetailsView: View {
     }
 
     func onFollowTrip() {
-        if let dataFilter = tripDetailsVMState?.tripData?.tripFilter, dataFilter == tripFilter {
-            nearbyVM.pushNavEntry(.tripDetails(filter: dataFilter))
+        if let tripData = tripDetailsVMState?.tripData, tripData.tripFilter == tripFilter {
+            let dataFilter = tripData.tripFilter
+            nearbyVM.pushNavEntry(.tripDetails(filter: TripDetailsPageFilter(
+                tripId: dataFilter.tripId,
+                vehicleId: dataFilter.vehicleId,
+                routeId: tripData.trip.routeId,
+                directionId: tripData.trip.directionId,
+                stopId: dataFilter.stopId,
+                stopSequence: dataFilter.stopSequence,
+            )))
         }
     }
 
@@ -192,7 +203,7 @@ struct TripDetailsView: View {
                 routeAccents: routeAccents,
                 onTap: onTap,
                 now: now,
-                onFollowTrip: settingsCache.get(.trackThisTrip) ? onFollowTrip : nil,
+                onFollowTrip: settingsCache.get(.trackThisTrip) && !isTripDetailsPage ? onFollowTrip : nil,
             )
         }
     }

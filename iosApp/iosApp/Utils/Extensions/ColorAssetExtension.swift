@@ -26,6 +26,8 @@ extension Color {
     static let haloDark = Color("Halo Dark")
     static let key = Color("Key")
     static let keyInverse = Color("Key Inverse")
+    static let routeColorContrast = Color("Route Color Contrast")
+    static let routeColorContrastText = Color("Route Color Contrast Text")
     static let sheetBackground = Color("Sheet Background")
     static let stopDotHalo = Color("Stop Dot Halo")
     static let text = Color("Text")
@@ -53,8 +55,10 @@ extension UIColor {
     static let halo = UIColor(named: "Halo") ?? UIColor(Color(.halo))
     static let key = UIColor(named: "Key") ?? UIColor(Color(.key))
     static let keyInverse = UIColor(named: "Key Inverse") ?? UIColor(Color(.keyInverse))
+    static let routeColorContrast = UIColor(named: "Route Color Contrast") ?? UIColor(Color(.routeColorContrast))
+    static let routeColorContrastText = UIColor(named: "Route Color Contrast Text") ??
+        UIColor(Color(.routeColorContrastText))
     static let sheetBackground = UIColor(named: "Sheet Background") ?? UIColor(Color(.sheetBackground))
-
     static let stopDotHalo = UIColor(named: "Stop Dot Halo") ?? UIColor(Color(.stopDotHalo))
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
 
