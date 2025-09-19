@@ -147,26 +147,6 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
     override fun toString(): String = "[TripDetailsStopList]"
 
     public companion object {
-
-        // TODO: Remove hardcoded IDs once the `listed_route` field is exposed by the API.
-        // https://mbta.slack.com/archives/C03K6NLKKD1/p1716220182028299
-        private var excludedRouteIds =
-            setOf(
-                "2427",
-                "3233",
-                "3738",
-                "4050",
-                "725",
-                "8993",
-                "116117",
-                "214216",
-                "441442",
-                "9701",
-                "9702",
-                "9703",
-                "Boat-F3",
-            )
-
         private fun MutableMap<Int, WorkingEntry>.putSchedule(schedule: Schedule) {
             put(
                 schedule.stopSequence,
@@ -380,21 +360,20 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             globalData: GlobalResponse,
         ): Set<Route> {
             return globalData.patternIdsByStop[stopId]
-                ?.map { globalData.routePatterns[it] }
-                ?.mapNotNull { if (shouldExclude(it)) null else globalData.routes[it?.routeId] }
-                ?.toSet() ?: emptySet()
+                .orEmpty()
+                .mapNotNull { routePatternId ->
+                    val routePattern = globalData.routePatterns[routePatternId]
+                    val route = globalData.getRoute(routePattern?.routeId)
+                    if (route != null && routePattern != null && shouldInclude(route, routePattern))
+                        route
+                    else null
+                }
+                .toSet()
         }
 
-        /**
-         * Any routes that are only found on route patterns which are not typical are excluded,
-         * along with a set of hardcoded route IDs containing mostly combined bus routes which are
-         * meant to be hidden on rider facing touch points.
-         */
-        private fun shouldExclude(pattern: RoutePattern?): Boolean {
-            return pattern == null ||
-                pattern.typicality != RoutePattern.Typicality.Typical ||
-                excludedRouteIds.contains(pattern.routeId) ||
-                pattern.routeId.startsWith("Logan-")
+        /** Only listed routes which are visited by a typical route pattern are included. */
+        private fun shouldInclude(route: Route, pattern: RoutePattern): Boolean {
+            return pattern.typicality == RoutePattern.Typicality.Typical && route.isListedRoute
         }
 
         private class ScheduleStopSequenceAligner(
