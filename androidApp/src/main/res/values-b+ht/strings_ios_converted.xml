@@ -43,6 +43,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">yon pwoblèm mekanik ki te pase anvan</string>
     <string name="an_earlier_signal_problem">Yon Siyal Ki Rive Pi Bonè</string>
     <string name="an_earlier_signal_problem_lowercase">yon pwoblèm siyal ki te pase anvan</string>
+    <string name="app_version_and_build">vèsyon %1$s (%2$s)</string>
     <string name="app_version_number">vèsyon %1$s</string>
     <string name="approaching">Ap apwoche</string>
     <string name="arriving_abbr">ARR</string>

@@ -38,6 +38,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">早前的機械故障</string>
     <string name="an_earlier_signal_problem">早前的信號問題</string>
     <string name="an_earlier_signal_problem_lowercase">早前的信號問題</string>
+    <string name="app_version_and_build">版本 %1$s（%2$s）</string>
     <string name="app_version_number">版本 %1$s</string>
     <string name="approaching">正在接近</string>
     <string name="arriving_abbr">到站</string>

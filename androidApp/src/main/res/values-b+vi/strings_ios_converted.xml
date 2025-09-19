@@ -38,6 +38,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">một vấn đề cơ khí trước đó</string>
     <string name="an_earlier_signal_problem">Một vấn đề về đèn tín hiệu trước đó</string>
     <string name="an_earlier_signal_problem_lowercase">vấn đề về đèn tín hiệu trước đó</string>
+    <string name="app_version_and_build">phiên bản %1$s (%2$s)</string>
     <string name="app_version_number">phiên bản %1$s</string>
     <string name="approaching">Đang đến gần</string>
     <string name="arriving_abbr">ARR</string>
