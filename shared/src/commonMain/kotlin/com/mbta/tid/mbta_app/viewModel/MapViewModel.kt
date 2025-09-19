@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -85,6 +86,7 @@ public class MapViewModel(
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
     private val stopRepository: IStopRepository,
+    private val clock: Clock,
     private val defaultCoroutineDispatcher: CoroutineDispatcher,
     private val iOCoroutineDispatcher: CoroutineDispatcher,
 ) : MoleculeViewModel<Event, MapViewModel.State>(), IMapViewModel {
@@ -155,7 +157,7 @@ public class MapViewModel(
 
     @Composable
     override fun runLogic(): State {
-        val now by timer(updateInterval = 300.seconds)
+        val alertCheckTimer by timer(updateInterval = 300.seconds, clock = clock)
         val globalData by globalRepository.state.collectAsState()
         var globalMapData by remember { mutableStateOf<GlobalMapData?>(null) }
         val routeCardData by routeCardDataViewModel.models.collectAsState()
@@ -181,8 +183,8 @@ public class MapViewModel(
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
-        LaunchedEffect(now, globalData, alerts) {
-            globalMapData = globalMapData(now, globalData, alerts)
+        LaunchedEffect(alertCheckTimer, globalData, alerts) {
+            globalMapData = globalMapData(EasternTimeInstant.now(clock), globalData, alerts)
         }
         LaunchedEffect(allRailRouteShapes, globalData, globalMapData) {
             allRailRouteSourceData = routeLineData(globalData, globalMapData, allRailRouteShapes)

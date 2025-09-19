@@ -45,7 +45,10 @@ class VehiclesRepositoryTest : KoinTest {
         val vehiclesRepo = VehiclesRepository(socket)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel =
-            socket.getChannel(topic = VehiclesOnRouteChannel.topic, params = emptyMap())
+            socket.getChannel(
+                topic = VehiclesOnRouteChannel(emptyList(), 0).topic,
+                params = emptyMap(),
+            )
         assertNotNull(vehiclesRepo.channel)
 
         vehiclesRepo.disconnect()

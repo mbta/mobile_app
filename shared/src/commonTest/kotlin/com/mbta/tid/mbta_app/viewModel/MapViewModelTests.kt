@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app.viewModel
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -34,11 +36,13 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.koin.core.component.get
@@ -80,6 +84,7 @@ internal class MapViewModelTests : KoinTest {
 
     fun setUpKoin(
         coroutineDispatcher: CoroutineDispatcher,
+        clock: Clock = Clock.System,
         configureRepositories: MockRepositories.() -> Unit = {},
     ) {
         startKoin {
@@ -98,7 +103,7 @@ internal class MapViewModelTests : KoinTest {
                     single<CoroutineDispatcher>(named("coroutineDispatcherIO")) {
                         coroutineDispatcher
                     }
-                    single<Clock> { Clock.System }
+                    single<Clock> { clock }
                     single { MockRouteCardDataViewModel() }.bind(IRouteCardDataViewModel::class)
                 },
             )
@@ -412,6 +417,77 @@ internal class MapViewModelTests : KoinTest {
                 )
             }
             cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `uses current time when alerts change`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        val clock = MockClock()
+
+        setUpKoin(dispatcher, clock)
+
+        val viewportProvider = MockViewportManager()
+        val viewModel: MapViewModel = get()
+        val layerManger = mock<IMapLayerManager>(MockMode.autofill)
+
+        val objects = TestData.clone()
+        val chestnutHill = objects.getStop("place-chill")
+        val southStreet = objects.getStop("place-sougr")
+        val informedEntities =
+            listOf(chestnutHill, southStreet).flatMap {
+                listOf(
+                    Alert.InformedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        stop = it.id,
+                        route = "Green-B",
+                    )
+                )
+            }
+        val alertCreationTime = clock.startTime + 1.seconds
+        objects.alert {
+            effect = Alert.Effect.Suspension
+            activePeriod = mutableListOf(Alert.ActivePeriod(alertCreationTime, null))
+            informedEntity = informedEntities.toMutableList()
+        }
+
+        viewModel.layerManagerInitialized(layerManger)
+        viewModel.setViewportManager(viewportProvider)
+        viewModel.densityChanged(1f)
+        advanceUntilIdle()
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it == MapViewModel.State.Overview }
+            advanceUntilIdle()
+            verifySuspend {
+                layerManger.updateRouteSourceData(
+                    matching(
+                        toString = { "all segments normal" },
+                        predicate = {
+                            it.all { it.lines.all { it.alertState == SegmentAlertState.Normal } }
+                        },
+                    )
+                )
+            }
+            resetCalls(layerManger)
+            advanceTimeBy(2.seconds)
+            viewModel.alertsChanged(AlertsStreamDataResponse(objects))
+            advanceUntilIdle()
+            verifySuspend {
+                layerManger.updateRouteSourceData(
+                    matching(
+                        toString = { "some segment suspended" },
+                        predicate = {
+                            it.any {
+                                it.lines.any { it.alertState == SegmentAlertState.Suspension }
+                            }
+                        },
+                    )
+                )
+            }
         }
     }
 }

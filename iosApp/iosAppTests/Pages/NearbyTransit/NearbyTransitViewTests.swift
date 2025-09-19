@@ -361,7 +361,6 @@ final class NearbyTransitViewTests: XCTestCase {
         let leaveExpectation = expectation(description: "leaves predictions")
 
         let predictionsRepo = MockPredictionsRepository(
-            onConnect: {},
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
@@ -424,7 +423,6 @@ final class NearbyTransitViewTests: XCTestCase {
         let leaveExpectation = expectation(description: "leaves predictions")
 
         let predictionsRepo = MockPredictionsRepository(
-            onConnect: {},
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
