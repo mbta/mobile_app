@@ -40,6 +40,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">um problema mecânico anterior</string>
     <string name="an_earlier_signal_problem">Um problema de sinal anterior</string>
     <string name="an_earlier_signal_problem_lowercase">um problema de sinal anterior</string>
+    <string name="app_version_and_build">versão %1$s (%2$s)</string>
     <string name="app_version_number">versão %1$s</string>
     <string name="approaching">Chegando</string>
     <string name="arriving_abbr">CHE</string>
