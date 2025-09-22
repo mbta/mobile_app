@@ -39,6 +39,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">an earlier mechanical problem</string>
     <string name="an_earlier_signal_problem">An Earlier Signal Problem</string>
     <string name="an_earlier_signal_problem_lowercase">an earlier signal problem</string>
+    <string name="app_version_and_build">version %1$s (%2$s)</string>
     <string name="app_version_number">version %1$s</string>
     <string name="approaching">Approaching</string>
     <string name="arriving_abbr">ARR</string>

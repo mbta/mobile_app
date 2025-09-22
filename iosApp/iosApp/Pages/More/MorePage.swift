@@ -13,6 +13,7 @@ struct MorePage: View {
     let inspection = Inspection<Self>()
 
     var viewModel = SettingsViewModel()
+    @State var showingBuildNumber = false
 
     var body: some View {
         NavigationStack {
@@ -23,13 +24,26 @@ struct MorePage: View {
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityHeading(.h1)
                     Spacer()
-                    let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+                    let infoPlist = Bundle.main.infoDictionary
+                    let version = infoPlist?["CFBundleShortVersionString"] as? String
+                    let build = infoPlist?["CFBundleVersion"] as? String ?? "?"
                     if let version {
-                        Text(
-                            "version \(version)",
-                            comment: "Version number label on the More page"
-                        )
-                        .font(Typography.footnote)
+                        if showingBuildNumber {
+                            Text(
+                                "version \(version) (\(build))",
+                                comment: "Version number and more detailed build number label on the More page"
+                            )
+                            .font(Typography.footnote)
+                        } else {
+                            Text(
+                                "version \(version)",
+                                comment: "Version number label on the More page"
+                            )
+                            .font(Typography.footnote)
+                            .onTapGesture {
+                                showingBuildNumber = true
+                            }
+                        }
                     }
                 }
                 .padding(.horizontal, 16)

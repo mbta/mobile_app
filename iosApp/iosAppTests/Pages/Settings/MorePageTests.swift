@@ -70,4 +70,27 @@ final class MorePageTests: XCTestCase {
 
         await fulfillment(of: [exp], timeout: 5)
     }
+
+    @MainActor func testShowsBuildNumberOnTap() {
+        let sut = MorePage()
+
+        let infoPlist = Bundle.main.infoDictionary
+        guard let version = infoPlist?["CFBundleShortVersionString"] as? String,
+              let build = infoPlist?["CFBundleVersion"] as? String else {
+            XCTFail("version info not found")
+            return
+        }
+        let versionText = "version \(version)"
+        let versionAndBuildText = "\(versionText) (\(build))"
+
+        let exp = sut.inspection.inspect { view in
+            XCTAssertThrowsError(try view.find(text: versionAndBuildText))
+            try view.find(text: versionText).callOnTapGesture()
+            XCTAssertNotNil(try view.find(text: versionAndBuildText))
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        wait(for: [exp], timeout: 1)
+    }
 }
