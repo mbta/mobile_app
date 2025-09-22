@@ -21,6 +21,7 @@ struct HomeMapView: View {
     @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var errorBannerRepository: IErrorBannerStateRepository
 

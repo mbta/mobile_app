@@ -219,6 +219,117 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func testVehicleTappingWithTrackThisTrip() throws {
+        class FakeStopRepository: IStopRepository {
+            func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
+                ApiResultOk(data: StopMapResponse(
+                    routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
+                    childStops: [:]
+                ))
+            }
+        }
+        let repositories = MockRepositories()
+        repositories.stop = FakeStopRepository()
+        HelpersKt.loadKoinMocks(repositories: repositories)
+
+        let objectCollection = ObjectCollectionBuilder()
+        let route = MapTestDataHelper.shared.routeOrange
+        objectCollection.routes[route.id] = route
+        let pattern = MapTestDataHelper.shared.patternOrange30
+        objectCollection.routePatterns[pattern.id] = pattern
+        let stop = objectCollection.stop { stop in
+            stop.id = "1"
+            stop.latitude = 1
+            stop.longitude = 1
+        }
+        let trip = objectCollection.trip { trip in
+            trip.routePatternId = pattern.id
+            trip.routeId = route.id
+            trip.id = "1"
+            trip.directionId = 0
+        }
+
+        let prediction = objectCollection.prediction { prediction in
+            prediction.trip = trip
+            prediction.stopSequence = 100
+        }
+
+        let vehicle = objectCollection.vehicle { vehicle in
+            vehicle.id = "1"
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.routeId = route.id
+            vehicle.directionId = 0
+        }
+
+        let routeCardData: [RouteCardData] = [.init(
+            lineOrRoute: .route(route),
+            stopData: [
+                .init(route: route, stop: stop, data: [
+                    .init(
+                        lineOrRoute: .route(route),
+                        stop: stop,
+                        directionId: 0,
+                        routePatterns: [pattern],
+                        stopIds: [stop.id],
+                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction, vehicle: vehicle)],
+                        alertsHere: [],
+                        allDataLoaded: true,
+                        hasSchedulesToday: true,
+                        alertsDownstream: [],
+                        context: .stopDetailsFiltered
+                    ),
+                ], globalData: .init(objects: objectCollection)),
+            ],
+            at: EasternTimeInstant.now()
+        )]
+        let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
+        let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
+
+        let initialNav: SheetNavigationStackEntry = .stopDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: vehicle.routeId!, directionId: vehicle.directionId),
+            tripFilter: nil
+        )
+        nearbyVM.navigationStack = [initialNav]
+        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
+        var sut = HomeMapView(
+            contentVM: .init(),
+            mapVM: MockMapViewModel(),
+            nearbyVM: nearbyVM,
+            routeCardDataVM: routeCardDataVM,
+            viewportProvider: ViewportProvider(),
+            vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
+            locationDataManager: locationDataManager,
+            sheetHeight: .constant(0),
+            selectedVehicle: .constant(nil)
+        )
+
+        let hasAppeared = sut.inspection.inspect(after: 1) { sut in
+            XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
+            try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
+            XCTAssertEqual(
+                nearbyVM.navigationStack.last,
+                .tripDetails(filter: .init(
+                    tripId: trip.id,
+                    vehicleId: vehicle.id,
+                    routeId: trip.routeId,
+                    directionId: trip.directionId,
+                    stopId: stop.id,
+                    stopSequence: 100
+                ))
+            )
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([.trackThisTrip: true]))
+        wait(for: [hasAppeared], timeout: 5)
+
+        addTeardownBlock {
+            HelpersKt.loadDefaultRepoModules()
+        }
+    }
+
     func testUpdatesViewportOnCameraChangeBeforeLayersLoad() throws {
         let updateCameraExpectation = XCTestExpectation(description: "updateCameraState called")
 
