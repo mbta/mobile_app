@@ -17,8 +17,10 @@ struct TripDetailsPage: View {
     var mapVM: IMapViewModel = ViewModelDI().map
     var nearbyVM: NearbyViewModel
     var tripDetailsPageVM: ITripDetailsPageViewModel = ViewModelDI().tripDetailsPage
+    var tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
 
     let analytics = AnalyticsProvider.shared
+    let inspection = Inspection<Self>()
 
     @State var global: GlobalResponse?
     @State var now = Date.now.toEasternInstant()
@@ -63,6 +65,7 @@ struct TripDetailsPage: View {
                         errorBannerVM: errorBannerVM,
                         nearbyVM: nearbyVM,
                         mapVM: mapVM,
+                        tripDetailsVM: tripDetailsVM,
                     )
                 }
             }
@@ -75,5 +78,6 @@ struct TripDetailsPage: View {
                 try? await Task.sleep(for: .seconds(5))
             }
         }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 }

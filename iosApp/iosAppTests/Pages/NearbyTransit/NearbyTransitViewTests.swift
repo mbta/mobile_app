@@ -364,7 +364,6 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
@@ -394,7 +393,6 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
 
-//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
@@ -426,7 +424,6 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-//        let objects = TestData.clone()
         let nearbyVM = NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
