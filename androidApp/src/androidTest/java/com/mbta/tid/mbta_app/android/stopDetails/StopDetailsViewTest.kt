@@ -13,6 +13,7 @@ import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -54,7 +55,7 @@ class StopDetailsViewTest {
             lineId = "line_1"
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
-    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+    val lineOrRoute = LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"

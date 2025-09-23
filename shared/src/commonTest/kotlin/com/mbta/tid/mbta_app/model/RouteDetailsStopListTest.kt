@@ -25,24 +25,18 @@ class RouteDetailsStopListTest {
 
         assertEquals(
             listOf(0),
-            RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Route(route1),
-                    globalData,
-                )
+            RouteDetailsStopList.RouteParameters(LineOrRoute.Route(route1), globalData)
+                .availableDirections,
+        )
+        assertEquals(
+            listOf(0, 1),
+            RouteDetailsStopList.RouteParameters(LineOrRoute.Route(route2), globalData)
                 .availableDirections,
         )
         assertEquals(
             listOf(0, 1),
             RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Route(route2),
-                    globalData,
-                )
-                .availableDirections,
-        )
-        assertEquals(
-            listOf(0, 1),
-            RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+                    LineOrRoute.Line(line, setOf(route1, route2)),
                     globalData,
                 )
                 .availableDirections,
@@ -73,32 +67,20 @@ class RouteDetailsStopListTest {
 
         assertEquals(
             listOf(Direction("East", "Here", 0), Direction("West", "There", 1)),
-            RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Route(route1),
-                    globalData,
-                )
-                .directions,
+            RouteDetailsStopList.RouteParameters(LineOrRoute.Route(route1), globalData).directions,
         )
         assertEquals(
             listOf(Direction("East", "Here", 0), Direction("West", "Elsewhere", 1)),
-            RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Route(route2),
-                    globalData,
-                )
-                .directions,
+            RouteDetailsStopList.RouteParameters(LineOrRoute.Route(route2), globalData).directions,
         )
         assertEquals(
             listOf(Direction("North", "Somewhere", 0), Direction("South", "Wherever", 1)),
-            RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Route(route3),
-                    globalData,
-                )
-                .directions,
+            RouteDetailsStopList.RouteParameters(LineOrRoute.Route(route3), globalData).directions,
         )
         assertEquals(
             listOf(Direction("East", "Here", 0), Direction("West", null, 1)),
             RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+                    LineOrRoute.Line(line, setOf(route1, route2)),
                     globalData,
                 )
                 .directions,
@@ -106,7 +88,7 @@ class RouteDetailsStopListTest {
         assertEquals(
             listOf(Direction(null, null, 0), Direction(null, null, 1)),
             RouteDetailsStopList.RouteParameters(
-                    RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
+                    LineOrRoute.Line(line, setOf(route1, route2, route3)),
                     globalData,
                 )
                 .directions,

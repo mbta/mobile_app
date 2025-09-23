@@ -20,7 +20,7 @@ final class RoutePickerRootRowTests: XCTestCase {
             route.type = RouteType.heavyRail
         }
 
-        let sut = RoutePickerRootRow(route: RouteCardData.LineOrRoute.route(route), onTap: {})
+        let sut = RoutePickerRootRow(route: LineOrRoute.route(route), onTap: {})
         XCTAssertNotNil(try sut.inspect().find(text: "Red Line"))
     }
 
@@ -30,7 +30,7 @@ final class RoutePickerRootRowTests: XCTestCase {
         let allRoutes = (objects.routes.allValues as? [Route]) ?? []
         let routes = Set(allRoutes.filter { $0.lineId == line.id })
 
-        let sut = RoutePickerRootRow(route: RouteCardData.LineOrRoute.line(line, routes), onTap: {})
+        let sut = RoutePickerRootRow(route: LineOrRoute.line(line, routes), onTap: {})
         XCTAssertNotNil(try sut.inspect().find(text: "Green Line"))
     }
 
@@ -45,7 +45,7 @@ final class RoutePickerRootRowTests: XCTestCase {
 
         var tapped = false
         let sut = RoutePickerRootRow(
-            route: RouteCardData.LineOrRoute.route(route),
+            route: LineOrRoute.route(route),
             onTap: { tapped = true }
         )
         try sut.inspect().find(button: "Blue Line").tap()

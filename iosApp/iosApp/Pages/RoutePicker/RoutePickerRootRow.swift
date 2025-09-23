@@ -40,7 +40,7 @@ struct RoutePickerRootRow: View {
         )
     }
 
-    init(route: RouteCardData.LineOrRoute, onTap: @escaping () -> Void) {
+    init(route: LineOrRoute, onTap: @escaping () -> Void) {
         let routeColor = Color(hex: route.backgroundColor)
         let textColor = Color(hex: route.textColor)
         self.init(

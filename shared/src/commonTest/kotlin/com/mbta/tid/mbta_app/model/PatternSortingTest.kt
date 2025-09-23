@@ -15,8 +15,8 @@ class PatternSortingTest {
 
     private fun singleLineOrRoute() =
         objects.lines.values.singleOrNull()?.let {
-            RouteCardData.LineOrRoute.Line(it, objects.routes.values.toSet())
-        } ?: objects.routes.values.single().let { RouteCardData.LineOrRoute.Route(it) }
+            LineOrRoute.Line(it, objects.routes.values.toSet())
+        } ?: objects.routes.values.single().let { LineOrRoute.Route(it) }
 
     private fun singleStop() = objects.stops.values.single()
 
@@ -43,7 +43,7 @@ class PatternSortingTest {
         )
 
     private fun leaf(
-        lineOrRoute: RouteCardData.LineOrRoute = singleLineOrRoute(),
+        lineOrRoute: LineOrRoute = singleLineOrRoute(),
         stop: Stop = singleStop(),
         pattern: RoutePattern,
         trips: Int = 0,
@@ -70,19 +70,14 @@ class PatternSortingTest {
     private fun stopData(stop: Stop, vararg leaf: RouteCardData.Leaf) =
         stopData(stop, singleLineOrRoute(), *leaf)
 
-    private fun stopData(
-        stop: Stop,
-        lineOrRoute: RouteCardData.LineOrRoute,
-        vararg leaf: RouteCardData.Leaf,
-    ) = RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList(), GlobalResponse(objects))
+    private fun stopData(stop: Stop, lineOrRoute: LineOrRoute, vararg leaf: RouteCardData.Leaf) =
+        RouteCardData.RouteStopData(lineOrRoute, stop, leaf.asList(), GlobalResponse(objects))
 
     private fun routeCard(route: Route, vararg stops: RouteCardData.RouteStopData) =
-        routeCard(RouteCardData.LineOrRoute.Route(route), *stops)
+        routeCard(LineOrRoute.Route(route), *stops)
 
-    private fun routeCard(
-        lineOrRoute: RouteCardData.LineOrRoute,
-        vararg stops: RouteCardData.RouteStopData,
-    ) = RouteCardData(lineOrRoute, stops.asList(), EasternTimeInstant.now())
+    private fun routeCard(lineOrRoute: LineOrRoute, vararg stops: RouteCardData.RouteStopData) =
+        RouteCardData(lineOrRoute, stops.asList(), EasternTimeInstant.now())
 
     @Test
     fun compareLeavesAtStop() {
@@ -190,13 +185,13 @@ class PatternSortingTest {
                     type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
                     this.sortOrder = sortOrder
                 }
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             val stop = if (near) nearStop else farStop
             return routeCard(
                 route,
                 stopData(
                     stop,
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     leaf(
                         lineOrRoute,
                         stop,
@@ -255,13 +250,13 @@ class PatternSortingTest {
                     type = if (subway) RouteType.HEAVY_RAIL else RouteType.BUS
                     this.sortOrder = sortOrder
                 }
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             val stop = if (near) nearStop else farStop
             return routeCard(
                 route,
                 stopData(
                     stop,
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     leaf(
                         lineOrRoute,
                         stop,

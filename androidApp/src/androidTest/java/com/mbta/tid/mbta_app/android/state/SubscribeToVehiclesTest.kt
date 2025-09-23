@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -131,7 +132,7 @@ class SubscribeToVehiclesTest {
                 onConnect = { routeId, directionId -> connectProps = Pair(routeId, directionId) },
             )
 
-        val line = RouteCardData.LineOrRoute.Line(objects.line(), routes = setOf(route1, route2))
+        val line = LineOrRoute.Line(objects.line(), routes = setOf(route1, route2))
         val stop = objects.stop()
         val routeCardData =
             listOf(

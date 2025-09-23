@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
@@ -29,10 +30,10 @@ class RouteCardTest {
         composeTestRule.setContent {
             RouteCard(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            RouteCardData.LineOrRoute.Route(route),
+                            LineOrRoute.Route(route),
                             stop,
                             emptyList(),
                             emptyList(),
@@ -66,10 +67,10 @@ class RouteCardTest {
         composeTestRule.setContent {
             RouteCard(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            RouteCardData.LineOrRoute.Route(route),
+                            LineOrRoute.Route(route),
                             stop,
                             emptyList(),
                             emptyList(),
@@ -105,10 +106,10 @@ class RouteCardTest {
         composeTestRule.setContent {
             RouteCard(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     listOf(
                         RouteCardData.RouteStopData(
-                            RouteCardData.LineOrRoute.Route(route),
+                            LineOrRoute.Route(route),
                             stop,
                             emptyList(),
                             emptyList(),

@@ -46,7 +46,7 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val now = EasternTimeInstant.now()
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 mapOf(
                     route1.id to
@@ -119,7 +119,7 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val now = EasternTimeInstant.now()
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 mapOf(
                     route1.id to
@@ -208,7 +208,7 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val now = EasternTimeInstant.now()
 
-        val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+        val lineOrRoute1 = LineOrRoute.Route(route1)
         assertEquals(
             mapOf(
                 route1.id to
@@ -323,8 +323,8 @@ class RouteCardDataTest {
                 )
             val now = EasternTimeInstant.now()
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute2 = LineOrRoute.Route(route2)
             assertEquals(
                 mapOf(
                     route2.id to
@@ -459,8 +459,8 @@ class RouteCardDataTest {
                 )
             val now = EasternTimeInstant.now()
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute2 = LineOrRoute.Route(route2)
             assertEquals(
                 mapOf(
                     route1.id to
@@ -575,8 +575,8 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val now = EasternTimeInstant.now()
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute2 = LineOrRoute.Route(route2)
             assertEquals(
                 mapOf(
                     route1.id to
@@ -687,7 +687,7 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val now = EasternTimeInstant.now()
 
-        val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+        val lineOrRoute1 = LineOrRoute.Route(route1)
         assertEquals(
             mapOf(
                 route1.id to
@@ -776,7 +776,7 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val now = EasternTimeInstant.now()
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         assertEquals(
             mapOf(
                 route.id to
@@ -865,8 +865,8 @@ class RouteCardDataTest {
             val westDir = Direction("West", "Boston College", 0)
             val eastDir = Direction("East", "Government Center", 1)
 
-            val railLineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(railRoute))
-            val shuttleLineOrRoute = RouteCardData.LineOrRoute.Route(shuttleRoute)
+            val railLineOrRoute = LineOrRoute.Line(line, setOf(railRoute))
+            val shuttleLineOrRoute = LineOrRoute.Route(shuttleRoute)
             assertEquals(
                 mapOf(
                     line.id to
@@ -996,7 +996,7 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val now = EasternTimeInstant.now()
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(bRoute, cRoute, dRoute))
+        val lineOrRoute = LineOrRoute.Line(line, setOf(bRoute, cRoute, dRoute))
         assertEquals(
             mapOf(
                 line.id to
@@ -1213,7 +1213,7 @@ class RouteCardDataTest {
             val westDir = Direction("West", "Copley & West", 0)
             val northDir = Direction("East", "North Station & North", 1)
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(routeB, routeC, routeD))
+            val lineOrRoute = LineOrRoute.Line(line, setOf(routeB, routeC, routeD))
             assertEquals(
                 mapOf(
                     line.id to
@@ -1342,7 +1342,7 @@ class RouteCardDataTest {
                     trip = trip3
                 }
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 mapOf(
                     route1.id to
@@ -1470,7 +1470,7 @@ class RouteCardDataTest {
             departureTime = now - 2.hours
         }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         assertEquals(
             mapOf(
                 route.id to
@@ -1626,7 +1626,7 @@ class RouteCardDataTest {
         val globalData = GlobalResponse(objects)
 
         val lineOrRoute =
-            RouteCardData.LineOrRoute.Line(
+            LineOrRoute.Line(
                 greenLine,
                 setOf(
                     greenB,
@@ -1736,8 +1736,8 @@ class RouteCardDataTest {
         val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
         val context = RouteCardData.Context.NearbyTransit
 
-        val subwayLineOrRoute = RouteCardData.LineOrRoute.Route(subwayRoute)
-        val busLineOrRoute = RouteCardData.LineOrRoute.Route(busRoute)
+        val subwayLineOrRoute = LineOrRoute.Route(subwayRoute)
+        val busLineOrRoute = LineOrRoute.Route(busRoute)
         assertEquals(
             listOf(
                 RouteCardData(
@@ -1845,8 +1845,8 @@ class RouteCardDataTest {
             val context = RouteCardData.Context.NearbyTransit
             val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-            val subwayLineOrRoute1 = RouteCardData.LineOrRoute.Route(subwayRoute1)
-            val subwayLineOrRoute2 = RouteCardData.LineOrRoute.Route(subwayRoute2)
+            val subwayLineOrRoute1 = LineOrRoute.Route(subwayRoute1)
+            val subwayLineOrRoute2 = LineOrRoute.Route(subwayRoute2)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -2501,7 +2501,7 @@ class RouteCardDataTest {
                     stopId = stop1.id
                     tripId = deviationInbound.representativeTripId
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -2613,7 +2613,7 @@ class RouteCardDataTest {
                     stopId = stop1.id
                     tripId = deviationInboundTrip2.id
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -2736,7 +2736,7 @@ class RouteCardDataTest {
                     stopId = stop2.id
                     tripId = typicalOutbound.representativeTripId
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -2848,7 +2848,7 @@ class RouteCardDataTest {
                     stopId = stop2.id
                     tripId = deviationOutbound.representativeTripId
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3036,7 +3036,7 @@ class RouteCardDataTest {
                     stopId = stop2.id
                     tripId = trip4.id
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3139,7 +3139,7 @@ class RouteCardDataTest {
                     stopId = stop1.id
                     tripId = deviationOutbound.representativeTripId
                 }
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3340,8 +3340,8 @@ class RouteCardDataTest {
                     departureTime = time + 121.minutes
                 }
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-            val lineOrRoute3 = RouteCardData.LineOrRoute.Route(route3)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute3 = LineOrRoute.Route(route3)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3470,7 +3470,7 @@ class RouteCardDataTest {
         val context = RouteCardData.Context.NearbyTransit
         val time = EasternTimeInstant(2024, Month.FEBRUARY, 22, 12, 8, 19)
 
-        val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+        val lineOrRoute1 = LineOrRoute.Route(route1)
         assertEquals(
             listOf(
                 RouteCardData(
@@ -3566,7 +3566,7 @@ class RouteCardDataTest {
                     tripId = deviationInbound.representativeTripId
                 }
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3671,7 +3671,7 @@ class RouteCardDataTest {
                     scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
                 }
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3746,7 +3746,7 @@ class RouteCardDataTest {
                 tripId = pattern1.representativeTripId
             }
 
-        val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
+        val lineOrRoute1 = LineOrRoute.Route(route1)
         assertEquals(
             listOf(
                 RouteCardData(
@@ -3822,7 +3822,7 @@ class RouteCardDataTest {
         val pred1 = objects.prediction(sched1) { departureTime = time + 1.5.minutes }
         val pred2 = objects.prediction(sched2) { departureTime = null }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         assertEquals(
             listOf(
                 RouteCardData(
@@ -3901,7 +3901,7 @@ class RouteCardDataTest {
                     status = "foo"
                 }
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -3977,7 +3977,7 @@ class RouteCardDataTest {
                     status = "foo"
                 }
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -4069,7 +4069,7 @@ class RouteCardDataTest {
                 departureTime = time - 2.hours
             }
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             val context = RouteCardData.Context.NearbyTransit
             assertEquals(
                 listOf(
@@ -4203,8 +4203,8 @@ class RouteCardDataTest {
             val pred2 = objects.prediction(sched2) { departureTime = time + 2.3.minutes }
             val pred3 = objects.prediction(sched3) { departureTime = time + 3.4.minutes }
 
-            val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-            val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+            val lineOrRoute1 = LineOrRoute.Route(route1)
+            val lineOrRoute2 = LineOrRoute.Route(route2)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -4488,7 +4488,7 @@ class RouteCardDataTest {
             )
         val context = RouteCardData.Context.NearbyTransit
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(routeB, routeC, routeE))
+        val lineOrRoute = LineOrRoute.Line(line, setOf(routeB, routeC, routeE))
         val expected =
             listOf(
                 RouteCardData(
@@ -4662,7 +4662,7 @@ class RouteCardDataTest {
                 )
             val context = RouteCardData.Context.NearbyTransit
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(routeB))
+            val lineOrRoute = LineOrRoute.Line(line, setOf(routeB))
             val expected =
                 listOf(
                     RouteCardData(
@@ -4770,7 +4770,7 @@ class RouteCardDataTest {
                 )
             val context = RouteCardData.Context.NearbyTransit
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route1)
+            val lineOrRoute = LineOrRoute.Route(route1)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -5046,7 +5046,7 @@ class RouteCardDataTest {
         val global = GlobalResponse(objects)
         val context = RouteCardData.Context.NearbyTransit
 
-        val orangeLineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute)
+        val orangeLineOrRoute = LineOrRoute.Route(orangeRoute)
         assertEquals(
             listOf(
                 RouteCardData(
@@ -5199,7 +5199,7 @@ class RouteCardDataTest {
                     departureTime = null
                 }
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(orangeRoute)
+            val lineOrRoute = LineOrRoute.Route(orangeRoute)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -5320,7 +5320,7 @@ class RouteCardDataTest {
                     departureTime = time + 2.minutes
                 }
 
-            val ferryLineOrRoute = RouteCardData.LineOrRoute.Route(ferryRoute)
+            val ferryLineOrRoute = LineOrRoute.Route(ferryRoute)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -5490,7 +5490,7 @@ class RouteCardDataTest {
                     targetStopWithChildren = setOf(park.id),
                     tripsById = global.trips,
                 )
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
                 listOf(
                     RouteCardData(
@@ -5609,7 +5609,7 @@ class RouteCardDataTest {
                     ),
                 )
 
-            val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+            val lineOrRoute = LineOrRoute.Route(route)
             assertEquals(
                 listOf(
                     RouteCardData(

@@ -19,7 +19,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    let line = RouteCardData.LineOrRoute.line(
+    let line = LineOrRoute.line(
         TestData.getLine(id: "line-Green"),
         Set([
             TestData.getRoute(id: "Green-B"),
@@ -146,7 +146,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             route.type = RouteType.bus
         }
 
-        let sut = SaveFavoritesFlow(lineOrRoute: RouteCardData.LineOrRoute.route(route),
+        let sut = SaveFavoritesFlow(lineOrRoute: LineOrRoute.route(route),
                                     stop: stop,
                                     directions: [direction0],
                                     selectedDirection: 0,
@@ -170,7 +170,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
             route.type = RouteType.bus
         }
 
-        let sut = SaveFavoritesFlow(lineOrRoute: RouteCardData.LineOrRoute.route(route),
+        let sut = SaveFavoritesFlow(lineOrRoute: LineOrRoute.route(route),
                                     stop: stop,
                                     directions: [direction0],
                                     selectedDirection: 0,
@@ -252,7 +252,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         }
 
         let sut = SaveFavoritesFlow(
-            lineOrRoute: RouteCardData.LineOrRoute.route(route),
+            lineOrRoute: LineOrRoute.route(route),
             stop: stop,
             directions: [direction0],
             selectedDirection: 0,

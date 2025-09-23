@@ -22,8 +22,8 @@ struct RoutePickerView: View {
     let onBack: () -> Void
 
     @State var globalData: GlobalResponse?
-    @State var routes: [RouteCardData.LineOrRoute] = []
-    @State var routeSearchResults: [RouteCardData.LineOrRoute] = []
+    @State var routes: [LineOrRoute] = []
+    @State var routeSearchResults: [LineOrRoute] = []
 
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
@@ -60,7 +60,7 @@ struct RoutePickerView: View {
     private var isRootPath: Bool { path is RoutePickerPath.Root }
 
     func routeSearchResultsForVMState(state: SearchRoutesViewModel.State,
-                                      routes: [RouteCardData.LineOrRoute]) -> [RouteCardData.LineOrRoute] {
+                                      routes: [LineOrRoute]) -> [LineOrRoute] {
         switch onEnum(of: state) {
         case .unfiltered, .error: routes
         case let .results(state):

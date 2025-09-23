@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
@@ -34,7 +34,7 @@ class SaveFavoritesFlowTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     val line =
-        RouteCardData.LineOrRoute.Line(
+        LineOrRoute.Line(
             TestData.getLine("line-Green"),
             setOf(
                 TestData.getRoute("Green-B"),
@@ -212,7 +212,7 @@ class SaveFavoritesFlowTest {
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
-                lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
+                lineOrRoute = LineOrRoute.Route(busRoute),
                 stop = busStop,
                 directions = listOf(direction0),
                 selectedDirection = 0,
@@ -361,7 +361,7 @@ class SaveFavoritesFlowTest {
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
-                lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
+                lineOrRoute = LineOrRoute.Route(busRoute),
                 stop = busStop,
                 directions = listOf(direction0),
                 selectedDirection = 0,
@@ -389,7 +389,7 @@ class SaveFavoritesFlowTest {
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
-                lineOrRoute = RouteCardData.LineOrRoute.Route(busRoute),
+                lineOrRoute = LineOrRoute.Route(busRoute),
                 stop = busStop,
                 directions = listOf(direction0),
                 selectedDirection = 0,

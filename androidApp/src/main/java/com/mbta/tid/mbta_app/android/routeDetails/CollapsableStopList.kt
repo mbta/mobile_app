@@ -31,12 +31,12 @@ import com.mbta.tid.mbta_app.android.component.StopListToggleGroup
 import com.mbta.tid.mbta_app.android.component.StopPlacement
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 
 @Composable
 fun CollapsableStopList(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     segment: RouteDetailsStopList.Segment,
     onClick: (RouteDetailsStopList.Entry) -> Unit,
     onClickLabel: @Composable (RouteDetailsStopList.Entry) -> String? = { null },

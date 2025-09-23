@@ -22,13 +22,13 @@ import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Silver.routeType
 
 @Composable
-fun RoutePickerRootRow(route: RouteCardData.LineOrRoute, onTap: () -> Unit) {
+fun RoutePickerRootRow(route: LineOrRoute, onTap: () -> Unit) {
     val routeColor = Color.fromHex(route.backgroundColor)
     val textColor = Color.fromHex(route.textColor)
     RoutePickerRootRow(route.type, routeColor, textColor, onTap) {

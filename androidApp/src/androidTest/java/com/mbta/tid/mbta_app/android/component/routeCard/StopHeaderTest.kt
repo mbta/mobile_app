@@ -6,6 +6,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
@@ -26,7 +27,7 @@ class StopHeaderTest {
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     stop,
                     emptyList(),
                     emptyList(),
@@ -48,7 +49,7 @@ class StopHeaderTest {
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     stop,
                     emptyList(),
                     emptyList(),
@@ -71,7 +72,7 @@ class StopHeaderTest {
         composeTestRule.setContent {
             StopHeader(
                 RouteCardData.RouteStopData(
-                    RouteCardData.LineOrRoute.Route(route),
+                    LineOrRoute.Route(route),
                     stop,
                     emptyList(),
                     emptyList(),
@@ -90,7 +91,7 @@ class StopHeaderTest {
         val stop = objects.stop { wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE }
         val alert = objects.alert { effect = Alert.Effect.ElevatorClosure }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         loadKoinMocks {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }

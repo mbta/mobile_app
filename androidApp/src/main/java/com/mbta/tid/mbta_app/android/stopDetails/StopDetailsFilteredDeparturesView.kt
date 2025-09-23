@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -113,11 +114,11 @@ fun StopDetailsFilteredDeparturesView(
         val routeIds: List<String>
 
         when (lineOrRoute) {
-            is RouteCardData.LineOrRoute.Line -> {
+            is LineOrRoute.Line -> {
                 lineId = lineOrRoute.id
                 routeIds = lineOrRoute.routes.map { it.id }
             }
-            is RouteCardData.LineOrRoute.Route -> {
+            is LineOrRoute.Route -> {
                 lineId = null
                 routeIds = listOf(lineOrRoute.id)
             }
@@ -283,7 +284,7 @@ fun StopDetailsFilteredDeparturesView(
 @Composable
 private fun DepartureTiles(
     tripFilter: TripDetailsFilter?,
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     stop: Stop,
     tiles: List<TileData>,
     alerts: List<Alert>,
@@ -326,7 +327,7 @@ private fun DepartureTiles(
                     coroutineScope.launch { bringIntoViewRequester.bringIntoView() }
                 },
                 modifier = Modifier.bringIntoViewRequester(bringIntoViewRequester),
-                showRoutePill = lineOrRoute is RouteCardData.LineOrRoute.Line,
+                showRoutePill = lineOrRoute is LineOrRoute.Line,
                 showHeadsign = true,
                 isSelected = tileData.isSelected(tripFilter),
             )

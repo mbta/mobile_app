@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct CollapsableStopList<RightSideContent: View>: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let segment: RouteDetailsStopList.Segment
     let onClick: (RouteDetailsStopList.Entry) -> Void
     let isFirstSegment: Bool
@@ -22,7 +22,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         segment: RouteDetailsStopList.Segment,
         onClick: @escaping (RouteDetailsStopList.Entry) -> Void,
         isFirstSegment: Bool = false,

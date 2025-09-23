@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.discardTrackChangesAtCRCore
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -68,7 +68,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
                 val filter = filter
                 val allPatterns =
                     if (filter != null && global != null && route != null)
-                        global.getPatternsFor(filter.stopId, RouteCardData.LineOrRoute.Route(route))
+                        global.getPatternsFor(filter.stopId, LineOrRoute.Route(route))
                     else emptyList()
                 if (trip != null) allPatterns.filter { it.id == trip.routePatternId }
                 else if (filter != null) allPatterns.filter { it.directionId == filter.directionId }

@@ -40,7 +40,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.model.Direction
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -52,7 +52,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun SaveFavoritesFlow(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     stop: Stop,
     directions: List<Direction>,
     selectedDirection: Int,
@@ -141,7 +141,7 @@ fun SaveFavoritesFlow(
 
 @Composable
 fun FavoriteConfirmationDialog(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     stop: Stop,
     directions: List<Direction>,
     selectedDirection: Int,
@@ -276,7 +276,7 @@ class Previews() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 FavoriteConfirmationDialog(
-                    RouteCardData.LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
+                    LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-boyls"),
                     directions =
                         listOf(
@@ -299,7 +299,7 @@ class Previews() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 FavoriteConfirmationDialog(
-                    RouteCardData.LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
+                    LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-unsqu"),
                     directions =
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
@@ -319,7 +319,7 @@ class Previews() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 FavoriteConfirmationDialog(
-                    RouteCardData.LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
+                    LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-unsqu"),
                     directions =
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
@@ -339,7 +339,7 @@ class Previews() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 FavoriteConfirmationDialog(
-                    RouteCardData.LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
+                    LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-boyls"),
                     directions =
                         listOf(

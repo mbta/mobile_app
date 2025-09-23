@@ -28,7 +28,7 @@ enum RouteDetailsRowContext: Equatable {
 }
 
 struct RouteStopListView<RightSideContent: View>: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let context: RouteDetailsContext
     let globalData: GlobalResponse
@@ -52,7 +52,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
@@ -183,7 +183,7 @@ struct RouteStopListView<RightSideContent: View>: View {
 }
 
 struct RouteStopListContentView<RightSideContent: View>: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let selectedDirection: Int32
     let setSelectedDirection: (Int32) -> Void
@@ -211,7 +211,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         parameters: RouteDetailsStopList.RouteParameters,
         selectedDirection: Int32,
         setSelectedDirection: @escaping (Int32) -> Void,

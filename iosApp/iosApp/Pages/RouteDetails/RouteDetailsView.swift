@@ -18,7 +18,7 @@ struct RouteDetailsView: View {
     let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
-    @State private var lineOrRoute: RouteCardData.LineOrRoute?
+    @State private var lineOrRoute: LineOrRoute?
 
     var body: some View {
         ScrollView([]) {
@@ -51,7 +51,7 @@ struct RouteDetailsView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         let objects = ObjectCollectionBuilder()
-        let mockRoute = RouteCardData.LineOrRouteRoute(route: objects.route { _ in })
+        let mockRoute = LineOrRoute.route(objects.route { _ in })
         let mockGlobal = GlobalResponse(objects: objects)
         let toastVM = MockToastViewModel(initialState: ToastViewModel.StateHidden())
         RouteStopListContentView(

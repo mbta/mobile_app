@@ -4,10 +4,10 @@ import com.mbta.tid.mbta_app.kdTree.KdTree
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -81,7 +81,7 @@ internal constructor(
 
     public fun getRoute(routeId: String?): Route? = routes[routeId]
 
-    public fun getRoutesForPicker(path: RoutePickerPath): List<RouteCardData.LineOrRoute> =
+    public fun getRoutesForPicker(path: RoutePickerPath): List<LineOrRoute> =
         routes.values
             .filter {
                 it.isListedRoute &&
@@ -107,13 +107,13 @@ internal constructor(
             .mapNotNull { route ->
                 if (route.id in greenRoutes) {
                     this.getLine(route.lineId)?.let { line ->
-                        RouteCardData.LineOrRoute.Line(
+                        LineOrRoute.Line(
                             line,
                             routes = routesByLineId[line.id]?.toSet() ?: emptySet(),
                         )
                     }
                 } else {
-                    RouteCardData.LineOrRoute.Route(route)
+                    LineOrRoute.Route(route)
                 }
             }
             .distinct()
@@ -127,14 +127,14 @@ internal constructor(
             null
         }
 
-    public fun getLineOrRoute(lineOrRouteId: String): RouteCardData.LineOrRoute? {
+    public fun getLineOrRoute(lineOrRouteId: String): LineOrRoute? {
         val route = this.getRoute(lineOrRouteId)
         val line = this.getLine(lineOrRouteId) ?: this.getLine(route?.lineId)
         return when {
             line != null && line.isGrouped ->
-                RouteCardData.LineOrRoute.Line(line, this.routesByLineId[line.id].orEmpty().toSet())
+                LineOrRoute.Line(line, this.routesByLineId[line.id].orEmpty().toSet())
 
-            route != null -> RouteCardData.LineOrRoute.Route(route)
+            route != null -> LineOrRoute.Route(route)
             else -> null
         }
     }
@@ -146,10 +146,7 @@ internal constructor(
         return patternIds.mapNotNull { routePatterns[it] }
     }
 
-    public fun getPatternsFor(
-        stopId: String,
-        lineOrRoute: RouteCardData.LineOrRoute,
-    ): List<RoutePattern> {
+    public fun getPatternsFor(stopId: String, lineOrRoute: LineOrRoute): List<RoutePattern> {
         val stop = stops[stopId] ?: return emptyList()
         val stopIds = stop.childStopIds + listOf(stopId)
         val patternIds = stopIds.flatMap { patternIdsByStop[it] ?: emptyList() }

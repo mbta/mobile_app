@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.utils
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -68,7 +69,7 @@ public open class RouteCardPreviewData {
     public val global: GlobalResponse = GlobalResponse(objects)
 
     private fun cardStop(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         stop: Stop,
         patterns: List<RoutePattern>,
         trips: List<UpcomingTrip>,
@@ -112,7 +113,7 @@ public open class RouteCardPreviewData {
         )
 
     private fun card(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         stop: Stop,
         patterns: List<RoutePattern>,
         trips: List<UpcomingTrip>,
@@ -133,7 +134,7 @@ public open class RouteCardPreviewData {
         alertDownstream: Map<Int, Alert> = emptyMap(),
     ) =
         card(
-            RouteCardData.LineOrRoute.Route(route),
+            LineOrRoute.Route(route),
             stop,
             objects.routePatterns.values.filter { it.routeId == route.id },
             trips,
@@ -152,7 +153,7 @@ public open class RouteCardPreviewData {
         val routeIds = routes.map { it.id }
         val routePatterns = objects.routePatterns.values.filter { routeIds.contains(it.routeId) }
         return card(
-            RouteCardData.LineOrRoute.Line(line, routes),
+            LineOrRoute.Line(line, routes),
             stop,
             routePatterns,
             trips,
@@ -657,7 +658,7 @@ public open class RouteCardPreviewData {
 
     // "Next two trips go to the same destination" group = "6. Bus route single direction"
     public fun Bus1(): RouteCardData {
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
+        val lineOrRoute = LineOrRoute.Route(bus87)
         return RouteCardData(
             lineOrRoute,
             listOf(
@@ -716,7 +717,7 @@ public open class RouteCardPreviewData {
 
     // "Next two trips go to different destinations" group = "6. Bus route single direction"
     public fun Bus2(): RouteCardData {
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(bus87)
+        val lineOrRoute = LineOrRoute.Route(bus87)
         return RouteCardData(
             lineOrRoute,
             listOf(
