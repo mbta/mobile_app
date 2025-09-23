@@ -122,7 +122,7 @@ internal fun getTripData(
         }
     }
 
-    LaunchedEffect(trip, tripSchedules, tripPredictions) {
+    LaunchedEffect(trip, tripSchedules, tripPredictions, vehicle, context) {
         val resolvedTrip = trip
         result =
             if (
