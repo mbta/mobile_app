@@ -134,7 +134,7 @@ fun FavoritesView(
             },
             global = globalResponse,
             now = now,
-            isFavorite = { rsd -> (state.favorites ?: emptySet()).contains(rsd) },
+            isFavorite = { rsd -> (state.favorites?.keys ?: emptySet()).contains(rsd) },
             onOpenStopDetails = { stopId, filter ->
                 openSheetRoute(SheetRoutes.StopDetails(stopId, filter, null))
             },

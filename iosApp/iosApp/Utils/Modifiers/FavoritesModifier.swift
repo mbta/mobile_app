@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 class LoadedFavorites {
-    static var last = Favorites(routeStopDirection: [])
+    static var last = Favorites(routeStopDirection: [:])
 }
 
 struct FavoritesModifier: ViewModifier {

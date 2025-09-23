@@ -32,7 +32,7 @@ final class FavoritesViewTests: XCTestCase {
         let globalData = GlobalResponse(objects: objects)
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [.init(route: route.id, stop: stop.id, direction: 0)],
+            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .companion.disabled)],
             shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
@@ -118,7 +118,7 @@ final class FavoritesViewTests: XCTestCase {
 
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [.init(route: route.id, stop: stop.id, direction: 0)],
+            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .companion.disabled)],
             shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
@@ -187,7 +187,7 @@ final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsEmpty() {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [],
+            favorites: [:],
             shouldShowFirstTimeToast: false,
             routeCardData: [],
             staticRouteCardData: [],
@@ -363,7 +363,7 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(
             initialState: .init(
                 awaitingPredictionsAfterBackground: false,
-                favorites: [],
+                favorites: [:],
                 shouldShowFirstTimeToast: true,
                 routeCardData: [],
                 staticRouteCardData: [],

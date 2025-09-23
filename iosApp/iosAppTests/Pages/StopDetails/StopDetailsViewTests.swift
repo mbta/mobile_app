@@ -54,7 +54,7 @@ final class StopDetailsViewTests: XCTestCase {
                     ),
                 ]
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -97,7 +97,7 @@ final class StopDetailsViewTests: XCTestCase {
                     at: EasternTimeInstant.now()
                 )]
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -153,7 +153,7 @@ final class StopDetailsViewTests: XCTestCase {
                     at: EasternTimeInstant.now()
                 )]
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -220,7 +220,7 @@ final class StopDetailsViewTests: XCTestCase {
                 filteredWith: filters,
                 stopData: stopData
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -251,7 +251,7 @@ final class StopDetailsViewTests: XCTestCase {
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -283,7 +283,7 @@ final class StopDetailsViewTests: XCTestCase {
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},
@@ -314,7 +314,7 @@ final class StopDetailsViewTests: XCTestCase {
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},

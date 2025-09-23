@@ -32,7 +32,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             stopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
             routeData: nil,
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
             onUpdateFavorites: {},

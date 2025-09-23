@@ -127,7 +127,7 @@ import XCTest
                 filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },
@@ -166,7 +166,7 @@ import XCTest
                 filteredWith: .init(stopId: inaccessibleStop!.id, stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },
@@ -216,7 +216,7 @@ import XCTest
                 filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
-            favorites: .init(routeStopDirection: []),
+            favorites: .init(routeStopDirection: [:]),
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },

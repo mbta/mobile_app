@@ -60,6 +60,7 @@ import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -229,7 +230,7 @@ fun RouteStopListView(
         favorites?.contains(routeStopDirection) ?: false
 
     val coroutineScope = rememberCoroutineScope()
-    fun confirmFavorites(updatedValues: Map<RouteStopDirection, Boolean>) {
+    fun confirmFavorites(updatedValues: Map<RouteStopDirection, FavoriteSettings?>) {
         coroutineScope.launch {
             updateFavorites(
                 updatedValues,

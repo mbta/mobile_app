@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -348,7 +349,7 @@ class StopDetailsFilteredPickerViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
 
-        var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
+        var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
 
         composeTestRule.setContent {
             StopDetailsFilteredPickerView(
@@ -385,8 +386,11 @@ class StopDetailsFilteredPickerViewTest {
             updatedFavorites ==
                 Pair(
                     mapOf(
-                        RouteStopDirection(route.id, stop.id, 0) to true,
-                        RouteStopDirection(route.id, stop.id, 1) to false,
+                        RouteStopDirection(route.id, stop.id, 0) to
+                            FavoriteSettings(
+                                notifications = FavoriteSettings.Notifications.disabled
+                            ),
+                        RouteStopDirection(route.id, stop.id, 1) to null,
                     ),
                     0,
                 )
@@ -412,7 +416,7 @@ class StopDetailsFilteredPickerViewTest {
             )
         val routeStopData = routeCardData.single().stopData.single()
 
-        var updatedFavorites: Pair<Map<RouteStopDirection, Boolean>, Int>? = null
+        var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
 
         composeTestRule.setContent {
             StopDetailsFilteredPickerView(
@@ -446,7 +450,7 @@ class StopDetailsFilteredPickerViewTest {
         composeTestRule.onNodeWithText("Add").assertDoesNotExist()
 
         composeTestRule.waitUntilDefaultTimeout {
-            updatedFavorites == Pair(mapOf(RouteStopDirection(route.id, stop.id, 0) to false), 0)
+            updatedFavorites == Pair(mapOf(RouteStopDirection(route.id, stop.id, 0) to null), 0)
         }
     }
 }

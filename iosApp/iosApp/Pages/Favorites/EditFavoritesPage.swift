@@ -15,7 +15,7 @@ struct EditFavoritesPage: View {
 
     @State var globalResponse: GlobalResponse?
     @State var favoritesVMState: FavoritesViewModel.State = .init()
-    @State var favoritesState: [RouteStopDirection: Bool] = [:]
+    @State var favoritesState: [RouteStopDirection: FavoriteSettings?] = [:]
 
     let errorBannerVM: IErrorBannerViewModel
     let toastVM: IToastViewModel
@@ -24,8 +24,9 @@ struct EditFavoritesPage: View {
     let inspection = Inspection<Self>()
 
     func deleteAndToast(_ rsd: RouteStopDirection) {
+        let settings = favoritesVMState.favorites?[rsd] ?? .init(notifications: .companion.disabled)
         viewModel.updateFavorites(
-            updatedFavorites: [rsd: false],
+            updatedFavorites: [rsd: nil],
             context: .favorites,
             defaultDirection: rsd.direction
         )
@@ -56,7 +57,7 @@ struct EditFavoritesPage: View {
                                                comment: "Button label to undo an action that was just performed"),
                 onAction: {
                     viewModel.updateFavorites(
-                        updatedFavorites: [rsd: true],
+                        updatedFavorites: [rsd: settings],
                         context: .favorites,
                         defaultDirection: rsd.direction
                     )
@@ -95,10 +96,11 @@ struct EditFavoritesPage: View {
             .task {
                 for await model in viewModel.models {
                     favoritesVMState = model
-                    let initialFavorites = model.favorites ?? []
-                    favoritesState = initialFavorites.reduce(into: [RouteStopDirection: Bool]()) { partialResult, rsd in
-                        partialResult[rsd] = true
-                    }
+                    let initialFavorites = model.favorites ?? [:]
+                    favoritesState = initialFavorites
+                        .reduce(into: [RouteStopDirection: FavoriteSettings?]()) { partialResult, entry in
+                            partialResult[entry.key] = entry.value
+                        }
                 }
             }
         }
