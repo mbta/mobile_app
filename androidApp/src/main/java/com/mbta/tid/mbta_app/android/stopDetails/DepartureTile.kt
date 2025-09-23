@@ -73,7 +73,7 @@ fun DepartureTile(
                 outlineColor = if (isSelected) colorResource(R.color.halo) else Color.Transparent,
                 backgroundColor =
                     if (isSelected) colorResource(R.color.fill3)
-                    else colorResource(R.color.deselected_toggle_2).copy(alpha = 0.6f),
+                    else colorResource(R.color.route_color_contrast),
                 borderRadius = 8.dp,
             )
             .padding(10.dp)
@@ -88,7 +88,7 @@ fun DepartureTile(
         CompositionLocalProvider(
             LocalContentColor provides
                 if (isSelected) colorResource(R.color.text)
-                else colorResource(R.color.deselected_toggle_text)
+                else colorResource(R.color.route_color_contrast_text)
         ) {
             val headsign = data.headsign.takeIf { showHeadsign }
             if (headsign != null) {

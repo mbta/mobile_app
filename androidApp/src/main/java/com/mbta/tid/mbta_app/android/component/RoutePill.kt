@@ -19,6 +19,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
@@ -40,6 +41,8 @@ import com.mbta.tid.mbta_app.model.RouteType
 typealias RoutePillType = RoutePillSpec.Type
 
 typealias RoutePillHeight = RoutePillSpec.Height
+
+typealias RoutePillWidth = RoutePillSpec.Width
 
 @Composable
 fun RoutePill(
@@ -82,25 +85,32 @@ fun RoutePill(
             RoutePillSpec.Shape.Capsule -> RoundedCornerShape(percent = 100)
         }
 
+    val borderShape =
+        when (spec.shape) {
+            RoutePillSpec.Shape.Rectangle ->
+                RoundedCornerShape(border?.width?.let { 4.dp + it } ?: 4.dp)
+            RoutePillSpec.Shape.Capsule -> RoundedCornerShape(percent = 100)
+        }
+
     val fontSize =
         when (spec.height) {
             RoutePillHeight.Small -> 12.sp
             RoutePillHeight.Medium -> 16.sp
-            RoutePillHeight.Large -> 20.sp
+            RoutePillHeight.Large -> if (spec.width == RoutePillWidth.Circle) 20.sp else 16.sp
         }
 
     val pillHeight =
         when (spec.height) {
             RoutePillHeight.Small -> 16.dp
             RoutePillHeight.Medium -> 24.dp
-            RoutePillHeight.Large -> 32.dp
+            RoutePillHeight.Large -> if (spec.width == RoutePillWidth.Circle) 32.dp else 24.dp
         }
 
     fun Modifier.withSizePadding() =
         when (spec.width) {
-            RoutePillSpec.Width.Fixed -> size(width = (pillHeight + 1.dp) * 2, height = pillHeight)
-            RoutePillSpec.Width.Circle -> size(pillHeight)
-            RoutePillSpec.Width.Flex ->
+            RoutePillWidth.Fixed -> size(width = (pillHeight + 1.dp) * 2, height = pillHeight)
+            RoutePillWidth.Circle -> size(pillHeight)
+            RoutePillWidth.Flex ->
                 height(pillHeight)
                     .padding(horizontal = pillHeight / 2)
                     .widthIn(min = pillHeight / 2 + 12.dp)
@@ -108,8 +118,9 @@ fun RoutePill(
 
     fun Modifier.withColor() =
         if (isActive) {
-            background(routeColor, shape)
-                .then(if (border != null) Modifier.border(border, shape) else Modifier)
+            (if (border != null) this.border(border, borderShape).padding(border.width) else this)
+                .background(routeColor, shape)
+                .clip(shape)
         } else {
             border(1.dp, routeColor, shape).padding(1.dp)
         }

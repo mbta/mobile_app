@@ -14,8 +14,6 @@ extension Color {
     static let deemphasized = Color("Deemphasized")
     static let delete = Color("Delete")
     static let deleteBackground = Color("Delete Background")
-    static let deselectedToggle2 = Color("Deselected Toggle 2")
-    static let deselectedToggleText = Color("Deselected Toggle Text")
     static let error = Color("Error")
     static let fill1 = Color("Fill 1")
     static let fill2 = Color("Fill 2")
@@ -26,6 +24,8 @@ extension Color {
     static let haloDark = Color("Halo Dark")
     static let key = Color("Key")
     static let keyInverse = Color("Key Inverse")
+    static let routeColorContrast = Color("Route Color Contrast")
+    static let routeColorContrastText = Color("Route Color Contrast Text")
     static let sheetBackground = Color("Sheet Background")
     static let stopDotHalo = Color("Stop Dot Halo")
     static let text = Color("Text")
@@ -44,8 +44,6 @@ extension UIColor {
     static let deemphasized = UIColor(named: "Deemphasized") ?? UIColor(Color(.deemphasized))
     static let delete = UIColor(named: "Delete") ?? UIColor(Color(.delete))
     static let deleteBackground = UIColor(named: "Delete Background") ?? UIColor(Color(.deleteBackground))
-    static let deselectedToggle2 = UIColor(named: "Deselected Toggle 2") ?? UIColor(Color(.deselectedToggle2))
-    static let deselectedToggleText = UIColor(named: "Deselected Toggle Text") ?? UIColor(Color(.deselectedToggleText))
     static let error = UIColor(named: "Error") ?? UIColor(Color(.error))
     static let fill1 = UIColor(named: "Fill 1") ?? UIColor(Color(.fill1))
     static let fill2 = UIColor(named: "Fill 2") ?? UIColor(Color(.fill2))
@@ -53,8 +51,10 @@ extension UIColor {
     static let halo = UIColor(named: "Halo") ?? UIColor(Color(.halo))
     static let key = UIColor(named: "Key") ?? UIColor(Color(.key))
     static let keyInverse = UIColor(named: "Key Inverse") ?? UIColor(Color(.keyInverse))
+    static let routeColorContrast = UIColor(named: "Route Color Contrast") ?? UIColor(Color(.routeColorContrast))
+    static let routeColorContrastText = UIColor(named: "Route Color Contrast Text") ??
+        UIColor(Color(.routeColorContrastText))
     static let sheetBackground = UIColor(named: "Sheet Background") ?? UIColor(Color(.sheetBackground))
-
     static let stopDotHalo = UIColor(named: "Stop Dot Halo") ?? UIColor(Color(.stopDotHalo))
     static let text = UIColor(named: "Text") ?? UIColor(Color(.text))
 

@@ -13,13 +13,71 @@ struct TripDetailsPage: View {
     var filter: TripDetailsPageFilter
     var onClose: () -> Void
 
+    var errorBannerVM: IErrorBannerViewModel = ViewModelDI().errorBanner
+    var mapVM: IMapViewModel = ViewModelDI().map
+    var nearbyVM: NearbyViewModel
+    var tripDetailsPageVM: ITripDetailsPageViewModel = ViewModelDI().tripDetailsPage
+    var tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
+
+    let analytics = AnalyticsProvider.shared
+    let inspection = Inspection<Self>()
+
+    @State var global: GlobalResponse?
+    @State var now = Date.now.toEasternInstant()
+    @State var tripDetailsPageState: TripDetailsPageViewModel.State?
+
+    var alertSummaries: [String: AlertSummary?] {
+        tripDetailsPageState?.alertSummaries as? [String: AlertSummary?] ?? [:]
+    }
+
+    var route: Route? { global?.getRoute(routeId: filter.routeId) }
+    var direction: Direction? { if let route { .init(directionId: filter.directionId, route: route) } else { nil } }
+    var routeAccents: TripRouteAccents { if let route { .init(route: route) } else { .init() } }
+
+    func onOpenAlertDetails(alert: Shared.Alert) {
+        let routes: [Route]? = if let route { [route] } else { nil }
+        nearbyVM.pushNavEntry(.alertDetails(
+            alertId: alert.id,
+            line: nil,
+            routes: routes,
+            stop: global?.getStop(stopId: filter.stopId)
+        ))
+        analytics.tappedAlertDetails(
+            routeId: filter.routeId,
+            stopId: filter.stopId,
+            alertId: alert.id,
+            elevator: false
+        )
+    }
+
     var body: some View {
-        VStack {
-            SheetHeader(title: "Trip details", onClose: onClose)
-            HaloScrollView {
-                Text(verbatim: "trip id: \(filter.tripId)")
-                Text(verbatim: "vehicle id: \(filter.vehicleId)")
+        ZStack {
+            routeAccents.color.ignoresSafeArea()
+            VStack {
+                TripDetailsHeader(route: route, direction: direction, onClose: onClose)
+                HaloScrollView {
+                    TripDetailsView(
+                        tripFilter: filter,
+                        alertSummaries: alertSummaries,
+                        isTripDetailsPage: true,
+                        now: now,
+                        onOpenAlertDetails: onOpenAlertDetails,
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM,
+                        tripDetailsVM: tripDetailsVM,
+                    )
+                }
             }
         }
+        .manageVM(tripDetailsPageVM, $tripDetailsPageState, alerts: nearbyVM.alerts, filter: filter, now: now)
+        .global($global, errorKey: "TripDetailsPage")
+        .task {
+            while !Task.isCancelled {
+                now = Date.now.toEasternInstant()
+                try? await Task.sleep(for: .seconds(5))
+            }
+        }
+        .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 }
