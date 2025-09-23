@@ -118,8 +118,7 @@ fun RoutePill(
 
     fun Modifier.withColor() =
         if (isActive) {
-            (if (border != null) Modifier.border(border, borderShape).padding(border.width)
-                else Modifier)
+            (if (border != null) this.border(border, borderShape).padding(border.width) else this)
                 .background(routeColor, shape)
                 .clip(shape)
         } else {
