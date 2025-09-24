@@ -96,12 +96,7 @@ class FavoriteTest {
                         put("stop", "stop2")
                         put("direction", 1)
                     }
-                    putJsonObject("second") {
-                        putJsonObject("notifications") {
-                            put("enabled", false)
-                            putJsonArray("windows") {}
-                        }
-                    }
+                    putJsonObject("second") {}
                 }
             }
         }
