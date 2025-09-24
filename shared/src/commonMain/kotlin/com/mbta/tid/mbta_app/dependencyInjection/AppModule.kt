@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.fs.JsonPersistence
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IAlertsRepository
@@ -46,7 +47,10 @@ import org.koin.dsl.module
 internal fun appModule(appVariant: AppVariant) = module {
     includes(
         module { single { MobileBackendClient(appVariant) } },
-        module { single { FileSystem.SYSTEM } },
+        module {
+            single { FileSystem.SYSTEM }
+            single { JsonPersistence(get(), get(), get(named("coroutineDispatcherIO"))) }
+        },
         module {
             single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) { Dispatchers.Default }
         },
