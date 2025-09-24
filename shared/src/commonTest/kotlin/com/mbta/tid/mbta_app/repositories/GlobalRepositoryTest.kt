@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.mocks.mockJsonPersistence
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
@@ -12,8 +13,6 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import com.mbta.tid.mbta_app.utils.MockSystemPaths
-import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -25,8 +24,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
-import okio.FileSystem
-import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -142,8 +139,7 @@ class GlobalRepositoryTest : KoinTest {
             modules(
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
+                    single { mockJsonPersistence() }
                 }
             )
         }

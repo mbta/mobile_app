@@ -2,13 +2,14 @@ package com.mbta.tid.mbta_app.cache
 
 import app.cash.turbine.test
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.fs.JsonPersistence
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.mocks.mockJsonPersistence
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.MockSystemPaths
-import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.request.header
@@ -27,10 +28,11 @@ import kotlin.test.fail
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
-import okio.FileSystem
 import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -62,14 +64,7 @@ class ResponseCacheTest {
 
         var didFetch = false
 
-        startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
-                }
-            )
-        }
+        startKoin { modules(module { single { mockJsonPersistence() } }) }
 
         assertEquals(
             ApiResult.Ok(globalData),
@@ -99,14 +94,7 @@ class ResponseCacheTest {
                 globalData,
             )
 
-        startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
-                }
-            )
-        }
+        startKoin { modules(module { single { mockJsonPersistence() } }) }
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
     }
 
@@ -142,14 +130,7 @@ class ResponseCacheTest {
 
         var didFetch = false
 
-        startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
-                }
-            )
-        }
+        startKoin { modules(module { single { mockJsonPersistence() } }) }
 
         assertEquals(
             ApiResult.Ok(newData),
@@ -221,14 +202,7 @@ class ResponseCacheTest {
             }
         }
 
-        startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
-                }
-            )
-        }
+        startKoin { modules(module { single { mockJsonPersistence() } }) }
 
         assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
         assertEquals(1, fetchCount)
@@ -267,7 +241,7 @@ class ResponseCacheTest {
 
         val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
         val directory = mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY
         fileSystem.createDirectories(directory)
@@ -284,12 +258,7 @@ class ResponseCacheTest {
         fileSystem.write(directory / "test.json") { writeUtf8(json.encodeToString(globalData)) }
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
@@ -323,7 +292,7 @@ class ResponseCacheTest {
 
         val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
         fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
         fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
@@ -341,12 +310,7 @@ class ResponseCacheTest {
         }
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         var didFetch = false
@@ -383,7 +347,7 @@ class ResponseCacheTest {
 
         val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
         fileSystem.createDirectories(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY)
         fileSystem.write(mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY / "test-meta.json") {
@@ -401,12 +365,7 @@ class ResponseCacheTest {
         }
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         var didFetch = false
@@ -451,16 +410,11 @@ class ResponseCacheTest {
 
         val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         var didFetch = false
@@ -523,16 +477,11 @@ class ResponseCacheTest {
 
         val partialCache = ResponseCache.create<PartialObject>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         var didFetch = false
@@ -587,18 +536,13 @@ class ResponseCacheTest {
 
         val cache = ResponseCache.create<GlobalResponse>(cacheKey = "test")
 
-        val mockPaths = MockSystemPaths(data = "data", cache = "cache")
+        val mockPaths = MockSystemPaths()
         val fileSystem = FakeFileSystem()
         val directory = mockPaths.cache / ResponseCache.CACHE_SUBDIRECTORY
         fileSystem.createDirectories(directory)
 
         startKoin {
-            modules(
-                module {
-                    single<SystemPaths> { mockPaths }
-                    single<FileSystem> { fileSystem }
-                }
-            )
+            modules(module { single { JsonPersistence(fileSystem, mockPaths, Dispatchers.IO) } })
         }
 
         var fetchCount = 0

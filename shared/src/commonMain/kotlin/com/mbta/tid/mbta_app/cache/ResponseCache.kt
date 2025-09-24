@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.cache
 
+import com.mbta.tid.mbta_app.fs.JsonPersistence
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.utils.SystemPaths
@@ -17,8 +18,6 @@ import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.serializer
-import okio.FileSystem
-import okio.Path
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -57,34 +56,17 @@ internal class ResponseCache<T : Any>(
     private val flow = MutableStateFlow<T?>(null)
     val state = flow.asStateFlow()
 
-    private val fileSystem: FileSystem by inject()
-    private val systemPaths: SystemPaths by inject()
-    private val cacheDirectory: Path
-        get() {
-            return systemPaths.cache / CACHE_SUBDIRECTORY
-        }
+    private val jsonPersistence: JsonPersistence by inject()
 
-    private val cacheFilePath: Path
-        get() {
-            return cacheDirectory / "$cacheKey.json"
-        }
-
-    private val cacheMetadataFilePath: Path
-        get() {
-            return cacheDirectory / "$cacheKey-meta.json"
-        }
+    private val cacheMetadataKey: String = "$cacheKey-meta"
 
     private val lock = Mutex()
 
-    private fun decodeString(body: String): T {
-        return json.decodeFromString(serializer, body)
-    }
-
-    private fun getPossiblyStaleData(): Response<T>? {
+    private suspend fun getPossiblyStaleData(): Response<T>? {
         return this.data ?: readData()
     }
 
-    private fun getData(): Response<T>? {
+    private suspend fun getData(): Response<T>? {
         val data = getPossiblyStaleData()
         if (data != null) {
             flow.value = data.body
@@ -101,7 +83,7 @@ internal class ResponseCache<T : Any>(
         val nextData =
             Response(
                 ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow(), invalidationKey),
-                decodeString(responseBody),
+                json.decodeFromString(serializer, responseBody),
             )
         this.data = nextData
         this.flow.value = nextData.body
@@ -109,37 +91,41 @@ internal class ResponseCache<T : Any>(
         this.writeData(nextData.metadata, responseBody)
     }
 
-    private fun readData(): Response<T>? {
-        try {
-            val diskMetadata: ResponseMetadata =
-                json.decodeFromString(fileSystem.read(cacheMetadataFilePath) { readUtf8() })
-            if (diskMetadata.invalidationKey != invalidationKey) {
-                return null
-            }
-            val diskData = decodeString(fileSystem.read(cacheFilePath) { readUtf8() })
-            this.data = Response(diskMetadata, diskData)
-            return this.data
-        } catch (error: Exception) {
+    private suspend fun readData(): Response<T>? {
+        val diskMetadata: ResponseMetadata =
+            jsonPersistence.read(SystemPaths.Category.Cache, CACHE_SUBDIRECTORY, cacheMetadataKey)
+                ?: return null
+        if (diskMetadata.invalidationKey != invalidationKey) {
             return null
         }
+        val diskData =
+            jsonPersistence.read(
+                SystemPaths.Category.Cache,
+                CACHE_SUBDIRECTORY,
+                cacheKey,
+                serializer,
+            ) ?: return null
+        this.data = Response(diskMetadata, diskData)
+        return this.data
     }
 
-    private fun writeData(metadata: ResponseMetadata, responseBody: String) {
-        try {
-            fileSystem.createDirectories(cacheFilePath.parent!!)
-            fileSystem.write(cacheFilePath) { writeUtf8(responseBody) }
-            writeMetadata(metadata)
-        } catch (error: Exception) {
-            println("Writing to '$cacheFilePath' failed. $error")
-        }
+    private suspend fun writeData(metadata: ResponseMetadata, responseBody: String) {
+        jsonPersistence.write(
+            SystemPaths.Category.Cache,
+            CACHE_SUBDIRECTORY,
+            cacheKey,
+            responseBody,
+        )
+        writeMetadata(metadata)
     }
 
-    private fun writeMetadata(metadata: ResponseMetadata) {
-        try {
-            fileSystem.write(cacheMetadataFilePath) { writeUtf8(json.encodeToString(metadata)) }
-        } catch (error: Exception) {
-            println("Writing to '${cacheMetadataFilePath}' failed. $error")
-        }
+    private suspend fun writeMetadata(metadata: ResponseMetadata) {
+        jsonPersistence.write(
+            SystemPaths.Category.Cache,
+            CACHE_SUBDIRECTORY,
+            cacheMetadataKey,
+            metadata,
+        )
     }
 
     suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): ApiResult<T> {
