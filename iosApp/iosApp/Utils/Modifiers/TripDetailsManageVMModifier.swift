@@ -44,9 +44,12 @@ struct TripDetailsManageVMModifier: ViewModifier {
                 onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) },
             )
             .onDisappear {
-                // Only set to inactive if the loaded filter matches the current value, this will be true
-                // when the page is closed, but not when the loading view disappears or the filter is changed
-                if let selectedFilters = vmState?.tripData?.tripFilter, filters == selectedFilters {
+                // Only set to inactive if the loaded filter and context match the current state,
+                // this will be true when the page is closed, but not when the loading view disappears,
+                // the filter is changed, or the user navigates between stop/trip details
+                if let selectedFilters = vmState?.tripData?.tripFilter,
+                   filters == selectedFilters,
+                   vmState?.context == context {
                     viewModel.setActive(active: false, wasSentToBackground: false)
                 }
             }

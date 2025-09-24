@@ -71,18 +71,30 @@ final class TripDetailsPageTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
+            context: .tripDetails,
             awaitingPredictionsAfterBackground: false
+        ))
+
+        let tripDetailsPageVM = MockTripDetailsPageViewModel(initialState: .init(
+            direction: Direction(name: "Outbound", destination: "Trip Headsign", id: 0),
+            alertSummaries: [:],
         ))
 
         loadKoinMocks(objects: objects)
 
-        let sut = TripDetailsPage(filter: filter, onClose: {}, nearbyVM: nearbyVM, tripDetailsVM: tripDetailsVM)
+        let sut = TripDetailsPage(
+            filter: filter,
+            onClose: {},
+            nearbyVM: nearbyVM,
+            tripDetailsPageVM: tripDetailsPageVM,
+            tripDetailsVM: tripDetailsVM
+        )
 
         let exp = expectation(description: "page loaded")
         sut.inspection.inspect(after: 0.5) { view in
             XCTAssertNotNil(try view.find(text: "15"))
             XCTAssertNotNil(try view.find(text: "Outbound to"))
-            XCTAssertNotNil(try view.find(text: "Fields Corner Station or St Peter's Square"))
+            XCTAssertNotNil(try view.find(text: "Trip Headsign"))
             exp.fulfill()
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
