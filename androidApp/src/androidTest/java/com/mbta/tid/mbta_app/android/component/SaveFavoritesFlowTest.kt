@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -50,7 +51,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testWithoutTappingAnyButtonSavesProposedChanges() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -59,7 +60,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 selectedDirection = 0,
                 directions = directions,
-                proposedFavorites = mapOf(0 to true),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = (it) },
             ) {
@@ -71,7 +72,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitForIdle()
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(RouteStopDirection(line.id, stop.id, 0) to true),
+            mapOf(RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings()),
         )
         assertTrue(onCloseCalled)
     }
@@ -87,7 +88,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites = mapOf(0 to true),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalled = true },
             ) {
@@ -103,7 +104,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testAddingOtherDirectionSavesBoth() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
 
         composeTestRule.setContent {
             FavoriteConfirmationDialog(
@@ -111,7 +112,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites = mapOf(0 to true),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
@@ -123,15 +124,15 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to true,
-                RouteStopDirection(line.id, stop.id, 1) to true,
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings(),
             ),
         )
     }
 
     @Test
     fun testRemovingOtherDirectoinSavesBoth() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
 
         composeTestRule.setContent {
             FavoriteConfirmationDialog(
@@ -139,7 +140,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites = mapOf(0 to true, 1 to true),
+                proposedFavorites = mapOf(0 to FavoriteSettings(), 1 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
@@ -151,15 +152,15 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to true,
-                RouteStopDirection(line.id, stop.id, 1) to false,
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(line.id, stop.id, 1) to null,
             ),
         )
     }
 
     @Test
     fun testRemovingProposedFavoriteDisablesAddButton() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -168,7 +169,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites = mapOf(0 to true),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {
@@ -182,7 +183,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testFavoritingOnlyDirectionPresentsDialogWhenNonBus() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -204,7 +205,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testFavoritingOnlyDirectionSkipsDialogWhenBus() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         val busRoute = TestData.getRoute("15")
@@ -227,13 +228,13 @@ class SaveFavoritesFlowTest {
         assertTrue(onCloseCalled)
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(RouteStopDirection(busRoute.id, busStop.id, 0) to true),
+            mapOf(RouteStopDirection(busRoute.id, busStop.id, 0) to FavoriteSettings()),
         )
     }
 
     @Test
     fun testUnfavoritingOnlyDirectionUpdatesFavoritesWithoutDialog() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -253,13 +254,13 @@ class SaveFavoritesFlowTest {
         assertTrue(onCloseCalled)
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(RouteStopDirection(line.id, stop.id, 0) to false),
+            mapOf(RouteStopDirection(line.id, stop.id, 0) to null),
         )
     }
 
     @Test
     fun testFavoritingWhenOnlyDirectionIsOppositePresentsDialog() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -282,7 +283,7 @@ class SaveFavoritesFlowTest {
         assertTrue(onCloseCalled)
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(RouteStopDirection(line.id, stop.id, 1) to true),
+            mapOf(RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings()),
         )
     }
 
@@ -474,7 +475,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testFavoritingWhenTwoDirectionsPresentsDialog() {
-        var updateFavoritesCalledFor: Map<RouteStopDirection, Boolean> = mapOf()
+        var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
         composeTestRule.setContent {
@@ -497,8 +498,8 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to true,
-                RouteStopDirection(line.id, stop.id, 1) to true,
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings(),
             ),
         )
     }

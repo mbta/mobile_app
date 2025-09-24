@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -256,7 +257,7 @@ class EditFavoritesPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testFavoritesDisplayCorrectly(): Unit = runBlocking {
-        val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
+        val favorites = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         val viewModel =
             MockFavoritesViewModel(
                 FavoritesViewModel.State(
@@ -285,7 +286,7 @@ class EditFavoritesPageTest : KoinTest {
     fun testShowsEmptyView() {
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, emptySet(), false, emptyList(), emptyList(), null)
+                FavoritesViewModel.State(false, emptyMap(), false, emptyList(), emptyList(), null)
             )
 
         composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
@@ -299,11 +300,11 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testDeleteFavorite(): Unit = runBlocking {
         val favorites =
-            setOf(
-                RouteStopDirection(route.id, sampleStop.id, 0),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
-        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+        var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
         val viewModel =
             MockFavoritesViewModel(
@@ -321,7 +322,9 @@ class EditFavoritesPageTest : KoinTest {
             viewModel.models.update {
                 FavoritesViewModel.State(
                     false,
-                    setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)),
+                    mapOf(
+                        RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings()
+                    ),
                     false,
                     greenLineRouteCardData,
                     greenLineRouteCardData,
@@ -343,7 +346,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
 
-        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
@@ -363,11 +366,11 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testToastUndoDeleteFavorite(): Unit = runBlocking {
         val favorites =
-            setOf(
-                RouteStopDirection(route.id, sampleStop.id, 0),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
-        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+        var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
         val viewModel =
             MockFavoritesViewModel(
@@ -382,7 +385,8 @@ class EditFavoritesPageTest : KoinTest {
             )
 
         viewModel.onUpdateFavorites = { update ->
-            val updatedFavorites = favorites.filter { update[it] != false }.toSet()
+            val updatedFavorites =
+                favorites.filterNot { update.containsKey(it.key) && update[it.key] == null }
             viewModel.models.update {
                 FavoritesViewModel.State(
                     false,
@@ -411,7 +415,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
 
-        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
@@ -429,7 +433,7 @@ class EditFavoritesPageTest : KoinTest {
         assertEquals("Undo", customAction.actionLabel)
         customAction.onAction()
 
-        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to true)
+        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0)
         }

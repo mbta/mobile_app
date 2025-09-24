@@ -94,7 +94,7 @@ fun NearbyTransitView(
             },
             global = globalResponse,
             now = now,
-            isFavorite = { rsd -> (favorites ?: emptySet()).contains(rsd) },
+            isFavorite = { rsd -> (favorites?.keys ?: emptySet()).contains(rsd) },
             onOpenStopDetails = onOpenStopDetails,
         )
     }

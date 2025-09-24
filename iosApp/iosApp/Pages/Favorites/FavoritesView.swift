@@ -58,7 +58,7 @@ struct FavoritesView: View {
                 },
                 global: globalData,
                 now: now,
-                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0 }) ?? false },
+                isFavorite: { rsd in favoritesVMState.favorites?.contains(where: { rsd == $0.key }) ?? false },
                 pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 showStopHeader: true
             )

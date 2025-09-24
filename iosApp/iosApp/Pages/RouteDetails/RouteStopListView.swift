@@ -491,7 +491,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     private func loadFavorites() {
         Task {
-            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+            favorites = try? await Set(favoritesUsecases.getRouteStopDirectionFavorites().keys)
         }
     }
 

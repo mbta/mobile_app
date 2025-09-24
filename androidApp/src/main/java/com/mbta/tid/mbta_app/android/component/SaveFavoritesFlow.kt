@@ -40,6 +40,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
@@ -59,7 +60,7 @@ fun SaveFavoritesFlow(
     context: EditFavoritesContext,
     toastViewModel: IToastViewModel = koinInject(),
     isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
-    updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
+    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
 ) {
 
@@ -71,9 +72,9 @@ fun SaveFavoritesFlow(
     val isBusOneDirection = directions.size == 1 && lineOrRoute.sortRoute.type == RouteType.BUS
     val localContext = LocalContext.current
 
-    fun updateAndToast(update: Map<RouteStopDirection, Boolean>) {
+    fun updateAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
         updateFavorites(update)
-        val favorited = update.filter { it.value }
+        val favorited = update.filter { it.value != null }
         val firstFavorite = favorited.entries.firstOrNull() ?: return
         val labels = firstFavorite.key.getLabels(global, localContext)
         var toastText: String? = null
@@ -113,7 +114,7 @@ fun SaveFavoritesFlow(
     // Save automatically without confirmation modal
     if (isUnFavoriting || isBusOneDirection && directions.any { it.id == selectedDirection }) {
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)
-        updateAndToast(mapOf(rsd to !isFavorite(rsd)))
+        updateAndToast(mapOf(rsd to if (isFavorite(rsd)) null else FavoriteSettings()))
 
         onClose()
     } else {
@@ -127,11 +128,17 @@ fun SaveFavoritesFlow(
                 directions.associateBy({ it.id }) {
                     // if selectedDirection and already a favorite, then removing favorite.
                     // if not selected direction and already a favorite, then keep it.
-                    ((it.id == selectedDirection) xor
-                        isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it.id))) ||
-                        // If the only direction is the opposite one, mark it as favorite
-                        // whether or not it already is
-                        (directions.size == 1 && it.id != selectedDirection)
+                    val isSelected = it.id == selectedDirection
+                    val isExistingFavorite =
+                        isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it.id))
+                    val onlyOppositeDirectionServed =
+                        directions.size == 1 && it.id != selectedDirection
+                    val suggestingFavorite =
+                        (isSelected xor isExistingFavorite) ||
+                            // If the only direction is the opposite one, mark it as favorite
+                            // whether or not it already is
+                            onlyOppositeDirectionServed
+                    if (suggestingFavorite) FavoriteSettings() else null
                 },
             updateFavorites = ::updateAndToast,
             onClose = onClose,
@@ -146,12 +153,14 @@ fun FavoriteConfirmationDialog(
     directions: List<Direction>,
     selectedDirection: Int,
     context: EditFavoritesContext,
-    proposedFavorites: Map<Int, Boolean>,
-    updateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit,
+    proposedFavorites: Map<Int, FavoriteSettings?>,
+    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
 ) {
 
-    var favoritesToSave: Map<Int, Boolean> by remember { mutableStateOf(proposedFavorites) }
+    var favoritesToSave: Map<Int, FavoriteSettings?> by remember {
+        mutableStateOf(proposedFavorites)
+    }
 
     fun saveAndClose() {
         val newFavorites =
@@ -220,11 +229,9 @@ fun FavoriteConfirmationDialog(
                     directions.mapIndexed { idx, direction ->
                         Button(
                             onClick = {
-                                favoritesToSave =
-                                    favoritesToSave.plus(
-                                        direction.id to
-                                            !favoritesToSave.getOrDefault(direction.id, false)
-                                    )
+                                val oldValue = favoritesToSave.getOrDefault(direction.id, null)
+                                val newValue = if (oldValue == null) FavoriteSettings() else null
+                                favoritesToSave = favoritesToSave.plus(direction.id to newValue)
                             },
                             colors =
                                 ButtonDefaults.buttonColors(
@@ -235,7 +242,8 @@ fun FavoriteConfirmationDialog(
                             modifier =
                                 Modifier.background(color = colorResource(R.color.fill3))
                                     .semantics {
-                                        selected = favoritesToSave.getOrDefault(direction.id, false)
+                                        selected =
+                                            favoritesToSave.getOrDefault(direction.id, null) != null
                                     },
                         ) {
                             Row(
@@ -245,7 +253,7 @@ fun FavoriteConfirmationDialog(
                             ) {
                                 DirectionLabel(direction, Modifier.weight(1f))
                                 StarIcon(
-                                    favoritesToSave.getOrDefault(direction.id, false),
+                                    favoritesToSave.getOrDefault(direction.id, null) != null,
                                     color = Color.fromHex(lineOrRoute.backgroundColor),
                                     Modifier.padding(start = 16.dp),
                                 )
@@ -258,7 +266,10 @@ fun FavoriteConfirmationDialog(
                 Row(modifier = Modifier.padding(16.dp)) {
                     Spacer(Modifier.weight(1F))
                     TextButton(onClose) { Text(stringResource(R.string.cancel)) }
-                    TextButton({ saveAndClose() }, enabled = favoritesToSave.values.any { it }) {
+                    TextButton(
+                        { saveAndClose() },
+                        enabled = favoritesToSave.values.any { it != null },
+                    ) {
                         Text(stringResource(R.string.add_confirmation_button))
                     }
                 }
@@ -285,7 +296,7 @@ class Previews() {
                         ),
                     selectedDirection = 0,
                     context = EditFavoritesContext.StopDetails,
-                    proposedFavorites = mapOf(0 to true, 1 to false),
+                    proposedFavorites = mapOf(0 to FavoriteSettings(), 1 to null),
                     updateFavorites = {},
                     onClose = {},
                 )
@@ -305,7 +316,7 @@ class Previews() {
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 0,
                     context = EditFavoritesContext.StopDetails,
-                    proposedFavorites = mapOf(0 to true),
+                    proposedFavorites = mapOf(0 to FavoriteSettings()),
                     updateFavorites = {},
                     onClose = {},
                 )
@@ -325,7 +336,7 @@ class Previews() {
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 1,
                     context = EditFavoritesContext.Favorites,
-                    proposedFavorites = mapOf(0 to true),
+                    proposedFavorites = mapOf(0 to FavoriteSettings()),
                     updateFavorites = {},
                     onClose = {},
                 )
@@ -348,7 +359,7 @@ class Previews() {
                         ),
                     selectedDirection = 1,
                     context = EditFavoritesContext.Favorites,
-                    proposedFavorites = mapOf(0 to false, 1 to false),
+                    proposedFavorites = mapOf(0 to null, 1 to null),
                     updateFavorites = {},
                     onClose = {},
                 )
