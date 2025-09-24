@@ -28,6 +28,7 @@ import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.generated.drawableByName
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -179,7 +180,7 @@ private fun DeparturesPreview() {
     val global = GlobalResponse(objects)
     val context = RouteCardData.Context.NearbyTransit
 
-    val lineOrRoute = RouteCardData.LineOrRoute.Route(redLine)
+    val lineOrRoute = LineOrRoute.Route(redLine)
     val stopData =
         RouteCardData.RouteStopData(
             lineOrRoute,

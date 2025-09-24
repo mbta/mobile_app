@@ -15,9 +15,9 @@ import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -105,7 +105,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(mainRoute),
+                LineOrRoute.Route(mainRoute),
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = clicks::add,
@@ -190,7 +190,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Line(line, setOf(route1, route2, route3)),
+                LineOrRoute.Line(line, setOf(route1, route2, route3)),
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
@@ -291,7 +291,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(mainRoute),
+                LineOrRoute.Route(mainRoute),
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
@@ -345,7 +345,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(mainRoute),
+                LineOrRoute.Route(mainRoute),
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
@@ -368,7 +368,7 @@ class RouteStopListViewTest {
     @Test
     fun testFavoritesWithConfirmationDialog() {
         val objects = TestData.clone()
-        val route = RouteCardData.LineOrRoute.Route(objects.getRoute("Red"))
+        val route = LineOrRoute.Route(objects.getRoute("Red"))
 
         loadKoinMocks(objects) {
             routeStops =
@@ -443,7 +443,7 @@ class RouteStopListViewTest {
         composeTestRule.setContent {
             toastState = toastVM.models.collectAsState()
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                LineOrRoute.Route(objects.getRoute("Red")),
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},
@@ -494,7 +494,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                LineOrRoute.Route(objects.getRoute("Red")),
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},
@@ -545,7 +545,7 @@ class RouteStopListViewTest {
 
         composeTestRule.setContent {
             RouteStopListView(
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
+                LineOrRoute.Route(objects.getRoute("Red")),
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},

@@ -17,7 +17,7 @@ enum SaveFavoritesContext {
 }
 
 struct SaveFavoritesFlow: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
@@ -40,7 +40,7 @@ struct SaveFavoritesFlow: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
+        lineOrRoute: LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
         context: SaveFavoritesContext, global: GlobalResponse?,
         isFavorite: @escaping (RouteStopDirection) -> Bool,
         updateFavorites: @escaping ([RouteStopDirection: Bool]) -> Void,
@@ -160,7 +160,7 @@ struct SaveFavoritesFlow: View {
 }
 
 struct FavoriteConfirmationDialog: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
@@ -218,7 +218,7 @@ struct FavoriteConfirmationDialog: View {
 }
 
 struct FavoriteConfirmationDialogContents: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
@@ -271,7 +271,7 @@ struct FavoriteConfirmationDialogContents: View {
 }
 
 struct DirectionButtons: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let favorites: [Direction: Bool]
     let updateLocalFavorite: (Direction, Bool) -> Void
 
@@ -327,7 +327,7 @@ struct DirectionButtons: View {
 }
 
 struct FavoriteConfirmationDialogActions: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let favoritesToSave: [Direction: Bool]
     let updateFavorites: ([RouteStopDirection: Bool]) -> Void

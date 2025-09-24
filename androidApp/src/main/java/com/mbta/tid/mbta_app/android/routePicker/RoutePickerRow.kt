@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteType
 
 @Composable
-fun RoutePickerRow(route: RouteCardData.LineOrRoute, onTap: () -> Unit) {
+fun RoutePickerRow(route: LineOrRoute, onTap: () -> Unit) {
     Row(
         Modifier.fillMaxWidth().clickable { onTap() }.padding(horizontal = 8.dp, vertical = 12.dp),
         Arrangement.SpaceBetween,

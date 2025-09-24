@@ -54,7 +54,7 @@ public object LoadingPlaceholders {
             return UpcomingTrip(trip, prediction = prediction)
         }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
 
         val leaf1 =
             RouteCardData.Leaf(
@@ -98,10 +98,7 @@ public object LoadingPlaceholders {
         return routeData
     }
 
-    public fun routeDetailsStops(
-        lineOrRoute: RouteCardData.LineOrRoute,
-        directionId: Int,
-    ): RouteDetailsStopList {
+    public fun routeDetailsStops(lineOrRoute: LineOrRoute, directionId: Int): RouteDetailsStopList {
         val objects = ObjectCollectionBuilder()
         val fixedRand = Random("${lineOrRoute.id}-$directionId".hashCode())
         fun randString(from: Int, until: Int) =

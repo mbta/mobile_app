@@ -190,7 +190,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.tripId = tripE1.id
         }
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(
+        let lineOrRoute = LineOrRoute.line(
             Green.shared.line,
             [Green.shared.routeB, Green.shared.routeC, Green.shared.routeE]
         )
@@ -280,7 +280,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+        let lineOrRoute = LineOrRoute.line(line, [route])
 
         let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(
@@ -328,7 +328,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+        let lineOrRoute = LineOrRoute.line(line, [route])
 
         let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(

@@ -9,13 +9,16 @@
 import Shared
 import SwiftUI
 
-extension RouteCardData.LineOrRoute {
-    static func route(_ route: Route) -> RouteCardData.LineOrRouteRoute {
-        RouteCardData.LineOrRouteRoute(route: route)
+typealias LineModel = Line
+typealias RouteModel = Route
+
+extension LineOrRoute {
+    static func route(_ route: RouteModel) -> LineOrRoute.Route {
+        LineOrRoute.Route(route: route)
     }
 
-    static func line(_ line: Line, _ routes: Set<Route>) -> RouteCardData.LineOrRouteLine {
-        RouteCardData.LineOrRouteLine(line: line, routes: routes)
+    static func line(_ line: LineModel, _ routes: Set<RouteModel>) -> LineOrRoute.Line {
+        LineOrRoute.Line(line: line, routes: routes)
     }
 
     var labelWithModeIfBus: String {

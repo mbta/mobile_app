@@ -62,11 +62,11 @@ import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
@@ -95,7 +95,7 @@ sealed class RouteDetailsRowContext {
 
 @Composable
 fun RouteStopListView(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     context: RouteDetailsContext,
     globalData: GlobalResponse,
     onClick: (RouteDetailsRowContext) -> Unit,
@@ -162,7 +162,7 @@ fun LoadingRouteStopListView(
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
         val objects = ObjectCollectionBuilder()
-        val mockRoute = RouteCardData.LineOrRoute.Route(objects.route {})
+        val mockRoute = LineOrRoute.Route(objects.route {})
 
         RouteStopListView(
             lineOrRoute = mockRoute,
@@ -204,7 +204,7 @@ fun LoadingRouteStopListView(
 
 @Composable
 fun RouteStopListView(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     parameters: RouteDetailsStopList.RouteParameters,
     selectedDirection: Int,
     setDirection: (Int) -> Unit,
@@ -347,7 +347,7 @@ fun RouteStopListView(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp).padding(top = 2.dp),
         )
 
-        if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
+        if (lineOrRoute is LineOrRoute.Line && routes.size > 1) {
             LineRoutePicker(lineOrRoute.line, routes, selectedRouteId, selectedDirection) {
                 setRouteId(it)
             }
@@ -368,7 +368,7 @@ fun RouteStopListView(
 
 @Composable
 private fun RouteStops(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     stopList: RouteDetailsStopList?,
     selectedDirection: Int,
     context: RouteDetailsContext,
@@ -497,7 +497,7 @@ private fun LineRoutePicker(
 
 @Composable
 private fun LoadingRouteStops(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     selectedDirection: Int,
     context: RouteDetailsContext,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
@@ -534,7 +534,7 @@ private fun RouteStopsPreview() {
         modules(module { single<SettingsCache> { SettingsCache(MockSettingsRepository()) } })
     }
     RouteStops(
-        RouteCardData.LineOrRoute.Route(TestData.getRoute("Red")),
+        LineOrRoute.Route(TestData.getRoute("Red")),
         RouteDetailsStopList(
             0,
             listOf(

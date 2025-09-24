@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -240,14 +241,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticData =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     directionId = 0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -266,14 +267,14 @@ internal class FavoritesViewModelTest : KoinTest {
                     now,
                 ),
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     directionId = 1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -295,14 +296,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedRealtimeData =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     directionId = 0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -329,14 +330,14 @@ internal class FavoritesViewModelTest : KoinTest {
                     now,
                 ),
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     directionId = 1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -422,14 +423,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataBefore =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -451,14 +452,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataAfter =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -544,14 +545,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataBefore =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -822,7 +823,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop1,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route1),
+                        LineOrRoute.Route(route1),
                         stop1,
                         0,
                         listOf(patterns.getValue(route1).getValue(0)),
@@ -844,7 +845,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop2,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route2),
+                        LineOrRoute.Route(route2),
                         stop2,
                         1,
                         listOf(patterns.getValue(route2).getValue(1)),
@@ -866,7 +867,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop3,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route2),
+                        LineOrRoute.Route(route2),
                         stop3,
                         1,
                         listOf(patterns.getValue(route2).getValue(1)),
@@ -881,15 +882,10 @@ internal class FavoritesViewModelTest : KoinTest {
                 ),
                 globalData,
             )
-        val routeCard1Data =
-            RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now)
+        val routeCard1Data = RouteCardData(LineOrRoute.Route(route1), listOf(stop1Data), now)
 
         val routeCard2Data =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route2),
-                listOf(stop3Data, stop2Data),
-                now,
-            )
+            RouteCardData(LineOrRoute.Route(route2), listOf(stop3Data, stop2Data), now)
 
         val expectedStaticDataBefore = listOf(routeCard2Data, routeCard1Data)
 

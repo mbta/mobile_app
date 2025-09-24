@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -93,7 +94,7 @@ fun StopDetailsFilteredPickerView(
         }
         StopDetailsFilteredHeader(
             lineOrRoute.sortRoute,
-            (lineOrRoute as? RouteCardData.LineOrRoute.Line)?.line,
+            (lineOrRoute as? LineOrRoute.Line)?.line,
             stop,
             isFavorite = isFavorite(rsd),
             onFavorite = { inSaveFavoritesFlow = true },

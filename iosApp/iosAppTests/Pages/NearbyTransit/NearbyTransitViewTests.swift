@@ -116,7 +116,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let distantMinutes = 10
         let objects = TestData.clone()
 
-        let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
+        let route: LineOrRoute = .route(TestData.getRoute(id: "67"))
         let stop = objects.getStop(id: "141")
         let trip = objects.getTrip(id: "68596786")
         let prediction = objects.prediction { prediction in
@@ -455,7 +455,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
 
-        let route: RouteCardData.LineOrRoute = .route(TestData.getRoute(id: "67"))
+        let route: LineOrRoute = .route(TestData.getRoute(id: "67"))
         let stop = objects.getStop(id: "141")
         nearbyVM.routeCardData = [.init(lineOrRoute: route,
                                         stopData: [.init(lineOrRoute: route,

@@ -10,10 +10,10 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasClickActionLabel
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteType
 import kotlin.test.assertTrue
@@ -43,7 +43,7 @@ class CollapsableStopListTest {
             }
         composeTestRule.setContent {
             CollapsableStopList(
-                RouteCardData.LineOrRoute.Route(mainRoute),
+                LineOrRoute.Route(mainRoute),
                 segment =
                     RouteDetailsStopList.Segment(
                         listOf(
@@ -92,7 +92,7 @@ class CollapsableStopListTest {
             }
         composeTestRule.setContent {
             CollapsableStopList(
-                RouteCardData.LineOrRoute.Route(mainRoute),
+                LineOrRoute.Route(mainRoute),
                 segment =
                     RouteDetailsStopList.Segment(
                         listOf(

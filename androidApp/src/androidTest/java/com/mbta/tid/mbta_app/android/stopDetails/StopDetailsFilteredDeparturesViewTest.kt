@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -300,7 +301,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val globalResponse =
             GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         val leaf =
             RouteCardData.Leaf(
                 lineOrRoute,
@@ -363,7 +364,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val route = objects.route { id = "Green-B" }
         val line = objects.line { id = "Green" }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
+        val lineOrRoute = LineOrRoute.Line(line, setOf(route))
         val leaf =
             RouteCardData.Leaf(
                 lineOrRoute,

@@ -79,7 +79,7 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
         val directions: List<Direction>,
     ) {
         public constructor(
-            lineOrRoute: RouteCardData.LineOrRoute,
+            lineOrRoute: LineOrRoute,
             globalData: GlobalResponse,
         ) : this(
             globalData.routePatterns.values

@@ -52,7 +52,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     func makeLeaf(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         stop: Stop? = nil,
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,

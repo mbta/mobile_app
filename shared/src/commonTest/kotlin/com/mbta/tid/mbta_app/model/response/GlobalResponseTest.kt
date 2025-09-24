@@ -3,9 +3,9 @@ package com.mbta.tid.mbta_app.model.response
 import com.mbta.tid.mbta_app.map.MapTestDataHelper.global
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.GlobalMapData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -464,9 +464,9 @@ class GlobalResponseTest {
         // Test data does not include mattapan trolley or blue line
         assertEquals(
             listOf(
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
-                RouteCardData.LineOrRoute.Line(
+                LineOrRoute.Route(objects.getRoute("Red")),
+                LineOrRoute.Route(objects.getRoute("Orange")),
+                LineOrRoute.Line(
                     objects.getLine("line-Green"),
                     setOf(
                         objects.getRoute("Green-B"),
@@ -552,10 +552,7 @@ class GlobalResponseTest {
         val allPatternsForStop = global.getPatternsFor("place-haecl")
         assertTrue(allPatternsForStop.map { it.routeId }.any { it != "Orange" })
         val orangePatterns =
-            global.getPatternsFor(
-                "place-haecl",
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
-            )
+            global.getPatternsFor("place-haecl", LineOrRoute.Route(objects.getRoute("Orange")))
         assertFalse(orangePatterns.map { it.routeId }.any { it != "Orange" })
     }
 
@@ -568,7 +565,7 @@ class GlobalResponseTest {
         val greenPatterns =
             global.getPatternsFor(
                 "place-haecl",
-                RouteCardData.LineOrRoute.Line(
+                LineOrRoute.Line(
                     objects.getLine("line-Green"),
                     setOf(
                         objects.getRoute("Green-B"),
@@ -591,9 +588,9 @@ class GlobalResponseTest {
 
         val globalData = GlobalResponse(objects)
 
-        assertEquals(RouteCardData.LineOrRoute.Route(route1), globalData.getLineOrRoute(route1.id))
-        assertEquals(RouteCardData.LineOrRoute.Route(route2), globalData.getLineOrRoute(route2.id))
-        assertEquals(RouteCardData.LineOrRoute.Route(route3), globalData.getLineOrRoute(route3.id))
+        assertEquals(LineOrRoute.Route(route1), globalData.getLineOrRoute(route1.id))
+        assertEquals(LineOrRoute.Route(route2), globalData.getLineOrRoute(route2.id))
+        assertEquals(LineOrRoute.Route(route3), globalData.getLineOrRoute(route3.id))
     }
 
     @Test
@@ -612,7 +609,7 @@ class GlobalResponseTest {
         val globalData = GlobalResponse(objects)
 
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(line.id),
         )
     }
@@ -627,11 +624,11 @@ class GlobalResponseTest {
         val globalData = GlobalResponse(objects)
 
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(route1.id),
         )
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(route2.id),
         )
     }

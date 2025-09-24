@@ -108,7 +108,7 @@ struct DirectionPicker: View {
         pattern.directionId = 1
     }
 
-    let lineOrRoute = RouteCardData.LineOrRoute.route(route)
+    let lineOrRoute = LineOrRoute.route(route)
     let context = RouteCardData.Context.stopDetailsFiltered
     let leaf0 = RouteCardData.Leaf(
         lineOrRoute: lineOrRoute,

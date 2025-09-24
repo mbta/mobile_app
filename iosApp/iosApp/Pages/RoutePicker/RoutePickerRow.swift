@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct RoutePickerRow: View {
-    let route: RouteCardData.LineOrRoute
+    let route: LineOrRoute
     let onTap: () -> Void
 
     var body: some View {

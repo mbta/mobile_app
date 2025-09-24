@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
@@ -41,7 +42,7 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
@@ -117,7 +118,7 @@ class DeparturesTest {
         val aSchedule = objects.schedule { stopHeadsign = "A Stop Headsign" }
         val bTrip = objects.trip { headsign = "B" }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
@@ -192,7 +193,7 @@ class DeparturesTest {
                 }
             )
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
+        val lineOrRoute = LineOrRoute.Line(line, setOf(route))
         val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(
@@ -237,7 +238,7 @@ class DeparturesTest {
         val aTrip = objects.trip { headsign = "A" }
         val bTrip = objects.trip { headsign = "B" }
 
-        val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+        val lineOrRoute = LineOrRoute.Route(route)
         val context = RouteCardData.Context.NearbyTransit
         val stopData =
             RouteCardData.RouteStopData(

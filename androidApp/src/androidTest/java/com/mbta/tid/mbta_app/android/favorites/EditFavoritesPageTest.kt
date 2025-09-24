@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -61,7 +62,7 @@ class EditFavoritesPageTest : KoinTest {
             lineId = line.id
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
-    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+    val lineOrRoute = LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
@@ -146,7 +147,7 @@ class EditFavoritesPageTest : KoinTest {
             lineId = greenLine.id
             routePatternIds = mutableListOf("pattern_gl")
         }
-    val greenLineOrRoute = RouteCardData.LineOrRoute.Line(greenLine, setOf(greenLineRoute))
+    val greenLineOrRoute = LineOrRoute.Line(greenLine, setOf(greenLineRoute))
     val greenLineRoutePatternOne =
         builder.routePattern(greenLineRoute) {
             id = "pattern_gl"

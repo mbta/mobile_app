@@ -70,7 +70,7 @@ final class RouteModeLabelTests: XCTestCase {
             route.longName = "SL3"
             route.type = .bus
         }
-        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+        let lineOrRoute = LineOrRoute.line(line, [route])
         XCTAssertEqual("Silver Line bus", routeModeLabel(lineOrRoute: lineOrRoute))
     }
 }
