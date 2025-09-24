@@ -59,6 +59,7 @@ public class TripDetailsViewModel(
     public data class State(
         val tripData: TripData? = null,
         val stopList: TripDetailsStopList? = null,
+        val context: Context? = null,
         val awaitingPredictionsAfterBackground: Boolean = false,
     )
 
@@ -119,6 +120,7 @@ public class TripDetailsViewModel(
                 State(
                     tripData,
                     stopList,
+                    context,
                     context == Context.TripDetails && awaitingPredictionsAfterBackground,
                 )
             }

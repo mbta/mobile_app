@@ -63,11 +63,15 @@ fun TripDetailsView(
     val stopList = state.stopList
     val vehicle = tripData?.vehicle
 
+    val tripDetailsContext: TripDetailsViewModel.Context =
+        if (isTripDetailsPage) TripDetailsViewModel.Context.TripDetails
+        else TripDetailsViewModel.Context.StopDetails
+
     LaunchedEffect(tripFilter) { tripDetailsVM.setFilters(tripFilter) }
     LaunchedEffect(allAlerts) { tripDetailsVM.setAlerts(allAlerts) }
 
     LaunchedEffect(Unit) {
-        tripDetailsVM.setContext(TripDetailsViewModel.Context.StopDetails)
+        tripDetailsVM.setContext(tripDetailsContext)
         tripDetailsVM.setActive(active = true, wasSentToBackground = false)
     }
 

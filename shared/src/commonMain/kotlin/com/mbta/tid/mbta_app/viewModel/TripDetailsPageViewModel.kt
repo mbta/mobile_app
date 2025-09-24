@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import kotlin.jvm.JvmName
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.core.scope.Scope
 
@@ -144,5 +145,29 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 
     override fun setNow(now: EasternTimeInstant) {
         this.now = now
+    }
+}
+
+public class MockTripDetailsPageViewModel(
+    initialState: TripDetailsPageViewModel.State = TripDetailsPageViewModel.State(null, emptyMap())
+) : ITripDetailsPageViewModel {
+    public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
+    public var onSetFilter: (TripDetailsPageFilter?) -> Unit = {}
+    public var onSetNow: (EasternTimeInstant?) -> Unit = {}
+
+    override val models: StateFlow<TripDetailsPageViewModel.State> = MutableStateFlow(initialState)
+
+    override var koinScope: Scope? = null
+
+    override fun setAlerts(alerts: AlertsStreamDataResponse?) {
+        onSetAlerts(alerts)
+    }
+
+    override fun setFilter(filter: TripDetailsPageFilter?) {
+        onSetFilter(filter)
+    }
+
+    override fun setNow(now: EasternTimeInstant) {
+        onSetNow(now)
     }
 }

@@ -75,6 +75,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -161,6 +162,7 @@ final class TripDetailsViewTests: XCTestCase {
                     routes: [route]
                 ),
             ], startTerminalEntry: firstStopEntry),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -243,6 +245,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: nil,
                 routes: [route]
             )]),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -323,6 +326,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: nil,
                 routes: [route]
             )]),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -409,6 +413,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 
@@ -493,6 +498,7 @@ final class TripDetailsViewTests: XCTestCase {
                 vehicle: vehicle,
                 routes: [route]
             )]),
+            context: .stopDetails,
             awaitingPredictionsAfterBackground: false
         ))
 

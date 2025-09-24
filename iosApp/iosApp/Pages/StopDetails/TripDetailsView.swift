@@ -87,7 +87,7 @@ struct TripDetailsView: View {
                 tripDetailsVM,
                 $tripDetailsVMState,
                 alerts: nearbyVM.alerts,
-                context: .stopDetails,
+                context: isTripDetailsPage ? .tripDetails : .stopDetails,
                 filters: tripFilter,
             )
             .task(id: global) {
