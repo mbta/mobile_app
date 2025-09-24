@@ -35,7 +35,7 @@ class FavoritesViewTest {
                 initialState =
                     FavoritesViewModel.State(
                         false,
-                        emptySet(),
+                        emptyMap(),
                         true,
                         emptyList(),
                         emptyList(),

@@ -10,10 +10,8 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
-import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -22,6 +20,7 @@ import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.buildFavorites
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
@@ -219,15 +218,9 @@ class NearbyTransitViewTest : KoinTest {
                 settings = MockSettingsRepository(settings = mapOf())
                 favorites =
                     MockFavoritesRepository(
-                        Favorites(
-                            setOf(
-                                RouteStopDirection(
-                                    route.id,
-                                    sampleStop.id,
-                                    routePatternOne.directionId,
-                                )
-                            )
-                        )
+                        buildFavorites {
+                            routeStopDirection(route.id, sampleStop.id, routePatternOne.directionId)
+                        }
                     )
             },
         )

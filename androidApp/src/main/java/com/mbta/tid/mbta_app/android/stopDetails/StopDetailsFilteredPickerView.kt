@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -55,7 +56,7 @@ fun StopDetailsFilteredPickerView(
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
+    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     onClose: () -> Unit,

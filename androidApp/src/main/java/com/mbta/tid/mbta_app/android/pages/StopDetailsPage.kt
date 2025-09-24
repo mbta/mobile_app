@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.stopDetails.StopDetailsView
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.timer
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
@@ -54,7 +55,10 @@ fun StopDetailsPage(
         return favorites?.contains(routeStopDirection)
     }
 
-    fun updateFavorites(updatedFavorites: Map<RouteStopDirection, Boolean>, defaultDirection: Int) {
+    fun updateFavorites(
+        updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
+        defaultDirection: Int,
+    ) {
         coroutineScope.launch {
             updateFavorites(updatedFavorites, EditFavoritesContext.StopDetails, defaultDirection)
         }
