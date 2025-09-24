@@ -78,6 +78,8 @@ public interface IMapViewModel {
     public fun locationPermissionsChanged(hasPermission: Boolean)
 
     public fun setViewportManager(viewportManager: ViewportManager)
+
+    public fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean)
 }
 
 public class MapViewModel(
@@ -123,6 +125,9 @@ public class MapViewModel(
         internal constructor(val layerManager: IMapLayerManager) : Event
 
         public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
+
+        public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) :
+            Event
     }
 
     public sealed class State {
@@ -273,6 +278,23 @@ public class MapViewModel(
                         layerManager?.run { resetPuckPosition() }
                     }
                 }
+                is Event.SelectedVehicleUpdated -> {
+                    val currentState = (state as? State.TripSelected)
+                    currentState?.let {
+                        val newState =
+                            State.TripSelected(
+                                it.stop,
+                                it.stopFilter,
+                                it.tripFilter,
+                                event.vehicle,
+                                event.follow,
+                            )
+                        if (it.vehicle?.id != newState.vehicle?.id || event.follow) {
+                            handleViewportCentering(newState, density)
+                        }
+                        state = newState
+                    }
+                }
             }
         }
 
@@ -367,6 +389,10 @@ public class MapViewModel(
 
     override fun setViewportManager(viewportManager: ViewportManager) {
         this.viewportManager = viewportManager
+    }
+
+    override fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean) {
+        fireEvent(Event.SelectedVehicleUpdated(vehicle, follow))
     }
 
     private fun handleNavChange(
@@ -621,6 +647,7 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     public var onLayerManagerInitialized: (IMapLayerManager) -> Unit = {}
     public var onLocationPermissionsChanged: (Boolean) -> Unit = {}
     public var onSetViewportManager: (ViewportManager) -> Unit = {}
+    public var onSelectedVehicleUpdated: (Vehicle?, Boolean) -> Unit = { _, _ -> }
 
     override val models: MutableStateFlow<MapViewModel.State> = MutableStateFlow(initialState)
 
@@ -657,4 +684,8 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
 
     override fun setViewportManager(viewportManager: ViewportManager): Unit =
         onSetViewportManager(viewportManager)
+
+    override fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean) {
+        onSelectedVehicleUpdated(vehicle, follow)
+    }
 }
