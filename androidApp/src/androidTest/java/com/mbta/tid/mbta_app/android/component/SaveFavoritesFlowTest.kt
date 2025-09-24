@@ -60,13 +60,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 selectedDirection = 0,
                 directions = directions,
-                proposedFavorites =
-                    mapOf(
-                        0 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
-                    ),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = (it) },
             ) {
@@ -78,10 +72,7 @@ class SaveFavoritesFlowTest {
         composeTestRule.waitForIdle()
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            ),
+            mapOf(RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings()),
         )
         assertTrue(onCloseCalled)
     }
@@ -97,13 +88,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites =
-                    mapOf(
-                        0 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
-                    ),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalled = true },
             ) {
@@ -127,13 +112,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites =
-                    mapOf(
-                        0 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
-                    ),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
@@ -145,10 +124,8 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
-                RouteStopDirection(line.id, stop.id, 1) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings(),
             ),
         )
     }
@@ -163,17 +140,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites =
-                    mapOf(
-                        0 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            ),
-                        1 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            ),
-                    ),
+                proposedFavorites = mapOf(0 to FavoriteSettings(), 1 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {}
@@ -185,8 +152,7 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
                 RouteStopDirection(line.id, stop.id, 1) to null,
             ),
         )
@@ -203,13 +169,7 @@ class SaveFavoritesFlowTest {
                 stop = stop,
                 directions = directions,
                 selectedDirection = 0,
-                proposedFavorites =
-                    mapOf(
-                        0 to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
-                    ),
+                proposedFavorites = mapOf(0 to FavoriteSettings()),
                 context = EditFavoritesContext.Favorites,
                 updateFavorites = { updateFavoritesCalledFor = it },
             ) {
@@ -268,10 +228,7 @@ class SaveFavoritesFlowTest {
         assertTrue(onCloseCalled)
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(
-                RouteStopDirection(busRoute.id, busStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            ),
+            mapOf(RouteStopDirection(busRoute.id, busStop.id, 0) to FavoriteSettings()),
         )
     }
 
@@ -326,10 +283,7 @@ class SaveFavoritesFlowTest {
         assertTrue(onCloseCalled)
         assertEquals(
             updateFavoritesCalledFor,
-            mapOf(
-                RouteStopDirection(line.id, stop.id, 1) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            ),
+            mapOf(RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings()),
         )
     }
 
@@ -544,10 +498,8 @@ class SaveFavoritesFlowTest {
         assertEquals(
             updateFavoritesCalledFor,
             mapOf(
-                RouteStopDirection(line.id, stop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
-                RouteStopDirection(line.id, stop.id, 1) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection(line.id, stop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(line.id, stop.id, 1) to FavoriteSettings(),
             ),
         )
     }

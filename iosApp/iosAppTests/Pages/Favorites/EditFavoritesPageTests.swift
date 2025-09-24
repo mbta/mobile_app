@@ -55,10 +55,8 @@ final class EditFavoritesPageTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [
-                RouteStopDirection(route: route15.id, stop: stop15.id,
-                                   direction: 0): .init(notifications: .companion.disabled),
-                RouteStopDirection(route: route67.id, stop: stop67.id,
-                                   direction: 0): .init(notifications: .companion.disabled),
+                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init(),
+                RouteStopDirection(route: route67.id, stop: stop67.id, direction: 0): .init(),
             ],
             shouldShowFirstTimeToast: false,
             routeCardData: [],
@@ -135,8 +133,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [
-                RouteStopDirection(route: route15.id, stop: stop15.id,
-                                   direction: 0): .init(notifications: .companion.disabled),
+                RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init(),
             ],
             shouldShowFirstTimeToast: false,
             routeCardData: [],
@@ -173,8 +170,7 @@ final class EditFavoritesPageTests: XCTestCase {
             } else {
                 XCTAssertEqual(
                     newFavorites,
-                    [RouteStopDirection(route: route15.id, stop: stop15.id,
-                                        direction: 0): .init(notifications: .companion.disabled)]
+                    [RouteStopDirection(route: route15.id, stop: stop15.id, direction: 0): .init()]
                 )
                 undoFavoritesExp.fulfill()
             }

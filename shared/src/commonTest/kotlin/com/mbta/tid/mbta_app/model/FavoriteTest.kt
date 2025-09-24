@@ -36,10 +36,8 @@ class FavoriteTest {
         assertEquals(
             Favorites(
                 mapOf(
-                    RouteStopDirection("route1", "stop1", 0) to
-                        FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
-                    RouteStopDirection("route2", "stop2", 1) to
-                        FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                    RouteStopDirection("route1", "stop1", 0) to FavoriteSettings(),
+                    RouteStopDirection("route2", "stop2", 1) to FavoriteSettings(),
                 )
             ),
             newFavorites,

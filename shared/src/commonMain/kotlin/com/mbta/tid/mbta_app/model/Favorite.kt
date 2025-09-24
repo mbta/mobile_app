@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
 import kotlinx.datetime.DayOfWeek
@@ -41,13 +42,7 @@ public data class Favorites(
                 serialized.postNotificationsRSDs != null ->
                     Favorites(serialized.postNotificationsRSDs.toMap())
                 serialized.preNotificationsRSDs != null ->
-                    Favorites(
-                        serialized.preNotificationsRSDs.associateWith {
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
-                        }
-                    )
+                    Favorites(serialized.preNotificationsRSDs.associateWith { FavoriteSettings() })
                 else -> Favorites()
             }
         }
@@ -64,7 +59,9 @@ public data class Favorites(
 public data class RouteStopDirection(val route: String, val stop: String, val direction: Int)
 
 @Serializable
-public data class FavoriteSettings(val notifications: Notifications) {
+public data class FavoriteSettings
+@DefaultArgumentInterop.Enabled
+constructor(val notifications: Notifications = Notifications.disabled) {
     @Serializable
     public data class Notifications(val enabled: Boolean, val windows: Set<Window>) {
         @Serializable

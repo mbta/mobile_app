@@ -114,13 +114,7 @@ fun SaveFavoritesFlow(
     // Save automatically without confirmation modal
     if (isUnFavoriting || isBusOneDirection && directions.any { it.id == selectedDirection }) {
         val rsd = RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection)
-        updateAndToast(
-            mapOf(
-                rsd to
-                    if (isFavorite(rsd)) null
-                    else FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            )
-        )
+        updateAndToast(mapOf(rsd to if (isFavorite(rsd)) null else FavoriteSettings()))
 
         onClose()
     } else {
@@ -144,9 +138,7 @@ fun SaveFavoritesFlow(
                             // If the only direction is the opposite one, mark it as favorite
                             // whether or not it already is
                             onlyOppositeDirectionServed
-                    if (suggestingFavorite)
-                        FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-                    else null
+                    if (suggestingFavorite) FavoriteSettings() else null
                 },
             updateFavorites = ::updateAndToast,
             onClose = onClose,
@@ -238,12 +230,7 @@ fun FavoriteConfirmationDialog(
                         Button(
                             onClick = {
                                 val oldValue = favoritesToSave.getOrDefault(direction.id, null)
-                                val newValue =
-                                    if (oldValue == null)
-                                        FavoriteSettings(
-                                            notifications = FavoriteSettings.Notifications.disabled
-                                        )
-                                    else null
+                                val newValue = if (oldValue == null) FavoriteSettings() else null
                                 favoritesToSave = favoritesToSave.plus(direction.id to newValue)
                             },
                             colors =
@@ -309,14 +296,7 @@ class Previews() {
                         ),
                     selectedDirection = 0,
                     context = EditFavoritesContext.StopDetails,
-                    proposedFavorites =
-                        mapOf(
-                            0 to
-                                FavoriteSettings(
-                                    notifications = FavoriteSettings.Notifications.disabled
-                                ),
-                            1 to null,
-                        ),
+                    proposedFavorites = mapOf(0 to FavoriteSettings(), 1 to null),
                     updateFavorites = {},
                     onClose = {},
                 )
@@ -336,13 +316,7 @@ class Previews() {
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 0,
                     context = EditFavoritesContext.StopDetails,
-                    proposedFavorites =
-                        mapOf(
-                            0 to
-                                FavoriteSettings(
-                                    notifications = FavoriteSettings.Notifications.disabled
-                                )
-                        ),
+                    proposedFavorites = mapOf(0 to FavoriteSettings()),
                     updateFavorites = {},
                     onClose = {},
                 )
@@ -362,13 +336,7 @@ class Previews() {
                         listOf(Direction(id = 0, name = "West", destination = "Copley & West")),
                     selectedDirection = 1,
                     context = EditFavoritesContext.Favorites,
-                    proposedFavorites =
-                        mapOf(
-                            0 to
-                                FavoriteSettings(
-                                    notifications = FavoriteSettings.Notifications.disabled
-                                )
-                        ),
+                    proposedFavorites = mapOf(0 to FavoriteSettings()),
                     updateFavorites = {},
                     onClose = {},
                 )

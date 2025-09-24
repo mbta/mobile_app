@@ -24,7 +24,7 @@ struct EditFavoritesPage: View {
     let inspection = Inspection<Self>()
 
     func deleteAndToast(_ rsd: RouteStopDirection) {
-        let settings = favoritesVMState.favorites?[rsd] ?? .init(notifications: .companion.disabled)
+        let settings = favoritesVMState.favorites?[rsd] ?? .init()
         viewModel.updateFavorites(
             updatedFavorites: [rsd: nil],
             context: .favorites,

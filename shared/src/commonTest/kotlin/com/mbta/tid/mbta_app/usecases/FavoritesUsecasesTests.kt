@@ -20,10 +20,7 @@ class FavoritesUsecasesTests : KoinTest {
         val usecase = FavoritesUsecases(repository, MockAnalytics())
         assertEquals(
             usecase.getRouteStopDirectionFavorites(),
-            mapOf(
-                routeStopDirection to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            ),
+            mapOf(routeStopDirection to FavoriteSettings()),
         )
     }
 
@@ -49,8 +46,7 @@ class FavoritesUsecasesTests : KoinTest {
         useCase.updateRouteStopDirections(
             mapOf(
                 RouteStopDirection("route_1", "stop_1", 0) to null,
-                RouteStopDirection("route_1", "stop_1", 1) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection("route_1", "stop_1", 1) to FavoriteSettings(),
             ),
             EditFavoritesContext.Favorites,
             0,

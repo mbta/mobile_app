@@ -42,13 +42,7 @@ class ManageFavoritesTest {
                     onClick = {
                         CoroutineScope(Dispatchers.Default).launch {
                             managedFavorites.updateFavorites(
-                                mapOf(
-                                    rsd0 to null,
-                                    rsd1 to
-                                        FavoriteSettings(
-                                            notifications = FavoriteSettings.Notifications.disabled
-                                        ),
-                                ),
+                                mapOf(rsd0 to null, rsd1 to FavoriteSettings()),
                                 EditFavoritesContext.Favorites,
                                 1,
                             )
@@ -62,20 +56,11 @@ class ManageFavoritesTest {
 
         composeTestRule.awaitIdle()
         assertNotNull(managedFavorites)
-        assertEquals(
-            mapOf(
-                rsd0 to FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            ),
-            managedFavorites!!.favoriteRoutes,
-        )
+        assertEquals(mapOf(rsd0 to FavoriteSettings()), managedFavorites!!.favoriteRoutes)
         composeTestRule.onNodeWithText("Click me").performClick()
         composeTestRule.awaitIdle()
         composeTestRule.waitUntilDefaultTimeout {
-            managedFavorites.favoriteRoutes ==
-                mapOf(
-                    rsd1 to
-                        FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-                )
+            managedFavorites.favoriteRoutes == mapOf(rsd1 to FavoriteSettings())
         }
     }
 }

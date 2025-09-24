@@ -97,9 +97,7 @@ fun EditFavoritesPage(
             state.staticRouteCardData,
             global,
             deleteFavorite = { deletedFavorite ->
-                val deletedSettings =
-                    state.favorites?.get(deletedFavorite)
-                        ?: FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
+                val deletedSettings = state.favorites?.get(deletedFavorite) ?: FavoriteSettings()
                 favoritesViewModel.updateFavorites(
                     mapOf(deletedFavorite to null),
                     EditFavoritesContext.Favorites,

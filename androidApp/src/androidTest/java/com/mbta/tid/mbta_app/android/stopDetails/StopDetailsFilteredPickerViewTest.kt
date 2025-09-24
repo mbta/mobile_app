@@ -386,10 +386,7 @@ class StopDetailsFilteredPickerViewTest {
             updatedFavorites ==
                 Pair(
                     mapOf(
-                        RouteStopDirection(route.id, stop.id, 0) to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            ),
+                        RouteStopDirection(route.id, stop.id, 0) to FavoriteSettings(),
                         RouteStopDirection(route.id, stop.id, 1) to null,
                     ),
                     0,

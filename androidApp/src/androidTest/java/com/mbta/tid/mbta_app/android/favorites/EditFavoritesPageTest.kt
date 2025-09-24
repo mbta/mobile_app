@@ -257,11 +257,7 @@ class EditFavoritesPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testFavoritesDisplayCorrectly(): Unit = runBlocking {
-        val favorites =
-            mapOf(
-                RouteStopDirection(route.id, sampleStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            )
+        val favorites = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         val viewModel =
             MockFavoritesViewModel(
                 FavoritesViewModel.State(
@@ -305,10 +301,8 @@ class EditFavoritesPageTest : KoinTest {
     fun testDeleteFavorite(): Unit = runBlocking {
         val favorites =
             mapOf(
-                RouteStopDirection(route.id, sampleStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
         var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
@@ -329,10 +323,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     mapOf(
-                        RouteStopDirection(greenLine.id, greenLineStop.id, 0) to
-                            FavoriteSettings(
-                                notifications = FavoriteSettings.Notifications.disabled
-                            )
+                        RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings()
                     ),
                     false,
                     greenLineRouteCardData,
@@ -376,10 +367,8 @@ class EditFavoritesPageTest : KoinTest {
     fun testToastUndoDeleteFavorite(): Unit = runBlocking {
         val favorites =
             mapOf(
-                RouteStopDirection(route.id, sampleStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled),
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
         var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
@@ -444,11 +433,7 @@ class EditFavoritesPageTest : KoinTest {
         assertEquals("Undo", customAction.actionLabel)
         customAction.onAction()
 
-        val undo =
-            mapOf(
-                RouteStopDirection(route.id, sampleStop.id, 0) to
-                    FavoriteSettings(notifications = FavoriteSettings.Notifications.disabled)
-            )
+        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0)
         }

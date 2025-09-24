@@ -32,7 +32,7 @@ final class FavoritesViewTests: XCTestCase {
         let globalData = GlobalResponse(objects: objects)
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .companion.disabled)],
+            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
@@ -118,7 +118,7 @@ final class FavoritesViewTests: XCTestCase {
 
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
-            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .companion.disabled)],
+            favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
