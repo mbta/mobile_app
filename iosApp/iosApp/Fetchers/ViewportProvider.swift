@@ -55,9 +55,14 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         }
     }
 
-    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop) {
+    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop?) {
+        let geometry: GeometryConvertible = if let stop {
+            MultiPoint([vehicle.coordinate, stop.coordinate])
+        } else {
+            Point(vehicle.coordinate)
+        }
         animateTo(viewport: .overview(
-            geometry: MultiPoint([vehicle.coordinate, stop.coordinate]),
+            geometry: geometry,
             geometryPadding: Defaults.overviewPadding,
             maxZoom: 16
         ))
@@ -200,7 +205,6 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     // swiftlint:disable:next identifier_name
     func __vehicleOverview(vehicle: Vehicle, stop: Stop?, density _: KotlinFloat?) async throws {
-        guard let stop else { return }
         await vehicleOverview(vehicle: vehicle, stop: stop)
     }
 }

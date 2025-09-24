@@ -221,6 +221,39 @@ internal class MapViewModelTests : KoinTest {
     }
 
     @Test
+    fun selectedVehicleUpdates() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+        val viewportProvider = MockViewportManager()
+        val viewModel: MapViewModel = get()
+        val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val tripDetailsFilter = TripDetailsFilter("trip", vehicle.id, null, false)
+        testViewModelFlow(viewModel).test {
+            viewModel.setViewportManager(viewportProvider)
+            viewModel.densityChanged(1f)
+            assertEquals(MapViewModel.State.Overview, awaitItem())
+            val stop = TestData.stops["70113"]!!
+            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, false)
+            assertEquals(
+                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
+                awaitItem(),
+            )
+            val updatedVehicle = vehicle.copy(latitude = 0.1, longitude = 0.2)
+            viewModel.selectedVehicleUpdated(updatedVehicle, false)
+            assertEquals(
+                MapViewModel.State.TripSelected(
+                    stop,
+                    null,
+                    tripDetailsFilter,
+                    updatedVehicle,
+                    false,
+                ),
+                awaitItem(),
+            )
+        }
+    }
+
+    @Test
     @Ignore // TODO: Address flakiness
     fun whenInStopDetailsNotResetToAllRailOnAlertChange() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)

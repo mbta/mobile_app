@@ -36,27 +36,29 @@ extension HomeMapView {
         viewportProvider.updateCameraState(change.cameraState)
     }
 
-    func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
-        if let filter = navigationStack.lastStopDetailsFilter {
-            joinVehiclesChannel(routeId: filter.routeId, directionId: filter.directionId)
-        } else {
+    func handleNavStackChange(entry: SheetNavigationStackEntry) {
+        let filter: StopDetailsFilter? = switch entry {
+        case let .stopDetails(_, stopFilter, _):
+            stopFilter
+        case let .tripDetails(tripPageFilter):
+            tripPageFilter.stopFilter
+        default:
+            nil
+        }
+        guard let filter else {
             leaveVehiclesChannel()
             vehiclesData = []
+            return
         }
+        joinVehiclesChannel(
+            routeId: filter.routeId,
+            directionId: filter.directionId
+        )
     }
 
     func checkOnboardingLoaded() {
         if contentVM.onboardingScreensPending == [] {
             locationDataManager.requestWhenInUseAuthorization()
-        }
-    }
-
-    func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = entry, let stopFilter {
-            joinVehiclesChannel(
-                routeId: stopFilter.routeId,
-                directionId: stopFilter.directionId
-            )
         }
     }
 
