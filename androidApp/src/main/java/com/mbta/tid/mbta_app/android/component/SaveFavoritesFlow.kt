@@ -169,6 +169,7 @@ fun FavoriteConfirmation(
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
     var favoritesToSave: Map<Int, FavoriteSettings?> by remember {
         mutableStateOf(proposedFavorites)
@@ -275,7 +276,7 @@ fun FavoriteConfirmation(
                 TextButton(onClose) { Text(stringResource(R.string.cancel)) }
                 TextButton(
                     { saveAndClose() },
-                    enabled = favoritesToSave.values.any { it != null },
+                    enabled = notificationsFlag || favoritesToSave.values.any { it != null },
                 ) {
                     Text(stringResource(R.string.add_confirmation_button))
                 }
