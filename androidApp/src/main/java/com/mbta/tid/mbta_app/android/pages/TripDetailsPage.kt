@@ -1,9 +1,8 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -14,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.android.stopDetails.TripDetailsView
@@ -65,7 +65,7 @@ fun TripDetailsPage(
         )
     }
 
-    Column(Modifier.verticalScroll(rememberScrollState())) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (route != null && direction != null) {
             TripDetailsPageHeader(route, direction, onClose)
         } else {
@@ -81,16 +81,18 @@ fun TripDetailsPage(
                 )
             }
         }
-        TripDetailsView(
-            filter,
-            allAlerts = allAlerts,
-            alertSummaries = alertSummaries,
-            onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
-            openSheetRoute = openSheetRoute,
-            openModal = openModal,
-            now = now,
-            isTripDetailsPage = true,
-            modifier = Modifier.padding(horizontal = 10.dp),
-        )
+        ScrollSeparatorColumn {
+            TripDetailsView(
+                filter,
+                allAlerts = allAlerts,
+                alertSummaries = alertSummaries,
+                onOpenAlertDetails = { openAlertDetails(it, AlertCardSpec.Downstream) },
+                openSheetRoute = openSheetRoute,
+                openModal = openModal,
+                now = now,
+                isTripDetailsPage = true,
+                modifier = Modifier.padding(horizontal = 10.dp),
+            )
+        }
     }
 }
