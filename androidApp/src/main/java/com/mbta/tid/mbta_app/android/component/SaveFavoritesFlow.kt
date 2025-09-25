@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -41,6 +42,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.getLabels
+import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -158,6 +160,7 @@ fun SaveFavoritesFlow(
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun FavoriteConfirmation(
     lineOrRoute: LineOrRoute,
@@ -171,11 +174,14 @@ fun FavoriteConfirmation(
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
+    val notificationPermissionState = notificationPermissionState()
+
     var favoritesToSave: Map<Int, FavoriteSettings?> by remember {
         mutableStateOf(proposedFavorites)
     }
 
     fun saveAndClose() {
+        notificationPermissionState.launchPermissionRequest()
         val newFavorites =
             favoritesToSave.mapKeys { (directionId, _isFavorite) ->
                 RouteStopDirection(lineOrRoute.id, stop.id, directionId)
