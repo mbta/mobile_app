@@ -57,6 +57,8 @@ class SaveFavoritesFlowTest {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
+
         composeTestRule.setContent {
             FavoriteConfirmation(
                 lineOrRoute = line,
@@ -85,6 +87,8 @@ class SaveFavoritesFlowTest {
         var updateFavoritesCalled = false
         var onCloseCalled = false
 
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
+
         composeTestRule.setContent {
             FavoriteConfirmation(
                 lineOrRoute = line,
@@ -108,6 +112,8 @@ class SaveFavoritesFlowTest {
     @Test
     fun testAddingOtherDirectionSavesBoth() {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             FavoriteConfirmation(
@@ -136,6 +142,8 @@ class SaveFavoritesFlowTest {
     @Test
     fun testRemovingOtherDirectoinSavesBoth() {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             FavoriteConfirmation(
@@ -166,6 +174,8 @@ class SaveFavoritesFlowTest {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
+
         composeTestRule.setContent {
             FavoriteConfirmation(
                 lineOrRoute = line,
@@ -188,6 +198,8 @@ class SaveFavoritesFlowTest {
     fun testFavoritingOnlyDirectionPresentsDialogWhenNonBus() {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -214,6 +226,8 @@ class SaveFavoritesFlowTest {
 
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -242,6 +256,8 @@ class SaveFavoritesFlowTest {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
 
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
+
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -268,6 +284,8 @@ class SaveFavoritesFlowTest {
     fun testFavoritingWhenOnlyDirectionIsOppositePresentsDialog() {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -300,7 +318,9 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
-        loadKoinMocks(TestData)
+        loadKoinMocks(TestData) {
+            settings = MockSettingsRepository(mapOf(Settings.Notifications to false))
+        }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -332,7 +352,9 @@ class SaveFavoritesFlowTest {
         var displayedToast: ToastViewModel.Toast? = null
         toastVM.onShowToast = { displayedToast = it }
 
-        loadKoinMocks(TestData)
+        loadKoinMocks(TestData) {
+            settings = MockSettingsRepository(mapOf(Settings.Notifications to false))
+        }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -367,7 +389,9 @@ class SaveFavoritesFlowTest {
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
 
-        loadKoinMocks(TestData)
+        loadKoinMocks(TestData) {
+            settings = MockSettingsRepository(mapOf(Settings.Notifications to false))
+        }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -396,7 +420,7 @@ class SaveFavoritesFlowTest {
         val busRoute = TestData.getRoute("15")
         val busStop = TestData.getStop("17861")
         // no TestData for getting the appropriate labels for this favorite
-        loadKoinMocks()
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
@@ -424,7 +448,7 @@ class SaveFavoritesFlowTest {
     @Test
     fun testFavoritingWhenDropOffOnlyPresentsDialog() {
         var onCloseCalled = false
-
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -449,6 +473,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testDialogTitleFavoritesContext() {
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -468,6 +493,7 @@ class SaveFavoritesFlowTest {
 
     @Test
     fun testDialogTitleStopDetailsContext() {
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
         composeTestRule.setContent {
             SaveFavoritesFlow(
                 lineOrRoute = line,
@@ -491,6 +517,8 @@ class SaveFavoritesFlowTest {
     fun testFavoritingWhenTwoDirectionsPresentsDialog() {
         var updateFavoritesCalledFor: Map<RouteStopDirection, FavoriteSettings?> = mapOf()
         var onCloseCalled = false
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to false)) }
 
         composeTestRule.setContent {
             SaveFavoritesFlow(
