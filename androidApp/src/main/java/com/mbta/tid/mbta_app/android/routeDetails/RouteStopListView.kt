@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -102,6 +103,7 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     defaultSelectedRouteId: String? = null,
@@ -148,6 +150,7 @@ fun RouteStopListView(
         onClickLabel = onClickLabel,
         onBack = onBack,
         onClose = onClose,
+        openModal = openModal,
         errorBannerViewModel = errorBannerViewModel,
         toastViewModel = toastViewModel,
         rightSideContent = rightSideContent,
@@ -179,6 +182,7 @@ fun LoadingRouteStopListView(
             onClickLabel = { null },
             onBack = {},
             onClose = {},
+            openModal = {},
             errorBannerViewModel = errorBannerViewModel,
             toastViewModel = toastViewModel,
             rightSideContent = { rowContext, modifier ->
@@ -218,13 +222,12 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
-    val managedFavorites = manageFavorites()
-    val favorites = managedFavorites.favoriteRoutes
-    val updateFavorites = managedFavorites.updateFavorites
+    val (favorites, updateFavorites) = manageFavorites()
 
     fun isFavorite(routeStopDirection: RouteStopDirection): Boolean =
         favorites?.contains(routeStopDirection) ?: false
@@ -312,9 +315,9 @@ fun RouteStopListView(
                 context = EditFavoritesContext.Favorites,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
-            ) {
-                showFavoritesStopConfirmationId = null
-            }
+                onClose = { showFavoritesStopConfirmationId = null },
+                openModal = openModal,
+            )
         }
     }
 

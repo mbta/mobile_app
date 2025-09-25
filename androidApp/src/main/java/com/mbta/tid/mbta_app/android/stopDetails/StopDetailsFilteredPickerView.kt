@@ -88,9 +88,9 @@ fun StopDetailsFilteredPickerView(
                     updateFavorites(newValues, stopFilter.directionId)
                 },
                 isFavorite = { rsd -> isFavorite(rsd) ?: false },
-            ) {
-                inSaveFavoritesFlow = false
-            }
+                onClose = { inSaveFavoritesFlow = false },
+                openModal = openModal,
+            )
         }
         StopDetailsFilteredHeader(
             lineOrRoute.sortRoute,
