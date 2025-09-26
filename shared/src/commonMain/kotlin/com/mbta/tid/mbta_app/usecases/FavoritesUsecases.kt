@@ -4,15 +4,22 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import org.koin.core.component.KoinComponent
 
 public class FavoritesUsecases(
     private val repository: IFavoritesRepository,
     private val analytics: Analytics,
 ) : KoinComponent {
+    private val flow = MutableStateFlow<Map<RouteStopDirection, FavoriteSettings>?>(null)
+    public val state: StateFlow<Map<RouteStopDirection, FavoriteSettings>?> = flow.asStateFlow()
 
     public suspend fun getRouteStopDirectionFavorites(): Map<RouteStopDirection, FavoriteSettings> {
         val storedFavorites = repository.getFavorites()
+        flow.update { storedFavorites.routeStopDirection }
         return storedFavorites.routeStopDirection
     }
 
@@ -42,6 +49,7 @@ public class FavoritesUsecases(
             }
         }
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
+        getRouteStopDirectionFavorites()
     }
 }
 

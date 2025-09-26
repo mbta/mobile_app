@@ -9,6 +9,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -23,6 +24,7 @@ fun RouteDetailsView(
     onOpenStopDetails: (String) -> Unit,
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView")
@@ -55,6 +57,7 @@ fun RouteDetailsView(
         },
         onBack = onBack,
         onClose = onClose,
+        openModal = openModal,
         errorBannerViewModel,
         defaultSelectedRouteId = selectionId.takeUnless { it == lineOrRoute.id },
         rightSideContent = { rowContext, modifier ->

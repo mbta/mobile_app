@@ -33,9 +33,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.getLabels
@@ -45,6 +47,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -62,7 +65,14 @@ fun SaveFavoritesFlow(
     isFavorite: (routeStopDirection: RouteStopDirection) -> Boolean,
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
+    if (notificationsFlag) {
+        openModal(ModalRoutes.SaveFavorite(lineOrRoute.id, stop.id, selectedDirection, context))
+        onClose()
+        return
+    }
 
     val global = getGlobalData("SaveFavoritesFlow")
     val isUnFavoriting =
@@ -118,36 +128,38 @@ fun SaveFavoritesFlow(
 
         onClose()
     } else {
-        FavoriteConfirmationDialog(
-            lineOrRoute,
-            stop,
-            directions,
-            selectedDirection,
-            context,
-            proposedFavorites =
-                directions.associateBy({ it.id }) {
-                    // if selectedDirection and already a favorite, then removing favorite.
-                    // if not selected direction and already a favorite, then keep it.
-                    val isSelected = it.id == selectedDirection
-                    val isExistingFavorite =
-                        isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it.id))
-                    val onlyOppositeDirectionServed =
-                        directions.size == 1 && it.id != selectedDirection
-                    val suggestingFavorite =
-                        (isSelected xor isExistingFavorite) ||
-                            // If the only direction is the opposite one, mark it as favorite
-                            // whether or not it already is
-                            onlyOppositeDirectionServed
-                    if (suggestingFavorite) FavoriteSettings() else null
-                },
-            updateFavorites = ::updateAndToast,
-            onClose = onClose,
-        )
+        Dialog(onDismissRequest = onClose) {
+            FavoriteConfirmation(
+                lineOrRoute,
+                stop,
+                directions,
+                selectedDirection,
+                context,
+                proposedFavorites =
+                    directions.associateBy({ it.id }) {
+                        // if selectedDirection and already a favorite, then removing favorite.
+                        // if not selected direction and already a favorite, then keep it.
+                        val isSelected = it.id == selectedDirection
+                        val isExistingFavorite =
+                            isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, it.id))
+                        val onlyOppositeDirectionServed =
+                            directions.size == 1 && it.id != selectedDirection
+                        val suggestingFavorite =
+                            (isSelected xor isExistingFavorite) ||
+                                // If the only direction is the opposite one, mark it as favorite
+                                // whether or not it already is
+                                onlyOppositeDirectionServed
+                        if (suggestingFavorite) FavoriteSettings() else null
+                    },
+                updateFavorites = ::updateAndToast,
+                onClose = onClose,
+            )
+        }
     }
 }
 
 @Composable
-fun FavoriteConfirmationDialog(
+fun FavoriteConfirmation(
     lineOrRoute: LineOrRoute,
     stop: Stop,
     directions: List<Direction>,
@@ -157,6 +169,7 @@ fun FavoriteConfirmationDialog(
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit,
     onClose: () -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
 
     var favoritesToSave: Map<Int, FavoriteSettings?> by remember {
         mutableStateOf(proposedFavorites)
@@ -171,107 +184,101 @@ fun FavoriteConfirmationDialog(
         onClose()
     }
 
-    Dialog(onDismissRequest = onClose) {
-        Column(
-            modifier =
-                Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
-        ) {
-            val headerText =
-                if (context == EditFavoritesContext.Favorites) {
-                    stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
-                } else {
-                    stringResource(
-                        R.string.add_to_favorites_title_stop_details,
-                        lineOrRoute.name,
-                        stop.name,
-                    )
-                }
+    Column(
+        modifier =
+            Modifier.background(colorResource(R.color.fill1), shape = RoundedCornerShape(28.dp))
+    ) {
+        val headerText =
+            if (context == EditFavoritesContext.Favorites) {
+                stringResource(R.string.add_to_favorites_title, lineOrRoute.name, stop.name)
+            } else {
+                stringResource(
+                    R.string.add_to_favorites_title_stop_details,
+                    lineOrRoute.name,
+                    stop.name,
+                )
+            }
+
+        Text(
+            AnnotatedString.fromHtml(headerText),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(16.dp).fillMaxWidth().semantics { heading() },
+        )
+        if (directions.size == 1 && directions.first().id != selectedDirection) {
 
             Text(
-                AnnotatedString.fromHtml(headerText),
+                stringResource(
+                    R.string.direction_service_only,
+                    stringResource(directionNameFormatted(directions.first())),
+                ),
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(16.dp).fillMaxWidth().semantics { heading() },
+                style = Typography.footnoteSemibold,
+                modifier =
+                    Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp).fillMaxWidth(),
             )
-            if (directions.size == 1 && directions.first().id != selectedDirection) {
+        }
 
+        if (directions.isEmpty()) {
+            Column {
                 Text(
-                    stringResource(
-                        R.string.direction_service_only,
-                        stringResource(directionNameFormatted(directions.first())),
-                    ),
+                    stringResource(R.string.this_stop_is_drop_off_only),
                     textAlign = TextAlign.Center,
                     style = Typography.footnoteSemibold,
                     modifier =
                         Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp).fillMaxWidth(),
                 )
-            }
-
-            if (directions.isEmpty()) {
-                Column {
-                    Text(
-                        stringResource(R.string.this_stop_is_drop_off_only),
-                        textAlign = TextAlign.Center,
-                        style = Typography.footnoteSemibold,
-                        modifier =
-                            Modifier.padding(horizontal = 16.dp)
-                                .padding(bottom = 8.dp)
-                                .fillMaxWidth(),
-                    )
-                    HaloSeparator()
-                    Row(modifier = Modifier.padding(16.dp)) {
-                        Spacer(Modifier.weight(1F))
-                        TextButton(onClose) { Text(stringResource(R.string.okay)) }
-                    }
-                }
-            } else {
-                Column() {
-                    HaloSeparator()
-                    directions.mapIndexed { idx, direction ->
-                        Button(
-                            onClick = {
-                                val oldValue = favoritesToSave.getOrDefault(direction.id, null)
-                                val newValue = if (oldValue == null) FavoriteSettings() else null
-                                favoritesToSave = favoritesToSave.plus(direction.id to newValue)
-                            },
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = colorResource(R.color.fill3),
-                                    contentColor = colorResource(R.color.text),
-                                ),
-                            shape = RectangleShape,
-                            modifier =
-                                Modifier.background(color = colorResource(R.color.fill3))
-                                    .semantics {
-                                        selected =
-                                            favoritesToSave.getOrDefault(direction.id, null) != null
-                                    },
-                        ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                DirectionLabel(direction, Modifier.weight(1f))
-                                StarIcon(
-                                    favoritesToSave.getOrDefault(direction.id, null) != null,
-                                    color = Color.fromHex(lineOrRoute.backgroundColor),
-                                    Modifier.padding(start = 16.dp),
-                                )
-                            }
-                        }
-                        HaloSeparator()
-                    }
-                }
-
+                HaloSeparator()
                 Row(modifier = Modifier.padding(16.dp)) {
                     Spacer(Modifier.weight(1F))
-                    TextButton(onClose) { Text(stringResource(R.string.cancel)) }
-                    TextButton(
-                        { saveAndClose() },
-                        enabled = favoritesToSave.values.any { it != null },
+                    TextButton(onClose) { Text(stringResource(R.string.okay)) }
+                }
+            }
+        } else {
+            Column() {
+                HaloSeparator()
+                directions.mapIndexed { idx, direction ->
+                    Button(
+                        onClick = {
+                            val oldValue = favoritesToSave.getOrDefault(direction.id, null)
+                            val newValue = if (oldValue == null) FavoriteSettings() else null
+                            favoritesToSave = favoritesToSave.plus(direction.id to newValue)
+                        },
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = colorResource(R.color.fill3),
+                                contentColor = colorResource(R.color.text),
+                            ),
+                        shape = RectangleShape,
+                        modifier =
+                            Modifier.background(color = colorResource(R.color.fill3)).semantics {
+                                selected = favoritesToSave.getOrDefault(direction.id, null) != null
+                            },
                     ) {
-                        Text(stringResource(R.string.add_confirmation_button))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            DirectionLabel(direction, Modifier.weight(1f))
+                            StarIcon(
+                                favoritesToSave.getOrDefault(direction.id, null) != null,
+                                color = Color.fromHex(lineOrRoute.backgroundColor),
+                                Modifier.padding(start = 16.dp),
+                            )
+                        }
                     }
+                    HaloSeparator()
+                }
+            }
+
+            Row(modifier = Modifier.padding(16.dp)) {
+                Spacer(Modifier.weight(1F))
+                TextButton(onClose) { Text(stringResource(R.string.cancel)) }
+                TextButton(
+                    { saveAndClose() },
+                    enabled = notificationsFlag || favoritesToSave.values.any { it != null },
+                ) {
+                    Text(stringResource(R.string.add_confirmation_button))
                 }
             }
         }
@@ -286,7 +293,7 @@ class Previews() {
     fun FavoriteConfirmationBoth() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
-                FavoriteConfirmationDialog(
+                FavoriteConfirmation(
                     LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-boyls"),
                     directions =
@@ -309,7 +316,7 @@ class Previews() {
     fun FavoriteConfirmationOnlySelectedDirection() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
-                FavoriteConfirmationDialog(
+                FavoriteConfirmation(
                     LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-unsqu"),
                     directions =
@@ -329,7 +336,7 @@ class Previews() {
     fun FavoriteConfirmationOnlyOppositeDirection() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
-                FavoriteConfirmationDialog(
+                FavoriteConfirmation(
                     LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-unsqu"),
                     directions =
@@ -349,7 +356,7 @@ class Previews() {
     fun FavoriteConfirmationDisabledAdd() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
-                FavoriteConfirmationDialog(
+                FavoriteConfirmation(
                     LineOrRoute.Line(objects.getLine("line-Green"), emptySet()),
                     stop = objects.getStop("place-boyls"),
                     directions =

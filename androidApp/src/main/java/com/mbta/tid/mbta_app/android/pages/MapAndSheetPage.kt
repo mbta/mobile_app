@@ -647,6 +647,7 @@ fun MapAndSheetPage(
                 onOpenStopDetails = ::handleStopNavigation,
                 onBack = { navController.popBackStackFrom(SheetRoutes.RouteDetails::class) },
                 onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
+                openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -882,6 +883,15 @@ fun MapAndSheetPage(
 
                     is ModalRoutes.Explainer ->
                         ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
+
+                    is ModalRoutes.SaveFavorite ->
+                        SaveFavoritePage(
+                            modal.routeId,
+                            modal.stopId,
+                            modal.selectedDirection,
+                            modal.context,
+                            goBack = { closeModal() },
+                        )
 
                     null -> {}
                 }
