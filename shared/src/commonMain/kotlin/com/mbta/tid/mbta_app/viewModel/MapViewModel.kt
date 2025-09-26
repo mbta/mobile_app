@@ -267,6 +267,7 @@ public class MapViewModel(
                             globalData ?: return@run,
                             if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                         )
+                        resetPuckPosition()
                     }
                 }
                 is Event.LayerManagerInitialized -> {

@@ -37,10 +37,11 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     }
 
     var allowTargeting: Bool {
-        switch self {
-        case .favorites, .nearby: true
-        default: false
-        }
+        toSheetRoute()?.allowTargeting ?? false
+    }
+
+    var showCurrentLocation: Bool {
+        toSheetRoute()?.showCurrentLocation ?? true
     }
 
     var analyticsScreen: AnalyticsScreen? {
