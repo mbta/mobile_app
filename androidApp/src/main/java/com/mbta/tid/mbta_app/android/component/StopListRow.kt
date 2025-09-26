@@ -110,7 +110,7 @@ fun StopListRow(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RouteLine(routeAccents, stopLane, stickConnections, targeted, getAlertState)
-                Column(Modifier.padding(vertical = 12.dp).padding(start = 8.dp)) {
+                Column(Modifier.padding(vertical = 12.dp).padding(start = 6.dp)) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -120,7 +120,7 @@ fun StopListRow(
                                 (activeElevatorAlerts > 0 || !stop.isWheelchairAccessible)
                         ) {
                             Row(
-                                Modifier.padding(start = 6.dp).widthIn(max = 28.dp),
+                                Modifier.widthIn(max = 28.dp),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center,
                             ) {
@@ -183,7 +183,7 @@ fun StopListRow(
                                 )
                             }
                         }
-                        rightSideContent(Modifier.padding(end = 12.dp))
+                        rightSideContent(Modifier.padding(end = 2.dp))
                         // Adding the accessibility description into the stop label rather than on
                         // the accessibility icon so that it is clear which stop it is associated
                         // with. Empty Rows, Canvas, Text that don't take up size, etc. do not have
