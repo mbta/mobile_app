@@ -140,6 +140,9 @@ class NearbyViewModel: ObservableObject {
             }
             if navigationStack.shouldSkipStopFilterUpdate(newStop: targetStop, newFilter: newFilter) { return }
             navigationStack.append(entry)
+        } else if case .tripDetails = currentEntry, case .tripDetails = entry {
+            _ = navigationStack.popLast()
+            navigationStack.append(entry)
         } else {
             navigationStack.append(entry)
         }
