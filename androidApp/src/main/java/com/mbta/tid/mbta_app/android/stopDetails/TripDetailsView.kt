@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.tripDetails.TripCompleteCard
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
@@ -113,8 +114,7 @@ fun TripDetailsView(
                     return
                 }
         val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse)
-        val vehicleStop =
-            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse) else null
+        val vehicleStop = vehicle?.let { getParentFor(it.stopId, globalResponse) }
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stopList, terminalStop, vehicle, vehicleStop)
@@ -156,6 +156,7 @@ fun TripDetailsView(
         TripDetails(
             tripData.trip,
             headerSpec,
+            tripData,
             onHeaderTap,
             ::onTapStop,
             onFollowTrip,
@@ -188,6 +189,7 @@ fun TripDetailsView(
                 TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,
+                    tripData = null,
                     null,
                     onTapStop = {},
                     onFollowTrip = {},
@@ -209,6 +211,7 @@ fun TripDetailsView(
 fun TripDetails(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
+    tripData: TripData?,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
     onFollowTrip: (() -> Unit),
@@ -235,35 +238,43 @@ fun TripDetails(
                 Text("vehicle id: ${tripFilter.vehicleId ?: "null"}")
             }
         }
-        Column(Modifier.zIndex(1F)) {
-            TripHeaderCard(
-                trip,
-                headerSpec,
-                tripFilter.stopId,
-                route,
-                routeAccents,
-                now,
-                onTap = onHeaderTap,
-                onFollowTrip =
-                    if (hasTrackThisTrip && !isTripDetailsPage) {
-                        onFollowTrip
-                    } else null,
-            )
-        }
-        Column(Modifier.offset(y = (-16).dp)) {
-            TripStops(
-                tripFilter.stopId,
-                stopList,
-                tripFilter.stopSequence,
-                headerSpec,
-                now,
-                alertSummaries,
-                globalResponse,
-                onTapStop,
-                onOpenAlertDetails,
-                route,
-                routeAccents,
-            )
+        val hasCompletedTrip =
+            tripData != null &&
+                (trip.id != tripData.vehicle?.tripId ||
+                    trip.directionId != tripData.vehicle?.directionId)
+        if (isTripDetailsPage && hasCompletedTrip) {
+            TripCompleteCard(routeAccents)
+        } else {
+            Column(Modifier.zIndex(1F)) {
+                TripHeaderCard(
+                    trip,
+                    headerSpec,
+                    tripFilter.stopId,
+                    route,
+                    routeAccents,
+                    now,
+                    onTap = onHeaderTap,
+                    onFollowTrip =
+                        if (hasTrackThisTrip && !isTripDetailsPage) {
+                            onFollowTrip
+                        } else null,
+                )
+            }
+            Column(Modifier.offset(y = (-16).dp)) {
+                TripStops(
+                    tripFilter.stopId,
+                    stopList,
+                    tripFilter.stopSequence,
+                    headerSpec,
+                    now,
+                    alertSummaries,
+                    globalResponse,
+                    onTapStop,
+                    onOpenAlertDetails,
+                    route,
+                    routeAccents,
+                )
+            }
         }
     }
 }

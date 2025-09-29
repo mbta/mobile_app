@@ -379,6 +379,8 @@
     <string name="trains">列車</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">本行程已取消。對於造成您的不便，我們深表歉意。</string>
+    <string name="trip_complete">行程完成</string>
+    <string name="trip_complete_body">此 %1$s 已到達目的地。</string>
     <string name="try_a_different_spelling_or_name">嘗試不同的拼字或名稱。</string>
     <string name="try_your_search_again">再次嘗試搜尋。</string>
     <string name="unable_to_connect">無法連接</string>

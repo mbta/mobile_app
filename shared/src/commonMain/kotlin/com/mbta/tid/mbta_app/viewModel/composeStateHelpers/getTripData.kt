@@ -105,8 +105,8 @@ internal fun getTripData(
     vehicle =
         subscribeToVehicle(
             tripFilter?.vehicleId,
-            active,
             errorKey,
+            active,
             errorBannerRepository,
             vehicleRepository,
         )
@@ -122,11 +122,14 @@ internal fun getTripData(
         }
     }
 
-    LaunchedEffect(trip, tripSchedules, tripPredictions, vehicle, context) {
+    LaunchedEffect(tripFilter, trip, tripSchedules, tripPredictions, vehicle, context) {
         val resolvedTrip = trip
         result =
             if (
-                tripFilter != null && resolvedTrip != null && resolvedTrip.id == tripFilter.tripId
+                tripFilter != null &&
+                    resolvedTrip != null &&
+                    resolvedTrip.id == tripFilter.tripId &&
+                    (tripFilter.vehicleId == null || vehicle != null)
             ) {
                 TripData(tripFilter, resolvedTrip, tripSchedules, tripPredictions, true, vehicle)
             } else {
