@@ -90,6 +90,9 @@ struct TripDetailsView: View {
                 context: isTripDetailsPage ? .tripDetails : .stopDetails,
                 filters: tripFilter,
             )
+            .onAppear {
+                setVehicle(tripDetailsVM.selectedVehicleUpdates.value)
+            }
             .task(id: global) {
                 for await vehicleUpdate in tripDetailsVM.selectedVehicleUpdates {
                     setVehicle(vehicleUpdate)
