@@ -35,6 +35,13 @@ public sealed class SheetRoutes {
 
     @Serializable public data class TripDetails(val filter: TripDetailsPageFilter) : SheetRoutes()
 
+    public val showCurrentLocation: Boolean
+        get() =
+            when (this) {
+                is TripDetails -> false
+                else -> true
+            }
+
     public val showSearchBar: Boolean
         get() =
             when (this) {

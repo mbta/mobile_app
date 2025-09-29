@@ -46,6 +46,10 @@ struct HomeMapView: View {
             && !nearbyVM.isTargeting
     }
 
+    private var allowTargeting: Bool {
+        nearbyVM.navigationStack.lastSafe().allowTargeting
+    }
+
     init(
         contentVM: ContentViewModel,
         mapVM: IMapViewModel,
@@ -78,7 +82,7 @@ struct HomeMapView: View {
     var body: some View {
         realtimeResponsiveMap
             .overlay(alignment: .center) {
-                if nearbyVM.isTargeting {
+                if nearbyVM.isTargeting, allowTargeting {
                     crosshairs
                 }
             }
@@ -179,6 +183,7 @@ struct HomeMapView: View {
             globalData: globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
+            showPuck: nearbyVM.navigationStack.lastSafe().showCurrentLocation,
             vehicles: vehicles,
             handleCameraChange: handleCameraChange,
             handleStyleLoaded: { mapVM.mapStyleLoaded() },

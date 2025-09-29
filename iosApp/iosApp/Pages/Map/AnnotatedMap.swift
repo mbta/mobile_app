@@ -20,6 +20,7 @@ struct AnnotatedMap: View {
     var globalData: GlobalResponse?
     var selectedVehicle: Vehicle?
     var sheetHeight: CGFloat
+    var showPuck: Bool
     var vehicles: [Vehicle]?
     var handleCameraChange: (CameraChanged) -> Void
     var handleStyleLoaded: () -> Void
@@ -40,6 +41,7 @@ struct AnnotatedMap: View {
         globalData: GlobalResponse? = nil,
         selectedVehicle: Vehicle? = nil,
         sheetHeight: CGFloat,
+        showPuck: Bool,
         vehicles: [Vehicle]? = nil,
         handleCameraChange: @escaping (CameraChanged) -> Void,
         handleStyleLoaded: @escaping () -> Void,
@@ -52,6 +54,7 @@ struct AnnotatedMap: View {
         self.globalData = globalData
         self.selectedVehicle = selectedVehicle
         self.sheetHeight = sheetHeight
+        self.showPuck = showPuck
         self.vehicles = vehicles
         self.handleCameraChange = handleCameraChange
         self.handleStyleLoaded = handleStyleLoaded
@@ -86,9 +89,11 @@ struct AnnotatedMap: View {
                     handleStyleLoaded()
                 }
             }
+
             .additionalSafeAreaInsets(.bottom, sheetHeight)
             .additionalSafeAreaInsets(.top, 20)
             .ignoresSafeArea(.all)
+            .onChange(of: showPuck) { _ in handleStyleLoaded() }
             .accessibilityIdentifier("transitMap")
             .onReceive(viewportProvider.cameraStatePublisher) { newCameraState in
                 zoomLevel = newCameraState.zoom
@@ -115,13 +120,15 @@ struct AnnotatedMap: View {
         Map(viewport: $viewportProvider.viewport) {
             TapInteraction(.layer(StopLayerGenerator.shared.stopLayerId), action: handleTapStopLayer)
             TapInteraction(.layer(StopLayerGenerator.shared.stopTouchTargetLayerId), action: handleTapStopLayer)
-            Puck2D()
-                .topImage(.init(resource: .locationDot))
-                .shadowImage(.init(resource: .locationHalo))
-                .pulsing(.init(color: .keyInverse, radius: .constant(24)))
-                .showsAccuracyRing(true)
-                .accuracyRingColor(.deemphasized.withAlphaComponent(0.1))
-                .accuracyRingBorderColor(.halo)
+            if showPuck {
+                Puck2D()
+                    .topImage(.init(resource: .locationDot))
+                    .shadowImage(.init(resource: .locationHalo))
+                    .pulsing(.init(color: .keyInverse, radius: .constant(24)))
+                    .showsAccuracyRing(true)
+                    .accuracyRingColor(.deemphasized.withAlphaComponent(0.1))
+                    .accuracyRingBorderColor(.halo)
+            }
             if let targetedLocation {
                 MapViewAnnotation(coordinate: targetedLocation) {
                     Image(.mapNearbyLocationCursor).frame(width: 26, height: 26)

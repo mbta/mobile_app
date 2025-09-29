@@ -214,10 +214,11 @@ fun MapAndSheetPage(
 
     val selectedVehicleUpdate by tripDetailsViewModel.selectedVehicleUpdates.collectAsState()
     LaunchedEffect(selectedVehicleUpdate) {
-        val follow = currentNavEntry is SheetRoutes.TripDetails
-        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
+        val follow =
+            currentNavEntry is SheetRoutes.TripDetails &&
+                nearbyTransit.viewportProvider.isVehicleOverview
         filters?.tripFilter?.let {
-            mapViewModel.selectedTrip(filters.stopFilter, stop, it, selectedVehicleUpdate, follow)
+            mapViewModel.selectedVehicleUpdated(selectedVehicleUpdate, follow)
         }
     }
 
@@ -329,6 +330,9 @@ fun MapAndSheetPage(
     ) {
         val filter =
             TripDetailsPageFilter(tripId, vehicleId, routeId, directionId, stopId, stopSequence)
+        if (currentNavEntry is SheetRoutes.TripDetails) {
+            navController.popBackStack()
+        }
         navController.navigate(SheetRoutes.TripDetails(filter))
     }
 
@@ -351,7 +355,7 @@ fun MapAndSheetPage(
                     )
                 else -> null
             } ?: return
-        if (stopFilter == null || tripFilter?.tripId == tripId) return
+        if (stopFilter == null || (tripFilter?.tripId == tripId && !hasTrackThisTrip)) return
         val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
 
         val upcoming =

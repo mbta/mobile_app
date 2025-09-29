@@ -183,7 +183,8 @@ struct ContentView: View {
                         if !searchObserver.isSearching {
                             VStack(alignment: .trailing, spacing: 20) {
                                 if !viewportProvider.viewport.isFollowing,
-                                   locationDataManager.currentLocation != nil {
+                                   locationDataManager.currentLocation != nil,
+                                   nearbyVM.navigationStack.lastSafe().showCurrentLocation {
                                     RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
                                         mapVM.recenter(type: .currentLocation)
                                     }

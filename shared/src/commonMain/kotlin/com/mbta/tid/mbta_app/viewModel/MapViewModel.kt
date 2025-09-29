@@ -267,6 +267,7 @@ public class MapViewModel(
                             globalData ?: return@run,
                             if (isDarkMode) ColorPalette.dark else ColorPalette.light,
                         )
+                        resetPuckPosition()
                     }
                 }
                 is Event.LayerManagerInitialized -> {
@@ -438,11 +439,15 @@ public class MapViewModel(
                     State.Overview
                 } else {
                     if (currentNavEntryStopDetails.tripFilter != null) {
+                        val vehicle =
+                            currentNavEntryStopDetails.tripFilter.vehicleId?.let { vehicleId ->
+                                vehiclesData.firstOrNull { it.id == vehicleId }
+                            }
                         State.TripSelected(
                             stop,
                             currentNavEntryStopDetails.stopFilter,
                             currentNavEntryStopDetails.tripFilter,
-                            null,
+                            vehicle,
                             false,
                         )
                     } else {
@@ -450,8 +455,12 @@ public class MapViewModel(
                     }
                 }
             }
-        // If we're already in this state, there's no need to perform these actions again
-        if (newState == currentState) return currentState
+        // If we're already in this state, there's no need to perform these actions again,
+        // except if we're transitioning from trip to stop details, then the state will be the same
+        // but we still need to recenter
+        val isNavigatingTripToStop =
+            currentNavEntryStopDetails != null && previousNavEntry is SheetRoutes.TripDetails
+        if (newState == currentState && !isNavigatingTripToStop) return currentState
         handleViewportRestoration(newNavEntry, previousNavEntry)
         handleViewportCentering(newState, density)
 
