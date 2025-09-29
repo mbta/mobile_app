@@ -41,6 +41,7 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.extension.compose.rememberMapState
 import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
@@ -118,6 +119,7 @@ fun HomeMapView(
     val zoomLevel by
         cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
 
+    val showCurrentLocation = currentNavEntry?.showCurrentLocation ?: true
     val pulsingRingColor: Int = colorResource(R.color.key_inverse).toArgb()
     val accuracyRingColor: Int = colorResource(R.color.deemphasized).copy(alpha = 0.1F).toArgb()
     val accuracyRingBorderColor: Int = colorResource(R.color.halo).toArgb()
@@ -172,7 +174,7 @@ fun HomeMapView(
             ) {
                 val locationProvider = remember { PassthroughLocationProvider() }
 
-                MapEffect(true) { map ->
+                MapEffect { map ->
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
                             handleStopNavigation(it)
@@ -185,15 +187,27 @@ fun HomeMapView(
                     )
                     map.location.setLocationProvider(locationProvider)
                     map.location.updateSettings {
-                        locationPuck = createDefault2DPuck(withBearing = false)
-                        puckBearingEnabled = false
                         enabled = true
+                        puckBearingEnabled = false
                         pulsingEnabled = true
                         pulsingColor = pulsingRingColor
                         pulsingMaxRadius = 24F
                         showAccuracyRing = true
                         this.accuracyRingColor = accuracyRingColor
                         this.accuracyRingBorderColor = accuracyRingBorderColor
+                    }
+
+                    viewModel.layerManagerInitialized(MapLayerManager(map.mapboxMap, context))
+                }
+
+                MapEffect(showCurrentLocation) { map ->
+                    map.location.updateSettings {
+                        locationPuck =
+                            if (showCurrentLocation) {
+                                createDefault2DPuck(withBearing = false)
+                            } else {
+                                LocationPuck2D(opacity = 0f)
+                            }
                     }
                 }
 
@@ -228,10 +242,6 @@ fun HomeMapView(
                         map.gestures.removeOnScaleListener(listener)
                         map.gestures.removeOnShoveListener(listener)
                     }
-                }
-
-                MapEffect { map ->
-                    viewModel.layerManagerInitialized(MapLayerManager(map.mapboxMap, context))
                 }
 
                 if (
@@ -307,7 +317,11 @@ fun HomeMapView(
                 else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
 
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
-                if (!viewportProvider.isFollowingPuck && locationDataManager.hasPermission) {
+                if (
+                    showCurrentLocation &&
+                        !viewportProvider.isFollowingPuck &&
+                        locationDataManager.hasPermission
+                ) {
                     RecenterButton(
                         Icons.Default.LocationOn,
                         modifier = Modifier.padding(horizontal = 16.dp).testTag("recenterButton"),
@@ -341,7 +355,7 @@ fun HomeMapView(
                 }
             }
 
-            if (isTargeting) {
+            if (isTargeting && allowTargeting) {
                 Crosshairs(sheetPadding = sheetPadding)
             }
         }
