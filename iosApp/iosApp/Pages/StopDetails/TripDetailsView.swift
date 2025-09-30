@@ -123,7 +123,7 @@ struct TripDetailsView: View {
                let route = global.getRoute(routeId: tripData.trip.routeId) {
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first)
                 let vehicleStop = getParentFor(vehicle?.stopId)
-                tripDetails(tripFilter, tripData.trip, stops, terminalStop, vehicle, vehicleStop, route)
+                tripDetails(tripFilter, tripData.trip, tripData, stops, terminalStop, vehicle, vehicleStop, route)
                     .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
@@ -134,6 +134,7 @@ struct TripDetailsView: View {
     @ViewBuilder private func tripDetails(
         _ filter: TripDetailsPageFilter,
         _ trip: Trip,
+        _ tripData: TripData?,
         _ stops: TripDetailsStopList,
         _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
@@ -168,23 +169,31 @@ struct TripDetailsView: View {
             explainer = .init(type: explainerType, routeAccents: routeAccents)
         } } else { nil }
 
-        VStack(spacing: 0) {
-            tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
-                .padding(.horizontal, 6)
-            TripStops(
-                targetId: filter.stopId,
-                stops: stops,
-                stopSequence: filter.stopSequence?.intValue,
-                headerSpec: headerSpec,
-                now: now,
-                alertSummaries: alertSummaries,
-                onTapLink: onTapStop,
-                onOpenAlertDetails: onOpenAlertDetails,
-                route: route,
-                routeAccents: routeAccents,
-                global: global
-            )
-            .padding(.top, -56)
+        let hasCompletedTrip =
+            tripData != nil &&
+            (trip.id != tripData?.vehicle?.tripId ||
+                trip.directionId != tripData?.vehicle?.directionId)
+        if isTripDetailsPage, hasCompletedTrip {
+            TripCompleteCard(routeAccents: routeAccents).padding(.horizontal, 16)
+        } else {
+            VStack(spacing: 0) {
+                tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
+                    .padding(.horizontal, 6)
+                TripStops(
+                    targetId: filter.stopId,
+                    stops: stops,
+                    stopSequence: filter.stopSequence?.intValue,
+                    headerSpec: headerSpec,
+                    now: now,
+                    alertSummaries: alertSummaries,
+                    onTapLink: onTapStop,
+                    onOpenAlertDetails: onOpenAlertDetails,
+                    route: route,
+                    routeAccents: routeAccents,
+                    global: global
+                )
+                .padding(.top, -56)
+            }
         }
     }
 
@@ -220,6 +229,7 @@ struct TripDetailsView: View {
                 tripFilter: .init(tripId: "", vehicleId: nil, stopSequence: nil, selectionLock: false)
             ),
             placeholderInfo.trip,
+            nil,
             placeholderInfo.stops,
             nil,
             placeholderInfo.vehicle,

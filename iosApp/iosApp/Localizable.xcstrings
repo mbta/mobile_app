@@ -19118,50 +19118,49 @@
         }
       }
     },
-    "This %1$@ has reached its destination." : {
-      "comment" : "Body text of a card on trip details telling the user that the vehicle they were following has completed its trip. Interpolated value can be \"bus\", \"train\", or \"ferry\"",
-      "extractionState" : "manual",
+    "This %@ has reached its destination." : {
+      "comment" : "Body text of a card on trip details telling the user that the vehicle they were following has completed its trip. Interpolated value can be \"bus\", \"train\", or \"ferry\".",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Este %1$@ ha llegado a su destino."
+            "value" : "Este %@ ha llegado a su destino."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ce %1$@ a atteint sa destination."
+            "value" : "Ce %@ a atteint sa destination."
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ sa a rive nan destinasyon li."
+            "value" : "%@ sa a rive nan destinasyon li."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Este %1$@ chegou ao seu destino."
+            "value" : "Este %@ chegou ao seu destino."
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ này đã đến đích."
+            "value" : "%@ này đã đến đích."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "此 %1$@ 已到达目的地。"
+            "value" : "此 %@ 已到达目的地。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "此 %1$@ 已到達目的地。"
+            "value" : "此 %@ 已到達目的地。"
           }
         }
       }
@@ -20310,7 +20309,6 @@
     },
     "Trip complete" : {
       "comment" : "Header of a card on trip details telling the user that the vehicle they were following has completed its trip",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
