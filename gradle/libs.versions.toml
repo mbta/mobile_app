@@ -7,7 +7,7 @@ androidx-activityCompose = "1.10.1"
 # changelog: https://developer.android.com/jetpack/androidx/releases/lifecycle
 androidx-lifecycle = "2.9.4"
 # changelog: https://developer.android.com/jetpack/androidx/releases/navigation
-androidx-navigationCompose = "2.9.4"
+androidx-navigationCompose = "2.9.5"
 # changelog: https://developer.android.com/jetpack/androidx/releases/test
 androidx-test-monitor = "1.8.0"
 androidx-test-rules = "1.7.0"
