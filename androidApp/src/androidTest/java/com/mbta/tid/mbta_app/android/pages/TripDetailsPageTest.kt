@@ -10,10 +10,14 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
+import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
+import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -49,6 +53,13 @@ class TripDetailsPageTest {
                 stopIds = objects.getTrip(routePattern.representativeTripId).stopIds
             }
         val targetStop = objects.getStop("place-dwnxg")
+        val vehicle =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                stopId = targetStop.id
+                tripId = trip.id
+            }
+
         loadKoinMocks(objects) {
             this.trip =
                 MockTripRepository(
@@ -56,13 +67,15 @@ class TripDetailsPageTest {
                         TripSchedulesResponse.StopIds(checkNotNull(trip.stopIds)),
                     tripResponse = TripResponse(trip),
                 )
+            this.vehicle =
+                MockVehicleRepository(outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
         }
         composeTestRule.setContent {
             TripDetailsPage(
                 filter =
                     TripDetailsPageFilter(
                         tripId = trip.id,
-                        vehicleId = null,
+                        vehicleId = vehicle.id,
                         routeId = trip.routeId,
                         directionId = trip.directionId,
                         stopId = targetStop.id,
