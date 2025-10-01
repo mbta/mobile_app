@@ -5,7 +5,8 @@
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
     <string name="add_confirmation_button">Ajoute</string>
-    <string name="add_favorite">ajoute yon preferans</string>
+    <string name="add_favorite_label">ajoute yon preferans</string>
+    <string name="add_favorite_title">Ajoute Favorite</string>
     <string name="add_stops">Ajoute arè</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> Preferans yo</string>
@@ -105,6 +106,7 @@
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
+    <string name="edit_favorite_title">Edit Favorite</string>
     <string name="edit_favorites">Modifye Preferans yo</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> devan</string>
     <string name="electrical_work">Travay Elektrik</string>
@@ -259,6 +261,7 @@
     <string name="onboarding_map_display_header">Mete preferans ou pou montre kat la</string>
     <string name="onboarding_station_accessibility_body">Lè ou enskri, nou ka montre w ki estasyon ki pa aksesib oswa kote yo fèmen asansè yo.</string>
     <string name="onboarding_station_accessibility_header">Mete preferans ou pou enfòmasyon sou aksè estasyon yo</string>
+    <string name="only_direction_to">Sèlman %1$s pou</string>
     <string name="only_served_at_certain_times">Sèvis sèlman pandan sèten lè nan jounen an</string>
     <string name="open_for_more_arrivals">Ouvri pou plis arive</string>
     <string name="other_link_privacy_policy">Règleman sou Vi Prive</string>
@@ -292,6 +295,7 @@
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
     <string name="remove_favorite">retire yon preferans</string>
+    <string name="remove_from_favorites">Retire nan Favorites</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
@@ -301,6 +305,7 @@
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Ajoute arè nan Preferans yo</string>
     <string name="routes">Wout</string>
+    <string name="save">Sove</string>
     <string name="schedule_change">Chanjman Orè</string>
     <string name="schedule_change_sentence_case">Chanjman orè</string>
     <string name="scheduled_to_depart">Pwograme pou ale</string>
@@ -384,6 +389,7 @@
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
+    <string name="toggle_direction">baskile direksyon</string>
     <string name="track_change">Suiv Chanjman</string>
     <string name="track_change_sentence_case">Suiv chanjman</string>
     <string name="track_number">Suiv %1$s</string>

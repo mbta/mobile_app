@@ -51,7 +51,7 @@ fun RouteDetailsView(
                     if (it.isFavorited) {
                         stringResource(R.string.remove_favorite)
                     } else {
-                        stringResource(R.string.add_favorite)
+                        stringResource(R.string.add_favorite_label)
                     }
             }
         },

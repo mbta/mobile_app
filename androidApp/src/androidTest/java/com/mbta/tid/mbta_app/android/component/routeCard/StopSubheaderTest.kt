@@ -15,7 +15,7 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import org.junit.Rule
 import org.junit.Test
 
-class StopHeaderTest {
+class StopSubheaderTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
@@ -25,7 +25,7 @@ class StopHeaderTest {
         val stop = objects.stop {}
 
         composeTestRule.setContent {
-            StopHeader(
+            StopSubheader(
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
@@ -47,7 +47,7 @@ class StopHeaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopHeader(
+            StopSubheader(
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
@@ -70,7 +70,7 @@ class StopHeaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopHeader(
+            StopSubheader(
                 RouteCardData.RouteStopData(
                     LineOrRoute.Route(route),
                     stop,
@@ -96,7 +96,7 @@ class StopHeaderTest {
             settings = MockSettingsRepository(mapOf(Settings.StationAccessibility to true))
         }
         composeTestRule.setContent {
-            StopHeader(
+            StopSubheader(
                 RouteCardData.RouteStopData(
                     lineOrRoute,
                     stop,

@@ -49,12 +49,16 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import org.koin.compose.koinInject
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import org.koin.mp.KoinPlatformTools
 
 @Composable
 fun SaveFavoritesFlow(
@@ -293,6 +297,12 @@ fun FavoriteConfirmation(
 
 class Previews() {
     val objects = TestData
+
+    init {
+        if (KoinPlatformTools.defaultContext().getOrNull() == null) {
+            startKoin { modules(module { single { SettingsCache(MockSettingsRepository()) } }) }
+        }
+    }
 
     @Preview(name = "Favorites both directions available")
     @Composable
