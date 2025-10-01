@@ -261,12 +261,14 @@ public class MapViewModel(
                 }
                 is Event.MapStyleLoaded -> {
                     layerManager?.run {
-                        addLayers(
-                            allRailRouteShapes ?: return@run,
-                            stopLayerGeneratorState,
-                            globalData ?: return@run,
-                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
-                        )
+                        val state = stopLayerGeneratorState
+                        val globalResponse = globalData ?: return@run
+                        val colorPalette = if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                        routeShapes?.let { addLayers(it, state, globalResponse, colorPalette) }
+                            ?: allRailRouteShapes?.let {
+                                addLayers(it, state, globalResponse, colorPalette)
+                            }
+                            ?: return@run
                         resetPuckPosition()
                     }
                 }
