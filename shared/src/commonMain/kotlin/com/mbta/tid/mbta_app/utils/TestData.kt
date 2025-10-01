@@ -22,7 +22,15 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
  */
 public val TestData: ObjectCollectionBuilder by lazy {
     val objects = ObjectCollectionBuilder()
+    putLines(objects)
+    putRoutes(objects)
+    putRoutePatterns(objects)
+    putStops(objects)
+    putTrips(objects)
+    objects
+}
 
+private fun putLines(objects: ObjectCollectionBuilder) {
     objects.put(
         Line(
             id = "line-Green",
@@ -43,7 +51,9 @@ public val TestData: ObjectCollectionBuilder by lazy {
             textColor = "FFFFFF",
         )
     )
+}
 
+private fun putRoutes(objects: ObjectCollectionBuilder) {
     objects.put(
         Route(
             id = "Red",
@@ -334,7 +344,9 @@ public val TestData: ObjectCollectionBuilder by lazy {
             routePatternIds = null,
         )
     )
+}
 
+private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
     objects.put(
         RoutePattern(
             id = "Red-3-0",
@@ -797,7 +809,9 @@ public val TestData: ObjectCollectionBuilder by lazy {
             routeId = "87",
         )
     )
+}
 
+private fun putStops(objects: ObjectCollectionBuilder) {
     objects.put(
         Stop(
             id = "121",
@@ -9408,7 +9422,9 @@ public val TestData: ObjectCollectionBuilder by lazy {
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
         )
     )
+}
 
+private fun putTrips(objects: ObjectCollectionBuilder) {
     objects.put(
         Trip(
             id = "68166605",
@@ -10601,6 +10617,4 @@ public val TestData: ObjectCollectionBuilder by lazy {
                 ),
         )
     )
-
-    objects
 }
