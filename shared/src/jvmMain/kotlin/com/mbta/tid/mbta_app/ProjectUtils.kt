@@ -6,6 +6,8 @@ import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.utils.SystemPaths
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import kotlin.io.path.Path
 import kotlinx.coroutines.runBlocking
@@ -92,26 +94,30 @@ internal object ProjectUtils {
         val tripIds = patterns.map { (_, pattern) -> pattern.representativeTripId }.toSet()
         val trips = globalData.trips.filterKeys { tripIds.contains(it) }
 
-        val testData =
-            PropertySpec.builder("TestData", ObjectCollectionBuilder::class)
-                .delegate(
-                    CodeBlock.builder()
-                        .beginControlFlow("lazy")
-                        .addStatement("val objects = ObjectCollectionBuilder()")
-                        .addStatement("")
-                        .apply {
-                            for (line in lines.values.sortedBy { it.sortOrder }) {
-                                addStatement("objects.put(Line(")
-                                addStatement("id = %S,", line.id)
-                                addStatement("color = %S,", line.color)
-                                addStatement("longName = %S,", line.longName)
-                                addStatement("shortName = %S,", line.shortName)
-                                addStatement("sortOrder = %L,", line.sortOrder)
-                                addStatement("textColor = %S,", line.textColor)
-                                addStatement("))")
-                            }
-                        }
-                        .addStatement("")
+        val putLines =
+            FunSpec.builder("putLines")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .apply {
+                    for (line in lines.values.sortedBy { it.sortOrder }) {
+                        addStatement("objects.put(Line(")
+                        addStatement("id = %S,", line.id)
+                        addStatement("color = %S,", line.color)
+                        addStatement("longName = %S,", line.longName)
+                        addStatement("shortName = %S,", line.shortName)
+                        addStatement("sortOrder = %L,", line.sortOrder)
+                        addStatement("textColor = %S,", line.textColor)
+                        addStatement("))")
+                    }
+                }
+                .build()
+
+        val putRoutes =
+            FunSpec.builder("putRoutes")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (route in routes.values.sorted()) {
                                 addStatement("objects.put(Route(")
@@ -138,7 +144,16 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putRoutePatterns =
+            FunSpec.builder("putRoutePatterns")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (pattern in patterns.values.sorted()) {
                                 addStatement("objects.put(RoutePattern(")
@@ -158,7 +173,16 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putStops =
+            FunSpec.builder("putStops")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (stop in stops.values.sortedBy { it.id }) {
                                 addStatement("objects.put(Stop(")
@@ -184,7 +208,16 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putTrips =
+            FunSpec.builder("putTrips")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (trip in trips.values.sortedBy { it.id }) {
                                 addStatement("objects.put(Trip(")
@@ -198,7 +231,21 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val testData =
+            PropertySpec.builder("TestData", ObjectCollectionBuilder::class)
+                .delegate(
+                    CodeBlock.builder()
+                        .beginControlFlow("lazy")
+                        .addStatement("val objects = ObjectCollectionBuilder()")
+                        .addStatement("putLines(objects)")
+                        .addStatement("putRoutes(objects)")
+                        .addStatement("putRoutePatterns(objects)")
+                        .addStatement("putStops(objects)")
+                        .addStatement("putTrips(objects)")
                         .addStatement("objects")
                         .endControlFlow()
                         .build()
@@ -229,6 +276,7 @@ internal object ProjectUtils {
                     "WheelchairBoardingStatus",
                 )
                 .addProperty(testData)
+                .addFunctions(listOf(putLines, putRoutes, putRoutePatterns, putStops, putTrips))
                 .build()
 
         testDataFile.writeTo(Path("shared/src/commonMain/kotlin"))
