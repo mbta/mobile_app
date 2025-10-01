@@ -48,7 +48,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let stop15 = objects.getStop(id: "17863")
 
         let route67: Route = objects.getRoute(id: "67")
-        let stop67 = objects.getStop(id: "141")
+        let stop67 = objects.getStop(id: "14121")
 
         let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
 

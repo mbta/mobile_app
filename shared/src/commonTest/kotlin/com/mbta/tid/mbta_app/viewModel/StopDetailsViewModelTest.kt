@@ -276,7 +276,8 @@ class StopDetailsViewModelTest : KoinTest {
     @Test
     fun testAutoStopFilter() = runTest {
         val objects = TestData.clone()
-        val trip = objects.getTrip("68596178")
+        val pattern = objects.getRoutePattern("87-2-1")
+        val trip = objects.getTrip(pattern.representativeTripId)
         objects.prediction { this.trip = trip }
         objects.schedule { this.trip = trip }
 
@@ -313,7 +314,8 @@ class StopDetailsViewModelTest : KoinTest {
         val objects = TestData.clone()
 
         val stop = objects.getStop("2595")
-        val trip = objects.getTrip("68596178")
+        val pattern = objects.getRoutePattern("87-2-1")
+        val trip = objects.getTrip(pattern.representativeTripId)
         objects.prediction {
             departureTime = now.plus(5.minutes)
             stopId = stop.id
