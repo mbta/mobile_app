@@ -49,18 +49,8 @@ internal object ProjectUtils {
                 "Orange",
                 "Red",
             )
-        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Red")
-        val stops =
-            setOf(
-                "1432",
-                "14320",
-                "2595",
-                "26131",
-                "place-astao",
-                "place-aqucl",
-                "place-rugg",
-                "place-sull",
-            )
+        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Orange", "Red")
+        val stops = setOf("1432", "14320", "2595", "26131", "place-aqucl")
     }
 
     fun fetchTestData(): Unit = runBlocking {
