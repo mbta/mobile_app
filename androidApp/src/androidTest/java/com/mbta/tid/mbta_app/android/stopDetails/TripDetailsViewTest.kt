@@ -216,7 +216,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                tripData = tripData,
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = { onFollowCalled = true },
@@ -245,7 +245,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                tripData = tripData,
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},
@@ -274,7 +274,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                tripData = tripData,
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},
@@ -303,18 +303,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                tripData =
-                    TripData(
-                        tripFilter,
-                        trip,
-                        TripSchedulesResponse.Schedules(listOf(schedule)),
-                        PredictionsStreamDataResponse(objects),
-                        true,
-                        objects.vehicle {
-                            currentStatus = Vehicle.CurrentStatus.InTransitTo
-                            tripId = "other trip"
-                        },
-                    ),
+                vehicleOnOtherTrip = true,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},

@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.model.stopDetailsPage.vehicleOnOtherTrip
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -156,7 +157,7 @@ fun TripDetailsView(
         TripDetails(
             tripData.trip,
             headerSpec,
-            tripData,
+            tripData.vehicleOnOtherTrip,
             onHeaderTap,
             ::onTapStop,
             onFollowTrip,
@@ -189,7 +190,7 @@ fun TripDetailsView(
                 TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,
-                    tripData = null,
+                    false,
                     null,
                     onTapStop = {},
                     onFollowTrip = {},
@@ -211,7 +212,7 @@ fun TripDetailsView(
 fun TripDetails(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
-    tripData: TripData?,
+    vehicleOnOtherTrip: Boolean,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
     onFollowTrip: (() -> Unit),
@@ -238,11 +239,10 @@ fun TripDetails(
                 Text("vehicle id: ${tripFilter.vehicleId ?: "null"}")
             }
         }
-        val hasCompletedTrip =
-            tripData != null &&
-                (trip.id != tripData.vehicle?.tripId ||
-                    trip.directionId != tripData.vehicle?.directionId)
-        if (isTripDetailsPage && hasCompletedTrip) {
+
+        // You can't open track this trip before the trip has started,
+        // so if this is true, it means that the selected trip is complete
+        if (isTripDetailsPage && vehicleOnOtherTrip) {
             TripCompleteCard(routeAccents)
         } else {
             Column(Modifier.zIndex(1F)) {

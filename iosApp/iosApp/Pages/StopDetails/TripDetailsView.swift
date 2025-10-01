@@ -123,8 +123,17 @@ struct TripDetailsView: View {
                let route = global.getRoute(routeId: tripData.trip.routeId) {
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first)
                 let vehicleStop = getParentFor(vehicle?.stopId)
-                tripDetails(tripFilter, tripData.trip, tripData, stops, terminalStop, vehicle, vehicleStop, route)
-                    .onAppear { didLoadData?(self) }
+                tripDetails(
+                    tripFilter,
+                    tripData.trip,
+                    tripData.vehicleOnOtherTrip,
+                    stops,
+                    terminalStop,
+                    vehicle,
+                    vehicleStop,
+                    route
+                )
+                .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
             }
@@ -134,7 +143,7 @@ struct TripDetailsView: View {
     @ViewBuilder private func tripDetails(
         _ filter: TripDetailsPageFilter,
         _ trip: Trip,
-        _ tripData: TripData?,
+        _ vehicleOnOtherTrip: Bool,
         _ stops: TripDetailsStopList,
         _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
@@ -169,11 +178,9 @@ struct TripDetailsView: View {
             explainer = .init(type: explainerType, routeAccents: routeAccents)
         } } else { nil }
 
-        let hasCompletedTrip =
-            tripData != nil &&
-            (trip.id != tripData?.vehicle?.tripId ||
-                trip.directionId != tripData?.vehicle?.directionId)
-        if isTripDetailsPage, hasCompletedTrip {
+        // You can't open track this trip before the trip has started,
+        // so if this is true, it means that the selected trip is complete
+        if isTripDetailsPage, vehicleOnOtherTrip {
             TripCompleteCard(routeAccents: routeAccents).padding(.horizontal, 16)
         } else {
             VStack(spacing: 0) {
@@ -229,7 +236,7 @@ struct TripDetailsView: View {
                 tripFilter: .init(tripId: "", vehicleId: nil, stopSequence: nil, selectionLock: false)
             ),
             placeholderInfo.trip,
-            nil,
+            false,
             placeholderInfo.stops,
             nil,
             placeholderInfo.vehicle,
