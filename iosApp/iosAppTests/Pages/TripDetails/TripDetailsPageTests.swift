@@ -22,7 +22,8 @@ final class TripDetailsPageTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = TestData.clone()
         let stop = objects.getStop(id: "17863")
-        let trip = objects.getTrip(id: "68166816")
+        let pattern = objects.getRoutePattern(id: "15-1-0")
+        let trip = objects.getTrip(id: pattern.representativeTripId)
 
         let route = objects.getRoute(id: trip.routeId)
         let vehicle = objects.vehicle { vehicle in
