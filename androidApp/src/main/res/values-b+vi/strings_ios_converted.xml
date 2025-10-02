@@ -379,6 +379,8 @@
     <string name="trains">tàu</string>
     <string name="trip_cancelled">Chuyến đi đã bị hủy</string>
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
+    <string name="trip_complete">Chuyến đi hoàn tất</string>
+    <string name="trip_complete_body">%1$s này đã đến đích.</string>
     <string name="try_a_different_spelling_or_name">Thử cách viết hoặc tên khác.</string>
     <string name="try_your_search_again">Thử tìm kiếm lại.</string>
     <string name="unable_to_connect">Không thể kết nối</string>

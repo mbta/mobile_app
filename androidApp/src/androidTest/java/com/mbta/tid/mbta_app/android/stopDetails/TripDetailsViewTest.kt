@@ -45,7 +45,11 @@ class TripDetailsViewTest {
     val routePattern = objects.routePattern(route)
     val stop = objects.stop()
     val trip = objects.trip(routePattern)
-    val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+    val vehicle =
+        objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+        }
     val stopSequence = 10
 
     val downstreamStopSequence = 20
@@ -212,6 +216,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = { onFollowCalled = true },
@@ -240,6 +245,7 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},
@@ -268,6 +274,36 @@ class TripDetailsViewTest {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
+                onHeaderTap = null,
+                onOpenAlertDetails = {},
+                onFollowTrip = {},
+                onTapStop = {},
+                route = route,
+                tripFilter = tripFilter,
+                stopList = TripDetailsStopList(trip, emptyList()),
+                now = now,
+                isTripDetailsPage = true,
+                alertSummaries = emptyMap(),
+                globalResponse = GlobalResponse(objects),
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
+    }
+
+    @Test
+    fun testDisplaysTripCompleteCard() {
+        loadKoinMocks(objects) {
+            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
+        }
+
+        composeTestRule.setContent {
+            TripDetails(
+                trip = trip,
+                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = true,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},

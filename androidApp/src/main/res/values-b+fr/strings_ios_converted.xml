@@ -387,6 +387,8 @@
     <string name="trains">trains</string>
     <string name="trip_cancelled">Trajet annulé</string>
     <string name="trip_cancelled_details">Ce voyage a été annulé. Nous sommes désolés pour la gêne occasionnée.</string>
+    <string name="trip_complete">Voyage terminé</string>
+    <string name="trip_complete_body">Ce %1$s a atteint sa destination.</string>
     <string name="try_a_different_spelling_or_name">Essayez avec une autre orthographe ou un autre nom.</string>
     <string name="try_your_search_again">Réessayez votre recherche.</string>
     <string name="unable_to_connect">Impossible de se connecter</string>

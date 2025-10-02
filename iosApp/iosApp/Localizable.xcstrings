@@ -19118,6 +19118,53 @@
         }
       }
     },
+    "This %@ has reached its destination." : {
+      "comment" : "Body text of a card on trip details telling the user that the vehicle they were following has completed its trip. Interpolated value can be \"bus\", \"train\", or \"ferry\".",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este %@ ha llegado a su destino."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ce %@ a atteint sa destination."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ sa a rive nan destinasyon li."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este %@ chegou ao seu destino."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ này đã đến đích."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此 %@ 已到达目的地。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此 %@ 已到達目的地。"
+          }
+        }
+      }
+    },
     "This stop has %ld elevators closed" : {
       "comment" : "Describe an elevator outage at the stop in the list of all stops on the trip",
       "localizations" : {
@@ -20256,6 +20303,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "行程已取消"
+          }
+        }
+      }
+    },
+    "Trip complete" : {
+      "comment" : "Header of a card on trip details telling the user that the vehicle they were following has completed its trip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viaje completo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Voyage terminé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vwayaj konplè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viagem concluída"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi hoàn tất"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程完成"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程完成"
           }
         }
       }
