@@ -5,7 +5,8 @@
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
     <string name="add_confirmation_button">Ajouter</string>
-    <string name="add_favorite">ajouter aux favoris</string>
+    <string name="add_favorite_label">ajouter aux favoris</string>
+    <string name="add_favorite_title">Ajouter aux favoris</string>
     <string name="add_stops">Ajouter des arrêts</string>
     <string name="add_to_favorites_title">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajouter &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b> aux Favoris</string>
@@ -102,6 +103,7 @@
     <string name="drawbridge_being_raised_lowercase">le pont est relevé</string>
     <string name="eastbound">En direction de l’est</string>
     <string name="edit">Modifier</string>
+    <string name="edit_favorite_title">Modifier les favoris</string>
     <string name="edit_favorites">Modifier les Favoris</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à venir</string>
     <string name="electrical_work">Travaux électriques</string>
@@ -250,6 +252,7 @@
     <string name="onboarding_map_display_header">Définir les préférences d’affichage de la carte</string>
     <string name="onboarding_station_accessibility_body">En vous inscrivant, nous pouvons vous montrer quelles stations sont inaccessibles ou dont les ascenseurs sont fermés.</string>
     <string name="onboarding_station_accessibility_header">Définir les préférences d’informations sur l’accessibilité de la station</string>
+    <string name="only_direction_to">Seulement %1$s à</string>
     <string name="only_served_at_certain_times">Desservi uniquement à certaines heures de la journée</string>
     <string name="open_for_more_arrivals">Ouvert pour plus d’arrivées</string>
     <string name="other_link_privacy_policy">Politique de confidentialité</string>
@@ -283,6 +286,7 @@
     <string name="refresh_predictions">Actualiser les prévisions</string>
     <string name="reload_data">Recharger les données</string>
     <string name="remove_favorite">supprimer des favoris</string>
+    <string name="remove_from_favorites">Supprimer des favoris</string>
     <string name="resources_link_fare_info">Informations sur les tarifs</string>
     <string name="resources_link_mticket">Titres pour train de banlieue et ferry</string>
     <string name="resources_link_mticket_note">Application mTicket</string>
@@ -292,6 +296,7 @@
     <string name="route_mode_label">%2$s %1$s</string>
     <string name="route_picker_header_favorites">Ajouter les arrêts favoris</string>
     <string name="routes">Trajets</string>
+    <string name="save">Sauvegarder</string>
     <string name="schedule_change">Changement d’horaire</string>
     <string name="schedule_change_sentence_case">Changement d’horaire</string>
     <string name="scheduled_to_depart">Prévu au départ</string>
@@ -372,6 +377,7 @@
     <string name="tie_replacement">Remplacement de traverses</string>
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
     <string name="toast_tip_prefix">Astuce : %1$s</string>
+    <string name="toggle_direction">basculer la direction</string>
     <string name="track_change">Changement de voie</string>
     <string name="track_change_sentence_case">Changement de voie</string>
     <string name="track_number">Voie %1$s</string>
