@@ -336,7 +336,7 @@ fun MapAndSheetPage(
         navController.navigate(SheetRoutes.TripDetails(filter))
     }
 
-    fun handleVehicleTap(vehicle: Vehicle, hasTrackThisTrip: Boolean) {
+    fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
         val routeCardData = routeCardDataState.data
         val (stopId, stopFilter, tripFilter) =
@@ -355,35 +355,27 @@ fun MapAndSheetPage(
                     )
                 else -> null
             } ?: return
-        if (stopFilter == null || (tripFilter?.tripId == tripId && !hasTrackThisTrip)) return
-        val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
+        if (stopFilter == null) return
 
+        val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
         val upcoming =
             routeCard
                 ?.stopData
                 ?.flatMap { it.data }
                 ?.flatMap { it.upcomingTrips }
                 ?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
-        val stopSequence = upcoming?.stopSequence
         val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id
 
         if (routeId != null) analytics.tappedVehicle(routeId)
 
-        val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence, true)
-        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
-        if (hasTrackThisTrip) {
-            handleTripDetailsNavigation(
-                tripId = tripId,
-                vehicleId = vehicle.id,
-                routeId = vehicle.routeId ?: stopFilter.routeId,
-                directionId = stopFilter.directionId,
-                stopId = stopId,
-                stopSequence = tripFilter?.stopSequence,
-            )
-        } else {
-            updateTripFilter(stopId, newTripFilter)
-            mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle, false)
-        }
+        handleTripDetailsNavigation(
+            tripId = tripId,
+            vehicleId = vehicle.id,
+            routeId = vehicle.routeId ?: stopFilter.routeId,
+            directionId = stopFilter.directionId,
+            stopId = stopId,
+            stopSequence = tripFilter?.stopSequence,
+        )
     }
 
     val popUp: NavOptionsBuilder.() -> Unit = {
@@ -849,7 +841,6 @@ fun MapAndSheetPage(
                                 )
                             )
                         }
-                    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
                     HomeMapView(
                         sheetPadding = mapPadding,
                         lastLoadedLocation = nearbyTransit.lastLoadedLocation,
@@ -858,7 +849,7 @@ fun MapAndSheetPage(
                         viewportProvider = nearbyTransit.viewportProvider,
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
-                        handleVehicleTap = { handleVehicleTap(it, hasTrackThisTrip) },
+                        handleVehicleTap = { handleVehicleTap(it) },
                         vehiclesData = vehiclesData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,

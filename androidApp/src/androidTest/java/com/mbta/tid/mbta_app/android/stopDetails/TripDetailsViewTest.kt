@@ -21,8 +21,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockTripDetailsViewModel
@@ -205,11 +203,7 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testFollowButtonWhenTrackThisTrip() {
-        loadKoinMocks(objects) {
-            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-        }
-
+    fun testFollowButton() {
         var onFollowCalled = false
 
         composeTestRule.setContent {
@@ -238,38 +232,7 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testNoFollowButtonByDefault() {
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to false)) }
-
-        composeTestRule.setContent {
-            TripDetails(
-                trip = trip,
-                headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
-                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
-                onHeaderTap = null,
-                onOpenAlertDetails = {},
-                onFollowTrip = {},
-                onTapStop = {},
-                route = route,
-                tripFilter = tripFilter,
-                stopList = TripDetailsStopList(trip, emptyList()),
-                now = now,
-                isTripDetailsPage = false,
-                alertSummaries = emptyMap(),
-                globalResponse = GlobalResponse(objects),
-            )
-        }
-
-        composeTestRule.waitForIdle()
-        composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
-    }
-
-    @Test
     fun testNoFollowButtonWhenOnTripDetails() {
-        loadKoinMocks(objects) {
-            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-        }
-
         composeTestRule.setContent {
             TripDetails(
                 trip = trip,
@@ -295,10 +258,6 @@ class TripDetailsViewTest {
 
     @Test
     fun testDisplaysTripCompleteCard() {
-        loadKoinMocks(objects) {
-            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-        }
-
         composeTestRule.setContent {
             TripDetails(
                 trip = trip,

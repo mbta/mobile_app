@@ -436,7 +436,7 @@ final class TripDetailsViewTests: XCTestCase {
                 XCTFail("Nav was not updated to trip details")
             }
         }
-        ViewHosting.host(view: sut.withFixedSettings([.trackThisTrip: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -517,7 +517,7 @@ final class TripDetailsViewTests: XCTestCase {
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertThrowsError(try view.find(TripHeaderCard.self).find(button: "Follow"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([.trackThisTrip: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 
@@ -598,7 +598,7 @@ final class TripDetailsViewTests: XCTestCase {
         let exp = sut.on(\.didLoadData) { view in
             XCTAssertNotNil(try view.find(text: "Trip complete"))
         }
-        ViewHosting.host(view: sut.withFixedSettings([.trackThisTrip: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 1)
     }
 }

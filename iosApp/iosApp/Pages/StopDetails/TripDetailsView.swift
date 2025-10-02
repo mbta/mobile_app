@@ -222,7 +222,7 @@ struct TripDetailsView: View {
                 routeAccents: routeAccents,
                 onTap: onTap,
                 now: now,
-                onFollowTrip: settingsCache.get(.trackThisTrip) && !isTripDetailsPage ? onFollowTrip : nil,
+                onFollowTrip: !isTripDetailsPage ? onFollowTrip : nil,
             )
         }
     }

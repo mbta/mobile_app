@@ -42,7 +42,6 @@ internal class SettingsRepositoryTest : KoinTest {
                 Settings.Notifications to false,
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
-                Settings.TrackThisTrip to false,
             ),
             repo.getSettings(),
         )
