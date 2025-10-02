@@ -4,6 +4,8 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import kotlin.experimental.ExperimentalObjCRefinement
+import kotlin.native.ShouldRefineInSwift
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +25,8 @@ public class FavoritesUsecases(
         return storedFavorites.routeStopDirection
     }
 
+    @OptIn(ExperimentalObjCRefinement::class)
+    @ShouldRefineInSwift
     public suspend fun updateRouteStopDirections(
         newValues: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,

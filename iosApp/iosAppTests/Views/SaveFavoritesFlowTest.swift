@@ -35,18 +35,18 @@ final class SaveFavoritesFlowTest: XCTestCase {
     var directions: [Direction] { [direction0, direction1] }
 
     func testWithoutTappingAnyButtonSavesProposedChanges() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         var onCloseCalled = false
 
         let sut = FavoriteConfirmationDialogActions(lineOrRoute: line,
                                                     stop: stop,
-                                                    favoritesToSave: [direction0: true],
+                                                    favoritesToSave: [direction0: .init()],
                                                     updateFavorites: { updateFavoritesCalledFor = $0 },
                                                     onClose: { onCloseCalled = true })
 
         try sut.inspect().find(button: "Add").tap()
 
-        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: line.id, stop: stop.id, direction: 0): true])
+        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: line.id, stop: stop.id, direction: 0): .init()])
         XCTAssertTrue(onCloseCalled)
     }
 
@@ -56,7 +56,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
 
         let sut = FavoriteConfirmationDialogActions(lineOrRoute: line,
                                                     stop: stop,
-                                                    favoritesToSave: [direction0: true],
+                                                    favoritesToSave: [direction0: .init()],
                                                     updateFavorites: { _ in updateFavoritesCalled = true },
                                                     onClose: { onCloseCalled = true })
 
@@ -67,7 +67,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     func testAddingOtherDirectionUpdates() throws {
-        var updateLocalFavoriteCalledFor: [Direction: Bool] = [:]
+        var updateLocalFavoriteCalledFor: [Direction: FavoriteSettings?] = [:]
         var onCloseCalled = false
 
         let sut = FavoriteConfirmationDialogContents(lineOrRoute: line,
@@ -75,17 +75,17 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                                      directions: directions,
                                                      selectedDirection: 0,
                                                      context: SaveFavoritesContext.favorites,
-                                                     favoritesToSave: [direction0: true, direction1: false],
+                                                     favoritesToSave: [direction0: .init(), direction1: nil],
                                                      updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] })
 
         print(Inspector.print(sut))
         try sut.inspect().findAll(ViewType.Button.self)[1].tap()
 
-        XCTAssertEqual(updateLocalFavoriteCalledFor, [direction1: true])
+        XCTAssertEqual(updateLocalFavoriteCalledFor, [direction1: .init()])
     }
 
     func testRemovingOtherDirectionUpdates() throws {
-        var updateLocalFavoriteCalledFor: [Direction: Bool] = [:]
+        var updateLocalFavoriteCalledFor: [Direction: FavoriteSettings?] = [:]
         var onCloseCalled = false
 
         let sut = FavoriteConfirmationDialogContents(lineOrRoute: line,
@@ -93,13 +93,13 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                                      directions: directions,
                                                      selectedDirection: 0,
                                                      context: SaveFavoritesContext.favorites,
-                                                     favoritesToSave: [direction0: true, direction1: true],
+                                                     favoritesToSave: [direction0: .init(), direction1: .init()],
                                                      updateLocalFavorite: { updateLocalFavoriteCalledFor = [$0: $1] })
 
         print(Inspector.print(sut))
         try sut.inspect().findAll(ViewType.Button.self)[1].tap()
 
-        XCTAssertEqual(updateLocalFavoriteCalledFor, [direction1: false])
+        XCTAssertEqual(updateLocalFavoriteCalledFor, [direction1: nil])
     }
 
     func testRemovingProposedFavoriteDisablesAddButton() throws {
@@ -108,7 +108,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
 
         let sut = FavoriteConfirmationDialogActions(lineOrRoute: line,
                                                     stop: stop,
-                                                    favoritesToSave: [direction0: false, direction1: false],
+                                                    favoritesToSave: [direction0: nil, direction1: nil],
                                                     updateFavorites: { _ in updateFavoritesCalled = true },
                                                     onClose: { onCloseCalled = true })
 
@@ -117,7 +117,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
 
     @MainActor
     func testFavoritingOnlyDirectionPresentsDialogWhenNonBus() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
 
         let sut = SaveFavoritesFlow(lineOrRoute: line,
                                     stop: stop,
@@ -139,7 +139,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     func testFavoritingOnlyDirectionSkipsDialogWhenBus() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onCloseExp = XCTestExpectation(description: "On close called")
 
         let route = ObjectCollectionBuilder().route { route in
@@ -159,11 +159,11 @@ final class SaveFavoritesFlowTest: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [onCloseExp], timeout: 2)
-        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): true])
+        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
     }
 
     func testUnfavoritingOnlyDirectionUpdatesFavoritesWithoutDialog() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onCloseExp = XCTestExpectation(description: "On close called")
 
         let route = ObjectCollectionBuilder().route { route in
@@ -183,13 +183,11 @@ final class SaveFavoritesFlowTest: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [onCloseExp], timeout: 2)
-        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): false])
+        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): nil])
     }
 
     @MainActor
     func testFavoritingWhenOnlyDirectionIsOppositePresentsDialog() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
-
         let sut = SaveFavoritesFlow(lineOrRoute: line,
                                     stop: stop,
                                     directions: [direction0],
@@ -197,7 +195,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
                                     context: SaveFavoritesContext.favorites,
                                     global: .init(objects: .init()),
                                     isFavorite: { _ in false },
-                                    updateFavorites: { updateFavoritesCalledFor = $0 },
+                                    updateFavorites: { _ in },
                                     onClose: {})
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -210,35 +208,31 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     func testFavoritingWhenOnlyDirectionHasDisclaimer() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
-
         let sut = FavoriteConfirmationDialogContents(lineOrRoute: line,
                                                      stop: stop,
                                                      directions: [direction0],
                                                      selectedDirection: 1,
                                                      context: .favorites,
-                                                     favoritesToSave: [direction0: false],
+                                                     favoritesToSave: [direction0: nil],
                                                      updateLocalFavorite: { _, _ in })
 
         try XCTAssertNotNil(sut.inspect().find(text: "Westbound service only"))
     }
 
     func testFavoritingWhenDropOffOnlyHasDisclaimer() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
-
         let sut = FavoriteConfirmationDialogContents(lineOrRoute: line,
                                                      stop: stop,
                                                      directions: [],
                                                      selectedDirection: 0,
                                                      context: .favorites,
-                                                     favoritesToSave: [direction0: false],
+                                                     favoritesToSave: [direction0: nil],
                                                      updateLocalFavorite: { _, _ in })
 
         try XCTAssertNotNil(sut.inspect().find(text: "This stop is drop-off only"))
     }
 
     func testFavoritingDisplaysToast() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: Bool] = [:]
+        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onToastExp = XCTestExpectation(description: "Toast displayed with expected text")
 
         let route = ObjectCollectionBuilder().route { route in
@@ -267,6 +261,6 @@ final class SaveFavoritesFlowTest: XCTestCase {
         ViewHosting.host(view: sut)
 
         wait(for: [onToastExp], timeout: 2)
-        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): true])
+        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
     }
 }
