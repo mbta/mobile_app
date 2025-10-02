@@ -44,7 +44,6 @@ public enum class Settings(
     Notifications(booleanPreferencesKey("notifications")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
-    TrackThisTrip(booleanPreferencesKey("track_this_trip")),
 }
 
 public class MockSettingsRepository

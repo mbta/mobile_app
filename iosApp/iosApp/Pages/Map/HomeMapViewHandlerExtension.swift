@@ -102,7 +102,6 @@ extension HomeMapView {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        let trackThisTrip = settingsCache.get(.trackThisTrip)
         guard let tripId = vehicle.tripId else { return }
         let currentNavEntry = nearbyVM.navigationStack.lastSafe()
         let (stopId, stopFilter, tripFilter): (String?, StopDetailsFilter?,
@@ -115,7 +114,7 @@ extension HomeMapView {
         case let .tripDetails(filter: filter): (filter.stopId, filter.stopFilter, filter.tripDetailsFilter)
         default: (nil, nil, nil)
         }
-        guard let stopId, let stopFilter, (tripFilter?.tripId != tripId || trackThisTrip) else { return }
+        guard let stopId, let stopFilter else { return }
         let routeCard = routeCardDataState?.data?
             .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
@@ -134,24 +133,13 @@ extension HomeMapView {
             stopSequence: stopSequence,
             selectionLock: true
         )
-        if settingsCache.get(.trackThisTrip) {
-            nearbyVM.pushNavEntry(.tripDetails(filter: .init(
-                tripId: tripId,
-                vehicleId: vehicle.id,
-                routeId: routeId,
-                directionId: stopFilter.directionId,
-                stopId: stopId,
-                stopSequence: stopSequence
-            )))
-        } else {
-            nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
-            mapVM.selectedTrip(
-                stopFilter: stopFilter,
-                stop: globalData?.getStop(stopId: stopId),
-                tripFilter: newTripFilter,
-                vehicle: vehicle,
-                follow: false
-            )
-        }
+        nearbyVM.pushNavEntry(.tripDetails(filter: .init(
+            tripId: tripId,
+            vehicleId: vehicle.id,
+            routeId: routeId,
+            directionId: stopFilter.directionId,
+            stopId: stopId,
+            stopSequence: stopSequence
+        )))
     }
 }

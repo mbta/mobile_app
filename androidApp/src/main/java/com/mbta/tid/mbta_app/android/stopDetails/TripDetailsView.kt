@@ -19,7 +19,6 @@ import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.tripDetails.TripCompleteCard
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -37,7 +36,6 @@ import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.model.stopDetailsPage.vehicleOnOtherTrip
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
@@ -227,7 +225,6 @@ fun TripDetails(
     modifier: Modifier = Modifier,
 ) {
     val routeAccents = TripRouteAccents(route)
-    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
 
     Column(modifier) {
         DebugView {
@@ -254,10 +251,7 @@ fun TripDetails(
                     routeAccents,
                     now,
                     onTap = onHeaderTap,
-                    onFollowTrip =
-                        if (hasTrackThisTrip && !isTripDetailsPage) {
-                            onFollowTrip
-                        } else null,
+                    onFollowTrip = if (!isTripDetailsPage) onFollowTrip else null,
                 )
             }
             Column(Modifier.offset(y = (-16).dp)) {

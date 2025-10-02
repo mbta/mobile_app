@@ -98,10 +98,6 @@ class MoreViewModel(private val context: Context, private val licensesCallback: 
                             settings = Settings.SearchRouteResults,
                         ),
                         MoreItem.Toggle(label = "Notifications", settings = Settings.Notifications),
-                        MoreItem.Toggle(
-                            label = "Track this Trip",
-                            settings = Settings.TrackThisTrip,
-                        ),
                     ),
             ),
             MoreSection(
