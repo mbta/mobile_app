@@ -28,7 +28,6 @@ struct ContentView: View {
 
     @StateObject var nearbyVM = NearbyViewModel()
     @State var mapVM = ViewModelDI().map
-    @StateObject var settingsVM = SettingsViewModel()
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
@@ -520,7 +519,7 @@ struct ContentView: View {
                         .tag(SelectedTab.nearby)
                         .tabItem { TabLabel(tab: SelectedTab.nearby) }
 
-                    MorePage(viewModel: settingsVM)
+                    MorePage()
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .toolbarBackground(.visible, for: .tabBar)
                         .tag(SelectedTab.more)
