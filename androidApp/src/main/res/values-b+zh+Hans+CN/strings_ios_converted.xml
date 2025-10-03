@@ -5,7 +5,8 @@
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
     <string name="add_confirmation_button">添加</string>
-    <string name="add_favorite">添加收藏</string>
+    <string name="add_favorite_label">添加收藏</string>
+    <string name="add_favorite_title">添加收藏</string>
     <string name="add_stops">添加站点</string>
     <string name="add_to_favorites_title">在&lt;b>%1$s&lt;/b>添加&lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">将&lt;b>%2$s&lt;/b>的&lt;b>%1$s&lt;/b>添加到收藏夹</string>
@@ -100,6 +101,7 @@
     <string name="drawbridge_being_raised_lowercase">吊桥升起</string>
     <string name="eastbound">东行</string>
     <string name="edit">编辑</string>
+    <string name="edit_favorite_title">编辑收藏夹</string>
     <string name="edit_favorites">编辑收藏夹</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b>提前到站</string>
     <string name="electrical_work">电力作业</string>
@@ -244,6 +246,7 @@
     <string name="onboarding_map_display_header">设置地图显示首选项</string>
     <string name="onboarding_station_accessibility_body">通过选择加入，我们可以向您显示哪些车站不适合轮椅通行或电梯关闭。</string>
     <string name="onboarding_station_accessibility_header">设置车站无障碍信息首选项</string>
+    <string name="only_direction_to">仅限 %1$s 至</string>
     <string name="only_served_at_certain_times">仅在每日特定时段提供服务</string>
     <string name="open_for_more_arrivals">开启获得更多到站信息</string>
     <string name="other_link_privacy_policy">隐私政策</string>
@@ -277,6 +280,7 @@
     <string name="refresh_predictions">刷新预测</string>
     <string name="reload_data">重新加载数据</string>
     <string name="remove_favorite">移除收藏</string>
+    <string name="remove_from_favorites">从收藏夹中移除</string>
     <string name="resources_link_fare_info">票价信息</string>
     <string name="resources_link_mticket">通勤列车和渡轮票</string>
     <string name="resources_link_mticket_note">mTicket应用程序</string>
@@ -286,6 +290,7 @@
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">添加最喜欢的站点</string>
     <string name="routes">线路</string>
+    <string name="save">节省</string>
     <string name="schedule_change">时刻表变更</string>
     <string name="schedule_change_sentence_case">时刻表变更</string>
     <string name="scheduled_to_depart">计划出发</string>
@@ -364,6 +369,7 @@
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
+    <string name="toggle_direction">切换方向</string>
     <string name="track_change">轨道变更</string>
     <string name="track_change_sentence_case">轨道变更</string>
     <string name="track_number">追踪%1$s</string>

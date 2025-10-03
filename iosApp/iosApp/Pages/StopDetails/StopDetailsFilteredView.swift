@@ -145,7 +145,7 @@ struct StopDetailsFilteredView: View {
                     updateFavorites: { updatedValues in
                         Task {
                             try? await favoritesUsecases.updateRouteStopDirections(
-                                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
+                                newValues: updatedValues,
                                 context: .stopDetails, defaultDirection: routeStopDirection.direction
                             )
                             onUpdateFavorites()

@@ -32,12 +32,19 @@ fun directionNameFormatted(direction: Direction) =
     localizedDirectionNames[direction.name] ?: R.string.heading
 
 @Composable
-fun DirectionTo(direction: Direction, textColor: Color) {
+fun DirectionTo(
+    direction: Direction,
+    textColor: Color,
+    onlyServingOppositeDirection: Boolean = false,
+) {
     Text(
-        stringResource(R.string.directionTo, stringResource(directionNameFormatted(direction))),
+        stringResource(
+            if (onlyServingOppositeDirection) R.string.only_direction_to else R.string.directionTo,
+            stringResource(directionNameFormatted(direction)),
+        ),
         color = textColor,
         modifier = Modifier.placeholderIfLoading(),
-        style = Typography.footnote,
+        style = if (onlyServingOppositeDirection) Typography.footnoteItalic else Typography.footnote,
     )
 }
 
@@ -71,13 +78,14 @@ fun DirectionLabel(
     textColor: Color = LocalContentColor.current,
     showDestination: Boolean = true,
     pillDecoration: PillDecoration? = null,
+    onlyServingOppositeDirection: Boolean = false,
 ) {
     val destination = direction.destination
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         if (!showDestination) {
-            DirectionTo(direction, textColor)
+            DirectionTo(direction, textColor, onlyServingOppositeDirection)
         } else if (destination != null) {
-            DirectionTo(direction, textColor)
+            DirectionTo(direction, textColor, onlyServingOppositeDirection)
             DestinationLabel(destination, textColor, pillDecoration)
         } else {
             DestinationLabel(direction, textColor, pillDecoration)

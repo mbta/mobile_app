@@ -58,7 +58,7 @@ fun StarButton(starred: Boolean?, color: Color, action: () -> Unit) {
         if (starred == true) {
             stringResource(R.string.remove_favorite)
         } else {
-            stringResource(R.string.add_favorite)
+            stringResource(R.string.add_favorite_label)
         }
     IconToggleButton(
         checked = starred == true,
