@@ -4,6 +4,7 @@
     <string name="access_issue_sentence_case">Access issue</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
+    <string name="add_another_time_period">Add another time period</string>
     <string name="add_confirmation_button">Add</string>
     <string name="add_favorite_label">add favorite</string>
     <string name="add_favorite_title">Add Favorite</string>
@@ -166,7 +167,9 @@
     <string name="follow">Follow</string>
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="freight_train_interference_lowercase">freight train interference</string>
+    <string name="from">From</string>
     <string name="full_description">Full Description</string>
+    <string name="get_disruption_notifications">Get disruption notifications</string>
     <string name="got_it">Got it</string>
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
@@ -374,6 +377,7 @@
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
+    <string name="to">To</string>
     <string name="toast_tip_prefix">Tip: %1$s</string>
     <string name="toggle_direction">toggle direction</string>
     <string name="track_change">Track Change</string>

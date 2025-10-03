@@ -4,6 +4,7 @@
     <string name="access_issue_sentence_case">Vấn đề về tiếp cận</string>
     <string name="accident">Tai nạn</string>
     <string name="accident_lowercase">tai nạn</string>
+    <string name="add_another_time_period">Thêm một khoảng thời gian khác</string>
     <string name="add_confirmation_button">Thêm</string>
     <string name="add_favorite_label">thêm mục yêu thích</string>
     <string name="add_favorite_title">Thêm mục yêu thích</string>
@@ -162,7 +163,9 @@
     <string name="follow">Theo</string>
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
     <string name="freight_train_interference_lowercase">ảnh hưởng của tàu hàng</string>
+    <string name="from">Từ</string>
     <string name="full_description">Mô tả đầy đủ</string>
+    <string name="get_disruption_notifications">Nhận thông báo gián đoạn</string>
     <string name="got_it">Đã hiểu</string>
     <string name="hazmat_condition">Tình trạng có vật liệu nguy hiểm</string>
     <string name="hazmat_condition_lowercase">tình trạng nguy hiểm</string>
@@ -368,6 +371,7 @@
     <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
+    <string name="to">ĐẾN</string>
     <string name="toast_tip_prefix">Mẹo: %1$s</string>
     <string name="toggle_direction">chuyển hướng</string>
     <string name="track_change">Thay đổi đường ray</string>

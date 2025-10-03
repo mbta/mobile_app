@@ -4,6 +4,7 @@
     <string name="access_issue_sentence_case">Problema de accesibilidad</string>
     <string name="accident">Accidente</string>
     <string name="accident_lowercase">accidente</string>
+    <string name="add_another_time_period">Añadir otro período de tiempo</string>
     <string name="add_confirmation_button">Agregar</string>
     <string name="add_favorite_label">agregar favorito</string>
     <string name="add_favorite_title">Añadir favorito</string>
@@ -168,7 +169,9 @@
     <string name="follow">Seguir</string>
     <string name="freight_train_interference">Interferencia con trenes de carga</string>
     <string name="freight_train_interference_lowercase">interferencia del tren de mercancías</string>
+    <string name="from">De</string>
     <string name="full_description">Descripción completa</string>
+    <string name="get_disruption_notifications">Recibir notificaciones de interrupciones</string>
     <string name="got_it">Entendido</string>
     <string name="hazmat_condition">Condición de materiales peligrosos</string>
     <string name="hazmat_condition_lowercase">condición de materiales peligrosos</string>
@@ -376,6 +379,7 @@
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
+    <string name="to">A</string>
     <string name="toast_tip_prefix">Propina: %1$s</string>
     <string name="toggle_direction">alternar dirección</string>
     <string name="track_change">Cambio de pista</string>
