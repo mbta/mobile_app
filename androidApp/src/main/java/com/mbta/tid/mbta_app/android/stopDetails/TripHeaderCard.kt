@@ -484,7 +484,12 @@ private fun FollowButton(routeAccents: TripRouteAccents, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 LiveIcon(size = 12.dp)
-                Text(stringResource(R.string.follow), style = Typography.callout)
+                Text(
+                    stringResource(R.string.follow),
+                    softWrap = false,
+                    maxLines = 1,
+                    style = Typography.callout,
+                )
             }
         }
     }
