@@ -30,7 +30,6 @@ val SharedString.value: String
             SharedString.SupportHours -> stringResource(R.string.more_section_support_note_hours)
             SharedString.SupportSection -> stringResource(R.string.more_section_support)
             SharedString.TermsOfUse -> stringResource(R.string.other_link_tos)
-            SharedString.TrackThisTrip -> "Track this Trip" // Temp feature flag
             SharedString.TripPlanner -> stringResource(R.string.resources_link_trip_planner)
             SharedString.ViewSourceOnGithub -> stringResource(R.string.other_link_source_code)
         }

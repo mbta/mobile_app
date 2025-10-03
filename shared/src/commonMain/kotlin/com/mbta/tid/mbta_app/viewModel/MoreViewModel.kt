@@ -89,10 +89,6 @@ public class MoreViewModel {
                             label = SharedString.Notifications,
                             settings = Settings.Notifications,
                         ),
-                        MoreItem.Toggle(
-                            label = SharedString.TrackThisTrip,
-                            settings = Settings.TrackThisTrip,
-                        ),
                     ),
             ),
             MoreSection(

@@ -99,8 +99,6 @@ extension SharedString {
                 "Terms of Use",
                 comment: "Label for a More page link to the MBTA.com terms of use"
             )
-        case .trackThisTrip:
-            "Track this Trip" // Temp feature flag
         case .tripPlanner:
             NSLocalizedString(
                 "Trip Planner",

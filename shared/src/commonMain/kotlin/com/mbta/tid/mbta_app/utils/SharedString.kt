@@ -19,7 +19,6 @@ public enum class SharedString {
     SupportHours,
     SupportSection,
     TermsOfUse,
-    TrackThisTrip,
     TripPlanner,
     ViewSourceOnGithub,
 }
