@@ -124,7 +124,7 @@ kotlin {
 
 android {
     namespace = "com.mbta.tid.mbta_app"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig { minSdk = 28 }
     testOptions { unitTests.isReturnDefaultValues = true }
 }
