@@ -31,33 +31,33 @@ class SchedulesRepositoryTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-                        {
-                          "schedules": [{
-                            "id": "sched1",
-                            "arrival_time": "2024-01-02T03:04:05.00-05:00",
-                            "departure_time": "2024-01-02T03:04:06.00-05:00",
-                            "drop_off_type": "regular",
-                            "pick_up_type":  "regular",
-                            "stop_headsign": "Stop Headsign",
-                            "stop_sequence": 0,
-                            "route_id": "Red",
-                            "stop_id": "70064",
-                            "trip_id": "trip1"
+                            {
+                              "schedules": [{
+                                "id": "sched1",
+                                "arrival_time": "2024-01-02T03:04:05.00-05:00",
+                                "departure_time": "2024-01-02T03:04:06.00-05:00",
+                                "drop_off_type": "regular",
+                                "pick_up_type":  "regular",
+                                "stop_headsign": "Stop Headsign",
+                                "stop_sequence": 0,
+                                "route_id": "Red",
+                                "stop_id": "70064",
+                                "trip_id": "trip1"
+                                }
+                              ],
+                              "trips": {
+                                "trip1": {
+                                  "id": "trip1",
+                                  "direction_id": 0,
+                                  "headsign": "Alewife",
+                                  "route_id": "Red",
+                                  "route_pattern_id": "rp1",
+                                  "shape_id": "shape1",
+                                  "stop_ids": ["70064", "70065"]
+                                }
+                              }
                             }
-                          ],
-                          "trips": {
-                            "trip1": {
-                              "id": "trip1",
-                              "direction_id": 0,
-                              "headsign": "Alewife",
-                              "route_id": "Red",
-                              "route_pattern_id": "rp1",
-                              "shape_id": "shape1",
-                              "stop_ids": ["70064", "70065"]
-                            }
-                          }
-                        }
-                    """
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
