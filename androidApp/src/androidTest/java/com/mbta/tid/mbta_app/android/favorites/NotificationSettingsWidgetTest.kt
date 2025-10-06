@@ -16,7 +16,9 @@ import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import kotlin.test.assertEquals
 import kotlinx.datetime.DayOfWeek
@@ -38,27 +40,27 @@ class NotificationSettingsWidgetTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         assertEquals(1, settings.value.windows.size)
-        composeTestRule.onNodeWithText("08:00\u202fAM").assertIsDisplayed()
-        composeTestRule.onNodeWithText("09:00\u202fAM").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Sun").assertIsOff()
-        composeTestRule.onNodeWithText("Mon").assertIsOn()
-        composeTestRule.onNodeWithText("Tue").assertIsOn()
-        composeTestRule.onNodeWithText("Wed").assertIsOn()
-        composeTestRule.onNodeWithText("Thu").assertIsOn()
-        composeTestRule.onNodeWithText("Fri").assertIsOn()
-        composeTestRule.onNodeWithText("Sat").assertIsOff()
+        composeTestRule.onNode(hasTextMatching(Regex("08:00\\sAM"))).performScrollTo().assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("09:00\\sAM"))).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sunday").assertIsOff()
+        composeTestRule.onNodeWithText("Monday").assertIsOn()
+        composeTestRule.onNodeWithText("Tuesday").assertIsOn()
+        composeTestRule.onNodeWithText("Wednesday").assertIsOn()
+        composeTestRule.onNodeWithText("Thursday").assertIsOn()
+        composeTestRule.onNodeWithText("Friday").assertIsOn()
+        composeTestRule.onNodeWithText("Saturday").assertIsOff()
         composeTestRule.onNodeWithContentDescription("Delete").assertDoesNotExist()
         composeTestRule.onNodeWithText("Add another time period").performClick()
         assertEquals(2, settings.value.windows.size)
-        composeTestRule.onNodeWithText("12:00\u202fPM").assertIsDisplayed()
-        composeTestRule.onNodeWithText("01:00\u202fPM").assertIsDisplayed()
-        composeTestRule.onAllNodesWithText("Sun").onLast().assertIsOn()
-        composeTestRule.onAllNodesWithText("Mon").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Tue").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Wed").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Thu").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Fri").onLast().assertIsOff()
-        composeTestRule.onAllNodesWithText("Sat").onLast().assertIsOn()
+        composeTestRule.onNode(hasTextMatching(Regex("12:00\\sPM"))).assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("01:00\\sPM"))).assertIsDisplayed()
+        composeTestRule.onAllNodesWithText("Sunday").onLast().assertIsOn()
+        composeTestRule.onAllNodesWithText("Monday").onLast().assertIsOff()
+        composeTestRule.onAllNodesWithText("Tuesday").onLast().assertIsOff()
+        composeTestRule.onAllNodesWithText("Wednesday").onLast().assertIsOff()
+        composeTestRule.onAllNodesWithText("Thursday").onLast().assertIsOff()
+        composeTestRule.onAllNodesWithText("Friday").onLast().assertIsOff()
+        composeTestRule.onAllNodesWithText("Saturday").onLast().assertIsOn()
         composeTestRule.onAllNodesWithContentDescription("Delete").assertCountEquals(2)
     }
 
@@ -72,12 +74,12 @@ class NotificationSettingsWidgetTest {
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-        composeTestRule.onNodeWithText("08:00\u202fAM").performClick()
+        composeTestRule.onNode(hasTextMatching(Regex("08:00\\sAM"))).performClick()
         composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("7")
         composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("45")
         composeTestRule.onNodeWithText("Okay").performClick()
         assertEquals(LocalTime(7, 45), settings.value.windows.single().startTime)
-        composeTestRule.onNodeWithText("09:00\u202fAM").performClick()
+        composeTestRule.onNode(hasTextMatching(Regex("09:00\\sAM"))).performClick()
         composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("9")
         composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("10")
         composeTestRule.onNodeWithText("Okay").performClick()
@@ -94,9 +96,9 @@ class NotificationSettingsWidgetTest {
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
-        composeTestRule.onNodeWithText("Sun").performClick()
-        composeTestRule.onNodeWithText("Wed").performClick()
-        composeTestRule.onNodeWithText("Fri").performClick()
+        composeTestRule.onNodeWithText("Sunday").performClick()
+        composeTestRule.onNodeWithText("Wednesday").performClick()
+        composeTestRule.onNodeWithText("Friday").performClick()
         assertEquals(
             setOf(DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.THURSDAY),
             settings.value.windows.single().daysOfWeek,
