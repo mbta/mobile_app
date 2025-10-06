@@ -29,439 +29,439 @@ class RouteStopsRepositoryTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-                    [
-                      {
-                        "name": null,
-                        "stops": [
+                        [
                           {
-                            "stop_id": "place-ogmnl",
-                            "connections": [
+                            "name": null,
+                            "stops": [
                               {
-                                "from_stop": "place-ogmnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-mlmnl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-mlmnl",
-                            "connections": [
-                              {
-                                "from_stop": "place-ogmnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-mlmnl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-ogmnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-ogmnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-mlmnl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-mlmnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-welln",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-welln",
-                            "connections": [
-                              {
-                                "from_stop": "place-mlmnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-welln",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-mlmnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-ogmnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-mlmnl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-mlmnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-welln",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-welln",
-                                "from_vpos": "center",
-                                "to_stop": "place-astao",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-astao",
-                            "connections": [
-                              {
-                                "from_stop": "place-welln",
-                                "from_vpos": "top",
-                                "to_stop": "place-astao",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-welln",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-mlmnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-welln",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-welln",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-astao",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-astao",
-                                "from_vpos": "center",
-                                "to_stop": "place-sull",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-sull",
-                            "connections": [
-                              {
-                                "from_stop": "place-astao",
-                                "from_vpos": "top",
-                                "to_stop": "place-sull",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-astao",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-welln",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-astao",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-astao",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-sull",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-sull",
-                                "from_vpos": "center",
-                                "to_stop": "place-ccmnl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-ccmnl",
-                            "connections": [
-                              {
-                                "from_stop": "place-sull",
-                                "from_vpos": "top",
-                                "to_stop": "place-ccmnl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-sull",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-astao",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-sull",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-sull",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-ccmnl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-ccmnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-north",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-north",
-                            "connections": [
-                              {
-                                "from_stop": "place-ccmnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-north",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-ccmnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-sull",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-ccmnl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-ccmnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-north",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-north",
-                                "from_vpos": "center",
-                                "to_stop": "place-haecl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-haecl",
-                            "connections": [
-                              {
-                                "from_stop": "place-north",
-                                "from_vpos": "top",
-                                "to_stop": "place-haecl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-north",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-ccmnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-north",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-north",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-haecl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-haecl",
-                                "from_vpos": "center",
-                                "to_stop": "place-state",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-state",
-                            "connections": [
-                              {
-                                "from_stop": "place-haecl",
-                                "from_vpos": "top",
-                                "to_stop": "place-state",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-haecl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-north",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-haecl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-haecl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-state",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-state",
-                                "from_vpos": "center",
-                                "to_stop": "place-dwnxg",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-dwnxg",
-                            "connections": [
-                              {
-                                "from_stop": "place-state",
-                                "from_vpos": "top",
-                                "to_stop": "place-dwnxg",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-state",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-haecl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-state",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-state",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-dwnxg",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-dwnxg",
-                                "from_vpos": "center",
-                                "to_stop": "place-chncl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-chncl",
-                            "connections": [
-                              {
-                                "from_stop": "place-dwnxg",
-                                "from_vpos": "top",
-                                "to_stop": "place-chncl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-dwnxg",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-state",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-dwnxg",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-dwnxg",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-chncl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-chncl",
-                                "from_vpos": "center",
-                                "to_stop": "place-tumnl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-tumnl",
-                            "connections": [
-                              {
-                                "from_stop": "place-chncl",
-                                "from_vpos": "top",
-                                "to_stop": "place-tumnl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-chncl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-dwnxg",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-chncl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-chncl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-tumnl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-tumnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-bbsta",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-bbsta",
-                            "connections": [
-                              {
-                                "from_stop": "place-tumnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-bbsta",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-tumnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-chncl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-tumnl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-tumnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-bbsta",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-bbsta",
-                                "from_vpos": "center",
-                                "to_stop": "place-masta",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-masta",
-                            "connections": [
-                              {
-                                "from_stop": "place-bbsta",
-                                "from_vpos": "top",
-                                "to_stop": "place-masta",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-bbsta",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-tumnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-bbsta",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-bbsta",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-masta",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-masta",
-                                "from_vpos": "center",
-                                "to_stop": "place-rugg",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-rugg",
-                            "connections": [
-                              {
-                                "from_stop": "place-masta",
-                                "from_vpos": "top",
-                                "to_stop": "place-rugg",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-masta",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-bbsta",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-masta",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-masta",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-rugg",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-rugg",
-                                "from_vpos": "center",
-                                "to_stop": "place-rcmnl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-rcmnl",
-                            "connections": [
-                              {
-                                "from_stop": "place-rugg",
-                                "from_vpos": "top",
-                                "to_stop": "place-rcmnl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-rugg",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-masta",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-rugg",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-rugg",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-rcmnl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-rcmnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-jaksn",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-jaksn",
-                            "connections": [
-                              {
-                                "from_stop": "place-rcmnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-jaksn",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-rcmnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-rugg",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-rcmnl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-rcmnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-jaksn",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-jaksn",
-                                "from_vpos": "center",
-                                "to_stop": "place-sbmnl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-sbmnl",
-                            "connections": [
-                              {
-                                "from_stop": "place-jaksn",
-                                "from_vpos": "top",
-                                "to_stop": "place-sbmnl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-jaksn",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-rcmnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-jaksn",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-jaksn",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-sbmnl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-sbmnl",
-                                "from_vpos": "center",
-                                "to_stop": "place-grnst",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-grnst",
-                            "connections": [
-                              {
-                                "from_stop": "place-sbmnl",
-                                "from_vpos": "top",
-                                "to_stop": "place-grnst",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-sbmnl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-jaksn",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-sbmnl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-sbmnl",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-grnst",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               },
                               {
-                                "from_stop": "place-grnst",
-                                "from_vpos": "center",
-                                "to_stop": "place-forhl",
-                                "to_vpos": "bottom",
-                                "from_lane": "center",
-                                "to_lane": "center"
-                              }
-                            ],
-                            "stop_lane": "center"
-                          },
-                          {
-                            "stop_id": "place-forhl",
-                            "connections": [
+                                "stop_id": "place-grnst",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-sbmnl",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-grnst",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  },
+                                  {
+                                    "from_stop": "place-grnst",
+                                    "from_vpos": "center",
+                                    "to_stop": "place-forhl",
+                                    "to_vpos": "bottom",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
+                              },
                               {
-                                "from_stop": "place-grnst",
-                                "from_vpos": "top",
-                                "to_stop": "place-forhl",
-                                "to_vpos": "center",
-                                "from_lane": "center",
-                                "to_lane": "center"
+                                "stop_id": "place-forhl",
+                                "connections": [
+                                  {
+                                    "from_stop": "place-grnst",
+                                    "from_vpos": "top",
+                                    "to_stop": "place-forhl",
+                                    "to_vpos": "center",
+                                    "from_lane": "center",
+                                    "to_lane": "center"
+                                  }
+                                ],
+                                "stop_lane": "center"
                               }
                             ],
-                            "stop_lane": "center"
+                            "typical?": true
                           }
-                        ],
-                        "typical?": true
-                      }
-                    ]
-                    """
+                        ]
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,

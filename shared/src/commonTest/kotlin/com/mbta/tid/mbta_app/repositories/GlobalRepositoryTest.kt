@@ -42,92 +42,92 @@ class GlobalRepositoryTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-{
-  "facilities": {
-    "808": {
-      "id": "808",
-      "type": "elevator",
-      "long_name": "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
-      "short_name": "Red Line center platform to Government Center & North platform, Winter Street Concourse"
-    }
-  },
-  "lines": {
-    "line-Green": {
-      "id": "line-Green",
-      "color": "00843D",
-      "long_name": "Green Line",
-      "short_name": "",
-      "sort_order": 10032,
-      "text_color": "FFFFFF"
-    }
-  },
-  "routes": {
-    "Shuttle-AirportGovernmentCenterLocal": {
-      "id": "Shuttle-AirportGovernmentCenterLocal",
-      "type": "bus",
-      "color": "FFC72C",
-      "direction_names": [
-        "West",
-        "East"
-      ],
-      "direction_destinations": [
-        "Bowdoin",
-        "Wonderland"
-      ],
-      "listed_route" : false,
-      "long_name": "Airport - Government Center (Local)",
-      "short_name": "Blue Line Shuttle",
-      "sort_order": 60208,
-      "text_color": "000000",
-      "route_pattern_ids": null
-    }
-  },
-  "route_patterns": {
-    "39-3-0": {
-      "id": "39-3-0",
-      "name": "Back Bay Station - Forest Hills Station",
-      "direction_id": 0,
-      "route_id": "39",
-      "sort_order": 503900000,
-      "canonical": false,
-      "typicality": "typical",
-      "representative_trip_id": "61945832"
-    }
-  },
-  "stops": {
-    "3992": {
-      "id": "3992",
-      "name": "S Franklin St @ Emery St",
-      "longitude": -71.011556,
-      "latitude": 42.125615,
-      "child_stop_ids": [],
-      "connecting_stop_ids": [],
-      "location_type": "stop",
-      "vehicle_type": "bus"
-    }
-  },
-  "trips": {
-    "62145526_2": {
-      "id": "62145526_2",
-      "direction_id": 0,
-      "route_id": "37",
-      "route_pattern_id": "37-D-0",
-      "stop_ids": [
-        "10642",
-        "596"
-      ],
-      "headsign": "LaGrange & Corey",
-      "shape_id": "370137-2"
-    }
-  },
-  "pattern_ids_by_stop": {
-    "3992": [
-      "230-3-1",
-      "230-5-1"
-    ]
-  }
-}
-                    """
+                        {
+                          "facilities": {
+                            "808": {
+                              "id": "808",
+                              "type": "elevator",
+                              "long_name": "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
+                              "short_name": "Red Line center platform to Government Center & North platform, Winter Street Concourse"
+                            }
+                          },
+                          "lines": {
+                            "line-Green": {
+                              "id": "line-Green",
+                              "color": "00843D",
+                              "long_name": "Green Line",
+                              "short_name": "",
+                              "sort_order": 10032,
+                              "text_color": "FFFFFF"
+                            }
+                          },
+                          "routes": {
+                            "Shuttle-AirportGovernmentCenterLocal": {
+                              "id": "Shuttle-AirportGovernmentCenterLocal",
+                              "type": "bus",
+                              "color": "FFC72C",
+                              "direction_names": [
+                                "West",
+                                "East"
+                              ],
+                              "direction_destinations": [
+                                "Bowdoin",
+                                "Wonderland"
+                              ],
+                              "listed_route" : false,
+                              "long_name": "Airport - Government Center (Local)",
+                              "short_name": "Blue Line Shuttle",
+                              "sort_order": 60208,
+                              "text_color": "000000",
+                              "route_pattern_ids": null
+                            }
+                          },
+                          "route_patterns": {
+                            "39-3-0": {
+                              "id": "39-3-0",
+                              "name": "Back Bay Station - Forest Hills Station",
+                              "direction_id": 0,
+                              "route_id": "39",
+                              "sort_order": 503900000,
+                              "canonical": false,
+                              "typicality": "typical",
+                              "representative_trip_id": "61945832"
+                            }
+                          },
+                          "stops": {
+                            "3992": {
+                              "id": "3992",
+                              "name": "S Franklin St @ Emery St",
+                              "longitude": -71.011556,
+                              "latitude": 42.125615,
+                              "child_stop_ids": [],
+                              "connecting_stop_ids": [],
+                              "location_type": "stop",
+                              "vehicle_type": "bus"
+                            }
+                          },
+                          "trips": {
+                            "62145526_2": {
+                              "id": "62145526_2",
+                              "direction_id": 0,
+                              "route_id": "37",
+                              "route_pattern_id": "37-D-0",
+                              "stop_ids": [
+                                "10642",
+                                "596"
+                              ],
+                              "headsign": "LaGrange & Corey",
+                              "shape_id": "370137-2"
+                            }
+                          },
+                          "pattern_ids_by_stop": {
+                            "3992": [
+                              "230-3-1",
+                              "230-5-1"
+                            ]
+                          }
+                        }
+                                            """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
