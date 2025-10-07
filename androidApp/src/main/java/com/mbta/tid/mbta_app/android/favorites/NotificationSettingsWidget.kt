@@ -45,9 +45,6 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
@@ -247,17 +244,11 @@ private fun LabeledTimeInput(label: String, time: LocalTime, setTime: (LocalTime
                 ),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         ) {
-            val text = buildAnnotatedString {
-                val formatted =
-                    EasternTimeInstant(LocalDateTime(EasternTimeInstant.now().local.date, time))
-                        .formattedTime()
-                // TODO handle other languages and 24-hour
-                if (formatted.length == 7) {
-                    withStyle(SpanStyle(color = Color.Transparent)) { append('0') }
-                }
-                append(formatted)
-            }
-            Text(text, style = Typography.footnoteSemibold)
+            Text(
+                EasternTimeInstant(LocalDateTime(EasternTimeInstant.now().local.date, time))
+                    .formattedTime(),
+                style = Typography.footnoteSemibold,
+            )
         }
     }
     if (isPicking) {

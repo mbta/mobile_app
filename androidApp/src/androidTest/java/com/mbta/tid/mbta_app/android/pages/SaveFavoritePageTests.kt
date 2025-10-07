@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
@@ -193,7 +194,11 @@ class SaveFavoritePageTests {
             .onNodeWithText("Get disruption notifications")
             .assertIsDisplayed()
             .assertIsOn()
-        composeTestRule.onNodeWithText("Remove from Favorites").assertIsDisplayed().performClick()
+        composeTestRule
+            .onNodeWithText("Remove from Favorites")
+            .performScrollTo()
+            .assertIsDisplayed()
+            .performClick()
         composeTestRule.waitForIdle()
         assertEquals(Favorites(), favoritesSet)
         assert(closed)
