@@ -40,7 +40,10 @@ class NotificationSettingsWidgetTest {
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
         assertEquals(1, settings.value.windows.size)
-        composeTestRule.onNode(hasTextMatching(Regex("08:00\\sAM"))).performScrollTo().assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("08:00\\sAM")))
+            .performScrollTo()
+            .assertIsDisplayed()
         composeTestRule.onNode(hasTextMatching(Regex("09:00\\sAM"))).assertIsDisplayed()
         composeTestRule.onNodeWithText("Sunday").assertIsOff()
         composeTestRule.onNodeWithText("Monday").assertIsOn()
