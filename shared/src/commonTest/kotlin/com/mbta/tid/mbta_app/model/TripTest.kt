@@ -19,13 +19,13 @@ class TripTest {
             ),
             json.decodeFromString<Trip>(
                 """
-                {"id": "1",
-                "direction_id":0,
-                "headsign": "Harvard",
-                "route_id": "Red",
-                "route_pattern_id":"red-1",
-                "shapeId":null}
-            """
+                    {"id": "1",
+                    "direction_id":0,
+                    "headsign": "Harvard",
+                    "route_id": "Red",
+                    "route_pattern_id":"red-1",
+                    "shapeId":null}
+                """
                     .trimIndent()
             ),
         )

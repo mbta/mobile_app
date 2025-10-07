@@ -53,16 +53,16 @@ class TripRepositoryTest : KoinTest {
         val mockEngine = MockEngine {
             respond(
                 """
-            {
-                "shape_with_stops": {
-                    "shape": {"id": "shape_id", "polyline": "shape_polyline"},
-                    "stop_ids": ["1", "2", "3"],
-                    "route_id": "66",
-                    "route_pattern_id": "66_rp",
-                    "direction_id": 1
-                }
-              }
-          """
+                  {
+                      "shape_with_stops": {
+                          "shape": {"id": "shape_id", "polyline": "shape_polyline"},
+                          "stop_ids": ["1", "2", "3"],
+                          "route_id": "66",
+                          "route_pattern_id": "66_rp",
+                          "direction_id": 1
+                      }
+                    }
+                """
                     .trimIndent(),
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
@@ -100,11 +100,11 @@ class TripRepositoryTest : KoinTest {
         val mockEngine = MockEngine {
             respond(
                 """
-            {
-                "code": 404,
-                "message": "not_found"
-              }
-          """
+                  {
+                      "code": 404,
+                      "message": "not_found"
+                    }
+                """
                     .trimIndent(),
                 status = HttpStatusCode.NotFound,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -130,8 +130,9 @@ class TripRepositoryTest : KoinTest {
     fun `getsTripShape when parsing error`() {
         val mockEngine = MockEngine {
             respond(
-                """{"field": "Can't parse me!"}
-                    """
+                """
+                {"field": "Can't parse me!"}
+                """
                     .trimIndent(),
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )

@@ -113,6 +113,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
     implementation(libs.compose.placeholder.material3)
     implementation(libs.compose.shimmer)
     implementation(libs.compose.ui)
