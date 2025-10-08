@@ -41,7 +41,7 @@ public class FavoritesBuilder {
 
         public class NotificationsBuilder {
             public var enabled: Boolean = false
-            public var windows: Set<FavoriteSettings.Notifications.Window> = emptySet()
+            public var windows: List<FavoriteSettings.Notifications.Window> = emptyList()
 
             public fun window(
                 startTime: LocalTime,

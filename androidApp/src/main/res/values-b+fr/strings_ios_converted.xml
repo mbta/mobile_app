@@ -4,6 +4,7 @@
     <string name="access_issue_sentence_case">Problème d’accès</string>
     <string name="accident">Accident</string>
     <string name="accident_lowercase">accident</string>
+    <string name="add_another_time_period">Ajouter une autre période</string>
     <string name="add_confirmation_button">Ajouter</string>
     <string name="add_favorite_label">ajouter aux favoris</string>
     <string name="add_favorite_title">Ajouter aux favoris</string>
@@ -168,7 +169,9 @@
     <string name="follow">Suivre</string>
     <string name="freight_train_interference">Interférence avec un train de marchandises</string>
     <string name="freight_train_interference_lowercase">interférence des trains de marchandises</string>
+    <string name="from">Depuis</string>
     <string name="full_description">Description complète</string>
+    <string name="get_disruption_notifications">Recevez des notifications de perturbation</string>
     <string name="got_it">J’ai compris</string>
     <string name="hazmat_condition">Présence de matières dangereuses</string>
     <string name="hazmat_condition_lowercase">incident impliquant des matières dangereuses</string>
@@ -376,6 +379,7 @@
     <string name="this_stop_is_drop_off_only">Cet arrêt est réservé à la descente uniquement</string>
     <string name="tie_replacement">Remplacement de traverses</string>
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
+    <string name="to">À</string>
     <string name="toast_tip_prefix">Astuce : %1$s</string>
     <string name="toggle_direction">basculer la direction</string>
     <string name="track_change">Changement de voie</string>
