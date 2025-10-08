@@ -103,6 +103,7 @@ import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
@@ -147,6 +148,7 @@ fun MapAndSheetPage(
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    toastViewModel: IToastViewModel = koinInject(),
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
@@ -234,6 +236,10 @@ fun MapAndSheetPage(
                     previousNavEntry.stopFilter != currentNavEntry.stopFilter)
         ) {
             tileScrollState.scrollTo(0)
+        }
+
+        if (currentNavEntry?.let { it::class } != previousNavEntry?.let { it::class }) {
+            toastViewModel.hideToast()
         }
     }
 
