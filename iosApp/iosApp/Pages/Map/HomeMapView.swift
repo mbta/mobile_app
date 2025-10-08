@@ -150,7 +150,7 @@ struct HomeMapView: View {
                 for await vehicle in tripDetailsVM.selectedVehicleUpdates {
                     let currentNavEntry = nearbyVM.navigationStack.lastSafe()
                     let follow = switch currentNavEntry {
-                    case .tripDetails: true
+                    case .tripDetails: true && viewportProvider.isVehicleOverview
                     default: false
                     }
                     mapVM.selectedVehicleUpdated(vehicle: vehicle, follow: follow)
