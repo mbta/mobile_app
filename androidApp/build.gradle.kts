@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
     implementation(libs.javaPhoenixClient)
     implementation(libs.koin.androidxCompose)
     implementation(libs.kotlinx.coroutines.core)
