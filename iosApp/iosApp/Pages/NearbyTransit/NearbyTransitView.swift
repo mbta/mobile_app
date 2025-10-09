@@ -31,7 +31,7 @@ struct NearbyTransitView: View {
     let noNearbyStops: () -> NoNearbyStopsView
 
     let inspection = Inspection<Self>()
-    let scrollSubject = PassthroughSubject<String, Never>()
+    let scrollSubject = PassthroughSubject<LineOrRoute.Id, Never>()
 
     struct RouteCardParams: Equatable {
         let state: NearbyViewModel.NearbyTransitState

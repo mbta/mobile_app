@@ -13,7 +13,7 @@ import SwiftUI
 struct SearchResultsView: View {
     private var state: SearchViewModel.State
     private var handleStopTap: (String) -> Void
-    private var handleRouteTap: (String) -> Void
+    private var handleRouteTap: (LineOrRoute.Id) -> Void
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -22,7 +22,7 @@ struct SearchResultsView: View {
     init(
         state: SearchViewModel.State,
         handleStopTap: @escaping (String) -> Void,
-        handleRouteTap: @escaping (String) -> Void,
+        handleRouteTap: @escaping (LineOrRoute.Id) -> Void,
     ) {
         self.state = state
         self.handleStopTap = handleStopTap

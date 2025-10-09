@@ -25,15 +25,15 @@ final class TripDetailsPageTests: XCTestCase {
         let pattern = objects.getRoutePattern(id: "15-1-0")
         let trip = objects.getTrip(id: pattern.representativeTripId)
 
-        let route = objects.getRoute(id: trip.routeId)
+        let route = objects.getRoute(id: trip.routeId.idText)
         let vehicle = objects.vehicle { vehicle in
             vehicle.currentStatus = .incomingAt
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.stopId = stop.id
         }
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = stop.id
             schedule.trip = trip
         }
@@ -79,6 +79,7 @@ final class TripDetailsPageTests: XCTestCase {
         let tripDetailsPageVM = MockTripDetailsPageViewModel(initialState: .init(
             direction: Direction(name: "Outbound", destination: "Trip Headsign", id: 0),
             alertSummaries: [:],
+            trip: nil,
         ))
 
         loadKoinMocks(objects: objects)
@@ -108,7 +109,14 @@ final class TripDetailsPageTests: XCTestCase {
         let nearbyVM = NearbyViewModel()
         let closeExp = expectation(description: "Page closed")
         let sut = TripDetailsPage(
-            filter: .init(tripId: "", vehicleId: nil, routeId: "", directionId: 0, stopId: "", stopSequence: nil),
+            filter: .init(
+                tripId: "",
+                vehicleId: nil,
+                routeId: Route.Id(""),
+                directionId: 0,
+                stopId: "",
+                stopSequence: nil
+            ),
             onClose: { closeExp.fulfill() },
             nearbyVM: nearbyVM,
         )

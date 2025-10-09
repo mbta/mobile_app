@@ -54,14 +54,14 @@ final class NearbyViewModelTests: XCTestCase {
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 
-        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1)
+        let filter1: StopDetailsFilter = .init(routeId: Route.Id("1"), directionId: 1)
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil))
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
             .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
         ], nearbyVM.navigationStack)
 
-        let filter2: StopDetailsFilter = .init(routeId: "1", directionId: 0)
+        let filter2: StopDetailsFilter = .init(routeId: Route.Id("1"), directionId: 0)
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter2, tripFilter: nil))
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
@@ -82,7 +82,7 @@ final class NearbyViewModelTests: XCTestCase {
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 
-        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1, autoFilter: true)
+        let filter1: StopDetailsFilter = .init(routeId: Route.Id("1"), directionId: 1, autoFilter: true)
         nearbyVM.pushNavEntry(.stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil))
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
@@ -97,14 +97,14 @@ final class NearbyViewModelTests: XCTestCase {
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 
-        let filter1: StopDetailsFilter = .init(routeId: "1", directionId: 1)
+        let filter1: StopDetailsFilter = .init(routeId: Route.Id("1"), directionId: 1)
         nearbyVM.setLastStopDetailsFilter(stop.id, filter1)
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
             .stopDetails(stopId: stop.id, stopFilter: filter1, tripFilter: nil),
         ], nearbyVM.navigationStack)
 
-        let filter2: StopDetailsFilter = .init(routeId: "1", directionId: 0)
+        let filter2: StopDetailsFilter = .init(routeId: Route.Id("1"), directionId: 0)
         nearbyVM.setLastStopDetailsFilter(stop.id, filter2)
         XCTAssertEqual([
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),

@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.utils
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -12,7 +13,7 @@ public class FavoritesBuilder {
 
     @DefaultArgumentInterop.Enabled
     public fun routeStopDirection(
-        route: String,
+        route: LineOrRoute.Id,
         stop: String,
         direction: Int,
         settings: SettingsBuilder.() -> Unit = {},

@@ -31,7 +31,7 @@ struct TripDetailsPage: View {
     }
 
     var direction: Direction? { tripDetailsPageState?.direction }
-    var route: Route? { global?.getRoute(routeId: filter.routeId) }
+    var route: Route? { global?.getRoute(routeId: tripDetailsPageState?.trip?.routeId ?? filter.routeId as? Route.Id) }
     var routeAccents: TripRouteAccents { if let route { .init(route: route) } else { .init() } }
 
     func onOpenAlertDetails(alert: Shared.Alert) {

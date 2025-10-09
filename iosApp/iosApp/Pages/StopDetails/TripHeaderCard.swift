@@ -352,7 +352,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             latitude: 0.0,
             longitude: 0.0,
             updatedAt: now.minus(seconds: 10),
-            routeId: "66",
+            routeId: .init("66"),
             stopId: "place-davis",
             tripId: trip.id
         )

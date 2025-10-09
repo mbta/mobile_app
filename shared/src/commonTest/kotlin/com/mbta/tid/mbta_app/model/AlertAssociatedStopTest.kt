@@ -25,13 +25,13 @@ class AlertAssociatedStopTest {
                 effect = Alert.Effect.Shuttle
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = platform1!!.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = stop.id,
                 )
@@ -86,7 +86,7 @@ class AlertAssociatedStopTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                 )
             }

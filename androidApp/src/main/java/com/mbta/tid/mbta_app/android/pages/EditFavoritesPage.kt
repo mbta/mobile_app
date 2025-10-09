@@ -154,7 +154,7 @@ private fun EditFavoritesList(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(routeCardData, key = { it.id }) {
+            items(routeCardData, key = { it.id.idText }) {
                 RouteCardContainer(
                     modifier = Modifier.animateItem(),
                     data = it,

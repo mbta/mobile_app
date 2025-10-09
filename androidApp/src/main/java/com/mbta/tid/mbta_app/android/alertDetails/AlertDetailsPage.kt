@@ -38,14 +38,16 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun AlertDetailsPage(
     alertId: String,
-    lineId: String?,
-    routeIds: List<String>?,
+    lineId: Line.Id?,
+    routeIds: List<Route.Id>?,
     stopId: String?,
     alerts: AlertsStreamDataResponse?,
     goBack: () -> Unit,

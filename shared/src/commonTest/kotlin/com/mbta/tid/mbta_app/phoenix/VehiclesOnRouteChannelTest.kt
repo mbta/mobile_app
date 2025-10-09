@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.phoenix
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -50,7 +51,7 @@ class VehiclesOnRouteChannelTest {
                             42.359901428222656,
                             -71.09449005126953,
                             EasternTimeInstant(2024, Month.MAY, 15, 9, 0),
-                            "1",
+                            Route.Id("1"),
                             "99",
                             "61391720",
                         )
@@ -62,8 +63,13 @@ class VehiclesOnRouteChannelTest {
 
     @Test
     fun testTopicInterpolation() {
-        val topic1 = VehiclesOnRouteChannel(listOf("Red"), 0).topic
-        val topic2 = VehiclesOnRouteChannel(listOf("Green-B", "Green-C", "Green-D"), 1).topic
+        val topic1 = VehiclesOnRouteChannel(listOf(Route.Id("Red")), 0).topic
+        val topic2 =
+            VehiclesOnRouteChannel(
+                    listOf(Route.Id("Green-B"), Route.Id("Green-C"), Route.Id("Green-D")),
+                    1,
+                )
+                .topic
 
         assertEquals("vehicles:routes:Red:0", topic1)
         assertEquals("vehicles:routes:Green-B,Green-C,Green-D:1", topic2)

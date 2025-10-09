@@ -61,6 +61,7 @@ import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -106,7 +107,7 @@ fun RouteStopListView(
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
-    defaultSelectedRouteId: String? = null,
+    defaultSelectedRouteId: Route.Id? = null,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
     val routes = lineOrRoute.allRoutes.sorted()
@@ -118,9 +119,10 @@ fun RouteStopListView(
     var selectedDirection by rememberSaveable {
         mutableIntStateOf(parameters.availableDirections.firstOrNull() ?: 0)
     }
-    var selectedRouteId by rememberSaveable {
-        mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
-    }
+    var selectedRouteId by
+        rememberSaveable(saver = stateJsonSaver()) {
+            mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
+        }
 
     val routeStops =
         getRouteStops(selectedRouteId, selectedDirection, "RouteDetailsView.routeStopIds")
@@ -212,8 +214,8 @@ fun RouteStopListView(
     parameters: RouteDetailsStopList.RouteParameters,
     selectedDirection: Int,
     setDirection: (Int) -> Unit,
-    selectedRouteId: String,
-    setRouteId: (String) -> Unit,
+    selectedRouteId: Route.Id,
+    setRouteId: (Route.Id) -> Unit,
     routes: List<Route>,
     stopList: RouteDetailsStopList?,
     context: RouteDetailsContext,
@@ -455,9 +457,9 @@ private fun RouteStops(
 private fun LineRoutePicker(
     line: Line,
     routes: List<Route>,
-    selectedRouteId: String,
+    selectedRouteId: Route.Id,
     selectedDirection: Int,
-    onSelect: (String) -> Unit,
+    onSelect: (Route.Id) -> Unit,
 ) {
     val backgroundColor =
         colorResource(R.color.route_color_contrast).compositeOver(Color.fromHex(line.color))

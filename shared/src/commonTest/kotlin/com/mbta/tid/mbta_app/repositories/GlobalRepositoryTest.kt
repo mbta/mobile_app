@@ -158,7 +158,7 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val line =
                 Line(
-                    id = "line-Green",
+                    id = Line.Id("line-Green"),
                     color = "00843D",
                     longName = "Green Line",
                     shortName = "",
@@ -167,7 +167,7 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val route =
                 Route(
-                    id = "Shuttle-AirportGovernmentCenterLocal",
+                    id = Route.Id("Shuttle-AirportGovernmentCenterLocal"),
                     type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("West", "East"),
@@ -184,7 +184,7 @@ class GlobalRepositoryTest : KoinTest {
                     id = "39-3-0",
                     name = "Back Bay Station - Forest Hills Station",
                     directionId = 0,
-                    routeId = "39",
+                    routeId = Route.Id("39"),
                     sortOrder = 503900000,
                     typicality = RoutePattern.Typicality.Typical,
                     representativeTripId = "61945832",
@@ -204,7 +204,7 @@ class GlobalRepositoryTest : KoinTest {
                 Trip(
                     id = "62145526_2",
                     directionId = 0,
-                    routeId = "37",
+                    routeId = Route.Id("37"),
                     routePatternId = "37-D-0",
                     stopIds = listOf("10642", "596"),
                     headsign = "LaGrange & Corey",
@@ -213,9 +213,9 @@ class GlobalRepositoryTest : KoinTest {
             val expectedResponse =
                 GlobalResponse(
                     facilities = mapOf("808" to facility),
-                    lines = mapOf("line-Green" to line),
+                    lines = mapOf(Line.Id("line-Green") to line),
                     patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
-                    routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
+                    routes = mapOf(Route.Id("Shuttle-AirportGovernmentCenterLocal") to route),
                     routePatterns = mapOf("39-3-0" to routePattern),
                     stops = mapOf("3992" to stop),
                     trips = mapOf("62145526_2" to trip),

@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.routes
 
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
@@ -28,7 +29,7 @@ public sealed class SheetRoutes {
         SheetRoutes()
 
     @Serializable
-    public data class RouteDetails(val routeId: String, val context: RouteDetailsContext) :
+    public data class RouteDetails(val routeId: LineOrRoute.Id, val context: RouteDetailsContext) :
         SheetRoutes()
 
     @Serializable public data object EditFavorites : SheetRoutes()

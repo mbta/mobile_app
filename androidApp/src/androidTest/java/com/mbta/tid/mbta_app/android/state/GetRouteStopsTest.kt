@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
@@ -41,7 +42,7 @@ class GetRouteStopsTest {
         val routeStopsRepo =
             object : IRouteStopsRepository {
                 override suspend fun getRouteSegments(
-                    routeId: String,
+                    routeId: Route.Id,
                     directionId: Int,
                 ): ApiResult<RouteStopsResult> {
                     return if (directionId == 0) ApiResult.Ok(expectedRouteStops1)
@@ -71,7 +72,7 @@ class GetRouteStopsTest {
         val routeStopsRepo =
             object : IRouteStopsRepository {
                 override suspend fun getRouteSegments(
-                    routeId: String,
+                    routeId: Route.Id,
                     directionId: Int,
                 ): ApiResult<RouteStopsResult> {
                     sync.receive()
@@ -82,7 +83,7 @@ class GetRouteStopsTest {
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {
-            actualRouteStops = getRouteStops("", directionId, "errorKey", routeStopsRepo)
+            actualRouteStops = getRouteStops(Route.Id(""), directionId, "errorKey", routeStopsRepo)
         }
 
         sync.send(Unit)
@@ -104,7 +105,9 @@ class GetRouteStopsTest {
 
         val errorRepo = MockErrorBannerStateRepository()
 
-        composeTestRule.setContent { getRouteStops("", 0, "errorKey", schedulesRepo, errorRepo) }
+        composeTestRule.setContent {
+            getRouteStops(Route.Id(""), 0, "errorKey", schedulesRepo, errorRepo)
+        }
 
         composeTestRule.waitUntilDefaultTimeout {
             when (val errorState = errorRepo.state.value) {

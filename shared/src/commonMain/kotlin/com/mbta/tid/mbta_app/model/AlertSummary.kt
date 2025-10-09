@@ -158,7 +158,7 @@ public data class AlertSummary(
                     }
                     .plus(
                         // Special casing to properly show when alerts affect multiple GL branches
-                        if (routes.any { it.lineId == "line-Green" }) {
+                        if (routes.any { it.lineId == Line.Id("line-Green") }) {
                             val directionStops =
                                 if (directionId == 0) westboundBranches else eastboundBranches
                             // If the provided stop is on a branch, don't take any parallel

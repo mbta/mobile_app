@@ -39,7 +39,7 @@ struct SearchResultsContainer: View {
         nearbyVM.pushNavEntry(.stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil))
     }
 
-    func handleRouteTap(routeId: String) {
+    func handleRouteTap(routeId: LineOrRoute.Id) {
         nearbyVM.pushNavEntry(.routeDetails(.init(routeId: routeId, context: .Details.shared)))
     }
 
@@ -90,7 +90,7 @@ struct SearchResultView_Previews: PreviewProvider {
                 ],
                 routes: [
                     SearchViewModel.RouteResult(
-                        id: "428",
+                        id: Route.Id("428"),
                         name: "Oaklandvale - Haymarket Station",
                         routePill: .init(
                             textColor: "#000000",

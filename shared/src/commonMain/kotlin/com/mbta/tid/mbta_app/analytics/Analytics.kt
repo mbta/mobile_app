@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.analytics
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -34,7 +36,7 @@ public abstract class Analytics {
                     logEvent(
                         "updated_favorites",
                         "action" to if (isFavorited) "add" else "remove",
-                        "route_id" to rsd.route,
+                        "route_id" to rsd.route.idText,
                         "stop_id" to rsd.stop,
                         "direction_id" to "${rsd.direction}",
                         "is_default_direction" to "${rsd.direction == defaultDirection}",
@@ -81,10 +83,10 @@ public abstract class Analytics {
         logEvent("refetched_nearby_transit")
     }
 
-    public fun tappedAffectedStops(routeId: String, stopId: String, alertId: String) {
+    public fun tappedAffectedStops(routeId: LineOrRoute.Id?, stopId: String, alertId: String) {
         logEvent(
             "tapped_affected_stops",
-            "route_id" to routeId,
+            "route_id" to (routeId?.idText ?: ""),
             "stop_id" to stopId,
             "alert_id" to alertId,
         )
@@ -92,14 +94,14 @@ public abstract class Analytics {
 
     @DefaultArgumentInterop.Enabled
     public fun tappedAlertDetails(
-        routeId: String,
+        routeId: LineOrRoute.Id?,
         stopId: String,
         alertId: String,
         elevator: Boolean = false,
     ) {
         logEvent(
             "tapped_alert_details",
-            "route_id" to routeId,
+            "route_id" to (routeId?.idText ?: ""),
             "stop_id" to stopId,
             "alertId" to alertId,
             "elevator" to elevator.toString(),
@@ -116,7 +118,7 @@ public abstract class Analytics {
     }
 
     public fun tappedDeparture(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         stopId: String,
         pinned: Boolean,
         alert: Boolean,
@@ -140,7 +142,7 @@ public abstract class Analytics {
             }
         logEvent(
             "tapped_departure",
-            "route_id" to routeId,
+            "route_id" to routeId.idText,
             "stop_id" to stopId,
             "pinned" to pinned.toString(),
             "alert" to alert.toString(),
@@ -151,14 +153,14 @@ public abstract class Analytics {
     }
 
     public fun tappedDownstreamStop(
-        routeId: String,
+        routeId: Route.Id?,
         stopId: String,
         tripId: String,
         connectingRouteId: String?,
     ) {
         logEvent(
             "tapped_downstream_stop",
-            "route_id" to routeId,
+            "route_id" to (routeId?.idText ?: ""),
             "stop_id" to stopId,
             "trip_id" to tripId,
             "connecting_route_id" to (connectingRouteId ?: ""),
@@ -169,25 +171,25 @@ public abstract class Analytics {
         logEvent("tapped_on_stop", "stop_id" to stopId)
     }
 
-    public fun tappedRouteFilter(routeId: String, stopId: String) {
-        logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
+    public fun tappedRouteFilter(routeId: LineOrRoute.Id, stopId: String) {
+        logEvent("tapped_route_filter", "route_id" to routeId.idText, "stop_id" to stopId)
     }
 
     public fun tappedRouteFilterLegacy(routeId: String, stopId: String) {
         logEvent("tapped_route_filter", "route_id" to routeId, "stop_id" to stopId)
     }
 
-    public fun tappedTripPlanner(routeId: String, stopId: String, alertId: String) {
+    public fun tappedTripPlanner(routeId: LineOrRoute.Id?, stopId: String, alertId: String) {
         logEvent(
             "tapped_trip_planner",
-            "route_id" to routeId,
+            "route_id" to (routeId?.idText ?: ""),
             "stop_id" to stopId,
             "alert_id" to alertId,
         )
     }
 
-    public fun tappedVehicle(routeId: String) {
-        logEvent("tapped_vehicle", "route_id" to routeId)
+    public fun tappedVehicle(routeId: LineOrRoute.Id) {
+        logEvent("tapped_vehicle", "route_id" to routeId.idText)
     }
 
     public fun toggledPinnedRoute(pinned: Boolean, routeId: String) {

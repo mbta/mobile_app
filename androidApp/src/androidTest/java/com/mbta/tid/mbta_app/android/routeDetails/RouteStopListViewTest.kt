@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilNodeCountDefaultTimeout
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
@@ -158,28 +159,28 @@ class RouteStopListViewTest {
         val line = objects.line()
         val route1 =
             objects.route {
-                lineId = line.id
+                lineId = line.id.idText
                 type = RouteType.BUS
                 shortName = "1"
                 directionDestinations = listOf("One", "")
             }
         val route2 =
             objects.route {
-                lineId = line.id
+                lineId = line.id.idText
                 type = RouteType.BUS
                 shortName = "2"
                 directionDestinations = listOf("Two", "")
             }
         val route3 =
             objects.route {
-                lineId = line.id
+                lineId = line.id.idText
                 type = RouteType.BUS
                 shortName = "3"
                 directionDestinations = listOf("Three", "")
             }
         objects.routePattern(route1) { directionId = 0 }
 
-        var lastSelectedRoute: String? = null
+        var lastSelectedRoute: Route.Id? = null
 
         loadKoinMocks(objects) {
             routeStops =

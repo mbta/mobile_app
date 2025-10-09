@@ -16,7 +16,10 @@ public object RouteLayerGenerator {
     public val routeLayerId: String = "route-layer"
     private val closeZoomCutoff = MapDefaults.closeZoomThreshold
 
-    internal fun getRouteLayerId(routeId: String) = "$routeLayerId-$routeId"
+    internal fun getRouteLayerId(routeId: Route.Id) = "$routeLayerId-$routeId"
+
+    internal fun getRouteLayerId(routeId: Route.Id, suffix: String) =
+        "$routeLayerId-$routeId-$suffix"
 
     public suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
@@ -26,7 +29,7 @@ public object RouteLayerGenerator {
 
     private suspend fun createAllRouteLayers(
         routesWithShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        routesById: Map<String, Route>,
+        routesById: Map<Route.Id, Route>,
         colorPalette: ColorPalette,
     ): List<LineLayer> =
         withContext(Dispatchers.Default) {
@@ -63,7 +66,7 @@ public object RouteLayerGenerator {
         route: Route,
         colorPalette: ColorPalette,
     ): List<LineLayer> {
-        val shuttledLayer = baseRouteLayer(getRouteLayerId("${route.id}-shuttled"), route)
+        val shuttledLayer = baseRouteLayer(getRouteLayerId(route.id, "shuttled"), route)
         shuttledLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -72,7 +75,7 @@ public object RouteLayerGenerator {
         shuttledLayer.lineWidth = Exp.step(Exp.zoom(), Exp(4), Exp(closeZoomCutoff) to Exp(6))
         shuttledLayer.lineDasharray = listOf(2.0, 1.33)
 
-        val suspendedLayer = baseRouteLayer(getRouteLayerId("${route.id}-suspended"), route)
+        val suspendedLayer = baseRouteLayer(getRouteLayerId(route.id, "suspended"), route)
         suspendedLayer.filter =
             Exp.eq(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -82,7 +85,7 @@ public object RouteLayerGenerator {
         suspendedLayer.lineDasharray = listOf(1.33, 2.0)
         suspendedLayer.lineColor = Exp(colorPalette.deemphasized).downcastToColor()
 
-        val alertBackgroundLayer = baseRouteLayer(getRouteLayerId("${route.id}-alerting-bg"), route)
+        val alertBackgroundLayer = baseRouteLayer(getRouteLayerId(route.id, "alerting-bg"), route)
         alertBackgroundLayer.filter =
             Exp.`in`(
                 Exp.get(RouteFeaturesBuilder.propAlertStateKey),
@@ -111,9 +114,14 @@ public object RouteLayerGenerator {
      */
     private fun lineOffset(route: Route): Double {
         val maxLineWidth = 6.0
-        val greenOverlappingCR = setOf("CR-Lowell", "CR-Fitchburg")
+        val greenOverlappingCR = setOf(Route.Id("CR-Lowell"), Route.Id("CR-Fitchburg"))
         val redOverlappingCR =
-            setOf("CR-Greenbush", "CR-Kingston", "CR-Middleborough", "CR-NewBedford")
+            setOf(
+                Route.Id("CR-Greenbush"),
+                Route.Id("CR-Kingston"),
+                Route.Id("CR-Middleborough"),
+                Route.Id("CR-NewBedford"),
+            )
 
         return if (route.type == RouteType.COMMUTER_RAIL) {
             when {
@@ -131,7 +139,7 @@ public object RouteLayerGenerator {
                     -maxLineWidth
                 }
             }
-        } else if (route.id.contains("Green")) {
+        } else if (route.id.idText.contains("Green")) {
             // Account for overlapping North Station - Haymarket
             // Offset to the East
             maxLineWidth

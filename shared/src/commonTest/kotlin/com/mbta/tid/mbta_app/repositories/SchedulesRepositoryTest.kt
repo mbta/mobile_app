@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Schedule
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -85,7 +86,7 @@ class SchedulesRepositoryTest : KoinTest {
                                     pickUpType = Schedule.StopEdgeType.Regular,
                                     stopHeadsign = "Stop Headsign",
                                     stopSequence = 0,
-                                    routeId = "Red",
+                                    routeId = Route.Id("Red"),
                                     stopId = "70064",
                                     tripId = "trip1",
                                 )
@@ -97,7 +98,7 @@ class SchedulesRepositoryTest : KoinTest {
                                         id = "trip1",
                                         directionId = 0,
                                         headsign = "Alewife",
-                                        routeId = "Red",
+                                        routeId = Route.Id("Red"),
                                         routePatternId = "rp1",
                                         shapeId = "shape1",
                                         stopIds = listOf("70064", "70065"),

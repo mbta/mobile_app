@@ -73,7 +73,7 @@ fun AlertDetails(
     now: EasternTimeInstant,
     analytics: Analytics = koinInject(),
 ) {
-    val routeId = line?.id ?: routes?.firstOrNull()?.id ?: ""
+    val routeId = line?.id ?: routes?.firstOrNull()?.id
     val routeLabel = line?.longName ?: routes?.firstOrNull()?.label
     val stopLabel = stop?.name
     val formattedAlert = FormattedAlert(alert)

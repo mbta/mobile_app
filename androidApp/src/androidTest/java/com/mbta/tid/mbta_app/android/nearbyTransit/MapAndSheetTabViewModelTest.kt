@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -17,7 +18,7 @@ class MapAndSheetTabViewModelTest {
         val initialFilter =
             StopDetailsPageFilters(
                 "stop1",
-                StopDetailsFilter("route_1", 1),
+                StopDetailsFilter(Route.Id("route_1"), 1),
                 TripDetailsFilter("trip_1", null, 0, false),
             )
         val initialNav =
@@ -29,7 +30,7 @@ class MapAndSheetTabViewModelTest {
         val newFilter =
             StopDetailsPageFilters(
                 "stop1",
-                StopDetailsFilter("route_1", 0),
+                StopDetailsFilter(Route.Id("route_1"), 0),
                 TripDetailsFilter("trip_2", null, 0, false),
             )
         val newNav =
@@ -49,7 +50,7 @@ class MapAndSheetTabViewModelTest {
     @Test
     fun testSetStopDetailsFilterPushedWhenNotInStopDetails() {
         val vm = NearbyTransitTabViewModel()
-        val newFilter = StopDetailsFilter("route_1", 1)
+        val newFilter = StopDetailsFilter(Route.Id("route_1"), 1)
 
         var popCalled = false
         var pushedRouteCalled = false
@@ -62,13 +63,13 @@ class MapAndSheetTabViewModelTest {
     @Test
     fun testSetStopDetailsFilterOldFilterPopped() {
         val vm = NearbyTransitTabViewModel()
-        val newFilter = StopDetailsFilter("route_1", 0)
+        val newFilter = StopDetailsFilter(Route.Id("route_1"), 0)
 
         var popCalled = false
         var pushedRoute: SheetRoutes? = null
 
         vm.setStopFilter(
-            SheetRoutes.StopDetails("a", StopDetailsFilter("route", 1), null),
+            SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("route"), 1), null),
             "a",
             newFilter,
             { popCalled = true },
@@ -88,7 +89,7 @@ class MapAndSheetTabViewModelTest {
     @Test
     fun testSetStopDetailsFilterDoesNothingIfFilterMatches() {
         val vm = NearbyTransitTabViewModel()
-        val sameFilter = StopDetailsFilter("route_1", 0)
+        val sameFilter = StopDetailsFilter(Route.Id("route_1"), 0)
 
         var popCalled = false
         var pushCalled = false
@@ -107,7 +108,7 @@ class MapAndSheetTabViewModelTest {
     @Test
     fun testSetStopDetailsFilterOldFilterPoppedWhenNewAutoFilter() {
         val vm = NearbyTransitTabViewModel()
-        val newFilter = StopDetailsFilter("route_1", 0, autoFilter = true)
+        val newFilter = StopDetailsFilter(Route.Id("route_1"), 0, autoFilter = true)
 
         var popCalled = false
         var pushedRoute: SheetRoutes? = null

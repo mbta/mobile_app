@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android
 
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.serialization.SerialName
@@ -17,8 +20,8 @@ sealed interface ModalRoutes {
     @Serializable
     data class AlertDetails(
         val alertId: String,
-        val lineId: String?,
-        val routeIds: List<String>?,
+        val lineId: Line.Id?,
+        val routeIds: List<Route.Id>?,
         val stopId: String?,
     ) : ModalRoutes
 
@@ -30,7 +33,7 @@ sealed interface ModalRoutes {
 
     @Serializable
     data class SaveFavorite(
-        val routeId: String,
+        val routeId: LineOrRoute.Id,
         val stopId: String,
         val selectedDirection: Int,
         val context: EditFavoritesContext,
