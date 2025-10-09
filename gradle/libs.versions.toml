@@ -72,6 +72,7 @@ compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 javaPhoenixClient = { module = "com.github.dsrees:JavaPhoenixClient", version.ref = "javaphoenixclient" }
 junit = { module = "junit:junit", version.ref = "junit" }
 koin-androidxCompose = { module = "io.insert-koin:koin-androidx-compose" }

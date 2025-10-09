@@ -32,6 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
@@ -43,6 +44,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.manageFavorites
+import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
@@ -68,6 +70,7 @@ import org.koin.compose.koinInject
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveFavoritePage(
     routeId: String,
@@ -110,7 +113,10 @@ fun SaveFavoritePage(
         rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<FavoriteSettings?>(null) }
     val settings = updatedSettings ?: existingSettings
 
+    val notificationPermissionState = notificationPermissionState()
+
     fun updateCloseAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
+        notificationPermissionState.launchPermissionRequest()
         coroutineScope.launch {
             updateFavorites(update, context, selectedDirection)
             val favorited = update.filter { it.value != null }
