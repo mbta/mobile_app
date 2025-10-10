@@ -14,7 +14,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -60,7 +59,6 @@ public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
     private val sentryRepository: ISentryRepository,
-    private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {

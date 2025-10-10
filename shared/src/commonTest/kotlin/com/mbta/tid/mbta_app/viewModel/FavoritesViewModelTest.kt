@@ -14,9 +14,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
-import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
@@ -29,7 +27,6 @@ import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentially
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
-import dev.mokkery.verifySuspend
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -191,36 +188,6 @@ internal class FavoritesViewModelTest : KoinTest {
                 awaitItem(),
             )
         }
-    }
-
-    @Test
-    fun `sets default tab to nearby`() = runTest {
-        val mockTabPreferencesRepo = mock<ITabPreferencesRepository>(MockMode.autofill)
-
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        setUpKoin(objects, dispatcher) {
-            favorites = MockFavoritesRepository(Favorites(emptyMap()))
-            tabPreferences = mockTabPreferencesRepo
-        }
-        val viewModel: FavoritesViewModel = get()
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(EasternTimeInstant.now())
-        viewModel.setLocation(stop1.position)
-
-        testViewModelFlow(viewModel).test {
-            awaitItemSatisfying {
-                it ==
-                    FavoritesViewModel.State(
-                        awaitingPredictionsAfterBackground = false,
-                        favorites = emptyMap(),
-                        routeCardData = emptyList(),
-                        staticRouteCardData = emptyList(),
-                        loadedLocation = null,
-                    )
-            }
-        }
-
-        verifySuspend { mockTabPreferencesRepo.setDefaultTab(DefaultTab.Nearby) }
     }
 
     @Test
