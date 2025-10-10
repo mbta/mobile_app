@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Schedule
 import com.mbta.tid.mbta_app.model.Stop
 import kotlinx.serialization.SerialName
@@ -13,7 +14,7 @@ public sealed class TripSchedulesResponse {
         override fun stops(globalData: GlobalResponse): List<Stop> =
             schedules.mapNotNull { globalData.stops[it.stopId] }
 
-        override fun routeId(): String? = schedules.map { it.routeId }.distinct().singleOrNull()
+        override fun routeId(): Route.Id? = schedules.map { it.routeId }.distinct().singleOrNull()
 
         override fun toString(): String = "[TripSchedulesResponse.Schedules]"
     }
@@ -38,5 +39,5 @@ public sealed class TripSchedulesResponse {
 
     internal abstract fun stops(globalData: GlobalResponse): List<Stop>?
 
-    internal abstract fun routeId(): String?
+    internal abstract fun routeId(): Route.Id?
 }

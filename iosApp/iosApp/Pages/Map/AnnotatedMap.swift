@@ -150,6 +150,7 @@ struct AnnotatedMap: View {
                         .priority(isSelected ? 1 : 0)
                         .allowOverlap(true)
                         .allowOverlapWithPuck(true)
+                        .ignoreCameraPadding(true)
                         .visible(zoomLevel >= StopLayerGenerator.shared.stopZoomThreshold || isSelected)
                     }
                 }

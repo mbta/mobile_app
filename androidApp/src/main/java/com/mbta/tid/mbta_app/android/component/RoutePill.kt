@@ -197,7 +197,7 @@ private fun RoutePillPreviews() {
         RoutePillPreview(
             route =
                 Route(
-                    id = "Red",
+                    id = Route.Id("Red"),
                     type = RouteType.HEAVY_RAIL,
                     color = "DA291C",
                     directionNames = listOf("South", "North"),
@@ -207,13 +207,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 10010,
                     textColor = "FFFFFF",
-                    lineId = "line-Red",
+                    lineId = Line.Id("line-Red"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Orange",
+                    id = Route.Id("Orange"),
                     type = RouteType.HEAVY_RAIL,
                     color = "ED8B00",
                     directionNames = listOf("South", "North"),
@@ -223,13 +223,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 10020,
                     textColor = "FFFFFF",
-                    lineId = "line-Orange",
+                    lineId = Line.Id("line-Orange"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Blue",
+                    id = Route.Id("Blue"),
                     type = RouteType.HEAVY_RAIL,
                     color = "003DA5",
                     directionNames = listOf("West", "East"),
@@ -239,13 +239,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 10040,
                     textColor = "FFFFFF",
-                    lineId = "line-Blue",
+                    lineId = Line.Id("line-Blue"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Mattapan",
+                    id = Route.Id("Mattapan"),
                     type = RouteType.LIGHT_RAIL,
                     color = "DA291C",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -255,13 +255,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 10011,
                     textColor = "FFFFFF",
-                    lineId = "line-Mattapan",
+                    lineId = Line.Id("line-Mattapan"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Green-B",
+                    id = Route.Id("Green-B"),
                     type = RouteType.LIGHT_RAIL,
                     color = "00843D",
                     directionNames = listOf("West", "East"),
@@ -271,13 +271,13 @@ private fun RoutePillPreviews() {
                     shortName = "B",
                     sortOrder = 10032,
                     textColor = "FFFFFF",
-                    lineId = "line-Green",
+                    lineId = Line.Id("line-Green"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Green-C",
+                    id = Route.Id("Green-C"),
                     type = RouteType.LIGHT_RAIL,
                     color = "00843D",
                     directionNames = listOf("West", "East"),
@@ -287,13 +287,13 @@ private fun RoutePillPreviews() {
                     shortName = "C",
                     sortOrder = 10033,
                     textColor = "FFFFFF",
-                    lineId = "line-Green",
+                    lineId = Line.Id("line-Green"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Green-D",
+                    id = Route.Id("Green-D"),
                     type = RouteType.LIGHT_RAIL,
                     color = "00843D",
                     directionNames = listOf("West", "East"),
@@ -303,13 +303,13 @@ private fun RoutePillPreviews() {
                     shortName = "D",
                     sortOrder = 10034,
                     textColor = "FFFFFF",
-                    lineId = "line-Green",
+                    lineId = Line.Id("line-Green"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Green-E",
+                    id = Route.Id("Green-E"),
                     type = RouteType.LIGHT_RAIL,
                     color = "00843D",
                     directionNames = listOf("West", "East"),
@@ -319,13 +319,13 @@ private fun RoutePillPreviews() {
                     shortName = "E",
                     sortOrder = 10035,
                     textColor = "FFFFFF",
-                    lineId = "line-Green",
+                    lineId = Line.Id("line-Green"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "CR-Fitchburg",
+                    id = Route.Id("CR-Fitchburg"),
                     type = RouteType.COMMUTER_RAIL,
                     color = "80276C",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -335,13 +335,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 20012,
                     textColor = "FFFFFF",
-                    lineId = "line-Fitchburg",
+                    lineId = Line.Id("line-Fitchburg"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "216",
+                    id = Route.Id("216"),
                     type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -351,13 +351,13 @@ private fun RoutePillPreviews() {
                     shortName = "216",
                     sortOrder = 52160,
                     textColor = "000000",
-                    lineId = "line-214216",
+                    lineId = Line.Id("line-214216"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "627",
+                    id = Route.Id("627"),
                     type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -367,13 +367,13 @@ private fun RoutePillPreviews() {
                     shortName = "62/76",
                     sortOrder = 50621,
                     textColor = "000000",
-                    lineId = "line-6276",
+                    lineId = Line.Id("line-6276"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "741",
+                    id = Route.Id("741"),
                     type = RouteType.BUS,
                     color = "7C878E",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -383,13 +383,13 @@ private fun RoutePillPreviews() {
                     shortName = "SL1",
                     sortOrder = 10051,
                     textColor = "FFFFFF",
-                    lineId = "line-SLWaterfront",
+                    lineId = Line.Id("line-SLWaterfront"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Boat-F1",
+                    id = Route.Id("Boat-F1"),
                     type = RouteType.FERRY,
                     color = "008EAA",
                     directionNames = listOf("Outbound", "Inbound"),
@@ -399,13 +399,13 @@ private fun RoutePillPreviews() {
                     shortName = "",
                     sortOrder = 30002,
                     textColor = "FFFFFF",
-                    lineId = "line-Boat-F1",
+                    lineId = Line.Id("line-Boat-F1"),
                 )
         )
         RoutePillPreview(
             route =
                 Route(
-                    id = "Shuttle-BroadwayKendall",
+                    id = Route.Id("Shuttle-BroadwayKendall"),
                     type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("South", "North"),
@@ -415,11 +415,11 @@ private fun RoutePillPreviews() {
                     shortName = "Red Line Shuttle",
                     sortOrder = 61050,
                     textColor = "000000",
-                    lineId = "line-Red",
+                    lineId = Line.Id("line-Red"),
                 ),
             line =
                 Line(
-                    id = "line-Red",
+                    id = Line.Id("line-Red"),
                     color = "DA291C",
                     longName = "Red Line",
                     shortName = "",

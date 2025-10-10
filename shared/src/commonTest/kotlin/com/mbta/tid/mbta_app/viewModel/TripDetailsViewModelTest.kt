@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -89,7 +90,7 @@ class TripDetailsViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { this.trip = tripRepo }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, null, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -132,7 +133,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, vehicle.id, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, vehicle.id, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -171,7 +172,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, null, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -212,7 +213,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, null, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -254,7 +255,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, vehicle.id, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, vehicle.id, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setActive(active = true, wasSentToBackground = false)
@@ -295,7 +296,7 @@ class TripDetailsViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { this.trip = tripRepo }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, "vehicle id", "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, "vehicle id", Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setActive(active = true, wasSentToBackground = false)

@@ -68,7 +68,7 @@ class AlertDetailsPageTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop1.id,
                 )
                 informedEntity(
@@ -79,7 +79,7 @@ class AlertDetailsPageTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop1a.id,
                 )
                 informedEntity(
@@ -90,7 +90,7 @@ class AlertDetailsPageTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 1,
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop1b.id,
                 )
                 informedEntity(
@@ -100,7 +100,7 @@ class AlertDetailsPageTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop2a.id,
                 )
                 informedEntity(
@@ -110,7 +110,7 @@ class AlertDetailsPageTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop3.id,
                 )
             }

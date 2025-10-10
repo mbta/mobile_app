@@ -21,6 +21,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     @Published private(set) var isManuallyCentering: Bool
     @Published private(set) var isFollowingPuck: Bool = false
+    @Published private(set) var isVehicleOverview: Bool = false
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
@@ -50,6 +51,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {
         isFollowingPuck = true
+        isVehicleOverview = false
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
@@ -61,6 +63,9 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         } else {
             Point(vehicle.coordinate)
         }
+
+        isFollowingPuck = false
+        isVehicleOverview = true
         animateTo(viewport: .overview(
             geometry: geometry,
             geometryPadding: Defaults.overviewPadding,
@@ -73,6 +78,8 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     @MainActor func stopCenter(stop: Stop) {
+        isFollowingPuck = false
+        isVehicleOverview = false
         animateTo(coordinates: stop.coordinate)
     }
 
@@ -108,6 +115,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
             isFollowingPuck = false
+            isVehicleOverview = false
         }
     }
 

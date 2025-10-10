@@ -6,6 +6,8 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
@@ -35,7 +37,7 @@ class RouteResultsViewTest {
     @Test
     fun testTap() {
         val route = TestData.getRoute("Red")
-        val taps = mutableListOf<String>()
+        val taps = mutableListOf<LineOrRoute.Id>()
         composeTestRule.setContent {
             RouteResultsView(
                 RoundedCornerShape(0.dp),
@@ -46,8 +48,8 @@ class RouteResultsViewTest {
             )
         }
         composeTestRule.onNodeWithText("RL").performClick()
-        assertEquals(listOf("Red"), taps)
+        assertEquals(listOf<LineOrRoute.Id>(Route.Id("Red")), taps)
         composeTestRule.onNodeWithText("Red Line").performClick()
-        assertEquals(listOf("Red", "Red"), taps)
+        assertEquals(listOf<LineOrRoute.Id>(Route.Id("Red"), Route.Id("Red")), taps)
     }
 }

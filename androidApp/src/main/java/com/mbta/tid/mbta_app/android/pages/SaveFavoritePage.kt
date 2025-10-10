@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -18,8 +20,10 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -28,18 +32,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.stopCard.FavoriteStopCard
+import com.mbta.tid.mbta_app.android.favorites.NotificationSettingsWidget
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.manageFavorites
+import com.mbta.tid.mbta_app.android.util.notificationPermissionState
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -55,14 +65,17 @@ import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
 import org.koin.compose.KoinIsolatedContext
 import org.koin.compose.koinInject
 import org.koin.dsl.koinApplication
 import org.koin.dsl.module
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveFavoritePage(
-    routeId: String,
+    routeId: LineOrRoute.Id,
     stopId: String,
     initialDirection: Int,
     context: EditFavoritesContext,
@@ -97,7 +110,15 @@ fun SaveFavoritePage(
 
     val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
 
+    val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
+    var updatedSettings by
+        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<FavoriteSettings?>(null) }
+    val settings = updatedSettings ?: existingSettings
+
+    val notificationPermissionState = notificationPermissionState()
+
     fun updateCloseAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
+        notificationPermissionState.launchPermissionRequest()
         coroutineScope.launch {
             updateFavorites(update, context, selectedDirection)
             val favorited = update.filter { it.value != null }
@@ -156,7 +177,7 @@ fun SaveFavoritePage(
                 }
                 Button(
                     onClick = {
-                        updateCloseAndToast(mapOf(selectedRouteStopDirection to FavoriteSettings()))
+                        updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))
                     },
                     colors = ButtonDefaults.key(),
                     contentPadding = PaddingValues(0.dp),
@@ -174,7 +195,9 @@ fun SaveFavoritePage(
         }
         HaloSeparator()
         Column(
-            Modifier.fillMaxHeight().padding(horizontal = 16.dp, vertical = 24.dp),
+            Modifier.fillMaxHeight()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             FavoriteStopCard(
@@ -187,6 +210,10 @@ fun SaveFavoritePage(
                     },
                 onlyServingOppositeDirection =
                     stopDirections.singleOrNull()?.id == 1 - initialDirection,
+            )
+            NotificationSettingsWidget(
+                settings = settings.notifications,
+                setSettings = { updatedSettings = settings.copy(notifications = it) },
             )
             if (isFavorite) {
                 HaloSeparator()
@@ -228,7 +255,7 @@ private fun SaveFavoritePagePreviewAdd() {
     KoinIsolatedContext(koin) {
         MyApplicationTheme {
             SaveFavoritePage(
-                routeId = "Orange",
+                routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
                 context = EditFavoritesContext.StopDetails,
@@ -253,8 +280,21 @@ private fun SaveFavoritePagePreviewEdit() {
                         MockFavoritesRepository(
                             Favorites(
                                 mapOf(
-                                    RouteStopDirection("Orange", "place-welln", 0) to
-                                        FavoriteSettings()
+                                    RouteStopDirection(Route.Id("Orange"), "place-welln", 0) to
+                                        FavoriteSettings(
+                                            notifications =
+                                                FavoriteSettings.Notifications(
+                                                    enabled = true,
+                                                    windows =
+                                                        listOf(
+                                                            FavoriteSettings.Notifications.Window(
+                                                                startTime = LocalTime(8, 0),
+                                                                endTime = LocalTime(9, 0),
+                                                                setOf(DayOfWeek.FRIDAY),
+                                                            )
+                                                        ),
+                                                )
+                                        )
                                 )
                             )
                         ),
@@ -268,7 +308,7 @@ private fun SaveFavoritePagePreviewEdit() {
     KoinIsolatedContext(koin) {
         MyApplicationTheme {
             SaveFavoritePage(
-                routeId = "Orange",
+                routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
                 context = EditFavoritesContext.StopDetails,

@@ -34,19 +34,20 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrast
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 
 sealed interface PillFilter {
-    val id: String
+    val id: LineOrRoute.Id
 
     data class ByRoute(val route: Route, val line: Line?) : PillFilter {
-        override val id: String
+        override val id: Route.Id
             get() = route.id
     }
 
     data class ByLine(val line: Line) : PillFilter {
-        override val id: String
+        override val id: Line.Id
             get() = line.id
     }
 }

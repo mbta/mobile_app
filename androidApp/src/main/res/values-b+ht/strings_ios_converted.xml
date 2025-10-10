@@ -4,6 +4,7 @@
     <string name="access_issue_sentence_case">Pwoblèm aksè</string>
     <string name="accident">Aksidan</string>
     <string name="accident_lowercase">aksidan</string>
+    <string name="add_another_time_period">Ajoute yon lòt peryòd tan</string>
     <string name="add_confirmation_button">Ajoute</string>
     <string name="add_favorite_label">ajoute yon preferans</string>
     <string name="add_favorite_title">Ajoute Favorite</string>
@@ -177,7 +178,9 @@
     <string name="follow">Swiv</string>
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
     <string name="freight_train_interference_lowercase">entèferans tren machandiz</string>
+    <string name="from">Soti nan</string>
     <string name="full_description">Deskripsyon Konplè</string>
+    <string name="get_disruption_notifications">Jwenn notifikasyon dezòd</string>
     <string name="got_it">Mwen konprann</string>
     <string name="hazmat_condition">Eta Matyè Danjere</string>
     <string name="hazmat_condition_lowercase">kondisyon danje</string>
@@ -388,6 +391,7 @@
     <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
+    <string name="to">Pou</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="toggle_direction">baskile direksyon</string>
     <string name="track_change">Suiv Chanjman</string>

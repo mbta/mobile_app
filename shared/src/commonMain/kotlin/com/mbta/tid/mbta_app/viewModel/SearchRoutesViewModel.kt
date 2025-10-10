@@ -8,6 +8,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
@@ -49,7 +52,7 @@ internal constructor(
     public sealed class State {
         public data object Unfiltered : State()
 
-        public data class Results(val routeIds: List<String>) : State()
+        public data class Results(val routeIds: List<LineOrRoute.Id>) : State()
 
         public data object Error : State()
 
@@ -101,8 +104,8 @@ internal constructor(
                                     data.data.routes
                                         .map {
                                             when {
-                                                it.id == "Green" -> "line-Green"
-                                                else -> it.id
+                                                it.id == "Green" -> Line.Id("line-Green")
+                                                else -> Route.Id(it.id)
                                             }
                                         }
                                         .sortedBy {

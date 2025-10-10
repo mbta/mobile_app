@@ -22,12 +22,18 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.RoundedCornerColumn
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 
 @Composable
-fun RouteResultsView(routes: List<SearchViewModel.RouteResult>, handleSearch: (String) -> Unit) {
+fun RouteResultsView(
+    routes: List<SearchViewModel.RouteResult>,
+    handleSearch: (LineOrRoute.Id) -> Unit,
+) {
     Text(
         stringResource(R.string.routes),
         Modifier.padding(vertical = 8.dp),
@@ -42,11 +48,11 @@ fun RouteResultsView(routes: List<SearchViewModel.RouteResult>, handleSearch: (S
 fun RouteResultsView(
     shape: RoundedCornerShape,
     routeResult: SearchViewModel.RouteResult,
-    handleSearch: (String) -> Unit,
+    handleSearch: (LineOrRoute.Id) -> Unit,
 ) {
     val resultId =
         when {
-            routeResult.id == "Green" -> "line-Green"
+            routeResult.id == Route.Id("Green") -> Line.Id("line-Green")
             else -> routeResult.id
         }
 

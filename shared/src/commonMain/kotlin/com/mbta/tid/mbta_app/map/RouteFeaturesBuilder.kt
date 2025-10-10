@@ -8,6 +8,8 @@ import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
 import com.mbta.tid.mbta_app.model.AlertAwareRouteSegment
 import com.mbta.tid.mbta_app.model.GlobalMapData
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteSegment
@@ -40,7 +42,7 @@ internal constructor(
 
 public data class RouteSourceData
 internal constructor(
-    val routeId: String,
+    val routeId: LineOrRoute.Id,
     val lines: List<RouteLineData>,
     val features: FeatureCollection,
 )
@@ -48,7 +50,7 @@ internal constructor(
 public object RouteFeaturesBuilder {
     internal val routeSourceId = "route-source"
 
-    public fun getRouteSourceId(routeId: String): String = "$routeSourceId-$routeId"
+    public fun getRouteSourceId(routeId: LineOrRoute.Id): String = "$routeSourceId-$routeId"
 
     internal val propAlertStateKey = FeatureProperty<String>("alertState")
 
@@ -85,7 +87,7 @@ public object RouteFeaturesBuilder {
         }
 
     private fun generateRouteSource(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
@@ -143,7 +145,7 @@ public object RouteFeaturesBuilder {
     }
 
     private fun generateRouteLines(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         routeShapes: List<SegmentedRouteShape>,
         stopsById: Map<String, Stop>,
         alertsByStop: Map<String, AlertAssociatedStop>,
@@ -206,9 +208,9 @@ public object RouteFeaturesBuilder {
     private fun forRailAtStop(
         stopShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         railShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
-        routesById: Map<String, Route>?,
+        routesById: Map<Route.Id, Route>?,
     ): List<MapFriendlyRouteResponse.RouteWithSegmentedShapes> {
-        val stopRailRouteIds: Set<String> =
+        val stopRailRouteIds: Set<LineOrRoute.Id> =
             stopShapes
                 .filter { routeWithShape ->
                     val routeType =
@@ -233,10 +235,10 @@ public object RouteFeaturesBuilder {
          *   how to get corresponding route ids for each)
          */
         val filterRoutes =
-            if (filter.routeId == "line-Green") {
-                greenRoutes
-            } else {
-                setOf(filter.routeId)
+            when (filter.routeId) {
+                is Route.Id -> setOf(filter.routeId)
+                Line.Id("line-Green") -> greenRoutes
+                else -> setOf(filter.routeId)
             }
         val targetRouteData = stopMapData.routeShapes.filter { filterRoutes.contains(it.routeId) }
 

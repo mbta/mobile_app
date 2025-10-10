@@ -5,14 +5,14 @@ import kotlinx.serialization.Serializable
 
 internal interface IRouteSegment {
     val sourceRoutePatternId: String
-    val sourceRouteId: String
+    val sourceRouteId: Route.Id
     val stopIds: List<String>
     val otherPatternsByStopId: Map<String, List<RoutePatternKey>>
 }
 
 @Serializable
 public data class RoutePatternKey(
-    @SerialName("route_id") val routeId: String,
+    @SerialName("route_id") val routeId: Route.Id,
     @SerialName("route_pattern_id") val routePatternId: String,
 )
 
@@ -24,7 +24,7 @@ public data class RoutePatternKey(
 public data class RouteSegment(
     val id: String,
     @SerialName("source_route_pattern_id") override val sourceRoutePatternId: String,
-    @SerialName("source_route_id") override val sourceRouteId: String,
+    @SerialName("source_route_id") override val sourceRouteId: Route.Id,
     @SerialName("stop_ids") override val stopIds: List<String>,
     @SerialName("other_patterns_by_stop_id")
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
@@ -73,7 +73,7 @@ public data class RouteSegment(
                     StopAlertState(hasSuspension = false, hasShuttle = false)
                 } else {
 
-                    var routes: Set<String> =
+                    var routes: Set<Route.Id> =
                         otherPatternsByStopId
                             .getOrElse(stopId) { listOf() }
                             .map { it.routeId }
@@ -176,7 +176,7 @@ public data class RouteSegment(
 internal data class AlertAwareRouteSegment(
     val id: String,
     override val sourceRoutePatternId: String,
-    override val sourceRouteId: String,
+    override val sourceRouteId: Route.Id,
     override val stopIds: List<String>,
     override val otherPatternsByStopId: Map<String, List<RoutePatternKey>>,
     val alertState: SegmentAlertState,

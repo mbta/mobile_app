@@ -128,7 +128,7 @@ class AlertTest {
             objects.alert {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop.id,
                     directionId = 0,
                 )
@@ -137,7 +137,7 @@ class AlertTest {
             objects.alert {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop.id,
                     directionId = null,
                 )
@@ -155,7 +155,7 @@ class AlertTest {
             objects.alert {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = "other_stop",
                     directionId = 0,
                 )
@@ -164,7 +164,7 @@ class AlertTest {
             objects.alert {
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop.id,
                     directionId = 1,
                 )
@@ -202,7 +202,7 @@ class AlertTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = stop.id,
                 )
@@ -240,7 +240,7 @@ class AlertTest {
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = stop.id,
                 )
@@ -296,7 +296,7 @@ class AlertTest {
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = "not matching",
                 )
@@ -324,7 +324,7 @@ class AlertTest {
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = "not matching",
                 )
@@ -335,7 +335,7 @@ class AlertTest {
                 effect = Alert.Effect.Suspension
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = otherRoute.id,
+                    route = otherRoute.id.idText,
                     routeType = otherRoute.type,
                     stop = "not matching",
                 )
@@ -366,7 +366,7 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = targetStop.id,
                     directionId = 0,
                 )
@@ -377,7 +377,7 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stopWithBoardAlert.id,
                     directionId = 0,
                 )
@@ -387,7 +387,7 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = firstStopWithRideAlert.id,
                     directionId = null,
                 )
@@ -398,7 +398,7 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = secondStopWithRideAlert.id,
                     directionId = null,
                 )
@@ -406,7 +406,7 @@ class AlertTest {
 
         val trip =
             objects.trip {
-                routeId = route.id
+                routeId = route.id.idText
                 directionId = 0
                 stopIds =
                     listOf(
@@ -440,19 +440,19 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = targetStop.id,
                     directionId = 0,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = downstreamStop1.id,
                     directionId = 0,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = downstreamStop2.id,
                     directionId = 0,
                 )
@@ -463,7 +463,7 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = downstreamStop2.id,
                     directionId = 0,
                 )
@@ -471,7 +471,7 @@ class AlertTest {
 
         val trip =
             objects.trip {
-                routeId = route.id
+                routeId = route.id.idText
                 directionId = 0
                 stopIds = listOf(targetStop.id, downstreamStop1.id, downstreamStop2.id)
             }
@@ -498,14 +498,14 @@ class AlertTest {
                 effect = Alert.Effect.ServiceChange
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = route.id,
+                    route = route.id.idText,
                     directionId = null,
                 )
             }
 
         val trip =
             objects.trip {
-                routeId = route.id
+                routeId = route.id.idText
                 directionId = 0
                 stopIds = listOf(targetStop.id, nextStop.id)
             }
@@ -611,7 +611,7 @@ class AlertTest {
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = shawmut.id,
                 )
             }
@@ -622,7 +622,7 @@ class AlertTest {
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = ashmont.id,
                 )
             }
@@ -633,7 +633,7 @@ class AlertTest {
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = alewife.id,
                 )
             }
@@ -645,7 +645,7 @@ class AlertTest {
                 activePeriod(time - 1.seconds, null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = park.id,
                 )
             }

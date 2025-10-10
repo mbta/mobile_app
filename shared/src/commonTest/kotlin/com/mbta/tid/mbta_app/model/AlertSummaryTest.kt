@@ -200,7 +200,7 @@ class AlertSummaryTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = childStop?.id,
                 )
             }
@@ -244,7 +244,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -294,7 +294,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -356,7 +356,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -435,7 +435,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -514,7 +514,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -589,7 +589,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stop.id,
                     )
                 }
@@ -687,7 +687,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Exit,
                             Alert.InformedEntity.Activity.Ride,
                         ),
-                        route = route.id,
+                        route = route.id.idText,
                         stop = stopId,
                     )
                 }

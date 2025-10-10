@@ -81,6 +81,14 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         }
     }
 
+    func vehicleId() -> String? {
+        switch self {
+        case let .stopDetails(_, _, tripFilter): tripFilter?.vehicleId
+        case let .tripDetails(filter): filter.vehicleId
+        case _: nil
+        }
+    }
+
     func sheetItemIdentifiable() -> SheetItem? {
         let item = SheetItem(stackEntry: self)
         return item.id == "" ? nil : item

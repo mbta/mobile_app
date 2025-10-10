@@ -11,7 +11,7 @@ import SwiftUI
 
 struct RouteResultsView: View {
     let routes: [SearchViewModel.RouteResult]
-    let handleRouteTap: (String) -> Void
+    let handleRouteTap: (LineOrRoute.Id) -> Void
 
     var body: some View {
         VStack {

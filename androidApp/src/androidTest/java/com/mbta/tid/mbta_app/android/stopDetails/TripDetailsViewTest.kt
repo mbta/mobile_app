@@ -130,7 +130,7 @@ class TripDetailsViewTest {
                 Pair(
                     "tapped_downstream_stop",
                     mapOf(
-                        "route_id" to route.id,
+                        "route_id" to route.id.idText,
                         "stop_id" to downstreamStopParent.id,
                         "trip_id" to trip.id,
                         "connecting_route_id" to "",
@@ -162,7 +162,7 @@ class TripDetailsViewTest {
                         Alert.InformedEntity.Activity.Ride,
                     ),
                 directionId = 0,
-                route = route.id,
+                route = route.id.idText,
                 stop = downstreamStop.id,
             )
         }

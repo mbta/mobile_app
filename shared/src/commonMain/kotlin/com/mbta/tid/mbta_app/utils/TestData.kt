@@ -33,7 +33,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
 private fun putLines(objects: ObjectCollectionBuilder) {
     objects.put(
         Line(
-            id = "line-Green",
+            id = Line.Id("line-Green"),
             color = "00843D",
             longName = "Green Line",
             shortName = "",
@@ -43,7 +43,7 @@ private fun putLines(objects: ObjectCollectionBuilder) {
     )
     objects.put(
         Line(
-            id = "line-SLWaterfront",
+            id = Line.Id("line-SLWaterfront"),
             color = "7C878E",
             longName = "Silver Line SL1/SL2/SL3",
             shortName = "",
@@ -56,7 +56,7 @@ private fun putLines(objects: ObjectCollectionBuilder) {
 private fun putRoutes(objects: ObjectCollectionBuilder) {
     objects.put(
         Route(
-            id = "Red",
+            id = Route.Id("Red"),
             type = RouteType.HEAVY_RAIL,
             color = "DA291C",
             directionNames = listOf("South", "North"),
@@ -66,13 +66,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 10_010,
             textColor = "FFFFFF",
-            lineId = "line-Red",
+            lineId = Line.Id("line-Red"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Orange",
+            id = Route.Id("Orange"),
             type = RouteType.HEAVY_RAIL,
             color = "ED8B00",
             directionNames = listOf("South", "North"),
@@ -82,13 +82,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 10_020,
             textColor = "FFFFFF",
-            lineId = "line-Orange",
+            lineId = Line.Id("line-Orange"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-B",
+            id = Route.Id("Green-B"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -98,13 +98,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "B",
             sortOrder = 10_032,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-C",
+            id = Route.Id("Green-C"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -114,13 +114,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "C",
             sortOrder = 10_033,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-D",
+            id = Route.Id("Green-D"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -130,13 +130,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "D",
             sortOrder = 10_034,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-E",
+            id = Route.Id("Green-E"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -146,13 +146,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "E",
             sortOrder = 10_035,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "741",
+            id = Route.Id("741"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -162,13 +162,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "SL1",
             sortOrder = 10_051,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "742",
+            id = Route.Id("742"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -178,13 +178,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "SL2",
             sortOrder = 10_052,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "743",
+            id = Route.Id("743"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -194,13 +194,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "SL3",
             sortOrder = 10_053,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "746",
+            id = Route.Id("746"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -210,13 +210,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "SLW",
             sortOrder = 10_057,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Fitchburg",
+            id = Route.Id("CR-Fitchburg"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -226,13 +226,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 20_003,
             textColor = "FFFFFF",
-            lineId = "line-Fitchburg",
+            lineId = Line.Id("line-Fitchburg"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Haverhill",
+            id = Route.Id("CR-Haverhill"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -242,13 +242,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 20_007,
             textColor = "FFFFFF",
-            lineId = "line-Haverhill",
+            lineId = Line.Id("line-Haverhill"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Lowell",
+            id = Route.Id("CR-Lowell"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -258,13 +258,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 20_009,
             textColor = "FFFFFF",
-            lineId = "line-Lowell",
+            lineId = Line.Id("line-Lowell"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Newburyport",
+            id = Route.Id("CR-Newburyport"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -274,13 +274,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 20_012,
             textColor = "FFFFFF",
-            lineId = "line-Newburyport",
+            lineId = Line.Id("line-Newburyport"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Providence",
+            id = Route.Id("CR-Providence"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -290,13 +290,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "",
             sortOrder = 20_013,
             textColor = "FFFFFF",
-            lineId = "line-Providence",
+            lineId = Line.Id("line-Providence"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "15",
+            id = Route.Id("15"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -306,13 +306,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "15",
             sortOrder = 50_150,
             textColor = "000000",
-            lineId = "line-15",
+            lineId = Line.Id("line-15"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "67",
+            id = Route.Id("67"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -322,13 +322,13 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "67",
             sortOrder = 50_670,
             textColor = "000000",
-            lineId = "line-6779",
+            lineId = Line.Id("line-6779"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "87",
+            id = Route.Id("87"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -339,7 +339,7 @@ private fun putRoutes(objects: ObjectCollectionBuilder) {
             shortName = "87",
             sortOrder = 50_870,
             textColor = "000000",
-            lineId = "line-87",
+            lineId = Line.Id("line-87"),
             routePatternIds = null,
         )
     )
@@ -354,7 +354,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_100_040,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-0",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -365,7 +365,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_100_041,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-0",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -376,7 +376,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_101_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-1",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -387,7 +387,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_101_001,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-1",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -398,7 +398,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_200_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-0",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
         )
     )
     objects.put(
@@ -409,7 +409,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_201_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-1",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
         )
     )
     objects.put(
@@ -420,7 +420,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_320_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-0",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
         )
     )
     objects.put(
@@ -431,7 +431,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_321_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-1",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
         )
     )
     objects.put(
@@ -442,7 +442,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_330_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-0",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
         )
     )
     objects.put(
@@ -453,7 +453,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_331_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-1",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
         )
     )
     objects.put(
@@ -464,7 +464,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_340_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-0",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
         )
     )
     objects.put(
@@ -475,7 +475,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_341_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-1",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
         )
     )
     objects.put(
@@ -486,7 +486,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_350_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-0",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
         )
     )
     objects.put(
@@ -497,7 +497,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_351_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-1",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
         )
     )
     objects.put(
@@ -508,7 +508,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_510_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039742",
-            routeId = "741",
+            routeId = Route.Id("741"),
         )
     )
     objects.put(
@@ -519,7 +519,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_511_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039744",
-            routeId = "741",
+            routeId = Route.Id("741"),
         )
     )
     objects.put(
@@ -530,7 +530,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_520_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039786",
-            routeId = "742",
+            routeId = Route.Id("742"),
         )
     )
     objects.put(
@@ -541,7 +541,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_521_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039768",
-            routeId = "742",
+            routeId = Route.Id("742"),
         )
     )
     objects.put(
@@ -552,7 +552,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_530_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72040977",
-            routeId = "743",
+            routeId = Route.Id("743"),
         )
     )
     objects.put(
@@ -563,7 +563,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_531_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72040978",
-            routeId = "743",
+            routeId = Route.Id("743"),
         )
     )
     objects.put(
@@ -574,7 +574,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_570_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039743",
-            routeId = "746",
+            routeId = Route.Id("746"),
         )
     )
     objects.put(
@@ -585,7 +585,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 100_571_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "72039750",
-            routeId = "746",
+            routeId = Route.Id("746"),
         )
     )
     objects.put(
@@ -596,7 +596,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_030_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744237-405",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
         )
     )
     objects.put(
@@ -607,7 +607,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_031_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744235-400",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
         )
     )
     objects.put(
@@ -618,7 +618,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_070_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-0",
-            routeId = "CR-Haverhill",
+            routeId = Route.Id("CR-Haverhill"),
         )
     )
     objects.put(
@@ -629,7 +629,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_071_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Haverhill-C1-1",
-            routeId = "CR-Haverhill",
+            routeId = Route.Id("CR-Haverhill"),
         )
     )
     objects.put(
@@ -640,7 +640,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_090_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-0",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
         )
     )
     objects.put(
@@ -651,7 +651,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_091_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-1",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
         )
     )
     objects.put(
@@ -662,7 +662,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_120_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744341-125",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -673,7 +673,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_120_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744312-27",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -684,7 +684,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_121_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744338-114",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -695,7 +695,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_121_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "HaverhillRestoredWKDY-744311-24",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -706,7 +706,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_130_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-767850-839",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -717,7 +717,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_130_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-768056-925",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -728,7 +728,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_131_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-767840-852",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -739,7 +739,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 200_131_010,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "Sept8Read-768057-930",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -750,7 +750,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 501_500_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71373591",
-            routeId = "15",
+            routeId = Route.Id("15"),
         )
     )
     objects.put(
@@ -761,7 +761,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 501_501_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71373380",
-            routeId = "15",
+            routeId = Route.Id("15"),
         )
     )
     objects.put(
@@ -772,7 +772,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 506_700_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694757",
-            routeId = "67",
+            routeId = Route.Id("67"),
         )
     )
     objects.put(
@@ -783,7 +783,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 506_701_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694754",
-            routeId = "67",
+            routeId = Route.Id("67"),
         )
     )
     objects.put(
@@ -794,7 +794,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 508_700_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694434",
-            routeId = "87",
+            routeId = Route.Id("87"),
         )
     )
     objects.put(
@@ -805,7 +805,7 @@ private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
             sortOrder = 508_701_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "71694436",
-            routeId = "87",
+            routeId = Route.Id("87"),
         )
     )
 }
@@ -11256,7 +11256,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71373380",
             directionId = 1,
             headsign = "Ruggles",
-            routeId = "15",
+            routeId = Route.Id("15"),
             routePatternId = "15-1-1",
             shapeId = "150308",
             stopIds =
@@ -11305,7 +11305,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71373591",
             directionId = 0,
             headsign = "Fields Corner",
-            routeId = "15",
+            routeId = Route.Id("15"),
             routePatternId = "15-1-0",
             shapeId = "150307",
             stopIds =
@@ -11348,7 +11348,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71694434",
             directionId = 0,
             headsign = "Arlington Center",
-            routeId = "87",
+            routeId = Route.Id("87"),
             routePatternId = "87-2-0",
             shapeId = "870206",
             stopIds =
@@ -11395,7 +11395,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71694436",
             directionId = 1,
             headsign = "Lechmere",
-            routeId = "87",
+            routeId = Route.Id("87"),
             routePatternId = "87-2-1",
             shapeId = "870202",
             stopIds =
@@ -11443,7 +11443,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71694754",
             directionId = 1,
             headsign = "Alewife via Arlington Center",
-            routeId = "67",
+            routeId = Route.Id("67"),
             routePatternId = "67-4-1",
             shapeId = "670068",
             stopIds =
@@ -11476,7 +11476,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "71694757",
             directionId = 0,
             headsign = "Turkey Hill via Arlington Center",
-            routeId = "67",
+            routeId = Route.Id("67"),
             routePatternId = "67-4-0",
             shapeId = "670067",
             stopIds =
@@ -11510,7 +11510,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039742",
             directionId = 0,
             headsign = "Logan Airport",
-            routeId = "741",
+            routeId = Route.Id("741"),
             routePatternId = "741-_-0",
             shapeId = "7410055",
             stopIds = listOf<String>("74611", "74612", "74613", "74624", "17091"),
@@ -11521,7 +11521,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039743",
             directionId = 0,
             headsign = "Silver Line Way",
-            routeId = "746",
+            routeId = Route.Id("746"),
             routePatternId = "746-_-0",
             shapeId = "7460032",
             stopIds = listOf<String>("74611", "74612", "74613", "74614"),
@@ -11532,7 +11532,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039744",
             directionId = 1,
             headsign = "South Station",
-            routeId = "741",
+            routeId = Route.Id("741"),
             routePatternId = "741-_-1",
             shapeId = "7410056",
             stopIds =
@@ -11555,7 +11555,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039750",
             directionId = 1,
             headsign = "South Station",
-            routeId = "746",
+            routeId = Route.Id("746"),
             routePatternId = "746-_-1",
             shapeId = "7460033",
             stopIds = listOf<String>("74614", "74615", "74616", "74617"),
@@ -11566,7 +11566,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039768",
             directionId = 1,
             headsign = "South Station",
-            routeId = "742",
+            routeId = Route.Id("742"),
             routePatternId = "742-3-1",
             shapeId = "7420071",
             stopIds =
@@ -11589,7 +11589,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72039786",
             directionId = 0,
             headsign = "Design Center",
-            routeId = "742",
+            routeId = Route.Id("742"),
             routePatternId = "742-3-0",
             shapeId = "7420072",
             stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
@@ -11600,7 +11600,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72040977",
             directionId = 0,
             headsign = "Chelsea",
-            routeId = "743",
+            routeId = Route.Id("743"),
             routePatternId = "743-_-0",
             shapeId = "7430048",
             stopIds =
@@ -11622,7 +11622,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "72040978",
             directionId = 1,
             headsign = "South Station",
-            routeId = "743",
+            routeId = Route.Id("743"),
             routePatternId = "743-_-1",
             shapeId = "7430047",
             stopIds =
@@ -11645,7 +11645,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744235-400",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
             routePatternId = "CR-Fitchburg-d82ea33a-1",
             shapeId = "9840003",
             stopIds =
@@ -11675,7 +11675,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744237-405",
             directionId = 0,
             headsign = "Wachusett",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
             routePatternId = "CR-Fitchburg-2a5f6366-0",
             shapeId = "9840004",
             stopIds =
@@ -11705,7 +11705,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744311-24",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-d47c5647-1",
             shapeId = "9810006",
             stopIds =
@@ -11730,7 +11730,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744312-27",
             directionId = 0,
             headsign = "Rockport",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-e54dc640-0",
             shapeId = "9810007",
             stopIds =
@@ -11755,7 +11755,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744338-114",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-7e4857df-1",
             shapeId = "9810001",
             stopIds =
@@ -11779,7 +11779,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "HaverhillRestoredWKDY-744341-125",
             directionId = 0,
             headsign = "Newburyport",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-79533330-0",
             shapeId = "9810002",
             stopIds =
@@ -11803,7 +11803,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "Sept8Read-767840-852",
             directionId = 1,
             headsign = "South Station",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
             routePatternId = "CR-Providence-e9395acc-1",
             shapeId = "9890008",
             stopIds =
@@ -11828,7 +11828,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "Sept8Read-767850-839",
             directionId = 0,
             headsign = "Wickford Junction",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
             routePatternId = "CR-Providence-9cf54fb3-0",
             shapeId = "9890009",
             stopIds =
@@ -11853,7 +11853,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "Sept8Read-768056-925",
             directionId = 0,
             headsign = "Stoughton",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
             routePatternId = "CR-Providence-9515a09b-0",
             shapeId = "9890004",
             stopIds =
@@ -11873,7 +11873,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "Sept8Read-768057-930",
             directionId = 1,
             headsign = "South Station",
-            routeId = "CR-Providence",
+            routeId = Route.Id("CR-Providence"),
             routePatternId = "CR-Providence-6cae46be-1",
             shapeId = "9890003",
             stopIds =
@@ -11894,7 +11894,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-CR-Haverhill-C1-0",
             directionId = 0,
             headsign = "Haverhill",
-            routeId = "CR-Haverhill",
+            routeId = Route.Id("CR-Haverhill"),
             routePatternId = "CR-Haverhill-779dede9-0",
             shapeId = "canonical-9820002",
             stopIds =
@@ -11922,7 +11922,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-CR-Haverhill-C1-1",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Haverhill",
+            routeId = Route.Id("CR-Haverhill"),
             routePatternId = "CR-Haverhill-ebc58735-1",
             shapeId = "canonical-9820001",
             stopIds =
@@ -11950,7 +11950,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-CR-Lowell-C1-0",
             directionId = 0,
             headsign = "Lowell",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
             routePatternId = "CR-Lowell-edb39c7b-0",
             shapeId = "canonical-9830006",
             stopIds =
@@ -11971,7 +11971,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-CR-Lowell-C1-1",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
             routePatternId = "CR-Lowell-305fef81-1",
             shapeId = "canonical-9830005",
             stopIds =
@@ -11992,7 +11992,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-B-C1-0",
             directionId = 0,
             headsign = "Boston College",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
             routePatternId = "Green-B-812-0",
             shapeId = "canonical-8000013",
             stopIds =
@@ -12028,7 +12028,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-B-C1-1",
             directionId = 1,
             headsign = "Government Center",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
             routePatternId = "Green-B-812-1",
             shapeId = "canonical-8000012",
             stopIds =
@@ -12064,7 +12064,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-C-C1-0",
             directionId = 0,
             headsign = "Cleveland Circle",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
             routePatternId = "Green-C-832-0",
             shapeId = "canonical-8000006",
             stopIds =
@@ -12097,7 +12097,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-C-C1-1",
             directionId = 1,
             headsign = "Government Center",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
             routePatternId = "Green-C-832-1",
             shapeId = "canonical-8000005",
             stopIds =
@@ -12130,7 +12130,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-D-C1-0",
             directionId = 0,
             headsign = "Riverside",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
             routePatternId = "Green-D-855-0",
             shapeId = "canonical-8000008",
             stopIds =
@@ -12168,7 +12168,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-D-C1-1",
             directionId = 1,
             headsign = "Union Square",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
             routePatternId = "Green-D-855-1",
             shapeId = "canonical-8000009",
             stopIds =
@@ -12206,7 +12206,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-E-C1-0",
             directionId = 0,
             headsign = "Heath Street",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
             routePatternId = "Green-E-886-0",
             shapeId = "canonical-8000018",
             stopIds =
@@ -12244,7 +12244,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Green-E-C1-1",
             directionId = 1,
             headsign = "Medford/Tufts",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
             routePatternId = "Green-E-886-1",
             shapeId = "canonical-8000015",
             stopIds =
@@ -12282,7 +12282,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Orange-C1-0",
             directionId = 0,
             headsign = "Forest Hills",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
             routePatternId = "Orange-3-0",
             shapeId = "canonical-903_0018",
             stopIds =
@@ -12315,7 +12315,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Orange-C1-1",
             directionId = 1,
             headsign = "Oak Grove",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
             routePatternId = "Orange-3-1",
             shapeId = "canonical-903_0017",
             stopIds =
@@ -12348,7 +12348,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Red-C1-0",
             directionId = 0,
             headsign = "Braintree",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-3-0",
             shapeId = "canonical-933_0009",
             stopIds =
@@ -12379,7 +12379,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Red-C1-1",
             directionId = 1,
             headsign = "Alewife",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-3-1",
             shapeId = "canonical-933_0010",
             stopIds =
@@ -12410,7 +12410,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Red-C2-0",
             directionId = 0,
             headsign = "Ashmont",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-1-0",
             shapeId = "canonical-931_0009",
             stopIds =
@@ -12440,7 +12440,7 @@ private fun putTrips(objects: ObjectCollectionBuilder) {
             id = "canonical-Red-C2-1",
             directionId = 1,
             headsign = "Alewife",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-1-1",
             shapeId = "canonical-931_0010",
             stopIds =

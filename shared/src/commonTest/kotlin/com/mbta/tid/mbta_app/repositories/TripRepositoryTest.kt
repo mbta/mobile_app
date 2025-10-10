@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -53,16 +54,16 @@ class TripRepositoryTest : KoinTest {
         val mockEngine = MockEngine {
             respond(
                 """
-            {
-                "shape_with_stops": {
-                    "shape": {"id": "shape_id", "polyline": "shape_polyline"},
-                    "stop_ids": ["1", "2", "3"],
-                    "route_id": "66",
-                    "route_pattern_id": "66_rp",
-                    "direction_id": 1
-                }
-              }
-          """
+                  {
+                      "shape_with_stops": {
+                          "shape": {"id": "shape_id", "polyline": "shape_polyline"},
+                          "stop_ids": ["1", "2", "3"],
+                          "route_id": "66",
+                          "route_pattern_id": "66_rp",
+                          "direction_id": 1
+                      }
+                    }
+                """
                     .trimIndent(),
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )
@@ -81,7 +82,7 @@ class TripRepositoryTest : KoinTest {
                         shapeWithStops =
                             ShapeWithStops(
                                 directionId = 1,
-                                routeId = "66",
+                                routeId = Route.Id("66"),
                                 routePatternId = "66_rp",
                                 shape = Shape(id = "shape_id", polyline = "shape_polyline"),
                                 stopIds = listOf("1", "2", "3"),
@@ -100,11 +101,11 @@ class TripRepositoryTest : KoinTest {
         val mockEngine = MockEngine {
             respond(
                 """
-            {
-                "code": 404,
-                "message": "not_found"
-              }
-          """
+                  {
+                      "code": 404,
+                      "message": "not_found"
+                    }
+                """
                     .trimIndent(),
                 status = HttpStatusCode.NotFound,
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -130,8 +131,9 @@ class TripRepositoryTest : KoinTest {
     fun `getsTripShape when parsing error`() {
         val mockEngine = MockEngine {
             respond(
-                """{"field": "Can't parse me!"}
-                    """
+                """
+                {"field": "Can't parse me!"}
+                """
                     .trimIndent(),
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
             )

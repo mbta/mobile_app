@@ -28,13 +28,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -109,11 +109,11 @@ final class TripDetailsViewTests: XCTestCase {
         let targetStop = objects.stop { _ in }
         let trip = objects.trip(routePattern: pattern) { trip in
             trip.stopIds = [firstStop.id, targetStop.id]
-            trip.routeId = route.id
+            trip.routeId = route.id.idText
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -198,13 +198,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -278,13 +278,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -366,13 +366,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -451,13 +451,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }
@@ -532,13 +532,13 @@ final class TripDetailsViewTests: XCTestCase {
         let vehicleStop = objects.stop { _ in }
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = "different trip"
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .inTransitTo
             vehicle.stopId = vehicleStop.id
         }
 
         let schedule = objects.schedule { schedule in
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = targetStop.id
             schedule.trip = trip
         }

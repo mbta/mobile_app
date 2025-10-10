@@ -13,8 +13,8 @@ internal constructor(
     @SerialName("sort_order") val sortOrder: Int,
     val typicality: Typicality?,
     @SerialName("representative_trip_id") val representativeTripId: String,
-    @SerialName("route_id") val routeId: String,
-) : Comparable<RoutePattern>, BackendObject {
+    @SerialName("route_id") val routeId: Route.Id,
+) : Comparable<RoutePattern>, BackendObject<String> {
     @Serializable
     public enum class Typicality {
         @SerialName("typical") Typical,

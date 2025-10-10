@@ -232,7 +232,7 @@ struct TripDetailsView: View {
         tripDetails(
             .init(
                 stopId: "",
-                stopFilter: .init(routeId: "", directionId: 0),
+                stopFilter: .init(routeId: Route.Id(""), directionId: 0),
                 tripFilter: .init(tripId: "", vehicleId: nil, stopSequence: nil, selectionLock: false)
             ),
             placeholderInfo.trip,
@@ -265,7 +265,7 @@ struct TripDetailsView: View {
         else { stop.stop }
         nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
-            routeId: tripDetailsVMState?.tripData?.trip.routeId ?? "",
+            routeId: tripDetailsVMState?.tripData?.trip.routeId,
             stopId: stop.stop.id,
             tripId: tripFilter?.tripId ?? "",
             connectingRouteId: nil

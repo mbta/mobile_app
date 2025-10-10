@@ -420,7 +420,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = route.id,
+                    route = route.id.idText,
                     stop = stop.id,
                 )
             }
@@ -516,7 +516,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = routeB.id,
+                    route = routeB.id.idText,
                     stop = "71151",
                 )
                 informedEntity(
@@ -527,7 +527,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = routeC.id,
+                    route = routeC.id.idText,
                     stop = "70151",
                 )
             }
@@ -536,11 +536,11 @@ class StopDetailsFilteredDeparturesViewTest {
         objects.upcomingTrip(
             objects.prediction {
                 departureTime = now.plus(5.minutes)
-                routeId = routeD.id
+                routeId = routeD.id.idText
                 stopId = stop.id
                 trip =
                     objects.trip {
-                        routeId = routeD.id
+                        routeId = routeD.id.idText
                         routePatternId = tripPattern.id
                     }
             }
@@ -616,7 +616,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = route.id,
+                    route = route.id.idText,
                     stop = downstreamStop.id,
                 )
             }
@@ -762,7 +762,7 @@ class StopDetailsFilteredDeparturesViewTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                     directionId = 0,
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = RouteType.LIGHT_RAIL,
                     stop = stop.id,
                 )

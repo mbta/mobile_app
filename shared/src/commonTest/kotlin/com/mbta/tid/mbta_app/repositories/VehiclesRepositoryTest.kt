@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.mocks.MockMessage
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
@@ -42,7 +43,11 @@ class VehiclesRepositoryTest : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(vehiclesRepo.channel)
-        vehiclesRepo.connect(routeId = "Red", directionId = 0, onReceive = { /* no-op */ })
+        vehiclesRepo.connect(
+            routeId = Route.Id("Red"),
+            directionId = 0,
+            onReceive = { /* no-op */ },
+        )
         advanceUntilIdle()
         assertNotNull(vehiclesRepo.channel)
     }
@@ -73,7 +78,7 @@ class VehiclesRepositoryTest : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         vehiclesRepo.channel = channel
-        vehiclesRepo.connect(routeId = "Test", directionId = 0, onReceive = {})
+        vehiclesRepo.connect(routeId = Route.Id("Test"), directionId = 0, onReceive = {})
         advanceUntilIdle()
         verify { channel.detach() }
     }
@@ -99,7 +104,7 @@ class VehiclesRepositoryTest : KoinTest {
         every { channel.attach() } returns push
 
         vehiclesRepo.connect(
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             directionId = 0,
             onReceive = { outcome ->
                 assertEquals(VehiclesStreamDataResponse(emptyMap()), outcome.dataOrThrow())
@@ -136,7 +141,7 @@ class VehiclesRepositoryTest : KoinTest {
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
         vehiclesRepo.connect(
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             directionId = 0,
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)

@@ -20,7 +20,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testBus() throws {
         let busRoute = Route(
-            id: "627",
+            id: .init("627"),
             type: .bus,
             color: "FFC72C",
             directionNames: ["Outbound", "Inbound"],
@@ -30,7 +30,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "62/76",
             sortOrder: 50621,
             textColor: "000000",
-            lineId: "line-6276",
+            lineId: .init("line-6276"),
             routePatternIds: nil
         )
         let fixedPill = RoutePill(route: busRoute, type: .fixed)
@@ -47,7 +47,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testHeavyRail() throws {
         let redLine = Route(
-            id: "Red",
+            id: .init("Red"),
             type: .heavyRail,
             color: "DA291C",
             directionNames: ["South", "North"],
@@ -57,11 +57,11 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10010,
             textColor: "FFFFFF",
-            lineId: "line-Red",
+            lineId: .init("line-Red"),
             routePatternIds: nil
         )
         let blueLine = Route(
-            id: "Blue",
+            id: .init("Blue"),
             type: .heavyRail,
             color: "003DA5",
             directionNames: ["West", "East"],
@@ -71,7 +71,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10040,
             textColor: "FFFFFF",
-            lineId: "line-Blue",
+            lineId: .init("line-Blue"),
             routePatternIds: nil
         )
 
@@ -100,7 +100,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testLightRail() throws {
         let greenLineC = Route(
-            id: "Green-C",
+            id: .init("Green-C"),
             type: .lightRail,
             color: "00843D",
             directionNames: ["West", "East"],
@@ -110,12 +110,12 @@ final class RoutePillTests: XCTestCase {
             shortName: "C",
             sortOrder: 10033,
             textColor: "FFFFFF",
-            lineId: "line-Green",
+            lineId: .init("line-Green"),
             routePatternIds: nil
         )
 
         let mattapan = Route(
-            id: "Mattapan",
+            id: .init("Mattapan"),
             type: .lightRail,
             color: "DA291C",
 
@@ -132,7 +132,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 10011,
             textColor: "FFFFFF",
-            lineId: "line-Mattapan",
+            lineId: .init("line-Mattapan"),
             routePatternIds: nil
         )
 
@@ -161,7 +161,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testCommuterRail() throws {
         let middleborough = Route(
-            id: "CR-Middleborough",
+            id: .init("CR-Middleborough"),
             type: .commuterRail,
             color: "80276C",
             directionNames: ["Outbound", "Inbound"],
@@ -171,11 +171,11 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20009,
             textColor: "FFFFFF",
-            lineId: "line-Middleborough",
+            lineId: .init("line-Middleborough"),
             routePatternIds: nil
         )
         let providence = Route(
-            id: "CR-Providence",
+            id: .init("CR-Providence"),
             type: .commuterRail,
             color: "80276C",
             directionNames: ["Outbound", "Inbound"],
@@ -185,7 +185,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 20012,
             textColor: "FFFFFF",
-            lineId: "line-Providence",
+            lineId: .init("line-Providence"),
             routePatternIds: nil
         )
 
@@ -214,7 +214,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testFerry() throws {
         let ferry = Route(
-            id: "Boat-F1",
+            id: .init("Boat-F1"),
             type: .ferry,
             color: "008EAA",
             directionNames: ["Outbound", "Inbound"],
@@ -224,7 +224,7 @@ final class RoutePillTests: XCTestCase {
             shortName: "",
             sortOrder: 30002,
             textColor: "FFFFFF",
-            lineId: "line-Boat-F1",
+            lineId: .init("line-Boat-F1"),
             routePatternIds: nil
         )
 
@@ -244,7 +244,7 @@ final class RoutePillTests: XCTestCase {
 
     @MainActor func testLines() throws {
         let redLine = Line(
-            id: "line-Red",
+            id: .init("line-Red"),
             color: "DA291C",
             longName: "Red Line",
             shortName: "",
@@ -253,7 +253,7 @@ final class RoutePillTests: XCTestCase {
         )
 
         let greenLine = Line(
-            id: "line-Green",
+            id: .init("line-Green"),
             color: "00843D",
             longName: "Green Line",
             shortName: "",

@@ -75,7 +75,7 @@ internal fun endToEndModule(): Module {
             longName = "Red Line"
             textColor = "FFFFFF"
             type = RouteType.HEAVY_RAIL
-            lineId = lineRed.id
+            lineId = lineRed.id.idText
         }
     val patternAlewife =
         objects.routePattern(routeRed) {

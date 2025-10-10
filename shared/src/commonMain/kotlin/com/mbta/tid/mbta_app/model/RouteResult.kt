@@ -17,7 +17,7 @@ internal constructor(
         route: Route,
         rank: Int = 1,
     ) : this(
-        id = route.id,
+        id = route.id.idText,
         rank = rank,
         longName = route.longName,
         shortName = route.shortName,

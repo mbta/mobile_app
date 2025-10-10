@@ -8,7 +8,7 @@ public data class MapStop(
     val stop: Stop,
     val routes: Map<MapStopRoute, List<Route>>,
     val routeTypes: List<MapStopRoute>,
-    val routeDirections: Map<String, Set<Int>>,
+    val routeDirections: Map<Route.Id, Set<Int>>,
     val isTerminal: Boolean,
     val alerts: Map<MapStopRoute, StopAlertState>?,
 )
@@ -99,7 +99,7 @@ public data class GlobalMapData(
                         .mapNotNull { globalData.routePatterns[it] }
                 val typicalPatterns =
                     patterns.filter {
-                        !it.routeId.startsWith("Shuttle-") &&
+                        !it.routeId.idText.startsWith("Shuttle-") &&
                             (it.typicality == RoutePattern.Typicality.Typical ||
                                 it.typicality == RoutePattern.Typicality.CanonicalOnly)
                     }
@@ -123,7 +123,7 @@ public data class GlobalMapData(
                     }
 
                 val allRoutes = mutableSetOf<Route>()
-                val routeDirections = mutableMapOf<String, MutableSet<Int>>()
+                val routeDirections = mutableMapOf<Route.Id, MutableSet<Int>>()
 
                 for (pattern in typicalPatterns.sorted()) {
                     routeDirections

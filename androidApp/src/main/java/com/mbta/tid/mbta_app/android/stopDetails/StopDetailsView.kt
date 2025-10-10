@@ -39,7 +39,7 @@ fun StopDetailsView(
         openModal(modal)
         if (modal is ModalRoutes.AlertDetails) {
             analytics.tappedAlertDetails(
-                routeId = modal.lineId ?: modal.routeIds?.firstOrNull() ?: "",
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
                 stopId = modal.stopId ?: "",
                 alertId = modal.alertId,
             )
