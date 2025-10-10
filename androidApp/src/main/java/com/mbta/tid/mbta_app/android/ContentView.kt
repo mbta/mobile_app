@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
@@ -163,8 +164,14 @@ fun ContentView(
                             currentDestination =
                                 Routes.fromNavBackStackEntry(navController.currentBackStackEntry),
                             sheetNavEntrypoint = sheetNavEntrypoint,
-                            navigateToFavorites = { sheetNavEntrypoint = SheetRoutes.Favorites },
-                            navigateToNearby = { sheetNavEntrypoint = SheetRoutes.NearbyTransit },
+                            navigateToFavorites = {
+                                sheetNavEntrypoint = SheetRoutes.Favorites
+                                viewModel.setTabPreference(DefaultTab.Favorites)
+                            },
+                            navigateToNearby = {
+                                sheetNavEntrypoint = SheetRoutes.NearbyTransit
+                                viewModel.setTabPreference(DefaultTab.Nearby)
+                            },
                             navigateToMore = { navController.navigate(Routes.More) },
                         )
                     }

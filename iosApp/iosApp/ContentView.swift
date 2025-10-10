@@ -400,7 +400,9 @@ struct ContentView: View {
                 )
                 .transition(transition)
             }
-        }.animation(.easeOut, value: navEntry.sheetItemIdentifiable()?.id)
+        }
+        .animation(.easeOut, value: navEntry.sheetItemIdentifiable()?.id)
+        .task { await contentVM.setTabPreference(.favorites) }
     }
 
     @ViewBuilder
@@ -416,6 +418,7 @@ struct ContentView: View {
                 }
             ) }
         )
+        .task { await contentVM.setTabPreference(.nearby) }
     }
 
     @ViewBuilder
