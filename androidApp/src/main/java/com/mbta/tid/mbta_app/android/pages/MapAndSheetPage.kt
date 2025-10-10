@@ -534,6 +534,7 @@ fun MapAndSheetPage(
                 global = nearbyTransit.globalResponse,
                 favoritesViewModel = favoritesViewModel,
                 onClose = { navController.popBackStackFrom(SheetRoutes.EditFavorites::class) },
+                openModal = ::openModal,
             )
         }
     }

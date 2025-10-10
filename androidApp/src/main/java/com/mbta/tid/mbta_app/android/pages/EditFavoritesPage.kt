@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
@@ -48,15 +49,18 @@ import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
+import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
@@ -71,7 +75,9 @@ fun EditFavoritesPage(
     favoritesViewModel: IFavoritesViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
     val state by favoritesViewModel.models.collectAsState()
     val context = LocalContext.current
     fun getToastLabel(routeStopDirection: RouteStopDirection): String {
@@ -123,6 +129,16 @@ fun EditFavoritesPage(
                     )
                 )
             },
+            editFavorite = { selectedFavorite ->
+                openModal(
+                    ModalRoutes.SaveFavorite(
+                        selectedFavorite.route,
+                        selectedFavorite.stop,
+                        selectedFavorite.direction,
+                        EditFavoritesContext.Favorites,
+                    )
+                )
+            },
         )
     }
 }
@@ -132,7 +148,9 @@ private fun EditFavoritesList(
     routeCardData: List<RouteCardData>?,
     global: GlobalResponse?,
     deleteFavorite: (RouteStopDirection) -> Unit,
+    editFavorite: (RouteStopDirection) -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
     if (routeCardData == null) {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             ScrollSeparatorLazyColumn(
@@ -160,10 +178,14 @@ private fun EditFavoritesList(
                     data = it,
                     showStopHeader = true,
                 ) { stopData ->
-                    FavoriteDepartures(stopData, global) {
-                        val favToDelete =
-                            RouteStopDirection(it.lineOrRoute.id, it.stop.id, it.directionId)
-                        deleteFavorite(favToDelete)
+                    FavoriteDepartures(stopData, global) { leaf ->
+                        val selectedFavorite =
+                            RouteStopDirection(leaf.lineOrRoute.id, leaf.stop.id, leaf.directionId)
+                        if (notificationsFlag) {
+                            editFavorite(selectedFavorite)
+                        } else {
+                            deleteFavorite(selectedFavorite)
+                        }
                     }
                 }
             }
@@ -177,6 +199,7 @@ private fun FavoriteDepartures(
     globalData: GlobalResponse?,
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
+    val notificationsFlag = SettingsCache.get(Settings.Notifications)
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
@@ -215,7 +238,12 @@ private fun FavoriteDepartures(
                                         },
                                     modifier = Modifier.weight(1f),
                                 )
-                                DeleteIcon(action = { onClick(leaf) })
+                                if (notificationsFlag) {
+                                    NotificationStatusIcon(leaf)
+                                    EditIcon { onClick(leaf) }
+                                } else {
+                                    DeleteIcon(action = { onClick(leaf) })
+                                }
                             }
                         }
                     }
@@ -234,7 +262,12 @@ private fun FavoriteDepartures(
                                 DirectionLabel(direction, showDestination = false)
                                 BranchRows(formatted)
                             }
-                            DeleteIcon(action = { onClick(leaf) })
+                            if (notificationsFlag) {
+                                NotificationStatusIcon(leaf)
+                                EditIcon { onClick(leaf) }
+                            } else {
+                                DeleteIcon(action = { onClick(leaf) })
+                            }
                         }
                     }
                 }
@@ -290,5 +323,50 @@ private fun DeleteIcon(action: () -> Unit) {
             modifier = Modifier.size(16.dp),
             tint = colorResource(R.color.delete),
         )
+    }
+}
+
+@Composable
+private fun EditIcon(action: () -> Unit) {
+    Box(
+        modifier =
+            Modifier.size(44.dp)
+                .clip(CircleShape)
+                .background(colorResource(R.color.halo))
+                .clickable { action() }
+                .testTag("editIcon")
+                .clearAndSetSemantics { hideFromAccessibility() },
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painterResource(R.drawable.fa_pencil),
+            null,
+            modifier = Modifier.size(24.dp),
+            tint = colorResource(R.color.text),
+        )
+    }
+}
+
+@Composable
+private fun NotificationStatusIcon(leaf: RouteCardData.Leaf) {
+    val routeStopDirection = RouteStopDirection(leaf.lineOrRoute.id, leaf.stop.id, leaf.directionId)
+    val (favorites, _) = manageFavorites()
+    val favorite = favorites?.get(routeStopDirection)
+    Box(modifier = Modifier.padding(horizontal = 8.dp), contentAlignment = Alignment.Center) {
+        if (favorite?.notifications?.enabled == true) {
+            Icon(
+                painterResource(R.drawable.fa_bell_filled),
+                null,
+                modifier = Modifier.size(18.dp),
+                tint = colorResource(R.color.text),
+            )
+        } else {
+            Icon(
+                painterResource(R.drawable.fa_bell_slash),
+                null,
+                modifier = Modifier.size(18.dp),
+                tint = colorResource(R.color.text),
+            )
+        }
     }
 }
