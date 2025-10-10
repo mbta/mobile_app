@@ -15,7 +15,6 @@ val runLocalReleaseBuild = false
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
-    alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry.android)
@@ -143,9 +142,10 @@ dependencies {
     androidTestImplementation(libs.ktor.client.mock)
 }
 
-tasks.cyclonedxBom {
+tasks.cyclonedxDirectBom {
     includeConfigs =
         listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
+    includeLicenseText = true
 }
 
 spotless {

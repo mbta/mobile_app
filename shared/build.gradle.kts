@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.compose)
-    alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
@@ -194,7 +193,7 @@ tasks.withType<JavaExec> {
 
 task<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
-    mustRunAfter("spotlessKotlin", "cyclonedxBom")
+    mustRunAfter("spotlessKotlin", "cyclonedxDirectBom")
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
     outputPath =
         layout.projectDirectory.file(
@@ -212,9 +211,13 @@ task<DependencyCodegenTask>("bomCodegenIos") {
 }
 
 task<CycloneDxBomTransformTask>("bomAndroid") {
-    dependsOn(":androidApp:cyclonedxBom")
+    dependsOn(":androidApp:cyclonedxDirectBom")
     inputPath =
-        project.project(projects.androidApp.path).layout.buildDirectory.file("reports/bom.json")
+        project
+            .project(projects.androidApp.path)
+            .layout
+            .buildDirectory
+            .file("reports/cyclonedx-direct/bom.json")
     outputPath = layout.buildDirectory.file("boms/bom-android.json")
     transform = {
         components =
@@ -326,7 +329,7 @@ task<Download>("bomCycloneDxCliDownload") {
 }
 
 task("bomIosKotlinDeps") {
-    dependsOn(tasks.cyclonedxBom)
+    dependsOn(tasks.cyclonedxDirectBom)
     mustRunAfter("bomCodegenAndroid")
 }
 
@@ -456,16 +459,14 @@ task<CachedExecTask>("bomIosSwiftPMRaw") {
     )
 }
 
-tasks.cyclonedxBom {
+tasks.cyclonedxDirectBom {
     includeConfigs =
         listOf(
             "commonMainImplementationDependenciesMetadata",
             "iosMainImplementationDependenciesMetadata",
         )
-    destination = layout.buildDirectory.dir("boms").get().asFile
-    outputName = "bom-ios-kotlin-deps"
-    outputFormat = "xml"
-    outputs.files(layout.buildDirectory.file("boms/bom-ios-kotlin-deps.xml"))
+    xmlOutput = layout.buildDirectory.file("boms/bom-ios-kotlin-deps.xml")
+    includeLicenseText = true
 }
 
 mokkery {
