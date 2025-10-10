@@ -129,7 +129,7 @@ internal fun getTripData(
                 tripFilter != null &&
                     resolvedTrip != null &&
                     resolvedTrip.id == tripFilter.tripId &&
-                    (tripFilter.vehicleId == null || vehicle != null)
+                    (tripFilter.vehicleId == null || tripFilter.vehicleId == vehicle?.id)
             ) {
                 TripData(tripFilter, resolvedTrip, tripSchedules, tripPredictions, true, vehicle)
             } else {

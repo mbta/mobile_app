@@ -272,7 +272,7 @@ struct TripHeaderCard: View {
     }
 
     @ViewBuilder private var tripIndicator: some View {
-        VStack {
+        VStack(alignment: .trailing) {
             switch spec {
             case .finishingAnotherTrip, .noVehicle: if onTap != nil { InfoIcon() }
             case .vehicle:

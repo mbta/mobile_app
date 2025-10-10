@@ -58,6 +58,14 @@ public sealed class SheetRoutes {
                 else -> false
             }
 
+    public val vehicleId: String?
+        get() =
+            when (this) {
+                is StopDetails -> this.tripFilter?.vehicleId
+                is TripDetails -> this.filter.vehicleId
+                else -> null
+            }
+
     public companion object {
 
         public fun shouldResetSheetHeight(first: SheetRoutes?, second: SheetRoutes?): Boolean {

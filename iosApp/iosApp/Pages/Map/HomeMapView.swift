@@ -93,11 +93,16 @@ struct HomeMapView: View {
                 }
             }
             .onChange(of: mapVMState) { state in
+                var vehicle: Vehicle? = nil
                 if case let .tripSelected(tripState) = onEnum(of: state) {
-                    selectedVehicle = tripState.vehicle
-                } else {
-                    selectedVehicle = nil
+                    vehicle = tripState.vehicle
                 }
+
+                // If the selected vehicle already matches the vehicle filter, don't set it to nil
+                let skipSettingVehicle = selectedVehicle?.id == nearbyVM.navigationStack.lastSafe()
+                    .vehicleId() && vehicle == nil
+                guard !skipSettingVehicle else { return }
+                selectedVehicle = vehicle
             }
             .onChange(of: nearbyVM.navigationStack) { navStack in
                 Task {
@@ -150,7 +155,7 @@ struct HomeMapView: View {
                 for await vehicle in tripDetailsVM.selectedVehicleUpdates {
                     let currentNavEntry = nearbyVM.navigationStack.lastSafe()
                     let follow = switch currentNavEntry {
-                    case .tripDetails: true
+                    case .tripDetails: viewportProvider.isVehicleOverview
                     default: false
                     }
                     mapVM.selectedVehicleUpdated(vehicle: vehicle, follow: follow)

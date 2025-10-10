@@ -74,7 +74,7 @@ fun subscribeToVehicles(
     val viewModel: VehiclesViewModel =
         viewModel(factory = VehiclesViewModel.Factory(vehiclesRepository))
 
-    val vehicleData = viewModel.vehiclesFlow.collectAsState(initial = null).value
+    val vehicleData by viewModel.vehiclesFlow.collectAsState(initial = null)
 
     LifecycleResumeEffect(routeDirection) {
         CoroutineScope(Dispatchers.IO).launch { viewModel.connectToVehicles(routeDirection) }
