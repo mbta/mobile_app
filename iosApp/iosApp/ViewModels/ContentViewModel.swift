@@ -51,9 +51,12 @@ class ContentViewModel: ObservableObject {
     @MainActor func loadTabPreferences(_ hasPendingFavoritesPromo: Bool) async {
         if hasPendingFavoritesPromo {
             defaultTab = .favorites
-            await (try? tabPreferencesRepository.setDefaultTab(defaultTab: .favorites))
         } else {
             defaultTab = await (try? tabPreferencesRepository.getDefaultTab())
         }
+    }
+
+    @MainActor func setTabPreference(_ tab: DefaultTab) async {
+        await (try? tabPreferencesRepository.setDefaultTab(defaultTab: tab))
     }
 }

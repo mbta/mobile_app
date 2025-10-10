@@ -4,6 +4,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -17,6 +18,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.network.MockPhoenixSocket
+import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
@@ -24,6 +26,7 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import kotlin.test.assertEquals
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -57,6 +60,30 @@ class ContentViewTests : KoinTest {
 
         composeTestRule.onNodeWithText("Nearby").performClick()
         composeTestRule.onNodeWithText("Nearby Transit").assertIsDisplayed()
+    }
+
+    @Test
+    fun testSetsDefaultTab() {
+        val repo = MockTabPreferencesRepository(DefaultTab.Favorites)
+        loadKoinMocks { tabPreferences = repo }
+
+        composeTestRule.setContent {
+            CompositionLocalProvider(
+                LocalLocationClient provides MockFusedLocationProviderClient()
+            ) {
+                ContentView()
+            }
+        }
+
+        composeTestRule.onNode(hasText("Favorites") and isHeading()).assertIsDisplayed()
+        composeTestRule.onNodeWithText("Nearby").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Nearby Transit"))
+        assertEquals(DefaultTab.Nearby, repo.defaultTab)
+        composeTestRule.onNodeWithText("Favorites").performClick()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasText("Favorites") and isHeading()
+        )
+        assertEquals(DefaultTab.Favorites, repo.defaultTab)
     }
 
     @Test

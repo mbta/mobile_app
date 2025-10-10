@@ -8,11 +8,13 @@ import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockCurrentAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockLastLaunchedAppVersionRepository
 import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
+import com.mbta.tid.mbta_app.repositories.MockTabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
+import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -43,6 +45,58 @@ class ContentViewModelTests : KoinTest {
         }
 
         composeTestRule.waitUntilDefaultTimeout { vm.defaultTab.value == DefaultTab.Nearby }
+    }
+
+    @Test
+    fun testDefaultTabFavoritesIfSet() = runBlocking {
+        val tabPreferencesRepository = MockTabPreferencesRepository(DefaultTab.Favorites)
+
+        lateinit var vm: ContentViewModel
+        composeTestRule.setContent {
+            vm =
+                ContentViewModel(
+                    featurePromoUseCase =
+                        FeaturePromoUseCase(
+                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                            // Favorites promo in version 2.0.0
+                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
+                        ),
+                    onboardingRepository = MockOnboardingRepository(),
+                    tabPreferencesRepository = tabPreferencesRepository,
+                )
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { vm.defaultTab.value == DefaultTab.Favorites }
+    }
+
+    @Test
+    fun testSetsDefaultTab() = runBlocking {
+        val tabPreferencesRepository = MockTabPreferencesRepository(DefaultTab.Favorites)
+        lateinit var vm: ContentViewModel
+
+        composeTestRule.setContent {
+            vm =
+                ContentViewModel(
+                    featurePromoUseCase =
+                        FeaturePromoUseCase(
+                            MockCurrentAppVersionRepository(AppVersion(4u, 0u, 0u)),
+                            // Favorites promo in version 2.0.0
+                            MockLastLaunchedAppVersionRepository(AppVersion(3u, 0u, 0u)),
+                        ),
+                    onboardingRepository = MockOnboardingRepository(),
+                    tabPreferencesRepository = tabPreferencesRepository,
+                )
+        }
+
+        assertEquals(DefaultTab.Favorites, tabPreferencesRepository.defaultTab)
+        vm.setTabPreference(DefaultTab.Nearby)
+        composeTestRule.waitUntilDefaultTimeout {
+            tabPreferencesRepository.defaultTab == DefaultTab.Nearby
+        }
+        vm.setTabPreference(DefaultTab.Favorites)
+        composeTestRule.waitUntilDefaultTimeout {
+            tabPreferencesRepository.defaultTab == DefaultTab.Favorites
+        }
     }
 
     @Test

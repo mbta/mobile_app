@@ -22,14 +22,7 @@ internal expect inline fun <reified T : MoleculeScopeViewModel> Module.viewModel
 public fun viewModelModule(): Module = module {
     singleOf(::ErrorBannerViewModel).bind(IErrorBannerViewModel::class)
     single {
-            FavoritesViewModel(
-                get(),
-                get(),
-                get(),
-                get(),
-                get(named("coroutineDispatcherDefault")),
-                get(),
-            )
+            FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
         }
         .bind(IFavoritesViewModel::class)
     single {

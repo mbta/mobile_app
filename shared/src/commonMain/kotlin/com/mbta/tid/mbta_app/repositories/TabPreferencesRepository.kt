@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -37,10 +38,14 @@ internal class TabPreferencesRepository : ITabPreferencesRepository, KoinCompone
     }
 }
 
-public class MockTabPreferencesRepository : ITabPreferencesRepository {
+public class MockTabPreferencesRepository
+@DefaultArgumentInterop.Enabled
+constructor(public var defaultTab: DefaultTab = DefaultTab.Nearby) : ITabPreferencesRepository {
     override suspend fun getDefaultTab(): DefaultTab {
-        return DefaultTab.Nearby
+        return defaultTab
     }
 
-    override suspend fun setDefaultTab(defaultTab: DefaultTab) {}
+    override suspend fun setDefaultTab(defaultTab: DefaultTab) {
+        this.defaultTab = defaultTab
+    }
 }
