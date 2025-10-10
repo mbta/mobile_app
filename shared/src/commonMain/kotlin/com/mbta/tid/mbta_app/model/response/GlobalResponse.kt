@@ -23,9 +23,9 @@ import kotlinx.serialization.Transient
 public data class GlobalResponse
 internal constructor(
     internal val facilities: Map<String, Facility>,
-    internal val lines: Map<String, Line>,
+    internal val lines: Map<Line.Id, Line>,
     @SerialName("pattern_ids_by_stop") internal val patternIdsByStop: Map<String, List<String>>,
-    internal val routes: Map<String, Route>,
+    internal val routes: Map<Route.Id, Route>,
     @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
     internal val stops: Map<String, Stop>,
     internal val trips: Map<String, Trip>,
@@ -74,12 +74,12 @@ internal constructor(
 
     @Transient
     /** lines with their associated non-shuttle routes */
-    internal val routesByLineId: Map<String, List<Route>> =
+    internal val routesByLineId: Map<Line.Id, List<Route>> =
         routes.values.filter { it.lineId != null && !it.isShuttle }.groupBy { it.lineId!! }
 
     internal fun getFacility(facilityId: String?) = facilities[facilityId]
 
-    public fun getRoute(routeId: String?): Route? = routes[routeId]
+    public fun getRoute(routeId: Route.Id?): Route? = routes[routeId]
 
     public fun getRoutesForPicker(path: RoutePickerPath): List<LineOrRoute> =
         routes.values
@@ -120,16 +120,16 @@ internal constructor(
 
     public fun getStop(stopId: String?): Stop? = stops[stopId]
 
-    public fun getLine(lineId: String?): Line? =
+    public fun getLine(lineId: Line.Id?): Line? =
         if (lineId != null) {
             lines[lineId]
         } else {
             null
         }
 
-    public fun getLineOrRoute(lineOrRouteId: String): LineOrRoute? {
-        val route = this.getRoute(lineOrRouteId)
-        val line = this.getLine(lineOrRouteId) ?: this.getLine(route?.lineId)
+    public fun getLineOrRoute(lineOrRouteId: LineOrRoute.Id): LineOrRoute? {
+        val route = this.getRoute(lineOrRouteId as? Route.Id)
+        val line = this.getLine(lineOrRouteId as? Line.Id) ?: this.getLine(route?.lineId)
         return when {
             line != null && line.isGrouped ->
                 LineOrRoute.Line(line, this.routesByLineId[line.id].orEmpty().toSet())
@@ -155,7 +155,7 @@ internal constructor(
             .filter { lineOrRoute.containsRoute(it.routeId) }
     }
 
-    internal fun getPatternsFor(stopId: String, routeId: String): List<RoutePattern> {
+    internal fun getPatternsFor(stopId: String, routeId: Route.Id): List<RoutePattern> {
         return getPatternsFor(stopId).filter { it.routeId == routeId }
     }
 

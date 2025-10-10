@@ -136,7 +136,7 @@ public object StopFeaturesBuilder {
         put(
             propRouteIdsKey,
             mapStop.routes
-                .map { (routeType, routes) -> Pair(routeType.name, routes.map { it.id }) }
+                .map { (routeType, routes) -> Pair(routeType.name, routes.map { it.id.idText }) }
                 .toMap(),
         )
         put(

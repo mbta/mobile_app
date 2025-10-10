@@ -13,7 +13,7 @@ class TripTest {
                 id = "1",
                 directionId = 0,
                 headsign = "Harvard",
-                routeId = "Red",
+                routeId = Route.Id("Red"),
                 routePatternId = "red-1",
                 shapeId = null,
             ),

@@ -108,7 +108,7 @@ public data class RouteDetailsStopList(val directionId: Int, val segments: List<
     public companion object {
 
         public suspend fun fromPieces(
-            routeId: String,
+            routeId: Route.Id,
             directionId: Int,
             routeStops: RouteStopsResult?,
             globalData: GlobalResponse,

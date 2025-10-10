@@ -1,9 +1,10 @@
 package com.mbta.tid.mbta_app.phoenix
 
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 
-internal class VehiclesOnRouteChannel(routeIds: List<String>, directionId: Int) : ChannelSpec {
+internal class VehiclesOnRouteChannel(routeIds: List<Route.Id>, directionId: Int) : ChannelSpec {
     override val topic = "vehicles:routes:${routeIds.joinToString(",")}:${directionId}"
     override val updateEvent = "stream_data"
     override val params = emptyMap<String, Any>()

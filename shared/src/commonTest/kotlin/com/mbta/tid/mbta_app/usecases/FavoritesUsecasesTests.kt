@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.usecases
 
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.utils.buildFavorites
@@ -14,7 +15,7 @@ class FavoritesUsecasesTests : KoinTest {
 
     @Test
     fun testGetRouteStopDirectionFavorites() = runBlocking {
-        val routeStopDirection = RouteStopDirection("Red", "place-alfcl", 0)
+        val routeStopDirection = RouteStopDirection(Route.Id("Red"), "place-alfcl", 0)
         val savedFavorites = buildFavorites { routeStopDirection(routeStopDirection) }
         val repository = MockFavoritesRepository(savedFavorites)
         val usecase = FavoritesUsecases(repository, MockAnalytics())
@@ -34,7 +35,9 @@ class FavoritesUsecasesTests : KoinTest {
     @Test
     fun testUpdateFavoritesRecordsAnalytics() = runBlocking {
         val repository =
-            MockFavoritesRepository(buildFavorites { routeStopDirection("route_1", "stop_1", 0) })
+            MockFavoritesRepository(
+                buildFavorites { routeStopDirection(Route.Id("route_1"), "stop_1", 0) }
+            )
 
         var eventLogged: String? = null
         val useCase =
@@ -45,8 +48,8 @@ class FavoritesUsecasesTests : KoinTest {
 
         useCase.updateRouteStopDirections(
             mapOf(
-                RouteStopDirection("route_1", "stop_1", 0) to null,
-                RouteStopDirection("route_1", "stop_1", 1) to FavoriteSettings(),
+                RouteStopDirection(Route.Id("route_1"), "stop_1", 0) to null,
+                RouteStopDirection(Route.Id("route_1"), "stop_1", 1) to FavoriteSettings(),
             ),
             EditFavoritesContext.Favorites,
             0,

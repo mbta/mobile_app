@@ -36,8 +36,8 @@ class FavoriteTest {
         assertEquals(
             Favorites(
                 mapOf(
-                    RouteStopDirection("route1", "stop1", 0) to FavoriteSettings(),
-                    RouteStopDirection("route2", "stop2", 1) to FavoriteSettings(),
+                    RouteStopDirection(Route.Id("route1"), "stop1", 0) to FavoriteSettings(),
+                    RouteStopDirection(Route.Id("route2"), "stop2", 1) to FavoriteSettings(),
                 )
             ),
             newFavorites,
@@ -47,7 +47,7 @@ class FavoriteTest {
     @Test
     fun `parses and serializes post-notifications format`() {
         val favorites = buildFavorites {
-            routeStopDirection("route1", "stop1", 0) {
+            routeStopDirection(Route.Id("route1"), "stop1", 0) {
                 notifications {
                     enabled = true
                     window(
@@ -58,7 +58,7 @@ class FavoriteTest {
                     window(LocalTime(10, 0), LocalTime(13, 0), setOf(DayOfWeek.SATURDAY))
                 }
             }
-            routeStopDirection("route2", "stop2", 1)
+            routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
         val serialized = buildJsonObject {
             putJsonArray("postNotificationsRSDs") {

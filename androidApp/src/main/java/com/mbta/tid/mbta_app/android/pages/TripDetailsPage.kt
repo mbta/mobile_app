@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -43,10 +44,10 @@ fun TripDetailsPage(
     val now by timer(updateInterval = 5.seconds)
     val global = getGlobalData("TripDetailsPage")
 
-    val route = global?.getRoute(filter.routeId)
-
     tripDetailsPageVM.koinScope = currentKoinScope()
     val tripDetailsPageState by tripDetailsPageVM.models.collectAsState()
+
+    val route = global?.getRoute(tripDetailsPageState.trip?.routeId ?: filter.routeId as? Route.Id)
 
     LaunchedEffect(allAlerts) { tripDetailsPageVM.setAlerts(allAlerts) }
     LaunchedEffect(filter) { tripDetailsPageVM.setFilter(filter) }

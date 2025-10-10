@@ -22,11 +22,11 @@ internal constructor(
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
     val status: String?,
     @SerialName("stop_sequence") val stopSequence: Int,
-    @SerialName("route_id") val routeId: String,
+    @SerialName("route_id") val routeId: Route.Id,
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
     @SerialName("vehicle_id") val vehicleId: String?,
-) : BackendObject, TripStopTime {
+) : BackendObject<String>, TripStopTime {
     @Serializable
     public enum class ScheduleRelationship {
         @SerialName("added") Added,

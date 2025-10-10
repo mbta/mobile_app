@@ -16,7 +16,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
 
         XCTAssertNil(stack.lastStopDetailsFilter)
 
-        stack.lastStopDetailsFilter = .init(routeId: "A", directionId: 1)
+        stack.lastStopDetailsFilter = .init(routeId: Route.Id("A"), directionId: 1)
 
         XCTAssertEqual(stack, [])
     }
@@ -61,7 +61,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         var stack: [SheetNavigationStackEntry] = [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
 
-        let filter1 = StopDetailsFilter(routeId: "A", directionId: 1)
+        let filter1 = StopDetailsFilter(routeId: Route.Id("A"), directionId: 1)
         stack.lastStopDetailsFilter = filter1
 
         XCTAssertEqual([
@@ -70,7 +70,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         ], stack)
         XCTAssertEqual(filter1, stack.lastStopDetailsFilter)
 
-        let filter2 = StopDetailsFilter(routeId: "A", directionId: 0)
+        let filter2 = StopDetailsFilter(routeId: Route.Id("A"), directionId: 0)
         stack.lastStopDetailsFilter = filter2
 
         XCTAssertEqual([
@@ -101,19 +101,19 @@ final class SheetNavigationStackEntryTests: XCTestCase {
                 .toSheetRoute()
         )
 
-        XCTAssertEqual(SheetRoutes.RouteDetails(routeId: "a", context: .Favorites()),
-                       SheetNavigationStackEntry.routeDetails(SheetRoutes.RouteDetails(routeId: "a",
+        XCTAssertEqual(SheetRoutes.RouteDetails(routeId: Route.Id("a"), context: .Favorites()),
+                       SheetNavigationStackEntry.routeDetails(SheetRoutes.RouteDetails(routeId: Route.Id("a"),
                                                                                        context: .Favorites()))
                            .toSheetRoute())
 
         XCTAssertEqual(SheetRoutes.StopDetails(stopId: "a",
-                                               stopFilter: .init(routeId: "b", directionId: 0),
+                                               stopFilter: .init(routeId: Route.Id("b"), directionId: 0),
                                                tripFilter: .init(tripId: "c",
                                                                  vehicleId: "d",
                                                                  stopSequence: 0,
                                                                  selectionLock: false)),
                        SheetNavigationStackEntry.stopDetails(stopId: "a",
-                                                             stopFilter: .init(routeId: "b", directionId: 0),
+                                                             stopFilter: .init(routeId: Route.Id("b"), directionId: 0),
                                                              tripFilter: .init(tripId: "c",
                                                                                vehicleId: "d",
                                                                                stopSequence: 0,

@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 
@@ -23,7 +24,7 @@ import com.mbta.tid.mbta_app.viewModel.SearchViewModel
 fun SearchResultsView(
     state: SearchViewModel.State,
     handleStopTap: (String) -> Unit,
-    handleRouteTap: (String) -> Unit,
+    handleRouteTap: (LineOrRoute.Id) -> Unit,
 ) {
     val includeRoutes = SettingsCache.get(Settings.SearchRouteResults)
     Column(

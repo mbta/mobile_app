@@ -89,7 +89,7 @@ fun TripDetailsView(
             globalResponse?.getStop(stop.stop.id)?.resolveParent(globalResponse)?.id ?: stop.stop.id
         openSheetRoute(SheetRoutes.StopDetails(parentStationId, null, null))
         analytics.tappedDownstreamStop(
-            routeId = tripData?.trip?.routeId ?: "",
+            routeId = tripData?.trip?.routeId,
             stopId = parentStationId,
             tripId = tripFilter?.tripId ?: "",
             connectingRouteId = null,
@@ -194,7 +194,7 @@ fun TripDetailsView(
                     onFollowTrip = {},
                     onOpenAlertDetails = {},
                     placeholderTripInfo.route,
-                    TripDetailsPageFilter("", "", "", 0, "", null),
+                    TripDetailsPageFilter("", "", Route.Id(""), 0, "", null),
                     placeholderTripStops,
                     now,
                     emptyMap(),

@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.network.MobileBackendClient
@@ -473,13 +474,13 @@ class RouteStopsRepositoryTest : KoinTest {
             modules(module { single { MobileBackendClient(mockEngine, AppVariant.Staging) } })
         }
         runBlocking {
-            val response = RouteStopsRepository().getRouteSegments("Orange", 0)
+            val response = RouteStopsRepository().getRouteSegments(Route.Id("Orange"), 0)
             assertEquals("/api/route/stop-graph", requestUrl.encodedPath)
             assertEquals("route_id=Orange&direction_id=0", requestUrl.encodedQuery)
             assertEquals(
                 ApiResult.Ok(
                     RouteStopsResult(
-                        "Orange",
+                        Route.Id("Orange"),
                         0,
                         listOf(
                             RouteBranchSegment(

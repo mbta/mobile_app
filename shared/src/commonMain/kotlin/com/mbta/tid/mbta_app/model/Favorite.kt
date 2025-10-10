@@ -56,7 +56,11 @@ public data class Favorites(
 }
 
 @Serializable
-public data class RouteStopDirection(val route: String, val stop: String, val direction: Int)
+public data class RouteStopDirection(
+    val route: LineOrRoute.Id,
+    val stop: String,
+    val direction: Int,
+)
 
 @Serializable
 public data class FavoriteSettings

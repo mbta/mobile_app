@@ -48,6 +48,8 @@ import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -73,7 +75,7 @@ import org.koin.dsl.module
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun SaveFavoritePage(
-    routeId: String,
+    routeId: LineOrRoute.Id,
     stopId: String,
     initialDirection: Int,
     context: EditFavoritesContext,
@@ -253,7 +255,7 @@ private fun SaveFavoritePagePreviewAdd() {
     KoinIsolatedContext(koin) {
         MyApplicationTheme {
             SaveFavoritePage(
-                routeId = "Orange",
+                routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
                 context = EditFavoritesContext.StopDetails,
@@ -278,7 +280,7 @@ private fun SaveFavoritePagePreviewEdit() {
                         MockFavoritesRepository(
                             Favorites(
                                 mapOf(
-                                    RouteStopDirection("Orange", "place-welln", 0) to
+                                    RouteStopDirection(Route.Id("Orange"), "place-welln", 0) to
                                         FavoriteSettings(
                                             notifications =
                                                 FavoriteSettings.Notifications(
@@ -306,7 +308,7 @@ private fun SaveFavoritePagePreviewEdit() {
     KoinIsolatedContext(koin) {
         MyApplicationTheme {
             SaveFavoritePage(
-                routeId = "Orange",
+                routeId = Route.Id("Orange"),
                 stopId = "place-welln",
                 initialDirection = 0,
                 context = EditFavoritesContext.StopDetails,

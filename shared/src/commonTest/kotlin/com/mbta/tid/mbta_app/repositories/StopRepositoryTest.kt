@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.LocationType
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
@@ -95,18 +96,18 @@ class StopRepositoryTest : KoinTest {
                         routeShapes =
                             listOf(
                                 MapFriendlyRouteResponse.RouteWithSegmentedShapes(
-                                    routeId = "Blue",
+                                    routeId = Route.Id("Blue"),
                                     segmentedShapes =
                                         listOf(
                                             SegmentedRouteShape(
                                                 sourceRoutePatternId = "Blue-6-0",
-                                                sourceRouteId = "Blue",
+                                                sourceRouteId = Route.Id("Blue"),
                                                 directionId = 0,
                                                 routeSegments =
                                                     listOf(
                                                         RouteSegment(
                                                             id = "place-wondl-place-bomnl",
-                                                            sourceRouteId = "Blue",
+                                                            sourceRouteId = Route.Id("Blue"),
                                                             stopIds =
                                                                 listOf(
                                                                     "place-wondl",

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.RouteStopsResult
@@ -23,7 +24,7 @@ class RouteStopsFetcher(
 ) {
 
     fun getRouteStops(
-        routeId: String,
+        routeId: Route.Id,
         directionId: Int,
         errorKey: String,
         onSuccess: (RouteStopsResult) -> Unit,
@@ -49,7 +50,7 @@ class RouteStopsViewModel(
     private val _routeStops = MutableStateFlow<RouteStopsResult?>(null)
     val routeStops: StateFlow<RouteStopsResult?> = _routeStops
 
-    fun getRouteStops(routeId: String, directionId: Int, errorKey: String) {
+    fun getRouteStops(routeId: Route.Id, directionId: Int, errorKey: String) {
         _routeStops.value = null
         routeStopsFetcher.getRouteStops(routeId, directionId, errorKey) { _routeStops.value = it }
     }
@@ -66,7 +67,7 @@ class RouteStopsViewModel(
 
 @Composable
 fun getRouteStops(
-    routeId: String,
+    routeId: Route.Id,
     directionId: Int,
     errorKey: String,
     routeStopsRepository: IRouteStopsRepository = koinInject(),

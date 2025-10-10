@@ -90,6 +90,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                 TripDetailsPageViewModel.State(
                     Direction("South", "Ashmont", trip.directionId),
                     alertSummaries = emptyMap(),
+                    trip = trip,
                 ),
                 awaitItem(),
             )
@@ -128,6 +129,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                 TripDetailsPageViewModel.State(
                     Direction("South", "Ashmont/Braintree", trip.directionId),
                     alertSummaries = emptyMap(),
+                    trip = null,
                 ),
                 awaitItem(),
             )
@@ -153,7 +155,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     stop = alertStop.id,
                 )
             }
@@ -191,6 +193,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                                     timeframe = null,
                                 )
                         ),
+                    trip = null,
                 ),
                 awaitItemSatisfying { it.alertSummaries.isNotEmpty() },
             )

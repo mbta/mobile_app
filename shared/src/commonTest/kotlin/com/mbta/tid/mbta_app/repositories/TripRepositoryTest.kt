@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Shape
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -81,7 +82,7 @@ class TripRepositoryTest : KoinTest {
                         shapeWithStops =
                             ShapeWithStops(
                                 directionId = 1,
-                                routeId = "66",
+                                routeId = Route.Id("66"),
                                 routePatternId = "66_rp",
                                 shape = Shape(id = "shape_id", polyline = "shape_polyline"),
                                 stopIds = listOf("1", "2", "3"),

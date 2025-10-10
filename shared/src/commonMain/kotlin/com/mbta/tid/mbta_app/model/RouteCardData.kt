@@ -22,7 +22,7 @@ private typealias ByDirectionBuilder = Map<Int, RouteCardData.LeafBuilder>
 
 private typealias ByStopIdBuilder = Map<String, RouteCardData.RouteStopDataBuilder>
 
-private typealias ByLineOrRouteBuilder = Map<String, RouteCardData.Builder>
+private typealias ByLineOrRouteBuilder = Map<LineOrRoute.Id, RouteCardData.Builder>
 
 /**
  * Contain all data for presentation in a route card. A route card is a snapshot of service for a
@@ -34,7 +34,7 @@ public data class RouteCardData(
     val stopData: List<RouteStopData>,
     val at: EasternTimeInstant,
 ) {
-    public val id: String = lineOrRoute.id
+    public val id: LineOrRoute.Id = lineOrRoute.id
 
     public enum class Context {
         NearbyTransit,
@@ -180,7 +180,7 @@ public data class RouteCardData(
             }
 
         private data class PotentialService(
-            val routeId: String,
+            val routeId: Route.Id,
             val headsign: String,
             val routePatternIds: Set<String>,
         )
@@ -198,7 +198,7 @@ public data class RouteCardData(
             globalData: GlobalResponse?,
             context: Context,
         ): Set<PotentialService> {
-            val potentialService: MutableMap<Pair<String, String>, MutableSet<String>> =
+            val potentialService: MutableMap<Pair<Route.Id, String>, MutableSet<String>> =
                 mutableMapOf()
             val cutoffTime = now + 120.minutes
             val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
@@ -662,7 +662,7 @@ public data class RouteCardData(
     }
 
     internal data class HierarchyPath(
-        val routeOrLineId: String,
+        val routeOrLineId: LineOrRoute.Id,
         val stopId: String,
         val directionId: Int,
     )
@@ -814,7 +814,7 @@ public data class RouteCardData(
             return stop.resolveParent(global.stops)
         }
 
-        private fun lineOrRouteId(global: GlobalResponse, routeId: String): String? {
+        private fun lineOrRouteId(global: GlobalResponse, routeId: Route.Id): LineOrRoute.Id? {
             val route = global.routes[routeId] ?: return null
             val line = route.lineId.let { global.lines[it] }
             return if (line != null && line.isGrouped && !route.isShuttle) {
@@ -845,16 +845,16 @@ public data class RouteCardData(
             forEachLeaf(
                 process = { path, leafBuilder ->
                     val routes =
-                        if (path.routeOrLineId.startsWith("line-")) {
-                            leafBuilder.routePatterns
-                                ?.map { it.routeId }
-                                ?.distinct()
-                                ?.takeUnless { it.isEmpty() }
-                                ?: globalData.routesByLineId[path.routeOrLineId].orEmpty().map {
-                                    it.id
-                                }
-                        } else {
-                            listOf(path.routeOrLineId)
+                        when (path.routeOrLineId) {
+                            is Line.Id ->
+                                leafBuilder.routePatterns
+                                    ?.map { it.routeId }
+                                    ?.distinct()
+                                    ?.takeUnless { it.isEmpty() }
+                                    ?: globalData.routesByLineId[path.routeOrLineId].orEmpty().map {
+                                        it.id
+                                    }
+                            is Route.Id -> listOf(path.routeOrLineId)
                         }
                     val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
