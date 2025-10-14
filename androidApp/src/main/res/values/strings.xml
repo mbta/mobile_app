@@ -288,6 +288,7 @@
     <string name="refresh">Refresh</string>
     <string name="refresh_predictions">Refresh predictions</string>
     <string name="reload_data">Reload data</string>
+    <string name="remove">Remove</string>
     <string name="remove_favorite">remove favorite</string>
     <string name="remove_from_favorites">Remove from Favorites</string>
     <string name="resources_link_fare_info">Fare Information</string>

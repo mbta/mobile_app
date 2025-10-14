@@ -288,6 +288,7 @@
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
     <string name="reload_data">Recarregar dados</string>
+    <string name="remove">Remover</string>
     <string name="remove_favorite">remover favorito</string>
     <string name="remove_from_favorites">Remover dos Favoritos</string>
     <string name="resources_link_fare_info">Informações sobre tarifas</string>

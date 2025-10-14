@@ -282,6 +282,7 @@
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>
     <string name="reload_data">Tải lại dữ liệu</string>
+    <string name="remove">Di dời</string>
     <string name="remove_favorite">xóa mục yêu thích</string>
     <string name="remove_from_favorites">Xóa khỏi mục Yêu thích</string>
     <string name="resources_link_fare_info">Thông tin giá vé</string>

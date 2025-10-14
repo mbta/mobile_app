@@ -5,10 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
@@ -20,10 +24,15 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -54,6 +63,8 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.manageFavorites
+import com.mbta.tid.mbta_app.android.util.modifiers.DragDirection
+import com.mbta.tid.mbta_app.android.util.modifiers.dragAction
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LeafFormat
@@ -178,9 +189,12 @@ private fun EditFavoritesList(
                     data = it,
                     showStopHeader = true,
                 ) { stopData ->
-                    FavoriteDepartures(stopData, global) { leaf ->
-                        val selectedFavorite =
-                            RouteStopDirection(leaf.lineOrRoute.id, leaf.stop.id, leaf.directionId)
+                    FavoriteDepartures(
+                        stopData,
+                        global,
+                        { leaf -> deleteFavorite(leaf.routeStopDirection) },
+                    ) { leaf ->
+                        val selectedFavorite = leaf.routeStopDirection
                         if (notificationsFlag) {
                             editFavorite(selectedFavorite)
                         } else {
@@ -197,76 +211,115 @@ private fun EditFavoritesList(
 private fun FavoriteDepartures(
     stopData: RouteCardData.RouteStopData,
     globalData: GlobalResponse?,
+    onDrag: (RouteCardData.Leaf) -> Unit,
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
+    val localDensity = LocalDensity.current
+    var dragWidth by remember { mutableStateOf(64.dp) }
+
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
             val overriddenClickLabel = stringResource(R.string.delete)
 
-            Row(
-                modifier =
-                    Modifier.padding(vertical = 10.dp, horizontal = 16.dp).semantics(
-                        mergeDescendants = true
-                    ) {
-                        role = Role.Button
-                        onClick(overriddenClickLabel) {
-                            onClick(leaf)
-                            true
-                        }
-                    }
+            Box(
+                Modifier.background(colorResource(R.color.delete)),
+                contentAlignment = Alignment.CenterEnd,
             ) {
-                when (formatted) {
-                    is LeafFormat.Single -> {
-                        Column(
-                            horizontalAlignment = Alignment.Start,
-                            verticalArrangement =
-                                Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                        ) {
+                Row(
+                    modifier = Modifier.height(IntrinsicSize.Max).width(IntrinsicSize.Min),
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(
+                        Modifier.onGloballyPositioned { coordinates ->
+                                dragWidth = with(localDensity) { coordinates.size.width.toDp() }
+                            }
+                            .padding(8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.fa_delete),
+                            null,
+                            modifier = Modifier.size(24.dp),
+                            tint = colorResource(R.color.delete_background),
+                        )
+                        Text(
+                            stringResource(R.string.remove),
+                            color = colorResource(R.color.delete_background),
+                            style = Typography.footnote,
+                        )
+                    }
+                }
+
+                Row(
+                    modifier =
+                        Modifier.dragAction(DragDirection.LEFT, dragWidth, notificationsFlag) {
+                                onDrag(leaf)
+                            }
+                            .background(colorResource(R.color.fill3))
+                            .fillMaxHeight()
+                            .padding(vertical = 10.dp, horizontal = 16.dp)
+                            .semantics(mergeDescendants = true) {
+                                role = Role.Button
+                                onClick(overriddenClickLabel) {
+                                    onClick(leaf)
+                                    true
+                                }
+                            }
+                ) {
+                    when (formatted) {
+                        is LeafFormat.Single -> {
+                            Column(
+                                horizontalAlignment = Alignment.Start,
+                                verticalArrangement =
+                                    Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    modifier = Modifier.semantics() {},
+                                ) {
+                                    DirectionLabel(
+                                        direction,
+                                        pillDecoration =
+                                            formatted.route?.let {
+                                                PillDecoration.OnDirectionDestination(it)
+                                            },
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                    if (notificationsFlag) {
+                                        NotificationStatusIcon(leaf)
+                                        EditIcon { onClick(leaf) }
+                                    } else {
+                                        DeleteIcon(action = { onClick(leaf) })
+                                    }
+                                }
+                            }
+                        }
+
+                        is LeafFormat.Branched -> {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.SpaceBetween,
-                                modifier = Modifier.semantics() {},
                             ) {
-                                DirectionLabel(
-                                    direction,
-                                    pillDecoration =
-                                        formatted.route?.let {
-                                            PillDecoration.OnDirectionDestination(it)
-                                        },
+                                Column(
+                                    horizontalAlignment = Alignment.Start,
+                                    verticalArrangement =
+                                        Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                                     modifier = Modifier.weight(1f),
-                                )
+                                ) {
+                                    DirectionLabel(direction, showDestination = false)
+                                    BranchRows(formatted)
+                                }
                                 if (notificationsFlag) {
                                     NotificationStatusIcon(leaf)
                                     EditIcon { onClick(leaf) }
                                 } else {
                                     DeleteIcon(action = { onClick(leaf) })
                                 }
-                            }
-                        }
-                    }
-
-                    is LeafFormat.Branched -> {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                        ) {
-                            Column(
-                                horizontalAlignment = Alignment.Start,
-                                verticalArrangement =
-                                    Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                                modifier = Modifier.weight(1f),
-                            ) {
-                                DirectionLabel(direction, showDestination = false)
-                                BranchRows(formatted)
-                            }
-                            if (notificationsFlag) {
-                                NotificationStatusIcon(leaf)
-                                EditIcon { onClick(leaf) }
-                            } else {
-                                DeleteIcon(action = { onClick(leaf) })
                             }
                         }
                     }

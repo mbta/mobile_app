@@ -282,6 +282,7 @@
     <string name="refresh">重新整理</string>
     <string name="refresh_predictions">重新整理預測</string>
     <string name="reload_data">重新載入資料</string>
+    <string name="remove">消除</string>
     <string name="remove_favorite">移除收藏</string>
     <string name="remove_from_favorites">從收藏夾移除</string>
     <string name="resources_link_fare_info">票價資訊</string>
