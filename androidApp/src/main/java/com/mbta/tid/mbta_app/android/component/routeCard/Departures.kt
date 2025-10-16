@@ -137,7 +137,7 @@ fun Departures(
 @Composable
 private fun DeparturesPreview() {
     val now = EasternTimeInstant.now()
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("DeparturesPreview")
     val redLine =
         objects.route {
             id = "Red"

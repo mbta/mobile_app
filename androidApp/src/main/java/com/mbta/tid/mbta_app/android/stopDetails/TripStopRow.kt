@@ -138,7 +138,7 @@ private fun TripStopRowPreview() {
     val koin = koinApplication {
         modules(module { single { SettingsCache(MockSettingsRepository()) } })
     }
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("TripStopRowPreview")
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
     val red =
@@ -249,7 +249,7 @@ private fun TripStopRowDisruptionsPreview() {
     val koin = koinApplication {
         modules(module { single { SettingsCache(MockSettingsRepository()) } })
     }
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("TripStopRowDisruptionsPreview")
     val trip = objects.trip()
     val now = EasternTimeInstant.now()
     val red =

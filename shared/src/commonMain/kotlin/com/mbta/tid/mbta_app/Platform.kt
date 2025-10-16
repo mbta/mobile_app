@@ -12,8 +12,6 @@ internal interface Platform {
 
 internal expect fun getPlatform(): Platform
 
-internal expect fun uuid(): String
-
 public enum class PlatformType {
     iOS,
     Android,

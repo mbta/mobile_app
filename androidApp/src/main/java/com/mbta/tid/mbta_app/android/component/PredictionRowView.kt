@@ -124,7 +124,7 @@ fun PredictionRowView(
 @Preview
 @Composable
 private fun PredictionRowViewPreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("PredictionRowViewPreview")
     val green = objects.line()
     val greenB =
         objects.route {

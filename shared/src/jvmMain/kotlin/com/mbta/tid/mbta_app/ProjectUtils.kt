@@ -232,7 +232,7 @@ internal object ProjectUtils {
                 .delegate(
                     CodeBlock.builder()
                         .beginControlFlow("lazy")
-                        .addStatement("val objects = ObjectCollectionBuilder()")
+                        .addStatement("val objects = ObjectCollectionBuilder(\"TestData\")")
                         .addStatement("putLines(objects)")
                         .addStatement("putRoutes(objects)")
                         .addStatement("putRoutePatterns(objects)")

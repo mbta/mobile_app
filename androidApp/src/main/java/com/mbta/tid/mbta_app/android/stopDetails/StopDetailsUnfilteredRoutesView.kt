@@ -148,7 +148,7 @@ fun StopDetailsUnfilteredRoutesView(
 @Composable
 private fun StopDetailsRoutesViewPreview() {
     val now = EasternTimeInstant.now()
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("StopDetailsRoutesViewPreview")
 
     val route1 =
         objects.route {

@@ -359,7 +359,7 @@ private fun AlertFooter(updatedAt: EasternTimeInstant) {
 @Composable
 private fun AlertDetailsPreview() {
     MyApplicationTheme {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("AlertDetailsPreview")
         val route =
             objects.route {
                 color = "ED8B00"

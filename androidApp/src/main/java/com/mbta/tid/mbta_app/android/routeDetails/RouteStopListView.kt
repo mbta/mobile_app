@@ -166,7 +166,7 @@ fun LoadingRouteStopListView(
     toastViewModel: IToastViewModel = koinInject(),
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingRouteStopListView")
         val mockRoute = LineOrRoute.Route(objects.route {})
 
         RouteStopListView(
