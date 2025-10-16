@@ -3,11 +3,13 @@ package com.mbta.tid.mbta_app.android.favorites
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
@@ -22,6 +24,8 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
@@ -35,6 +39,7 @@ import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.DayOfWeek
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -271,7 +276,14 @@ class EditFavoritesPageTest : KoinTest {
                 )
             )
 
-        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                onClose = {},
+                openModalWithCloseCallback = { _, _ -> },
+            )
+        }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
@@ -290,7 +302,14 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(false, emptyMap(), false, emptyList(), emptyList(), null)
             )
 
-        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                onClose = {},
+                openModalWithCloseCallback = { _, _ -> },
+            )
+        }
 
         composeTestRule.waitForIdle()
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("No stops added"))
@@ -335,7 +354,14 @@ class EditFavoritesPageTest : KoinTest {
             updatedWith = update
         }
 
-        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                onClose = {},
+                openModalWithCloseCallback = { _, _ -> },
+            )
+        }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
@@ -408,7 +434,15 @@ class EditFavoritesPageTest : KoinTest {
         toastVM.onHideToast = { displayedToast = null }
         toastVM.onShowToast = { displayedToast = it }
 
-        composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel, toastVM) {} }
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                toastVM,
+                onClose = {},
+                openModalWithCloseCallback = { _, _ -> },
+            )
+        }
 
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
@@ -443,5 +477,109 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
         composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
         assertNull(displayedToast)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testOpenEditModal(): Unit = runBlocking {
+        val favorites =
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
+            )
+        var openedModal: ModalRoutes? = null
+
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(
+                    false,
+                    favorites,
+                    false,
+                    combinedRouteCardData,
+                    combinedRouteCardData,
+                    null,
+                )
+            )
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                onClose = {},
+                openModalWithCloseCallback = { modal, _ -> openedModal = modal },
+            )
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Sample Route"))
+        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed()
+
+        composeTestRule.onNodeWithText("Green Line Long Name").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Green Line Stop").assertIsDisplayed()
+
+        composeTestRule.onAllNodesWithTag("editIcon")[0].performClick()
+        composeTestRule.awaitIdle()
+
+        composeTestRule.waitUntilDefaultTimeout {
+            openedModal ==
+                ModalRoutes.SaveFavorite(
+                    LineOrRoute.Route(route).id,
+                    sampleStop.id,
+                    0,
+                    EditFavoritesContext.Favorites,
+                )
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testNotificationIcons(): Unit = runBlocking {
+        val notifications =
+            FavoriteSettings.Notifications(
+                true,
+                listOf(
+                    FavoriteSettings.Notifications.Window(
+                        now.local.time,
+                        now.local.time,
+                        setOf(DayOfWeek.SATURDAY),
+                    )
+                ),
+            )
+        val favorites =
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(notifications),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
+            )
+
+        val viewModel =
+            MockFavoritesViewModel(
+                FavoritesViewModel.State(
+                    false,
+                    favorites,
+                    false,
+                    combinedRouteCardData,
+                    combinedRouteCardData,
+                    null,
+                )
+            )
+
+        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.Notifications to true)) }
+
+        composeTestRule.setContent {
+            EditFavoritesPage(
+                globalResponse,
+                viewModel,
+                onClose = {},
+                openModalWithCloseCallback = { _, _ -> },
+            )
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
+            hasContentDescription("notifications enabled")
+        )
+        composeTestRule.onNodeWithText("Sample Route").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Downtown").assertIsDisplayed()
     }
 }

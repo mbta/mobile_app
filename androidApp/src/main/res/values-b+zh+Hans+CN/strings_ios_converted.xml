@@ -235,6 +235,7 @@
     <string name="northbound">北行</string>
     <string name="not_accessible">不适合轮椅通行</string>
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
+    <string name="notifications_enabled">已启用通知</string>
     <string name="now">现在</string>
     <string name="now_at">现在停靠</string>
     <string name="okay">好的</string>

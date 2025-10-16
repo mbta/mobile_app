@@ -225,8 +225,8 @@ fun SaveFavoritePage(
                     shape = RoundedCornerShape(8.dp),
                     colors =
                         ButtonDefaults.buttonColors(
-                            colorResource(R.color.error),
-                            contentColor = colorResource(R.color.fill3),
+                            colorResource(R.color.delete),
+                            contentColor = colorResource(R.color.delete_background),
                         ),
                 ) {
                     Text(

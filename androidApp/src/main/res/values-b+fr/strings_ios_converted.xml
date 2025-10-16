@@ -241,6 +241,7 @@
     <string name="northbound">En direction du nord</string>
     <string name="not_accessible">Non accessible</string>
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
+    <string name="notifications_enabled">notifications activées</string>
     <string name="now">Maintenant</string>
     <string name="now_at">Maintenant à</string>
     <string name="okay">OK</string>

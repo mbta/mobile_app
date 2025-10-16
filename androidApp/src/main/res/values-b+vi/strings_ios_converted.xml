@@ -235,6 +235,7 @@
     <string name="northbound">Về hướng bắc</string>
     <string name="not_accessible">Không thể tiếp cận</string>
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
+    <string name="notifications_enabled">thông báo đã được bật</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
     <string name="okay">Okay</string>

@@ -460,15 +460,26 @@ fun MapAndSheetPage(
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var currentModal by
-        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
+        rememberSaveable(saver = stateJsonSaver()) {
+            mutableStateOf<Pair<ModalRoutes, () -> Unit>?>(null)
+        }
 
-    fun openModal(modal: ModalRoutes) {
-        currentModal = modal
+    fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
+        currentModal = Pair(modal, onClose)
         // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
+    fun openModal(modal: ModalRoutes) {
+        openModalWithCloseCallback(modal, {})
+    }
+
     fun closeModal() {
-        scope.launch { modalSheetState.hide() }.invokeOnCompletion { currentModal = null }
+        scope
+            .launch {
+                currentModal?.second()
+                modalSheetState.hide()
+            }
+            .invokeOnCompletion { currentModal = null }
     }
 
     @Composable
@@ -534,7 +545,7 @@ fun MapAndSheetPage(
                 global = nearbyTransit.globalResponse,
                 favoritesViewModel = favoritesViewModel,
                 onClose = { navController.popBackStackFrom(SheetRoutes.EditFavorites::class) },
-                openModal = ::openModal,
+                openModalWithCloseCallback = ::openModalWithCloseCallback,
             )
         }
     }
@@ -875,7 +886,7 @@ fun MapAndSheetPage(
             dragHandle = null,
         ) {
             Column {
-                when (val modal = currentModal) {
+                when (val modal = currentModal?.first) {
                     is ModalRoutes.AlertDetails ->
                         AlertDetailsPage(
                             modal.alertId,

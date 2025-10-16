@@ -13405,6 +13405,54 @@
         }
       }
     },
+    "notifications enabled" : {
+      "comment" : "Screen reader text for an icon on the edit favorites page that displays whether or not the user has notifications turned on for a specific row",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "notificaciones habilitadas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "notifications activées"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "notifikasyon yo pèmèt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "notificações habilitadas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "thông báo đã được bật"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已启用通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "已啟用通知"
+          }
+        }
+      }
+    },
     "Now" : {
       "comment" : "Label for a trip that's arriving right now",
       "localizations" : {

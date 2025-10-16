@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -18,6 +19,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 enum class DragDirection {
     LEFT,
@@ -48,6 +52,7 @@ fun Modifier.dragAction(
     var offsetPosition by remember { mutableFloatStateOf(0f) }
     val animatedOffset by
         animateFloatAsState(if (isDragging || lockDragPosition) offsetPosition else 0f)
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(animatedOffset) {
         if (!isDragging) {
@@ -65,6 +70,10 @@ fun Modifier.dragAction(
         if (!isDragging && draggedToThreshold) {
             lockDragPosition = true
             action()
+            coroutineScope.launch {
+                delay(1.seconds)
+                lockDragPosition = false
+            }
         }
     }
     return offset {
