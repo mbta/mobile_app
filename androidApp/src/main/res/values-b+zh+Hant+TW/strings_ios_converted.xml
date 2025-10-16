@@ -4,8 +4,10 @@
     <string name="access_issue_sentence_case">無障礙問題</string>
     <string name="accident">事件</string>
     <string name="accident_lowercase">事故</string>
+    <string name="add_another_time_period">新增另一個時間段</string>
     <string name="add_confirmation_button">新增</string>
-    <string name="add_favorite">新增收藏</string>
+    <string name="add_favorite_label">新增收藏</string>
+    <string name="add_favorite_title">新增收藏</string>
     <string name="add_stops">新增網站</string>
     <string name="add_to_favorites_title">在&lt;b>%1$s&lt;/b>新增&lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">將&lt;b>%2$s&lt;/b>的&lt;b>%1$s&lt;/b>新增到我的最愛</string>
@@ -38,6 +40,7 @@
     <string name="an_earlier_mechanical_problem_lowercase">早前的機械故障</string>
     <string name="an_earlier_signal_problem">早前的信號問題</string>
     <string name="an_earlier_signal_problem_lowercase">早前的信號問題</string>
+    <string name="app_version_and_build">版本 %1$s（%2$s）</string>
     <string name="app_version_number">版本 %1$s</string>
     <string name="approaching">正在接近</string>
     <string name="arriving_abbr">到站</string>
@@ -99,6 +102,7 @@
     <string name="drawbridge_being_raised_lowercase">吊橋升起</string>
     <string name="eastbound">東行</string>
     <string name="edit">編輯</string>
+    <string name="edit_favorite_title">編輯收藏夾</string>
     <string name="edit_favorites">編輯我的最愛</string>
     <string name="effect_ahead">提前&lt;b>%1$s&lt;/b></string>
     <string name="electrical_work">電力作業</string>
@@ -159,7 +163,9 @@
     <string name="follow">跟隨</string>
     <string name="freight_train_interference">貨運列車干擾</string>
     <string name="freight_train_interference_lowercase">貨運列車干擾</string>
+    <string name="from">從</string>
     <string name="full_description">完整說明</string>
+    <string name="get_disruption_notifications">取得中斷通知</string>
     <string name="got_it">知道了</string>
     <string name="hazmat_condition">危險物質</string>
     <string name="hazmat_condition_lowercase">危險物質</string>
@@ -243,6 +249,7 @@
     <string name="onboarding_map_display_header">設定地圖顯示首選項</string>
     <string name="onboarding_station_accessibility_body">透過選擇加入，我們可以向您顯示哪些車站不適合輪椅通行或電梯關閉。</string>
     <string name="onboarding_station_accessibility_header">設定車站無障礙資訊首選項</string>
+    <string name="only_direction_to">僅限 %1$s 至</string>
     <string name="only_served_at_certain_times">僅在每日特定時段提供服務</string>
     <string name="open_for_more_arrivals">開啟獲得更多到站資訊</string>
     <string name="other_link_privacy_policy">隱私政策</string>
@@ -276,6 +283,7 @@
     <string name="refresh_predictions">重新整理預測</string>
     <string name="reload_data">重新載入資料</string>
     <string name="remove_favorite">移除收藏</string>
+    <string name="remove_from_favorites">從收藏夾移除</string>
     <string name="resources_link_fare_info">票價資訊</string>
     <string name="resources_link_mticket">通勤列車和渡輪票</string>
     <string name="resources_link_mticket_note">mTicket應用程式</string>
@@ -285,6 +293,7 @@
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">新增最喜歡的網站</string>
     <string name="routes">線路</string>
+    <string name="save">節省</string>
     <string name="schedule_change">時刻表變更</string>
     <string name="schedule_change_sentence_case">時刻表變更</string>
     <string name="scheduled_to_depart">預定出發</string>
@@ -362,7 +371,9 @@
     <string name="this_stop_is_drop_off_only">此網站僅供下客</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
+    <string name="to">到</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
+    <string name="toggle_direction">切換方向</string>
     <string name="track_change">軌道變更</string>
     <string name="track_change_sentence_case">軌道變更</string>
     <string name="track_number">追蹤%1$s</string>
@@ -378,6 +389,8 @@
     <string name="trains">列車</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">本行程已取消。對於造成您的不便，我們深表歉意。</string>
+    <string name="trip_complete">行程完成</string>
+    <string name="trip_complete_body">此 %1$s 已到達目的地。</string>
     <string name="try_a_different_spelling_or_name">嘗試不同的拼字或名稱。</string>
     <string name="try_your_search_again">再次嘗試搜尋。</string>
     <string name="unable_to_connect">無法連接</string>

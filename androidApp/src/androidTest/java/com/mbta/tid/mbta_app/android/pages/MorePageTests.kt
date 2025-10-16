@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -103,5 +104,16 @@ class MorePageTests : KoinTest {
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText(dependency.licenseText))
         composeTestRule.onNodeWithText(dependency.name).assertIsDisplayed()
         composeTestRule.onNodeWithText(dependency.licenseText).assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsBuildNumberOnTap() {
+        composeTestRule.setContent { MorePage(bottomBar = {}) }
+
+        val versionText = "version ${BuildConfig.VERSION_NAME}"
+        val versionAndBuildText = "$versionText (${BuildConfig.VERSION_CODE})"
+        composeTestRule.onNodeWithText(versionAndBuildText).assertDoesNotExist()
+        composeTestRule.onNodeWithText(versionText).performClick()
+        composeTestRule.onNodeWithText(versionAndBuildText).assertIsDisplayed()
     }
 }

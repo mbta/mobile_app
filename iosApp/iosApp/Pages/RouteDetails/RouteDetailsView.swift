@@ -10,7 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteDetailsView: View {
-    let selectionId: String
+    let selectionId: LineOrRoute.Id
     let context: RouteDetailsContext
     let onOpenStopDetails: (String) -> Void
     let onBack: () -> Void
@@ -18,7 +18,14 @@ struct RouteDetailsView: View {
     let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
-    @State private var lineOrRoute: RouteCardData.LineOrRoute?
+    @State private var lineOrRoute: LineOrRoute?
+
+    private var defaultSelectedRouteId: Route.Id? {
+        switch onEnum(of: selectionId) {
+        case .Line_Id: nil
+        case let .Route_Id(id): id == lineOrRoute?.id ? nil : id
+        }
+    }
 
     var body: some View {
         ScrollView([]) {
@@ -36,7 +43,7 @@ struct RouteDetailsView: View {
                     onBack: onBack,
                     onClose: onClose,
                     errorBannerVM: errorBannerVM,
-                    defaultSelectedRouteId: selectionId == lineOrRoute.id ? nil : selectionId,
+                    defaultSelectedRouteId: defaultSelectedRouteId,
                     rightSideContent: rightSideContent
                 )
             } else {
@@ -51,7 +58,7 @@ struct RouteDetailsView: View {
 
     @ViewBuilder private func loadingBody() -> some View {
         let objects = ObjectCollectionBuilder()
-        let mockRoute = RouteCardData.LineOrRouteRoute(route: objects.route { _ in })
+        let mockRoute = LineOrRoute.route(objects.route { _ in })
         let mockGlobal = GlobalResponse(objects: objects)
         let toastVM = MockToastViewModel(initialState: ToastViewModel.StateHidden())
         RouteStopListContentView(

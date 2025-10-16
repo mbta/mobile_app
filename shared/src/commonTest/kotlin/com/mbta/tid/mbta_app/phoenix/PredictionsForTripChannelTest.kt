@@ -8,17 +8,14 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.putJsonObject
 
-class PredictionsForStopsChannelTest {
-
+class PredictionsForTripChannelTest {
     @Test
     fun testParseNewDataMessage() {
-
         val prediction1 = prediction()
 
         val trip1 = trip()
@@ -26,7 +23,7 @@ class PredictionsForStopsChannelTest {
         val vehicle1 = vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
 
         val parsed =
-            PredictionsForStopsChannel.parseMessage(
+            PredictionsForTripChannel.parseMessage(
                 json.encodeToString(
                     (buildJsonObject {
                         putJsonObject("predictions") {

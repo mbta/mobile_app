@@ -22,9 +22,11 @@ final class FavoritesModifierTests: XCTestCase {
         let repoExp = expectation(description: "favorites loaded from repo")
         let setExp = expectation(description: "favorites binding was set")
 
-        let updatedFavorites = Favorites(routeStopDirection: [.init(route: "route", stop: "stop", direction: 0)])
+        let updatedFavorites = buildFavorites {
+            $0.routeStopDirection(route: Route.Id("route"), stop: "stop", direction: 0)
+        }
 
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: []) }, set: {
+        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: {
             guard $0 == updatedFavorites else { return }
             setExp.fulfill()
         })
@@ -52,7 +54,7 @@ final class FavoritesModifierTests: XCTestCase {
     func testSetsLoadingToFalseWhenDone() throws {
         let loadExp = expectation(description: "favorites loaded binding set")
 
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: []) }, set: { _ in })
+        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: { _ in })
         let loadingBinding = Binding(get: { true }, set: {
             XCTAssertFalse($0)
             loadExp.fulfill()
@@ -68,10 +70,12 @@ final class FavoritesModifierTests: XCTestCase {
     func testSetsPreviouslyLoadedValueWhileFetching() throws {
         let setExp = expectation(description: "favorites binding set to previously loaded value")
 
-        let previouslyLoaded = Favorites(routeStopDirection: [.init(route: "route1", stop: "stop1", direction: 0)])
+        let previouslyLoaded = buildFavorites {
+            $0.routeStopDirection(route: Route.Id("route1"), stop: "stop1", direction: 0)
+        }
         LoadedFavorites.last = previouslyLoaded
 
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: []) }, set: { setFavorites in
+        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: { setFavorites in
             if setFavorites == previouslyLoaded {
                 setExp.fulfill()
             }

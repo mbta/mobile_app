@@ -28,7 +28,7 @@ enum RouteDetailsRowContext: Equatable {
 }
 
 struct RouteStopListView<RightSideContent: View>: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let context: RouteDetailsContext
     let globalData: GlobalResponse
@@ -36,7 +36,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let onBack: () -> Void
     let onClose: () -> Void
     let errorBannerVM: IErrorBannerViewModel
-    let defaultSelectedRouteId: String?
+    let defaultSelectedRouteId: Route.Id?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
 
@@ -46,20 +46,20 @@ struct RouteStopListView<RightSideContent: View>: View {
     @State var routeStops: RouteStopsResult?
     @State var stopList: RouteDetailsStopList?
 
-    @State var selectedRouteId: String
+    @State var selectedRouteId: Route.Id
     @State var selectedDirection: Int32
 
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
         onBack: @escaping () -> Void,
         onClose: @escaping () -> Void,
         errorBannerVM: IErrorBannerViewModel,
-        defaultSelectedRouteId: String? = nil,
+        defaultSelectedRouteId: Route.Id? = nil,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         routeStopsRepository: IRouteStopsRepository = RepositoryDI().routeStops,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
@@ -85,12 +85,12 @@ struct RouteStopListView<RightSideContent: View>: View {
     }
 
     private struct RouteStopsParams: Equatable {
-        let routeId: String
+        let routeId: Route.Id
         let directionId: Int32
     }
 
     private struct RouteStopListParams: Equatable {
-        let routeId: String
+        let routeId: Route.Id
         let directionId: Int32
         let routeStops: RouteStopsResult?
         let globalData: GlobalResponse
@@ -151,7 +151,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         }
     }
 
-    private func loadRouteStops(routeId: String, directionId: Int32) {
+    private func loadRouteStops(routeId: Route.Id, directionId: Int32) {
         Task {
             await fetchApi(
                 errorKey: "RouteStopListView.loadRouteStops",
@@ -166,7 +166,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     }
 
     private func loadStopList(
-        routeId: String,
+        routeId: Route.Id,
         directionId: Int32,
         routeStops: RouteStopsResult?,
         globalData: GlobalResponse
@@ -183,12 +183,12 @@ struct RouteStopListView<RightSideContent: View>: View {
 }
 
 struct RouteStopListContentView<RightSideContent: View>: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let selectedDirection: Int32
     let setSelectedDirection: (Int32) -> Void
-    let selectedRouteId: String
-    let setSelectedRouteId: (String) -> Void
+    let selectedRouteId: Route.Id
+    let setSelectedRouteId: (Route.Id) -> Void
     let routes: [Route]
     let stopList: RouteDetailsStopList?
     let context: RouteDetailsContext
@@ -211,12 +211,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         parameters: RouteDetailsStopList.RouteParameters,
         selectedDirection: Int32,
         setSelectedDirection: @escaping (Int32) -> Void,
-        selectedRouteId: String,
-        setSelectedRouteId: @escaping (String) -> Void,
+        selectedRouteId: Route.Id,
+        setSelectedRouteId: @escaping (Route.Id) -> Void,
         stopList: RouteDetailsStopList?,
         context: RouteDetailsContext,
         globalData: GlobalResponse,
@@ -262,7 +262,11 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     private var routeColor: Color { Color(hex: lineOrRoute.backgroundColor) }
     private var textColor: Color { Color(hex: lineOrRoute.textColor) }
     private var haloColor: Color {
-        lineOrRoute.type == .bus && !silverRoutes.contains(lineOrRoute.id) ? Color.haloLight : Color.haloDark
+        if lineOrRoute.type == .bus, let routeId = lineOrRoute.id as? Route.Id, !silverRoutes.contains(routeId) {
+            Color.haloLight
+        } else {
+            Color.haloDark
+        }
     }
 
     var body: some View {
@@ -271,7 +275,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 title: lineOrRoute.name,
                 titleAccessibilityLabel: lineOrRoute.labelWithModeIfBus,
                 titleColor: textColor,
-                buttonColor: Color.translucentContrast,
+                buttonColor: .routeColorContrast,
+                buttonTextColor: .routeColorContrastText,
                 onBack: onBack,
                 onClose: onClose
             )
@@ -419,7 +424,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         .accessibilityElement(children: .contain)
         .frame(maxWidth: .infinity)
         .padding(2)
-        .background(Color.deselectedToggle2.opacity(0.6))
+        .background(Color.routeColorContrast)
         .background(Color(hex: line.color))
         .withRoundedBorder(radius: 10, width: 0)
         .padding(.horizontal, 14)
@@ -469,7 +474,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         )
     }
 
-    private func confirmFavorites(updatedValues: [RouteStopDirection: Bool]) {
+    private func confirmFavorites(updatedValues: [RouteStopDirection: FavoriteSettings?]) {
         Task {
             let editContext = switch onEnum(of: context) {
             case .favorites: EditFavoritesContext.favorites
@@ -477,7 +482,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
 
             try? await favoritesUsecases.updateRouteStopDirections(
-                newValues: updatedValues.mapValues { KotlinBoolean(bool: $0) },
+                newValues: updatedValues,
                 context: editContext, defaultDirection: selectedDirection
             )
             loadFavorites()
@@ -490,7 +495,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     private func loadFavorites() {
         Task {
-            favorites = try? await favoritesUsecases.getRouteStopDirectionFavorites()
+            favorites = try? await Set(favoritesUsecases.getRouteStopDirectionFavorites().keys)
         }
     }
 

@@ -86,6 +86,8 @@ import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -103,6 +105,7 @@ import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
@@ -147,6 +150,7 @@ fun MapAndSheetPage(
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    toastViewModel: IToastViewModel = koinInject(),
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
@@ -214,10 +218,11 @@ fun MapAndSheetPage(
 
     val selectedVehicleUpdate by tripDetailsViewModel.selectedVehicleUpdates.collectAsState()
     LaunchedEffect(selectedVehicleUpdate) {
-        val follow = currentNavEntry is SheetRoutes.TripDetails
-        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
+        val follow =
+            currentNavEntry is SheetRoutes.TripDetails &&
+                nearbyTransit.viewportProvider.isVehicleOverview
         filters?.tripFilter?.let {
-            mapViewModel.selectedTrip(filters.stopFilter, stop, it, selectedVehicleUpdate, follow)
+            mapViewModel.selectedVehicleUpdated(selectedVehicleUpdate, follow)
         }
     }
 
@@ -233,6 +238,10 @@ fun MapAndSheetPage(
                     previousNavEntry.stopFilter != currentNavEntry.stopFilter)
         ) {
             tileScrollState.scrollTo(0)
+        }
+
+        if (currentNavEntry?.let { it::class } != previousNavEntry?.let { it::class }) {
+            toastViewModel.hideToast()
         }
     }
 
@@ -299,7 +308,7 @@ fun MapAndSheetPage(
     }
 
     fun handleRouteNavigation(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
@@ -308,7 +317,7 @@ fun MapAndSheetPage(
     }
 
     fun handlePickRouteNavigation(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
         navController.navigateFrom(
@@ -322,17 +331,20 @@ fun MapAndSheetPage(
     fun handleTripDetailsNavigation(
         tripId: String,
         vehicleId: String?,
-        routeId: String,
+        routeId: Route.Id,
         directionId: Int,
         stopId: String,
         stopSequence: Int?,
     ) {
         val filter =
             TripDetailsPageFilter(tripId, vehicleId, routeId, directionId, stopId, stopSequence)
+        if (currentNavEntry is SheetRoutes.TripDetails) {
+            navController.popBackStack()
+        }
         navController.navigate(SheetRoutes.TripDetails(filter))
     }
 
-    fun handleVehicleTap(vehicle: Vehicle, hasTrackThisTrip: Boolean) {
+    fun handleVehicleTap(vehicle: Vehicle) {
         val tripId = vehicle.tripId ?: return
         val routeCardData = routeCardDataState.data
         val (stopId, stopFilter, tripFilter) =
@@ -351,35 +363,28 @@ fun MapAndSheetPage(
                     )
                 else -> null
             } ?: return
-        if (stopFilter == null || tripFilter?.tripId == tripId) return
-        val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
+        if (stopFilter == null) return
 
+        val routeCard = routeCardData?.find { it.lineOrRoute.containsRoute(vehicle.routeId) }
         val upcoming =
             routeCard
                 ?.stopData
                 ?.flatMap { it.data }
                 ?.flatMap { it.upcomingTrips }
                 ?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
-        val stopSequence = upcoming?.stopSequence
-        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id
+        val routeId =
+            upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id as? Route.Id
 
         if (routeId != null) analytics.tappedVehicle(routeId)
 
-        val newTripFilter = TripDetailsFilter(tripId, vehicle.id, stopSequence)
-        val stop = nearbyTransit.globalResponse?.getStop(filters?.stopId)
-        if (hasTrackThisTrip) {
-            handleTripDetailsNavigation(
-                tripId = tripId,
-                vehicleId = vehicle.id,
-                routeId = vehicle.routeId ?: stopFilter.routeId,
-                directionId = stopFilter.directionId,
-                stopId = stopId,
-                stopSequence = tripFilter?.stopSequence,
-            )
-        } else {
-            updateTripFilter(stopId, newTripFilter)
-            mapViewModel.selectedTrip(stopFilter, stop, newTripFilter, vehicle, false)
-        }
+        handleTripDetailsNavigation(
+            tripId = tripId,
+            vehicleId = vehicle.id,
+            routeId = vehicle.routeId ?: routeId ?: stopFilter.routeId as? Route.Id ?: return,
+            directionId = stopFilter.directionId,
+            stopId = stopId,
+            stopSequence = tripFilter?.stopSequence,
+        )
     }
 
     val popUp: NavOptionsBuilder.() -> Unit = {
@@ -577,8 +582,8 @@ fun MapAndSheetPage(
         }
 
         val global = getGlobalData("TripDetailsSheetContents")
-        val route = global?.getRoute(navRoute.filter.routeId)
-        val routeColor = route?.color?.let { Color.fromHex(it) }
+        val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
+        val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
 
         SheetPage(routeColor ?: colorResource(R.color.fill2)) {
             TripDetailsPage(
@@ -647,6 +652,7 @@ fun MapAndSheetPage(
                 onOpenStopDetails = ::handleStopNavigation,
                 onBack = { navController.popBackStackFrom(SheetRoutes.RouteDetails::class) },
                 onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
+                openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -844,7 +850,6 @@ fun MapAndSheetPage(
                                 )
                             )
                         }
-                    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
                     HomeMapView(
                         sheetPadding = mapPadding,
                         lastLoadedLocation = nearbyTransit.lastLoadedLocation,
@@ -853,7 +858,7 @@ fun MapAndSheetPage(
                         viewportProvider = nearbyTransit.viewportProvider,
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
-                        handleVehicleTap = { handleVehicleTap(it, hasTrackThisTrip) },
+                        handleVehicleTap = { handleVehicleTap(it) },
                         vehiclesData = vehiclesData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,
@@ -882,6 +887,15 @@ fun MapAndSheetPage(
 
                     is ModalRoutes.Explainer ->
                         ExplainerPage(modal.type, modal.routeAccents, goBack = { closeModal() })
+
+                    is ModalRoutes.SaveFavorite ->
+                        SaveFavoritePage(
+                            modal.routeId,
+                            modal.stopId,
+                            modal.selectedDirection,
+                            modal.context,
+                            goBack = { closeModal() },
+                        )
 
                     null -> {}
                 }

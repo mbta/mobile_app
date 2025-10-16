@@ -10,8 +10,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import kotlin.test.assertEquals
 import org.junit.Rule
@@ -100,7 +100,7 @@ class RouteModeLabelTest {
             ObjectCollectionBuilder.Single.route {
                 longName = "Green Line C"
                 type = RouteType.LIGHT_RAIL
-                lineId = line.id
+                lineId = line.id.idText
             }
 
         composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, line, route)) }
@@ -116,9 +116,9 @@ class RouteModeLabelTest {
             ObjectCollectionBuilder.Single.route {
                 shortName = "SL2"
                 type = RouteType.BUS
-                lineId = line.id
+                lineId = line.id.idText
             }
-        val lineOrRoute = RouteCardData.LineOrRoute.Line(line, setOf(route))
+        val lineOrRoute = LineOrRoute.Line(line, setOf(route))
 
         composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, lineOrRoute)) }
 

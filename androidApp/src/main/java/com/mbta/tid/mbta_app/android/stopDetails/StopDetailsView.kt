@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -23,7 +24,7 @@ fun StopDetailsView(
     allAlerts: AlertsStreamDataResponse?,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    updateFavorites: (Map<RouteStopDirection, Boolean>, Int) -> Unit,
+    updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
     onClose: () -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
@@ -38,7 +39,7 @@ fun StopDetailsView(
         openModal(modal)
         if (modal is ModalRoutes.AlertDetails) {
             analytics.tappedAlertDetails(
-                routeId = modal.lineId ?: modal.routeIds?.firstOrNull() ?: "",
+                routeId = modal.lineId ?: modal.routeIds?.firstOrNull(),
                 stopId = modal.stopId ?: "",
                 alertId = modal.alertId,
             )

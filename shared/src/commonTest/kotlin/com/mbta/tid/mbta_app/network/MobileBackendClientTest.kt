@@ -24,13 +24,13 @@ class MobileBackendClientTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-                        {
-                          "schedules": [{
+                            {
+                              "schedules": [{
+                                }
+                              ],
+                              "trips": {}
                             }
-                          ],
-                          "trips": {}
-                        }
-                    """
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,

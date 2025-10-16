@@ -22,10 +22,18 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
  */
 public val TestData: ObjectCollectionBuilder by lazy {
     val objects = ObjectCollectionBuilder()
+    putLines(objects)
+    putRoutes(objects)
+    putRoutePatterns(objects)
+    putStops(objects)
+    putTrips(objects)
+    objects
+}
 
+private fun putLines(objects: ObjectCollectionBuilder) {
     objects.put(
         Line(
-            id = "line-Green",
+            id = Line.Id("line-Green"),
             color = "00843D",
             longName = "Green Line",
             shortName = "",
@@ -35,7 +43,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Line(
-            id = "line-SLWaterfront",
+            id = Line.Id("line-SLWaterfront"),
             color = "7C878E",
             longName = "Silver Line SL1/SL2/SL3",
             shortName = "",
@@ -43,10 +51,12 @@ public val TestData: ObjectCollectionBuilder by lazy {
             textColor = "FFFFFF",
         )
     )
+}
 
+private fun putRoutes(objects: ObjectCollectionBuilder) {
     objects.put(
         Route(
-            id = "Red",
+            id = Route.Id("Red"),
             type = RouteType.HEAVY_RAIL,
             color = "DA291C",
             directionNames = listOf("South", "North"),
@@ -56,13 +66,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 10_010,
             textColor = "FFFFFF",
-            lineId = "line-Red",
+            lineId = Line.Id("line-Red"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Orange",
+            id = Route.Id("Orange"),
             type = RouteType.HEAVY_RAIL,
             color = "ED8B00",
             directionNames = listOf("South", "North"),
@@ -72,13 +82,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 10_020,
             textColor = "FFFFFF",
-            lineId = "line-Orange",
+            lineId = Line.Id("line-Orange"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-B",
+            id = Route.Id("Green-B"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -88,13 +98,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "B",
             sortOrder = 10_032,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-C",
+            id = Route.Id("Green-C"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -104,13 +114,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "C",
             sortOrder = 10_033,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-D",
+            id = Route.Id("Green-D"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -120,13 +130,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "D",
             sortOrder = 10_034,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "Green-E",
+            id = Route.Id("Green-E"),
             type = RouteType.LIGHT_RAIL,
             color = "00843D",
             directionNames = listOf("West", "East"),
@@ -136,13 +146,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "E",
             sortOrder = 10_035,
             textColor = "FFFFFF",
-            lineId = "line-Green",
+            lineId = Line.Id("line-Green"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "741",
+            id = Route.Id("741"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -152,13 +162,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "SL1",
             sortOrder = 10_051,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "742",
+            id = Route.Id("742"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -168,13 +178,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "SL2",
             sortOrder = 10_052,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "743",
+            id = Route.Id("743"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -184,13 +194,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "SL3",
             sortOrder = 10_053,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "746",
+            id = Route.Id("746"),
             type = RouteType.BUS,
             color = "7C878E",
             directionNames = listOf("Outbound", "Inbound"),
@@ -200,13 +210,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "SLW",
             sortOrder = 10_057,
             textColor = "FFFFFF",
-            lineId = "line-SLWaterfront",
+            lineId = Line.Id("line-SLWaterfront"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Fitchburg",
+            id = Route.Id("CR-Fitchburg"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -216,13 +226,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 20_003,
             textColor = "FFFFFF",
-            lineId = "line-Fitchburg",
+            lineId = Line.Id("line-Fitchburg"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Haverhill",
+            id = Route.Id("CR-Haverhill"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -232,13 +242,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 20_007,
             textColor = "FFFFFF",
-            lineId = "line-Haverhill",
+            lineId = Line.Id("line-Haverhill"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Lowell",
+            id = Route.Id("CR-Lowell"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -248,13 +258,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 20_009,
             textColor = "FFFFFF",
-            lineId = "line-Lowell",
+            lineId = Line.Id("line-Lowell"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Newburyport",
+            id = Route.Id("CR-Newburyport"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -264,13 +274,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 20_012,
             textColor = "FFFFFF",
-            lineId = "line-Newburyport",
+            lineId = Line.Id("line-Newburyport"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "CR-Providence",
+            id = Route.Id("CR-Providence"),
             type = RouteType.COMMUTER_RAIL,
             color = "80276C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -280,30 +290,29 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "",
             sortOrder = 20_013,
             textColor = "FFFFFF",
-            lineId = "line-Providence",
+            lineId = Line.Id("line-Providence"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "15",
+            id = Route.Id("15"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
-            directionDestinations =
-                listOf("Fields Corner Station or St Peter's Square", "Ruggles Station"),
+            directionDestinations = listOf("Fields Corner Station", "Ruggles Station"),
             isListedRoute = true,
-            longName = "Fields Corner Station or St Peter's Square - Ruggles Station",
+            longName = "Fields Corner Station - Ruggles Station",
             shortName = "15",
             sortOrder = 50_150,
             textColor = "000000",
-            lineId = "line-15",
+            lineId = Line.Id("line-15"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "67",
+            id = Route.Id("67"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -313,13 +322,13 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "67",
             sortOrder = 50_670,
             textColor = "000000",
-            lineId = "line-6779",
+            lineId = Line.Id("line-6779"),
             routePatternIds = null,
         )
     )
     objects.put(
         Route(
-            id = "87",
+            id = Route.Id("87"),
             type = RouteType.BUS,
             color = "FFC72C",
             directionNames = listOf("Outbound", "Inbound"),
@@ -330,20 +339,22 @@ public val TestData: ObjectCollectionBuilder by lazy {
             shortName = "87",
             sortOrder = 50_870,
             textColor = "000000",
-            lineId = "line-87",
+            lineId = Line.Id("line-87"),
             routePatternIds = null,
         )
     )
+}
 
+private fun putRoutePatterns(objects: ObjectCollectionBuilder) {
     objects.put(
         RoutePattern(
             id = "Red-3-0",
             directionId = 0,
             name = "Alewife - Braintree",
-            sortOrder = 100_100_000,
+            sortOrder = 100_100_040,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-0",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -351,10 +362,10 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "Red-1-0",
             directionId = 0,
             name = "Alewife - Ashmont",
-            sortOrder = 100_100_001,
+            sortOrder = 100_100_041,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-0",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -365,7 +376,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_101_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C1-1",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -376,7 +387,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_101_001,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Red-C2-1",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
         )
     )
     objects.put(
@@ -387,7 +398,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_200_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-0",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
         )
     )
     objects.put(
@@ -398,7 +409,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_201_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Orange-C1-1",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
         )
     )
     objects.put(
@@ -409,7 +420,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_320_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-0",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
         )
     )
     objects.put(
@@ -420,7 +431,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_321_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-B-C1-1",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
         )
     )
     objects.put(
@@ -431,7 +442,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_330_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-0",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
         )
     )
     objects.put(
@@ -442,7 +453,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_331_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-C-C1-1",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
         )
     )
     objects.put(
@@ -453,7 +464,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_340_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-0",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
         )
     )
     objects.put(
@@ -464,7 +475,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_341_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-D-C1-1",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
         )
     )
     objects.put(
@@ -475,7 +486,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_350_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-0",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
         )
     )
     objects.put(
@@ -486,7 +497,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 100_351_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-Green-E-C1-1",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
         )
     )
     objects.put(
@@ -496,8 +507,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Logan Airport Terminals",
             sortOrder = 100_510_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68245389",
-            routeId = "741",
+            representativeTripId = "72039742",
+            routeId = Route.Id("741"),
         )
     )
     objects.put(
@@ -507,8 +518,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Logan Airport Terminals - South Station",
             sortOrder = 100_511_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68245385",
-            routeId = "741",
+            representativeTripId = "72039744",
+            routeId = Route.Id("741"),
         )
     )
     objects.put(
@@ -518,8 +529,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Design Center (PM Route)",
             sortOrder = 100_520_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244480",
-            routeId = "742",
+            representativeTripId = "72039786",
+            routeId = Route.Id("742"),
         )
     )
     objects.put(
@@ -529,8 +540,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Design Center - South Station (PM - Omits 88 Black Falcon Ave)",
             sortOrder = 100_521_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244484",
-            routeId = "742",
+            representativeTripId = "72039768",
+            routeId = Route.Id("742"),
         )
     )
     objects.put(
@@ -540,8 +551,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Chelsea Station",
             sortOrder = 100_530_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244692",
-            routeId = "743",
+            representativeTripId = "72040977",
+            routeId = Route.Id("743"),
         )
     )
     objects.put(
@@ -551,8 +562,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Chelsea Station - South Station",
             sortOrder = 100_531_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244686",
-            routeId = "743",
+            representativeTripId = "72040978",
+            routeId = Route.Id("743"),
         )
     )
     objects.put(
@@ -562,8 +573,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Silver Line Way",
             sortOrder = 100_570_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244389",
-            routeId = "746",
+            representativeTripId = "72039743",
+            routeId = Route.Id("746"),
         )
     )
     objects.put(
@@ -573,8 +584,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Silver Line Way - South Station",
             sortOrder = 100_571_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68244390",
-            routeId = "746",
+            representativeTripId = "72039750",
+            routeId = Route.Id("746"),
         )
     )
     objects.put(
@@ -584,8 +595,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "North Station - Wachusett",
             sortOrder = 200_030_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728475-405",
-            routeId = "CR-Fitchburg",
+            representativeTripId = "HaverhillRestoredWKDY-744237-405",
+            routeId = Route.Id("CR-Fitchburg"),
         )
     )
     objects.put(
@@ -595,30 +606,30 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Wachusett - North Station",
             sortOrder = 200_031_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728473-400",
-            routeId = "CR-Fitchburg",
+            representativeTripId = "HaverhillRestoredWKDY-744235-400",
+            routeId = Route.Id("CR-Fitchburg"),
         )
     )
     objects.put(
         RoutePattern(
-            id = "CR-Haverhill-56199cd1-0",
+            id = "CR-Haverhill-779dede9-0",
             directionId = 0,
-            name = "North Station - Bradford via Reading",
+            name = "North Station - Haverhill via Reading",
             sortOrder = 200_070_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728449-209-HaverhillBradfordVan",
-            routeId = "CR-Haverhill",
+            representativeTripId = "canonical-CR-Haverhill-C1-0",
+            routeId = Route.Id("CR-Haverhill"),
         )
     )
     objects.put(
         RoutePattern(
-            id = "CR-Haverhill-9794afd5-1",
+            id = "CR-Haverhill-ebc58735-1",
             directionId = 1,
-            name = "Bradford - North Station via Reading",
+            name = "Haverhill - North Station via Reading",
             sortOrder = 200_071_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728448-208-HaverhillBradfordVan",
-            routeId = "CR-Haverhill",
+            representativeTripId = "canonical-CR-Haverhill-C1-1",
+            routeId = Route.Id("CR-Haverhill"),
         )
     )
     objects.put(
@@ -629,7 +640,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_090_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-0",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
         )
     )
     objects.put(
@@ -640,7 +651,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             sortOrder = 200_091_000,
             typicality = RoutePattern.Typicality.Typical,
             representativeTripId = "canonical-CR-Lowell-C1-1",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
         )
     )
     objects.put(
@@ -650,8 +661,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "North Station - Newburyport",
             sortOrder = 200_120_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728599-143",
-            routeId = "CR-Newburyport",
+            representativeTripId = "HaverhillRestoredWKDY-744341-125",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -661,8 +672,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "North Station - Rockport",
             sortOrder = 200_120_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728591-45",
-            routeId = "CR-Newburyport",
+            representativeTripId = "HaverhillRestoredWKDY-744312-27",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -672,8 +683,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Newburyport - North Station",
             sortOrder = 200_121_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728590-136",
-            routeId = "CR-Newburyport",
+            representativeTripId = "HaverhillRestoredWKDY-744338-114",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -683,8 +694,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Rockport - North Station",
             sortOrder = 200_121_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "SPRING2025V2-728589-28",
-            routeId = "CR-Newburyport",
+            representativeTripId = "HaverhillRestoredWKDY-744311-24",
+            routeId = Route.Id("CR-Newburyport"),
         )
     )
     objects.put(
@@ -694,8 +705,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Wickford Junction via Back Bay",
             sortOrder = 200_130_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "AttleboroWork-715914-803",
-            routeId = "CR-Providence",
+            representativeTripId = "Sept8Read-767850-839",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -705,8 +716,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "South Station - Stoughton via Back Bay",
             sortOrder = 200_130_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "AttleboroWork-715956-907",
-            routeId = "CR-Providence",
+            representativeTripId = "Sept8Read-768056-925",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -716,8 +727,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Wickford Junction - South Station via Back Bay",
             sortOrder = 200_131_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "AttleboroWork-715931-840",
-            routeId = "CR-Providence",
+            representativeTripId = "Sept8Read-767840-852",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
@@ -727,30 +738,30 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Stoughton - South Station via Back Bay",
             sortOrder = 200_131_010,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "AttleboroWork-715955-904",
-            routeId = "CR-Providence",
+            representativeTripId = "Sept8Read-768057-930",
+            routeId = Route.Id("CR-Providence"),
         )
     )
     objects.put(
         RoutePattern(
-            id = "15-2-0",
+            id = "15-1-0",
             directionId = 0,
-            name = "Ruggles Station - St Peter's Square",
+            name = "Ruggles Station - Fields Corner Station",
             sortOrder = 501_500_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68166816",
-            routeId = "15",
+            representativeTripId = "71373591",
+            routeId = Route.Id("15"),
         )
     )
     objects.put(
         RoutePattern(
-            id = "15-2-1",
+            id = "15-1-1",
             directionId = 1,
-            name = "St Peter's Square - Ruggles Station",
+            name = "Fields Corner Station - Ruggles Station",
             sortOrder = 501_501_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68166605",
-            routeId = "15",
+            representativeTripId = "71373380",
+            routeId = Route.Id("15"),
         )
     )
     objects.put(
@@ -760,8 +771,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Alewife Station - Turkey Hill",
             sortOrder = 506_700_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68596786",
-            routeId = "67",
+            representativeTripId = "71694757",
+            routeId = Route.Id("67"),
         )
     )
     objects.put(
@@ -771,8 +782,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Turkey Hill - Alewife Station",
             sortOrder = 506_701_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68596783",
-            routeId = "67",
+            representativeTripId = "71694754",
+            routeId = Route.Id("67"),
         )
     )
     objects.put(
@@ -782,8 +793,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Lechmere Station - Arlington Center",
             sortOrder = 508_700_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68596172",
-            routeId = "87",
+            representativeTripId = "71694434",
+            routeId = Route.Id("87"),
         )
     )
     objects.put(
@@ -793,11 +804,47 @@ public val TestData: ObjectCollectionBuilder by lazy {
             name = "Arlington Center - Lechmere Station",
             sortOrder = 508_701_000,
             typicality = RoutePattern.Typicality.Typical,
-            representativeTripId = "68596178",
-            routeId = "87",
+            representativeTripId = "71694436",
+            routeId = Route.Id("87"),
         )
     )
+}
 
+private fun putStops(objects: ObjectCollectionBuilder) {
+    objects.put(
+        Stop(
+            id = "10642",
+            latitude = 42.29985,
+            longitude = -71.114261,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Upper Busway",
+            platformCode = null,
+            platformName = "Upper Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "11531",
+            latitude = 42.323074,
+            longitude = -71.099546,
+            name = "Jackson Square",
+            locationType = LocationType.STOP,
+            description = "Jackson Square - Busway",
+            platformCode = null,
+            platformName = "Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-jaksn",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
     objects.put(
         Stop(
             id = "121",
@@ -834,14 +881,99 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
-            id = "141",
-            latitude = 42.395752,
-            longitude = -71.141584,
+            id = "14112",
+            latitude = 42.395325,
+            longitude = -71.141439,
             name = "Alewife",
             locationType = LocationType.STOP,
-            description = "Alewife - Busway",
-            platformCode = null,
-            platformName = "Busway",
+            description = "Alewife - Busway Berth A6",
+            platformCode = "A6",
+            platformName = "Busway Berth A6",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-alfcl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "14118",
+            latitude = 42.396228,
+            longitude = -71.141735,
+            name = "Alewife",
+            locationType = LocationType.STOP,
+            description = "Alewife - Busway Berth B6",
+            platformCode = "B6",
+            platformName = "Busway Berth B6",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-alfcl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "14120",
+            latitude = 42.3958,
+            longitude = -71.141524,
+            name = "Alewife",
+            locationType = LocationType.STOP,
+            description = "Alewife - Busway Berth B4",
+            platformCode = "B4",
+            platformName = "Busway Berth B4",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-alfcl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "14121",
+            latitude = 42.395622,
+            longitude = -71.141438,
+            name = "Alewife",
+            locationType = LocationType.STOP,
+            description = "Alewife - Busway Berth B3",
+            platformCode = "B3",
+            platformName = "Busway Berth B3",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-alfcl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "14122",
+            latitude = 42.395389,
+            longitude = -71.141326,
+            name = "Alewife",
+            locationType = LocationType.STOP,
+            description = "Alewife - Busway Berth B2",
+            platformCode = "B2",
+            platformName = "Busway Berth B2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-alfcl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "14123",
+            latitude = 42.395197,
+            longitude = -71.141237,
+            name = "Alewife",
+            locationType = LocationType.STOP,
+            description = "Alewife - Busway Berth B1",
+            platformCode = "B1",
+            platformName = "Busway Berth B1",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -1038,6 +1170,23 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "23391",
+            latitude = 42.347441,
+            longitude = -71.074592,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Busway",
+            platformCode = null,
+            platformName = "Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "2595",
             latitude = 42.381176,
             longitude = -71.099677,
@@ -1080,6 +1229,23 @@ public val TestData: ObjectCollectionBuilder by lazy {
             description = "Sullivan Square - Upper Busway Berth A6",
             platformCode = "A6",
             platformName = "Upper Busway Berth A6",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sull",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "29002",
+            latitude = 42.384386,
+            longitude = -71.076502,
+            name = "Sullivan Square",
+            locationType = LocationType.STOP,
+            description = "Sullivan Square - Upper Busway Berth A5",
+            platformCode = "A5",
+            platformName = "Upper Busway Berth A5",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -1276,23 +1442,6 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
-            id = "29014",
-            latitude = 42.383612,
-            longitude = -71.076196,
-            name = "Sullivan Square",
-            locationType = LocationType.STOP,
-            description = "Sullivan Square - Lower Busway Berth C1",
-            platformCode = "C1",
-            platformName = "Lower Busway Berth C1",
-            vehicleType = RouteType.BUS,
-            childStopIds = listOf<String>(),
-            connectingStopIds = listOf<String>(),
-            parentStationId = "place-sull",
-            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
-        )
-    )
-    objects.put(
-        Stop(
             id = "3125",
             latitude = 42.275585,
             longitude = -71.028752,
@@ -1480,6 +1629,23 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "5072",
+            latitude = 42.426729,
+            longitude = -71.074659,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - West Busway",
+            platformCode = null,
+            platformName = "West Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "5104",
             latitude = 42.396646,
             longitude = -71.121879,
@@ -1492,6 +1658,329 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-davis",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52710",
+            latitude = 42.402533,
+            longitude = -71.075586,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth A1",
+            platformCode = "A1",
+            platformName = "Busway Berth A1",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52711",
+            latitude = 42.402469,
+            longitude = -71.075826,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth A2",
+            platformCode = "A2",
+            platformName = "Busway Berth A2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52712",
+            latitude = 42.402463,
+            longitude = -71.07609,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth A3",
+            platformCode = "A3",
+            platformName = "Busway Berth A3",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52713",
+            latitude = 42.40246,
+            longitude = -71.0763,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth A4",
+            platformCode = "A4",
+            platformName = "Busway Berth A4",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52714",
+            latitude = 42.402616,
+            longitude = -71.075739,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth B1",
+            platformCode = "B1",
+            platformName = "Busway Berth B1",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52715",
+            latitude = 42.402597,
+            longitude = -71.076024,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth B2",
+            platformCode = "B2",
+            platformName = "Busway Berth B2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52716",
+            latitude = 42.402602,
+            longitude = -71.076337,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Berth B3",
+            platformCode = "B3",
+            platformName = "Busway Berth B3",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "52720",
+            latitude = 42.402517,
+            longitude = -71.076577,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Busway Drop-off Only",
+            platformCode = null,
+            platformName = "Busway Drop-off Only",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "5327",
+            latitude = 42.426507,
+            longitude = -71.073919,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - East Busway Platform 2",
+            platformCode = "2",
+            platformName = "East Busway Platform 2",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "53270",
+            latitude = 42.426565,
+            longitude = -71.074107,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - East Busway Platform 1",
+            platformCode = "1",
+            platformName = "East Busway Platform 1",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70001",
+            latitude = 42.300926,
+            longitude = -71.114129,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Orange Line",
+            platformCode = null,
+            platformName = "Orange Line",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70002",
+            latitude = 42.309832,
+            longitude = -71.108059,
+            name = "Green Street",
+            locationType = LocationType.STOP,
+            description = "Green Street - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-grnst",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70003",
+            latitude = 42.309796,
+            longitude = -71.107988,
+            name = "Green Street",
+            locationType = LocationType.STOP,
+            description = "Green Street - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-grnst",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70004",
+            latitude = 42.317062,
+            longitude = -71.104248,
+            name = "Stony Brook",
+            locationType = LocationType.STOP,
+            description = "Stony Brook - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sbmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70005",
+            latitude = 42.317062,
+            longitude = -71.104248,
+            name = "Stony Brook",
+            locationType = LocationType.STOP,
+            description = "Stony Brook - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-sbmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70006",
+            latitude = 42.323132,
+            longitude = -71.099592,
+            name = "Jackson Square",
+            locationType = LocationType.STOP,
+            description = "Jackson Square - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-jaksn",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70007",
+            latitude = 42.323132,
+            longitude = -71.099592,
+            name = "Jackson Square",
+            locationType = LocationType.STOP,
+            description = "Jackson Square - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-jaksn",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70008",
+            latitude = 42.330671,
+            longitude = -71.096121,
+            name = "Roxbury Crossing",
+            locationType = LocationType.STOP,
+            description = "Roxbury Crossing - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rcmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70009",
+            latitude = 42.33064,
+            longitude = -71.09604,
+            name = "Roxbury Crossing",
+            locationType = LocationType.STOP,
+            description = "Roxbury Crossing - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-rcmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
@@ -1531,6 +2020,142 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "70012",
+            latitude = 42.340927,
+            longitude = -71.084188,
+            name = "Massachusetts Avenue",
+            locationType = LocationType.STOP,
+            description = "Massachusetts Avenue - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-masta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70013",
+            latitude = 42.340892,
+            longitude = -71.084124,
+            name = "Massachusetts Avenue",
+            locationType = LocationType.STOP,
+            description = "Massachusetts Avenue - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-masta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70014",
+            latitude = 42.34735,
+            longitude = -71.075727,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70015",
+            latitude = 42.34735,
+            longitude = -71.075727,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70016",
+            latitude = 42.349662,
+            longitude = -71.063917,
+            name = "Tufts Medical Center",
+            locationType = LocationType.STOP,
+            description = "Tufts Medical Center - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-tumnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70017",
+            latitude = 42.349662,
+            longitude = -71.063917,
+            name = "Tufts Medical Center",
+            locationType = LocationType.STOP,
+            description = "Tufts Medical Center - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-tumnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70018",
+            latitude = 42.352547,
+            longitude = -71.062752,
+            name = "Chinatown",
+            locationType = LocationType.STOP,
+            description = "Chinatown - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-chncl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70019",
+            latitude = 42.352547,
+            longitude = -71.062752,
+            name = "Chinatown",
+            locationType = LocationType.STOP,
+            description = "Chinatown - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-chncl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "70020",
             latitude = 42.355518,
             longitude = -71.060225,
@@ -1560,6 +2185,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-dwnxg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70022",
+            latitude = 42.358978,
+            longitude = -71.057598,
+            name = "State",
+            locationType = LocationType.STOP,
+            description = "State - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-state",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70023",
+            latitude = 42.358978,
+            longitude = -71.057598,
+            name = "State",
+            locationType = LocationType.STOP,
+            description = "State - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
@@ -1633,6 +2292,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "70028",
+            latitude = 42.373622,
+            longitude = -71.069533,
+            name = "Community College",
+            locationType = LocationType.STOP,
+            description = "Community College - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ccmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70029",
+            latitude = 42.373622,
+            longitude = -71.069533,
+            name = "Community College",
+            locationType = LocationType.STOP,
+            description = "Community College - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ccmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "70030",
             latitude = 42.383975,
             longitude = -71.076994,
@@ -1667,6 +2360,91 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "70032",
+            latitude = 42.401505,
+            longitude = -71.077252,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Orange Line - Forest Hills",
+            platformCode = "1",
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70033",
+            latitude = 42.401507,
+            longitude = -71.07715,
+            name = "Wellington",
+            locationType = LocationType.STOP,
+            description = "Wellington - Orange Line - Oak Grove",
+            platformCode = "2",
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-welln",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70034",
+            latitude = 42.426677,
+            longitude = -71.074381,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - Orange Line - Forest Hills",
+            platformCode = null,
+            platformName = "Forest Hills",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70035",
+            latitude = 42.426662,
+            longitude = -71.074314,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - Orange Line - Oak Grove",
+            platformCode = null,
+            platformName = "Oak Grove",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70036",
+            latitude = 42.437735,
+            longitude = -71.070875,
+            name = "Oak Grove",
+            locationType = LocationType.STOP,
+            description = "Oak Grove - Orange Line",
+            platformCode = null,
+            platformName = "Orange Line",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ogmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "70039",
             latitude = 42.359705,
             longitude = -71.059215,
@@ -1696,6 +2474,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-gover",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70041",
+            latitude = 42.358978,
+            longitude = -71.057598,
+            name = "State",
+            locationType = LocationType.STOP,
+            description = "State - Blue Line - Bowdoin",
+            platformCode = null,
+            platformName = "Bowdoin",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-state",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "70042",
+            latitude = 42.358978,
+            longitude = -71.057598,
+            name = "State",
+            locationType = LocationType.STOP,
+            description = "State - Blue Line - Wonderland",
+            platformCode = null,
+            platformName = "Wonderland",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-state",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
@@ -1821,8 +2633,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "70067",
-            latitude = 42.373362,
-            longitude = -71.118956,
+            latitude = 42.374663,
+            longitude = -71.118814,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Red Line - Ashmont/Braintree",
@@ -1838,8 +2650,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "70068",
-            latitude = 42.373362,
-            longitude = -71.118956,
+            latitude = 42.374663,
+            longitude = -71.118814,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Red Line - Alewife",
@@ -4983,8 +5795,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76121",
-            latitude = 42.374145,
-            longitude = -71.119,
+            latitude = 42.37372,
+            longitude = -71.119121,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B1",
@@ -5000,8 +5812,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76122",
-            latitude = 42.374094,
-            longitude = -71.11901,
+            latitude = 42.373604,
+            longitude = -71.119242,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B2",
@@ -5017,8 +5829,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76123",
-            latitude = 42.374019,
-            longitude = -71.119035,
+            latitude = 42.373516,
+            longitude = -71.119582,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B3",
@@ -5034,8 +5846,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76124",
-            latitude = 42.373956,
-            longitude = -71.119066,
+            latitude = 42.373483,
+            longitude = -71.119771,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B4",
@@ -5051,8 +5863,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76125",
-            latitude = 42.3739,
-            longitude = -71.119094,
+            latitude = 42.373448,
+            longitude = -71.119959,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B5",
@@ -5068,8 +5880,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
     objects.put(
         Stop(
             id = "76126",
-            latitude = 42.373839,
-            longitude = -71.119119,
+            latitude = 42.373414,
+            longitude = -71.120134,
             name = "Harvard",
             locationType = LocationType.STOP,
             description = "Harvard - Upper Busway Berth B6",
@@ -5084,14 +5896,14 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
-            id = "76127",
-            latitude = 42.37421,
-            longitude = -71.119106,
+            id = "76129",
+            latitude = 42.373612,
+            longitude = -71.119323,
             name = "Harvard",
             locationType = LocationType.STOP,
-            description = "Harvard - Lower Busway",
-            platformCode = "A1",
-            platformName = "Lower Busway",
+            description = "Harvard - Lower Busway Berth A3",
+            platformCode = "A3",
+            platformName = "Lower Busway Berth A3",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -5135,6 +5947,23 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "875",
+            latitude = 42.300479,
+            longitude = -71.113634,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Lower Busway",
+            platformCode = null,
+            platformName = "Lower Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "899",
             latitude = 42.348918,
             longitude = -71.095456,
@@ -5157,9 +5986,9 @@ public val TestData: ObjectCollectionBuilder by lazy {
             longitude = -71.141886,
             name = "Alewife",
             locationType = LocationType.STOP,
-            description = "Alewife - Busway Berth 5",
-            platformCode = "5",
-            platformName = "Busway Berth 5",
+            description = "Alewife - Busway Berth A2",
+            platformCode = "A2",
+            platformName = "Busway Berth A2",
             vehicleType = RouteType.BUS,
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
@@ -5181,6 +6010,23 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-newtn",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "9328",
+            latitude = 42.436807,
+            longitude = -71.070338,
+            name = "Oak Grove Busway",
+            locationType = LocationType.STOP,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ogmnl",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
@@ -5526,6 +6372,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "Forest Hills-01",
+            latitude = 42.30088,
+            longitude = -71.114005,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Orange Line - Track 1",
+            platformCode = "1",
+            platformName = "Track 1",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "Forest Hills-02",
+            latitude = 42.300972,
+            longitude = -71.114283,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Orange Line - Track 2",
+            platformCode = "2",
+            platformName = "Track 2",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "Government Center-Brattle",
             latitude = 42.359705,
             longitude = -71.059215,
@@ -5628,6 +6508,57 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "NEC-2237",
+            latitude = 42.301085,
+            longitude = -71.113551,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Commuter Rail",
+            platformCode = null,
+            platformName = "Commuter Rail",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2237-03",
+            latitude = 42.301065,
+            longitude = -71.113491,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Commuter Rail - Track 3",
+            platformCode = "3",
+            platformName = "Commuter Rail - Track 3",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2237-05",
+            latitude = 42.301105,
+            longitude = -71.113625,
+            name = "Forest Hills",
+            locationType = LocationType.STOP,
+            description = "Forest Hills - Commuter Rail - Track 5",
+            platformCode = "5",
+            platformName = "Commuter Rail - Track 5",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-forhl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "NEC-2265",
             latitude = 42.336608,
             longitude = -71.089208,
@@ -5691,6 +6622,91 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds = listOf<String>(),
             connectingStopIds = listOf<String>(),
             parentStationId = "place-rugg",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2276",
+            latitude = 42.34735,
+            longitude = -71.075727,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail",
+            platformCode = null,
+            platformName = "Commuter Rail",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2276-01",
+            latitude = 42.347283,
+            longitude = -71.075312,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail - Track 1",
+            platformCode = "1",
+            platformName = "Commuter Rail - Track 1",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2276-02",
+            latitude = 42.347196,
+            longitude = -71.075299,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail - Track 2",
+            platformCode = "2",
+            platformName = "Commuter Rail - Track 2",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2276-03",
+            latitude = 42.347283,
+            longitude = -71.075312,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail - Track 3",
+            platformCode = "3",
+            platformName = "Commuter Rail - Track 3",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "NEC-2276-B",
+            latitude = 42.347497,
+            longitude = -71.075894,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail Shuttle",
+            platformCode = null,
+            platformName = "Commuter Rail Shuttle",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
@@ -5951,6 +6967,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "Oak Grove-01",
+            latitude = 42.437735,
+            longitude = -71.070837,
+            name = "Oak Grove",
+            locationType = LocationType.STOP,
+            description = "Oak Grove - Orange Line - Track 1",
+            platformCode = "1",
+            platformName = "Track 1",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ogmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "Oak Grove-02",
+            latitude = 42.437727,
+            longitude = -71.070905,
+            name = "Oak Grove",
+            locationType = LocationType.STOP,
+            description = "Oak Grove - Orange Line - Track 2",
+            platformCode = "2",
+            platformName = "Track 2",
+            vehicleType = RouteType.HEAVY_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ogmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "Union Square-01",
             latitude = 42.377024,
             longitude = -71.093964,
@@ -5985,6 +7035,74 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "WML-0012-05",
+            latitude = 42.34759,
+            longitude = -71.075393,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail - Track 5",
+            platformCode = "5",
+            platformName = "Commuter Rail - Track 5",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "WML-0012-07",
+            latitude = 42.34759,
+            longitude = -71.075393,
+            name = "Back Bay",
+            locationType = LocationType.STOP,
+            description = "Back Bay - Commuter Rail - Track 7",
+            platformCode = "7",
+            platformName = "Commuter Rail - Track 7",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-bbsta",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "WR-0045-S",
+            latitude = 42.426632,
+            longitude = -71.07411,
+            name = "Malden Center",
+            locationType = LocationType.STOP,
+            description = "Malden Center - Commuter Rail - Track 1 (All Trains)",
+            platformCode = "1",
+            platformName = "Track 1 (All Trains)",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-mlmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "WR-0053-S",
+            latitude = 42.437731,
+            longitude = -71.070705,
+            name = "Oak Grove",
+            locationType = LocationType.STOP,
+            description = "Oak Grove - Commuter Rail - Track 1 (All Trains)",
+            platformCode = "1",
+            platformName = "Commuter Rail - Track 1 (All Trains)",
+            vehicleType = RouteType.COMMUTER_RAIL,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-ogmnl",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-alfcl",
             latitude = 42.39583,
             longitude = -71.141287,
@@ -5996,7 +7114,12 @@ public val TestData: ObjectCollectionBuilder by lazy {
             vehicleType = null,
             childStopIds =
                 listOf<String>(
-                    "141",
+                    "14112",
+                    "14118",
+                    "14120",
+                    "14121",
+                    "14122",
+                    "14123",
                     "70061",
                     "9070061",
                     "Alewife-01",
@@ -6043,6 +7166,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-961-top",
                     "node-alfcl-buswaynorthstairs-bottom",
                     "node-alfcl-buswaynorthstairs-top",
+                    "node-alfcl-buswayplatform-middle",
                     "node-alfcl-buswayramp-bottom",
                     "node-alfcl-buswayramp-landing",
                     "node-alfcl-buswayramp-top",
@@ -6183,7 +7307,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-andrw-sobstairs-lobby",
                     "node-andrw-sobstairs-platform",
                 ),
-            connectingStopIds = listOf<String>("9070083"),
+            connectingStopIds = listOf<String>("9070083", "9170084"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -6462,6 +7586,95 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-balsq-stairs-top",
                 ),
             connectingStopIds = listOf<String>("9070509", "2697", "2736"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-bbsta",
+            latitude = 42.34735,
+            longitude = -71.075727,
+            name = "Back Bay",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "23391",
+                    "70014",
+                    "70015",
+                    "NEC-2276",
+                    "NEC-2276-01",
+                    "NEC-2276-02",
+                    "NEC-2276-03",
+                    "NEC-2276-B",
+                    "WML-0012-05",
+                    "WML-0012-07",
+                    "door-bbsta-buswayn",
+                    "door-bbsta-busways",
+                    "door-bbsta-clarcolum",
+                    "door-bbsta-clarendon1",
+                    "door-bbsta-clarendon2",
+                    "door-bbsta-dartmn",
+                    "door-bbsta-dartms",
+                    "door-bbsta-dartmw",
+                    "door-bbsta-garage",
+                    "door-bbsta-underpass",
+                    "node-140-lobby",
+                    "node-140-platform",
+                    "node-141-lobby",
+                    "node-141-platform",
+                    "node-142-lobby",
+                    "node-142-platform",
+                    "node-143-lobby",
+                    "node-143-platform",
+                    "node-144-lobby",
+                    "node-144-platform",
+                    "node-853-lobby",
+                    "node-853-platform",
+                    "node-854-lobby",
+                    "node-854-platform",
+                    "node-855-lobby",
+                    "node-855-platform",
+                    "node-856-lobby",
+                    "node-856-platform",
+                    "node-bbsta-13clarexit-bottom",
+                    "node-bbsta-13clarexit-farepaid",
+                    "node-bbsta-13clarexit-fareunpaid",
+                    "node-bbsta-13stairs-lobby",
+                    "node-bbsta-13stairs-platform",
+                    "node-bbsta-2clarexit-bottom",
+                    "node-bbsta-2clarexit-farepaid",
+                    "node-bbsta-2clarexit-fareunpaid",
+                    "node-bbsta-2stairs-lobby",
+                    "node-bbsta-2stairs-platform",
+                    "node-bbsta-clar-farepaid",
+                    "node-bbsta-clar-fareunpaid",
+                    "node-bbsta-dartexit-farepaid",
+                    "node-bbsta-dartexit-fareunpaid",
+                    "node-bbsta-dartexit-platform",
+                    "node-bbsta-e57stairs-lobby",
+                    "node-bbsta-e57stairs-platform",
+                    "node-bbsta-lower-farepaid",
+                    "node-bbsta-lower-fareunpaid",
+                    "node-bbsta-olclarexit-bottom",
+                    "node-bbsta-olestairs-lobby",
+                    "node-bbsta-olestairs-platform",
+                    "node-bbsta-olwstairs-lobby",
+                    "node-bbsta-olwstairs-platform",
+                    "node-bbsta-upassestairs-bottom",
+                    "node-bbsta-upassestairs-top",
+                    "node-bbsta-upassmezstairs-top",
+                    "node-bbsta-upasswstairs-bottom",
+                    "node-bbsta-upper-farepaid",
+                    "node-bbsta-upper-fareunpaid",
+                    "node-bbsta-w57stairs-lobby",
+                    "node-bbsta-w57stairs-platform",
+                ),
+            connectingStopIds = listOf<String>("11384", "176", "9270014", "71855", "34585"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -6791,6 +8004,37 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-ccmnl",
+            latitude = 42.373622,
+            longitude = -71.069533,
+            name = "Community College",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70028",
+                    "70029",
+                    "door-ccmnl-main",
+                    "node-ccmnl-305-lobby",
+                    "node-ccmnl-305-platform",
+                    "node-ccmnl-933-lobby",
+                    "node-ccmnl-933-platform",
+                    "node-ccmnl-farepaid",
+                    "node-ccmnl-fareunpaid",
+                    "node-ccmnl-lobby",
+                    "node-ccmnl-stairs-lobby",
+                    "node-ccmnl-stairs-platform",
+                ),
+            connectingStopIds = listOf<String>(),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-chhil",
             latitude = 42.326753,
             longitude = -71.164699,
@@ -6865,6 +8109,48 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-chmnl-sbstairs-platform",
                 ),
             connectingStopIds = listOf<String>("9070074"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-chncl",
+            latitude = 42.352547,
+            longitude = -71.062752,
+            name = "Chinatown",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70018",
+                    "70019",
+                    "door-chncl-fhelevator",
+                    "door-chncl-foresthills",
+                    "door-chncl-ogelevator",
+                    "door-chncl-ogessex",
+                    "node-366-landing",
+                    "node-366-lobby",
+                    "node-377-landing",
+                    "node-377-lobby",
+                    "node-876-lobby",
+                    "node-922-lobby",
+                    "node-chncl-fhfarepaid",
+                    "node-chncl-fhfareunpaid",
+                    "node-chncl-fhlower-landing",
+                    "node-chncl-fhlower-lobby",
+                    "node-chncl-fhupper-landing",
+                    "node-chncl-ogfarepaid",
+                    "node-chncl-ogfareunpaid",
+                    "node-chncl-oglower-landing",
+                    "node-chncl-oglower-lobby",
+                    "node-chncl-ogonlystair-lobby",
+                    "node-chncl-ogupper-landing",
+                ),
+            connectingStopIds = listOf<String>("6567", "6537"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -7232,8 +8518,17 @@ public val TestData: ObjectCollectionBuilder by lazy {
             platformCode = null,
             platformName = null,
             vehicleType = null,
-            childStopIds = listOf<String>("70513", "70514", "door-esomr-washington"),
-            connectingStopIds = listOf<String>(),
+            childStopIds =
+                listOf<String>(
+                    "70513",
+                    "70514",
+                    "door-esomr-innerbelt",
+                    "door-esomr-washington",
+                    "node-esomr-innercross-entrance",
+                    "node-esomr-innercross-platform",
+                    "node-esomr-washcross-platform",
+                ),
+            connectingStopIds = listOf<String>("2761"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -7328,6 +8623,72 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-fldcr-charlesstairs-lobby",
                     "node-fldcr-farepaid",
                     "node-fldcr-fareunpaid",
+                ),
+            connectingStopIds = listOf<String>(),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-forhl",
+            latitude = 42.300713,
+            longitude = -71.113943,
+            name = "Forest Hills",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "10642",
+                    "70001",
+                    "875",
+                    "Forest Hills-01",
+                    "Forest Hills-02",
+                    "NEC-2237",
+                    "NEC-2237-03",
+                    "NEC-2237-05",
+                    "door-forhl-arborway",
+                    "door-forhl-lowern",
+                    "door-forhl-lowers",
+                    "door-forhl-south",
+                    "door-forhl-upper",
+                    "node-127-busway",
+                    "node-127-lobby",
+                    "node-128-busway",
+                    "node-128-lobby",
+                    "node-129-lobby",
+                    "node-129-platform",
+                    "node-130-lobby",
+                    "node-130-platform",
+                    "node-724-lobby",
+                    "node-724-platform",
+                    "node-841-lobby",
+                    "node-841-platform",
+                    "node-842-lobby",
+                    "node-842-platform",
+                    "node-843-busway",
+                    "node-843-lobby",
+                    "node-forhl-busfarepaid",
+                    "node-forhl-busfareunpaid",
+                    "node-forhl-crstairs-lobby",
+                    "node-forhl-crstairs-platform",
+                    "node-forhl-lowerdoor",
+                    "node-forhl-nlowbusstairs-busway",
+                    "node-forhl-nlowbusstairs-lobby",
+                    "node-forhl-nplatstairs-lobby",
+                    "node-forhl-nplatstairs-platform",
+                    "node-forhl-slowbusstairs-busway",
+                    "node-forhl-slowbusstairs-lobby",
+                    "node-forhl-southfarepaid",
+                    "node-forhl-southfareunpaid",
+                    "node-forhl-southstairs-lobby",
+                    "node-forhl-southstairs-platform",
+                    "node-forhl-splatstairs-lobby",
+                    "node-forhl-splatstairs-platform",
+                    "node-forhl-upperdoor",
                 ),
             connectingStopIds = listOf<String>(),
             parentStationId = null,
@@ -7433,6 +8794,36 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-grnst",
+            latitude = 42.310525,
+            longitude = -71.107414,
+            name = "Green Street",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70002",
+                    "70003",
+                    "door-grnst-main",
+                    "node-grnst-131-lobby",
+                    "node-grnst-131-platform",
+                    "node-grnst-844-lobby",
+                    "node-grnst-844-platform",
+                    "node-grnst-farepaid",
+                    "node-grnst-fareunpaid",
+                    "node-grnst-stairs-lobby",
+                    "node-grnst-stairs-platform",
+                ),
+            connectingStopIds = listOf<String>("9070002", "52371", "52370", "9070003"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-haecl",
             latitude = 42.363021,
             longitude = -71.05829,
@@ -7491,7 +8882,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-haecl-passogstair-passage",
                     "node-haecl-passogstair-platform",
                 ),
-            connectingStopIds = listOf<String>("9170024", "4511", "117", "8309", "9070024"),
+            connectingStopIds =
+                listOf<String>("30203", "9170024", "4511", "117", "8309", "9070025", "9070024"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -7517,7 +8909,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "76124",
                     "76125",
                     "76126",
-                    "76127",
+                    "76129",
                     "door-harsq-brattle",
                     "door-harsq-church",
                     "door-harsq-square",
@@ -7637,7 +9029,8 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-hymnl-ebstairs-platform",
                     "node-hymnl-farepaid",
                     "node-hymnl-fareunpaid",
-                    "node-hymnl-massentrance",
+                    "node-hymnl-massentrance-lobby",
+                    "node-hymnl-massentrance-street",
                     "node-hymnl-newbury-farepaid",
                     "node-hymnl-newbury-fareunpaid",
                     "node-hymnl-newburyexit",
@@ -7646,9 +9039,40 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-hymnl-wbstairs-midtlobby",
                     "node-hymnl-wbstairs-platform",
                 ),
-            connectingStopIds = listOf<String>("93", "79", "11391", "1932", "9070152", "9170152"),
+            connectingStopIds = listOf<String>("93", "79", "11391", "9070152", "9170152"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-jaksn",
+            latitude = 42.323132,
+            longitude = -71.099592,
+            name = "Jackson Square",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "11531",
+                    "70006",
+                    "70007",
+                    "door-jaksn-main",
+                    "node-jaksn-133-lobby",
+                    "node-jaksn-133-platform",
+                    "node-jaksn-846-lobby",
+                    "node-jaksn-846-platform",
+                    "node-jaksn-farepaid",
+                    "node-jaksn-fareunpaid",
+                    "node-jaksn-stairs-lobby",
+                    "node-jaksn-stairs-platform",
+                ),
+            connectingStopIds = listOf<String>("9070007", "41157"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
     objects.put(
@@ -7946,6 +9370,51 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-masta",
+            latitude = 42.341512,
+            longitude = -71.083423,
+            name = "Massachusetts Avenue",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70012",
+                    "70013",
+                    "door-masta-camden",
+                    "door-masta-corridor",
+                    "door-masta-main",
+                    "door-masta-side",
+                    "node-masta-139-lobby",
+                    "node-masta-139-platform",
+                    "node-masta-852-lobby",
+                    "node-masta-852-platform",
+                    "node-masta-camdstair-platform",
+                    "node-masta-camfarepaid",
+                    "node-masta-camfareunpaid",
+                    "node-masta-farepaid",
+                    "node-masta-fareunpaid",
+                    "node-masta-mainstair-lobby",
+                    "node-masta-mainstair-platform",
+                    "node-masta-undernorth-lobby",
+                    "node-masta-undernorth-way",
+                    "node-masta-undersouth-lobby",
+                    "node-masta-undersouth-way",
+                    "node-masta-unpaid-lobby",
+                    "node-masta-unpramp-exit",
+                    "node-masta-unpramp-lobby",
+                    "node-masta-unpstair-exit",
+                    "node-masta-unpstair-lobby",
+                ),
+            connectingStopIds = listOf<String>("187", "188"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-mdftf",
             latitude = 42.407975,
             longitude = -71.117044,
@@ -8034,6 +9503,55 @@ public val TestData: ObjectCollectionBuilder by lazy {
             connectingStopIds = listOf<String>("1315", "1365"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-mlmnl",
+            latitude = 42.426632,
+            longitude = -71.07411,
+            name = "Malden Center",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "5072",
+                    "5327",
+                    "53270",
+                    "70034",
+                    "70035",
+                    "WR-0045-S",
+                    "door-mlmnl-commercial",
+                    "door-mlmnl-pleasant",
+                    "door-mlmnl-ramp",
+                    "node-311-lobby",
+                    "node-311-platform",
+                    "node-312-lobby",
+                    "node-312-platform",
+                    "node-944-lobby",
+                    "node-944-platform",
+                    "node-945-lobby",
+                    "node-945-platform",
+                    "node-mlmnl-commstair-bus",
+                    "node-mlmnl-commstair-lobby",
+                    "node-mlmnl-crstairs-lobby",
+                    "node-mlmnl-crstairs-platform",
+                    "node-mlmnl-exitfarepaid",
+                    "node-mlmnl-exitfareunpaid",
+                    "node-mlmnl-exitstair-lobby",
+                    "node-mlmnl-exitstair-platform",
+                    "node-mlmnl-farepaid",
+                    "node-mlmnl-fareunpaid",
+                    "node-mlmnl-olstairs-lobby",
+                    "node-mlmnl-olstairs-platform",
+                    "node-mlmnl-ramptop",
+                ),
+            connectingStopIds = listOf<String>(),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
     objects.put(
@@ -8296,6 +9814,58 @@ public val TestData: ObjectCollectionBuilder by lazy {
             vehicleType = null,
             childStopIds = listOf<String>("70243", "70244"),
             connectingStopIds = listOf<String>("41391", "81317"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-ogmnl",
+            latitude = 42.43668,
+            longitude = -71.071097,
+            name = "Oak Grove",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70036",
+                    "9328",
+                    "Oak Grove-01",
+                    "Oak Grove-02",
+                    "WR-0053-S",
+                    "door-ogmnl-banks",
+                    "door-ogmnl-wash",
+                    "door-ogmnl-washel",
+                    "node-105-crplatform",
+                    "node-105-lobby",
+                    "node-451-lobby",
+                    "node-451-street",
+                    "node-452-lobby",
+                    "node-452-street",
+                    "node-453-lobby",
+                    "node-453-platform",
+                    "node-743-lobby",
+                    "node-743-platform",
+                    "node-744-lobby",
+                    "node-745-lobby",
+                    "node-745-street",
+                    "node-746-lobby",
+                    "node-746-platform",
+                    "node-ogmnl-banksstair-lobby",
+                    "node-ogmnl-banksstair-street",
+                    "node-ogmnl-crstair-crplatform",
+                    "node-ogmnl-crstair-lobby",
+                    "node-ogmnl-farepaid",
+                    "node-ogmnl-fareunpaid",
+                    "node-ogmnl-olstair-lobby",
+                    "node-ogmnl-olstair-platform",
+                    "node-ogmnl-washstair-lobby",
+                    "node-ogmnl-washstair-street",
+                ),
+            connectingStopIds = listOf<String>("9326", "5991"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -8646,6 +10216,36 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-rcmnl",
+            latitude = 42.331397,
+            longitude = -71.095451,
+            name = "Roxbury Crossing",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70008",
+                    "70009",
+                    "door-rcmnl-tremont",
+                    "node-rcmnl-134-lobby",
+                    "node-rcmnl-134-platform",
+                    "node-rcmnl-847-lobby",
+                    "node-rcmnl-847-platform",
+                    "node-rcmnl-farepaid",
+                    "node-rcmnl-fareunpaid",
+                    "node-rcmnl-stairs-lobby",
+                    "node-rcmnl-stairs-platform",
+                ),
+            connectingStopIds = listOf<String>("1323", "1357", "1258", "1222"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-river",
             latitude = 42.337352,
             longitude = -71.252685,
@@ -8668,6 +10268,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-river-fareunpaid",
                     "node-river-ramp-lobby",
                     "node-river-wstairs-lobby",
+                    "river-B",
                 ),
             connectingStopIds = listOf<String>("9070160"),
             parentStationId = null,
@@ -8772,7 +10373,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "node-rugg-track2ramp-bottom",
                     "node-rugg-track2ramp-top",
                 ),
-            connectingStopIds = listOf<String>("9070010"),
+            connectingStopIds = listOf<String>("1225", "9070010"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -8792,6 +10393,36 @@ public val TestData: ObjectCollectionBuilder by lazy {
             connectingStopIds = listOf<String>("21365", "6575", "1314"),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-sbmnl",
+            latitude = 42.317062,
+            longitude = -71.104248,
+            name = "Stony Brook",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70004",
+                    "70005",
+                    "door-sbmnl-main",
+                    "node-sbmnl-132-lobby",
+                    "node-sbmnl-132-platform",
+                    "node-sbmnl-845-lobby",
+                    "node-sbmnl-845-platform",
+                    "node-sbmnl-farepaid",
+                    "node-sbmnl-fareunpaid",
+                    "node-sbmnl-stairs-lobby",
+                    "node-sbmnl-stairs-platform",
+                ),
+            connectingStopIds = listOf<String>("45237", "9070005"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
     )
     objects.put(
@@ -9075,6 +10706,97 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-state",
+            latitude = 42.358978,
+            longitude = -71.057598,
+            name = "State",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70022",
+                    "70023",
+                    "70041",
+                    "70042",
+                    "door-state-cityhall",
+                    "door-state-congress",
+                    "door-state-exchange",
+                    "door-state-meeting",
+                    "door-state-state",
+                    "door-state-water",
+                    "node-374-lobby",
+                    "node-374-nbplatform",
+                    "node-501-nbplatform",
+                    "node-501-sbplatform",
+                    "node-502-landing",
+                    "node-502-sbplatform",
+                    "node-523-sbplatform",
+                    "node-523-street",
+                    "node-6-landing",
+                    "node-6-nbplatform",
+                    "node-802-nbplatform",
+                    "node-802-sbplatform",
+                    "node-803-sbplatform",
+                    "node-803-street",
+                    "node-967-nbplatform",
+                    "node-967-sbplatform",
+                    "node-974-street",
+                    "node-974-wbplatform",
+                    "node-975-ebplatform",
+                    "node-ogcityhallstairs-lobby",
+                    "node-ogcityhallstairs-nbplatform",
+                    "node-state-bowdoinoldstatestairs-landing",
+                    "node-state-bowdoinoldstatestairs-wbplatform",
+                    "node-state-bowdoinramp-nbplatform",
+                    "node-state-bowdoinramp-wbplatform",
+                    "node-state-cityhall-farepaid",
+                    "node-state-cityhall-fareunpaid",
+                    "node-state-congress-farepaid",
+                    "node-state-congress-fareunpaid",
+                    "node-state-congressstairs-street",
+                    "node-state-congressstairs-wbplatform",
+                    "node-state-exchange-farepaid",
+                    "node-state-exchange-fareunpaid",
+                    "node-state-exchangestairs-ebplatform",
+                    "node-state-milk-farepaid",
+                    "node-state-milk-fareunpaid",
+                    "node-state-milkmidstairs-landing",
+                    "node-state-milkmidstairs-street",
+                    "node-state-milkststairs-lobby",
+                    "node-state-ogoldstatehousestairs-landing",
+                    "node-state-ogoldstatehousestairs-nbplatform",
+                    "node-state-oldstate-farepaid",
+                    "node-state-oldstate-fareunpaid",
+                    "node-state-oldstateogministairs-landing",
+                    "node-state-oldstateogministairs-street",
+                    "node-state-oldstatepassageministairs-landing",
+                    "node-state-oldstatepassageministairs-street",
+                    "node-state-olnbplatformstairsmain-nbplatform",
+                    "node-state-olnbplatformstairsmain-sbplatform",
+                    "node-state-olnbplatformstairssec-nbplatform",
+                    "node-state-olnbplatformstairssec-sbplatform",
+                    "node-state-olpassagestairs-nbplatform",
+                    "node-state-olpassagestairs-sbplatform",
+                    "node-state-passageoldstatehousestairs-landing",
+                    "node-state-passageoldstatehousestairs-sbplatform",
+                    "node-state-statestreetstairs-lobby",
+                    "node-state-water-farepaid",
+                    "node-state-water-fareunpaid",
+                    "node-state-waterststairs-lobby",
+                    "node-state-wonderlandoldstatestairs-ebplatform",
+                    "node-state-wonderlandoldstatestairs-landing",
+                ),
+            connectingStopIds =
+                listOf<String>("65", "9370022", "9070022", "204", "9270022", "190", "191"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-sthld",
             latitude = 42.341614,
             longitude = -71.146202,
@@ -9121,6 +10843,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             childStopIds =
                 listOf<String>(
                     "29001",
+                    "29002",
                     "29003",
                     "29004",
                     "29005",
@@ -9132,7 +10855,6 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "29011",
                     "29012",
                     "29013",
-                    "29014",
                     "70030",
                     "70031",
                     "door-sull-main",
@@ -9241,6 +10963,57 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Stop(
+            id = "place-tumnl",
+            latitude = 42.349662,
+            longitude = -71.063917,
+            name = "Tufts Medical Center",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "70016",
+                    "70017",
+                    "door-tumnl-tremont",
+                    "door-tumnl-washington",
+                    "node-145-lobby",
+                    "node-146-lobby",
+                    "node-146-platform",
+                    "node-147-lobby",
+                    "node-147-platform",
+                    "node-148-lobby",
+                    "node-148-platform",
+                    "node-149-lobby",
+                    "node-149-platform",
+                    "node-857-lobby",
+                    "node-858-lobby",
+                    "node-858-platform",
+                    "node-859-lobby",
+                    "node-859-platform",
+                    "node-tumnl-tre-farepaid",
+                    "node-tumnl-tre-fareunpaid",
+                    "node-tumnl-trenbstairs-lobby",
+                    "node-tumnl-trenbstairs-platform",
+                    "node-tumnl-tresbstairs-lobby",
+                    "node-tumnl-tresbstairs-platform",
+                    "node-tumnl-trestairs-lobby",
+                    "node-tumnl-wash-farepaid",
+                    "node-tumnl-wash-fareunpaid",
+                    "node-tumnl-washnbstairs-lobby",
+                    "node-tumnl-washnbstairs-platform",
+                    "node-tumnl-washsbstairs-lobby",
+                    "node-tumnl-washsbstairs-platform",
+                    "node-tumnl-washstairs-lobby",
+                ),
+            connectingStopIds = listOf<String>("49002", "6565", "8281"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
             id = "place-unsqu",
             latitude = 42.377359,
             longitude = -71.094761,
@@ -9311,6 +11084,56 @@ public val TestData: ObjectCollectionBuilder by lazy {
             vehicleType = null,
             childStopIds = listOf<String>("70120", "70121"),
             connectingStopIds = listOf<String>("9070120", "9070121", "1273", "1295", "9170120"),
+            parentStationId = null,
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+    objects.put(
+        Stop(
+            id = "place-welln",
+            latitude = 42.40237,
+            longitude = -71.077082,
+            name = "Wellington",
+            locationType = LocationType.STATION,
+            description = null,
+            platformCode = null,
+            platformName = null,
+            vehicleType = null,
+            childStopIds =
+                listOf<String>(
+                    "52710",
+                    "52711",
+                    "52712",
+                    "52713",
+                    "52714",
+                    "52715",
+                    "52716",
+                    "52720",
+                    "70032",
+                    "70033",
+                    "door-welln-busway",
+                    "door-welln-garage",
+                    "node-309-lobby",
+                    "node-309-platform",
+                    "node-310-lobby",
+                    "node-310-platform",
+                    "node-864-lobby",
+                    "node-864-platform",
+                    "node-865-lobby",
+                    "node-865-platform",
+                    "node-welln-busramp-lobby",
+                    "node-welln-busstair-lobby",
+                    "node-welln-farepaid",
+                    "node-welln-fareunpaid",
+                    "node-welln-fhstair-lobby",
+                    "node-welln-fhstair-platform",
+                    "node-welln-ogstair-lobby",
+                    "node-welln-ogstair-platform",
+                    "node-welln-skyelev-bridge",
+                    "node-welln-skyentry",
+                    "node-welln-skystairs-bridge",
+                ),
+            connectingStopIds = listOf<String>(),
             parentStationId = null,
             wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
         )
@@ -9408,18 +11231,49 @@ public val TestData: ObjectCollectionBuilder by lazy {
             wheelchairBoarding = WheelchairBoardingStatus.INACCESSIBLE,
         )
     )
+    objects.put(
+        Stop(
+            id = "river-B",
+            latitude = 42.336666,
+            longitude = -71.2533,
+            name = "Riverside",
+            locationType = LocationType.STOP,
+            description = "Riverside - Commuter Rail Shuttle - Busway",
+            platformCode = null,
+            platformName = "Busway",
+            vehicleType = RouteType.BUS,
+            childStopIds = listOf<String>(),
+            connectingStopIds = listOf<String>(),
+            parentStationId = "place-river",
+            wheelchairBoarding = WheelchairBoardingStatus.ACCESSIBLE,
+        )
+    )
+}
 
+private fun putTrips(objects: ObjectCollectionBuilder) {
     objects.put(
         Trip(
-            id = "68166605",
+            id = "71373380",
             directionId = 1,
             headsign = "Ruggles",
-            routeId = "15",
-            routePatternId = "15-2-1",
-            shapeId = "150275",
+            routeId = Route.Id("15"),
+            routePatternId = "15-1-1",
+            shapeId = "150308",
             stopIds =
                 listOf<String>(
-                    "15100",
+                    "323",
+                    "322",
+                    "557",
+                    "558",
+                    "559",
+                    "560",
+                    "561",
+                    "1468",
+                    "1469",
+                    "1470",
+                    "1471",
+                    "1472",
+                    "1473",
                     "14731",
                     "1474",
                     "1475",
@@ -9448,12 +11302,12 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "68166816",
+            id = "71373591",
             directionId = 0,
-            headsign = "St Peter's Square",
-            routeId = "15",
-            routePatternId = "15-2-0",
-            shapeId = "150285",
+            headsign = "Fields Corner",
+            routeId = Route.Id("15"),
+            routePatternId = "15-1-0",
+            shapeId = "150307",
             stopIds =
                 listOf<String>(
                     "17863",
@@ -9477,153 +11331,26 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "1509",
                     "1510",
                     "1511",
-                    "15100",
+                    "11512",
+                    "1512",
+                    "1514",
+                    "1515",
+                    "553",
+                    "554",
+                    "555",
+                    "556",
+                    "323",
                 ),
         )
     )
     objects.put(
         Trip(
-            id = "68244389",
-            directionId = 0,
-            headsign = "Silver Line Way",
-            routeId = "746",
-            routePatternId = "746-_-0",
-            shapeId = "7460029",
-            stopIds = listOf<String>("74611", "74612", "74613", "74614"),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68244390",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = "746",
-            routePatternId = "746-_-1",
-            shapeId = "7460028",
-            stopIds = listOf<String>("74614", "74615", "74616", "74617"),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68244480",
-            directionId = 0,
-            headsign = "Design Center",
-            routeId = "742",
-            routePatternId = "742-3-0",
-            shapeId = "7420070",
-            stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68244484",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = "742",
-            routePatternId = "742-3-1",
-            shapeId = "7420069",
-            stopIds =
-                listOf<String>(
-                    "30250",
-                    "30251",
-                    "31259",
-                    "31255",
-                    "31257",
-                    "31256",
-                    "74614",
-                    "74615",
-                    "74616",
-                    "74617",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68244686",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = "743",
-            routePatternId = "743-_-1",
-            shapeId = "7430040",
-            stopIds =
-                listOf<String>(
-                    "74630",
-                    "74632",
-                    "74634",
-                    "74636",
-                    "7097",
-                    "17096",
-                    "74614",
-                    "74615",
-                    "74616",
-                    "74617",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68244692",
-            directionId = 0,
-            headsign = "Chelsea",
-            routeId = "743",
-            routePatternId = "743-_-0",
-            shapeId = "7430042",
-            stopIds =
-                listOf<String>(
-                    "74611",
-                    "74612",
-                    "74613",
-                    "74624",
-                    "7096",
-                    "74637",
-                    "74635",
-                    "74633",
-                    "74631",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68245385",
-            directionId = 1,
-            headsign = "South Station",
-            routeId = "741",
-            routePatternId = "741-_-1",
-            shapeId = "7410051",
-            stopIds =
-                listOf<String>(
-                    "17091",
-                    "27092",
-                    "17093",
-                    "17094",
-                    "17095",
-                    "17096",
-                    "74614",
-                    "74615",
-                    "74616",
-                    "74617",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68245389",
-            directionId = 0,
-            headsign = "Logan Airport",
-            routeId = "741",
-            routePatternId = "741-_-0",
-            shapeId = "7410052",
-            stopIds = listOf<String>("74611", "74612", "74613", "74624", "17091"),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "68596172",
+            id = "71694434",
             directionId = 0,
             headsign = "Arlington Center",
-            routeId = "87",
+            routeId = Route.Id("87"),
             routePatternId = "87-2-0",
-            shapeId = "870204",
+            shapeId = "870206",
             stopIds =
                 listOf<String>(
                     "70500",
@@ -9665,10 +11392,10 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "68596178",
+            id = "71694436",
             directionId = 1,
             headsign = "Lechmere",
-            routeId = "87",
+            routeId = Route.Id("87"),
             routePatternId = "87-2-1",
             shapeId = "870202",
             stopIds =
@@ -9713,12 +11440,12 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "68596783",
+            id = "71694754",
             directionId = 1,
             headsign = "Alewife via Arlington Center",
-            routeId = "67",
+            routeId = Route.Id("67"),
             routePatternId = "67-4-1",
-            shapeId = "670062",
+            shapeId = "670068",
             stopIds =
                 listOf<String>(
                     "7961",
@@ -9740,21 +11467,21 @@ public val TestData: ObjectCollectionBuilder by lazy {
                     "2478",
                     "24790",
                     "24791",
-                    "141",
+                    "14118",
                 ),
         )
     )
     objects.put(
         Trip(
-            id = "68596786",
+            id = "71694757",
             directionId = 0,
             headsign = "Turkey Hill via Arlington Center",
-            routeId = "67",
+            routeId = Route.Id("67"),
             routePatternId = "67-4-0",
-            shapeId = "670063",
+            shapeId = "670067",
             stopIds =
                 listOf<String>(
-                    "141",
+                    "14121",
                     "2482",
                     "23530",
                     "23531",
@@ -9780,155 +11507,145 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "AttleboroWork-715914-803",
+            id = "72039742",
             directionId = 0,
-            headsign = "Wickford Junction",
-            routeId = "CR-Providence",
-            routePatternId = "CR-Providence-9cf54fb3-0",
-            shapeId = "9890009",
-            stopIds =
-                listOf<String>(
-                    "NEC-2287",
-                    "NEC-2276-01",
-                    "NEC-2265-01",
-                    "NEC-2173-01",
-                    "NEC-2139-01",
-                    "NEC-2108-01",
-                    "NEC-2040-01",
-                    "NEC-1969-03",
-                    "NEC-1891-01",
-                    "NEC-1851-03",
-                    "NEC-1768-03",
-                    "NEC-1659-03",
-                ),
+            headsign = "Logan Airport",
+            routeId = Route.Id("741"),
+            routePatternId = "741-_-0",
+            shapeId = "7410055",
+            stopIds = listOf<String>("74611", "74612", "74613", "74624", "17091"),
         )
     )
     objects.put(
         Trip(
-            id = "AttleboroWork-715931-840",
+            id = "72039743",
+            directionId = 0,
+            headsign = "Silver Line Way",
+            routeId = Route.Id("746"),
+            routePatternId = "746-_-0",
+            shapeId = "7460032",
+            stopIds = listOf<String>("74611", "74612", "74613", "74614"),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "72039744",
             directionId = 1,
             headsign = "South Station",
-            routeId = "CR-Providence",
-            routePatternId = "CR-Providence-e9395acc-1",
-            shapeId = "9890008",
+            routeId = Route.Id("741"),
+            routePatternId = "741-_-1",
+            shapeId = "7410056",
             stopIds =
                 listOf<String>(
-                    "NEC-1659-03",
-                    "NEC-1768-03",
-                    "NEC-1851-03",
-                    "NEC-1891-02",
-                    "NEC-1969-04",
-                    "NEC-2040-02",
-                    "NEC-2108-02",
-                    "NEC-2139-02",
-                    "NEC-2173-02",
-                    "NEC-2265-02",
-                    "NEC-2276-02",
-                    "NEC-2287",
+                    "17091",
+                    "27092",
+                    "17093",
+                    "17094",
+                    "17095",
+                    "17096",
+                    "74614",
+                    "74615",
+                    "74616",
+                    "74617",
                 ),
         )
     )
     objects.put(
         Trip(
-            id = "AttleboroWork-715955-904",
+            id = "72039750",
             directionId = 1,
             headsign = "South Station",
-            routeId = "CR-Providence",
-            routePatternId = "CR-Providence-6cae46be-1",
-            shapeId = "9890003",
+            routeId = Route.Id("746"),
+            routePatternId = "746-_-1",
+            shapeId = "7460033",
+            stopIds = listOf<String>("74614", "74615", "74616", "74617"),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "72039768",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("742"),
+            routePatternId = "742-3-1",
+            shapeId = "7420071",
             stopIds =
                 listOf<String>(
-                    "SB-0189-S",
-                    "SB-0156-S",
-                    "SB-0150-06",
-                    "NEC-2173-02",
-                    "NEC-2203-02",
-                    "NEC-2265-02",
-                    "NEC-2276-02",
-                    "NEC-2287",
+                    "30250",
+                    "30251",
+                    "31259",
+                    "31255",
+                    "31257",
+                    "31256",
+                    "74614",
+                    "74615",
+                    "74616",
+                    "74617",
                 ),
         )
     )
     objects.put(
         Trip(
-            id = "AttleboroWork-715956-907",
+            id = "72039786",
             directionId = 0,
-            headsign = "Stoughton",
-            routeId = "CR-Providence",
-            routePatternId = "CR-Providence-9515a09b-0",
-            shapeId = "9890004",
+            headsign = "Design Center",
+            routeId = Route.Id("742"),
+            routePatternId = "742-3-0",
+            shapeId = "7420072",
+            stopIds = listOf<String>("74611", "74612", "74613", "74624", "247", "30249", "30250"),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "72040977",
+            directionId = 0,
+            headsign = "Chelsea",
+            routeId = Route.Id("743"),
+            routePatternId = "743-_-0",
+            shapeId = "7430048",
             stopIds =
                 listOf<String>(
-                    "NEC-2287",
-                    "NEC-2276-01",
-                    "NEC-2265-01",
-                    "NEC-2173-01",
-                    "SB-0150-04",
-                    "SB-0156-S",
-                    "SB-0189-S",
+                    "74611",
+                    "74612",
+                    "74613",
+                    "74624",
+                    "7096",
+                    "74637",
+                    "74635",
+                    "74633",
+                    "74631",
                 ),
         )
     )
     objects.put(
         Trip(
-            id = "SPRING2025V2-728448-208-HaverhillBradfordVan",
+            id = "72040978",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("743"),
+            routePatternId = "743-_-1",
+            shapeId = "7430047",
+            stopIds =
+                listOf<String>(
+                    "74630",
+                    "74632",
+                    "74634",
+                    "74636",
+                    "7097",
+                    "17096",
+                    "74614",
+                    "74615",
+                    "74616",
+                    "74617",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "HaverhillRestoredWKDY-744235-400",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Haverhill",
-            routePatternId = "CR-Haverhill-9794afd5-1",
-            shapeId = "9820001",
-            stopIds =
-                listOf<String>(
-                    "WR-0325-01",
-                    "WR-0264-02",
-                    "WR-0228-02",
-                    "WR-0205-02",
-                    "WR-0163-S",
-                    "WR-0120-S",
-                    "WR-0099-02",
-                    "WR-0085-02",
-                    "WR-0075-02",
-                    "WR-0067-02",
-                    "WR-0062-02",
-                    "WR-0053-S",
-                    "WR-0045-S",
-                    "BNT-0000",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "SPRING2025V2-728449-209-HaverhillBradfordVan",
-            directionId = 0,
-            headsign = "Bradford",
-            routeId = "CR-Haverhill",
-            routePatternId = "CR-Haverhill-56199cd1-0",
-            shapeId = "9820002",
-            stopIds =
-                listOf<String>(
-                    "BNT-0000",
-                    "WR-0045-S",
-                    "WR-0053-S",
-                    "WR-0062-01",
-                    "WR-0067-01",
-                    "WR-0075-01",
-                    "WR-0085-01",
-                    "WR-0099-01",
-                    "WR-0120-S",
-                    "WR-0163-S",
-                    "WR-0205-02",
-                    "WR-0228-02",
-                    "WR-0264-02",
-                    "WR-0325-01",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "SPRING2025V2-728473-400",
-            directionId = 1,
-            headsign = "North Station",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
             routePatternId = "CR-Fitchburg-d82ea33a-1",
             shapeId = "9840003",
             stopIds =
@@ -9955,10 +11672,10 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "SPRING2025V2-728475-405",
+            id = "HaverhillRestoredWKDY-744237-405",
             directionId = 0,
             headsign = "Wachusett",
-            routeId = "CR-Fitchburg",
+            routeId = Route.Id("CR-Fitchburg"),
             routePatternId = "CR-Fitchburg-2a5f6366-0",
             shapeId = "9840004",
             stopIds =
@@ -9985,10 +11702,10 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "SPRING2025V2-728589-28",
+            id = "HaverhillRestoredWKDY-744311-24",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-d47c5647-1",
             shapeId = "9810006",
             stopIds =
@@ -10010,34 +11727,10 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "SPRING2025V2-728590-136",
-            directionId = 1,
-            headsign = "North Station",
-            routeId = "CR-Newburyport",
-            routePatternId = "CR-Newburyport-7e4857df-1",
-            shapeId = "9810001",
-            stopIds =
-                listOf<String>(
-                    "ER-0362-01",
-                    "ER-0312-S",
-                    "ER-0276-S",
-                    "ER-0227-S",
-                    "ER-0208-02",
-                    "ER-0183-02",
-                    "ER-0168-S",
-                    "ER-0128-02",
-                    "ER-0117-02",
-                    "ER-0042-02",
-                    "BNT-0000",
-                ),
-        )
-    )
-    objects.put(
-        Trip(
-            id = "SPRING2025V2-728591-45",
+            id = "HaverhillRestoredWKDY-744312-27",
             directionId = 0,
             headsign = "Rockport",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-e54dc640-0",
             shapeId = "9810007",
             stopIds =
@@ -10059,10 +11752,34 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
-            id = "SPRING2025V2-728599-143",
+            id = "HaverhillRestoredWKDY-744338-114",
+            directionId = 1,
+            headsign = "North Station",
+            routeId = Route.Id("CR-Newburyport"),
+            routePatternId = "CR-Newburyport-7e4857df-1",
+            shapeId = "9810001",
+            stopIds =
+                listOf<String>(
+                    "ER-0362-01",
+                    "ER-0312-S",
+                    "ER-0276-S",
+                    "ER-0227-S",
+                    "ER-0208-02",
+                    "ER-0183-02",
+                    "ER-0168-S",
+                    "ER-0128-02",
+                    "ER-0117-02",
+                    "ER-0042-02",
+                    "BNT-0000",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "HaverhillRestoredWKDY-744341-125",
             directionId = 0,
             headsign = "Newburyport",
-            routeId = "CR-Newburyport",
+            routeId = Route.Id("CR-Newburyport"),
             routePatternId = "CR-Newburyport-79533330-0",
             shapeId = "9810002",
             stopIds =
@@ -10083,10 +11800,157 @@ public val TestData: ObjectCollectionBuilder by lazy {
     )
     objects.put(
         Trip(
+            id = "Sept8Read-767840-852",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-e9395acc-1",
+            shapeId = "9890008",
+            stopIds =
+                listOf<String>(
+                    "NEC-1659-03",
+                    "NEC-1768-03",
+                    "NEC-1851-03",
+                    "NEC-1891-02",
+                    "NEC-1969-04",
+                    "NEC-2040-02",
+                    "NEC-2108-02",
+                    "NEC-2139-02",
+                    "NEC-2173-02",
+                    "NEC-2265-02",
+                    "NEC-2276-02",
+                    "NEC-2287",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "Sept8Read-767850-839",
+            directionId = 0,
+            headsign = "Wickford Junction",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-9cf54fb3-0",
+            shapeId = "9890009",
+            stopIds =
+                listOf<String>(
+                    "NEC-2287",
+                    "NEC-2276-01",
+                    "NEC-2265-01",
+                    "NEC-2173-01",
+                    "NEC-2139-01",
+                    "NEC-2108-01",
+                    "NEC-2040-01",
+                    "NEC-1969-03",
+                    "NEC-1891-01",
+                    "NEC-1851-03",
+                    "NEC-1768-03",
+                    "NEC-1659-03",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "Sept8Read-768056-925",
+            directionId = 0,
+            headsign = "Stoughton",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-9515a09b-0",
+            shapeId = "9890004",
+            stopIds =
+                listOf<String>(
+                    "NEC-2287",
+                    "NEC-2276-01",
+                    "NEC-2265-01",
+                    "NEC-2173-01",
+                    "SB-0150-04",
+                    "SB-0156-S",
+                    "SB-0189-S",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "Sept8Read-768057-930",
+            directionId = 1,
+            headsign = "South Station",
+            routeId = Route.Id("CR-Providence"),
+            routePatternId = "CR-Providence-6cae46be-1",
+            shapeId = "9890003",
+            stopIds =
+                listOf<String>(
+                    "SB-0189-S",
+                    "SB-0156-S",
+                    "SB-0150-06",
+                    "NEC-2173-02",
+                    "NEC-2203-02",
+                    "NEC-2265-02",
+                    "NEC-2276-02",
+                    "NEC-2287",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "canonical-CR-Haverhill-C1-0",
+            directionId = 0,
+            headsign = "Haverhill",
+            routeId = Route.Id("CR-Haverhill"),
+            routePatternId = "CR-Haverhill-779dede9-0",
+            shapeId = "canonical-9820002",
+            stopIds =
+                listOf<String>(
+                    "BNT-0000",
+                    "WR-0045-S",
+                    "WR-0053-S",
+                    "WR-0062-01",
+                    "WR-0067-01",
+                    "WR-0075-01",
+                    "WR-0085-01",
+                    "WR-0099-01",
+                    "WR-0120-S",
+                    "WR-0163-S",
+                    "WR-0205-02",
+                    "WR-0228-02",
+                    "WR-0264-02",
+                    "WR-0325-01",
+                    "WR-0329-01",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
+            id = "canonical-CR-Haverhill-C1-1",
+            directionId = 1,
+            headsign = "North Station",
+            routeId = Route.Id("CR-Haverhill"),
+            routePatternId = "CR-Haverhill-ebc58735-1",
+            shapeId = "canonical-9820001",
+            stopIds =
+                listOf<String>(
+                    "WR-0329-02",
+                    "WR-0325-02",
+                    "WR-0264-02",
+                    "WR-0228-02",
+                    "WR-0205-02",
+                    "WR-0163-S",
+                    "WR-0120-S",
+                    "WR-0099-02",
+                    "WR-0085-02",
+                    "WR-0075-02",
+                    "WR-0067-02",
+                    "WR-0062-02",
+                    "WR-0053-S",
+                    "WR-0045-S",
+                    "BNT-0000",
+                ),
+        )
+    )
+    objects.put(
+        Trip(
             id = "canonical-CR-Lowell-C1-0",
             directionId = 0,
             headsign = "Lowell",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
             routePatternId = "CR-Lowell-edb39c7b-0",
             shapeId = "canonical-9830006",
             stopIds =
@@ -10107,7 +11971,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-CR-Lowell-C1-1",
             directionId = 1,
             headsign = "North Station",
-            routeId = "CR-Lowell",
+            routeId = Route.Id("CR-Lowell"),
             routePatternId = "CR-Lowell-305fef81-1",
             shapeId = "canonical-9830005",
             stopIds =
@@ -10128,7 +11992,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-B-C1-0",
             directionId = 0,
             headsign = "Boston College",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
             routePatternId = "Green-B-812-0",
             shapeId = "canonical-8000013",
             stopIds =
@@ -10164,7 +12028,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-B-C1-1",
             directionId = 1,
             headsign = "Government Center",
-            routeId = "Green-B",
+            routeId = Route.Id("Green-B"),
             routePatternId = "Green-B-812-1",
             shapeId = "canonical-8000012",
             stopIds =
@@ -10200,7 +12064,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-C-C1-0",
             directionId = 0,
             headsign = "Cleveland Circle",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
             routePatternId = "Green-C-832-0",
             shapeId = "canonical-8000006",
             stopIds =
@@ -10233,7 +12097,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-C-C1-1",
             directionId = 1,
             headsign = "Government Center",
-            routeId = "Green-C",
+            routeId = Route.Id("Green-C"),
             routePatternId = "Green-C-832-1",
             shapeId = "canonical-8000005",
             stopIds =
@@ -10266,7 +12130,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-D-C1-0",
             directionId = 0,
             headsign = "Riverside",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
             routePatternId = "Green-D-855-0",
             shapeId = "canonical-8000008",
             stopIds =
@@ -10304,7 +12168,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-D-C1-1",
             directionId = 1,
             headsign = "Union Square",
-            routeId = "Green-D",
+            routeId = Route.Id("Green-D"),
             routePatternId = "Green-D-855-1",
             shapeId = "canonical-8000009",
             stopIds =
@@ -10342,7 +12206,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-E-C1-0",
             directionId = 0,
             headsign = "Heath Street",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
             routePatternId = "Green-E-886-0",
             shapeId = "canonical-8000018",
             stopIds =
@@ -10380,7 +12244,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Green-E-C1-1",
             directionId = 1,
             headsign = "Medford/Tufts",
-            routeId = "Green-E",
+            routeId = Route.Id("Green-E"),
             routePatternId = "Green-E-886-1",
             shapeId = "canonical-8000015",
             stopIds =
@@ -10418,7 +12282,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Orange-C1-0",
             directionId = 0,
             headsign = "Forest Hills",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
             routePatternId = "Orange-3-0",
             shapeId = "canonical-903_0018",
             stopIds =
@@ -10451,7 +12315,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Orange-C1-1",
             directionId = 1,
             headsign = "Oak Grove",
-            routeId = "Orange",
+            routeId = Route.Id("Orange"),
             routePatternId = "Orange-3-1",
             shapeId = "canonical-903_0017",
             stopIds =
@@ -10484,7 +12348,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Red-C1-0",
             directionId = 0,
             headsign = "Braintree",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-3-0",
             shapeId = "canonical-933_0009",
             stopIds =
@@ -10515,7 +12379,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Red-C1-1",
             directionId = 1,
             headsign = "Alewife",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-3-1",
             shapeId = "canonical-933_0010",
             stopIds =
@@ -10546,7 +12410,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Red-C2-0",
             directionId = 0,
             headsign = "Ashmont",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-1-0",
             shapeId = "canonical-931_0009",
             stopIds =
@@ -10576,7 +12440,7 @@ public val TestData: ObjectCollectionBuilder by lazy {
             id = "canonical-Red-C2-1",
             directionId = 1,
             headsign = "Alewife",
-            routeId = "Red",
+            routeId = Route.Id("Red"),
             routePatternId = "Red-1-1",
             shapeId = "canonical-931_0010",
             stopIds =
@@ -10601,6 +12465,4 @@ public val TestData: ObjectCollectionBuilder by lazy {
                 ),
         )
     )
-
-    objects
 }

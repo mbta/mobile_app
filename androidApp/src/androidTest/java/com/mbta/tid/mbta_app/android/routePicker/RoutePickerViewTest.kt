@@ -15,6 +15,7 @@ import androidx.compose.ui.test.performTextInput
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteResult
 import com.mbta.tid.mbta_app.model.RouteType
@@ -316,7 +317,7 @@ class RoutePickerViewTest {
                 type = RouteType.HEAVY_RAIL
             }
 
-        var selectedRouteId: String? = null
+        var selectedRouteId: LineOrRoute.Id? = null
         var selectedContext: RouteDetailsContext? = null
 
         loadKoinMocks(objects) { global = MockGlobalRepository(GlobalResponse(objects)) }

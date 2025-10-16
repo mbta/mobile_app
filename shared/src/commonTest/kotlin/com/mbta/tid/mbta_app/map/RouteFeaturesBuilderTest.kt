@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.map
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertAssociatedStop
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteSegment
@@ -103,13 +104,13 @@ class RouteFeaturesBuilderTest {
                 activePeriod(start = now - 1.seconds, end = null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id,
+                    route = MapTestDataHelper.routeRed.id.idText,
                     routeType = RouteType.HEAVY_RAIL,
                     stop = MapTestDataHelper.stopPorter.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id,
+                    route = MapTestDataHelper.routeRed.id.idText,
                     routeType = RouteType.HEAVY_RAIL,
                     stop = MapTestDataHelper.stopHarvard.id,
                 )
@@ -200,13 +201,13 @@ class RouteFeaturesBuilderTest {
                 activePeriod(start = now - 1.seconds, end = null)
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id,
+                    route = MapTestDataHelper.routeRed.id.idText,
                     routeType = RouteType.HEAVY_RAIL,
                     stop = MapTestDataHelper.stopAlewife.id,
                 )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board),
-                    route = MapTestDataHelper.routeRed.id,
+                    route = MapTestDataHelper.routeRed.id.idText,
                     routeType = RouteType.HEAVY_RAIL,
                     stop = MapTestDataHelper.stopDavis.id,
                 )
@@ -305,7 +306,7 @@ class RouteFeaturesBuilderTest {
         val glFilteredShapes =
             RouteFeaturesBuilder.filteredRouteShapesForStop(
                 GreenLineTestHelper.stopMapResponse,
-                StopDetailsFilter("line-Green", 0),
+                StopDetailsFilter(Line.Id("line-Green"), 0),
                 null,
             )
         assertEquals(glFilteredShapes.count(), 3)

@@ -14,9 +14,7 @@ import XCTest
 
 final class MorePageTests: XCTestCase {
     @MainActor func testLoadsState() async throws {
-        let viewModel = SettingsViewModel()
-
-        let sut = MorePage(viewModel: viewModel)
+        let sut = MorePage()
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
             XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
@@ -39,9 +37,8 @@ final class MorePageTests: XCTestCase {
                 savedExp.fulfill()
             }
         )
-        let viewModel = SettingsViewModel()
 
-        let sut = MorePage(viewModel: viewModel)
+        let sut = MorePage()
         let tapExp = sut.inspection.inspect(after: 1) { view in
             try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
@@ -52,9 +49,7 @@ final class MorePageTests: XCTestCase {
     }
 
     @MainActor func testLinksExist() async throws {
-        let viewModel = SettingsViewModel()
-
-        let sut = MorePage(viewModel: viewModel)
+        let sut = MorePage()
         let exp = sut.inspection.inspect(after: 2) { view in
             try XCTAssertNotNil(view.find(text: "Send App Feedback"))
             try XCTAssertNotNil(view.find(text: "Trip Planner"))
@@ -69,5 +64,28 @@ final class MorePageTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         await fulfillment(of: [exp], timeout: 5)
+    }
+
+    @MainActor func testShowsBuildNumberOnTap() {
+        let sut = MorePage()
+
+        let infoPlist = Bundle.main.infoDictionary
+        guard let version = infoPlist?["CFBundleShortVersionString"] as? String,
+              let build = infoPlist?["CFBundleVersion"] as? String else {
+            XCTFail("version info not found")
+            return
+        }
+        let versionText = "version \(version)"
+        let versionAndBuildText = "\(versionText) (\(build))"
+
+        let exp = sut.inspection.inspect { view in
+            XCTAssertThrowsError(try view.find(text: versionAndBuildText))
+            try view.find(text: versionText).callOnTapGesture()
+            XCTAssertNotNil(try view.find(text: versionAndBuildText))
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        wait(for: [exp], timeout: 1)
     }
 }

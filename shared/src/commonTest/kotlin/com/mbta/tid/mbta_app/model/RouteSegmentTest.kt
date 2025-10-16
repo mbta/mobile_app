@@ -13,7 +13,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-davis"),
                 otherPatternsByStopId = mapOf(),
@@ -27,7 +27,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-davis"),
                 otherPatternsByStopId = mapOf(),
@@ -63,7 +63,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-davis"),
                 otherPatternsByStopId = mapOf(),
@@ -118,7 +118,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds =
                     listOf("place-neither", "place-shuttle", "place-suspension", "place-both"),
@@ -184,7 +184,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-davis"),
                 otherPatternsByStopId = mapOf(),
@@ -220,12 +220,13 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-davis"),
                 otherPatternsByStopId =
                     mapOf(
-                        "place-davis" to listOf(RoutePatternKey("otherRoute", "otherRoutePattern"))
+                        "place-davis" to
+                            listOf(RoutePatternKey(Route.Id("otherRoute"), "otherRoutePattern"))
                     ),
             )
 
@@ -286,7 +287,7 @@ class RouteSegmentTest {
         val segment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "Mattapan",
+                sourceRouteId = Route.Id("Mattapan"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("place-butlr"),
                 otherPatternsByStopId = mapOf(),
@@ -440,14 +441,17 @@ class RouteSegmentTest {
         var routeSegment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("alewife", "davis", "porter", "harvard", "central"),
                 otherPatternsByStopId =
                     mapOf(
                         "alewife" to
                             listOf(
-                                RoutePatternKey(routeId = "otherRoute", routePatternId = "otherRp")
+                                RoutePatternKey(
+                                    routeId = Route.Id("otherRoute"),
+                                    routePatternId = "otherRp",
+                                )
                             )
                     ),
             )
@@ -472,7 +476,7 @@ class RouteSegmentTest {
                             "alewife" to
                                 listOf(
                                     RoutePatternKey(
-                                        routeId = "otherRoute",
+                                        routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
                                     )
                                 )
@@ -505,14 +509,17 @@ class RouteSegmentTest {
         var routeSegment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("alewife", "davis", "porter"),
                 otherPatternsByStopId =
                     mapOf(
                         "alewife" to
                             listOf(
-                                RoutePatternKey(routeId = "otherRoute", routePatternId = "otherRp")
+                                RoutePatternKey(
+                                    routeId = Route.Id("otherRoute"),
+                                    routePatternId = "otherRp",
+                                )
                             )
                     ),
             )
@@ -539,7 +546,7 @@ class RouteSegmentTest {
                             "alewife" to
                                 listOf(
                                     RoutePatternKey(
-                                        routeId = "otherRoute",
+                                        routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
                                     )
                                 )
@@ -557,14 +564,17 @@ class RouteSegmentTest {
         var routeSegment =
             RouteSegment(
                 id = "id",
-                sourceRouteId = "sourceRoute",
+                sourceRouteId = Route.Id("sourceRoute"),
                 sourceRoutePatternId = "sourceRoutePattern",
                 stopIds = listOf("alewife", "davis", "porter"),
                 otherPatternsByStopId =
                     mapOf(
                         "alewife" to
                             listOf(
-                                RoutePatternKey(routeId = "otherRoute", routePatternId = "otherRp")
+                                RoutePatternKey(
+                                    routeId = Route.Id("otherRoute"),
+                                    routePatternId = "otherRp",
+                                )
                             )
                     ),
             )
@@ -583,7 +593,7 @@ class RouteSegmentTest {
                             "alewife" to
                                 listOf(
                                     RoutePatternKey(
-                                        routeId = "otherRoute",
+                                        routeId = Route.Id("otherRoute"),
                                         routePatternId = "otherRp",
                                     )
                                 )
@@ -595,9 +605,12 @@ class RouteSegmentTest {
         )
     }
 
+    private fun serviceAlert(stopId: String, routeId: String, effect: Alert.Effect) =
+        serviceAlert(stopId, Route.Id(routeId), effect)
+
     private fun serviceAlert(
         stopId: String,
-        routeId: String,
+        routeId: Route.Id,
         effect: Alert.Effect,
     ): AlertAssociatedStop {
         return AlertAssociatedStop(
@@ -612,7 +625,7 @@ class RouteSegmentTest {
                                 Alert.InformedEntity.Activity.Exit,
                                 Alert.InformedEntity.Activity.Ride,
                             ),
-                            route = routeId,
+                            route = routeId.idText,
                             routeType = RouteType.HEAVY_RAIL,
                             stop = stopId,
                         )

@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.android.pages.EditFavoritesPage
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.FavoriteSettings
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -57,16 +59,16 @@ class EditFavoritesPageTest : KoinTest {
             longName = "Sample Route Long Name"
             shortName = "Sample Route"
             textColor = "000000"
-            lineId = line.id
+            lineId = line.id.idText
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
-    val lineOrRoute = RouteCardData.LineOrRoute.Route(route)
+    val lineOrRoute = LineOrRoute.Route(route)
     val routePatternOne =
         builder.routePattern(route) {
             id = "pattern_1"
             directionId = 0
             name = "Sample Route Pattern"
-            routeId = route.id
+            routeId = route.id.idText
             representativeTripId = "trip_1"
         }
     val routePatternTwo =
@@ -74,7 +76,7 @@ class EditFavoritesPageTest : KoinTest {
             id = "pattern_2"
             directionId = 1
             name = "Sample Route Pattern Two"
-            routeId = route.id
+            routeId = route.id.idText
             representativeTripId = "trip_2"
         }
     val sampleStop =
@@ -96,7 +98,7 @@ class EditFavoritesPageTest : KoinTest {
     val trip1 =
         builder.trip {
             id = "trip_1"
-            routeId = route.id
+            routeId = route.id.idText
             directionId = 0
             headsign = "Sample Headsign"
             routePatternId = routePatternOne.id
@@ -105,7 +107,7 @@ class EditFavoritesPageTest : KoinTest {
     val trip2 =
         builder.trip {
             id = "trip_2"
-            routeId = route.id
+            routeId = route.id.idText
             directionId = 1
             headsign = "Other Headsign"
             routePatternId = routePatternTwo.id
@@ -117,7 +119,7 @@ class EditFavoritesPageTest : KoinTest {
             revenue = true
             stopId = sampleStop.id
             tripId = trip1.id
-            routeId = route.id
+            routeId = route.id.idText
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(1.minutes)
@@ -142,16 +144,16 @@ class EditFavoritesPageTest : KoinTest {
             longName = "Green Line Long Name"
             shortName = "Green Line"
             textColor = "FFFFFF"
-            lineId = greenLine.id
+            lineId = greenLine.id.idText
             routePatternIds = mutableListOf("pattern_gl")
         }
-    val greenLineOrRoute = RouteCardData.LineOrRoute.Line(greenLine, setOf(greenLineRoute))
+    val greenLineOrRoute = LineOrRoute.Line(greenLine, setOf(greenLineRoute))
     val greenLineRoutePatternOne =
         builder.routePattern(greenLineRoute) {
             id = "pattern_gl"
             directionId = 0
             name = "Green Line Pattern"
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             representativeTripId = "trip_gl"
         }
     val greenLineStop =
@@ -165,7 +167,7 @@ class EditFavoritesPageTest : KoinTest {
     val greenLineTrip =
         builder.trip {
             id = "trip_gl"
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             directionId = 0
             headsign = "Green Line Head Sign"
             routePatternId = greenLineRoutePatternOne.id
@@ -177,7 +179,7 @@ class EditFavoritesPageTest : KoinTest {
             revenue = true
             stopId = greenLineStop.id
             tripId = greenLineTrip.id
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(5.minutes)
@@ -256,7 +258,7 @@ class EditFavoritesPageTest : KoinTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testFavoritesDisplayCorrectly(): Unit = runBlocking {
-        val favorites = setOf(RouteStopDirection(route.id, sampleStop.id, 0))
+        val favorites = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         val viewModel =
             MockFavoritesViewModel(
                 FavoritesViewModel.State(
@@ -285,7 +287,7 @@ class EditFavoritesPageTest : KoinTest {
     fun testShowsEmptyView() {
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, emptySet(), false, emptyList(), emptyList(), null)
+                FavoritesViewModel.State(false, emptyMap(), false, emptyList(), emptyList(), null)
             )
 
         composeTestRule.setContent { EditFavoritesPage(globalResponse, viewModel) {} }
@@ -299,11 +301,11 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testDeleteFavorite(): Unit = runBlocking {
         val favorites =
-            setOf(
-                RouteStopDirection(route.id, sampleStop.id, 0),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
-        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+        var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
         val viewModel =
             MockFavoritesViewModel(
@@ -321,7 +323,9 @@ class EditFavoritesPageTest : KoinTest {
             viewModel.models.update {
                 FavoritesViewModel.State(
                     false,
-                    setOf(RouteStopDirection(greenLine.id, greenLineStop.id, 0)),
+                    mapOf(
+                        RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings()
+                    ),
                     false,
                     greenLineRouteCardData,
                     greenLineRouteCardData,
@@ -343,7 +347,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
 
-        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
@@ -363,11 +367,11 @@ class EditFavoritesPageTest : KoinTest {
     @Test
     fun testToastUndoDeleteFavorite(): Unit = runBlocking {
         val favorites =
-            setOf(
-                RouteStopDirection(route.id, sampleStop.id, 0),
-                RouteStopDirection(greenLine.id, greenLineStop.id, 0),
+            mapOf(
+                RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings(),
+                RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings(),
             )
-        var updatedWith: Map<RouteStopDirection, Boolean>? = null
+        var updatedWith: Map<RouteStopDirection, FavoriteSettings?>? = null
 
         val viewModel =
             MockFavoritesViewModel(
@@ -382,7 +386,8 @@ class EditFavoritesPageTest : KoinTest {
             )
 
         viewModel.onUpdateFavorites = { update ->
-            val updatedFavorites = favorites.filter { update[it] != false }.toSet()
+            val updatedFavorites =
+                favorites.filterNot { update.containsKey(it.key) && update[it.key] == null }
             viewModel.models.update {
                 FavoritesViewModel.State(
                     false,
@@ -411,7 +416,7 @@ class EditFavoritesPageTest : KoinTest {
         composeTestRule.onAllNodesWithTag("trashCan")[0].performClick()
         composeTestRule.awaitIdle()
 
-        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to false)
+        val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0)
         }
@@ -429,7 +434,7 @@ class EditFavoritesPageTest : KoinTest {
         assertEquals("Undo", customAction.actionLabel)
         customAction.onAction()
 
-        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to true)
+        val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         verifySuspend(VerifyMode.exactly(1)) {
             viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0)
         }

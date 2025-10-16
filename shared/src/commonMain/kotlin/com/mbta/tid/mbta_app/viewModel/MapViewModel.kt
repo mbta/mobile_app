@@ -78,6 +78,8 @@ public interface IMapViewModel {
     public fun locationPermissionsChanged(hasPermission: Boolean)
 
     public fun setViewportManager(viewportManager: ViewportManager)
+
+    public fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean)
 }
 
 public class MapViewModel(
@@ -123,6 +125,9 @@ public class MapViewModel(
         internal constructor(val layerManager: IMapLayerManager) : Event
 
         public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
+
+        public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) :
+            Event
     }
 
     public sealed class State {
@@ -256,12 +261,15 @@ public class MapViewModel(
                 }
                 is Event.MapStyleLoaded -> {
                     layerManager?.run {
-                        addLayers(
-                            allRailRouteShapes ?: return@run,
-                            stopLayerGeneratorState,
-                            globalData ?: return@run,
-                            if (isDarkMode) ColorPalette.dark else ColorPalette.light,
-                        )
+                        val state = stopLayerGeneratorState
+                        val globalResponse = globalData ?: return@run
+                        val colorPalette = if (isDarkMode) ColorPalette.dark else ColorPalette.light
+                        routeShapes?.let { addLayers(it, state, globalResponse, colorPalette) }
+                            ?: allRailRouteShapes?.let {
+                                addLayers(it, state, globalResponse, colorPalette)
+                            }
+                            ?: return@run
+                        resetPuckPosition()
                     }
                 }
                 is Event.LayerManagerInitialized -> {
@@ -271,6 +279,23 @@ public class MapViewModel(
                     if (event.hasPermission && viewportManager.isDefault()) {
                         followPuck(0)
                         layerManager?.run { resetPuckPosition() }
+                    }
+                }
+                is Event.SelectedVehicleUpdated -> {
+                    val currentState = (state as? State.TripSelected)
+                    currentState?.let {
+                        val newState =
+                            State.TripSelected(
+                                it.stop,
+                                it.stopFilter,
+                                it.tripFilter,
+                                event.vehicle,
+                                event.follow,
+                            )
+                        if (it.vehicle?.id != newState.vehicle?.id || event.follow) {
+                            handleViewportCentering(newState, density)
+                        }
+                        state = newState
                     }
                 }
             }
@@ -369,6 +394,10 @@ public class MapViewModel(
         this.viewportManager = viewportManager
     }
 
+    override fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean) {
+        fireEvent(Event.SelectedVehicleUpdated(vehicle, follow))
+    }
+
     private fun handleNavChange(
         currentState: State,
         newNavEntry: SheetRoutes?,
@@ -412,11 +441,15 @@ public class MapViewModel(
                     State.Overview
                 } else {
                     if (currentNavEntryStopDetails.tripFilter != null) {
+                        val vehicle =
+                            currentNavEntryStopDetails.tripFilter.vehicleId?.let { vehicleId ->
+                                vehiclesData.firstOrNull { it.id == vehicleId }
+                            }
                         State.TripSelected(
                             stop,
                             currentNavEntryStopDetails.stopFilter,
                             currentNavEntryStopDetails.tripFilter,
-                            null,
+                            vehicle,
                             false,
                         )
                     } else {
@@ -424,8 +457,12 @@ public class MapViewModel(
                     }
                 }
             }
-        // If we're already in this state, there's no need to perform these actions again
-        if (newState == currentState) return currentState
+        // If we're already in this state, there's no need to perform these actions again,
+        // except if we're transitioning from trip to stop details, then the state will be the same
+        // but we still need to recenter
+        val isNavigatingTripToStop =
+            currentNavEntryStopDetails != null && previousNavEntry is SheetRoutes.TripDetails
+        if (newState == currentState && !isNavigatingTripToStop) return currentState
         handleViewportRestoration(newNavEntry, previousNavEntry)
         handleViewportCentering(newState, density)
 
@@ -621,6 +658,7 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
     public var onLayerManagerInitialized: (IMapLayerManager) -> Unit = {}
     public var onLocationPermissionsChanged: (Boolean) -> Unit = {}
     public var onSetViewportManager: (ViewportManager) -> Unit = {}
+    public var onSelectedVehicleUpdated: (Vehicle?, Boolean) -> Unit = { _, _ -> }
 
     override val models: MutableStateFlow<MapViewModel.State> = MutableStateFlow(initialState)
 
@@ -657,4 +695,8 @@ constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IM
 
     override fun setViewportManager(viewportManager: ViewportManager): Unit =
         onSetViewportManager(viewportManager)
+
+    override fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean) {
+        onSelectedVehicleUpdated(vehicle, follow)
+    }
 }

@@ -13,11 +13,18 @@ struct DirectionLabel: View {
     let direction: Direction
     let showDestination: Bool
     let pillDecoration: PredictionRowView.PillDecoration
+    let isTitle: Bool
 
-    init(direction: Direction, showDestination: Bool = true, pillDecoration: PredictionRowView.PillDecoration = .none) {
+    init(
+        direction: Direction,
+        showDestination: Bool = true,
+        pillDecoration: PredictionRowView.PillDecoration = .none,
+        isTitle: Bool = false
+    ) {
         self.direction = direction
         self.showDestination = showDestination
         self.pillDecoration = pillDecoration
+        self.isTitle = isTitle
     }
 
     private static let localizedDirectionNames: [String: String] = [
@@ -54,14 +61,14 @@ struct DirectionLabel: View {
                 RoutePill(route: route, type: .flex)
             }
             Text(destination)
-                .font(Typography.bodySemibold)
+                .font(isTitle ? Typography.title3Bold : Typography.bodySemibold)
                 .multilineTextAlignment(.leading)
                 .textCase(.none)
         }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: isTitle ? 2 : 6) {
             if !showDestination {
                 directionTo(direction)
             } else if let destination = direction.destination {

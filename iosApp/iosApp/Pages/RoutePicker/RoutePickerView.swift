@@ -16,19 +16,19 @@ struct RoutePickerView: View {
     let path: RoutePickerPath
     let errorBannerVM: IErrorBannerViewModel
     var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
-    let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
+    let onOpenRouteDetails: (LineOrRoute.Id, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
     let onClose: () -> Void
     let onBack: () -> Void
 
     @State var globalData: GlobalResponse?
-    @State var routes: [RouteCardData.LineOrRoute] = []
-    @State var routeSearchResults: [RouteCardData.LineOrRoute] = []
+    @State var routes: [LineOrRoute] = []
+    @State var routeSearchResults: [LineOrRoute] = []
 
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
 
-    let scrollSubject = PassthroughSubject<String, Never>()
+    let scrollSubject = PassthroughSubject<LineOrRoute.Id, Never>()
 
     let inspection = Inspection<Self>()
 
@@ -60,7 +60,7 @@ struct RoutePickerView: View {
     private var isRootPath: Bool { path is RoutePickerPath.Root }
 
     func routeSearchResultsForVMState(state: SearchRoutesViewModel.State,
-                                      routes: [RouteCardData.LineOrRoute]) -> [RouteCardData.LineOrRoute] {
+                                      routes: [LineOrRoute]) -> [LineOrRoute] {
         switch onEnum(of: state) {
         case .unfiltered, .error: routes
         case let .results(state):
@@ -98,7 +98,7 @@ struct RoutePickerView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 if !routeSearchResults.isEmpty {
-                                    ForEach(routeSearchResults, id: \.id) { route in
+                                    ForEach(routeSearchResults, id: \.id.idText) { route in
                                         RoutePickerRow(route: route, onTap: { onOpenRouteDetails(route.id, context) })
                                         if route != routeSearchResults.last { HaloSeparator() }
                                     }
@@ -159,14 +159,14 @@ struct RoutePickerView: View {
         SheetHeader(
             title: headerTitle,
             titleColor: path.textColor,
-            buttonColor: Color.translucentContrast,
-            buttonTextColor: Color.fill3,
+            buttonColor: Color.routeColorContrast,
+            buttonTextColor: Color.routeColorContrastText,
             onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
             rightActionContents: {
                 NavTextButton(
                     string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                    backgroundColor: Color.translucentContrast,
-                    textColor: Color.fill3,
+                    backgroundColor: Color.routeColorContrast,
+                    textColor: Color.routeColorContrastText,
                     height: 32,
                     action: onClose
                 )

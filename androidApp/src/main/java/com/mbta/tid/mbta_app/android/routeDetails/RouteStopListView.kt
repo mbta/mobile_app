@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.RoutePill
@@ -60,12 +61,14 @@ import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
+import com.mbta.tid.mbta_app.android.util.stateJsonSaver
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
@@ -94,16 +97,17 @@ sealed class RouteDetailsRowContext {
 
 @Composable
 fun RouteStopListView(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     context: RouteDetailsContext,
     globalData: GlobalResponse,
     onClick: (RouteDetailsRowContext) -> Unit,
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
-    defaultSelectedRouteId: String? = null,
+    defaultSelectedRouteId: Route.Id? = null,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
     val routes = lineOrRoute.allRoutes.sorted()
@@ -115,9 +119,10 @@ fun RouteStopListView(
     var selectedDirection by rememberSaveable {
         mutableIntStateOf(parameters.availableDirections.firstOrNull() ?: 0)
     }
-    var selectedRouteId by rememberSaveable {
-        mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
-    }
+    var selectedRouteId by
+        rememberSaveable(saver = stateJsonSaver()) {
+            mutableStateOf(defaultSelectedRouteId ?: routeIds.first())
+        }
 
     val routeStops =
         getRouteStops(selectedRouteId, selectedDirection, "RouteDetailsView.routeStopIds")
@@ -147,6 +152,7 @@ fun RouteStopListView(
         onClickLabel = onClickLabel,
         onBack = onBack,
         onClose = onClose,
+        openModal = openModal,
         errorBannerViewModel = errorBannerViewModel,
         toastViewModel = toastViewModel,
         rightSideContent = rightSideContent,
@@ -161,7 +167,7 @@ fun LoadingRouteStopListView(
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
         val objects = ObjectCollectionBuilder()
-        val mockRoute = RouteCardData.LineOrRoute.Route(objects.route {})
+        val mockRoute = LineOrRoute.Route(objects.route {})
 
         RouteStopListView(
             lineOrRoute = mockRoute,
@@ -178,6 +184,7 @@ fun LoadingRouteStopListView(
             onClickLabel = { null },
             onBack = {},
             onClose = {},
+            openModal = {},
             errorBannerViewModel = errorBannerViewModel,
             toastViewModel = toastViewModel,
             rightSideContent = { rowContext, modifier ->
@@ -203,12 +210,12 @@ fun LoadingRouteStopListView(
 
 @Composable
 fun RouteStopListView(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     parameters: RouteDetailsStopList.RouteParameters,
     selectedDirection: Int,
     setDirection: (Int) -> Unit,
-    selectedRouteId: String,
-    setRouteId: (String) -> Unit,
+    selectedRouteId: Route.Id,
+    setRouteId: (Route.Id) -> Unit,
     routes: List<Route>,
     stopList: RouteDetailsStopList?,
     context: RouteDetailsContext,
@@ -217,19 +224,18 @@ fun RouteStopListView(
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
 ) {
-    val managedFavorites = manageFavorites()
-    val favorites = managedFavorites.favoriteRoutes
-    val updateFavorites = managedFavorites.updateFavorites
+    val (favorites, updateFavorites) = manageFavorites()
 
     fun isFavorite(routeStopDirection: RouteStopDirection): Boolean =
         favorites?.contains(routeStopDirection) ?: false
 
     val coroutineScope = rememberCoroutineScope()
-    fun confirmFavorites(updatedValues: Map<RouteStopDirection, Boolean>) {
+    fun confirmFavorites(updatedValues: Map<RouteStopDirection, FavoriteSettings?>) {
         coroutineScope.launch {
             updateFavorites(
                 updatedValues,
@@ -311,9 +317,9 @@ fun RouteStopListView(
                 context = EditFavoritesContext.Favorites,
                 isFavorite = ::isFavorite,
                 updateFavorites = ::confirmFavorites,
-            ) {
-                showFavoritesStopConfirmationId = null
-            }
+                onClose = { showFavoritesStopConfirmationId = null },
+                openModal = openModal,
+            )
         }
     }
 
@@ -346,7 +352,7 @@ fun RouteStopListView(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp).padding(top = 2.dp),
         )
 
-        if (lineOrRoute is RouteCardData.LineOrRoute.Line && routes.size > 1) {
+        if (lineOrRoute is LineOrRoute.Line && routes.size > 1) {
             LineRoutePicker(lineOrRoute.line, routes, selectedRouteId, selectedDirection) {
                 setRouteId(it)
             }
@@ -367,7 +373,7 @@ fun RouteStopListView(
 
 @Composable
 private fun RouteStops(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     stopList: RouteDetailsStopList?,
     selectedDirection: Int,
     context: RouteDetailsContext,
@@ -451,14 +457,12 @@ private fun RouteStops(
 private fun LineRoutePicker(
     line: Line,
     routes: List<Route>,
-    selectedRouteId: String,
+    selectedRouteId: Route.Id,
     selectedDirection: Int,
-    onSelect: (String) -> Unit,
+    onSelect: (Route.Id) -> Unit,
 ) {
     val backgroundColor =
-        colorResource(R.color.deselected_toggle_2)
-            .copy(alpha = 0.6f)
-            .compositeOver(Color.fromHex(line.color))
+        colorResource(R.color.route_color_contrast).compositeOver(Color.fromHex(line.color))
 
     Column(
         Modifier.padding(horizontal = 14.dp)
@@ -498,7 +502,7 @@ private fun LineRoutePicker(
 
 @Composable
 private fun LoadingRouteStops(
-    lineOrRoute: RouteCardData.LineOrRoute,
+    lineOrRoute: LineOrRoute,
     selectedDirection: Int,
     context: RouteDetailsContext,
     rightSideContent: @Composable RowScope.(RouteDetailsRowContext, Modifier) -> Unit,
@@ -535,7 +539,7 @@ private fun RouteStopsPreview() {
         modules(module { single<SettingsCache> { SettingsCache(MockSettingsRepository()) } })
     }
     RouteStops(
-        RouteCardData.LineOrRoute.Route(TestData.getRoute("Red")),
+        LineOrRoute.Route(TestData.getRoute("Red")),
         RouteDetailsStopList(
             0,
             listOf(

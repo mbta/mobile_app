@@ -17,8 +17,8 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.tripDetails.TripCompleteCard
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -35,7 +35,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.model.stopDetailsPage.vehicleOnOtherTrip
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
@@ -63,11 +63,15 @@ fun TripDetailsView(
     val stopList = state.stopList
     val vehicle = tripData?.vehicle
 
+    val tripDetailsContext: TripDetailsViewModel.Context =
+        if (isTripDetailsPage) TripDetailsViewModel.Context.TripDetails
+        else TripDetailsViewModel.Context.StopDetails
+
     LaunchedEffect(tripFilter) { tripDetailsVM.setFilters(tripFilter) }
     LaunchedEffect(allAlerts) { tripDetailsVM.setAlerts(allAlerts) }
 
     LaunchedEffect(Unit) {
-        tripDetailsVM.setContext(TripDetailsViewModel.Context.StopDetails)
+        tripDetailsVM.setContext(tripDetailsContext)
         tripDetailsVM.setActive(active = true, wasSentToBackground = false)
     }
 
@@ -85,7 +89,7 @@ fun TripDetailsView(
             globalResponse?.getStop(stop.stop.id)?.resolveParent(globalResponse)?.id ?: stop.stop.id
         openSheetRoute(SheetRoutes.StopDetails(parentStationId, null, null))
         analytics.tappedDownstreamStop(
-            routeId = tripData?.trip?.routeId ?: "",
+            routeId = tripData?.trip?.routeId,
             stopId = parentStationId,
             tripId = tripFilter?.tripId ?: "",
             connectingRouteId = null,
@@ -109,8 +113,7 @@ fun TripDetailsView(
                     return
                 }
         val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse)
-        val vehicleStop =
-            if (vehicle != null) getParentFor(vehicle.stopId, globalResponse) else null
+        val vehicleStop = vehicle?.let { getParentFor(it.stopId, globalResponse) }
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
             TripHeaderSpec.getSpec(tripId, stopList, terminalStop, vehicle, vehicleStop)
@@ -152,6 +155,7 @@ fun TripDetailsView(
         TripDetails(
             tripData.trip,
             headerSpec,
+            tripData.vehicleOnOtherTrip,
             onHeaderTap,
             ::onTapStop,
             onFollowTrip,
@@ -184,12 +188,13 @@ fun TripDetailsView(
                 TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,
+                    false,
                     null,
                     onTapStop = {},
                     onFollowTrip = {},
                     onOpenAlertDetails = {},
                     placeholderTripInfo.route,
-                    TripDetailsPageFilter("", "", "", 0, "", null),
+                    TripDetailsPageFilter("", "", Route.Id(""), 0, "", null),
                     placeholderTripStops,
                     now,
                     emptyMap(),
@@ -205,6 +210,7 @@ fun TripDetailsView(
 fun TripDetails(
     trip: Trip,
     headerSpec: TripHeaderSpec?,
+    vehicleOnOtherTrip: Boolean,
     onHeaderTap: (() -> Unit)?,
     onTapStop: (TripDetailsStopList.Entry) -> Unit,
     onFollowTrip: (() -> Unit),
@@ -219,7 +225,6 @@ fun TripDetails(
     modifier: Modifier = Modifier,
 ) {
     val routeAccents = TripRouteAccents(route)
-    val hasTrackThisTrip = SettingsCache.get(Settings.TrackThisTrip)
 
     Column(modifier) {
         DebugView {
@@ -231,35 +236,39 @@ fun TripDetails(
                 Text("vehicle id: ${tripFilter.vehicleId ?: "null"}")
             }
         }
-        Column(Modifier.zIndex(1F)) {
-            TripHeaderCard(
-                trip,
-                headerSpec,
-                tripFilter.stopId,
-                route,
-                routeAccents,
-                now,
-                onTap = onHeaderTap,
-                onFollowTrip =
-                    if (hasTrackThisTrip && !isTripDetailsPage) {
-                        onFollowTrip
-                    } else null,
-            )
-        }
-        Column(Modifier.offset(y = (-16).dp)) {
-            TripStops(
-                tripFilter.stopId,
-                stopList,
-                tripFilter.stopSequence,
-                headerSpec,
-                now,
-                alertSummaries,
-                globalResponse,
-                onTapStop,
-                onOpenAlertDetails,
-                route,
-                routeAccents,
-            )
+
+        // You can't open track this trip before the trip has started,
+        // so if this is true, it means that the selected trip is complete
+        if (isTripDetailsPage && vehicleOnOtherTrip) {
+            TripCompleteCard(routeAccents)
+        } else {
+            Column(Modifier.zIndex(1F)) {
+                TripHeaderCard(
+                    trip,
+                    headerSpec,
+                    tripFilter.stopId,
+                    route,
+                    routeAccents,
+                    now,
+                    onTap = onHeaderTap,
+                    onFollowTrip = if (!isTripDetailsPage) onFollowTrip else null,
+                )
+            }
+            Column(Modifier.offset(y = (-16).dp)) {
+                TripStops(
+                    tripFilter.stopId,
+                    stopList,
+                    tripFilter.stopSequence,
+                    headerSpec,
+                    now,
+                    alertSummaries,
+                    globalResponse,
+                    onTapStop,
+                    onOpenAlertDetails,
+                    route,
+                    routeAccents,
+                )
+            }
         }
     }
 }

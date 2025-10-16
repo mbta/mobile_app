@@ -17,14 +17,14 @@ enum SaveFavoritesContext {
 }
 
 struct SaveFavoritesFlow: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
     let context: SaveFavoritesContext
     let global: GlobalResponse?
     let isFavorite: (RouteStopDirection) -> Bool
-    let updateFavorites: ([RouteStopDirection: Bool]) -> Void
+    let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     let onClose: () -> Void
     let toastVM: IToastViewModel
 
@@ -40,10 +40,10 @@ struct SaveFavoritesFlow: View {
     let inspection = Inspection<Self>()
 
     init(
-        lineOrRoute: RouteCardData.LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
+        lineOrRoute: LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
         context: SaveFavoritesContext, global: GlobalResponse?,
         isFavorite: @escaping (RouteStopDirection) -> Bool,
-        updateFavorites: @escaping ([RouteStopDirection: Bool]) -> Void,
+        updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         onClose: @escaping () -> Void,
         toastVM: IToastViewModel = ViewModelDI().toast
     ) {
@@ -59,9 +59,9 @@ struct SaveFavoritesFlow: View {
         self.toastVM = toastVM
     }
 
-    func proposedFavorites() -> [Int32: Bool] {
+    func proposedFavorites() -> [Int32: FavoriteSettings?] {
         directions
-            .reduce(into: [Int32: Bool]()) { acc, direction in
+            .reduce(into: [Int32: FavoriteSettings?]()) { acc, direction in
                 // if selectedDirection and already a favorite, then removing favorite.
                 // if this is not the selected direction and already a favorite, then keep it.
                 let isFavorite = ((direction.id == selectedDirection) !=
@@ -72,14 +72,14 @@ struct SaveFavoritesFlow: View {
                     ))) ||
                     // If the only direction is the opposite one, mark it as favorite whether or not it already is
                     (directions.count == 1 && direction.id != selectedDirection)
-                acc[direction.id] = isFavorite
+                acc[direction.id] = isFavorite ? .init() : nil
             }
     }
 
-    func updateAndToast(_ update: [RouteStopDirection: Bool]) {
+    func updateAndToast(_ update: [RouteStopDirection: FavoriteSettings?]) {
         updateFavorites(update)
 
-        let favorited = update.filter(\.value)
+        let favorited = update.filter { $0.value != nil }
         let firstFavorite = favorited.first
         let labels = firstFavorite?.key.getLabels(global)
         var toastText: String? = nil
@@ -140,7 +140,7 @@ struct SaveFavoritesFlow: View {
                 VStack {}
                     .onAppear {
                         let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
-                        updateAndToast([rsd: !isFavorite(rsd)])
+                        updateAndToast([rsd: isFavorite(rsd) ? nil : .init()])
 
                         onClose()
                     }
@@ -160,24 +160,23 @@ struct SaveFavoritesFlow: View {
 }
 
 struct FavoriteConfirmationDialog: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
     let context: SaveFavoritesContext
-    let proposedFavorites: [Int32: Bool]
-    let updateFavorites: ([RouteStopDirection: Bool]) -> Void
+    let proposedFavorites: [Int32: FavoriteSettings?]
+    let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     let onClose: () -> Void
 
     @State var showDialog = false
-    @State var favoritesToSave: [Direction: Bool] = [:]
+    @State var favoritesToSave: [Direction: FavoriteSettings?] = [:]
 
     var body: some View {
         VStack {}
             .onAppear {
-                favoritesToSave = directions.reduce(into: [Direction: Bool]()) { acc, direction in
-                    acc[direction] = proposedFavorites[direction.id] ?? false
-                }
+                favoritesToSave = Dictionary(uniqueKeysWithValues: directions
+                    .map { ($0, proposedFavorites[$0.id] ?? nil) })
                 showDialog = true
             }
             .customAlert(
@@ -218,13 +217,13 @@ struct FavoriteConfirmationDialog: View {
 }
 
 struct FavoriteConfirmationDialogContents: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
     let context: SaveFavoritesContext
-    let favoritesToSave: [Direction: Bool]
-    let updateLocalFavorite: (Direction, Bool) -> Void
+    let favoritesToSave: [Direction: FavoriteSettings?]
+    let updateLocalFavorite: (Direction, FavoriteSettings?) -> Void
 
     var body: some View {
         let headerText = if context == SaveFavoritesContext.favorites {
@@ -271,9 +270,9 @@ struct FavoriteConfirmationDialogContents: View {
 }
 
 struct DirectionButtons: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
-    let favorites: [Direction: Bool]
-    let updateLocalFavorite: (Direction, Bool) -> Void
+    let lineOrRoute: LineOrRoute
+    let favorites: [Direction: FavoriteSettings?]
+    let updateLocalFavorite: (Direction, FavoriteSettings?) -> Void
 
     /**
      Convenience struct to support iterating through the map of favoritesToSave entries via `ForEach`.
@@ -281,12 +280,12 @@ struct DirectionButtons: View {
      */
     struct DirectionFavorite: Hashable {
         let direction: Direction
-        let isFavorite: Bool
+        let settings: FavoriteSettings?
     }
 
     var directionValues: [DirectionFavorite] {
         favorites
-            .map { DirectionFavorite(direction: $0.key, isFavorite: $0.value) }
+            .map { DirectionFavorite(direction: $0.key, settings: $0.value) }
             .sorted(by: { $0.direction.id < $1.direction.id })
     }
 
@@ -299,14 +298,17 @@ struct DirectionButtons: View {
                 id: \.element.direction
             ) { index, directionValue in
                 Button(action: {
-                    updateLocalFavorite(directionValue.direction, !directionValue.isFavorite)
+                    updateLocalFavorite(directionValue.direction, directionValue.settings != nil ? nil : .init())
                 }) {
                     VStack(spacing: 0) {
                         HStack(spacing: 0) {
                             DirectionLabel(direction: directionValue.direction)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                             Spacer()
-                            StarIcon(starred: directionValue.isFavorite, color: .init(hex: lineOrRoute.backgroundColor))
+                            StarIcon(
+                                starred: directionValue.settings != nil,
+                                color: .init(hex: lineOrRoute.backgroundColor)
+                            )
                         }
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.horizontal, 16)
@@ -316,7 +318,7 @@ struct DirectionButtons: View {
                         }
                     }
                 }
-                .accessibilityAddTraits(directionValue.isFavorite ? [.isSelected] : [])
+                .accessibilityAddTraits(directionValue.settings != nil ? [.isSelected] : [])
                 .fullFocusSize()
                 .background(Color.fill3)
             }
@@ -327,10 +329,10 @@ struct DirectionButtons: View {
 }
 
 struct FavoriteConfirmationDialogActions: View {
-    let lineOrRoute: RouteCardData.LineOrRoute
+    let lineOrRoute: LineOrRoute
     let stop: Stop
-    let favoritesToSave: [Direction: Bool]
-    let updateFavorites: ([RouteStopDirection: Bool]) -> Void
+    let favoritesToSave: [Direction: FavoriteSettings?]
+    let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     let onClose: () -> Void
 
     var body: some View {
@@ -342,7 +344,7 @@ struct FavoriteConfirmationDialogActions: View {
 
         Button {
             updateFavorites(favoritesToSave
-                .reduce(into: [RouteStopDirection: Bool]()) { partialResult, entry in
+                .reduce(into: [RouteStopDirection: FavoriteSettings?]()) { partialResult, entry in
                     partialResult[RouteStopDirection(
                         route: lineOrRoute.id,
                         stop: stop.id,
@@ -352,6 +354,6 @@ struct FavoriteConfirmationDialogActions: View {
             onClose()
         } label: {
             Text("Add")
-        }.disabled(favoritesToSave.values.allSatisfy { $0 == false })
+        }.disabled(favoritesToSave.values.allSatisfy { $0 == nil })
     }
 }

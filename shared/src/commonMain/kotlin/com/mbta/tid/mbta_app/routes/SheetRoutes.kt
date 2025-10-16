@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.routes
 
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
@@ -28,12 +29,19 @@ public sealed class SheetRoutes {
         SheetRoutes()
 
     @Serializable
-    public data class RouteDetails(val routeId: String, val context: RouteDetailsContext) :
+    public data class RouteDetails(val routeId: LineOrRoute.Id, val context: RouteDetailsContext) :
         SheetRoutes()
 
     @Serializable public data object EditFavorites : SheetRoutes()
 
     @Serializable public data class TripDetails(val filter: TripDetailsPageFilter) : SheetRoutes()
+
+    public val showCurrentLocation: Boolean
+        get() =
+            when (this) {
+                is TripDetails -> false
+                else -> true
+            }
 
     public val showSearchBar: Boolean
         get() =
@@ -49,6 +57,14 @@ public sealed class SheetRoutes {
                 is Favorites,
                 is NearbyTransit -> true
                 else -> false
+            }
+
+    public val vehicleId: String?
+        get() =
+            when (this) {
+                is StopDetails -> this.tripFilter?.vehicleId
+                is TripDetails -> this.filter.vehicleId
+                else -> null
             }
 
     public companion object {

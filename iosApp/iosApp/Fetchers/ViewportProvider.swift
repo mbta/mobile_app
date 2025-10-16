@@ -21,6 +21,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     @Published private(set) var isManuallyCentering: Bool
     @Published private(set) var isFollowingPuck: Bool = false
+    @Published private(set) var isVehicleOverview: Bool = false
 
     @Published var viewport: Viewport
     private var savedNearbyTransitViewport: Viewport?
@@ -50,14 +51,23 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     @MainActor func follow(animation: ViewportAnimation = Defaults.animation) {
         isFollowingPuck = true
+        isVehicleOverview = false
         withViewportAnimation(animation) {
             self.viewport = .followPuck(zoom: cameraStateSubject.value.zoom)
         }
     }
 
-    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop) {
+    @MainActor func vehicleOverview(vehicle: Vehicle, stop: Stop?) {
+        let geometry: GeometryConvertible = if let stop {
+            MultiPoint([vehicle.coordinate, stop.coordinate])
+        } else {
+            Point(vehicle.coordinate)
+        }
+
+        isFollowingPuck = false
+        isVehicleOverview = true
         animateTo(viewport: .overview(
-            geometry: MultiPoint([vehicle.coordinate, stop.coordinate]),
+            geometry: geometry,
             geometryPadding: Defaults.overviewPadding,
             maxZoom: 16
         ))
@@ -68,6 +78,8 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
     }
 
     @MainActor func stopCenter(stop: Stop) {
+        isFollowingPuck = false
+        isVehicleOverview = false
         animateTo(coordinates: stop.coordinate)
     }
 
@@ -103,6 +115,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         self.isManuallyCentering = isManuallyCentering
         if isManuallyCentering {
             isFollowingPuck = false
+            isVehicleOverview = false
         }
     }
 
@@ -200,7 +213,6 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
 
     // swiftlint:disable:next identifier_name
     func __vehicleOverview(vehicle: Vehicle, stop: Stop?, density _: KotlinFloat?) async throws {
-        guard let stop else { return }
         await vehicleOverview(vehicle: vehicle, stop: stop)
     }
 }

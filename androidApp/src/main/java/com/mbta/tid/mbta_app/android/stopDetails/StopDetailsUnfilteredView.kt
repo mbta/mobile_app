@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -68,8 +69,8 @@ fun StopDetailsUnfilteredView(
     ): List<PillFilter> =
         routeCardData.map {
             when (val lineOrRoute = it.lineOrRoute) {
-                is RouteCardData.LineOrRoute.Line -> PillFilter.ByLine(lineOrRoute.line)
-                is RouteCardData.LineOrRoute.Route ->
+                is LineOrRoute.Line -> PillFilter.ByLine(lineOrRoute.line)
+                is LineOrRoute.Route ->
                     PillFilter.ByRoute(lineOrRoute.route, global.getLine(lineOrRoute.route.lineId))
             }
         }

@@ -43,7 +43,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         alertsDownstream: [Shared.Alert] = [],
         objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
     ) -> RouteCardData.Leaf {
-        let routes = routes ?? Set([objects.route { $0.lineId = line.id }])
+        let routes = routes ?? Set([objects.route { $0.lineId = line.id.idText }])
         return makeLeaf(
             lineOrRoute: .line(line, routes),
             stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
@@ -52,7 +52,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     func makeLeaf(
-        lineOrRoute: RouteCardData.LineOrRoute,
+        lineOrRoute: LineOrRoute,
         stop: Stop? = nil,
         patterns: [RoutePattern]? = nil,
         upcomingTrips: [UpcomingTrip]? = nil,
@@ -176,7 +176,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let line = objects.line { line in line.id = "Green" }
         let routeB = objects.route { route in
             route.id = "Green-B"
-            route.lineId = line.id
+            route.lineId = line.id.idText
         }
         let routePatternB = objects.routePattern(route: routeB) { pattern in
             pattern.representativeTrip { $0.headsign = "Headsign B" }
@@ -191,7 +191,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         })
         let routeC = objects.route { route in
             route.id = "Green-C"
-            route.lineId = line.id
+            route.lineId = line.id.idText
         }
         let routePatternC = objects.routePattern(route: routeC) { pattern in
             pattern.representativeTrip { $0.headsign = "Headsign C" }
@@ -684,7 +684,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: 0, facility: nil,
-                route: route.id, routeType: .lightRail,
+                route: route.id.idText, routeType: .lightRail,
                 stop: nil, trip: nil
             )
         }
@@ -751,13 +751,13 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 alert.informedEntity(
                     activities: [.board, .exit, .ride],
                     directionId: 0, facility: nil,
-                    route: routeB.id, routeType: nil,
+                    route: routeB.id.idText, routeType: nil,
                     stop: "71151", trip: nil
                 )
                 alert.informedEntity(
                     activities: [.board, .exit, .ride],
                     directionId: 0, facility: nil,
-                    route: routeC.id, routeType: nil,
+                    route: routeC.id.idText, routeType: nil,
                     stop: "70151", trip: nil
                 )
             }
@@ -765,10 +765,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.departureTime = now.plus(seconds: 300)
-            prediction.routeId = routeD.id
+            prediction.routeId = routeD.id.idText
             prediction.stopId = stop.id
             prediction.trip = objects.trip { trip in
-                trip.routeId = routeD.id
+                trip.routeId = routeD.id.idText
                 trip.routePatternId = "Green-D-855-0"
             }
         })

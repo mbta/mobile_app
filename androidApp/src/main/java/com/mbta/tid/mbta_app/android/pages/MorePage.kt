@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import android.annotation.SuppressLint
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,22 +42,39 @@ import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.more.MoreButton
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
-import com.mbta.tid.mbta_app.android.more.MoreViewModel
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
+import com.mbta.tid.mbta_app.viewModel.MoreViewModel
 
+@SuppressLint("LocalContextConfigurationRead")
 @Composable
 fun MorePage(bottomBar: @Composable () -> Unit) {
+    val context = LocalContext.current
+    val locales = AppCompatDelegate.getApplicationLocales()
+    val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
+    val translation =
+        when {
+            primaryLocale.language == "es" -> "es"
+            primaryLocale.language == "fr" -> "fr"
+            primaryLocale.language == "ht" -> "ht"
+            primaryLocale.language == "pt" -> "pt-BR"
+            primaryLocale.language == "vi" -> "vi"
+            primaryLocale.language == "zh" && primaryLocale.script == "Hans" -> "zh-Hans-CN"
+            primaryLocale.language == "zh" && primaryLocale.script == "Hant" -> "zh-Hant-TW"
+            else -> "en"
+        }
 
     val navController = rememberNavController()
-    val context = LocalContext.current
-    val viewModel = viewModel { MoreViewModel(context) { navController.navigate("licenses") } }
+    val viewModel = MoreViewModel()
 
-    val sections by viewModel.sections.collectAsState()
+    val sections = remember {
+        viewModel.getSections(translation) { navController.navigate("licenses") }
+    }
     val dependencies = Dependency.getAllDependencies()
+    var showingBuildNumber by remember { mutableStateOf(false) }
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         Column(Modifier.padding(outerSheetPadding).background(colorResource(R.color.fill3))) {
@@ -70,10 +92,20 @@ fun MorePage(bottomBar: @Composable () -> Unit) {
                                 modifier = Modifier.semantics { heading() },
                             )
                             Text(
-                                stringResource(
-                                    R.string.app_version_number,
-                                    BuildConfig.VERSION_NAME,
-                                ),
+                                if (showingBuildNumber)
+                                    stringResource(
+                                        R.string.app_version_and_build,
+                                        BuildConfig.VERSION_NAME,
+                                        BuildConfig.VERSION_CODE,
+                                    )
+                                else
+                                    stringResource(
+                                        R.string.app_version_number,
+                                        BuildConfig.VERSION_NAME,
+                                    ),
+                                if (!showingBuildNumber)
+                                    Modifier.clickable { showingBuildNumber = true }
+                                else Modifier,
                                 style = Typography.footnote,
                             )
                         }

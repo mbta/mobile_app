@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.SearchInput
 import com.mbta.tid.mbta_app.android.search.results.SearchResultsView
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.viewModel.ISearchViewModel
 import org.koin.compose.koinInject
 
@@ -37,7 +38,7 @@ fun SearchBarOverlay(
     showSearchBar: Boolean,
     onExpandedChange: (Boolean) -> Unit,
     onStopNavigation: (stopId: String) -> Unit,
-    onRouteNavigation: (routeId: String) -> Unit,
+    onRouteNavigation: (routeId: LineOrRoute.Id) -> Unit,
     inputFieldFocusRequester: FocusRequester,
     searchVM: ISearchViewModel = koinInject(),
     onBarGloballyPositioned: (LayoutCoordinates) -> Unit = {},

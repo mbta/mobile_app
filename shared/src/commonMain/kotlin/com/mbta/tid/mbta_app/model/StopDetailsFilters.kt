@@ -4,7 +4,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import kotlinx.serialization.Serializable
 
 public interface RouteDirection {
-    public val routeId: String
+    public val routeId: LineOrRoute.Id
     public val directionId: Int
 }
 
@@ -12,7 +12,7 @@ public interface RouteDirection {
 public data class StopDetailsFilter
 @DefaultArgumentInterop.Enabled
 constructor(
-    override val routeId: String,
+    override val routeId: LineOrRoute.Id,
     override val directionId: Int,
     val autoFilter: Boolean = false,
 ) : RouteDirection {
@@ -56,7 +56,7 @@ public data class StopDetailsPageFilters(
 public data class TripDetailsPageFilter(
     val tripId: String,
     val vehicleId: String?,
-    val routeId: String,
+    val routeId: LineOrRoute.Id,
     val directionId: Int,
     val stopId: String,
     val stopSequence: Int?,

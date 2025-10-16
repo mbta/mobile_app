@@ -125,14 +125,14 @@ final class RouteCardDeparturesTests: XCTestCase {
         let predB0 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 1).plus(seconds: 1)
             prediction.departureTime = now.plus(minutes: 2)
-            prediction.routeId = Green.shared.routeB.id
+            prediction.routeId = Green.shared.routeB.id.idText
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripB0.id
         }
         let predB1 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 2).plus(seconds: 10)
             prediction.departureTime = now.plus(minutes: 3)
-            prediction.routeId = Green.shared.routeB.id
+            prediction.routeId = Green.shared.routeB.id.idText
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripB1.id
         }
@@ -141,7 +141,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let predC01 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 3)
             prediction.departureTime = now.plus(minutes: 4)
-            prediction.routeId = Green.shared.routeC.id
+            prediction.routeId = Green.shared.routeC.id.idText
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripC01.id
         }
@@ -150,7 +150,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.arrivalTime = now.plus(minutes: 11)
             prediction.departureTime = now.plus(minutes: 15)
             prediction.status = "Overridden"
-            prediction.routeId = Green.shared.routeC.id
+            prediction.routeId = Green.shared.routeC.id.idText
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripC02.id
         }
@@ -159,7 +159,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let predC11 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 4)
             prediction.departureTime = now.plus(minutes: 5)
-            prediction.routeId = Green.shared.routeC.id
+            prediction.routeId = Green.shared.routeC.id.idText
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripC11.id
         }
@@ -167,7 +167,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let tripC12 = objects.trip(routePattern: Green.shared.rpC1)
         let predC12 = objects.prediction { prediction in
             prediction.departureTime = now.plus(minutes: 10)
-            prediction.routeId = Green.shared.routeC.id
+            prediction.routeId = Green.shared.routeC.id.idText
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripC12.id
         }
@@ -176,7 +176,7 @@ final class RouteCardDeparturesTests: XCTestCase {
         let predE0 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 5)
             prediction.departureTime = now.plus(minutes: 6)
-            prediction.routeId = Green.shared.routeE.id
+            prediction.routeId = Green.shared.routeE.id.idText
             prediction.stopId = Green.shared.stopWestbound.id
             prediction.tripId = tripE0.id
         }
@@ -185,12 +185,12 @@ final class RouteCardDeparturesTests: XCTestCase {
         let predE1 = objects.prediction { prediction in
             prediction.arrivalTime = now.plus(minutes: 6)
             prediction.departureTime = now.plus(minutes: 7)
-            prediction.routeId = Green.shared.routeE.id
+            prediction.routeId = Green.shared.routeE.id.idText
             prediction.stopId = Green.shared.stopEastbound.id
             prediction.tripId = tripE1.id
         }
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(
+        let lineOrRoute = LineOrRoute.line(
             Green.shared.line,
             [Green.shared.routeB, Green.shared.routeC, Green.shared.routeE]
         )
@@ -280,7 +280,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+        let lineOrRoute = LineOrRoute.line(line, [route])
 
         let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(
@@ -328,7 +328,7 @@ final class RouteCardDeparturesTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
 
-        let lineOrRoute = RouteCardData.LineOrRoute.line(line, [route])
+        let lineOrRoute = LineOrRoute.line(line, [route])
 
         let context = RouteCardData.Context.nearbyTransit
         let stopData = RouteCardData.RouteStopData(

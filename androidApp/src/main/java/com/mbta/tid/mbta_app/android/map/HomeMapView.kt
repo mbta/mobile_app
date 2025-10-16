@@ -16,6 +16,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +44,7 @@ import com.mapbox.maps.extension.compose.MapboxMap
 import com.mapbox.maps.extension.compose.annotation.ViewAnnotation
 import com.mapbox.maps.extension.compose.rememberMapState
 import com.mapbox.maps.extension.compose.style.MapStyle
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.gestures.generated.GesturesSettings
 import com.mapbox.maps.plugin.gestures.gestures
@@ -97,7 +101,9 @@ fun HomeMapView(
 
     val allowTargeting = currentNavEntry?.allowTargeting ?: true
 
-    val selectedVehicle = (state as? State.TripSelected)?.vehicle
+    var selectedVehicle by remember {
+        mutableStateOf<Vehicle?>((state as? State.TripSelected)?.vehicle)
+    }
 
     val showTripRecenterButton =
         when (state) {
@@ -118,6 +124,7 @@ fun HomeMapView(
     val zoomLevel by
         cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
 
+    val showCurrentLocation = currentNavEntry?.showCurrentLocation ?: true
     val pulsingRingColor: Int = colorResource(R.color.key_inverse).toArgb()
     val accuracyRingColor: Int = colorResource(R.color.deemphasized).copy(alpha = 0.1F).toArgb()
     val accuracyRingBorderColor: Int = colorResource(R.color.halo).toArgb()
@@ -136,6 +143,13 @@ fun HomeMapView(
     LaunchedEffect(isDarkMode) { viewModel.colorPaletteChanged(isDarkMode) }
     LaunchedEffect(density) { viewModel.densityChanged(density.density) }
     LaunchedEffect(currentNavEntry) { viewModel.navChanged(currentNavEntry) }
+    LaunchedEffect((state as? State.TripSelected)?.vehicle) {
+        val vehicle = (state as? State.TripSelected)?.vehicle
+        val skipSettingVehicle =
+            selectedVehicle?.id == currentNavEntry?.vehicleId && vehicle == null
+        if (skipSettingVehicle) return@LaunchedEffect
+        selectedVehicle = vehicle
+    }
     Box(contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
@@ -172,7 +186,7 @@ fun HomeMapView(
             ) {
                 val locationProvider = remember { PassthroughLocationProvider() }
 
-                MapEffect(true) { map ->
+                MapEffect { map ->
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
                             handleStopNavigation(it)
@@ -185,15 +199,27 @@ fun HomeMapView(
                     )
                     map.location.setLocationProvider(locationProvider)
                     map.location.updateSettings {
-                        locationPuck = createDefault2DPuck(withBearing = false)
-                        puckBearingEnabled = false
                         enabled = true
+                        puckBearingEnabled = false
                         pulsingEnabled = true
                         pulsingColor = pulsingRingColor
                         pulsingMaxRadius = 24F
                         showAccuracyRing = true
                         this.accuracyRingColor = accuracyRingColor
                         this.accuracyRingBorderColor = accuracyRingBorderColor
+                    }
+
+                    viewModel.layerManagerInitialized(MapLayerManager(map.mapboxMap, context))
+                }
+
+                MapEffect(showCurrentLocation) { map ->
+                    map.location.updateSettings {
+                        locationPuck =
+                            if (showCurrentLocation) {
+                                createDefault2DPuck(withBearing = false)
+                            } else {
+                                LocationPuck2D(opacity = 0f)
+                            }
                     }
                 }
 
@@ -230,10 +256,6 @@ fun HomeMapView(
                     }
                 }
 
-                MapEffect { map ->
-                    viewModel.layerManagerInitialized(MapLayerManager(map.mapboxMap, context))
-                }
-
                 if (
                     !viewportProvider.isFollowingPuck &&
                         allowTargeting &&
@@ -251,15 +273,30 @@ fun HomeMapView(
                     }
                 }
 
-                val allVehicles =
-                    remember(vehiclesData, selectedVehicle) {
-                        when {
-                            selectedVehicle == null -> vehiclesData
-                            else ->
-                                vehiclesData.filterNot { it.id == selectedVehicle.id } +
-                                    listOf(selectedVehicle)
-                        }
+                // Maintain a mutable state list of the vehicles displayed on the map, and modify
+                // that in place when there are changes to the vehicle data, to prevent issues with
+                // compose forgetting the vehicle identity when the list changes, which results in
+                // all the vehicles on the map flickering in and out.
+                val allVehicles = remember { mutableStateListOf<Vehicle>() }
+                LaunchedEffect(vehiclesData, selectedVehicle) {
+                    val updated = mutableSetOf<String>()
+                    val updateVehicles =
+                        (selectedVehicle?.let { mapOf(it.id to it) } ?: emptyMap()).plus(
+                            vehiclesData.associateBy { it.id }
+                        )
+
+                    // Remove any vehicles that don't exist in the update
+                    allVehicles.removeAll { !updateVehicles.containsKey(it.id) }
+                    // Replace all existing vehicles in the list with their updated vehicle objects
+                    allVehicles.replaceAll {
+                        updateVehicles[it.id]?.let { updateVehicle ->
+                            updated.add(updateVehicle.id)
+                            updateVehicle
+                        } ?: it
                     }
+                    // Add any vehicles that exist in the update which weren't already in the list
+                    allVehicles.addAll(updateVehicles.filter { !updated.contains(it.key) }.values)
+                }
 
                 for (vehicle in allVehicles) {
                     val route = globalData?.getRoute(vehicle.routeId) ?: continue
@@ -307,7 +344,11 @@ fun HomeMapView(
                 else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
 
             Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
-                if (!viewportProvider.isFollowingPuck && locationDataManager.hasPermission) {
+                if (
+                    showCurrentLocation &&
+                        !viewportProvider.isFollowingPuck &&
+                        locationDataManager.hasPermission
+                ) {
                     RecenterButton(
                         Icons.Default.LocationOn,
                         modifier = Modifier.padding(horizontal = 16.dp).testTag("recenterButton"),
@@ -316,9 +357,8 @@ fun HomeMapView(
                 }
 
                 if (showTripRecenterButton) {
-                    if (selectedVehicle != null) {
-                        val routeType = globalData?.getRoute(selectedVehicle.routeId)?.type
-                        if (routeType != null) {
+                    selectedVehicle?.let { vehicle ->
+                        globalData?.getRoute(vehicle.routeId)?.type?.let { routeType ->
                             RecenterButton(
                                 routeIcon(routeType).first,
                                 onClick = {
@@ -341,7 +381,7 @@ fun HomeMapView(
                 }
             }
 
-            if (isTargeting) {
+            if (isTargeting && allowTargeting) {
                 Crosshairs(sheetPadding = sheetPadding)
             }
         }

@@ -15,10 +15,10 @@ public data class Vehicle(
     val latitude: Double,
     val longitude: Double,
     @SerialName("updated_at") val updatedAt: EasternTimeInstant,
-    @SerialName("route_id") val routeId: String?,
+    @SerialName("route_id") val routeId: Route.Id?,
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,
-) : BackendObject {
+) : BackendObject<String> {
     val position: Position = Position(latitude = latitude, longitude = longitude)
 
     @Serializable

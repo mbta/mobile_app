@@ -3,16 +3,13 @@ package com.mbta.tid.mbta_app.android.util
 import android.content.Context
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.RouteModeLabelType
 
-fun routeModeLabel(
-    context: Context,
-    lineOrRoute: RouteCardData.LineOrRoute,
-    isOnly: Boolean = true,
-): String = routeModeLabel(context, lineOrRoute.name, lineOrRoute.type, isOnly)
+fun routeModeLabel(context: Context, lineOrRoute: LineOrRoute, isOnly: Boolean = true): String =
+    routeModeLabel(context, lineOrRoute.name, lineOrRoute.type, isOnly)
 
 fun routeModeLabel(context: Context, line: Line?, route: Route?, isOnly: Boolean = true): String =
     routeModeLabel(context, line?.longName ?: route?.label, route?.type, isOnly)

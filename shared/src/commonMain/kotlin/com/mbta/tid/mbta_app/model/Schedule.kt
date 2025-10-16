@@ -14,10 +14,10 @@ internal constructor(
     @SerialName("pick_up_type") val pickUpType: StopEdgeType,
     @SerialName("stop_headsign") val stopHeadsign: String?,
     @SerialName("stop_sequence") val stopSequence: Int,
-    @SerialName("route_id") val routeId: String,
+    @SerialName("route_id") val routeId: Route.Id,
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
-) : BackendObject, TripStopTime {
+) : BackendObject<String>, TripStopTime {
     @Serializable
     public enum class StopEdgeType {
         /** Regularly scheduled drop off / pickup */

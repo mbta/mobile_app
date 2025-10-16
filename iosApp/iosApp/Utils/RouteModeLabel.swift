@@ -9,7 +9,7 @@
 import Shared
 import SwiftUI
 
-func routeModeLabel(lineOrRoute: RouteCardData.LineOrRoute, isOnly: Bool = true) -> String {
+func routeModeLabel(lineOrRoute: LineOrRoute, isOnly: Bool = true) -> String {
     routeModeLabel(name: lineOrRoute.name, type: lineOrRoute.type, isOnly: isOnly)
 }
 

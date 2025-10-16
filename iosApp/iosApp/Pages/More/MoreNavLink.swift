@@ -10,13 +10,13 @@ import SwiftUI
 
 struct MoreNavLink: View {
     var label: String
-    var destination: MoreNavTarget
+    var callback: () -> Void
 
     @ScaledMetric
     private var iconSize: CGFloat = 10.5
 
     var body: some View {
-        NavigationLink(value: destination) {
+        Button(action: callback) {
             HStack(alignment: .center, spacing: 0) {
                 Text(label)
                     .foregroundStyle(Color.text)

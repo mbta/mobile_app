@@ -38,10 +38,10 @@ internal class SettingsRepositoryTest : KoinTest {
         assertEquals(
             mapOf(
                 Settings.DevDebugMode to true,
+                Settings.HideMaps to false,
+                Settings.Notifications to false,
                 Settings.SearchRouteResults to false,
                 Settings.StationAccessibility to false,
-                Settings.HideMaps to false,
-                Settings.TrackThisTrip to false,
             ),
             repo.getSettings(),
         )

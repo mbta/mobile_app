@@ -40,14 +40,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -161,14 +161,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -258,14 +258,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -346,14 +346,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = "different"
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -448,14 +448,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -556,14 +556,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }
@@ -664,14 +664,14 @@ class TripStopsTest {
         val vehicle =
             objects.vehicle {
                 tripId = trip.id
-                routeId = route.id
+                routeId = route.id.idText
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
                 stopId = stop1.id
             }
 
         fun makeSchedule(stop: Stop) =
             objects.schedule {
-                routeId = route.id
+                routeId = route.id.idText
                 stopId = stop.id
                 this.trip = trip
             }

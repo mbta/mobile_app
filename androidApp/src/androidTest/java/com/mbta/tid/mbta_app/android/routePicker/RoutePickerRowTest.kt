@@ -5,8 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import org.junit.Rule
 import org.junit.Test
@@ -24,7 +24,7 @@ class RoutePickerRowTest {
                 type = RouteType.BUS
             }
 
-        composeTestRule.setContent { RoutePickerRow(RouteCardData.LineOrRoute.Route(route)) {} }
+        composeTestRule.setContent { RoutePickerRow(LineOrRoute.Route(route)) {} }
 
         composeTestRule.onNodeWithText("66").assertIsDisplayed()
         composeTestRule.onNodeWithText("Harvard Square - Nubian Station").assertHasClickAction()
@@ -40,9 +40,7 @@ class RoutePickerRowTest {
                 type = RouteType.FERRY
             }
 
-        composeTestRule.setContent {
-            RoutePickerRow(RouteCardData.LineOrRoute.Route(route)) { tapped = true }
-        }
+        composeTestRule.setContent { RoutePickerRow(LineOrRoute.Route(route)) { tapped = true } }
 
         composeTestRule.onNodeWithText(route.longName).performClick()
         composeTestRule.waitForIdle()

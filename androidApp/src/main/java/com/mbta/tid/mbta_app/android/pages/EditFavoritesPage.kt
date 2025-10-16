@@ -52,6 +52,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -92,32 +93,37 @@ fun EditFavoritesPage(
             buttonColors = ButtonDefaults.key(),
             onClose = onClose,
         )
-        EditFavoritesList(state.staticRouteCardData, global) {
-            favoritesViewModel.updateFavorites(
-                mapOf(it to false),
-                EditFavoritesContext.Favorites,
-                it.direction,
-            )
-
-            toastViewModel.showToast(
-                ToastViewModel.Toast(
-                    getToastLabel(it),
-                    duration = ToastViewModel.Duration.Short,
-                    action =
-                        ToastViewModel.ToastAction.Custom(
-                            actionLabel = toastUndoLabel,
-                            onAction = {
-                                favoritesViewModel.updateFavorites(
-                                    mapOf(it to true),
-                                    EditFavoritesContext.Favorites,
-                                    it.direction,
-                                )
-                                toastViewModel.hideToast()
-                            },
-                        ),
+        EditFavoritesList(
+            state.staticRouteCardData,
+            global,
+            deleteFavorite = { deletedFavorite ->
+                val deletedSettings = state.favorites?.get(deletedFavorite) ?: FavoriteSettings()
+                favoritesViewModel.updateFavorites(
+                    mapOf(deletedFavorite to null),
+                    EditFavoritesContext.Favorites,
+                    deletedFavorite.direction,
                 )
-            )
-        }
+
+                toastViewModel.showToast(
+                    ToastViewModel.Toast(
+                        getToastLabel(deletedFavorite),
+                        duration = ToastViewModel.Duration.Short,
+                        action =
+                            ToastViewModel.ToastAction.Custom(
+                                actionLabel = toastUndoLabel,
+                                onAction = {
+                                    favoritesViewModel.updateFavorites(
+                                        mapOf(deletedFavorite to deletedSettings),
+                                        EditFavoritesContext.Favorites,
+                                        deletedFavorite.direction,
+                                    )
+                                    toastViewModel.hideToast()
+                                },
+                            ),
+                    )
+                )
+            },
+        )
     }
 }
 
@@ -148,7 +154,7 @@ private fun EditFavoritesList(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(routeCardData, key = { it.id }) {
+            items(routeCardData, key = { it.id.idText }) {
                 RouteCardContainer(
                     modifier = Modifier.animateItem(),
                     data = it,

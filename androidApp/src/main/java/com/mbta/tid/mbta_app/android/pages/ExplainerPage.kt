@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,6 +31,7 @@ import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.overRouteColor
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
@@ -56,7 +58,9 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
                 style = Typography.headline,
                 modifier = Modifier.weight(1f),
             )
-            ActionButton(ActionButtonKind.Close) { goBack() }
+            ActionButton(ActionButtonKind.Close, colors = ButtonDefaults.overRouteColor()) {
+                goBack()
+            }
         }
         Column(
             Modifier.padding(horizontal = 16.dp, vertical = 24.dp),

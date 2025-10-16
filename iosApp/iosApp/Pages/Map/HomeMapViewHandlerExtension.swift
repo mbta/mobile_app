@@ -36,13 +36,24 @@ extension HomeMapView {
         viewportProvider.updateCameraState(change.cameraState)
     }
 
-    func handleNavStackChange(navigationStack: [SheetNavigationStackEntry]) {
-        if let filter = navigationStack.lastStopDetailsFilter {
-            joinVehiclesChannel(routeId: filter.routeId, directionId: filter.directionId)
-        } else {
+    func handleNavStackChange(entry: SheetNavigationStackEntry) {
+        let filter: StopDetailsFilter? = switch entry {
+        case let .stopDetails(_, stopFilter, _):
+            stopFilter
+        case let .tripDetails(tripPageFilter):
+            tripPageFilter.stopFilter
+        default:
+            nil
+        }
+        guard let filter else {
             leaveVehiclesChannel()
             vehiclesData = []
+            return
         }
+        joinVehiclesChannel(
+            routeId: filter.routeId,
+            directionId: filter.directionId
+        )
     }
 
     func checkOnboardingLoaded() {
@@ -51,16 +62,7 @@ extension HomeMapView {
         }
     }
 
-    func joinVehiclesChannel(navStackEntry entry: SheetNavigationStackEntry) {
-        if case let .stopDetails(stopId: _, stopFilter: stopFilter, tripFilter: _) = entry, let stopFilter {
-            joinVehiclesChannel(
-                routeId: stopFilter.routeId,
-                directionId: stopFilter.directionId
-            )
-        }
-    }
-
-    func joinVehiclesChannel(routeId: String, directionId: Int32) {
+    func joinVehiclesChannel(routeId: LineOrRoute.Id, directionId: Int32) {
         leaveVehiclesChannel()
         vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
@@ -100,10 +102,19 @@ extension HomeMapView {
     }
 
     func handleTapVehicle(_ vehicle: Vehicle) {
-        guard let tripId = vehicle.tripId,
-              case let .stopDetails(_, stopFilter, tripFilter) = nearbyVM.navigationStack.lastSafe(),
-              stopFilter != nil || tripFilter?.tripId == tripId
-        else { return }
+        guard let tripId = vehicle.tripId else { return }
+        let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+        let (stopId, stopFilter, tripFilter): (String?, StopDetailsFilter?,
+                                               TripDetailsFilter?) = switch currentNavEntry {
+        case let .stopDetails(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter): (
+                stopId,
+                stopFilter,
+                tripFilter
+            )
+        case let .tripDetails(filter: filter): (filter.stopId, filter.stopFilter, filter.tripDetailsFilter)
+        default: (nil, nil, nil)
+        }
+        guard let stopId, let stopFilter else { return }
         let routeCard = routeCardDataState?.data?
             .first(where: { $0.lineOrRoute.containsRoute(routeId: vehicle.routeId) })
         let upcoming = routeCard?
@@ -111,10 +122,10 @@ extension HomeMapView {
             .flatMap(\.data)
             .flatMap(\.upcomingTrips)
             .first { upcoming in upcoming.trip.id == tripId }
-        let stopSequence = upcoming?.stopSequence
-        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id
+        let stopSequence = upcoming?.stopSequence ?? tripFilter?.stopSequence
+        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? stopFilter.routeId
 
-        if let routeId { analytics.tappedVehicle(routeId: routeId) }
+        analytics.tappedVehicle(routeId: routeId)
 
         let newTripFilter = TripDetailsFilter(
             tripId: tripId,
@@ -122,6 +133,13 @@ extension HomeMapView {
             stopSequence: stopSequence,
             selectionLock: true
         )
-        nearbyVM.navigationStack.lastTripDetailsFilter = newTripFilter
+        nearbyVM.pushNavEntry(.tripDetails(filter: .init(
+            tripId: tripId,
+            vehicleId: vehicle.id,
+            routeId: routeId,
+            directionId: stopFilter.directionId,
+            stopId: stopId,
+            stopSequence: stopSequence
+        )))
     }
 }

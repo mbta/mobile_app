@@ -7,8 +7,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.utils.TestData
@@ -28,7 +28,7 @@ class RoutePickerRootRowTest {
                 type = RouteType.HEAVY_RAIL
             }
 
-        composeTestRule.setContent { RoutePickerRootRow(RouteCardData.LineOrRoute.Route(route)) {} }
+        composeTestRule.setContent { RoutePickerRootRow(LineOrRoute.Route(route)) {} }
 
         composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
         composeTestRule.onNodeWithText("Red Line").assertHasClickAction()
@@ -40,9 +40,7 @@ class RoutePickerRootRowTest {
         val line = objects.getLine("line-Green")
         val routes = objects.routes.values.filter { it.lineId == line.id }.toSet()
 
-        composeTestRule.setContent {
-            RoutePickerRootRow(RouteCardData.LineOrRoute.Line(line, routes)) {}
-        }
+        composeTestRule.setContent { RoutePickerRootRow(LineOrRoute.Line(line, routes)) {} }
 
         composeTestRule.onNodeWithText("Green Line").assertIsDisplayed()
     }
@@ -59,7 +57,7 @@ class RoutePickerRootRowTest {
 
         var tapped = false
         composeTestRule.setContent {
-            RoutePickerRootRow(RouteCardData.LineOrRoute.Route(route)) { tapped = true }
+            RoutePickerRootRow(LineOrRoute.Route(route)) { tapped = true }
         }
 
         composeTestRule.waitForIdle()

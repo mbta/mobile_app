@@ -3,9 +3,9 @@ package com.mbta.tid.mbta_app.model.response
 import com.mbta.tid.mbta_app.map.MapTestDataHelper.global
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.GlobalMapData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
@@ -46,7 +46,7 @@ class GlobalResponseTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = stop.id,
                 )
@@ -87,7 +87,7 @@ class GlobalResponseTest {
                     Alert.InformedEntity.Activity.Exit,
                     Alert.InformedEntity.Activity.Ride,
                 ),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = "different stop",
             )
@@ -136,7 +136,7 @@ class GlobalResponseTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = childStop.id,
                 )
@@ -199,7 +199,7 @@ class GlobalResponseTest {
                         Alert.InformedEntity.Activity.Exit,
                         Alert.InformedEntity.Activity.Ride,
                     ),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = childStop1.id,
                 )
@@ -213,7 +213,7 @@ class GlobalResponseTest {
                 effect = Alert.Effect.ElevatorClosure
                 informedEntity(
                     listOf(),
-                    route = route.id,
+                    route = route.id.idText,
                     routeType = route.type,
                     stop = childStop2.id,
                 )
@@ -304,7 +304,7 @@ class GlobalResponseTest {
             effect = Alert.Effect.Suspension
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = child1Stop.id,
             )
@@ -314,7 +314,7 @@ class GlobalResponseTest {
                     Alert.InformedEntity.Activity.Exit,
                     Alert.InformedEntity.Activity.Ride,
                 ),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = parent1Stop.id,
             )
@@ -324,7 +324,7 @@ class GlobalResponseTest {
                     Alert.InformedEntity.Activity.Exit,
                     Alert.InformedEntity.Activity.Ride,
                 ),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = parent2Stop.id,
             )
@@ -334,7 +334,7 @@ class GlobalResponseTest {
                     Alert.InformedEntity.Activity.Exit,
                     Alert.InformedEntity.Activity.Ride,
                 ),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = child2Stop.id,
             )
@@ -344,13 +344,13 @@ class GlobalResponseTest {
                     Alert.InformedEntity.Activity.Exit,
                     Alert.InformedEntity.Activity.Ride,
                 ),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = parent3Stop.id,
             )
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
-                route = route.id,
+                route = route.id.idText,
                 routeType = route.type,
                 stop = child3Stop.id,
             )
@@ -407,8 +407,8 @@ class GlobalResponseTest {
         val alert =
             objects.alert {
                 informedEntity(listOf(), stop = stop1.id)
-                informedEntity(listOf(), route = route1.id, stop = stop2.id)
-                informedEntity(listOf(), route = route2.id, stop = stop3.id)
+                informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
+                informedEntity(listOf(), route = route2.id.idText, stop = stop3.id)
             }
 
         val affectedStops = GlobalResponse(objects).getAlertAffectedStops(alert, listOf(route1))
@@ -425,10 +425,10 @@ class GlobalResponseTest {
         val stop2 = objects.stop()
         val alert =
             objects.alert {
-                informedEntity(listOf(), route = route1.id, stop = stop1.id)
-                informedEntity(listOf(), route = route1.id, stop = stop2.id)
-                informedEntity(listOf(), route = route2.id, stop = stop1.id)
-                informedEntity(listOf(), route = route2.id, stop = stop2.id)
+                informedEntity(listOf(), route = route1.id.idText, stop = stop1.id)
+                informedEntity(listOf(), route = route1.id.idText, stop = stop2.id)
+                informedEntity(listOf(), route = route2.id.idText, stop = stop1.id)
+                informedEntity(listOf(), route = route2.id.idText, stop = stop2.id)
             }
 
         val affectedStops =
@@ -442,12 +442,12 @@ class GlobalResponseTest {
 
         val line = objects.line()
 
-        val route = objects.route { lineId = line.id }
+        val route = objects.route { lineId = line.id.idText }
 
         val shuttleRoute =
             objects.route {
                 id = "Shuttle-1"
-                lineId = line.id
+                lineId = line.id.idText
             }
 
         // not included b/c no line
@@ -464,9 +464,9 @@ class GlobalResponseTest {
         // Test data does not include mattapan trolley or blue line
         assertEquals(
             listOf(
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Red")),
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
-                RouteCardData.LineOrRoute.Line(
+                LineOrRoute.Route(objects.getRoute("Red")),
+                LineOrRoute.Route(objects.getRoute("Orange")),
+                LineOrRoute.Line(
                     objects.getLine("line-Green"),
                     setOf(
                         objects.getRoute("Green-B"),
@@ -550,13 +550,10 @@ class GlobalResponseTest {
         val objects = TestData.clone()
 
         val allPatternsForStop = global.getPatternsFor("place-haecl")
-        assertTrue(allPatternsForStop.map { it.routeId }.any { it != "Orange" })
+        assertTrue(allPatternsForStop.map { it.routeId }.any { it.idText != "Orange" })
         val orangePatterns =
-            global.getPatternsFor(
-                "place-haecl",
-                RouteCardData.LineOrRoute.Route(objects.getRoute("Orange")),
-            )
-        assertFalse(orangePatterns.map { it.routeId }.any { it != "Orange" })
+            global.getPatternsFor("place-haecl", LineOrRoute.Route(objects.getRoute("Orange")))
+        assertFalse(orangePatterns.map { it.routeId }.any { it.idText != "Orange" })
     }
 
     @Test
@@ -564,11 +561,11 @@ class GlobalResponseTest {
         val objects = TestData.clone()
 
         val allPatternsForStop = global.getPatternsFor("place-haecl")
-        assertTrue(allPatternsForStop.map { it.routeId }.any { it == "Orange" })
+        assertTrue(allPatternsForStop.map { it.routeId }.any { it.idText == "Orange" })
         val greenPatterns =
             global.getPatternsFor(
                 "place-haecl",
-                RouteCardData.LineOrRoute.Line(
+                LineOrRoute.Line(
                     objects.getLine("line-Green"),
                     setOf(
                         objects.getRoute("Green-B"),
@@ -578,7 +575,7 @@ class GlobalResponseTest {
                     ),
                 ),
             )
-        assertTrue(greenPatterns.map { it.routeId }.all { it.startsWith("Green-") })
+        assertTrue(greenPatterns.map { it.routeId }.all { it.idText.startsWith("Green-") })
     }
 
     @Test
@@ -587,32 +584,32 @@ class GlobalResponseTest {
         val ungroupedLine = objects.line()
         val route1 = objects.route()
         val route2 = objects.route()
-        val route3 = objects.route { lineId = ungroupedLine.id }
+        val route3 = objects.route { lineId = ungroupedLine.id.idText }
 
         val globalData = GlobalResponse(objects)
 
-        assertEquals(RouteCardData.LineOrRoute.Route(route1), globalData.getLineOrRoute(route1.id))
-        assertEquals(RouteCardData.LineOrRoute.Route(route2), globalData.getLineOrRoute(route2.id))
-        assertEquals(RouteCardData.LineOrRoute.Route(route3), globalData.getLineOrRoute(route3.id))
+        assertEquals(LineOrRoute.Route(route1), globalData.getLineOrRoute(route1.id))
+        assertEquals(LineOrRoute.Route(route2), globalData.getLineOrRoute(route2.id))
+        assertEquals(LineOrRoute.Route(route3), globalData.getLineOrRoute(route3.id))
     }
 
     @Test
     fun `getLineOrRoute gets line excluding shuttles`() {
         val objects = ObjectCollectionBuilder()
         val line = objects.line { id = "line-Green" }
-        val route1 = objects.route { lineId = line.id }
-        val route2 = objects.route { lineId = line.id }
+        val route1 = objects.route { lineId = line.id.idText }
+        val route2 = objects.route { lineId = line.id.idText }
         val shuttleRoute =
             objects.route {
                 id = "Shuttle-$id"
-                lineId = line.id
+                lineId = line.id.idText
             }
         assertTrue(shuttleRoute.isShuttle)
 
         val globalData = GlobalResponse(objects)
 
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(line.id),
         )
     }
@@ -621,17 +618,17 @@ class GlobalResponseTest {
     fun `getLineOrRoute gets line if route in grouped line`() {
         val objects = ObjectCollectionBuilder()
         val line = objects.line { id = "line-Green" }
-        val route1 = objects.route { lineId = line.id }
-        val route2 = objects.route { lineId = line.id }
+        val route1 = objects.route { lineId = line.id.idText }
+        val route2 = objects.route { lineId = line.id.idText }
 
         val globalData = GlobalResponse(objects)
 
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(route1.id),
         )
         assertEquals(
-            RouteCardData.LineOrRoute.Line(line, setOf(route1, route2)),
+            LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(route2.id),
         )
     }

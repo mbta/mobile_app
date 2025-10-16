@@ -23,12 +23,12 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
-import com.mbta.tid.mbta_app.model.RouteCardData
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.RouteType
 
 @Composable
 fun TransitHeader(
-    transit: RouteCardData.LineOrRoute,
+    transit: LineOrRoute,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
     val (modeIcon, modeDescription) = routeIcon(transit.sortRoute)

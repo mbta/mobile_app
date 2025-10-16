@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -40,6 +41,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
@@ -125,7 +127,7 @@ fun StopDetailsUnfilteredRoutesView(
                         }
                     }
                 }
-                items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
+                items(routeCardData, key = { it.lineOrRoute.id.idText }) { routeCardData ->
                     RouteCard(
                         routeCardData,
                         globalData,
@@ -198,8 +200,8 @@ private fun StopDetailsRoutesViewPreview() {
 
     val globalData = GlobalResponse(objects)
 
-    val lineOrRoute1 = RouteCardData.LineOrRoute.Route(route1)
-    val lineOrRoute2 = RouteCardData.LineOrRoute.Route(route2)
+    val lineOrRoute1 = LineOrRoute.Route(route1)
+    val lineOrRoute2 = LineOrRoute.Route(route2)
     val context = RouteCardData.Context.StopDetailsUnfiltered
     val routeCardData =
         listOf(
@@ -273,7 +275,14 @@ private fun StopDetailsRoutesViewPreview() {
             ),
         )
 
-    val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+    val koin = koinApplication {
+        modules(
+            module {
+                single<Analytics> { MockAnalytics() }
+                single<SettingsCache> { SettingsCache(MockSettingsRepository()) }
+            }
+        )
+    }
     val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()
 
     MyApplicationTheme {

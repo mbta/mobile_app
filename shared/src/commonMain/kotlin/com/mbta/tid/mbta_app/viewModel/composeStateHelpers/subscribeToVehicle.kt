@@ -16,8 +16,8 @@ import org.koin.compose.koinInject
 @Composable
 internal fun subscribeToVehicle(
     vehicleId: String?,
-    active: Boolean,
     errorKey: String,
+    active: Boolean,
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     vehicleRepository: IVehicleRepository = koinInject(),
 ): Vehicle? {

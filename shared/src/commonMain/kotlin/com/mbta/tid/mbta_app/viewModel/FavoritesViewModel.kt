@@ -8,13 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -22,12 +21,15 @@ import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
 import io.github.dellisd.spatialk.geojson.Position
+import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
+import kotlin.native.ShouldRefineInSwift
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@OptIn(ExperimentalObjCRefinement::class)
 public interface IFavoritesViewModel {
     public val models: StateFlow<FavoritesViewModel.State>
 
@@ -45,8 +47,9 @@ public interface IFavoritesViewModel {
 
     public fun setIsFirstExposureToNewFavorites(isFirst: Boolean)
 
+    @ShouldRefineInSwift
     public fun updateFavorites(
-        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
     )
@@ -56,7 +59,6 @@ public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
     private val sentryRepository: ISentryRepository,
-    private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
@@ -73,7 +75,7 @@ public class FavoritesViewModel(
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
 
         public data class UpdateFavorites(
-            val updatedFavorites: Map<RouteStopDirection, Boolean>,
+            val updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
             val context: EditFavoritesContext,
             val defaultDirection: Int,
         ) : Event
@@ -81,7 +83,7 @@ public class FavoritesViewModel(
 
     public data class State(
         val awaitingPredictionsAfterBackground: Boolean,
-        val favorites: Set<RouteStopDirection>?,
+        val favorites: Map<RouteStopDirection, FavoriteSettings>?,
         val shouldShowFirstTimeToast: Boolean = false,
         val routeCardData: List<RouteCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
@@ -101,7 +103,9 @@ public class FavoritesViewModel(
     @Composable
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
-        var favorites: Set<RouteStopDirection>? by remember { mutableStateOf(null) }
+        var favorites: Map<RouteStopDirection, FavoriteSettings>? by remember {
+            mutableStateOf(null)
+        }
 
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
@@ -116,7 +120,7 @@ public class FavoritesViewModel(
         val globalData = getGlobalData(errorKey)
         val stopIds =
             remember(favorites, globalData) {
-                val stops = favorites?.mapNotNull { globalData?.getStop(it.stop) }
+                val stops = favorites?.keys?.mapNotNull { globalData?.getStop(it.stop) }
                 stops?.flatMap { stop ->
                     stop.childStopIds.filter { globalData?.stops?.containsKey(it) ?: false } +
                         stop.id
@@ -136,8 +140,6 @@ public class FavoritesViewModel(
             hadOldPinnedRoutes = pinnedRoutesRepository.getPinnedRoutes().isNotEmpty()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
-            // first time seeing favorites, default to nearby going forward
-            tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
         }
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
@@ -186,7 +188,7 @@ public class FavoritesViewModel(
                         alerts,
                         now,
                         RouteCardData.Context.Favorites,
-                        favorites,
+                        favorites?.keys,
                         coroutineDispatcher,
                     )
                 loadedLocation = location
@@ -207,7 +209,7 @@ public class FavoritesViewModel(
                         // not depending on now because it only matters for testing
                         now,
                         location,
-                        favorites,
+                        favorites?.keys,
                         coroutineDispatcher,
                     )
             }
@@ -256,7 +258,7 @@ public class FavoritesViewModel(
     }
 
     override fun updateFavorites(
-        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
     ) {
@@ -264,6 +266,7 @@ public class FavoritesViewModel(
     }
 }
 
+@OptIn(ExperimentalObjCRefinement::class)
 public class MockFavoritesViewModel
 @DefaultArgumentInterop.Enabled
 constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State()) :
@@ -275,7 +278,8 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     public var onSetLocation: (Position?) -> Unit = {}
     public var onSetNow: (EasternTimeInstant) -> Unit = { _ -> }
     public var onSetIsFirstExposureToNewFavorites: (Boolean) -> Unit = { _ -> }
-    public var onUpdateFavorites: (Map<RouteStopDirection, Boolean>) -> Unit = { _ -> }
+    @ShouldRefineInSwift
+    public var onUpdateFavorites: (Map<RouteStopDirection, FavoriteSettings?>) -> Unit = { _ -> }
 
     override val models: MutableStateFlow<FavoritesViewModel.State> = MutableStateFlow(initialState)
 
@@ -308,7 +312,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     }
 
     override fun updateFavorites(
-        updatedFavorites: Map<RouteStopDirection, Boolean>,
+        updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
     ) {

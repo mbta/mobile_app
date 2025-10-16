@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.phoenix
 
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -84,13 +85,13 @@ class AlertsChannelTest {
                             listOf(
                                 Alert.InformedEntity(
                                     listOf(Alert.InformedEntity.Activity.Board),
-                                    route = "Green-D",
+                                    route = Route.Id("Green-D"),
                                     routeType = RouteType.LIGHT_RAIL,
                                     stop = "70511",
                                 ),
                                 Alert.InformedEntity(
                                     listOf(Alert.InformedEntity.Activity.Board),
-                                    route = "88",
+                                    route = Route.Id("88"),
                                     routeType = RouteType.BUS,
                                     stop = "place-lech",
                                 ),
@@ -164,7 +165,7 @@ class AlertsChannelTest {
                             listOf(
                                 Alert.InformedEntity(
                                     listOf(Alert.InformedEntity.Activity.Board),
-                                    route = "Red",
+                                    route = Route.Id("Red"),
                                     routeType = RouteType.HEAVY_RAIL,
                                     stop = "place-pktrm",
                                 )

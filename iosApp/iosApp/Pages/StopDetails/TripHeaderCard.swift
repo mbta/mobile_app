@@ -272,7 +272,7 @@ struct TripHeaderCard: View {
     }
 
     @ViewBuilder private var tripIndicator: some View {
-        VStack {
+        VStack(alignment: .trailing) {
             switch spec {
             case .finishingAnotherTrip, .noVehicle: if onTap != nil { InfoIcon() }
             case .vehicle:
@@ -352,7 +352,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             latitude: 0.0,
             longitude: 0.0,
             updatedAt: now.minus(seconds: 10),
-            routeId: "66",
+            routeId: .init("66"),
             stopId: "place-davis",
             tripId: trip.id
         )

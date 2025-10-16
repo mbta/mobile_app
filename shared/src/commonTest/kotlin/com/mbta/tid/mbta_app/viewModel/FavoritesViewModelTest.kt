@@ -7,27 +7,26 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
-import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
-import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.buildFavorites
 import dev.mokkery.MockMode
 import dev.mokkery.answering.repeat
 import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentially
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
-import dev.mokkery.verifySuspend
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.AfterTest
 import kotlin.test.Test
@@ -90,13 +89,10 @@ internal class FavoritesViewModelTest : KoinTest {
                 }
         }
 
-    val favorites =
-        Favorites(
-            setOf(
-                RouteStopDirection(route1.id, stop1.id, 0),
-                RouteStopDirection(route2.id, stop2.id, 1),
-            )
-        )
+    val favorites = buildFavorites {
+        routeStopDirection(route1.id, stop1.id, 0)
+        routeStopDirection(route2.id, stop2.id, 1)
+    }
 
     private fun setUpKoin(
         objects: ObjectCollectionBuilder = this.objects,
@@ -150,7 +146,7 @@ internal class FavoritesViewModelTest : KoinTest {
         try {
             val dispatcher = StandardTestDispatcher(testScheduler)
             setUpKoin(objects, dispatcher) {
-                favorites = MockFavoritesRepository(Favorites(emptySet()))
+                favorites = MockFavoritesRepository(Favorites(emptyMap()))
             }
         } catch (e: Exception) {
             TODO("Not yet implemented")
@@ -174,7 +170,7 @@ internal class FavoritesViewModelTest : KoinTest {
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
-                    favorites = emptySet(),
+                    favorites = emptyMap(),
                     routeCardData = null,
                     staticRouteCardData = null,
                     loadedLocation = null,
@@ -184,7 +180,7 @@ internal class FavoritesViewModelTest : KoinTest {
             assertEquals(
                 FavoritesViewModel.State(
                     awaitingPredictionsAfterBackground = false,
-                    favorites = emptySet(),
+                    favorites = emptyMap(),
                     routeCardData = emptyList(),
                     staticRouteCardData = emptyList(),
                     loadedLocation = null,
@@ -192,36 +188,6 @@ internal class FavoritesViewModelTest : KoinTest {
                 awaitItem(),
             )
         }
-    }
-
-    @Test
-    fun `sets default tab to nearby`() = runTest {
-        val mockTabPreferencesRepo = mock<ITabPreferencesRepository>(MockMode.autofill)
-
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        setUpKoin(objects, dispatcher) {
-            favorites = MockFavoritesRepository(Favorites(emptySet()))
-            tabPreferences = mockTabPreferencesRepo
-        }
-        val viewModel: FavoritesViewModel = get()
-        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
-        viewModel.setNow(EasternTimeInstant.now())
-        viewModel.setLocation(stop1.position)
-
-        testViewModelFlow(viewModel).test {
-            awaitItemSatisfying {
-                it ==
-                    FavoritesViewModel.State(
-                        awaitingPredictionsAfterBackground = false,
-                        favorites = emptySet(),
-                        routeCardData = emptyList(),
-                        staticRouteCardData = emptyList(),
-                        loadedLocation = null,
-                    )
-            }
-        }
-
-        verifySuspend { mockTabPreferencesRepo.setDefaultTab(DefaultTab.Nearby) }
     }
 
     @Test
@@ -242,14 +208,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticData =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     directionId = 0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -268,14 +234,14 @@ internal class FavoritesViewModelTest : KoinTest {
                     now,
                 ),
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     directionId = 1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -297,14 +263,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedRealtimeData =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     directionId = 0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -331,14 +297,14 @@ internal class FavoritesViewModelTest : KoinTest {
                     now,
                 ),
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     directionId = 1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -406,8 +372,8 @@ internal class FavoritesViewModelTest : KoinTest {
     fun `reloads favorites`() = runTest {
         val now = EasternTimeInstant.now()
 
-        val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
-        val favoritesAfter = Favorites(setOf(RouteStopDirection(route2.id, stop2.id, 1)))
+        val favoritesBefore = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+        val favoritesAfter = buildFavorites { routeStopDirection(route2.id, stop2.id, 1) }
 
         val favoritesRepo = MockFavoritesRepository(favoritesBefore)
 
@@ -424,14 +390,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataBefore =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -453,14 +419,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataAfter =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route2),
+                    LineOrRoute.Route(route2),
                     listOf(
                         RouteCardData.RouteStopData(
                             route2,
                             stop2,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route2),
+                                    LineOrRoute.Route(route2),
                                     stop2,
                                     1,
                                     listOf(patterns.getValue(route2).getValue(1)),
@@ -522,8 +488,8 @@ internal class FavoritesViewModelTest : KoinTest {
     fun `updates favorites`() = runTest {
         val now = EasternTimeInstant.now()
 
-        val favoritesBefore = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
-        val favoritesAfter = Favorites(setOf())
+        val favoritesBefore = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+        val favoritesAfter = Favorites(emptyMap())
 
         val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
 
@@ -546,14 +512,14 @@ internal class FavoritesViewModelTest : KoinTest {
         val expectedStaticDataBefore =
             listOf(
                 RouteCardData(
-                    RouteCardData.LineOrRoute.Route(route1),
+                    LineOrRoute.Route(route1),
                     listOf(
                         RouteCardData.RouteStopData(
                             route1,
                             stop1,
                             listOf(
                                 RouteCardData.Leaf(
-                                    RouteCardData.LineOrRoute.Route(route1),
+                                    LineOrRoute.Route(route1),
                                     stop1,
                                     0,
                                     listOf(patterns.getValue(route1).getValue(0)),
@@ -588,7 +554,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 },
             )
             viewModel.updateFavorites(
-                mapOf(RouteStopDirection(route1.id, stop1.id, 0) to false),
+                mapOf(RouteStopDirection(route1.id, stop1.id, 0) to null),
                 EditFavoritesContext.Favorites,
                 0,
             )
@@ -773,7 +739,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 onSetUserProperty = { event, count -> analyticsLogged = Pair(event, count) }
             )
 
-        val initialFavorites = Favorites(setOf(RouteStopDirection(route1.id, stop1.id, 0)))
+        val initialFavorites = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
         val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
         everySuspend { favoritesRepo.getFavorites() } returns (initialFavorites)
 
@@ -795,21 +761,15 @@ internal class FavoritesViewModelTest : KoinTest {
     fun `does not load new route card data when editing`() = runTest {
         val now = EasternTimeInstant.now()
 
-        val favoritesBefore =
-            Favorites(
-                setOf(
-                    RouteStopDirection(route1.id, stop1.id, 0),
-                    RouteStopDirection(route2.id, stop2.id, 1),
-                    RouteStopDirection(route2.id, stop3.id, 1),
-                )
-            )
-        val favoritesAfter =
-            Favorites(
-                setOf(
-                    RouteStopDirection(route1.id, stop1.id, 0),
-                    RouteStopDirection(route2.id, stop2.id, 1),
-                )
-            )
+        val favoritesBefore = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0)
+            routeStopDirection(route2.id, stop2.id, 1)
+            routeStopDirection(route2.id, stop3.id, 1)
+        }
+        val favoritesAfter = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0)
+            routeStopDirection(route2.id, stop2.id, 1)
+        }
 
         val favoritesRepo = MockFavoritesRepository(favoritesBefore)
 
@@ -830,7 +790,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop1,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route1),
+                        LineOrRoute.Route(route1),
                         stop1,
                         0,
                         listOf(patterns.getValue(route1).getValue(0)),
@@ -852,7 +812,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop2,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route2),
+                        LineOrRoute.Route(route2),
                         stop2,
                         1,
                         listOf(patterns.getValue(route2).getValue(1)),
@@ -874,7 +834,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 stop3,
                 listOf(
                     RouteCardData.Leaf(
-                        RouteCardData.LineOrRoute.Route(route2),
+                        LineOrRoute.Route(route2),
                         stop3,
                         1,
                         listOf(patterns.getValue(route2).getValue(1)),
@@ -889,15 +849,10 @@ internal class FavoritesViewModelTest : KoinTest {
                 ),
                 globalData,
             )
-        val routeCard1Data =
-            RouteCardData(RouteCardData.LineOrRoute.Route(route1), listOf(stop1Data), now)
+        val routeCard1Data = RouteCardData(LineOrRoute.Route(route1), listOf(stop1Data), now)
 
         val routeCard2Data =
-            RouteCardData(
-                RouteCardData.LineOrRoute.Route(route2),
-                listOf(stop3Data, stop2Data),
-                now,
-            )
+            RouteCardData(LineOrRoute.Route(route2), listOf(stop3Data, stop2Data), now)
 
         val expectedStaticDataBefore = listOf(routeCard2Data, routeCard1Data)
 

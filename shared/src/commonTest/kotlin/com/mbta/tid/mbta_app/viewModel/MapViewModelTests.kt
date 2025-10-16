@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -140,7 +141,7 @@ internal class MapViewModelTests : KoinTest {
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
-            val stopFilter = StopDetailsFilter("", 0)
+            val stopFilter = StopDetailsFilter(Route.Id(""), 0)
             val tripFilter = TripDetailsFilter("", "", 0)
             viewModel.navChanged(
                 SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
@@ -215,8 +216,43 @@ internal class MapViewModelTests : KoinTest {
                 MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
                 awaitItem(),
             )
-            viewModel.navChanged(SheetRoutes.RouteDetails("", RouteDetailsContext.Details))
+            viewModel.navChanged(
+                SheetRoutes.RouteDetails(Route.Id(""), RouteDetailsContext.Details)
+            )
             assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+        }
+    }
+
+    @Test
+    fun selectedVehicleUpdates() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+        val viewportProvider = MockViewportManager()
+        val viewModel: MapViewModel = get()
+        val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val tripDetailsFilter = TripDetailsFilter("trip", vehicle.id, null, false)
+        testViewModelFlow(viewModel).test {
+            viewModel.setViewportManager(viewportProvider)
+            viewModel.densityChanged(1f)
+            assertEquals(MapViewModel.State.Overview, awaitItem())
+            val stop = TestData.stops["70113"]!!
+            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, false)
+            assertEquals(
+                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
+                awaitItem(),
+            )
+            val updatedVehicle = vehicle.copy(latitude = 0.1, longitude = 0.2)
+            viewModel.selectedVehicleUpdated(updatedVehicle, false)
+            assertEquals(
+                MapViewModel.State.TripSelected(
+                    stop,
+                    null,
+                    tripDetailsFilter,
+                    updatedVehicle,
+                    false,
+                ),
+                awaitItem(),
+            )
         }
     }
 
@@ -242,7 +278,7 @@ internal class MapViewModelTests : KoinTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                         stop = it.id,
-                        route = "Green-B",
+                        route = Route.Id("Green-B"),
                     )
                 )
             }
@@ -296,7 +332,7 @@ internal class MapViewModelTests : KoinTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                         stop = it.id,
-                        route = "Green-B",
+                        route = Route.Id("Green-B"),
                     )
                 )
             }
@@ -444,7 +480,7 @@ internal class MapViewModelTests : KoinTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                         stop = it.id,
-                        route = "Green-B",
+                        route = Route.Id("Green-B"),
                     )
                 )
             }

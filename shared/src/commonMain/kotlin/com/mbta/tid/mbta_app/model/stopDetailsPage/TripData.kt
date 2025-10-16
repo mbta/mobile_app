@@ -15,4 +15,10 @@ public data class TripData(
     val tripPredictions: PredictionsStreamDataResponse?,
     val tripPredictionsLoaded: Boolean = false,
     val vehicle: Vehicle?,
-)
+) {
+    public val vehicleOnOtherTrip: Boolean =
+        (trip.id != vehicle?.tripId || trip.directionId != vehicle.directionId)
+}
+
+public val TripData?.vehicleOnOtherTrip: Boolean
+    get() = this != null && vehicleOnOtherTrip

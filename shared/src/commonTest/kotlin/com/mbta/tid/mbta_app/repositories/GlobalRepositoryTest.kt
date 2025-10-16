@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.mocks.mockJsonPersistence
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LocationType
@@ -12,8 +13,6 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
-import com.mbta.tid.mbta_app.utils.MockSystemPaths
-import com.mbta.tid.mbta_app.utils.SystemPaths
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -25,8 +24,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlinx.coroutines.runBlocking
-import okio.FileSystem
-import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -45,92 +42,92 @@ class GlobalRepositoryTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-{
-  "facilities": {
-    "808": {
-      "id": "808",
-      "type": "elevator",
-      "long_name": "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
-      "short_name": "Red Line center platform to Government Center & North platform, Winter Street Concourse"
-    }
-  },
-  "lines": {
-    "line-Green": {
-      "id": "line-Green",
-      "color": "00843D",
-      "long_name": "Green Line",
-      "short_name": "",
-      "sort_order": 10032,
-      "text_color": "FFFFFF"
-    }
-  },
-  "routes": {
-    "Shuttle-AirportGovernmentCenterLocal": {
-      "id": "Shuttle-AirportGovernmentCenterLocal",
-      "type": "bus",
-      "color": "FFC72C",
-      "direction_names": [
-        "West",
-        "East"
-      ],
-      "direction_destinations": [
-        "Bowdoin",
-        "Wonderland"
-      ],
-      "listed_route" : false,
-      "long_name": "Airport - Government Center (Local)",
-      "short_name": "Blue Line Shuttle",
-      "sort_order": 60208,
-      "text_color": "000000",
-      "route_pattern_ids": null
-    }
-  },
-  "route_patterns": {
-    "39-3-0": {
-      "id": "39-3-0",
-      "name": "Back Bay Station - Forest Hills Station",
-      "direction_id": 0,
-      "route_id": "39",
-      "sort_order": 503900000,
-      "canonical": false,
-      "typicality": "typical",
-      "representative_trip_id": "61945832"
-    }
-  },
-  "stops": {
-    "3992": {
-      "id": "3992",
-      "name": "S Franklin St @ Emery St",
-      "longitude": -71.011556,
-      "latitude": 42.125615,
-      "child_stop_ids": [],
-      "connecting_stop_ids": [],
-      "location_type": "stop",
-      "vehicle_type": "bus"
-    }
-  },
-  "trips": {
-    "62145526_2": {
-      "id": "62145526_2",
-      "direction_id": 0,
-      "route_id": "37",
-      "route_pattern_id": "37-D-0",
-      "stop_ids": [
-        "10642",
-        "596"
-      ],
-      "headsign": "LaGrange & Corey",
-      "shape_id": "370137-2"
-    }
-  },
-  "pattern_ids_by_stop": {
-    "3992": [
-      "230-3-1",
-      "230-5-1"
-    ]
-  }
-}
-                    """
+                        {
+                          "facilities": {
+                            "808": {
+                              "id": "808",
+                              "type": "elevator",
+                              "long_name": "Park Street Elevator 808 (Red Line center platform to Government Center & North platform, Winter Street Concourse)",
+                              "short_name": "Red Line center platform to Government Center & North platform, Winter Street Concourse"
+                            }
+                          },
+                          "lines": {
+                            "line-Green": {
+                              "id": "line-Green",
+                              "color": "00843D",
+                              "long_name": "Green Line",
+                              "short_name": "",
+                              "sort_order": 10032,
+                              "text_color": "FFFFFF"
+                            }
+                          },
+                          "routes": {
+                            "Shuttle-AirportGovernmentCenterLocal": {
+                              "id": "Shuttle-AirportGovernmentCenterLocal",
+                              "type": "bus",
+                              "color": "FFC72C",
+                              "direction_names": [
+                                "West",
+                                "East"
+                              ],
+                              "direction_destinations": [
+                                "Bowdoin",
+                                "Wonderland"
+                              ],
+                              "listed_route" : false,
+                              "long_name": "Airport - Government Center (Local)",
+                              "short_name": "Blue Line Shuttle",
+                              "sort_order": 60208,
+                              "text_color": "000000",
+                              "route_pattern_ids": null
+                            }
+                          },
+                          "route_patterns": {
+                            "39-3-0": {
+                              "id": "39-3-0",
+                              "name": "Back Bay Station - Forest Hills Station",
+                              "direction_id": 0,
+                              "route_id": "39",
+                              "sort_order": 503900000,
+                              "canonical": false,
+                              "typicality": "typical",
+                              "representative_trip_id": "61945832"
+                            }
+                          },
+                          "stops": {
+                            "3992": {
+                              "id": "3992",
+                              "name": "S Franklin St @ Emery St",
+                              "longitude": -71.011556,
+                              "latitude": 42.125615,
+                              "child_stop_ids": [],
+                              "connecting_stop_ids": [],
+                              "location_type": "stop",
+                              "vehicle_type": "bus"
+                            }
+                          },
+                          "trips": {
+                            "62145526_2": {
+                              "id": "62145526_2",
+                              "direction_id": 0,
+                              "route_id": "37",
+                              "route_pattern_id": "37-D-0",
+                              "stop_ids": [
+                                "10642",
+                                "596"
+                              ],
+                              "headsign": "LaGrange & Corey",
+                              "shape_id": "370137-2"
+                            }
+                          },
+                          "pattern_ids_by_stop": {
+                            "3992": [
+                              "230-3-1",
+                              "230-5-1"
+                            ]
+                          }
+                        }
+                                            """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
@@ -142,8 +139,7 @@ class GlobalRepositoryTest : KoinTest {
             modules(
                 module {
                     single { MobileBackendClient(mockEngine, AppVariant.Staging) }
-                    single<SystemPaths> { MockSystemPaths(data = "data", cache = "cache") }
-                    single<FileSystem> { FakeFileSystem() }
+                    single { mockJsonPersistence() }
                 }
             )
         }
@@ -162,7 +158,7 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val line =
                 Line(
-                    id = "line-Green",
+                    id = Line.Id("line-Green"),
                     color = "00843D",
                     longName = "Green Line",
                     shortName = "",
@@ -171,7 +167,7 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val route =
                 Route(
-                    id = "Shuttle-AirportGovernmentCenterLocal",
+                    id = Route.Id("Shuttle-AirportGovernmentCenterLocal"),
                     type = RouteType.BUS,
                     color = "FFC72C",
                     directionNames = listOf("West", "East"),
@@ -188,7 +184,7 @@ class GlobalRepositoryTest : KoinTest {
                     id = "39-3-0",
                     name = "Back Bay Station - Forest Hills Station",
                     directionId = 0,
-                    routeId = "39",
+                    routeId = Route.Id("39"),
                     sortOrder = 503900000,
                     typicality = RoutePattern.Typicality.Typical,
                     representativeTripId = "61945832",
@@ -208,7 +204,7 @@ class GlobalRepositoryTest : KoinTest {
                 Trip(
                     id = "62145526_2",
                     directionId = 0,
-                    routeId = "37",
+                    routeId = Route.Id("37"),
                     routePatternId = "37-D-0",
                     stopIds = listOf("10642", "596"),
                     headsign = "LaGrange & Corey",
@@ -217,9 +213,9 @@ class GlobalRepositoryTest : KoinTest {
             val expectedResponse =
                 GlobalResponse(
                     facilities = mapOf("808" to facility),
-                    lines = mapOf("line-Green" to line),
+                    lines = mapOf(Line.Id("line-Green") to line),
                     patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
-                    routes = mapOf("Shuttle-AirportGovernmentCenterLocal" to route),
+                    routes = mapOf(Route.Id("Shuttle-AirportGovernmentCenterLocal") to route),
                     routePatterns = mapOf("39-3-0" to routePattern),
                     stops = mapOf("3992" to stop),
                     trips = mapOf("62145526_2" to trip),

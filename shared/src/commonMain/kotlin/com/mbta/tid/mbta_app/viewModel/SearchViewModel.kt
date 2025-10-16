@@ -11,6 +11,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePillSpec
@@ -140,11 +141,18 @@ public class SearchViewModel(
         }
     }
 
-    public data class RouteResult(val id: String, val name: String, val routePill: RoutePillSpec) {
+    public data class RouteResult(
+        val id: LineOrRoute.Id,
+        val name: String,
+        val routePill: RoutePillSpec,
+    ) {
         public companion object {
-            public fun forLineOrRoute(objectId: String, globalData: GlobalResponse?): RouteResult? {
-                val route = globalData?.getRoute(objectId)
-                val line = globalData?.getLine(objectId)
+            public fun forLineOrRoute(
+                objectId: LineOrRoute.Id,
+                globalData: GlobalResponse?,
+            ): RouteResult? {
+                val route = globalData?.getRoute(objectId as? Route.Id)
+                val line = globalData?.getLine(objectId as? Line.Id)
 
                 val routePillSpec =
                     RoutePillSpec(
@@ -198,8 +206,8 @@ public class SearchViewModel(
                                     data.data.routes.mapNotNull {
                                         RouteResult.forLineOrRoute(
                                             when {
-                                                it.id == "Green" -> "line-Green"
-                                                else -> it.id
+                                                it.id == "Green" -> Line.Id("line-Green")
+                                                else -> Route.Id(it.id)
                                             },
                                             globalData,
                                         )

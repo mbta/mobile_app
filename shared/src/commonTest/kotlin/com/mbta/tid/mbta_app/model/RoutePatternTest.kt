@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RouteCardData.LineOrRoute
 import com.mbta.tid.mbta_app.model.RoutePattern.PatternsForStop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlin.test.Test

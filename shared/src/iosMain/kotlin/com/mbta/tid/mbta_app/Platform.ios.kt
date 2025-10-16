@@ -10,6 +10,8 @@ internal class IOSPlatform : Platform {
         UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
     override val httpClientEngine: HttpClientEngine
         get() = Darwin.create()
+
+    override val type: PlatformType = PlatformType.iOS
 }
 
 internal actual fun getPlatform(): Platform = IOSPlatform()

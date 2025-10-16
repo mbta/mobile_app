@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.model.RouteCardData.LineOrRoute
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -14,8 +13,8 @@ internal constructor(
     @SerialName("sort_order") val sortOrder: Int,
     val typicality: Typicality?,
     @SerialName("representative_trip_id") val representativeTripId: String,
-    @SerialName("route_id") val routeId: String,
-) : Comparable<RoutePattern>, BackendObject {
+    @SerialName("route_id") val routeId: Route.Id,
+) : Comparable<RoutePattern>, BackendObject<String> {
     @Serializable
     public enum class Typicality {
         @SerialName("typical") Typical,

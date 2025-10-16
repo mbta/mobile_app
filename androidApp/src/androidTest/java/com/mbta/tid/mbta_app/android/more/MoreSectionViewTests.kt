@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.SharedString
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -25,7 +26,8 @@ class MoreSectionViewTests {
                 section =
                     MoreSection(
                         MoreSection.Category.Settings,
-                        listOf(MoreItem.Toggle("Toggle 1", Settings.HideMaps)),
+                        SharedString.FeatureFlagsSection,
+                        listOf(MoreItem.Toggle(SharedString.MapDisplay, Settings.HideMaps)),
                     ),
                 settingsCache =
                     SettingsCache(
@@ -34,8 +36,8 @@ class MoreSectionViewTests {
             )
         }
 
-        composeTestRule.onNodeWithText("Settings").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Toggle 1").performClick()
+        composeTestRule.onNodeWithText("Feature Flags").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Map Display").performClick()
         composeTestRule.waitForIdle()
 
         assertTrue { toggleCallbackCalled }

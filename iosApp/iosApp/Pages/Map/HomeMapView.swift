@@ -19,8 +19,10 @@ struct HomeMapView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     var routeCardDataVM: IRouteCardDataViewModel
     @ObservedObject var viewportProvider: ViewportProvider
+    var tripDetailsVM: ITripDetailsViewModel
 
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var errorBannerRepository: IErrorBannerStateRepository
 
@@ -44,6 +46,10 @@ struct HomeMapView: View {
             && !nearbyVM.isTargeting
     }
 
+    private var allowTargeting: Bool {
+        nearbyVM.navigationStack.lastSafe().allowTargeting
+    }
+
     init(
         contentVM: ContentViewModel,
         mapVM: IMapViewModel,
@@ -56,7 +62,8 @@ struct HomeMapView: View {
         locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
         globalMapData _: GlobalMapData? = nil,
-        selectedVehicle: Binding<Vehicle?>
+        selectedVehicle: Binding<Vehicle?>,
+        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
     ) {
         self.contentVM = contentVM
         self.mapVM = mapVM
@@ -66,6 +73,7 @@ struct HomeMapView: View {
         self.errorBannerRepository = errorBannerRepository
         self.vehiclesData = vehiclesData
         self.vehiclesRepository = vehiclesRepository
+        self.tripDetailsVM = tripDetailsVM
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
         _selectedVehicle = selectedVehicle
@@ -74,7 +82,7 @@ struct HomeMapView: View {
     var body: some View {
         realtimeResponsiveMap
             .overlay(alignment: .center) {
-                if nearbyVM.isTargeting {
+                if nearbyVM.isTargeting, allowTargeting {
                     crosshairs
                 }
             }
@@ -85,19 +93,22 @@ struct HomeMapView: View {
                 }
             }
             .onChange(of: mapVMState) { state in
-                let filteredVehicle = nearbyVM.navigationStack.lastTripDetailsFilter?.vehicleId
-                if case let .tripSelected(tripState) = onEnum(of: state),
-                   filteredVehicle == tripState.vehicle?.id {
-                    selectedVehicle = tripState.vehicle
-                } else {
-                    selectedVehicle = nil
+                var vehicle: Vehicle? = nil
+                if case let .tripSelected(tripState) = onEnum(of: state) {
+                    vehicle = tripState.vehicle
                 }
+
+                // If the selected vehicle already matches the vehicle filter, don't set it to nil
+                let skipSettingVehicle = selectedVehicle?.id == nearbyVM.navigationStack.lastSafe()
+                    .vehicleId() && vehicle == nil
+                guard !skipSettingVehicle else { return }
+                selectedVehicle = vehicle
             }
             .onChange(of: nearbyVM.navigationStack) { navStack in
                 Task {
-                    let currentNavEntry = navStack.lastSafe().toSheetRoute()
-                    mapVM.navChanged(currentNavEntry: currentNavEntry)
-                    handleNavStackChange(navigationStack: navStack)
+                    let currentNavEntry = navStack.lastSafe()
+                    mapVM.navChanged(currentNavEntry: currentNavEntry.toSheetRoute())
+                    handleNavStackChange(entry: currentNavEntry)
                 }
             }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
@@ -131,11 +142,25 @@ struct HomeMapView: View {
             .withScenePhaseHandlers(
                 onActive: {
                     let lastNavEntry = nearbyVM.navigationStack.lastSafe()
-                    joinVehiclesChannel(navStackEntry: lastNavEntry)
+                    handleNavStackChange(entry: lastNavEntry)
                 },
                 onInactive: leaveVehiclesChannel,
                 onBackground: leaveVehiclesChannel
             )
+            .onChange(of: vehiclesData) { newVehicleData in
+                guard let newVehicleData else { return }
+                mapVM.vehiclesChanged(vehicles: newVehicleData)
+            }
+            .task {
+                for await vehicle in tripDetailsVM.selectedVehicleUpdates {
+                    let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+                    let follow = switch currentNavEntry {
+                    case .tripDetails: viewportProvider.isVehicleOverview
+                    default: false
+                    }
+                    mapVM.selectedVehicleUpdated(vehicle: vehicle, follow: follow)
+                }
+            }
     }
 
     @ViewBuilder
@@ -156,7 +181,6 @@ struct HomeMapView: View {
 
     @ViewBuilder
     var annotatedMap: some View {
-        let nav = nearbyVM.navigationStack.last
         let vehicles: [Vehicle]? = vehiclesData?.filter { $0.id != selectedVehicle?.id }
         AnnotatedMap(
             filter: nearbyVM.navigationStack.lastStopDetailsFilter,
@@ -164,6 +188,7 @@ struct HomeMapView: View {
             globalData: globalData,
             selectedVehicle: selectedVehicle,
             sheetHeight: sheetHeight,
+            showPuck: nearbyVM.navigationStack.lastSafe().showCurrentLocation,
             vehicles: vehicles,
             handleCameraChange: handleCameraChange,
             handleStyleLoaded: { mapVM.mapStyleLoaded() },

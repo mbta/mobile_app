@@ -17,10 +17,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +37,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -48,6 +49,7 @@ import androidx.compose.ui.zIndex
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.component.LiveIcon
 import com.mbta.tid.mbta_app.android.component.StickDiagram
 import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
@@ -468,22 +470,27 @@ private fun RowScope.TripIndicator(
 
 @Composable
 private fun FollowButton(routeAccents: TripRouteAccents, onClick: () -> Unit) {
-    Button(
-        onClick,
-        colors =
-            ButtonColors(
-                containerColor = routeAccents.color,
-                contentColor = routeAccents.textColor,
-                disabledContainerColor = routeAccents.color,
-                disabledContentColor = routeAccents.textColor,
-            ),
+    Column(
+        Modifier.sizeIn(minHeight = 36.dp, minWidth = 97.dp)
+            .haloContainer(2.dp, backgroundColor = routeAccents.color, borderRadius = 88.dp)
+            .clickable(onClickLabel = null, role = Role.Button, onClick = onClick),
+        Arrangement.Center,
+        Alignment.CenterHorizontally,
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            LiveIcon()
-            Text(stringResource(R.string.follow))
+        CompositionLocalProvider(LocalContentColor provides routeAccents.textColor) {
+            Row(
+                Modifier.padding(start = 12.dp, top = 10.dp, end = 16.dp, bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                LiveIcon(size = 12.dp)
+                Text(
+                    stringResource(R.string.follow),
+                    softWrap = false,
+                    maxLines = 1,
+                    style = Typography.callout,
+                )
+            }
         }
     }
 }
@@ -503,16 +510,6 @@ private fun LiveIndicator() {
             modifier = Modifier.placeholderIfLoading(),
         )
     }
-}
-
-@Composable
-private fun LiveIcon() {
-    Image(
-        painterResource(R.drawable.live_data),
-        null,
-        Modifier.placeholderIfLoading().size(16.dp),
-        colorFilter = ColorFilter.tint(LocalContentColor.current),
-    )
 }
 
 private fun upcomingTripViewState(

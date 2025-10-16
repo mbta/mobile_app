@@ -9,20 +9,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun RouteDetailsView(
-    selectionId: String,
+    selectionId: LineOrRoute.Id,
     context: RouteDetailsContext,
     onOpenStopDetails: (String) -> Unit,
     onBack: () -> Unit,
     onClose: () -> Unit,
+    openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val globalData = getGlobalData("RouteDetailsView")
@@ -49,14 +53,15 @@ fun RouteDetailsView(
                     if (it.isFavorited) {
                         stringResource(R.string.remove_favorite)
                     } else {
-                        stringResource(R.string.add_favorite)
+                        stringResource(R.string.add_favorite_label)
                     }
             }
         },
         onBack = onBack,
         onClose = onClose,
+        openModal = openModal,
         errorBannerViewModel,
-        defaultSelectedRouteId = selectionId.takeUnless { it == lineOrRoute.id },
+        defaultSelectedRouteId = (selectionId as? Route.Id).takeUnless { it == lineOrRoute.id },
         rightSideContent = { rowContext, modifier ->
             when (rowContext) {
                 is RouteDetailsRowContext.Details ->

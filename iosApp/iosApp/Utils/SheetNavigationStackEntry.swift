@@ -37,10 +37,11 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     }
 
     var allowTargeting: Bool {
-        switch self {
-        case .favorites, .nearby: true
-        default: false
-        }
+        toSheetRoute()?.allowTargeting ?? false
+    }
+
+    var showCurrentLocation: Bool {
+        toSheetRoute()?.showCurrentLocation ?? true
     }
 
     var analyticsScreen: AnalyticsScreen? {
@@ -76,6 +77,14 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     func stopId() -> String? {
         switch self {
         case let .stopDetails(stopId, _, _): stopId
+        case _: nil
+        }
+    }
+
+    func vehicleId() -> String? {
+        switch self {
+        case let .stopDetails(_, _, tripFilter): tripFilter?.vehicleId
+        case let .tripDetails(filter): filter.vehicleId
         case _: nil
         }
     }

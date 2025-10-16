@@ -128,7 +128,7 @@ private fun PredictionRowViewPreview() {
     val green = objects.line()
     val greenB =
         objects.route {
-            lineId = green.id
+            lineId = green.id.idText
             color = "00843D"
             textColor = "FFFFFF"
             shortName = "B"
