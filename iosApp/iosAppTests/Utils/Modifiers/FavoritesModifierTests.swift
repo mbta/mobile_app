@@ -23,7 +23,7 @@ final class FavoritesModifierTests: XCTestCase {
         let setExp = expectation(description: "favorites binding was set")
 
         let updatedFavorites = buildFavorites {
-            $0.routeStopDirection(route: "route", stop: "stop", direction: 0)
+            $0.routeStopDirection(route: Route.Id("route"), stop: "stop", direction: 0)
         }
 
         let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: {
@@ -71,7 +71,7 @@ final class FavoritesModifierTests: XCTestCase {
         let setExp = expectation(description: "favorites binding set to previously loaded value")
 
         let previouslyLoaded = buildFavorites {
-            $0.routeStopDirection(route: "route1", stop: "stop1", direction: 0)
+            $0.routeStopDirection(route: Route.Id("route1"), stop: "stop1", direction: 0)
         }
         LoadedFavorites.last = previouslyLoaded
 

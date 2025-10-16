@@ -86,6 +86,8 @@ import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.history.Visit
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -103,6 +105,7 @@ import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.reflect.KClass
@@ -147,6 +150,7 @@ fun MapAndSheetPage(
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
+    toastViewModel: IToastViewModel = koinInject(),
     tripDetailsViewModel: ITripDetailsViewModel = koinInject(),
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
 ) {
@@ -235,6 +239,10 @@ fun MapAndSheetPage(
         ) {
             tileScrollState.scrollTo(0)
         }
+
+        if (currentNavEntry?.let { it::class } != previousNavEntry?.let { it::class }) {
+            toastViewModel.hideToast()
+        }
     }
 
     val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsState()
@@ -300,7 +308,7 @@ fun MapAndSheetPage(
     }
 
     fun handleRouteNavigation(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
         navController.navigate(SheetRoutes.RouteDetails(routeId, context)) {
@@ -309,7 +317,7 @@ fun MapAndSheetPage(
     }
 
     fun handlePickRouteNavigation(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         context: RouteDetailsContext = RouteDetailsContext.Details,
     ) {
         navController.navigateFrom(
@@ -323,7 +331,7 @@ fun MapAndSheetPage(
     fun handleTripDetailsNavigation(
         tripId: String,
         vehicleId: String?,
-        routeId: String,
+        routeId: Route.Id,
         directionId: Int,
         stopId: String,
         stopSequence: Int?,
@@ -364,14 +372,15 @@ fun MapAndSheetPage(
                 ?.flatMap { it.data }
                 ?.flatMap { it.upcomingTrips }
                 ?.firstOrNull { upcoming -> upcoming.trip.id == tripId }
-        val routeId = upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id
+        val routeId =
+            upcoming?.trip?.routeId ?: vehicle.routeId ?: routeCard?.lineOrRoute?.id as? Route.Id
 
         if (routeId != null) analytics.tappedVehicle(routeId)
 
         handleTripDetailsNavigation(
             tripId = tripId,
             vehicleId = vehicle.id,
-            routeId = vehicle.routeId ?: stopFilter.routeId,
+            routeId = vehicle.routeId ?: routeId ?: stopFilter.routeId as? Route.Id ?: return,
             directionId = stopFilter.directionId,
             stopId = stopId,
             stopSequence = tripFilter?.stopSequence,
@@ -573,8 +582,8 @@ fun MapAndSheetPage(
         }
 
         val global = getGlobalData("TripDetailsSheetContents")
-        val route = global?.getRoute(navRoute.filter.routeId)
-        val routeColor = route?.color?.let { Color.fromHex(it) }
+        val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
+        val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
 
         SheetPage(routeColor ?: colorResource(R.color.fill2)) {
             TripDetailsPage(

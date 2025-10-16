@@ -32,14 +32,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -127,14 +127,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -206,14 +206,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -282,14 +282,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = "different"
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -369,14 +369,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -465,14 +465,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }
@@ -561,14 +561,14 @@ final class TripStopsTests: XCTestCase {
 
         let vehicle = objects.vehicle { vehicle in
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.currentStatus = .stoppedAt
             vehicle.stopId = stop1.id
         }
 
         func makeSchedule(stop: Stop) -> Schedule {
             objects.schedule { schedule in
-                schedule.routeId = route.id
+                schedule.routeId = route.id.idText
                 schedule.stopId = stop.id
                 schedule.trip = trip
             }

@@ -11,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -33,7 +34,15 @@ class TripDetailsPageTest {
         var onCloseCalled = false
         composeTestRule.setContent {
             TripDetailsPage(
-                filter = TripDetailsPageFilter("tripId", "vehicleId", "routeId", 0, "stopId", null),
+                filter =
+                    TripDetailsPageFilter(
+                        "tripId",
+                        "vehicleId",
+                        Route.Id("routeId"),
+                        0,
+                        "stopId",
+                        null,
+                    ),
                 allAlerts = AlertsStreamDataResponse(emptyMap()),
                 openModal = {},
                 openSheetRoute = {},

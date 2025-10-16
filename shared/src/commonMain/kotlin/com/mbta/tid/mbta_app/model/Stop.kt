@@ -23,7 +23,7 @@ internal constructor(
     @SerialName("connecting_stop_ids") val connectingStopIds: List<String> = emptyList(),
     @SerialName("parent_station_id") val parentStationId: String? = null,
     @SerialName("wheelchair_boarding") val wheelchairBoarding: WheelchairBoardingStatus? = null,
-) : BackendObject {
+) : BackendObject<String> {
     val position: Position = Position(latitude = latitude, longitude = longitude)
 
     /**

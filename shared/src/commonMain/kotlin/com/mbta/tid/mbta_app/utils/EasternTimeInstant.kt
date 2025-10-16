@@ -27,7 +27,7 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
     Comparable<EasternTimeInstant> {
     public constructor(instant: Instant) : this(instant, instant.toLocalDateTime(timeZone))
 
-    internal constructor(local: LocalDateTime) : this(local.toInstant(timeZone), local)
+    public constructor(local: LocalDateTime) : this(local.toInstant(timeZone), local)
 
     public constructor(
         year: Int,

@@ -328,7 +328,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
         internal fun getTransferRoutes(
             stopId: String,
-            currentRouteId: String?,
+            currentRouteId: Route.Id?,
             globalData: GlobalResponse,
         ): List<Route> {
             val stop = globalData.stops[stopId] ?: return emptyList()

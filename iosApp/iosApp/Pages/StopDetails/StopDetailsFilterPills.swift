@@ -11,7 +11,7 @@ import SwiftUI
 
 struct StopDetailsFilterPills: View {
     enum FilterBy {
-        var id: String {
+        var id: LineOrRoute.Id {
             switch self {
             case let .route(route): route.id
             case let .line(line): line.id

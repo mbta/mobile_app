@@ -59,7 +59,7 @@ class EditFavoritesPageTest : KoinTest {
             longName = "Sample Route Long Name"
             shortName = "Sample Route"
             textColor = "000000"
-            lineId = line.id
+            lineId = line.id.idText
             routePatternIds = mutableListOf("pattern_1", "pattern_2")
         }
     val lineOrRoute = LineOrRoute.Route(route)
@@ -68,7 +68,7 @@ class EditFavoritesPageTest : KoinTest {
             id = "pattern_1"
             directionId = 0
             name = "Sample Route Pattern"
-            routeId = route.id
+            routeId = route.id.idText
             representativeTripId = "trip_1"
         }
     val routePatternTwo =
@@ -76,7 +76,7 @@ class EditFavoritesPageTest : KoinTest {
             id = "pattern_2"
             directionId = 1
             name = "Sample Route Pattern Two"
-            routeId = route.id
+            routeId = route.id.idText
             representativeTripId = "trip_2"
         }
     val sampleStop =
@@ -98,7 +98,7 @@ class EditFavoritesPageTest : KoinTest {
     val trip1 =
         builder.trip {
             id = "trip_1"
-            routeId = route.id
+            routeId = route.id.idText
             directionId = 0
             headsign = "Sample Headsign"
             routePatternId = routePatternOne.id
@@ -107,7 +107,7 @@ class EditFavoritesPageTest : KoinTest {
     val trip2 =
         builder.trip {
             id = "trip_2"
-            routeId = route.id
+            routeId = route.id.idText
             directionId = 1
             headsign = "Other Headsign"
             routePatternId = routePatternTwo.id
@@ -119,7 +119,7 @@ class EditFavoritesPageTest : KoinTest {
             revenue = true
             stopId = sampleStop.id
             tripId = trip1.id
-            routeId = route.id
+            routeId = route.id.idText
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(1.minutes)
@@ -144,7 +144,7 @@ class EditFavoritesPageTest : KoinTest {
             longName = "Green Line Long Name"
             shortName = "Green Line"
             textColor = "FFFFFF"
-            lineId = greenLine.id
+            lineId = greenLine.id.idText
             routePatternIds = mutableListOf("pattern_gl")
         }
     val greenLineOrRoute = LineOrRoute.Line(greenLine, setOf(greenLineRoute))
@@ -153,7 +153,7 @@ class EditFavoritesPageTest : KoinTest {
             id = "pattern_gl"
             directionId = 0
             name = "Green Line Pattern"
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             representativeTripId = "trip_gl"
         }
     val greenLineStop =
@@ -167,7 +167,7 @@ class EditFavoritesPageTest : KoinTest {
     val greenLineTrip =
         builder.trip {
             id = "trip_gl"
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             directionId = 0
             headsign = "Green Line Head Sign"
             routePatternId = greenLineRoutePatternOne.id
@@ -179,7 +179,7 @@ class EditFavoritesPageTest : KoinTest {
             revenue = true
             stopId = greenLineStop.id
             tripId = greenLineTrip.id
-            routeId = greenLineRoute.id
+            routeId = greenLineRoute.id.idText
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(5.minutes)

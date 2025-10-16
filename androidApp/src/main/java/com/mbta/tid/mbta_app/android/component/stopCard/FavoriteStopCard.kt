@@ -59,7 +59,10 @@ fun FavoriteStopCard(
                     ActionButtonKind.Exchange,
                     size = 44.dp,
                     colors =
-                        ButtonDefaults.buttonColors(containerColor = colorResource(R.color.halo)),
+                        ButtonDefaults.buttonColors(
+                            containerColor = colorResource(R.color.halo),
+                            contentColor = colorResource(R.color.text),
+                        ),
                     action = toggleDirection,
                 )
             }

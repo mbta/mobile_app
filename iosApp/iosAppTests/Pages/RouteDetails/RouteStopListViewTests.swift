@@ -107,26 +107,26 @@ final class RouteStopListViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let line = objects.line()
         let route1 = objects.route { route in
-            route.lineId = line.id
+            route.lineId = line.id.idText
             route.type = .bus
             route.shortName = "1"
             route.directionDestinations = ["One", ""]
         }
         let route2 = objects.route { route in
-            route.lineId = line.id
+            route.lineId = line.id.idText
             route.type = .bus
             route.shortName = "2"
             route.directionDestinations = ["Two", ""]
         }
         let route3 = objects.route { route in
-            route.lineId = line.id
+            route.lineId = line.id.idText
             route.type = .bus
             route.shortName = "3"
             route.directionDestinations = ["Three", ""]
         }
         objects.routePattern(route: route1) { $0.directionId = 0 }
 
-        var lastSelectedRoute: String?
+        var lastSelectedRoute: Route.Id?
 
         let getRouteStopsSubject = PassthroughSubject<Void, Never>()
         let repositories = MockRepositories()

@@ -185,7 +185,7 @@ struct RoutePill_Previews: PreviewProvider {
                 Text(verbatim: "Flex")
             }
             RoutePillPreview(route: .init(
-                id: "Red",
+                id: .init("Red"),
                 type: .heavyRail,
                 color: "DA291C",
                 directionNames: ["South", "North"],
@@ -195,11 +195,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10010,
                 textColor: "FFFFFF",
-                lineId: "line-Red",
+                lineId: .init("line-Red"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: .init(
-                id: "Orange",
+                id: .init("Orange"),
                 type: .heavyRail,
                 color: "ED8B00",
                 directionNames: ["South", "North"],
@@ -209,11 +209,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10020,
                 textColor: "FFFFFF",
-                lineId: "line-Orange",
+                lineId: .init("line-Orange"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Blue",
+                id: .init("Blue"),
                 type: .heavyRail,
                 color: "003DA5",
                 directionNames: ["West", "East"],
@@ -223,11 +223,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10040,
                 textColor: "FFFFFF",
-                lineId: "line-Blue",
+                lineId: .init("line-Blue"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Mattapan",
+                id: .init("Mattapan"),
                 type: .lightRail,
                 color: "DA291C",
                 directionNames: ["Outbound", "Inbound"],
@@ -237,11 +237,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 10011,
                 textColor: "FFFFFF",
-                lineId: "line-Mattapan",
+                lineId: .init("line-Mattapan"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Green-B",
+                id: .init("Green-B"),
                 type: .lightRail,
                 color: "00843D",
                 directionNames: ["West", "East"],
@@ -251,11 +251,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "B",
                 sortOrder: 10032,
                 textColor: "FFFFFF",
-                lineId: "line-Green",
+                lineId: .init("line-Green"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Green-C",
+                id: .init("Green-C"),
                 type: .lightRail,
                 color: "00843D",
                 directionNames: ["West", "East"],
@@ -265,11 +265,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "C",
                 sortOrder: 10033,
                 textColor: "FFFFFF",
-                lineId: "line-Green",
+                lineId: .init("line-Green"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Green-D",
+                id: .init("Green-D"),
                 type: .lightRail,
                 color: "00843D",
                 directionNames: ["West", "East"],
@@ -279,11 +279,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "D",
                 sortOrder: 10034,
                 textColor: "FFFFFF",
-                lineId: "line-Green",
+                lineId: .init("line-Green"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Green-E",
+                id: .init("Green-E"),
                 type: .lightRail,
                 color: "00843D",
                 directionNames: ["West", "East"],
@@ -293,11 +293,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "E",
                 sortOrder: 10035,
                 textColor: "FFFFFF",
-                lineId: "line-Green",
+                lineId: .init("line-Green"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "CR-Fitchburg",
+                id: .init("CR-Fitchburg"),
                 type: .commuterRail,
                 color: "80276C",
                 directionNames: ["Outbound", "Inbound"],
@@ -307,11 +307,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 20012,
                 textColor: "FFFFFF",
-                lineId: "line-Fitchburg",
+                lineId: .init("line-Fitchburg"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "216",
+                id: .init("216"),
                 type: .bus,
                 color: "FFC72C",
                 directionNames: ["Outbound", "Inbound"],
@@ -321,11 +321,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "216",
                 sortOrder: 52160,
                 textColor: "000000",
-                lineId: "line-214216",
+                lineId: .init("line-214216"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "627",
+                id: .init("627"),
                 type: .bus,
                 color: "FFC72C",
                 directionNames: ["Outbound", "Inbound"],
@@ -335,11 +335,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "62/76",
                 sortOrder: 50621,
                 textColor: "000000",
-                lineId: "line-6276",
+                lineId: .init("line-6276"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "741",
+                id: .init("741"),
                 type: .bus,
                 color: "7C878E",
                 directionNames: ["Outbound", "Inbound"],
@@ -349,11 +349,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "SL1",
                 sortOrder: 10051,
                 textColor: "FFFFFF",
-                lineId: "line-SLWaterfront",
+                lineId: .init("line-SLWaterfront"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Boat-F1",
+                id: .init("Boat-F1"),
                 type: .ferry,
                 color: "008EAA",
                 directionNames: ["Outbound", "Inbound"],
@@ -363,11 +363,11 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "",
                 sortOrder: 30002,
                 textColor: "FFFFFF",
-                lineId: "line-Boat-F1",
+                lineId: .init("line-Boat-F1"),
                 routePatternIds: nil
             ))
             RoutePillPreview(route: Route(
-                id: "Shuttle-BroadwayKendall",
+                id: .init("Shuttle-BroadwayKendall"),
                 type: .bus,
                 color: "FFC72C",
                 directionNames: ["South", "North"],
@@ -377,10 +377,10 @@ struct RoutePill_Previews: PreviewProvider {
                 shortName: "Red Line Shuttle",
                 sortOrder: 61050,
                 textColor: "000000",
-                lineId: "line-Red",
+                lineId: .init("line-Red"),
                 routePatternIds: nil
             ), line: Line(
-                id: "line-Red",
+                id: .init("line-Red"),
                 color: "DA291C",
                 longName: "Red Line",
                 shortName: "",

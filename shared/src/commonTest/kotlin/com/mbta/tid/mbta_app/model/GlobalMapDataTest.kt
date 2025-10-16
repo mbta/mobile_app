@@ -129,7 +129,7 @@ internal class GlobalMapDataTest {
     fun `mapStop data is created`() {
 
         val (objects, response) = createData()
-        val routeSilver = objects.routes["742"]!!
+        val routeSilver = objects.getRoute("742")
 
         val mapData = GlobalMapData(globalData = response, mapOf())
 

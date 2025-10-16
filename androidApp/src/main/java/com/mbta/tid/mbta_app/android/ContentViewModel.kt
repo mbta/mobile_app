@@ -53,11 +53,15 @@ class ContentViewModel(
         CoroutineScope(Dispatchers.IO).launch {
             if (hasPendingFavoritesPromo) {
                 _defaultTab.value = DefaultTab.Favorites
-                tabPreferencesRepository.setDefaultTab(DefaultTab.Favorites)
             } else {
                 _defaultTab.value = tabPreferencesRepository.getDefaultTab()
             }
         }
+    }
+
+    fun setTabPreference(tab: DefaultTab) {
+        _defaultTab.value = tab
+        CoroutineScope(Dispatchers.IO).launch { tabPreferencesRepository.setDefaultTab(tab) }
     }
 
     fun clearPendingOnboarding() {

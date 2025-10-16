@@ -6,6 +6,7 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavType
 import androidx.navigation.toRoute
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
@@ -24,6 +25,7 @@ val SheetRoutes.Companion.EntrypointSaver
 val SheetRoutes.Companion.typeMap
     get() =
         mapOf(
+            typeOf<LineOrRoute.Id>() to LineOrRouteIdParameterType,
             typeOf<RouteDetailsContext>() to RouteDetailsContextParameterType,
             typeOf<RoutePickerPath>() to RoutePickerPathParameterType,
             typeOf<StopDetailsFilter?>() to StopFilterParameterType,
@@ -65,6 +67,7 @@ inline fun <reified T> jsonNavType(default: T? = null) =
         override fun serializeAsValue(value: T): String = json.encodeToString(value)
     }
 
+val LineOrRouteIdParameterType = jsonNavType<LineOrRoute.Id>()
 val RouteDetailsContextParameterType =
     jsonNavType<RouteDetailsContext>(default = RouteDetailsContext.Details)
 

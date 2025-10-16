@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.mocks.MockDatastoreStorage
 import com.mbta.tid.mbta_app.mocks.mockJsonPersistence
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.utils.SystemPaths
 import com.mbta.tid.mbta_app.utils.buildFavorites
@@ -33,13 +34,13 @@ class FavoritesRepositoryTest {
     @Test
     fun `migrates preferences to JSON file`() = runBlocking {
         val favorites = buildFavorites {
-            routeStopDirection("route1", "stop1", 0) {
+            routeStopDirection(Route.Id("route1"), "stop1", 0) {
                 notifications {
                     enabled = true
                     window(LocalTime(8, 0), LocalTime(9, 0), setOf(DayOfWeek.FRIDAY))
                 }
             }
-            routeStopDirection("route2", "stop2", 1)
+            routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
         val storage = MockDatastoreStorage()
         storage.preferences =
@@ -65,8 +66,8 @@ class FavoritesRepositoryTest {
 
     @Test
     fun `loads pre-notifications favorites from preferences`() = runBlocking {
-        val rsd1 = RouteStopDirection("route1", "stop1", 0)
-        val rsd2 = RouteStopDirection("route2", "stop2", 1)
+        val rsd1 = RouteStopDirection(Route.Id("route1"), "stop1", 0)
+        val rsd2 = RouteStopDirection(Route.Id("route2"), "stop2", 1)
 
         val storage = MockDatastoreStorage()
         storage.preferences =
@@ -106,13 +107,13 @@ class FavoritesRepositoryTest {
     @Test
     fun `loads from JSON file`() = runBlocking {
         val favorites = buildFavorites {
-            routeStopDirection("route1", "stop1", 0) {
+            routeStopDirection(Route.Id("route1"), "stop1", 0) {
                 notifications {
                     enabled = true
                     window(LocalTime(8, 0), LocalTime(9, 0), setOf(DayOfWeek.FRIDAY))
                 }
             }
-            routeStopDirection("route2", "stop2", 1)
+            routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
         val jsonPersistence = mockJsonPersistence()
         jsonPersistence.write(SystemPaths.Category.Data, group = null, "favorites", favorites)
@@ -134,13 +135,13 @@ class FavoritesRepositoryTest {
         }
         val repo = FavoritesRepository()
         val favorites = buildFavorites {
-            routeStopDirection("route1", "stop1", 0) {
+            routeStopDirection(Route.Id("route1"), "stop1", 0) {
                 notifications {
                     enabled = true
                     window(LocalTime(8, 0), LocalTime(9, 0), setOf(DayOfWeek.FRIDAY))
                 }
             }
-            routeStopDirection("route2", "stop2", 1)
+            routeStopDirection(Route.Id("route2"), "stop2", 1)
         }
         repo.setFavorites(favorites)
         assertEquals(favorites, repo.getFavorites())

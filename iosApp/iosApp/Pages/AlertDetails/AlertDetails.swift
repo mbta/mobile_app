@@ -125,7 +125,7 @@ struct AlertDetails: View {
                 .onChange(of: areStopsExpanded) { expanded in
                     if expanded {
                         analytics.tappedAffectedStops(
-                            routeId: line?.id ?? routes?.first?.id ?? "",
+                            routeId: line?.id ?? routes?.first?.id,
                             stopId: stopId ?? "",
                             alertId: alert.id
                         )
@@ -145,7 +145,7 @@ struct AlertDetails: View {
             Image(.faRoute).resizable().frame(width: iconSize, height: iconSize).padding(16)
         }.environment(\.openURL, OpenURLAction { _ in
             analytics.tappedTripPlanner(
-                routeId: line?.id ?? routes?.first?.id ?? "",
+                routeId: line?.id ?? routes?.first?.id,
                 stopId: stopId ?? "",
                 alertId: alert.id
             )

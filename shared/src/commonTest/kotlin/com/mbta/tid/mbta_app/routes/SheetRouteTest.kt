@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.routes
 
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
@@ -33,7 +34,7 @@ class SheetRouteTest {
         assertFalse(
             SheetRoutes.pageChanged(
                 SheetRoutes.StopDetails("a", null, null),
-                SheetRoutes.StopDetails("a", StopDetailsFilter("route1", 1), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("route1"), 1), null),
             )
         )
     }
@@ -70,22 +71,22 @@ class SheetRouteTest {
 
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
-                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 0), null),
-                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 0), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
             )
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.NearbyTransit,
-                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
             )
         )
 
         assertTrue(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.Favorites,
-                SheetRoutes.StopDetails("a", StopDetailsFilter("b", 1), null),
+                SheetRoutes.StopDetails("a", StopDetailsFilter(Route.Id("b"), 1), null),
             )
         )
     }
@@ -104,12 +105,12 @@ class SheetRouteTest {
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
                 SheetRoutes.RoutePicker(RoutePickerPath.Bus, RouteDetailsContext.Favorites),
-                SheetRoutes.RouteDetails("a", RouteDetailsContext.Favorites),
+                SheetRoutes.RouteDetails(Route.Id("a"), RouteDetailsContext.Favorites),
             )
         )
         assertFalse(
             SheetRoutes.shouldResetSheetHeight(
-                SheetRoutes.RouteDetails("a", RouteDetailsContext.Favorites),
+                SheetRoutes.RouteDetails(Route.Id("a"), RouteDetailsContext.Favorites),
                 SheetRoutes.Favorites,
             )
         )

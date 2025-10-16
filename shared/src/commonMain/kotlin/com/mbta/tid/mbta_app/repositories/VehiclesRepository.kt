@@ -1,7 +1,10 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.Line
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.greenRoutes
@@ -17,7 +20,7 @@ import org.koin.core.component.KoinComponent
 
 public interface IVehiclesRepository {
     public fun connect(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     )
@@ -31,13 +34,17 @@ internal class VehiclesRepository(socket: PhoenixSocket, ioDispatcher: Coroutine
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
             VehiclesOnRouteChannel(
-                if (routeId == "line-Green") greenRoutes.toList() else listOf(routeId),
+                when (routeId) {
+                    is Route.Id -> listOf(routeId)
+                    Line.Id("line-Green") -> greenRoutes.toList()
+                    is Line.Id -> listOf(Route.Id(routeId.idText))
+                },
                 directionId,
             ),
             handleMessage = { handleNewDataMessage(it, onReceive) },
@@ -75,7 +82,9 @@ public class MockVehiclesRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     internal val response: VehiclesStreamDataResponse,
-    internal val onConnect: (routeId: String, directionId: Int) -> Unit = { _: String, _: Int -> },
+    internal val onConnect: (routeId: LineOrRoute.Id, directionId: Int) -> Unit =
+        { _: LineOrRoute.Id, _: Int ->
+        },
     internal val onDisconnect: () -> Unit = {},
 ) : IVehiclesRepository {
     public constructor(
@@ -87,7 +96,7 @@ constructor(
     ) : this(response = VehiclesStreamDataResponse(objects.vehicles))
 
     override fun connect(
-        routeId: String,
+        routeId: LineOrRoute.Id,
         directionId: Int,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {

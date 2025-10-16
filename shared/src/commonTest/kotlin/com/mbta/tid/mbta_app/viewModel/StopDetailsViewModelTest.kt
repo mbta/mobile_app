@@ -4,7 +4,9 @@ import app.cash.turbine.test
 import app.cash.turbine.turbineScope
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -197,7 +199,11 @@ class StopDetailsViewModelTest : KoinTest {
         val routeCardVM: RouteCardDataViewModel = get()
         val viewModel: StopDetailsViewModel = get()
         val filters =
-            StopDetailsPageFilters("place-gover", StopDetailsFilter("line-Green", 0, false), null)
+            StopDetailsPageFilters(
+                "place-gover",
+                StopDetailsFilter(Line.Id("line-Green"), 0, false),
+                null,
+            )
 
         turbineScope {
             val routeCardTurbine = testViewModelFlow(routeCardVM).testIn(backgroundScope)
@@ -303,7 +309,7 @@ class StopDetailsViewModelTest : KoinTest {
 
             modelTurbine.awaitItemSatisfying { it.routeData != null }
             filterUpdatesTurbine.awaitItemSatisfying {
-                it?.stopFilter == StopDetailsFilter("87", 1, true)
+                it?.stopFilter == StopDetailsFilter(Route.Id("87"), 1, true)
             }
         }
     }
@@ -395,7 +401,11 @@ class StopDetailsViewModelTest : KoinTest {
 
         val viewModel: StopDetailsViewModel = get()
         val initialFilters =
-            StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 0, false), null)
+            StopDetailsPageFilters(
+                "place-rugg",
+                StopDetailsFilter(Route.Id("Orange"), 0, false),
+                null,
+            )
 
         turbineScope {
             val filterUpdatesTurbine = viewModel.filterUpdates.testIn(backgroundScope)
@@ -408,7 +418,11 @@ class StopDetailsViewModelTest : KoinTest {
             modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 0 }
             filterUpdatesTurbine.awaitItemSatisfying { it?.tripFilter?.tripId == trip0.id }
             viewModel.setFilters(
-                StopDetailsPageFilters("place-rugg", StopDetailsFilter("Orange", 1, false), null)
+                StopDetailsPageFilters(
+                    "place-rugg",
+                    StopDetailsFilter(Route.Id("Orange"), 1, false),
+                    null,
+                )
             )
             modelTurbine.awaitItemSatisfying { it.routeData?.filters?.stopFilter?.directionId == 1 }
 

@@ -304,7 +304,7 @@ class DeparturesTest {
             Pair(
                 "tapped_departure",
                 mapOf(
-                    "route_id" to route.id,
+                    "route_id" to route.id.idText,
                     "stop_id" to stop.id,
                     "pinned" to "true",
                     "alert" to "false",

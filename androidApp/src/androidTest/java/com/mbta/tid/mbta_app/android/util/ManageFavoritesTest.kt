@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -29,8 +30,8 @@ class ManageFavoritesTest {
 
     @Test
     fun testManageFavorites() = runBlocking {
-        val rsd0 = RouteStopDirection("route1", "stop1", 0)
-        val rsd1 = RouteStopDirection("route1", "stop1", 1)
+        val rsd0 = RouteStopDirection(Route.Id("route1"), "stop1", 0)
+        val rsd1 = RouteStopDirection(Route.Id("route1"), "stop1", 1)
         val favoritesRepo = MockFavoritesRepository(buildFavorites { routeStopDirection(rsd0) })
         val favoritesUseCases = FavoritesUsecases(favoritesRepo, MockAnalytics())
 

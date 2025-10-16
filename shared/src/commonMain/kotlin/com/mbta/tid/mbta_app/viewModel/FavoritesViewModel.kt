@@ -12,10 +12,8 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
-import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -61,7 +59,6 @@ public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
     private val sentryRepository: ISentryRepository,
-    private val tabPreferencesRepository: ITabPreferencesRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
     private val analytics: Analytics,
 ) : MoleculeViewModel<FavoritesViewModel.Event, FavoritesViewModel.State>(), IFavoritesViewModel {
@@ -143,8 +140,6 @@ public class FavoritesViewModel(
             hadOldPinnedRoutes = pinnedRoutesRepository.getPinnedRoutes().isNotEmpty()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
-            // first time seeing favorites, default to nearby going forward
-            tabPreferencesRepository.setDefaultTab(DefaultTab.Nearby)
         }
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->

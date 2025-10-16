@@ -862,22 +862,22 @@ class StopDetailsUtilsTest {
 
         val vehicleB =
             objects.vehicle {
-                routeId = routeB.id
+                routeId = routeB.id.idText
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
             }
         val vehicleC =
             objects.vehicle {
-                routeId = routeC.id
+                routeId = routeC.id.idText
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
             }
         val vehicleD =
             objects.vehicle {
-                routeId = routeD.id
+                routeId = routeD.id.idText
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
             }
         val vehicleE =
             objects.vehicle {
-                routeId = routeE.id
+                routeId = routeE.id.idText
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
             }
         val vehicleResponse =

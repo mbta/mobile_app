@@ -27,7 +27,7 @@ final class StopDetailsPageTests: XCTestCase {
         let trip = objects.trip { _ in }
         let schedule = objects.schedule { schedule in
             schedule.trip = trip
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = stop.id
             schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
         }
@@ -185,7 +185,7 @@ final class StopDetailsPageTests: XCTestCase {
         }
         objects.schedule { schedule in
             schedule.trip = trip
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = stop.id
             schedule.stopSequence = 0
             schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)
@@ -252,7 +252,7 @@ final class StopDetailsPageTests: XCTestCase {
         }
         let schedule = objects.schedule { schedule in
             schedule.trip = trip
-            schedule.routeId = route.id
+            schedule.routeId = route.id.idText
             schedule.stopId = stop.id
             schedule.stopSequence = 0
             schedule.departureTime = EasternTimeInstant.now().plus(minutes: 10)

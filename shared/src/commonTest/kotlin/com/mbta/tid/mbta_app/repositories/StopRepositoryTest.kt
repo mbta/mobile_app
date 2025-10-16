@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.LocationType
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteSegment
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.SegmentedRouteShape
@@ -33,50 +34,50 @@ class StopRepositoryTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-                    {
-                      "map_friendly_route_shapes": [
                         {
-                          "route_id": "Blue",
-                          "route_shapes": [
+                          "map_friendly_route_shapes": [
                             {
-                              "source_route_pattern_id": "Blue-6-0",
-                              "source_route_id": "Blue",
-                              "direction_id": 0,
-                              "route_segments": [
+                              "route_id": "Blue",
+                              "route_shapes": [
                                 {
-                                  "id": "place-wondl-place-bomnl",
+                                  "source_route_pattern_id": "Blue-6-0",
                                   "source_route_id": "Blue",
-                                  "stop_ids": [
-                                    "place-wondl",
-                                    "place-bomnl"
+                                  "direction_id": 0,
+                                  "route_segments": [
+                                    {
+                                      "id": "place-wondl-place-bomnl",
+                                      "source_route_id": "Blue",
+                                      "stop_ids": [
+                                        "place-wondl",
+                                        "place-bomnl"
+                                      ],
+                                      "other_patterns_by_stop_id": {},
+                                      "source_route_pattern_id": "Blue-6-0"
+                                    }
                                   ],
-                                  "other_patterns_by_stop_id": {},
-                                  "source_route_pattern_id": "Blue-6-0"
+                                  "shape": {
+                                    "id": "canonical-946_0013",
+                                    "polyline": "s|zaG~phpLpBwO"
+                                  }
                                 }
-                              ],
-                              "shape": {
-                                "id": "canonical-946_0013",
-                                "polyline": "s|zaG~phpLpBwO"
-                              }
+                              ]
                             }
-                          ]
+                          ],
+                          "child_stops": {
+                            "70060": {
+                              "id": "70060",
+                              "name": "Wonderland",
+                              "description": "Wonderland - Blue Line - Exit Only",
+                              "location_type": "stop",
+                              "latitude": 42.413361,
+                              "longitude": -70.991685,
+                              "vehicle_type": "heavy_rail",
+                              "platform_name": "Exit Only",
+                              "parent_station_id": "place-wondl"
+                            }
+                          }
                         }
-                      ],
-                      "child_stops": {
-                        "70060": {
-                          "id": "70060",
-                          "name": "Wonderland",
-                          "description": "Wonderland - Blue Line - Exit Only",
-                          "location_type": "stop",
-                          "latitude": 42.413361,
-                          "longitude": -70.991685,
-                          "vehicle_type": "heavy_rail",
-                          "platform_name": "Exit Only",
-                          "parent_station_id": "place-wondl"
-                        }
-                      }
-                    }
-                    """
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,
@@ -95,18 +96,18 @@ class StopRepositoryTest : KoinTest {
                         routeShapes =
                             listOf(
                                 MapFriendlyRouteResponse.RouteWithSegmentedShapes(
-                                    routeId = "Blue",
+                                    routeId = Route.Id("Blue"),
                                     segmentedShapes =
                                         listOf(
                                             SegmentedRouteShape(
                                                 sourceRoutePatternId = "Blue-6-0",
-                                                sourceRouteId = "Blue",
+                                                sourceRouteId = Route.Id("Blue"),
                                                 directionId = 0,
                                                 routeSegments =
                                                     listOf(
                                                         RouteSegment(
                                                             id = "place-wondl-place-bomnl",
-                                                            sourceRouteId = "Blue",
+                                                            sourceRouteId = Route.Id("Blue"),
                                                             stopIds =
                                                                 listOf(
                                                                     "place-wondl",

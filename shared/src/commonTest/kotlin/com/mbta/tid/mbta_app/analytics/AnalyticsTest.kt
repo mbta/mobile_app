@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.analytics
 
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -10,7 +11,7 @@ class AnalyticsTest {
 
     @Test
     fun testLogsUpdateFavorite() {
-        val favoriteAdded = RouteStopDirection("route_1", "stop_1", 0)
+        val favoriteAdded = RouteStopDirection(Route.Id("route_1"), "stop_1", 0)
 
         var eventLogged: Pair<String, Map<String, String>>? = null
 
@@ -25,7 +26,7 @@ class AnalyticsTest {
                 "updated_favorites",
                 mapOf(
                     "action" to "add",
-                    "route_id" to favoriteAdded.route,
+                    "route_id" to favoriteAdded.route.idText,
                     "stop_id" to favoriteAdded.stop,
                     "direction_id" to "${favoriteAdded.direction}",
                     "is_default_direction" to "true",
@@ -38,8 +39,8 @@ class AnalyticsTest {
 
     @Test
     fun testLogsUpdateMultipleFavoritesAtOnce() {
-        val favoriteAdded = RouteStopDirection("route_1", "stop_1", 0)
-        val favoriteRemoved = RouteStopDirection("route_1", "stop_1", 1)
+        val favoriteAdded = RouteStopDirection(Route.Id("route_1"), "stop_1", 0)
+        val favoriteRemoved = RouteStopDirection(Route.Id("route_1"), "stop_1", 1)
 
         var eventsLogged = mutableListOf<Pair<String, Map<String, String>>>()
 
@@ -59,7 +60,7 @@ class AnalyticsTest {
                     "updated_favorites",
                     mapOf(
                         "action" to "add",
-                        "route_id" to favoriteAdded.route,
+                        "route_id" to favoriteAdded.route.idText,
                         "stop_id" to favoriteAdded.stop,
                         "direction_id" to "${favoriteAdded.direction}",
                         "is_default_direction" to "true",
@@ -71,7 +72,7 @@ class AnalyticsTest {
                     "updated_favorites",
                     mapOf(
                         "action" to "remove",
-                        "route_id" to favoriteRemoved.route,
+                        "route_id" to favoriteRemoved.route.idText,
                         "stop_id" to favoriteRemoved.stop,
                         "direction_id" to "${favoriteRemoved.direction}",
                         "is_default_direction" to "false",
@@ -103,7 +104,7 @@ class AnalyticsTest {
         var loggedEvent: Pair<String, Map<String, String>>? = null
         val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
         analytics.track(AnalyticsScreen.Favorites)
-        analytics.tappedDeparture("route_1", "stop_1", false, false, RouteType.BUS, null)
+        analytics.tappedDeparture(Route.Id("route_1"), "stop_1", false, false, RouteType.BUS, null)
         assertEquals(
             loggedEvent,
             Pair(
