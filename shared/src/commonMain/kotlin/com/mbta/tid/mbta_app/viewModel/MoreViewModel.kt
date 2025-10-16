@@ -5,10 +5,17 @@ import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.model.morePage.localizedFeedbackFormUrl
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.SharedString
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
-public class MoreViewModel {
+public class MoreViewModel(
+    private val coroutineDispatcher: CoroutineDispatcher,
+    private val subscriptionsRepository: ISubscriptionsRepository,
+) {
 
     public fun getSections(translation: String, licensesCallback: () -> Unit): List<MoreSection> {
         val platform = getPlatform()
@@ -121,5 +128,11 @@ public class MoreViewModel {
                 noteBelow = SharedString.SupportAccessibilityNote,
             ),
         )
+    }
+
+    public fun updateAccessibility(fcmToken: String, includeAccessibility: Boolean) {
+        CoroutineScope(coroutineDispatcher).launch {
+            subscriptionsRepository.updateAccessibility(fcmToken, includeAccessibility)
+        }
     }
 }

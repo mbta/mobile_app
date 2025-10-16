@@ -18,7 +18,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.messaging.FirebaseMessaging
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.initializeSentry
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 
@@ -28,6 +30,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSentry()
+        getFCMToken()
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         enableEdgeToEdge(
             navigationBarStyle =
@@ -83,6 +86,12 @@ class MainActivity : ComponentActivity() {
             Log.i("MainActivity", "Sentry initialized")
         } else {
             Log.w("MainActivity", "skipping sentry initialization")
+        }
+    }
+
+    private fun getFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener {
+            if (it.isSuccessful) fcmToken = it.result
         }
     }
 }

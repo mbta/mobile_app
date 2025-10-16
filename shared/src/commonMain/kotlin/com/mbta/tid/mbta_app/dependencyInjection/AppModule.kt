@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.repositories.ISearchResultRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.ITabPreferencesRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
@@ -94,10 +95,11 @@ public fun repositoriesModule(repositories: IRepositories): Module {
         repositories.vehicles?.let { vehiclesRepo -> factory<IVehiclesRepository> { vehiclesRepo } }
         single<IVisitHistoryRepository> { repositories.visitHistory }
         single<IFavoritesRepository> { repositories.favorites }
+        single<ISubscriptionsRepository> { repositories.subscriptions }
         single { AlertsUsecase(get(), get()) }
         single { ConfigUseCase(get(), get()) }
         single<IFeaturePromoUseCase> { FeaturePromoUseCase(get(), get()) }
         single { VisitHistoryUsecase(get()) }
-        single { FavoritesUsecases(get(), get()) }
+        single { FavoritesUsecases(get(), get(), get()) }
     }
 }

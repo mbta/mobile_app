@@ -3,7 +3,9 @@ package com.mbta.tid.mbta_app.usecases
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.ShouldRefineInSwift
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,6 +16,7 @@ import org.koin.core.component.KoinComponent
 
 public class FavoritesUsecases(
     private val repository: IFavoritesRepository,
+    private val subscriptionsRepository: ISubscriptionsRepository,
     private val analytics: Analytics,
 ) : KoinComponent {
     private val flow = MutableStateFlow<Map<RouteStopDirection, FavoriteSettings>?>(null)
@@ -31,6 +34,8 @@ public class FavoritesUsecases(
         newValues: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
+        fcmToken: String?,
+        includeAccessibility: Boolean,
     ) {
         val storedFavorites = repository.getFavorites()
         val currentFavorites = storedFavorites.routeStopDirection.toMutableMap()
@@ -53,6 +58,10 @@ public class FavoritesUsecases(
             }
         }
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
+        fcmToken?.let {
+            val subs = SubscriptionRequest.fromFavorites(currentFavorites, includeAccessibility)
+            subscriptionsRepository.updateSubscriptions(it, subs)
+        }
         getRouteStopDirectionFavorites()
     }
 }

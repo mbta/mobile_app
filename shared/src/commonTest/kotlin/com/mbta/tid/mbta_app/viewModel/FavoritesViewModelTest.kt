@@ -557,6 +557,8 @@ internal class FavoritesViewModelTest : KoinTest {
                 mapOf(RouteStopDirection(route1.id, stop1.id, 0) to null),
                 EditFavoritesContext.Favorites,
                 0,
+                null,
+                false,
             )
             awaitItemSatisfying {
                 it.routeCardData != null &&

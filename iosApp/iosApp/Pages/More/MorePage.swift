@@ -12,7 +12,7 @@ import SwiftUI
 struct MorePage: View {
     let inspection = Inspection<Self>()
 
-    let viewModel = MoreViewModel()
+    let viewModel = ViewModelDI().more
     @State var showingBuildNumber = false
     @State private var path = NavigationPath()
 

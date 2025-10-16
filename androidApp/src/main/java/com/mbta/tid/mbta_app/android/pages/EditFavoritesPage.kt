@@ -48,7 +48,9 @@ import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -57,6 +59,7 @@ import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
@@ -82,6 +85,7 @@ fun EditFavoritesPage(
         } ?: context.getString(R.string.favorites_toast_remove_fallback)
     }
     val toastUndoLabel = stringResource(R.string.undo)
+    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
     DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
@@ -102,6 +106,8 @@ fun EditFavoritesPage(
                     mapOf(deletedFavorite to null),
                     EditFavoritesContext.Favorites,
                     deletedFavorite.direction,
+                    fcmToken,
+                    includeAccessibility,
                 )
 
                 toastViewModel.showToast(
@@ -116,6 +122,8 @@ fun EditFavoritesPage(
                                         mapOf(deletedFavorite to deletedSettings),
                                         EditFavoritesContext.Favorites,
                                         deletedFavorite.direction,
+                                        fcmToken,
+                                        includeAccessibility,
                                     )
                                     toastViewModel.hideToast()
                                 },
