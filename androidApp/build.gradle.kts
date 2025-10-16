@@ -56,7 +56,7 @@ sentry {
 
 android {
     namespace = "com.mbta.tid.mbta_app.android"
-    compileSdk = 35
+    compileSdk = 36
     defaultConfig {
         applicationId = "com.mbta.tid.mbta_app"
         minSdk = 28
