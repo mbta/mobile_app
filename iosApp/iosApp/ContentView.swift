@@ -184,13 +184,19 @@ struct ContentView: View {
                                 if !viewportProvider.viewport.isFollowing,
                                    locationDataManager.currentLocation != nil,
                                    nearbyVM.navigationStack.lastSafe().showCurrentLocation {
-                                    RecenterButton(icon: .faLocationArrowSolid, size: 17.33) {
+                                    RecenterButton(icon: .faLocationArrowSolid, label: Text(
+                                        "Recenter map on my location",
+                                        comment: "Screen reader text describing the behavior of the map recenter on current location button"
+                                    ), size: 17.33) {
                                         mapVM.recenter(type: .currentLocation)
                                     }
                                 }
                                 if !viewportProvider.viewport.isOverview,
                                    let routeType = vehicleRouteType() {
-                                    RecenterButton(icon: routeIconResource(routeType), size: 32) {
+                                    RecenterButton(icon: routeIconResource(routeType), label: Text(
+                                        "Recenter map on \(routeType.typeText(isOnly: true))",
+                                        comment: "Screen reader text describing the behavior of the map recenter on trip button (e.g. “Recenter map on train”)"
+                                    ), size: 32) {
                                         mapVM.recenter(type: .trip)
                                     }
                                 }

@@ -24,7 +24,12 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 
 @Composable
-fun RecenterButton(painter: Painter, modifier: Modifier = Modifier, onClick: () -> Unit) {
+fun RecenterButton(
+    painter: Painter,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
     Box(
         modifier =
             modifier
@@ -40,18 +45,23 @@ fun RecenterButton(painter: Painter, modifier: Modifier = Modifier, onClick: () 
                 .background(color = colorResource(R.color.fill3), shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(painter, stringResource(R.string.recenter), tint = colorResource(R.color.key))
+            Icon(painter, contentDescription, tint = colorResource(R.color.key))
         }
     }
 }
 
 @Composable
-fun RecenterButton(imageVector: ImageVector, modifier: Modifier = Modifier, onClick: () -> Unit) {
-    RecenterButton(rememberVectorPainter(imageVector), modifier, onClick)
+fun RecenterButton(
+    imageVector: ImageVector,
+    contentDescription: String,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    RecenterButton(rememberVectorPainter(imageVector), contentDescription, modifier, onClick)
 }
 
 @Preview
 @Composable
 fun RecenterButtonPreview() {
-    RecenterButton(Icons.Default.LocationOn, onClick = {})
+    RecenterButton(Icons.Default.LocationOn, stringResource(R.string.recenter), onClick = {})
 }

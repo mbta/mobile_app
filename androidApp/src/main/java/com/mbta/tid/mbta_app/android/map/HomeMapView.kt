@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -65,6 +66,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.toPoint
+import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -351,7 +353,8 @@ fun HomeMapView(
                 ) {
                     RecenterButton(
                         Icons.Default.LocationOn,
-                        modifier = Modifier.padding(horizontal = 16.dp).testTag("recenterButton"),
+                        stringResource(R.string.recenter),
+                        modifier = Modifier.padding(horizontal = 16.dp),
                         onClick = { viewModel.recenter() },
                     )
                 }
@@ -361,12 +364,14 @@ fun HomeMapView(
                         globalData?.getRoute(vehicle.routeId)?.type?.let { routeType ->
                             RecenterButton(
                                 routeIcon(routeType).first,
+                                stringResource(
+                                    R.string.recenter_map_on_vehicle,
+                                    routeType.typeText(LocalContext.current, isOnly = true),
+                                ),
                                 onClick = {
                                     viewModel.recenter(MapViewModel.Event.RecenterType.Trip)
                                 },
-                                modifier =
-                                    Modifier.padding(horizontal = 16.dp)
-                                        .testTag("tripRecenterButton"),
+                                modifier = Modifier.padding(horizontal = 16.dp),
                             )
                         }
                     }

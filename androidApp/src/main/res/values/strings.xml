@@ -285,6 +285,7 @@
     <string name="rail_defect_lowercase">rail defect</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>
     <string name="recenter">Recenter map on my location</string>
+    <string name="recenter_map_on_vehicle">Recenter map on %1$s</string>
     <string name="recently_viewed">Recently Viewed</string>
     <string name="refresh">Refresh</string>
     <string name="refresh_predictions">Refresh predictions</string>

@@ -279,6 +279,7 @@
     <string name="rail_defect_lowercase">軌道缺陷</string>
     <string name="real_time_arrivals_updating_live">即時到達即時更新</string>
     <string name="recenter">將地圖重新定位到我的位置</string>
+    <string name="recenter_map_on_vehicle">將地圖重新定位到 %1$s</string>
     <string name="recently_viewed">近期查看過</string>
     <string name="refresh">重新整理</string>
     <string name="refresh_predictions">重新整理預測</string>

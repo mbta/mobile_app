@@ -285,6 +285,7 @@
     <string name="rail_defect_lowercase">defecto del riel</string>
     <string name="real_time_arrivals_updating_live">Llegadas en tiempo real actualizadas en vivo</string>
     <string name="recenter">Volver a centrar el mapa en mi ubicación</string>
+    <string name="recenter_map_on_vehicle">Volver a centrar el mapa en %1$s</string>
     <string name="recently_viewed">Visto recientemente</string>
     <string name="refresh">Refrescar</string>
     <string name="refresh_predictions">Refrescar predicciones</string>

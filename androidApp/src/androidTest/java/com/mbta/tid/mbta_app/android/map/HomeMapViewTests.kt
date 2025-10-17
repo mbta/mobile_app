@@ -369,9 +369,13 @@ class HomeMapViewTests {
         }
 
         composeTestRule.waitUntilDefaultTimeout {
-            composeTestRule.onNodeWithTag("recenterButton").isDisplayed()
+            composeTestRule
+                .onNodeWithContentDescription("Recenter map on my location")
+                .isDisplayed()
         }
-        composeTestRule.onNodeWithTag("recenterButton").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Recenter map on my location")
+            .assertIsDisplayed()
     }
 
     @Test
