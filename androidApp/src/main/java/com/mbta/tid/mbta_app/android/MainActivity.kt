@@ -90,8 +90,6 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getFCMToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener {
-            if (it.isSuccessful) fcmToken = it.result
-        }
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken = it }
     }
 }

@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
-import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.isoDayNumber
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -38,7 +38,7 @@ internal constructor(
 ) {
     public companion object {
         public fun fromFavorites(
-            favorites: Map<RouteStopDirection, FavoriteSettings?>,
+            favorites: Map<RouteStopDirection, FavoriteSettings>,
             includeAccessibility: Boolean = false,
         ): List<SubscriptionRequest> {
             val enabled = favorites.filter { it.value?.notifications?.enabled == true }
@@ -48,7 +48,7 @@ internal constructor(
                         WindowRequest(
                             startTime = it.startTime,
                             endTime = it.endTime,
-                            daysOfWeek = it.daysOfWeek.map { day -> day.number },
+                            daysOfWeek = it.daysOfWeek.map { day -> day.isoDayNumber },
                         )
                     }
                 SubscriptionRequest(
@@ -62,15 +62,3 @@ internal constructor(
         }
     }
 }
-
-private val DayOfWeek.number: Int
-    get() =
-        when (this) {
-            DayOfWeek.SUNDAY -> 0
-            DayOfWeek.MONDAY -> 1
-            DayOfWeek.TUESDAY -> 2
-            DayOfWeek.WEDNESDAY -> 3
-            DayOfWeek.THURSDAY -> 4
-            DayOfWeek.FRIDAY -> 5
-            DayOfWeek.SATURDAY -> 6
-        }
