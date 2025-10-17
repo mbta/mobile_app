@@ -16,7 +16,7 @@ struct StopDetailsFilteredHeader: View {
     var direction: Int32
     var isFavorite: Bool = false
     var onFavorite: () -> Void = {}
-    var onClose: () -> Void = {}
+    var navCallbacks: NavigationCallbacks
 
     var body: some View {
         let routeLabel = line?.longName ?? route?.label
@@ -37,7 +37,7 @@ struct StopDetailsFilteredHeader: View {
                 comment: "Stop details header fallback voiceover text when data fails to load"
             )
         }
-        HStack(alignment: .center, spacing: 16) {
+        SheetHeader(title: {
             HStack(alignment: .center, spacing: 8) {
                 let pillAccessibilityLabel =
                     routeModeLabel(line: line, route: route)
@@ -57,18 +57,14 @@ struct StopDetailsFilteredHeader: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h1)
             .accessibilityLabel(accessibilityLabel)
-
-            HStack(alignment: .center, spacing: 16) {
-                StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
-                    .id(direction) // don’t play animation when switching between favorited direction and unfavorited
-                    // direction
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: 44, maxHeight: 44)
-                ActionButton(kind: .close, action: onClose)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 16)
+        }, navCallbacks: navCallbacks, rightActionContents: {
+            StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
+                .id(direction) // don’t play animation when switching between favorited direction and unfavorited
+                // direction
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: 44, maxHeight: 44)
+        })
+        .padding(.bottom, 16)
     }
 
     func stopLabel(_ stop: Stop) -> AttributedString {
@@ -115,9 +111,27 @@ struct StopDetailsFilteredHeader_Previews: PreviewProvider {
             stop.name = "South Station"
         }
         VStack {
-            StopDetailsFilteredHeader(route: route, line: nil, stop: stop, direction: 0)
-            StopDetailsFilteredHeader(route: longestStopNameRoute, line: nil, stop: longestStopName, direction: 0)
-            StopDetailsFilteredHeader(route: crRoute, line: nil, stop: crStop, direction: 0)
+            StopDetailsFilteredHeader(
+                route: route,
+                line: nil,
+                stop: stop,
+                direction: 0,
+                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+            )
+            StopDetailsFilteredHeader(
+                route: longestStopNameRoute,
+                line: nil,
+                stop: longestStopName,
+                direction: 0,
+                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+            )
+            StopDetailsFilteredHeader(
+                route: crRoute,
+                line: nil,
+                stop: crStop,
+                direction: 0,
+                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+            )
         }
     }
 }

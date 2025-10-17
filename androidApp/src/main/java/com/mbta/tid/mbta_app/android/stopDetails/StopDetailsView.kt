@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import org.koin.compose.koinInject
 
@@ -25,7 +26,7 @@ fun StopDetailsView(
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
@@ -55,7 +56,7 @@ fun StopDetailsView(
             now,
             isFavorite,
             updateFavorites,
-            onClose,
+            navCallbacks,
             updateStopFilter,
             updateTripFilter,
             tileScrollState,
@@ -68,7 +69,7 @@ fun StopDetailsView(
             stopId,
             now,
             isFavorite,
-            onClose,
+            navCallbacks,
             updateStopFilter,
             ::openModalAndRecord,
             errorBannerViewModel,

@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
@@ -63,7 +64,15 @@ fun NearbyTransitView(
     val (favorites) = manageFavorites()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SheetHeader(title = stringResource(R.string.nearby_transit))
+        SheetHeader(
+            title = stringResource(R.string.nearby_transit),
+            navCallbacks =
+                NavigationCallbacks(
+                    onBack = null,
+                    onClose = null,
+                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                ),
+        )
         ErrorBanner(errorBannerViewModel)
         LaunchedEffect(
             stopIds,

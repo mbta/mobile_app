@@ -23,10 +23,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.ActionButton
-import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
@@ -36,6 +35,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 
 @Composable
 fun StopDetailsFilteredHeader(
@@ -44,62 +44,59 @@ fun StopDetailsFilteredHeader(
     stop: Stop?,
     isFavorite: Boolean? = false,
     onFavorite: (() -> Unit)? = null,
-    onClose: (() -> Unit)? = null,
+    navCallbacks: NavigationCallbacks,
 ) {
-    Row(
-        Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp),
-        Arrangement.spacedBy(8.dp),
-        Alignment.CenterVertically,
-    ) {
-        Row(
-            Modifier.weight(1f).padding(top = 4.dp).semantics(mergeDescendants = true) {
-                heading()
-            },
-            Arrangement.spacedBy(8.dp),
-            Alignment.CenterVertically,
-        ) {
-            val pillDescription = routeModeLabel(LocalContext.current, line, route)
-            if (line != null) {
-                RoutePill(
-                    route = null,
-                    line = line,
-                    type = RoutePillType.Fixed,
-                    modifier =
-                        Modifier.semantics { contentDescription = pillDescription }
-                            .placeholderIfLoading(),
-                )
-            } else if (route != null) {
-                RoutePill(
-                    route = route,
-                    type = RoutePillType.Fixed,
-                    modifier =
-                        Modifier.semantics { contentDescription = pillDescription }
-                            .placeholderIfLoading(),
-                )
+    SheetHeader(
+        Modifier.padding(bottom = 8.dp),
+        title = {
+            Row(
+                Modifier.weight(1f)
+                    .padding(top = 4.dp)
+                    .semantics(mergeDescendants = true) { heading() }
+                    .align(Alignment.CenterVertically),
+                Arrangement.spacedBy(8.dp),
+                Alignment.CenterVertically,
+            ) {
+                val pillDescription = routeModeLabel(LocalContext.current, line, route)
+                if (line != null) {
+                    RoutePill(
+                        route = null,
+                        line = line,
+                        type = RoutePillType.Fixed,
+                        modifier =
+                            Modifier.semantics { contentDescription = pillDescription }
+                                .placeholderIfLoading(),
+                    )
+                } else if (route != null) {
+                    RoutePill(
+                        route = route,
+                        type = RoutePillType.Fixed,
+                        modifier =
+                            Modifier.semantics { contentDescription = pillDescription }
+                                .placeholderIfLoading(),
+                    )
+                }
+                if (stop != null) {
+                    Text(
+                        AnnotatedString.fromHtml(
+                            stringResource(R.string.header_at_stop, stop.name)
+                        ),
+                        modifier =
+                            Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
+                        style = Typography.headline,
+                    )
+                } else {
+                    Spacer(Modifier.weight(1f))
+                }
             }
-            if (stop != null) {
-                Text(
-                    AnnotatedString.fromHtml(stringResource(R.string.header_at_stop, stop.name)),
-                    modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                    style = Typography.headline,
-                )
-            } else {
-                Spacer(Modifier.weight(1f))
-            }
-        }
-
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        },
+        navCallbacks = navCallbacks,
+        rightActionContents = {
             if (onFavorite != null) {
                 StarButton(isFavorite, colorResource(R.color.text), onFavorite)
             }
-            if (onClose != null) {
-                ActionButton(ActionButtonKind.Close) { onClose() }
-            }
-        }
-    }
+        },
+    )
 }
 
 @Preview
@@ -122,7 +119,12 @@ private fun StopDetailsFilteredHeaderPreview() {
                 stop = stop,
                 isFavorite = true,
                 onFavorite = {},
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = {},
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
             )
             HorizontalDivider()
             StopDetailsFilteredHeader(
@@ -131,6 +133,12 @@ private fun StopDetailsFilteredHeaderPreview() {
                 stop = stop,
                 isFavorite = true,
                 onFavorite = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = null,
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
             )
         }
     }

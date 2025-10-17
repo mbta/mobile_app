@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
@@ -142,11 +143,10 @@ class StopDetailsUnfilteredRoutesViewTest {
                 now = now,
                 globalData = globalResponse,
                 isFavorite = { false },
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
                 updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            ) {}
         }
 
         composeTestRule.onNodeWithText("Sample Route").assertExists()
@@ -185,11 +185,10 @@ class StopDetailsUnfilteredRoutesViewTest {
                 now = now,
                 globalData = globalResponse,
                 isFavorite = { false },
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
                 updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            ) {}
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertExists()
@@ -235,11 +234,10 @@ class StopDetailsUnfilteredRoutesViewTest {
                 now = now,
                 globalData = globalResponse,
                 isFavorite = { false },
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 onTapRoutePill = {},
                 updateStopFilter = filterState::value::set,
-                openModal = {},
-            )
+            ) {}
         }
 
         composeTestRule.onNodeWithText("Elevator alert").assertIsDisplayed()

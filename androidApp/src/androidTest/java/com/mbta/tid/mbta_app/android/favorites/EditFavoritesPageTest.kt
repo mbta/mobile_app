@@ -28,6 +28,7 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
@@ -280,7 +281,7 @@ class EditFavoritesPageTest : KoinTest {
             EditFavoritesPage(
                 globalResponse,
                 viewModel,
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModalWithCloseCallback = { _, _ -> },
             )
         }
@@ -306,7 +307,7 @@ class EditFavoritesPageTest : KoinTest {
             EditFavoritesPage(
                 globalResponse,
                 viewModel,
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModalWithCloseCallback = { _, _ -> },
             )
         }
@@ -358,7 +359,7 @@ class EditFavoritesPageTest : KoinTest {
             EditFavoritesPage(
                 globalResponse,
                 viewModel,
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModalWithCloseCallback = { _, _ -> },
             )
         }
@@ -439,7 +440,7 @@ class EditFavoritesPageTest : KoinTest {
                 globalResponse,
                 viewModel,
                 toastVM,
-                onClose = {},
+                NavigationCallbacks.empty,
                 openModalWithCloseCallback = { _, _ -> },
             )
         }
@@ -507,7 +508,7 @@ class EditFavoritesPageTest : KoinTest {
             EditFavoritesPage(
                 globalResponse,
                 viewModel,
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModalWithCloseCallback = { modal, _ -> openedModal = modal },
             )
         }
@@ -571,7 +572,7 @@ class EditFavoritesPageTest : KoinTest {
             EditFavoritesPage(
                 globalResponse,
                 viewModel,
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModalWithCloseCallback = { _, _ -> },
             )
         }

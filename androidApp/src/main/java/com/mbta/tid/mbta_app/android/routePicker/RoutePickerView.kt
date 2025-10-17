@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
 import com.mbta.tid.mbta_app.viewModel.SearchRoutesViewModel
@@ -57,8 +58,7 @@ fun RoutePickerView(
     onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Unit,
     onOpenRouteDetails: (LineOrRoute.Id, RouteDetailsContext) -> Unit,
     onRouteSearchExpandedChange: (Boolean) -> Unit,
-    onBack: () -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     errorBannerViewModel: IErrorBannerViewModel,
     searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
@@ -109,8 +109,10 @@ fun RoutePickerView(
             title = headerTitle,
             titleColor = path.textColor,
             closeText = stringResource(R.string.done),
-            onBack = if (path !is RoutePickerPath.Root) onBack else null,
-            onClose = onClose,
+            navCallbacks =
+                navCallbacks.copy(
+                    onBack = navCallbacks.onBack.takeUnless { path == RoutePickerPath.Root }
+                ),
             buttonColors = ButtonDefaults.contrastTranslucent(),
         )
         ErrorBanner(errorBannerViewModel, Modifier.padding(start = 14.dp, top = 6.dp, end = 14.dp))

@@ -26,6 +26,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
@@ -166,19 +167,19 @@ class StopDetailsViewTest {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
             StopDetailsView(
                 stopId = stop.id,
-                isFavorite = { false },
-                updateFavorites = { _, _ -> },
-                onClose = {},
                 stopFilter = null,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                navCallbacks = NavigationCallbacks.empty,
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                errorBannerViewModel = koinInject(),
                 openModal = {},
                 openSheetRoute = {},
+                errorBannerViewModel = koinInject(),
             )
         }
 
@@ -233,11 +234,16 @@ class StopDetailsViewTest {
                 stopId = stop.id,
                 isFavorite = { false },
                 updateFavorites = { _, _ -> },
-                onClose = {},
                 stopFilter = filterState.value,
                 tripFilter = null,
                 allAlerts = null,
                 now = now,
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
@@ -316,19 +322,19 @@ class StopDetailsViewTest {
             val filterState = remember { mutableStateOf<StopDetailsFilter?>(null) }
             StopDetailsView(
                 stopId = stop.id,
-                isFavorite = { false },
-                updateFavorites = { _, _ -> },
-                onClose = {},
                 stopFilter = filterState.value,
                 tripFilter = null,
                 allAlerts = AlertsStreamDataResponse(builder),
                 now = now,
+                isFavorite = { false },
+                updateFavorites = { _, _ -> },
+                navCallbacks = NavigationCallbacks.empty,
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                errorBannerViewModel = koinInject(),
                 openModal = {},
                 openSheetRoute = {},
+                errorBannerViewModel = koinInject(),
             )
         }
 
@@ -391,13 +397,13 @@ class StopDetailsViewTest {
                 now = now,
                 isFavorite = { false },
                 updateFavorites = { _, _ -> },
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),
-                errorBannerViewModel = koinInject(),
                 openModal = {},
                 openSheetRoute = {},
+                errorBannerViewModel = koinInject(),
             )
         }
 

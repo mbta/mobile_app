@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.repositories.MockVehicleRepository
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertTrue
 import org.junit.Rule
@@ -46,7 +47,12 @@ class TripDetailsPageTest {
                 allAlerts = AlertsStreamDataResponse(emptyMap()),
                 openModal = {},
                 openSheetRoute = {},
-                onClose = { onCloseCalled = true },
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = { onCloseCalled = true },
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
             )
         }
 
@@ -95,7 +101,7 @@ class TripDetailsPageTest {
                 allAlerts = AlertsStreamDataResponse(objects),
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 

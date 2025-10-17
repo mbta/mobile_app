@@ -78,6 +78,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -102,8 +103,7 @@ fun RouteStopListView(
     globalData: GlobalResponse,
     onClick: (RouteDetailsRowContext) -> Unit,
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
-    onBack: () -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
@@ -150,8 +150,7 @@ fun RouteStopListView(
         globalData = globalData,
         onClick = onClick,
         onClickLabel = onClickLabel,
-        onBack = onBack,
-        onClose = onClose,
+        navCallbacks = navCallbacks,
         openModal = openModal,
         errorBannerViewModel = errorBannerViewModel,
         toastViewModel = toastViewModel,
@@ -181,9 +180,12 @@ fun LoadingRouteStopListView(
             context = context,
             globalData = GlobalResponse(objects),
             onClick = {},
-            onClickLabel = { null },
-            onBack = {},
-            onClose = {},
+            navCallbacks =
+                NavigationCallbacks(
+                    onBack = null,
+                    onClose = null,
+                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                ),
             openModal = {},
             errorBannerViewModel = errorBannerViewModel,
             toastViewModel = toastViewModel,
@@ -222,8 +224,7 @@ fun RouteStopListView(
     globalData: GlobalResponse,
     onClick: (RouteDetailsRowContext) -> Unit,
     onClickLabel: @Composable (RouteDetailsRowContext) -> String? = { null },
-    onBack: () -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
     toastViewModel: IToastViewModel = koinInject(),
@@ -331,14 +332,17 @@ fun RouteStopListView(
             closeText =
                 if (context is RouteDetailsContext.Favorites) stringResource(R.string.done)
                 else null,
-            onBack = {
-                showFirstTimeFavoritesToast = false
-                onBack()
-            },
-            onClose = {
-                showFirstTimeFavoritesToast = false
-                onClose()
-            },
+            navCallbacks =
+                navCallbacks.copy(
+                    onBack = {
+                        showFirstTimeFavoritesToast = false
+                        navCallbacks.onBack?.invoke()
+                    },
+                    onClose = {
+                        showFirstTimeFavoritesToast = false
+                        navCallbacks.onClose?.invoke()
+                    },
+                ),
             buttonColors = ButtonDefaults.contrastTranslucent(),
         )
         ErrorBanner(errorBannerViewModel)

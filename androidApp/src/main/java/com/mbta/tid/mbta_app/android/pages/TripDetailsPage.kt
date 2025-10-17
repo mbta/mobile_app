@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsPageViewModel
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.currentKoinScope
@@ -38,7 +39,7 @@ fun TripDetailsPage(
     allAlerts: AlertsStreamDataResponse?,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     tripDetailsPageVM: ITripDetailsPageViewModel = koinInject(),
 ) {
     val now by timer(updateInterval = 5.seconds)
@@ -68,7 +69,7 @@ fun TripDetailsPage(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         if (route != null && direction != null) {
-            TripDetailsPageHeader(route, direction, onClose)
+            TripDetailsPageHeader(route, direction, navCallbacks)
         } else {
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 TripDetailsPageHeader(
@@ -78,7 +79,7 @@ fun TripDetailsPage(
                         stringResource(R.string.loading),
                         0,
                     ),
-                    onClose,
+                    navCallbacks,
                 )
             }
         }

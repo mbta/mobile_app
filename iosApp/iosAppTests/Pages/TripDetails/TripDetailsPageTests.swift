@@ -86,7 +86,7 @@ final class TripDetailsPageTests: XCTestCase {
 
         let sut = TripDetailsPage(
             filter: filter,
-            onClose: {},
+            navCallbacks: .companion.empty,
             nearbyVM: nearbyVM,
             tripDetailsPageVM: tripDetailsPageVM,
             tripDetailsVM: tripDetailsVM
@@ -117,7 +117,7 @@ final class TripDetailsPageTests: XCTestCase {
                 stopId: "",
                 stopSequence: nil
             ),
-            onClose: { closeExp.fulfill() },
+            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, sheetBackState: .hidden),
             nearbyVM: nearbyVM,
         )
         try sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()

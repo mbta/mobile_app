@@ -24,6 +24,7 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
@@ -110,8 +111,7 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = clicks::add,
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = MockToastViewModel(),
@@ -196,8 +196,7 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = MockToastViewModel(),
@@ -298,8 +297,7 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = MockToastViewModel(),
@@ -353,8 +351,7 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Details,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = MockToastViewModel(),
@@ -399,8 +396,7 @@ class RouteStopListViewTest {
                         is RouteDetailsRowContext.Favorites -> it.onTapStar()
                     }
                 },
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = MockToastViewModel(),
@@ -453,8 +449,7 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = toastVM,
@@ -505,8 +500,12 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = { backTapped = true },
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = { backTapped = true },
+                        onClose = null,
+                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                    ),
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = toastVM,
@@ -557,8 +556,12 @@ class RouteStopListViewTest {
                 RouteDetailsContext.Favorites,
                 GlobalResponse(objects),
                 onClick = {},
-                onBack = {},
-                onClose = { closeTapped = true },
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = { closeTapped = true },
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
                 toastViewModel = toastVM,

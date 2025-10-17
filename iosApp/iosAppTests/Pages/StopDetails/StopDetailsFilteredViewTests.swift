@@ -38,6 +38,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),

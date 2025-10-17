@@ -62,8 +62,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { clicks.append($0) },
-            onBack: { backTapped = true },
-            onClose: { closeTapped = true },
+            navCallbacks: .init(onBack: { backTapped = true }, onClose: { closeTapped = true }, sheetBackState: .shown),
             errorBannerVM: errorBannerVM,
             rightSideContent: { switch $0 {
             case let .details(stop: stop): return Text(verbatim: "rightSideContent for \(stop.name)")
@@ -96,7 +95,7 @@ final class RouteStopListViewTests: XCTestCase {
             try view.find(ViewType.Button.self, where: { try $0.accessibilityLabel().string() == "Back" }).tap()
             XCTAssertTrue(backTapped)
 
-            try view.find(ViewType.Button.self, where: { try $0.accessibilityLabel().string() == "Close" }).tap()
+            try view.find(button: "Done").tap()
             XCTAssertTrue(closeTapped)
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -143,8 +142,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
-            onBack: {},
-            onClose: {},
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             defaultSelectedRouteId: route2.id,
             rightSideContent: { _ in EmptyView() }
@@ -211,8 +209,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
-            onBack: {},
-            onClose: {},
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             rightSideContent: { _ in EmptyView() }
         )
@@ -271,8 +268,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
-            onBack: {},
-            onClose: {},
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             rightSideContent: { _ in EmptyView() }
         )

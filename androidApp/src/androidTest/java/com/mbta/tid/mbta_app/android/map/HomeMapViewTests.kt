@@ -78,6 +78,7 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -118,6 +119,7 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -169,6 +171,7 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -208,6 +211,7 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.NearbyTransit,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -245,6 +249,7 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -283,6 +288,7 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -321,6 +327,7 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
@@ -362,6 +369,7 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = mapVM,
                 configManager,
@@ -376,6 +384,82 @@ class HomeMapViewTests {
         composeTestRule
             .onNodeWithContentDescription("Recenter map on my location")
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsBackButtonIfNeeded(): Unit = runBlocking {
+        val locationManager = MockLocationDataManager()
+        val viewModel =
+            MapViewModel(
+                MockRouteCardDataViewModel(),
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockSentryRepository(),
+                MockStopRepository(),
+                Clock.System,
+                Dispatchers.Default,
+                Dispatchers.IO,
+            )
+        val viewportProvider = ViewportProvider(MapViewportState())
+        viewModel.setViewportManager(viewportProvider)
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
+        locationManager.hasPermission = true
+        composeTestRule.setContent {
+            HomeMapView(
+                sheetPadding = PaddingValues(0.dp),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
+                locationDataManager = locationManager,
+                viewportProvider = viewportProvider,
+                currentNavEntry = null,
+                handleStopNavigation = {},
+                handleVehicleTap = {},
+                handleBack = {},
+                vehiclesData = emptyList(),
+                viewModel = viewModel,
+                configManager,
+            )
+        }
+        composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
+    }
+
+    @Test
+    fun testHidesBackButtonIfNeeded(): Unit = runBlocking {
+        val locationManager = MockLocationDataManager()
+        val viewModel =
+            MapViewModel(
+                MockRouteCardDataViewModel(),
+                MockGlobalRepository(),
+                MockRailRouteShapeRepository(),
+                MockSentryRepository(),
+                MockStopRepository(),
+                Clock.System,
+                Dispatchers.Default,
+                Dispatchers.IO,
+            )
+        val viewportProvider = ViewportProvider(MapViewportState())
+        viewModel.setViewportManager(viewportProvider)
+        val configManager = MapboxConfigManager()
+        configManager.loadConfig()
+        locationManager.hasPermission = true
+        composeTestRule.setContent {
+            HomeMapView(
+                sheetPadding = PaddingValues(0.dp),
+                lastLoadedLocation = null,
+                isTargetingState = mutableStateOf(false),
+                locationDataManager = locationManager,
+                viewportProvider = viewportProvider,
+                currentNavEntry = null,
+                handleStopNavigation = {},
+                handleVehicleTap = {},
+                handleBack = null,
+                vehiclesData = emptyList(),
+                viewModel = viewModel,
+                configManager,
+            )
+        }
+        composeTestRule.onNodeWithContentDescription("Back").assertDoesNotExist()
     }
 
     @Test
@@ -415,6 +499,7 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
+                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,

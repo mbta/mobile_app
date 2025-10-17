@@ -131,6 +131,7 @@ import XCTest
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM
         )
@@ -170,6 +171,7 @@ import XCTest
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM
         )
@@ -220,6 +222,7 @@ import XCTest
             global: .init(objects: builder!),
             now: now!,
             setStopFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
             nearbyVM: nearbyVM
         )

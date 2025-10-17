@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
@@ -34,7 +35,7 @@ fun StopDetailsFilteredView(
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
@@ -66,9 +67,9 @@ fun StopDetailsFilteredView(
             updateFavorites = updateFavorites,
             openModal = openModal,
             openSheetRoute = openSheetRoute,
-            onClose = onClose,
+            navCallbacks = navCallbacks,
         )
-    } ?: Loading(stopId, stopFilter, tripFilter, now, onClose, errorBannerViewModel)
+    } ?: Loading(stopId, stopFilter, tripFilter, now, navCallbacks, errorBannerViewModel)
 }
 
 @Composable
@@ -77,7 +78,7 @@ private fun Loading(
     stopFilter: StopDetailsFilter,
     tripFilter: TripDetailsFilter?,
     now: EasternTimeInstant,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
     CompositionLocalProvider(IsLoadingSheetContents provides true) {
@@ -105,7 +106,7 @@ private fun Loading(
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = onClose,
+                navCallbacks = navCallbacks,
             )
         }
     }

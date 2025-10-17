@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.IdleGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSearchResultRepository
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.MockSearchRoutesViewModel
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -46,8 +47,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -73,8 +73,12 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = {},
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -97,8 +101,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -127,8 +130,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -158,8 +160,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -202,8 +203,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -241,8 +241,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -271,8 +270,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -298,8 +296,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -332,8 +329,7 @@ class RoutePickerViewTest {
                     selectedContext = context
                 },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -365,8 +361,12 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = { backCalled = true },
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = { backCalled = true },
+                        onClose = null,
+                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                    ),
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -397,8 +397,12 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = { closeCalled = true },
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = { closeCalled = true },
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -440,8 +444,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -474,8 +477,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
                 searchRoutesViewModel = searchVM,
             )
@@ -514,8 +516,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = {},
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -553,8 +554,7 @@ class RoutePickerViewTest {
                 onOpenPickerPath = { _, _ -> },
                 onOpenRouteDetails = { _, _ -> },
                 onRouteSearchExpandedChange = { filterExpanded = it },
-                onBack = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
                 errorBannerViewModel = koinInject(),
             )
         }

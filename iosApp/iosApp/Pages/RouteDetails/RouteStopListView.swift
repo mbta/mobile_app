@@ -33,8 +33,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let context: RouteDetailsContext
     let globalData: GlobalResponse
     let onClick: (RouteDetailsRowContext) -> Void
-    let onBack: () -> Void
-    let onClose: () -> Void
+    let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
     let defaultSelectedRouteId: Route.Id?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
@@ -56,8 +55,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
-        onBack: @escaping () -> Void,
-        onClose: @escaping () -> Void,
+        navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         defaultSelectedRouteId: Route.Id? = nil,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
@@ -69,8 +67,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         self.context = context
         self.globalData = globalData
         self.onClick = onClick
-        self.onBack = onBack
-        self.onClose = onClose
+        self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.defaultSelectedRouteId = defaultSelectedRouteId
         self.rightSideContent = rightSideContent
@@ -107,8 +104,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             context: context,
             globalData: globalData,
             onClick: onClick,
-            onBack: onBack,
-            onClose: onClose,
+            navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
             rightSideContent: rightSideContent,
             favoritesUsecases: favoritesUsecases,
@@ -194,8 +190,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let context: RouteDetailsContext
     let globalData: GlobalResponse
     let onClick: (RouteDetailsRowContext) -> Void
-    let onBack: () -> Void
-    let onClose: () -> Void
+    let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
     let toastVM: IToastViewModel
@@ -221,8 +216,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
-        onBack: @escaping () -> Void,
-        onClose: @escaping () -> Void,
+        navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
@@ -239,8 +233,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         self.context = context
         self.globalData = globalData
         self.onClick = onClick
-        self.onBack = onBack
-        self.onClose = onClose
+        self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.rightSideContent = rightSideContent
         self.favoritesUsecases = favoritesUsecases
@@ -277,8 +270,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 titleColor: textColor,
                 buttonColor: .routeColorContrast,
                 buttonTextColor: .routeColorContrastText,
-                onBack: onBack,
-                onClose: onClose
+                navCallbacks: navCallbacks,
+                closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
             )
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .top], 16))
             DirectionPicker(

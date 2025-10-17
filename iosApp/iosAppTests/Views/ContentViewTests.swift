@@ -206,6 +206,42 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
     }
 
+    @MainActor func testBack() throws {
+        let sut = ContentView(contentVM: .init())
+        let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
+        let tripFilter = TripDetailsFilter(
+            tripId: "trip",
+            vehicleId: "vehicle",
+            stopSequence: nil,
+            selectionLock: false
+        )
+
+        let exp1 = sut.inspection.inspect(after: 1) { view in
+            try view.actualView().nearbyVM.navigationStack = [
+                .nearby,
+                .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
+                .tripDetails(filter: .init(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter)),
+                .stopDetails(stopId: "otherStop", stopFilter: nil, tripFilter: nil),
+            ]
+        }
+        let exp2 = sut.inspection.inspect(after: 2) { view in
+            try view.find(viewWithAccessibilityLabel: "Back").callOnTapGesture()
+        }
+        let exp3 = sut.inspection.inspect(after: 3) { view in
+            XCTAssertEqual(
+                try view.actualView().nearbyVM.navigationStack,
+                [
+                    .nearby,
+                    .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
+                    .tripDetails(filter: .init(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter)),
+                ]
+            )
+        }
+
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        wait(for: [exp1, exp2, exp3], timeout: 5)
+    }
+
     class FakeContentVM: ContentViewModel {
         let loadConfigCallback: () -> Void
         let configMapboxCallback: () -> Void

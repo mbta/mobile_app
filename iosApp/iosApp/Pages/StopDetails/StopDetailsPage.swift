@@ -21,6 +21,7 @@ struct RouteCardParams: Equatable {
 
 struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
+    var navCallbacks: NavigationCallbacks
 
     @State var favorites: Favorites = LoadedFavorites.last
     @State var global: GlobalResponse?
@@ -47,6 +48,7 @@ struct StopDetailsPage: View {
 
     init(
         filters: StopDetailsPageFilters,
+        navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
@@ -55,6 +57,7 @@ struct StopDetailsPage: View {
         viewportProvider: ViewportProvider
     ) {
         self.filters = filters
+        self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -74,6 +77,7 @@ struct StopDetailsPage: View {
             onUpdateFavorites: { loadingFavorites = true },
             setStopFilter: { filter in nearbyVM.setLastStopDetailsFilter(stopId, filter) },
             setTripFilter: { filter in nearbyVM.setLastTripDetailsFilter(stopId, filter) },
+            navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
             nearbyVM: nearbyVM,
             mapVM: mapVM,
