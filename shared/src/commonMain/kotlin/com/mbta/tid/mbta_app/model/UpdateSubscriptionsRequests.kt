@@ -36,7 +36,7 @@ internal constructor(
     @SerialName("include_accessibility") val includeAccessibility: Boolean,
     val windows: List<WindowRequest>,
 ) {
-    public companion object Companion {
+    public companion object {
         public fun fromFavorites(
             favorites: Map<RouteStopDirection, FavoriteSettings?>,
             includeAccessibility: Boolean = false,
