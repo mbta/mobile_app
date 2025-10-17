@@ -8,6 +8,7 @@ import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import com.mbta.tid.mbta_app.android.util.fcmToken
 
 class MBTAGoMessagingService : FirebaseMessagingService() {
 
@@ -19,6 +20,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
      */
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        fcmToken = token
     }
 
     override fun onMessageReceived(message: RemoteMessage) {

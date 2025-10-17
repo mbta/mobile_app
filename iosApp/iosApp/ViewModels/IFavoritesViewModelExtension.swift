@@ -14,6 +14,12 @@ extension IFavoritesViewModel {
         context: EditFavoritesContext,
         defaultDirection: Int32,
     ) {
-        __updateFavorites(updatedFavorites: updatedFavorites, context: context, defaultDirection: defaultDirection)
+        __updateFavorites(
+            updatedFavorites: updatedFavorites,
+            context: context,
+            defaultDirection: defaultDirection,
+            fcmToken: nil, // TODO:
+            includeAccessibility: false // TODO:
+        )
     }
 }

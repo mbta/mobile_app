@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.buildFavorites
@@ -33,7 +34,8 @@ class ManageFavoritesTest {
         val rsd0 = RouteStopDirection(Route.Id("route1"), "stop1", 0)
         val rsd1 = RouteStopDirection(Route.Id("route1"), "stop1", 1)
         val favoritesRepo = MockFavoritesRepository(buildFavorites { routeStopDirection(rsd0) })
-        val favoritesUseCases = FavoritesUsecases(favoritesRepo, MockAnalytics())
+        val favoritesUseCases =
+            FavoritesUsecases(favoritesRepo, MockSubscriptionsRepository(), MockAnalytics())
 
         var managedFavorites: ManagedFavorites? = null
         composeTestRule.setContent {

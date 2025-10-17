@@ -59,6 +59,7 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.TestData
@@ -249,7 +250,13 @@ private fun SaveFavoritePagePreviewAdd() {
             module {
                 single<IErrorBannerStateRepository> { MockErrorBannerStateRepository() }
                 single<IGlobalRepository> { MockGlobalRepository(GlobalResponse(objects)) }
-                single { FavoritesUsecases(MockFavoritesRepository(), MockAnalytics()) }
+                single {
+                    FavoritesUsecases(
+                        MockFavoritesRepository(),
+                        MockSubscriptionsRepository(),
+                        MockAnalytics(),
+                    )
+                }
             }
         )
     }
@@ -300,6 +307,7 @@ private fun SaveFavoritePagePreviewEdit() {
                                 )
                             )
                         ),
+                        MockSubscriptionsRepository(),
                         MockAnalytics(),
                     )
                 }

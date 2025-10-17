@@ -17,6 +17,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.websocket.WebSockets
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.get
+import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
@@ -50,5 +51,9 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
 
     suspend fun get(request: HttpRequestBuilder.() -> Unit): HttpResponse {
         return httpClient.get(request)
+    }
+
+    suspend fun post(request: HttpRequestBuilder.() -> Unit): HttpResponse {
+        return httpClient.post(request)
     }
 }

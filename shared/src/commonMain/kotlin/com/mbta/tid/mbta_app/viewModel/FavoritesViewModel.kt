@@ -52,6 +52,8 @@ public interface IFavoritesViewModel {
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
+        fcmToken: String?,
+        includeAccessibility: Boolean,
     )
 }
 
@@ -78,6 +80,8 @@ public class FavoritesViewModel(
             val updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
             val context: EditFavoritesContext,
             val defaultDirection: Int,
+            val fcmToken: String?,
+            val includeAccessibility: Boolean,
         ) : Event
     }
 
@@ -157,6 +161,8 @@ public class FavoritesViewModel(
                         event.updatedFavorites,
                         event.context,
                         event.defaultDirection,
+                        event.fcmToken,
+                        event.includeAccessibility,
                     )
                     reloadFavorites()
                 }
@@ -261,8 +267,18 @@ public class FavoritesViewModel(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
+        fcmToken: String?,
+        includeAccessibility: Boolean,
     ) {
-        fireEvent(Event.UpdateFavorites(updatedFavorites, context, defaultDirection))
+        fireEvent(
+            Event.UpdateFavorites(
+                updatedFavorites,
+                context,
+                defaultDirection,
+                fcmToken,
+                includeAccessibility,
+            )
+        )
     }
 }
 
@@ -315,6 +331,8 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
         defaultDirection: Int,
+        fcmToken: String?,
+        includeAccessibility: Boolean,
     ) {
         onUpdateFavorites(updatedFavorites)
     }

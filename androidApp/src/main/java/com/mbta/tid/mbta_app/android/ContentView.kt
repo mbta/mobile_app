@@ -34,14 +34,18 @@ import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.model.FeaturePromo
+import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
@@ -55,6 +59,8 @@ fun ContentView(
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
+    favoritesUsecases: FavoritesUsecases = koinInject(),
+    subscriptionsRepository: ISubscriptionsRepository = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
 ) {
@@ -74,8 +80,21 @@ fun ContentView(
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
     val globalResponse = getGlobalData("ContentView")
     val hideMaps = SettingsCache.get(Settings.HideMaps)
+    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
+
+    if (notificationsEnabled) {
+        LaunchedEffect(fcmToken) {
+            fcmToken?.let {
+                val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+                val subscriptions =
+                    SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
+                subscriptionsRepository.updateSubscriptions(it, subscriptions)
+            }
+        }
+    }
 
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {

@@ -27,7 +27,11 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import org.koin.compose.koinInject
 
 @Composable
-fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInject()) {
+fun MoreSectionView(
+    section: MoreSection,
+    settingsCache: SettingsCache = koinInject(),
+    updateAccessibility: (Boolean) -> Unit = {},
+) {
 
     val noteAbove = section.noteAbove?.value
     val noteBelow = section.noteBelow?.value
@@ -70,6 +74,9 @@ fun MoreSectionView(section: MoreSection, settingsCache: SettingsCache = koinInj
                                     else settingValue,
                             ) {
                                 settingsCache.set(item.settings, !settingValue)
+                                if (item.settings == Settings.StationAccessibility) {
+                                    updateAccessibility(!settingValue)
+                                }
                             }
                         }
                         is MoreItem.Link ->

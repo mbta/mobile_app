@@ -17,7 +17,9 @@ extension FavoritesUsecases {
         try await __updateRouteStopDirections(
             newValues: newValues as [RouteStopDirection: Any],
             context: context,
-            defaultDirection: defaultDirection
+            defaultDirection: defaultDirection,
+            fcmToken: nil, // TODO:
+            includeAccessibility: false // TODO:
         )
     }
 }

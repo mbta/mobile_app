@@ -60,6 +60,7 @@ import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.DragDirection
@@ -97,6 +98,7 @@ fun EditFavoritesPage(
         } ?: context.getString(R.string.favorites_toast_remove_fallback)
     }
     val toastUndoLabel = stringResource(R.string.undo)
+    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
     DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
@@ -118,6 +120,8 @@ fun EditFavoritesPage(
                     mapOf(deletedFavorite to null),
                     EditFavoritesContext.Favorites,
                     deletedFavorite.direction,
+                    fcmToken,
+                    includeAccessibility,
                 )
 
                 toastViewModel.showToast(
@@ -132,6 +136,8 @@ fun EditFavoritesPage(
                                         mapOf(deletedFavorite to deletedSettings),
                                         EditFavoritesContext.Favorites,
                                         deletedFavorite.direction,
+                                        fcmToken,
+                                        includeAccessibility,
                                     )
                                     toastViewModel.hideToast()
                                 },

@@ -34,7 +34,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -42,16 +41,20 @@ import com.mbta.tid.mbta_app.android.BuildConfig
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.more.MoreButton
 import com.mbta.tid.mbta_app.android.more.MoreSectionView
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.MoreViewModel
+import org.koin.compose.koinInject
 
 @SuppressLint("LocalContextConfigurationRead")
 @Composable
-fun MorePage(bottomBar: @Composable () -> Unit) {
+fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinInject()) {
     val context = LocalContext.current
     val locales = AppCompatDelegate.getApplicationLocales()
     val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
@@ -68,13 +71,13 @@ fun MorePage(bottomBar: @Composable () -> Unit) {
         }
 
     val navController = rememberNavController()
-    val viewModel = MoreViewModel()
 
     val sections = remember {
         viewModel.getSections(translation) { navController.navigate("licenses") }
     }
     val dependencies = Dependency.getAllDependencies()
     var showingBuildNumber by remember { mutableStateOf(false) }
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
     Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
         Column(Modifier.padding(outerSheetPadding).background(colorResource(R.color.fill3))) {
@@ -116,7 +119,21 @@ fun MorePage(bottomBar: @Composable () -> Unit) {
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
-                            sections.map { section -> MoreSectionView(section = section) }
+                            sections.map { section ->
+                                MoreSectionView(
+                                    section = section,
+                                    updateAccessibility = { includeAccessibility ->
+                                        if (notificationsEnabled) {
+                                            fcmToken?.let {
+                                                viewModel.updateAccessibility(
+                                                    it,
+                                                    includeAccessibility,
+                                                )
+                                            }
+                                        }
+                                    },
+                                )
+                            }
                             Row(
                                 horizontalArrangement = Arrangement.spacedBy(16.dp),
                                 verticalAlignment = Alignment.CenterVertically,
