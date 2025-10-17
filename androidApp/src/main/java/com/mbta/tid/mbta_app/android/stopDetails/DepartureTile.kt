@@ -109,7 +109,7 @@ fun DepartureTile(
 @Preview
 @Composable
 private fun DepartureTilePreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("DepartureTilePreview")
     val route1 = objects.route()
     val routeB =
         objects.route {

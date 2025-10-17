@@ -2,7 +2,6 @@ package com.mbta.tid.mbta_app
 
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.engine.darwin.Darwin
-import platform.Foundation.NSUUID
 import platform.UIKit.UIDevice
 
 internal class IOSPlatform : Platform {
@@ -15,5 +14,3 @@ internal class IOSPlatform : Platform {
 }
 
 internal actual fun getPlatform(): Platform = IOSPlatform()
-
-internal actual fun uuid(): String = NSUUID().UUIDString()

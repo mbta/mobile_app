@@ -105,7 +105,7 @@ fun StopDetailsFilteredHeader(
 @Preview
 @Composable
 private fun StopDetailsFilteredHeaderPreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("StopDetailsFilteredHeaderPreview")
     val route =
         objects.route {
             color = "ED8B00"

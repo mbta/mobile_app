@@ -38,7 +38,7 @@ private fun DirectionRowViewPreview() {
     MyApplicationTheme {
         Column {
             val now = EasternTimeInstant.now()
-            val objects = ObjectCollectionBuilder()
+            val objects = ObjectCollectionBuilder("DirectionRowViewPreview")
             val trip1 = objects.trip()
             val prediction1 =
                 objects.prediction {

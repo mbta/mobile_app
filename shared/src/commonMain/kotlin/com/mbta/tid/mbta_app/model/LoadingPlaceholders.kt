@@ -16,7 +16,7 @@ public object LoadingPlaceholders {
         context: RouteCardData.Context,
         now: EasternTimeInstant,
     ): RouteCardData {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.routeCardData")
         val line =
             if (routeId is Line.Id) {
                 objects.line {
@@ -115,7 +115,7 @@ public object LoadingPlaceholders {
     }
 
     public fun routeDetailsStops(lineOrRoute: LineOrRoute, directionId: Int): RouteDetailsStopList {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.routeDetailsStops")
         val fixedRand = Random("${lineOrRoute.id}-$directionId".hashCode())
         fun randString(from: Int, until: Int) =
             (1..fixedRand.nextInt(from, until)).joinToString("") { " " }
@@ -188,7 +188,7 @@ public object LoadingPlaceholders {
     )
 
     public fun tripDetailsInfo(): TripDetailsInfo {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.tripDetailsInfo")
         val route =
             objects.route {
                 color = "8A9199"

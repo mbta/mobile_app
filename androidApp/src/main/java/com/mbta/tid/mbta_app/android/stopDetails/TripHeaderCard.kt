@@ -535,7 +535,7 @@ private fun upcomingTripViewState(
 @Preview
 @Composable
 private fun TripHeaderCardPreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("TripHeaderCardPreview")
     val red =
         objects.route {
             id = "Red"
