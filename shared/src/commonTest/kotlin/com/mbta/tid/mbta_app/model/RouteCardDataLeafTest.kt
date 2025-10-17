@@ -429,7 +429,7 @@ class RouteCardDataLeafTest {
             val route =
                 objects.route {
                     type = RouteType.BUS
-                    id = anyOfList(silverRoutes.toList())
+                    id = anyOfList(silverRoutes.toList()).idText
                 }
             val pattern = objects.routePattern(route)
             val schedule =
@@ -2343,7 +2343,7 @@ class RouteCardDataLeafTest {
 
             val representativeTrip =
                 objects.trip {
-                    routeId = route.id
+                    routeId = route.id.idText
                     routePatternId = "rp1"
                     directionId = 0
                     stopIds = listOf(stop1.id, stop2.id)
@@ -2360,7 +2360,7 @@ class RouteCardDataLeafTest {
             // Pattern 2 isn't scheduled, but because typical will treat this as branched
             val representativeTrip2 =
                 objects.trip {
-                    routeId = route.id
+                    routeId = route.id.idText
                     routePatternId = "rp2"
                     directionId = 0
                     stopIds = listOf(stop1.id, stop3.id)

@@ -41,6 +41,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
@@ -126,7 +127,7 @@ fun StopDetailsUnfilteredRoutesView(
                         }
                     }
                 }
-                items(routeCardData, key = { it.lineOrRoute.id }) { routeCardData ->
+                items(routeCardData, key = { it.lineOrRoute.id.idText }) { routeCardData ->
                     RouteCard(
                         routeCardData,
                         globalData,
@@ -147,7 +148,7 @@ fun StopDetailsUnfilteredRoutesView(
 @Composable
 private fun StopDetailsRoutesViewPreview() {
     val now = EasternTimeInstant.now()
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("StopDetailsRoutesViewPreview")
 
     val route1 =
         objects.route {
@@ -274,7 +275,14 @@ private fun StopDetailsRoutesViewPreview() {
             ),
         )
 
-    val koin = koinApplication { modules(module { single<Analytics> { MockAnalytics() } }) }
+    val koin = koinApplication {
+        modules(
+            module {
+                single<Analytics> { MockAnalytics() }
+                single<SettingsCache> { SettingsCache(MockSettingsRepository()) }
+            }
+        )
+    }
     val errorBannerVM: IErrorBannerViewModel = MockErrorBannerViewModel()
 
     MyApplicationTheme {

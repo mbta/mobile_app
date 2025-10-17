@@ -123,8 +123,17 @@ struct TripDetailsView: View {
                let route = global.getRoute(routeId: tripData.trip.routeId) {
                 let terminalStop = getParentFor(tripData.trip.stopIds?.first)
                 let vehicleStop = getParentFor(vehicle?.stopId)
-                tripDetails(tripFilter, tripData.trip, stops, terminalStop, vehicle, vehicleStop, route)
-                    .onAppear { didLoadData?(self) }
+                tripDetails(
+                    tripFilter,
+                    tripData.trip,
+                    tripData.vehicleOnOtherTrip,
+                    stops,
+                    terminalStop,
+                    vehicle,
+                    vehicleStop,
+                    route
+                )
+                .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
             }
@@ -134,6 +143,7 @@ struct TripDetailsView: View {
     @ViewBuilder private func tripDetails(
         _ filter: TripDetailsPageFilter,
         _ trip: Trip,
+        _ vehicleOnOtherTrip: Bool,
         _ stops: TripDetailsStopList,
         _ terminalStop: Stop?,
         _ vehicle: Vehicle?,
@@ -168,23 +178,29 @@ struct TripDetailsView: View {
             explainer = .init(type: explainerType, routeAccents: routeAccents)
         } } else { nil }
 
-        VStack(spacing: 0) {
-            tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
-                .padding(.horizontal, 6)
-            TripStops(
-                targetId: filter.stopId,
-                stops: stops,
-                stopSequence: filter.stopSequence?.intValue,
-                headerSpec: headerSpec,
-                now: now,
-                alertSummaries: alertSummaries,
-                onTapLink: onTapStop,
-                onOpenAlertDetails: onOpenAlertDetails,
-                route: route,
-                routeAccents: routeAccents,
-                global: global
-            )
-            .padding(.top, -56)
+        // You can't open track this trip before the trip has started,
+        // so if this is true, it means that the selected trip is complete
+        if isTripDetailsPage, vehicleOnOtherTrip {
+            TripCompleteCard(routeAccents: routeAccents).padding(.horizontal, 16)
+        } else {
+            VStack(spacing: 0) {
+                tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
+                    .padding(.horizontal, 6)
+                TripStops(
+                    targetId: filter.stopId,
+                    stops: stops,
+                    stopSequence: filter.stopSequence?.intValue,
+                    headerSpec: headerSpec,
+                    now: now,
+                    alertSummaries: alertSummaries,
+                    onTapLink: onTapStop,
+                    onOpenAlertDetails: onOpenAlertDetails,
+                    route: route,
+                    routeAccents: routeAccents,
+                    global: global
+                )
+                .padding(.top, -56)
+            }
         }
     }
 
@@ -206,7 +222,7 @@ struct TripDetailsView: View {
                 routeAccents: routeAccents,
                 onTap: onTap,
                 now: now,
-                onFollowTrip: settingsCache.get(.trackThisTrip) && !isTripDetailsPage ? onFollowTrip : nil,
+                onFollowTrip: !isTripDetailsPage ? onFollowTrip : nil,
             )
         }
     }
@@ -216,10 +232,11 @@ struct TripDetailsView: View {
         tripDetails(
             .init(
                 stopId: "",
-                stopFilter: .init(routeId: "", directionId: 0),
+                stopFilter: .init(routeId: Route.Id(""), directionId: 0),
                 tripFilter: .init(tripId: "", vehicleId: nil, stopSequence: nil, selectionLock: false)
             ),
             placeholderInfo.trip,
+            false,
             placeholderInfo.stops,
             nil,
             placeholderInfo.vehicle,
@@ -248,7 +265,7 @@ struct TripDetailsView: View {
         else { stop.stop }
         nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
-            routeId: tripDetailsVMState?.tripData?.trip.routeId ?? "",
+            routeId: tripDetailsVMState?.tripData?.trip.routeId,
             stopId: stop.stop.id,
             tripId: tripFilter?.tripId ?? "",
             connectingRouteId: nil

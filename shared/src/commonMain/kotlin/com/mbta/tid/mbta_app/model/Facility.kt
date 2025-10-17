@@ -10,7 +10,7 @@ internal constructor(
     @SerialName("long_name") internal val longName: String? = null,
     @SerialName("short_name") val shortName: String? = null,
     val type: Type = Type.Other,
-) : BackendObject {
+) : BackendObject<String> {
     @Serializable
     public enum class Type {
         @SerialName("bike_storage") BikeStorage,

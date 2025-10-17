@@ -40,6 +40,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
@@ -54,7 +55,7 @@ fun RoutePickerView(
     path: RoutePickerPath,
     context: RouteDetailsContext,
     onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Unit,
-    onOpenRouteDetails: (String, RouteDetailsContext) -> Unit,
+    onOpenRouteDetails: (LineOrRoute.Id, RouteDetailsContext) -> Unit,
     onRouteSearchExpandedChange: (Boolean) -> Unit,
     onBack: () -> Unit,
     onClose: () -> Unit,

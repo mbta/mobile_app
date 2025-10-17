@@ -14,6 +14,7 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
@@ -38,7 +39,7 @@ class SubscribeToVehiclesTest {
     fun testSubscribeToVehicles() = runTest {
         val vehicle =
             ObjectCollectionBuilder().vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
-        var connectProps: Pair<String, Int>? = null
+        var connectProps: Pair<LineOrRoute.Id, Int>? = null
 
         val vehiclesRepo =
             MockVehiclesRepository(
@@ -48,18 +49,20 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        var stateFilter = mutableStateOf(StopDetailsFilter("route_1", 1))
+        var stateFilter = mutableStateOf(StopDetailsFilter(Route.Id("route_1"), 1))
 
         composeTestRule.setContent {
             var filter by remember { stateFilter }
             vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
         }
 
-        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair("route_1", 1) }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(Route.Id("route_1"), 1) }
         composeTestRule.waitUntilDefaultTimeout { listOf(vehicle) == vehicles }
 
-        composeTestRule.runOnUiThread { stateFilter.value = StopDetailsFilter("route_2", 1) }
-        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair("route_2", 1) }
+        composeTestRule.runOnUiThread {
+            stateFilter.value = StopDetailsFilter(Route.Id("route_2"), 1)
+        }
+        composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(Route.Id("route_2"), 1) }
     }
 
     @Test
@@ -80,7 +83,7 @@ class SubscribeToVehiclesTest {
 
         var vehicles: List<Vehicle> = emptyList()
 
-        var stateFilter = mutableStateOf(StopDetailsFilter("route_1", 1))
+        var stateFilter = mutableStateOf(StopDetailsFilter(Route.Id("route_1"), 1))
 
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
@@ -116,15 +119,15 @@ class SubscribeToVehiclesTest {
         val vehicle1 =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route1.id
+                routeId = route1.id.idText
             }
         val vehicle2 =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.StoppedAt
-                routeId = route2.id
+                routeId = route2.id.idText
             }
 
-        var connectProps: Pair<String, Int>? = null
+        var connectProps: Pair<LineOrRoute.Id, Int>? = null
 
         val vehiclesRepo =
             MockVehiclesRepository(
@@ -151,7 +154,11 @@ class SubscribeToVehiclesTest {
                                         0,
                                         listOf(),
                                         setOf(stop.id),
-                                        listOf(UpcomingTrip(objects.trip { routeId = route2.id })),
+                                        listOf(
+                                            UpcomingTrip(
+                                                objects.trip { routeId = route2.id.idText }
+                                            )
+                                        ),
                                         emptyList(),
                                         true,
                                         true,

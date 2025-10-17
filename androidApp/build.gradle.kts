@@ -15,7 +15,6 @@ val runLocalReleaseBuild = false
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
-    alias(libs.plugins.cycloneDx)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry.android)
@@ -113,11 +112,13 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.material3)
+    implementation(libs.compose.material.icons)
     implementation(libs.compose.placeholder.material3)
     implementation(libs.compose.shimmer)
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
     implementation(libs.javaPhoenixClient)
     implementation(libs.koin.androidxCompose)
     implementation(libs.kotlinx.coroutines.core)
@@ -141,9 +142,10 @@ dependencies {
     androidTestImplementation(libs.ktor.client.mock)
 }
 
-tasks.cyclonedxBom {
+tasks.cyclonedxDirectBom {
     includeConfigs =
         listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
+    includeLicenseText = true
 }
 
 spotless {

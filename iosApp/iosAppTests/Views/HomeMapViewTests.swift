@@ -22,9 +22,9 @@ final class HomeMapViewTests: XCTestCase {
 
     class FilteredStopRepository: IStopRepository {
         private var onGetStopMapData: () -> Void
-        private var filteredRouteIds: Set<String>?
+        private var filteredRouteIds: Set<LineOrRoute.Id>?
 
-        init(filteredRouteIds: Set<String>? = nil, onGetStopMapData: @escaping () -> Void = {}) {
+        init(filteredRouteIds: Set<LineOrRoute.Id>? = nil, onGetStopMapData: @escaping () -> Void = {}) {
             self.onGetStopMapData = onGetStopMapData
             self.filteredRouteIds = filteredRouteIds
         }
@@ -137,7 +137,7 @@ final class HomeMapViewTests: XCTestCase {
         }
         let trip = objectCollection.trip { trip in
             trip.routePatternId = pattern.id
-            trip.routeId = route.id
+            trip.routeId = route.id.idText
             trip.id = "1"
             trip.directionId = 0
         }
@@ -151,7 +151,7 @@ final class HomeMapViewTests: XCTestCase {
             vehicle.id = "1"
             vehicle.currentStatus = .inTransitTo
             vehicle.tripId = trip.id
-            vehicle.routeId = route.id
+            vehicle.routeId = route.id.idText
             vehicle.directionId = 0
         }
 
@@ -186,115 +186,7 @@ final class HomeMapViewTests: XCTestCase {
         )
         nearbyVM.navigationStack = [initialNav]
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
-            contentVM: .init(),
-            mapVM: MockMapViewModel(),
-            nearbyVM: nearbyVM,
-            routeCardDataVM: routeCardDataVM,
-            viewportProvider: ViewportProvider(),
-            vehiclesRepository: MockVehiclesRepository(vehicles: [vehicle]),
-            locationDataManager: locationDataManager,
-            sheetHeight: .constant(0),
-            selectedVehicle: .constant(nil)
-        )
-
-        let hasAppeared = sut.inspection.inspect(after: 1) { sut in
-            XCTAssertEqual(nearbyVM.navigationStack.last, initialNav)
-            try sut.find(HomeMapView.self).actualView().handleTapVehicle(vehicle)
-            XCTAssertEqual(
-                nearbyVM.navigationStack.last,
-                .stopDetails(
-                    stopId: stop.id,
-                    stopFilter: .init(routeId: trip.routeId, directionId: trip.directionId),
-                    tripFilter: .init(tripId: trip.id, vehicleId: vehicle.id, stopSequence: 100, selectionLock: true)
-                )
-            )
-        }
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [hasAppeared], timeout: 5)
-
-        addTeardownBlock {
-            HelpersKt.loadDefaultRepoModules()
-        }
-    }
-
-    @MainActor
-    func testVehicleTappingWithTrackThisTrip() throws {
-        class FakeStopRepository: IStopRepository {
-            func __getStopMapData(stopId _: String) async throws -> ApiResult<StopMapResponse> {
-                ApiResultOk(data: StopMapResponse(
-                    routeShapes: MapTestDataHelper.shared.routeResponse.routesWithSegmentedShapes,
-                    childStops: [:]
-                ))
-            }
-        }
-        let repositories = MockRepositories()
-        repositories.stop = FakeStopRepository()
-        HelpersKt.loadKoinMocks(repositories: repositories)
-
-        let objectCollection = ObjectCollectionBuilder()
-        let route = MapTestDataHelper.shared.routeOrange
-        objectCollection.routes[route.id] = route
-        let pattern = MapTestDataHelper.shared.patternOrange30
-        objectCollection.routePatterns[pattern.id] = pattern
-        let stop = objectCollection.stop { stop in
-            stop.id = "1"
-            stop.latitude = 1
-            stop.longitude = 1
-        }
-        let trip = objectCollection.trip { trip in
-            trip.routePatternId = pattern.id
-            trip.routeId = route.id
-            trip.id = "1"
-            trip.directionId = 0
-        }
-
-        let prediction = objectCollection.prediction { prediction in
-            prediction.trip = trip
-            prediction.stopSequence = 100
-        }
-
-        let vehicle = objectCollection.vehicle { vehicle in
-            vehicle.id = "1"
-            vehicle.currentStatus = .inTransitTo
-            vehicle.tripId = trip.id
-            vehicle.routeId = route.id
-            vehicle.directionId = 0
-        }
-
-        let routeCardData: [RouteCardData] = [.init(
-            lineOrRoute: .route(route),
-            stopData: [
-                .init(route: route, stop: stop, data: [
-                    .init(
-                        lineOrRoute: .route(route),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [pattern],
-                        stopIds: [stop.id],
-                        upcomingTrips: [UpcomingTrip(trip: trip, prediction: prediction, vehicle: vehicle)],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: true,
-                        alertsDownstream: [],
-                        context: .stopDetailsFiltered
-                    ),
-                ], globalData: .init(objects: objectCollection)),
-            ],
-            at: EasternTimeInstant.now()
-        )]
-        let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
-        let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
-
-        let initialNav: SheetNavigationStackEntry = .stopDetails(
-            stopId: stop.id,
-            stopFilter: .init(routeId: vehicle.routeId!, directionId: vehicle.directionId),
-            tripFilter: nil
-        )
-        nearbyVM.navigationStack = [initialNav]
-        let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
-        var sut = HomeMapView(
+        let sut = HomeMapView(
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: nearbyVM,
@@ -322,7 +214,7 @@ final class HomeMapViewTests: XCTestCase {
             )
         }
 
-        ViewHosting.host(view: sut.withFixedSettings([.trackThisTrip: true]))
+        ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [hasAppeared], timeout: 5)
 
         addTeardownBlock {
@@ -381,7 +273,7 @@ final class HomeMapViewTests: XCTestCase {
             nearbyVM: .init(navigationStack: [
                 .stopDetails(
                     stopId: "stop",
-                    stopFilter: .init(routeId: "r", directionId: 0),
+                    stopFilter: .init(routeId: Route.Id("r"), directionId: 0),
                     tripFilter: .init(tripId: "t", vehicleId: "v", stopSequence: 0, selectionLock: false)
                 ),
             ]),
@@ -411,7 +303,7 @@ final class HomeMapViewTests: XCTestCase {
             mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(
                 stopId: stop.id,
-                stopFilter: .init(routeId: "routeId", directionId: 0),
+                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
                 tripFilter: nil
             )]),
             routeCardDataVM: MockRouteCardDataViewModel(),
@@ -467,7 +359,7 @@ final class HomeMapViewTests: XCTestCase {
             mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [.stopDetails(
                 stopId: stop.id,
-                stopFilter: .init(routeId: "routeId", directionId: 0),
+                stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
                 tripFilter: nil
             )]),
             routeCardDataVM: MockRouteCardDataViewModel(),
@@ -499,7 +391,11 @@ final class HomeMapViewTests: XCTestCase {
             contentVM: .init(),
             mapVM: MockMapViewModel(),
             nearbyVM: .init(navigationStack: [
-                .stopDetails(stopId: stop.id, stopFilter: .init(routeId: "routeId", directionId: 0), tripFilter: nil),
+                .stopDetails(
+                    stopId: stop.id,
+                    stopFilter: .init(routeId: Route.Id("routeId"), directionId: 0),
+                    tripFilter: nil
+                ),
             ]),
             routeCardDataVM: MockRouteCardDataViewModel(),
             viewportProvider: ViewportProvider(),
@@ -572,7 +468,7 @@ final class HomeMapViewTests: XCTestCase {
             self.disconnectExp = disconnectExp
         }
 
-        func connect(routeId _: String,
+        func connect(routeId _: LineOrRoute.Id,
                      directionId _: Int32,
                      onReceive _: @escaping (ApiResult<VehiclesStreamDataResponse>) -> Void) {
             connectExp?.fulfill()

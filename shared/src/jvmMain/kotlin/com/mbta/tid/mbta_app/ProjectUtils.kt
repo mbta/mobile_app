@@ -1,11 +1,15 @@
 package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
+import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.repositories.GlobalRepository
 import com.mbta.tid.mbta_app.utils.SystemPaths
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.PropertySpec
 import kotlin.io.path.Path
 import kotlinx.coroutines.runBlocking
@@ -47,18 +51,8 @@ internal object ProjectUtils {
                 "Orange",
                 "Red",
             )
-        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Red")
-        val stops =
-            setOf(
-                "1432",
-                "14320",
-                "2595",
-                "26131",
-                "place-astao",
-                "place-aqucl",
-                "place-rugg",
-                "place-sull",
-            )
+        val allStopsOnRoutes = setOf("Green-B", "Green-C", "Green-D", "Green-E", "Orange", "Red")
+        val stops = setOf("1432", "14320", "2595", "26131", "place-aqucl")
     }
 
     fun fetchTestData(): Unit = runBlocking {
@@ -66,11 +60,11 @@ internal object ProjectUtils {
 
         val globalData = GlobalRepository().getGlobalData().dataOrThrow()
 
-        val lines = globalData.lines.filterKeys { it in TestDataFilters.lines }
+        val lines = globalData.lines.filterKeys { it.idText in TestDataFilters.lines }
         val routes =
             globalData.routes.filterValues {
-                (it.lineId in TestDataFilters.lines && !it.isShuttle) ||
-                    it.id in TestDataFilters.routes
+                (it.lineId?.idText in TestDataFilters.lines && !it.isShuttle) ||
+                    it.id.idText in TestDataFilters.routes
             }
         val patterns =
             globalData.routePatterns.filterValues {
@@ -78,7 +72,7 @@ internal object ProjectUtils {
             }
         val stopIdsForRoutes =
             patterns.values
-                .filter { it.routeId in TestDataFilters.allStopsOnRoutes }
+                .filter { it.routeId.idText in TestDataFilters.allStopsOnRoutes }
                 .flatMap { globalData.trips[it.representativeTripId]?.stopIds.orEmpty() }
                 .map { globalData.stops[it]?.resolveParent(globalData)?.id }
                 .distinct()
@@ -92,30 +86,34 @@ internal object ProjectUtils {
         val tripIds = patterns.map { (_, pattern) -> pattern.representativeTripId }.toSet()
         val trips = globalData.trips.filterKeys { tripIds.contains(it) }
 
-        val testData =
-            PropertySpec.builder("TestData", ObjectCollectionBuilder::class)
-                .delegate(
-                    CodeBlock.builder()
-                        .beginControlFlow("lazy")
-                        .addStatement("val objects = ObjectCollectionBuilder()")
-                        .addStatement("")
-                        .apply {
-                            for (line in lines.values.sortedBy { it.sortOrder }) {
-                                addStatement("objects.put(Line(")
-                                addStatement("id = %S,", line.id)
-                                addStatement("color = %S,", line.color)
-                                addStatement("longName = %S,", line.longName)
-                                addStatement("shortName = %S,", line.shortName)
-                                addStatement("sortOrder = %L,", line.sortOrder)
-                                addStatement("textColor = %S,", line.textColor)
-                                addStatement("))")
-                            }
-                        }
-                        .addStatement("")
+        val putLines =
+            FunSpec.builder("putLines")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .apply {
+                    for (line in lines.values.sortedBy { it.sortOrder }) {
+                        addStatement("objects.put(Line(")
+                        addStatement("id = %L,", line.id.encode())
+                        addStatement("color = %S,", line.color)
+                        addStatement("longName = %S,", line.longName)
+                        addStatement("shortName = %S,", line.shortName)
+                        addStatement("sortOrder = %L,", line.sortOrder)
+                        addStatement("textColor = %S,", line.textColor)
+                        addStatement("))")
+                    }
+                }
+                .build()
+
+        val putRoutes =
+            FunSpec.builder("putRoutes")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (route in routes.values.sorted()) {
                                 addStatement("objects.put(Route(")
-                                addStatement("id = %S,", route.id)
+                                addStatement("id = %L,", route.id.encode())
                                 addStatement("type = RouteType.%L,", route.type)
                                 addStatement("color = %S,", route.color)
                                 addStatement(
@@ -133,12 +131,21 @@ internal object ProjectUtils {
                                 addStatement("shortName = %S,", route.shortName)
                                 addStatement("sortOrder = %L,", route.sortOrder)
                                 addStatement("textColor = %S,", route.textColor)
-                                addStatement("lineId = %S,", route.lineId)
+                                addStatement("lineId = %L,", route.lineId?.encode())
                                 addStatement("routePatternIds = %L", route.routePatternIds)
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putRoutePatterns =
+            FunSpec.builder("putRoutePatterns")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (pattern in patterns.values.sorted()) {
                                 addStatement("objects.put(RoutePattern(")
@@ -154,11 +161,20 @@ internal object ProjectUtils {
                                     "representativeTripId = %S,",
                                     pattern.representativeTripId,
                                 )
-                                addStatement("routeId = %S", pattern.routeId)
+                                addStatement("routeId = %L", pattern.routeId.encode())
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putStops =
+            FunSpec.builder("putStops")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (stop in stops.values.sortedBy { it.id }) {
                                 addStatement("objects.put(Stop(")
@@ -184,21 +200,44 @@ internal object ProjectUtils {
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val putTrips =
+            FunSpec.builder("putTrips")
+                .addModifiers(KModifier.PRIVATE)
+                .addParameter("objects", ObjectCollectionBuilder::class)
+                .addCode(
+                    CodeBlock.Builder()
                         .apply {
                             for (trip in trips.values.sortedBy { it.id }) {
                                 addStatement("objects.put(Trip(")
                                 addStatement("id = %S,", trip.id)
                                 addStatement("directionId = %L,", trip.directionId)
                                 addStatement("headsign = %S,", trip.headsign)
-                                addStatement("routeId = %S,", trip.routeId)
+                                addStatement("routeId = %L,", trip.routeId.encode())
                                 addStatement("routePatternId = %S,", trip.routePatternId)
                                 addStatement("shapeId = %S,", trip.shapeId)
                                 addStatement("stopIds = %L,", trip.stopIds?.encode())
                                 addStatement("))")
                             }
                         }
-                        .addStatement("")
+                        .build()
+                )
+                .build()
+
+        val testData =
+            PropertySpec.builder("TestData", ObjectCollectionBuilder::class)
+                .delegate(
+                    CodeBlock.builder()
+                        .beginControlFlow("lazy")
+                        .addStatement("val objects = ObjectCollectionBuilder(\"TestData\")")
+                        .addStatement("putLines(objects)")
+                        .addStatement("putRoutes(objects)")
+                        .addStatement("putRoutePatterns(objects)")
+                        .addStatement("putStops(objects)")
+                        .addStatement("putTrips(objects)")
                         .addStatement("objects")
                         .endControlFlow()
                         .build()
@@ -229,6 +268,7 @@ internal object ProjectUtils {
                     "WheelchairBoardingStatus",
                 )
                 .addProperty(testData)
+                .addFunctions(listOf(putLines, putRoutes, putRoutePatterns, putStops, putTrips))
                 .build()
 
         testDataFile.writeTo(Path("shared/src/commonMain/kotlin"))
@@ -241,6 +281,10 @@ private inline fun <reified T : Enum<T>> T?.encode() =
     } else {
         CodeBlock.of("%L.%L", T::class.simpleName, this)
     }
+
+private fun Line.Id.encode() = CodeBlock.of("Line.Id(%S)", idText)
+
+private fun Route.Id.encode() = CodeBlock.of("Route.Id(%S)", idText)
 
 private fun List<String>.encode() =
     CodeBlock.builder()

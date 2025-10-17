@@ -2,10 +2,11 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import com.mbta.tid.mbta_app.uuid
 import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 /**
  * Allows related objects to be built and tracked more conveniently. Provides default values where
@@ -22,11 +23,12 @@ import kotlin.time.Instant
  */
 public class ObjectCollectionBuilder
 private constructor(
+    private val namespace: String,
     public val alerts: MutableMap<String, Alert>,
     public val facilities: MutableMap<String, Facility>,
-    public val lines: MutableMap<String, Line>,
+    public val lines: MutableMap<Line.Id, Line>,
     public val predictions: MutableMap<String, Prediction>,
-    public val routes: MutableMap<String, Route>,
+    public val routes: MutableMap<Route.Id, Route>,
     public val routePatterns: MutableMap<String, RoutePattern>,
     public val schedules: MutableMap<String, Schedule>,
     public val stops: MutableMap<String, Stop>,
@@ -34,23 +36,26 @@ private constructor(
     public val shapes: MutableMap<String, Shape>,
     public val vehicles: MutableMap<String, Vehicle>,
 ) {
-    public constructor() :
-        this(
-            alerts = mutableMapOf(),
-            facilities = mutableMapOf(),
-            lines = mutableMapOf(),
-            predictions = mutableMapOf(),
-            routes = mutableMapOf(),
-            routePatterns = mutableMapOf(),
-            schedules = mutableMapOf(),
-            stops = mutableMapOf(),
-            trips = mutableMapOf(),
-            shapes = mutableMapOf(),
-            vehicles = mutableMapOf(),
-        )
+    public constructor(
+        namespace: String
+    ) : this(
+        namespace = namespace,
+        alerts = mutableMapOf(),
+        facilities = mutableMapOf(),
+        lines = mutableMapOf(),
+        predictions = mutableMapOf(),
+        routes = mutableMapOf(),
+        routePatterns = mutableMapOf(),
+        schedules = mutableMapOf(),
+        stops = mutableMapOf(),
+        trips = mutableMapOf(),
+        shapes = mutableMapOf(),
+        vehicles = mutableMapOf(),
+    )
 
-    public fun clone(): ObjectCollectionBuilder =
+    public fun clone(namespace: String = this.namespace): ObjectCollectionBuilder =
         ObjectCollectionBuilder(
+            namespace = namespace,
             alerts = alerts.toMutableMap(),
             facilities = facilities.toMutableMap(),
             lines = lines.toMutableMap(),
@@ -64,11 +69,11 @@ private constructor(
             vehicles = vehicles.toMutableMap(),
         )
 
-    internal interface ObjectBuilder<Built : BackendObject> {
+    internal interface ObjectBuilder<Built : BackendObject<*>> {
         fun built(): Built
     }
 
-    public fun put(`object`: BackendObject) {
+    public fun put(`object`: BackendObject<*>) {
         when (`object`) {
             is Alert -> alerts[`object`.id] = `object`
             is Facility -> facilities[`object`.id] = `object`
@@ -85,8 +90,10 @@ private constructor(
         }
     }
 
-    public class AlertBuilder : ObjectBuilder<Alert> {
-        public var id: String = uuid()
+    @OptIn(ExperimentalUuidApi::class) private fun objectId() = "$namespace/${Uuid.random()}"
+
+    public inner class AlertBuilder : ObjectBuilder<Alert> {
+        public var id: String = objectId()
         public var activePeriod: MutableList<Alert.ActivePeriod> = mutableListOf()
         public var cause: Alert.Cause = Alert.Cause.UnknownCause
         public var description: String? = null
@@ -120,7 +127,7 @@ private constructor(
                     activities,
                     directionId,
                     facility,
-                    route,
+                    route?.let { Route.Id(it) },
                     routeType,
                     stop,
                     trip,
@@ -150,8 +157,8 @@ private constructor(
 
     public fun getAlert(id: String): Alert = alerts.getValue(id)
 
-    public class FacilityBuilder : ObjectBuilder<Facility> {
-        public var id: String = uuid()
+    public inner class FacilityBuilder : ObjectBuilder<Facility> {
+        public var id: String = objectId()
         public var longName: String? = null
         public var shortName: String? = null
         public var type: Facility.Type = Facility.Type.Other
@@ -165,24 +172,25 @@ private constructor(
 
     public fun getFacility(id: String): Facility = facilities.getValue(id)
 
-    public class LineBuilder : ObjectBuilder<Line> {
-        public var id: String = uuid()
+    public inner class LineBuilder : ObjectBuilder<Line> {
+        public var id: String = objectId()
         public var color: String = "FFFFFF"
         public var longName: String = ""
         public var shortName: String = ""
         public var sortOrder: Int = 0
         public var textColor: String = "000000"
 
-        override fun built(): Line = Line(id, color, longName, shortName, sortOrder, textColor)
+        override fun built(): Line =
+            Line(Line.Id(id), color, longName, shortName, sortOrder, textColor)
     }
 
     @DefaultArgumentInterop.Enabled
     public fun line(block: LineBuilder.() -> Unit = {}): Line = build(LineBuilder(), block)
 
-    public fun getLine(id: String): Line = lines.getValue(id)
+    public fun getLine(id: String): Line = lines.getValue(Line.Id(id))
 
     public inner class PredictionBuilder : ObjectBuilder<Prediction> {
-        public var id: String = uuid()
+        public var id: String = objectId()
         public var arrivalTime: EasternTimeInstant? = null
         public var departureTime: EasternTimeInstant? = null
         public var directionId: Int = 0
@@ -199,7 +207,7 @@ private constructor(
         public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
-                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
+                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it.idText }
                 tripId = trip.id
                 directionId = trip.directionId
             }
@@ -214,7 +222,7 @@ private constructor(
                 scheduleRelationship,
                 status,
                 stopSequence,
-                routeId,
+                Route.Id(routeId),
                 stopId,
                 tripId,
                 vehicleId,
@@ -231,7 +239,7 @@ private constructor(
     ): Prediction =
         build(
             PredictionBuilder().apply {
-                routeId = schedule.routeId
+                routeId = schedule.routeId.idText
                 tripId = schedule.tripId
                 stopId = schedule.stopId
                 stopSequence = schedule.stopSequence
@@ -241,8 +249,8 @@ private constructor(
 
     public fun getPrediction(id: String): Prediction = predictions.getValue(id)
 
-    public class RouteBuilder : ObjectBuilder<Route> {
-        public var id: String = uuid()
+    public inner class RouteBuilder : ObjectBuilder<Route> {
+        public var id: String = objectId()
         public var type: RouteType = RouteType.LIGHT_RAIL
         public var color: String = "FFFFFF"
         public var directionNames: List<String> = listOf("", "")
@@ -257,7 +265,7 @@ private constructor(
 
         override fun built(): Route =
             Route(
-                id,
+                Route.Id(id),
                 type,
                 color,
                 directionNames,
@@ -267,7 +275,7 @@ private constructor(
                 shortName,
                 sortOrder,
                 textColor,
-                lineId,
+                lineId?.let { Line.Id(it) },
                 routePatternIds,
             )
     }
@@ -275,10 +283,10 @@ private constructor(
     @DefaultArgumentInterop.Enabled
     public fun route(block: RouteBuilder.() -> Unit = {}): Route = build(RouteBuilder(), block)
 
-    public fun getRoute(id: String): Route = routes.getValue(id)
+    public fun getRoute(id: String): Route = routes.getValue(Route.Id(id))
 
     public inner class RoutePatternBuilder : ObjectBuilder<RoutePattern> {
-        public var id: String = uuid()
+        public var id: String = objectId()
         public var directionId: Int = 0
         public var name: String = ""
         public var sortOrder: Int = 0
@@ -303,19 +311,19 @@ private constructor(
                 sortOrder,
                 typicality,
                 representativeTripId,
-                routeId,
+                Route.Id(routeId),
             )
     }
 
     public fun routePattern(
         route: Route,
         block: RoutePatternBuilder.() -> Unit = {},
-    ): RoutePattern = build(RoutePatternBuilder().apply { routeId = route.id }, block)
+    ): RoutePattern = build(RoutePatternBuilder().apply { routeId = route.id.idText }, block)
 
     public fun getRoutePattern(id: String): RoutePattern = routePatterns.getValue(id)
 
     public inner class ScheduleBuilder : ObjectBuilder<Schedule> {
-        public var id: String = uuid()
+        public var id: String = objectId()
         public var arrivalTime: EasternTimeInstant? = null
         public var departureTime: EasternTimeInstant? = null
         public var stopHeadsign: String? = null
@@ -327,7 +335,7 @@ private constructor(
         public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
-                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it }
+                routePatterns[trip.routePatternId]?.routeId?.let { routeId = it.idText }
                 tripId = trip.id
             }
 
@@ -346,7 +354,7 @@ private constructor(
                 },
                 stopHeadsign,
                 stopSequence,
-                routeId,
+                Route.Id(routeId),
                 stopId,
                 tripId,
             )
@@ -357,8 +365,8 @@ private constructor(
 
     public fun getSchedule(id: String): Schedule = schedules.getValue(id)
 
-    public class TripBuilder : ObjectBuilder<Trip> {
-        public var id: String = uuid()
+    public inner class TripBuilder : ObjectBuilder<Trip> {
+        public var id: String = objectId()
         public var directionId: Int = 0
         public var headsign: String = ""
         public var routeId: String = ""
@@ -367,7 +375,7 @@ private constructor(
         public var stopIds: List<String>? = null
 
         override fun built(): Trip =
-            Trip(id, directionId, headsign, routeId, routePatternId, shapeId, stopIds)
+            Trip(id, directionId, headsign, Route.Id(routeId), routePatternId, shapeId, stopIds)
     }
 
     public fun trip(block: TripBuilder.() -> Unit = {}): Trip = build(TripBuilder(), block)
@@ -377,7 +385,7 @@ private constructor(
         build(
             TripBuilder().apply {
                 directionId = routePattern.directionId
-                routeId = routePattern.routeId
+                routeId = routePattern.routeId.idText
                 routePatternId = routePattern.id
                 val representativeTrip = trips[routePattern.representativeTripId]
                 if (representativeTrip != null) {
@@ -391,8 +399,8 @@ private constructor(
 
     public fun getTrip(id: String): Trip = trips.getValue(id)
 
-    public class ShapeBuilder : ObjectBuilder<Shape> {
-        public var id: String = uuid()
+    public inner class ShapeBuilder : ObjectBuilder<Shape> {
+        public var id: String = objectId()
         public var polyline: String = ""
 
         override fun built(): Shape = Shape(id, polyline)
@@ -403,7 +411,7 @@ private constructor(
     public fun getShape(id: String): Shape = shapes.getValue(id)
 
     public inner class StopBuilder : ObjectBuilder<Stop> {
-        public var id: String = uuid()
+        public var id: String = objectId()
         public var latitude: Double = 1.2
         public var longitude: Double = 3.4
         public var name: String = ""
@@ -453,8 +461,8 @@ private constructor(
 
     public fun getStop(id: String): Stop = stops.getValue(id)
 
-    public class VehicleBuilder : ObjectBuilder<Vehicle> {
-        public var id: String = uuid()
+    public inner class VehicleBuilder : ObjectBuilder<Vehicle> {
+        public var id: String = objectId()
         public var bearing: Double = 0.0
         public lateinit var currentStatus: Vehicle.CurrentStatus
         public var currentStopSequence: Int? = null
@@ -476,7 +484,7 @@ private constructor(
                 latitude,
                 longitude,
                 updatedAt,
-                routeId,
+                routeId?.let { Route.Id(it) },
                 stopId,
                 tripId,
             )
@@ -512,7 +520,7 @@ private constructor(
     public fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
         upcomingTrip(null, prediction, predictionStop, null)
 
-    private fun <Built : BackendObject, Builder : ObjectBuilder<Built>> build(
+    private fun <Built : BackendObject<*>, Builder : ObjectBuilder<Built>> build(
         builder: Builder,
         block: Builder.() -> Unit,
     ): Built {
@@ -523,38 +531,38 @@ private constructor(
 
     public object Single {
         public fun alert(block: AlertBuilder.() -> Unit = {}): Alert =
-            ObjectCollectionBuilder().alert(block)
+            ObjectCollectionBuilder(namespace = "Single").alert(block)
 
         public fun facility(block: FacilityBuilder.() -> Unit = {}): Facility =
-            ObjectCollectionBuilder().facility(block)
+            ObjectCollectionBuilder(namespace = "Single").facility(block)
 
         public fun line(block: LineBuilder.() -> Unit = {}): Line =
-            ObjectCollectionBuilder().line(block)
+            ObjectCollectionBuilder(namespace = "Single").line(block)
 
         public fun prediction(block: PredictionBuilder.() -> Unit = {}): Prediction =
-            ObjectCollectionBuilder().prediction(block)
+            ObjectCollectionBuilder(namespace = "Single").prediction(block)
 
         public fun route(block: RouteBuilder.() -> Unit = {}): Route =
-            ObjectCollectionBuilder().route(block)
+            ObjectCollectionBuilder(namespace = "Single").route(block)
 
         public fun routePattern(
             route: Route,
             block: RoutePatternBuilder.() -> Unit = {},
-        ): RoutePattern = ObjectCollectionBuilder().routePattern(route, block)
+        ): RoutePattern = ObjectCollectionBuilder(namespace = "Single").routePattern(route, block)
 
         public fun trip(block: TripBuilder.() -> Unit = {}): Trip =
-            ObjectCollectionBuilder().trip(block)
+            ObjectCollectionBuilder(namespace = "Single").trip(block)
 
         public fun shape(block: ShapeBuilder.() -> Unit = {}): Shape =
-            ObjectCollectionBuilder().shape(block)
+            ObjectCollectionBuilder(namespace = "Single").shape(block)
 
         public fun schedule(block: ScheduleBuilder.() -> Unit = {}): Schedule =
-            ObjectCollectionBuilder().schedule(block)
+            ObjectCollectionBuilder(namespace = "Single").schedule(block)
 
         public fun stop(block: StopBuilder.() -> Unit = {}): Stop =
-            ObjectCollectionBuilder().stop(block)
+            ObjectCollectionBuilder(namespace = "Single").stop(block)
 
         public fun vehicle(block: VehicleBuilder.() -> Unit = {}): Vehicle =
-            ObjectCollectionBuilder().vehicle(block)
+            ObjectCollectionBuilder(namespace = "Single").vehicle(block)
     }
 }

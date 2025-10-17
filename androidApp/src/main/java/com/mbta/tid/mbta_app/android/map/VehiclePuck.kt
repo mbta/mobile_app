@@ -91,7 +91,7 @@ private fun <T> haloPulseSpec() =
 @Preview
 @Composable
 private fun VehiclePuckPreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("VehiclePuckPreview")
     val route =
         objects.route {
             color = "DA291C"

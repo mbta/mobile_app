@@ -36,7 +36,7 @@ fun RouteCardContainer(
 
         data.stopData.forEach {
             if (showStopHeader) {
-                StopHeader(it)
+                StopSubheader(it)
             }
 
             departureContent(it)

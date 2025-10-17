@@ -54,10 +54,10 @@ public data class Direction(var name: String?, var destination: String?, var id:
 
         A null value means to ignore special cases and fall back to the route's default labels.
          */
-        private val specialCases: Map<String, List<List<Pair<String, String?>>?>> =
+        private val specialCases: Map<LineOrRoute.Id, List<List<Pair<String, String?>>?>> =
             mapOf(
                 Pair(
-                    "Green",
+                    Line.Id("line-Green"),
                     listOf(
                         listOf(
                             Pair("place-armnl", "Copley & West"),
@@ -75,7 +75,7 @@ public data class Direction(var name: String?, var destination: String?, var id:
                     ),
                 ),
                 Pair(
-                    "Red",
+                    Route.Id("Red"),
                     listOf(
                         listOf(
                             Pair("place-jfk", null),
@@ -87,17 +87,17 @@ public data class Direction(var name: String?, var destination: String?, var id:
                 ),
             )
 
-        private val idOverrides: Map<String, String> =
+        private val idOverrides: Map<Route.Id, Line.Id> =
             mapOf(
-                Pair("Green-B", "Green"),
-                Pair("Green-C", "Green"),
-                Pair("Green-D", "Green"),
-                Pair("Green-E", "Green"),
+                Pair(Route.Id("Green-B"), Line.Id("line-Green")),
+                Pair(Route.Id("Green-C"), Line.Id("line-Green")),
+                Pair(Route.Id("Green-D"), Line.Id("line-Green")),
+                Pair(Route.Id("Green-E"), Line.Id("line-Green")),
             )
 
         fun getSpecialCaseDestination(
             directionId: Int,
-            routeId: String,
+            routeId: Route.Id,
             stopId: String?,
             routeStopIds: List<String>?,
         ): String? {

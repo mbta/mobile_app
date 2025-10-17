@@ -11,21 +11,36 @@ public object LoadingPlaceholders {
         routeCardData(context = RouteCardData.Context.NearbyTransit, now = EasternTimeInstant.now())
 
     public fun routeCardData(
-        routeId: String? = null,
+        routeId: LineOrRoute.Id? = null,
         trips: Int = 2,
         context: RouteCardData.Context,
         now: EasternTimeInstant,
     ): RouteCardData {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.routeCardData")
+        val line =
+            if (routeId is Line.Id) {
+                objects.line {
+                    id = routeId.idText
+                    color = "000000"
+                    longName = "Loading"
+                    shortName = "00"
+                    textColor = "FFFFFF"
+                }
+            } else null
         val route =
             objects.route {
-                routeId?.let { id = it }
+                if (routeId is Route.Id) {
+                    id = routeId.idText
+                }
                 color = "000000"
                 longName = "Loading"
                 shortName = "00"
                 textColor = "FFFFFF"
                 directionNames = listOf("Loading", "Loading")
                 directionDestinations = listOf("Loading", "Loading")
+                if (routeId is Line.Id) {
+                    lineId = routeId.idText
+                }
             }
         val pattern1 =
             objects.routePattern(route = route) {
@@ -54,7 +69,8 @@ public object LoadingPlaceholders {
             return UpcomingTrip(trip, prediction = prediction)
         }
 
-        val lineOrRoute = LineOrRoute.Route(route)
+        val lineOrRoute =
+            if (line != null) LineOrRoute.Line(line, setOf(route)) else LineOrRoute.Route(route)
 
         val leaf1 =
             RouteCardData.Leaf(
@@ -99,7 +115,7 @@ public object LoadingPlaceholders {
     }
 
     public fun routeDetailsStops(lineOrRoute: LineOrRoute, directionId: Int): RouteDetailsStopList {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.routeDetailsStops")
         val fixedRand = Random("${lineOrRoute.id}-$directionId".hashCode())
         fun randString(from: Int, until: Int) =
             (1..fixedRand.nextInt(from, until)).joinToString("") { " " }
@@ -172,7 +188,7 @@ public object LoadingPlaceholders {
     )
 
     public fun tripDetailsInfo(): TripDetailsInfo {
-        val objects = ObjectCollectionBuilder()
+        val objects = ObjectCollectionBuilder("LoadingPlaceholders.tripDetailsInfo")
         val route =
             objects.route {
                 color = "8A9199"

@@ -57,6 +57,23 @@ final class ContentViewModelTests: XCTestCase {
         XCTAssertEqual(contentVM.defaultTab, .nearby)
     }
 
+    func testDefaultTabFavoritesIfSet() async {
+        let tabPreferencesRepo = MockTabPreferencesRepository(defaultTab: .favorites)
+        let contentVM = ContentViewModel(tabPreferencesRepository: tabPreferencesRepo)
+        await contentVM.loadPendingFeaturePromosAndTabPreferences()
+        XCTAssertEqual(contentVM.defaultTab, .favorites)
+    }
+
+    func testSetsDefaultTab() async {
+        let tabPreferencesRepo = MockTabPreferencesRepository(defaultTab: .favorites)
+        XCTAssertEqual(tabPreferencesRepo.defaultTab, .favorites)
+        let contentVM = ContentViewModel(tabPreferencesRepository: tabPreferencesRepo)
+        await contentVM.setTabPreference(.nearby)
+        XCTAssertEqual(tabPreferencesRepo.defaultTab, .nearby)
+        await contentVM.setTabPreference(.favorites)
+        XCTAssertEqual(tabPreferencesRepo.defaultTab, .favorites)
+    }
+
     func testDefaultTabFavoritesIfShownPromo() async {
         let contentVM = ContentViewModel(featurePromoUseCase: FeaturePromoUseCase(
             currentAppVersionRepository: MockCurrentAppVersionRepository(currentAppVersion:

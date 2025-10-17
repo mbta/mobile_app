@@ -30,7 +30,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.repositories.Settings
 
 @Composable
-fun StopHeader(data: RouteCardData.RouteStopData) {
+fun StopSubheader(data: RouteCardData.RouteStopData) {
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val isWheelchairAccessible = data.stop.isWheelchairAccessible
     val showInaccessible = showStationAccessibility && !isWheelchairAccessible

@@ -25,7 +25,7 @@ internal constructor(
     // This field is not parsed from the Alert object from the backend, it is injected from
     // global data in the AlertsUsecase if any informed entities apply to a facility.
     val facilities: Map<String, Facility>? = null,
-) : BackendObject {
+) : BackendObject<String> {
     init {
         // This is done on init to avoid having to pass it in for any call to format an ActivePeriod
         activePeriod.forEach { period -> period.durationCertainty = durationCertainty }
@@ -227,7 +227,7 @@ internal constructor(
         val activities: List<Activity>,
         @SerialName("direction_id") val directionId: Int? = null,
         val facility: String? = null,
-        val route: String? = null,
+        val route: Route.Id? = null,
         @SerialName("route_type") val routeType: RouteType? = null,
         val stop: String? = null,
         val trip: String? = null,
@@ -247,7 +247,7 @@ internal constructor(
         internal fun appliesTo(
             directionId: Int? = null,
             facilityId: String? = null,
-            routeId: String? = null,
+            routeId: Route.Id? = null,
             routeType: RouteType? = null,
             stopId: String? = null,
             tripId: String? = null,
@@ -292,7 +292,7 @@ internal constructor(
                 }
             }
 
-            fun checkRoute(routeId: String?) {
+            fun checkRoute(routeId: Route.Id?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
                 if (this@InformedEntity.route == null) return
@@ -301,7 +301,7 @@ internal constructor(
                 }
             }
 
-            fun checkRouteIn(routeIds: Collection<String>) {
+            fun checkRouteIn(routeIds: Collection<Route.Id>) {
                 if (!isSatisfied) return
                 if (this@InformedEntity.route == null) return
                 if (this@InformedEntity.route !in routeIds) {
@@ -379,7 +379,7 @@ internal constructor(
         fun applicableAlerts(
             alerts: Collection<Alert>,
             directionId: Int?,
-            routeIds: List<String>,
+            routeIds: List<Route.Id>,
             stopIds: Set<String>?,
             tripId: String?,
         ): List<Alert> {

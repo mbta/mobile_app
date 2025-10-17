@@ -16,6 +16,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -98,7 +101,9 @@ fun HomeMapView(
 
     val allowTargeting = currentNavEntry?.allowTargeting ?: true
 
-    val selectedVehicle = (state as? State.TripSelected)?.vehicle
+    var selectedVehicle by remember {
+        mutableStateOf<Vehicle?>((state as? State.TripSelected)?.vehicle)
+    }
 
     val showTripRecenterButton =
         when (state) {
@@ -138,6 +143,13 @@ fun HomeMapView(
     LaunchedEffect(isDarkMode) { viewModel.colorPaletteChanged(isDarkMode) }
     LaunchedEffect(density) { viewModel.densityChanged(density.density) }
     LaunchedEffect(currentNavEntry) { viewModel.navChanged(currentNavEntry) }
+    LaunchedEffect((state as? State.TripSelected)?.vehicle) {
+        val vehicle = (state as? State.TripSelected)?.vehicle
+        val skipSettingVehicle =
+            selectedVehicle?.id == currentNavEntry?.vehicleId && vehicle == null
+        if (skipSettingVehicle) return@LaunchedEffect
+        selectedVehicle = vehicle
+    }
     Box(contentAlignment = Alignment.Center) {
         /* Whether loading the config succeeds or not we show the Mapbox Map in case
          * the user has cached tiles on their device.
@@ -261,15 +273,30 @@ fun HomeMapView(
                     }
                 }
 
-                val allVehicles =
-                    remember(vehiclesData, selectedVehicle) {
-                        when {
-                            selectedVehicle == null -> vehiclesData
-                            else ->
-                                vehiclesData.filterNot { it.id == selectedVehicle.id } +
-                                    listOf(selectedVehicle)
-                        }
+                // Maintain a mutable state list of the vehicles displayed on the map, and modify
+                // that in place when there are changes to the vehicle data, to prevent issues with
+                // compose forgetting the vehicle identity when the list changes, which results in
+                // all the vehicles on the map flickering in and out.
+                val allVehicles = remember { mutableStateListOf<Vehicle>() }
+                LaunchedEffect(vehiclesData, selectedVehicle) {
+                    val updated = mutableSetOf<String>()
+                    val updateVehicles =
+                        (selectedVehicle?.let { mapOf(it.id to it) } ?: emptyMap()).plus(
+                            vehiclesData.associateBy { it.id }
+                        )
+
+                    // Remove any vehicles that don't exist in the update
+                    allVehicles.removeAll { !updateVehicles.containsKey(it.id) }
+                    // Replace all existing vehicles in the list with their updated vehicle objects
+                    allVehicles.replaceAll {
+                        updateVehicles[it.id]?.let { updateVehicle ->
+                            updated.add(updateVehicle.id)
+                            updateVehicle
+                        } ?: it
                     }
+                    // Add any vehicles that exist in the update which weren't already in the list
+                    allVehicles.addAll(updateVehicles.filter { !updated.contains(it.key) }.values)
+                }
 
                 for (vehicle in allVehicles) {
                     val route = globalData?.getRoute(vehicle.routeId) ?: continue
@@ -330,9 +357,8 @@ fun HomeMapView(
                 }
 
                 if (showTripRecenterButton) {
-                    if (selectedVehicle != null) {
-                        val routeType = globalData?.getRoute(selectedVehicle.routeId)?.type
-                        if (routeType != null) {
+                    selectedVehicle?.let { vehicle ->
+                        globalData?.getRoute(vehicle.routeId)?.type?.let { routeType ->
                             RecenterButton(
                                 routeIcon(routeType).first,
                                 onClick = {

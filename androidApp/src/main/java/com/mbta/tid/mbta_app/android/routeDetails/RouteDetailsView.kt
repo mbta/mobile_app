@@ -14,12 +14,14 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.StarIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.fromHex
+import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
 fun RouteDetailsView(
-    selectionId: String,
+    selectionId: LineOrRoute.Id,
     context: RouteDetailsContext,
     onOpenStopDetails: (String) -> Unit,
     onBack: () -> Unit,
@@ -51,7 +53,7 @@ fun RouteDetailsView(
                     if (it.isFavorited) {
                         stringResource(R.string.remove_favorite)
                     } else {
-                        stringResource(R.string.add_favorite)
+                        stringResource(R.string.add_favorite_label)
                     }
             }
         },
@@ -59,7 +61,7 @@ fun RouteDetailsView(
         onClose = onClose,
         openModal = openModal,
         errorBannerViewModel,
-        defaultSelectedRouteId = selectionId.takeUnless { it == lineOrRoute.id },
+        defaultSelectedRouteId = (selectionId as? Route.Id).takeUnless { it == lineOrRoute.id },
         rightSideContent = { rowContext, modifier ->
             when (rowContext) {
                 is RouteDetailsRowContext.Details ->

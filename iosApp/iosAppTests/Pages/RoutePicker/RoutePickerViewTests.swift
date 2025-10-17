@@ -360,7 +360,7 @@ final class RoutePickerViewTests: XCTestCase {
             route.type = RouteType.heavyRail
         }
 
-        var selectedRouteId: String?
+        var selectedRouteId: LineOrRoute.Id?
         var selectedContext: RouteDetailsContext?
 
         let gotGlobalData = PassthroughSubject<Void, Never>()

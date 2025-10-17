@@ -100,7 +100,7 @@ class RouteModeLabelTest {
             ObjectCollectionBuilder.Single.route {
                 longName = "Green Line C"
                 type = RouteType.LIGHT_RAIL
-                lineId = line.id
+                lineId = line.id.idText
             }
 
         composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, line, route)) }
@@ -116,7 +116,7 @@ class RouteModeLabelTest {
             ObjectCollectionBuilder.Single.route {
                 shortName = "SL2"
                 type = RouteType.BUS
-                lineId = line.id
+                lineId = line.id.idText
             }
         val lineOrRoute = LineOrRoute.Line(line, setOf(route))
 

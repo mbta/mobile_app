@@ -60,31 +60,31 @@ final class AlertDetailsPageTests: XCTestCase {
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: nil, facility: nil,
-                route: route.id, routeType: nil,
+                route: route.id.idText, routeType: nil,
                 stop: stop1.id, trip: nil
             )
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: 0, facility: nil,
-                route: route.id, routeType: nil,
+                route: route.id.idText, routeType: nil,
                 stop: stop1a.id, trip: nil
             )
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: 1, facility: nil,
-                route: route.id, routeType: nil,
+                route: route.id.idText, routeType: nil,
                 stop: stop1b.id, trip: nil
             )
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: nil, facility: nil,
-                route: route.id, routeType: nil,
+                route: route.id.idText, routeType: nil,
                 stop: stop2a.id, trip: nil
             )
             alert.informedEntity(
                 activities: [.board, .exit, .ride],
                 directionId: nil, facility: nil,
-                route: route.id, routeType: nil,
+                route: route.id.idText, routeType: nil,
                 stop: stop3.id, trip: nil
             )
         }

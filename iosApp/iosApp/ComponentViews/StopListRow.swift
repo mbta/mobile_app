@@ -174,7 +174,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                                     HStack {}
                                         .accessibilityLabel(Text("This stop is not accessible"))
                                 }
-                            }.padding(.trailing, 8)
+                            }.padding(.trailing, 6)
                             if let connectingRoutes, !connectingRoutes.isEmpty {
                                 scrollRoutes
                                     .accessibilityElement()

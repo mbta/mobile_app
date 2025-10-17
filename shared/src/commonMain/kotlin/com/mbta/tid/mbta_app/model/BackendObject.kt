@@ -5,6 +5,6 @@ package com.mbta.tid.mbta_app.model
  *
  * Useful in the [ObjectCollectionBuilder] for maintaining maps from IDs to objects.
  */
-public interface BackendObject {
-    public val id: String
+public interface BackendObject<Id> {
+    public val id: Id
 }

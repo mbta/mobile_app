@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
@@ -55,13 +56,13 @@ class StopLayerGeneratorTest {
             )
         val routeDirections =
             mapOf(
-                "Orange" to setOf(0, 1),
-                "Green-D" to setOf(0, 1),
-                "Green-E" to setOf(0, 1),
-                "CR-Fitchburg" to setOf(0, 1),
-                "CR-Haverhill" to setOf(0, 1),
-                "CR-Lowell" to setOf(0, 1),
-                "CR-Newburyport" to setOf(0, 1),
+                Route.Id("Orange") to setOf(0, 1),
+                Route.Id("Green-D") to setOf(0, 1),
+                Route.Id("Green-E") to setOf(0, 1),
+                Route.Id("CR-Fitchburg") to setOf(0, 1),
+                Route.Id("CR-Haverhill") to setOf(0, 1),
+                Route.Id("CR-Lowell") to setOf(0, 1),
+                Route.Id("CR-Newburyport") to setOf(0, 1),
             )
 
         val mapStops =

@@ -65,7 +65,7 @@ import org.koin.dsl.module
 
 internal fun endToEndModule(): Module {
     val now = EasternTimeInstant.now()
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("endToEndModule")
     val lineRed = objects.line()
     val routeRed =
         objects.route {
@@ -75,7 +75,7 @@ internal fun endToEndModule(): Module {
             longName = "Red Line"
             textColor = "FFFFFF"
             type = RouteType.HEAVY_RAIL
-            lineId = lineRed.id
+            lineId = lineRed.id.idText
         }
     val patternAlewife =
         objects.routePattern(routeRed) {

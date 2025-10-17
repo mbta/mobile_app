@@ -16,7 +16,7 @@ struct RoutePickerView: View {
     let path: RoutePickerPath
     let errorBannerVM: IErrorBannerViewModel
     var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
-    let onOpenRouteDetails: (String, RouteDetailsContext) -> Void
+    let onOpenRouteDetails: (LineOrRoute.Id, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
     let onClose: () -> Void
     let onBack: () -> Void
@@ -28,7 +28,7 @@ struct RoutePickerView: View {
     @State var searchVMState: SearchRoutesViewModel.State = SearchRoutesViewModel.StateUnfiltered()
     @StateObject var searchObserver = TextFieldObserver()
 
-    let scrollSubject = PassthroughSubject<String, Never>()
+    let scrollSubject = PassthroughSubject<LineOrRoute.Id, Never>()
 
     let inspection = Inspection<Self>()
 
@@ -98,7 +98,7 @@ struct RoutePickerView: View {
                         ScrollView {
                             LazyVStack(spacing: 0) {
                                 if !routeSearchResults.isEmpty {
-                                    ForEach(routeSearchResults, id: \.id) { route in
+                                    ForEach(routeSearchResults, id: \.id.idText) { route in
                                         RoutePickerRow(route: route, onTap: { onOpenRouteDetails(route.id, context) })
                                         if route != routeSearchResults.last { HaloSeparator() }
                                     }

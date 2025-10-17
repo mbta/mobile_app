@@ -21,8 +21,6 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
-import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
-import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockTripDetailsViewModel
@@ -45,7 +43,11 @@ class TripDetailsViewTest {
     val routePattern = objects.routePattern(route)
     val stop = objects.stop()
     val trip = objects.trip(routePattern)
-    val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
+    val vehicle =
+        objects.vehicle {
+            currentStatus = Vehicle.CurrentStatus.InTransitTo
+            tripId = trip.id
+        }
     val stopSequence = 10
 
     val downstreamStopSequence = 20
@@ -128,7 +130,7 @@ class TripDetailsViewTest {
                 Pair(
                     "tapped_downstream_stop",
                     mapOf(
-                        "route_id" to route.id,
+                        "route_id" to route.id.idText,
                         "stop_id" to downstreamStopParent.id,
                         "trip_id" to trip.id,
                         "connecting_route_id" to "",
@@ -160,7 +162,7 @@ class TripDetailsViewTest {
                         Alert.InformedEntity.Activity.Ride,
                     ),
                 directionId = 0,
-                route = route.id,
+                route = route.id.idText,
                 stop = downstreamStop.id,
             )
         }
@@ -201,17 +203,14 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testFollowButtonWhenTrackThisTrip() {
-        loadKoinMocks(objects) {
-            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-        }
-
+    fun testFollowButton() {
         var onFollowCalled = false
 
         composeTestRule.setContent {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = { onFollowCalled = true },
@@ -233,13 +232,12 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testNoFollowButtonByDefault() {
-        loadKoinMocks { settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to false)) }
-
+    fun testNoFollowButtonWhenOnTripDetails() {
         composeTestRule.setContent {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = tripData.vehicleOnOtherTrip,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},
@@ -248,7 +246,7 @@ class TripDetailsViewTest {
                 tripFilter = tripFilter,
                 stopList = TripDetailsStopList(trip, emptyList()),
                 now = now,
-                isTripDetailsPage = false,
+                isTripDetailsPage = true,
                 alertSummaries = emptyMap(),
                 globalResponse = GlobalResponse(objects),
             )
@@ -259,15 +257,12 @@ class TripDetailsViewTest {
     }
 
     @Test
-    fun testNoFollowButtonWhenOnTripDetails() {
-        loadKoinMocks(objects) {
-            settings = MockSettingsRepository(mapOf(Settings.TrackThisTrip to true))
-        }
-
+    fun testDisplaysTripCompleteCard() {
         composeTestRule.setContent {
             TripDetails(
                 trip = trip,
                 headerSpec = TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                vehicleOnOtherTrip = true,
                 onHeaderTap = null,
                 onOpenAlertDetails = {},
                 onFollowTrip = {},

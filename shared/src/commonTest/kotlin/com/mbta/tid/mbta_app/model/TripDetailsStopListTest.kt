@@ -48,25 +48,25 @@ class TripDetailsStopListTest {
             return objects.trip(block).also { _trip = it }
         }
 
-        fun schedule(stopId: String, stopSequence: Int, routeId: String = "") =
+        fun schedule(stopId: String, stopSequence: Int, routeId: Route.Id = Route.Id("")) =
             objects.schedule {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
                 _trip?.let { this.trip = it }
-                this.routeId = routeId
+                this.routeId = routeId.idText
             }
 
         fun prediction(
             stopId: String,
             stopSequence: Int,
-            routeId: String = "",
+            routeId: Route.Id = Route.Id(""),
             time: EasternTimeInstant? = null,
         ) =
             objects.prediction {
                 this.stopId = stop(stopId).id
                 this.stopSequence = stopSequence
                 _trip?.let { this.trip = it }
-                this.routeId = routeId
+                this.routeId = routeId.idText
                 this.departureTime = time
             }
 
@@ -90,7 +90,7 @@ class TripDetailsStopListTest {
                 block()
             }
 
-        private fun defaultTrip() = Trip("trip", 0, "", "")
+        private fun defaultTrip() = Trip("trip", 0, "", Route.Id(""))
 
         fun stopListOf(
             vararg stops: TripDetailsStopList.Entry,
@@ -575,7 +575,7 @@ class TripDetailsStopListTest {
         val stopC1 = stop("C1")
 
         val routeCurrent = objects.route { id = "V" }
-        val trip = trip { routeId = routeCurrent.id }
+        val trip = trip { routeId = routeCurrent.id.idText }
         val routeW =
             objects.route {
                 id = "W"
@@ -622,7 +622,7 @@ class TripDetailsStopListTest {
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
-                routeId = routeCurrent.id
+                routeId = routeCurrent.id.idText
                 tripId = trip.id
             }
 
@@ -680,7 +680,7 @@ class TripDetailsStopListTest {
 
         val patternCurrent = pattern("X1", routeCurrent)
         val patternOther = pattern("Y1", routeOther)
-        trip { routeId = routeCurrent.id }
+        trip { routeId = routeCurrent.id.idText }
 
         val sched = schedule(stopA.id, 10, routeCurrent.id)
         val pred = prediction(stopB.id, 20, routeCurrent.id)
@@ -782,9 +782,9 @@ class TripDetailsStopListTest {
         objects.route { id = "Red" }
         trip { routeId = "Red" }
         val now = EasternTimeInstant.now()
-        val pred1 = prediction("A", 10, routeId = "Red", time = now + 1.minutes)
-        val pred2 = prediction("B", 20, routeId = "Red", time = now + 2.minutes)
-        val pred3 = prediction("C", 30, routeId = "Red", time = now + 3.minutes)
+        val pred1 = prediction("A", 10, routeId = Route.Id("Red"), time = now + 1.minutes)
+        val pred2 = prediction("B", 20, routeId = Route.Id("Red"), time = now + 2.minutes)
+        val pred3 = prediction("C", 30, routeId = Route.Id("Red"), time = now + 3.minutes)
         val alert =
             alert(Alert.Effect.Detour) {
                 informedEntity(listOf(Alert.InformedEntity.Activity.Board), stop = "B")
@@ -809,8 +809,8 @@ class TripDetailsStopListTest {
     fun `fromPieces does not crash on multi-route trips`() = test {
         val now = EasternTimeInstant.now()
         trip { routeId = "1" }
-        val pred1 = prediction("A", 10, routeId = "1", time = now + 1.minutes)
-        val pred2 = prediction("A", 10, routeId = "2", time = now + 1.minutes)
+        val pred1 = prediction("A", 10, routeId = Route.Id("1"), time = now + 1.minutes)
+        val pred2 = prediction("A", 10, routeId = Route.Id("2"), time = now + 1.minutes)
         assertEquals(
             stopListOf(entry("A", 10, prediction = pred1)),
             fromPieces(null, predictions()),
@@ -984,7 +984,7 @@ class TripDetailsStopListTest {
     @Test
     fun `Entry format displays prediction`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val trip = trip { routeId = route.id }
+        val trip = trip { routeId = route.id.idText }
         val now = EasternTimeInstant.now()
         val pred = prediction("A", 10, time = now)
         val entry = entry("A", 10, prediction = pred)
@@ -1004,7 +1004,7 @@ class TripDetailsStopListTest {
     @Test
     fun `Entry format takes non-truncating disruption over prediction`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val trip = trip { routeId = route.id }
+        val trip = trip { routeId = route.id.idText }
         val now = EasternTimeInstant.now()
         val shuttleAlert = alert(Alert.Effect.StationClosure)
         val pred = prediction("A", 10, time = now)
@@ -1018,7 +1018,7 @@ class TripDetailsStopListTest {
     @Test
     fun `Entry format takes prediction over truncating disruption`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
-        val trip = trip { routeId = route.id }
+        val trip = trip { routeId = route.id.idText }
         val now = EasternTimeInstant.now()
         val shuttleAlert = alert(Alert.Effect.Shuttle)
         val pred = prediction("A", 10, time = now)

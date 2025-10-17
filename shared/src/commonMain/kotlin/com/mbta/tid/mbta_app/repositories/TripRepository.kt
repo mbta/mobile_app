@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.repositories
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
@@ -83,8 +84,9 @@ public class MockTripRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     internal var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
-    internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
-    internal var tripShape: TripShape = TripShape(ShapeWithStops(0, "", "", null, emptyList())),
+    internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder.Single.trip {}),
+    internal var tripShape: TripShape =
+        TripShape(ShapeWithStops(0, Route.Id(""), "", null, emptyList())),
     internal val onGetTrip: (String) -> Unit = {},
     internal val onGetTripSchedules: (String) -> Unit = {},
 ) : ITripRepository {

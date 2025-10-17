@@ -179,7 +179,7 @@ final class SearchResultViewTests: XCTestCase {
                 ],
                 routes: [
                     SearchViewModel.RouteResult(
-                        id: "428",
+                        id: Route.Id("428"),
                         name: "Oaklandvale - Haymarket Station",
                         routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
@@ -202,7 +202,7 @@ final class SearchResultViewTests: XCTestCase {
                 stops: [],
                 routes: [
                     SearchViewModel.RouteResult(
-                        id: "428",
+                        id: Route.Id("428"),
                         name: "Oaklandvale - Haymarket Station",
                         routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
@@ -225,7 +225,7 @@ final class SearchResultViewTests: XCTestCase {
                 stops: [],
                 routes: [
                     SearchViewModel.RouteResult(
-                        id: "428",
+                        id: Route.Id("428"),
                         name: "Oaklandvale - Haymarket Station",
                         routePill: .init(route: bus428, line: nil, type: .fixed)
                     ),
@@ -296,7 +296,7 @@ final class SearchResultViewTests: XCTestCase {
                 stops: [],
                 routes: [
                     .init(
-                        id: "Orange",
+                        id: Route.Id("Orange"),
                         name: "Orange",
                         routePill: .init(
                             textColor: "000000",
@@ -311,7 +311,7 @@ final class SearchResultViewTests: XCTestCase {
                 ]
             ),
             handleStopTap: { _ in }, handleRouteTap: { routeId in
-                XCTAssertEqual("Orange", routeId)
+                XCTAssertEqual(Route.Id("Orange"), routeId)
                 tapRouteExpectation.fulfill()
             }
         ).withFixedSettings([.searchRouteResults: true])

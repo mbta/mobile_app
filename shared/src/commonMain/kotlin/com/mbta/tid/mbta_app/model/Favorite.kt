@@ -56,14 +56,18 @@ public data class Favorites(
 }
 
 @Serializable
-public data class RouteStopDirection(val route: String, val stop: String, val direction: Int)
+public data class RouteStopDirection(
+    val route: LineOrRoute.Id,
+    val stop: String,
+    val direction: Int,
+)
 
 @Serializable
 public data class FavoriteSettings
 @DefaultArgumentInterop.Enabled
 constructor(val notifications: Notifications = Notifications.disabled) {
     @Serializable
-    public data class Notifications(val enabled: Boolean, val windows: Set<Window>) {
+    public data class Notifications(val enabled: Boolean, val windows: List<Window>) {
         @Serializable
         public data class Window(
             val startTime: LocalTime,
@@ -73,7 +77,7 @@ constructor(val notifications: Notifications = Notifications.disabled) {
 
         public companion object {
             public val disabled: Notifications =
-                Notifications(enabled = false, windows = emptySet())
+                Notifications(enabled = false, windows = emptyList())
         }
     }
 }

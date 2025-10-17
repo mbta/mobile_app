@@ -12,11 +12,22 @@ import SwiftUI
 struct MorePage: View {
     let inspection = Inspection<Self>()
 
-    var viewModel = SettingsViewModel()
+    let viewModel = MoreViewModel()
     @State var showingBuildNumber = false
+    @State private var path = NavigationPath()
+
+    private let translation = Bundle.main.preferredLocalizations.first ?? "en"
+    var sections: [MoreSection] {
+        viewModel.getSections(
+            translation: translation,
+            licensesCallback: {
+                path.append(MoreNavTarget.licenses)
+            }
+        )
+    }
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             VStack(spacing: 0) {
                 HStack(alignment: .bottom) {
                     Text("MBTA Go")
@@ -53,7 +64,7 @@ struct MorePage: View {
 
                 ScrollView {
                     VStack(alignment: .leading, spacing: 16) {
-                        ForEach(viewModel.sections) { section in
+                        ForEach(sections, id: \.id) { section in
                             MoreSectionView(
                                 section: section
                             )

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -20,6 +21,7 @@ import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlinx.coroutines.CoroutineDispatcher
@@ -88,7 +90,7 @@ class TripDetailsViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { this.trip = tripRepo }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, "", "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -131,7 +133,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, vehicle.id, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, vehicle.id, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -170,7 +172,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, "", "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -211,7 +213,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, "", "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, null, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
 
@@ -253,7 +255,7 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         val viewModel: TripDetailsViewModel = get()
-        val filters = TripDetailsPageFilter(trip.id, vehicle.id, "", 0, "", 0)
+        val filters = TripDetailsPageFilter(trip.id, vehicle.id, Route.Id(""), 0, "", 0)
         viewModel.setFilters(filters)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setActive(active = true, wasSentToBackground = false)
@@ -276,5 +278,29 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         testScheduler.advanceUntilIdle()
+    }
+
+    @Test
+    fun testTripDataIsNullWithUnloadedVehicle() = runTest {
+        val objects = TestData.clone()
+        val trip = objects.trip {}
+
+        val tripRepo =
+            MockTripRepository(
+                tripSchedulesResponse =
+                    TripSchedulesResponse.Schedules(listOf(objects.schedule { this.trip = trip })),
+                tripResponse = TripResponse(trip),
+            )
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) { this.trip = tripRepo }
+
+        val viewModel: TripDetailsViewModel = get()
+        val filters = TripDetailsPageFilter(trip.id, "vehicle id", Route.Id(""), 0, "", 0)
+        viewModel.setFilters(filters)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setActive(active = true, wasSentToBackground = false)
+
+        testViewModelFlow(viewModel).test { assertNull(awaitItem().tripData) }
     }
 }
