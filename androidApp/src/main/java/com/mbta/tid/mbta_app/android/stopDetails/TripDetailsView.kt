@@ -198,7 +198,8 @@ fun TripDetailsView(
                     placeholderTripStops,
                     now,
                     emptyMap(),
-                    globalResponse ?: GlobalResponse(ObjectCollectionBuilder()),
+                    globalResponse
+                        ?: GlobalResponse(ObjectCollectionBuilder("TripDetailsView.loading")),
                     isTripDetailsPage,
                 )
             }

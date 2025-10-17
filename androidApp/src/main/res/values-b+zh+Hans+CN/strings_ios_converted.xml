@@ -235,6 +235,7 @@
     <string name="northbound">北行</string>
     <string name="not_accessible">不适合轮椅通行</string>
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
+    <string name="notifications_enabled">已启用通知</string>
     <string name="now">现在</string>
     <string name="now_at">现在停靠</string>
     <string name="okay">好的</string>
@@ -282,6 +283,7 @@
     <string name="refresh">刷新</string>
     <string name="refresh_predictions">刷新预测</string>
     <string name="reload_data">重新加载数据</string>
+    <string name="remove">消除</string>
     <string name="remove_favorite">移除收藏</string>
     <string name="remove_from_favorites">从收藏夹中移除</string>
     <string name="resources_link_fare_info">票价信息</string>

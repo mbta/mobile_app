@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.pages
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,9 +13,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -26,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -37,6 +37,7 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
+import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.stopCard.FavoriteStopCard
 import com.mbta.tid.mbta_app.android.favorites.NotificationSettingsWidget
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -173,17 +174,18 @@ fun SaveFavoritePage(
                 .padding(end = 16.dp)
         ) {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                TextButton(onClick = goBack, contentPadding = PaddingValues(16.dp)) {
-                    Text(stringResource(R.string.cancel))
-                }
-                Button(
-                    onClick = {
-                        updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))
-                    },
-                    colors = ButtonDefaults.key(),
-                    contentPadding = PaddingValues(0.dp),
-                ) {
-                    Text(stringResource(R.string.save), style = Typography.callout)
+                NavTextButton(
+                    stringResource(R.string.cancel),
+                    Modifier.padding(start = 6.dp),
+                    colors =
+                        buttonColors(
+                            containerColor = Color.Transparent,
+                            contentColor = colorResource(R.color.key),
+                        ),
+                    action = goBack,
+                )
+                NavTextButton(stringResource(R.string.save), colors = ButtonDefaults.key()) {
+                    updateCloseAndToast(mapOf(selectedRouteStopDirection to settings))
                 }
             }
             Text(
@@ -224,8 +226,8 @@ fun SaveFavoritePage(
                     shape = RoundedCornerShape(8.dp),
                     colors =
                         ButtonDefaults.buttonColors(
-                            colorResource(R.color.error),
-                            contentColor = colorResource(R.color.fill3),
+                            colorResource(R.color.delete),
+                            contentColor = colorResource(R.color.delete_background),
                         ),
                 ) {
                     Text(

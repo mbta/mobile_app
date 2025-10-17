@@ -273,7 +273,7 @@ private fun StopList(
 @Preview
 @Composable
 private fun TripStopsPreview() {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("TripStopsPreview")
     val route =
         objects.route {
             color = "FFC72C"

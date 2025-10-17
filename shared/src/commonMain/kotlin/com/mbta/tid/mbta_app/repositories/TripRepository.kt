@@ -84,7 +84,7 @@ public class MockTripRepository
 @DefaultArgumentInterop.Enabled
 constructor(
     internal var tripSchedulesResponse: TripSchedulesResponse = TripSchedulesResponse.Unknown,
-    internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder().trip {}),
+    internal var tripResponse: TripResponse = TripResponse(ObjectCollectionBuilder.Single.trip {}),
     internal var tripShape: TripShape =
         TripShape(ShapeWithStops(0, Route.Id(""), "", null, emptyList())),
     internal val onGetTrip: (String) -> Unit = {},

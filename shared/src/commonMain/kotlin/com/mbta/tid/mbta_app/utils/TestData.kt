@@ -21,7 +21,7 @@ import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
  * @see com.mbta.tid.mbta_app.ProjectUtils
  */
 public val TestData: ObjectCollectionBuilder by lazy {
-    val objects = ObjectCollectionBuilder()
+    val objects = ObjectCollectionBuilder("TestData")
     putLines(objects)
     putRoutes(objects)
     putRoutePatterns(objects)
