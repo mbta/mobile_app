@@ -250,6 +250,7 @@
     <string name="northbound">Nan direksyon nò</string>
     <string name="not_accessible">Pa aksesib</string>
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
+    <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="now">Kounye a</string>
     <string name="now_at">Kounye a li nan</string>
     <string name="okay">Oke</string>
@@ -297,6 +298,7 @@
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
+    <string name="remove">Retire</string>
     <string name="remove_favorite">retire yon preferans</string>
     <string name="remove_from_favorites">Retire nan Favorites</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>

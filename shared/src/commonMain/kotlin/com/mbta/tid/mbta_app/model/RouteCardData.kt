@@ -153,6 +153,9 @@ public data class RouteCardData(
 
         internal val id: Int = directionId
 
+        public val routeStopDirection: RouteStopDirection =
+            RouteStopDirection(lineOrRoute.id, stop.id, directionId)
+
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
         internal val hasMajorAlerts: Boolean

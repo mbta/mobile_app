@@ -241,6 +241,7 @@
     <string name="northbound">En direction du nord</string>
     <string name="not_accessible">Non accessible</string>
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
+    <string name="notifications_enabled">notifications activées</string>
     <string name="now">Maintenant</string>
     <string name="now_at">Maintenant à</string>
     <string name="okay">OK</string>
@@ -288,6 +289,7 @@
     <string name="refresh">Actualiser</string>
     <string name="refresh_predictions">Actualiser les prévisions</string>
     <string name="reload_data">Recharger les données</string>
+    <string name="remove">Retirer</string>
     <string name="remove_favorite">supprimer des favoris</string>
     <string name="remove_from_favorites">Supprimer des favoris</string>
     <string name="resources_link_fare_info">Informations sur les tarifs</string>
