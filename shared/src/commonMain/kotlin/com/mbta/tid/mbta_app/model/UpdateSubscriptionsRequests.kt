@@ -42,9 +42,7 @@ internal constructor(
             includeAccessibility: Boolean = false,
         ): List<SubscriptionRequest> {
             val enabled = favorites.filter { it.value?.notifications?.enabled == true }
-            return enabled.map {
-                val rsd = it.key
-                val settings = it.value
+            return enabled.map { (rsd, settings) ->
                 val windows =
                     settings?.notifications?.windows?.map {
                         WindowRequest(
