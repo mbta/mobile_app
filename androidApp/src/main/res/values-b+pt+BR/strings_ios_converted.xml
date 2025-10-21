@@ -285,6 +285,7 @@
     <string name="rail_defect_lowercase">defeito nos trilhos</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recenter">Mapa mais recente sobre minha localização</string>
+    <string name="recenter_map_on_vehicle">Mapa mais recente em %1$s</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>

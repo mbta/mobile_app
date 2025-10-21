@@ -279,6 +279,7 @@
     <string name="rail_defect_lowercase">lỗi đường sắt</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>
     <string name="recenter">Định vị lại bản đồ ở vị trí của tôi</string>
+    <string name="recenter_map_on_vehicle">Căn chỉnh lại bản đồ trên %1$s</string>
     <string name="recently_viewed">Đã xem gần đây</string>
     <string name="refresh">Làm mới</string>
     <string name="refresh_predictions">Làm mới dự đoán</string>

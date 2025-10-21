@@ -294,6 +294,7 @@
     <string name="rail_defect_lowercase">defo nan ray</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
     <string name="recenter">Resantre kat jeyografik la sou pozisyon mwen</string>
+    <string name="recenter_map_on_vehicle">Kat ki pi resan sou %1$s</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>

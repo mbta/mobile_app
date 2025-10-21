@@ -10,6 +10,7 @@ import SwiftUI
 
 struct RecenterButton: View {
     var icon: ImageResource
+    var label: Text
     var size: CGFloat
     var perform: () -> Void
     var body: some View {
@@ -24,10 +25,7 @@ struct RecenterButton: View {
             .overlay(Circle().stroke(Color.halo, lineWidth: 2).frame(width: 50, height: 50))
             .padding(.horizontal, 20)
             .onTapGesture(perform: perform)
-            .accessibilityLabel(Text(
-                "Recenter map on my location",
-                comment: "Screen reader text describing the behavior of the map recenter button"
-            ))
+            .accessibilityLabel(label)
             .accessibilityRemoveTraits(.isImage)
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("mapRecenterButton")

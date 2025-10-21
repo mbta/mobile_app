@@ -285,6 +285,7 @@
     <string name="rail_defect_lowercase">défaut sur les rails</string>
     <string name="real_time_arrivals_updating_live">Arrivées en temps réel et mises à jour en direct</string>
     <string name="recenter">Recentrer la carte sur ma position</string>
+    <string name="recenter_map_on_vehicle">Carte recentrée sur %1$s</string>
     <string name="recently_viewed">Vu récemment</string>
     <string name="refresh">Actualiser</string>
     <string name="refresh_predictions">Actualiser les prévisions</string>

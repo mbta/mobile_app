@@ -14963,8 +14963,55 @@
         }
       }
     },
+    "Recenter map on %@" : {
+      "comment" : "Screen reader text describing the behavior of the map recenter on trip button (e.g. “Recenter map on train”)",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Volver a centrar el mapa en %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Carte recentrée sur %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kat ki pi resan sou %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mapa mais recente em %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Căn chỉnh lại bản đồ trên %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "将地图重新​​定位到 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "將地圖重新定位到 %@"
+          }
+        }
+      }
+    },
     "Recenter map on my location" : {
-      "comment" : "Screen reader text describing the behavior of the map recenter button",
+      "comment" : "Screen reader text describing the behavior of the map recenter on current location button",
       "localizations" : {
         "es" : {
           "stringUnit" : {
