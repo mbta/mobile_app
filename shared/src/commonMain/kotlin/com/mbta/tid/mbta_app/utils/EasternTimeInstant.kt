@@ -73,6 +73,11 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
 
     public operator fun minus(other: EasternTimeInstant): Duration = instant - other.instant
 
+    // Durations become Int64s of half nanoseconds in Swift,
+    // so we need this awkward wrapper to easily get specific units
+    public fun minusToKotlinDuration(other: EasternTimeInstant): KotlinDuration =
+        KotlinDuration(instant - other.instant)
+
     override fun compareTo(other: EasternTimeInstant): Int {
         return this.instant.compareTo(other.instant)
     }
@@ -119,4 +124,14 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
         public fun now(clock: Clock = Clock.System): EasternTimeInstant =
             EasternTimeInstant(clock.now())
     }
+}
+
+public class KotlinDuration(public val duration: Duration) {
+    public val inWholeDays: Long = duration.inWholeDays
+    public val inWholeHours: Long = duration.inWholeHours
+    public val inWholeMicroseconds: Long = duration.inWholeMicroseconds
+    public val inWholeMilliseconds: Long = duration.inWholeMilliseconds
+    public val inWholeMinutes: Long = duration.inWholeMinutes
+    public val inWholeNanoseconds: Long = duration.inWholeNanoseconds
+    public val inWholeSeconds: Long = duration.inWholeSeconds
 }

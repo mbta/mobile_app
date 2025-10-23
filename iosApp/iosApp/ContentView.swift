@@ -6,7 +6,6 @@ import SwiftUI
 
 // swiftlint:disable:next type_body_length
 struct ContentView: View {
-    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
@@ -99,16 +98,6 @@ struct ContentView: View {
             analytics.track(screen: screen)
         }
         .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility() }
-        .onChange(of: scenePhase) { newPhase in
-            if newPhase == .active {
-                socketProvider.socket.attach()
-                nearbyVM.joinAlertsChannel()
-                readDeepLinkState()
-            } else if newPhase == .background {
-                nearbyVM.leaveAlertsChannel()
-                socketProvider.socket.detach()
-            }
-        }
         .onChange(of: colorScheme) { _ in
             analytics.recordSession(colorScheme: colorScheme)
         }
@@ -122,6 +111,21 @@ struct ContentView: View {
             if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
                 favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
             }
+        }
+        .withScenePhaseHandlers(
+            onActive: {
+                socketProvider.socket.attach()
+                nearbyVM.joinAlertsChannel()
+                readDeepLinkState()
+            },
+            onBackground: {
+                nearbyVM.leaveAlertsChannel()
+                socketProvider.socket.detach()
+            }
+        )
+        .withBackgroundTimer {
+            nearbyVM.popToEntrypoint()
+            mapVM.recenter(type: .currentLocation)
         }
         .onReceive(
             contentVM.mapboxConfigManager.lastMapboxErrorSubject
