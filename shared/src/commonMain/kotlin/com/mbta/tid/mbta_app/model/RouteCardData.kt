@@ -204,7 +204,9 @@ public data class RouteCardData(
             val potentialService: MutableMap<Pair<Route.Id, String>, MutableSet<String>> =
                 mutableMapOf()
             val cutoffTime = now + 120.minutes
-            val tripsUpcoming = upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
+            val tripsUpcoming =
+                if (context.isStopDetails()) upcomingTrips
+                else upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider =
                 if (isBus && context != Context.StopDetailsFiltered)
@@ -212,7 +214,7 @@ public data class RouteCardData(
                 else tripsUpcoming
 
             for (trip in tripsToConsider) {
-                if (trip.isUpcomingWithin(now, cutoffTime)) {
+                if (context.isStopDetails() || trip.isUpcomingWithin(now, cutoffTime)) {
                     val existingPatterns =
                         potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
                             mutableSetOf()
@@ -274,38 +276,36 @@ public data class RouteCardData(
             potentialService: Set<PotentialService>,
             globalData: GlobalResponse?,
         ): Map<String, ByHeadsignData> {
-            return potentialService
-                .map { (_, headsign, patternIds) ->
-                    val routePatterns =
-                        routePatterns.filter { pattern -> patternIds.contains(pattern.id) }
+            return potentialService.associate { (_, headsign, patternIds) ->
+                val routePatterns =
+                    routePatterns.filter { pattern -> patternIds.contains(pattern.id) }
 
-                    val routePatternIds = routePatterns.map { it.id }.toSet()
+                val routePatternIds = routePatterns.map { it.id }.toSet()
 
-                    val stopIds =
-                        globalData
-                            ?.let { filterStopsByPatterns(routePatterns, it, this.stopIds) }
-                            .orEmpty()
-                    val majorAlert =
-                        Alert.applicableAlerts(
-                            alertsHere.filter { it.significance >= AlertSignificance.Major },
-                            directionId,
-                            routePatterns.map { it.routeId },
-                            stopIds,
-                            null,
-                        )
+                val stopIds =
+                    globalData
+                        ?.let { filterStopsByPatterns(routePatterns, it, this.stopIds) }
+                        .orEmpty()
+                val majorAlert =
+                    Alert.applicableAlerts(
+                        alertsHere.filter { it.significance >= AlertSignificance.Major },
+                        directionId,
+                        routePatterns.map { it.routeId },
+                        stopIds,
+                        null,
+                    )
 
-                    headsign to
-                        ByHeadsignData(
-                            stopIds,
-                            routePatterns,
-                            hasSchedulesTodayByPattern
-                                .filterKeys { it in routePatternIds }
-                                .any { it.value },
-                            upcomingTrips.filter { it.headsign == headsign },
-                            majorAlert.firstOrNull(),
-                        )
-                }
-                .toMap()
+                headsign to
+                    ByHeadsignData(
+                        stopIds,
+                        routePatterns,
+                        hasSchedulesTodayByPattern
+                            .filterKeys { it in routePatternIds }
+                            .any { it.value },
+                        upcomingTrips.filter { it.headsign == headsign },
+                        majorAlert.firstOrNull(),
+                    )
+            }
         }
 
         /**

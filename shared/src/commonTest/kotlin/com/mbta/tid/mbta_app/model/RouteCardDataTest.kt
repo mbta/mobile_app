@@ -4119,6 +4119,122 @@ class RouteCardDataTest {
         }
 
     @Test
+    fun `RouteCardData routeCardsForStopList shows scheduled variants farther in the future on stop details`():
+        Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val otherStop = objects.stop()
+        val route = objects.route { type = RouteType.BUS }
+        val routePatternA =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip {
+                    headsign = "A"
+                    stopIds = listOf(stop.id, otherStop.id)
+                }
+            }
+        val routePatternB =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Atypical
+                representativeTrip {
+                    headsign = "B"
+                    stopIds = listOf(stop.id, otherStop.id)
+                }
+            }
+        val routePatternC =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Deviation
+                representativeTrip {
+                    headsign = "C"
+                    stopIds = listOf(stop.id, otherStop.id)
+                }
+            }
+        val trip1 = objects.trip(routePatternA)
+        val trip2 = objects.trip(routePatternB)
+        val trip3 = objects.trip(routePatternC)
+
+        val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
+
+        val schedule1 =
+            objects.schedule {
+                trip = trip1
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 2.hours
+            }
+
+        val schedule2 =
+            objects.schedule {
+                trip = trip2
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 3.hours
+            }
+
+        val schedule3 =
+            objects.schedule {
+                trip = trip3
+                stopId = stop.id
+                stopSequence = 90
+                departureTime = time + 4.hours
+            }
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val context = RouteCardData.Context.StopDetailsFiltered
+
+        assertEquals(
+            listOf(
+                RouteCardData(
+                    lineOrRoute,
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route,
+                            stop,
+                            listOf(
+                                RouteCardData.Leaf(
+                                    lineOrRoute,
+                                    stop,
+                                    directionId = 0,
+                                    listOf(routePatternA, routePatternB, routePatternC),
+                                    setOf(stop.id),
+                                    upcomingTrips =
+                                        listOf(
+                                            UpcomingTrip(trip1, schedule1),
+                                            UpcomingTrip(trip2, schedule2),
+                                            UpcomingTrip(trip3, schedule3),
+                                        ),
+                                    alertsHere = emptyList(),
+                                    allDataLoaded = true,
+                                    hasSchedulesTodayByPattern =
+                                        mapOf(
+                                            routePatternA.id to true,
+                                            routePatternB.id to true,
+                                            routePatternC.id to true,
+                                        ),
+                                    alertsDownstream = emptyList(),
+                                    context,
+                                )
+                            ),
+                            globalData = GlobalResponse(objects),
+                        )
+                    ),
+                    time,
+                )
+            ),
+            RouteCardData.routeCardsForStopList(
+                stopIds = listOf(stop.id),
+                globalData = GlobalResponse(objects),
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(emptyMap()),
+                now = time,
+                context = context,
+            ),
+        )
+    }
+
+    @Test
     fun `RouteCardData routeCardsForStopList treats typical last stop as arrival-only even with no trips`() =
         parametricTest {
             val objects = ObjectCollectionBuilder()
