@@ -112,7 +112,7 @@ jobs:
         run: |
           flavor="${{ inputs.flavor }}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
-      - uses: actions/download-artifact@v5
+      - uses: actions/download-artifact@v6
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
