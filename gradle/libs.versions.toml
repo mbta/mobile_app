@@ -37,7 +37,7 @@ ktor = "3.3.0"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.15.1"
 mapboxTurf = "7.4.0"
-mokkery = "2.10.1"
+mokkery = "2.10.2"
 molecule = "2.2.0"
 okhttp = "5.2.1"
 okio = "3.16.2"
