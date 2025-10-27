@@ -587,7 +587,7 @@ struct ContentView: View {
 
     private func readDeepLinkState() {
         switch onEnum(of: AppDelegate.deepLinkState) {
-        case .none: break
+        default: break
         }
         AppDelegate.deepLinkState = .None.shared
     }

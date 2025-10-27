@@ -197,6 +197,8 @@ public class StopDetailsViewModel(
             currentFilters: StopDetailsPageFilters,
             stopDetailsFilterOverride: StopDetailsFilter? = null,
         ) {
+            if (routeCardData == null) return
+
             val autoTripFilter =
                 StopDetailsUtils.autoTripFilter(
                     routeCardData,
