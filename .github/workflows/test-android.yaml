@@ -27,7 +27,7 @@ jobs:
       - name: shared checks & unit tests
         run: ./gradlew shared:check
         if: ${{ !inputs.skip-everything }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure() && !inputs.skip-everything
         with:
           name: android-shared-reports
@@ -35,7 +35,7 @@ jobs:
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
         if: ${{ !inputs.skip-everything }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure() && !inputs.skip-everything
         with:
           name: android-android-reports
@@ -80,7 +80,7 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           script: ./bin/android-instrumented-test-ci.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: failure() && !inputs.skip-everything
         with:
           name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
