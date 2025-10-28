@@ -11,6 +11,7 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import io.ktor.http.path
+import io.ktor.http.protocolWithAuthority
 import io.ktor.utils.io.ByteReadChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -52,7 +53,7 @@ class MobileBackendClientTest : KoinTest {
 
             assertEquals(HttpStatusCode.OK, response.status)
             assertEquals("/api/schedules", response.request.url.encodedPath)
-            assertEquals(AppVariant.Staging.backendHost, response.request.url.host)
+            assertEquals(AppVariant.Staging.backendRoot, response.request.url.protocolWithAuthority)
             assertTrue(
                 Regex("""^MBTA Go/1\.3\.12 \((Android|iOS|JVM)\)$""")
                     .matches(response.request.headers["User-Agent"] ?: "")

@@ -15,6 +15,8 @@ configs:
   StagingDebug: debug
   DevOrangeRelease: release
   DevOrangeDebug: debug
+  LocalRelease: release
+  LocalDebug: debug
 settings:
   base:
     IPHONEOS_DEPLOYMENT_TARGET: '16.4'
@@ -23,6 +25,8 @@ settings:
       DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
     Release:
       VALIDATE_PRODUCT: 'YES'
+    Local:
+      PRODUCT_NAME: MBTA Go Local
     DevOrange:
       PRODUCT_NAME: MBTA Go Dev Orange
     Staging:
@@ -55,12 +59,16 @@ settingGroups:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING DEBUG $(inherited)
       DevOrangeDebug:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVORANGE DEBUG $(inherited)
+      LocalDebug:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: LOCAL DEBUG $(inherited)
       ProdRelease:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: PROD $(inherited)
       StagingRelease:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: STAGING $(inherited)
       DevOrangeRelease:
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEVORANGE $(inherited)
+      LocalRelease:
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: LOCAL $(inherited)
   test:
     base:
       ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: 'YES'
@@ -155,6 +163,11 @@ targets:
           CODE_SIGN_STYLE: Manual
           DEVELOPMENT_TEAM: RP77QY87AD
           PROVISIONING_PROFILE_SPECIFIER: "$(PRODUCT_BUNDLE_IDENTIFIER) AppStore"
+        Local:
+          ASSETCATALOG_COMPILER_APPICON_NAME: AppIconLocal
+          BUNDLE_NAME: MBTA Go Local
+          CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-local.entitlements
+          PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp.local
         DevOrange:
           ASSETCATALOG_COMPILER_APPICON_NAME: AppIconDevOrange
           BUNDLE_NAME: MBTA Go Dev Orange
@@ -315,6 +328,9 @@ fileGroups:
   - PrivacyInfo.xcprivacy
   - project.yml
 schemes:
+  Local:
+    templates:
+      - EnvironmentScheme
   DevOrange:
     templates:
       - EnvironmentScheme

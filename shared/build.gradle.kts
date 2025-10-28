@@ -4,6 +4,7 @@ import com.diffplug.spotless.Lint
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
+import com.mbta.tid.mbta_app.gradle.EnvReader
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
 import java.io.Serializable
@@ -70,6 +71,8 @@ kotlin {
             export(libs.sentry.kmp)
         }
 
+        xcodeConfigurationToNativeBuildType["LocalDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["LocalRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["DevOrangeRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
@@ -182,6 +185,20 @@ spotless {
             },
         )
     }
+}
+
+run {
+    val env = EnvReader()
+
+    val localBackendOrigin = env["LOCAL_BACKEND_ORIGIN"] ?: "http://127.0.0.1:4000"
+    val buildFolder = layout.buildDirectory.dir("generated/localBackendOrigin").get()
+    buildFolder.asFile.mkdirs()
+    buildFolder.file("localBackendOrigin.kt").asFile.bufferedWriter().use {
+        it.appendLine("package com.mbta.tid.mbta_app")
+        it.appendLine()
+        it.appendLine("internal val localBackendOrigin = \"$localBackendOrigin\"")
+    }
+    kotlin.sourceSets.commonMain.configure { kotlin.srcDirs(buildFolder) }
 }
 
 tasks.register("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
