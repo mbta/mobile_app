@@ -46,7 +46,12 @@ fun RecenterButton(
                 .background(color = colorResource(R.color.fill3), shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(painter, contentDescription, Modifier.size(24.dp), tint = colorResource(R.color.key))
+            Icon(
+                painter,
+                contentDescription,
+                Modifier.size(24.dp),
+                tint = colorResource(R.color.key),
+            )
         }
     }
 }
@@ -70,5 +75,9 @@ fun RecenterButtonPreview() {
 @Preview
 @Composable
 fun RecenterBackButtonPreview() {
-    RecenterButton(painterResource(R.drawable.fa_chevron_left), stringResource(R.string.back_button_label), onClick = {})
+    RecenterButton(
+        painterResource(R.drawable.fa_chevron_left),
+        stringResource(R.string.back_button_label),
+        onClick = {},
+    )
 }
