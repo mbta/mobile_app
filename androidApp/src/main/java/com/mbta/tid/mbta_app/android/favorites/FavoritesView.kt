@@ -30,6 +30,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
@@ -109,6 +110,12 @@ fun FavoritesView(
     Column() {
         SheetHeader(
             title = stringResource(R.string.favorites_link),
+            navCallbacks =
+                NavigationCallbacks(
+                    onBack = null,
+                    onClose = null,
+                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                ),
             rightActionContents = {
                 Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
                     if (!routeCardData.isNullOrEmpty()) {

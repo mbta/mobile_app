@@ -184,27 +184,41 @@ struct ContentView: View {
                             }
                         }
                         if !searchObserver.isSearching {
-                            VStack(alignment: .trailing, spacing: 20) {
-                                if !viewportProvider.viewport.isFollowing,
-                                   locationDataManager.currentLocation != nil,
-                                   nearbyVM.navigationStack.lastSafe().showCurrentLocation {
-                                    RecenterButton(icon: .faLocationArrowSolid, label: Text(
-                                        "Recenter map on my location",
-                                        comment: "Screen reader text describing the behavior of the map recenter on current location button"
-                                    ), size: 17.33) {
-                                        mapVM.recenter(type: .currentLocation)
+                            HStack(alignment: .top) {
+                                VStack(alignment: .leading) {
+                                    if nearbyVM.navigationStack.hasFloatingBackButton() {
+                                        RecenterButton(
+                                            icon: .faChevronLeft,
+                                            label: Text("Back", comment: "VoiceOver label for a generic back button"),
+                                            size: 18.67
+                                        ) {
+                                            nearbyVM.goBack()
+                                        }
                                     }
                                 }
-                                if !viewportProvider.viewport.isOverview,
-                                   let routeType = vehicleRouteType() {
-                                    RecenterButton(icon: routeIconResource(routeType), label: Text(
-                                        "Recenter map on \(routeType.typeText(isOnly: true))",
-                                        comment: "Screen reader text describing the behavior of the map recenter on trip button (e.g. “Recenter map on train”)"
-                                    ), size: 32) {
-                                        mapVM.recenter(type: .trip)
+                                Spacer()
+                                VStack(alignment: .trailing, spacing: 20) {
+                                    if !viewportProvider.viewport.isFollowing,
+                                       locationDataManager.currentLocation != nil,
+                                       nearbyVM.navigationStack.lastSafe().showCurrentLocation {
+                                        RecenterButton(icon: .faLocationArrowSolid, label: Text(
+                                            "Recenter map on my location",
+                                            comment: "Screen reader text describing the behavior of the map recenter on current location button"
+                                        ), size: 17.33) {
+                                            mapVM.recenter(type: .currentLocation)
+                                        }
+                                    }
+                                    if !viewportProvider.viewport.isOverview,
+                                       let routeType = vehicleRouteType() {
+                                        RecenterButton(icon: routeIconResource(routeType), label: Text(
+                                            "Recenter map on \(routeType.typeText(isOnly: true))",
+                                            comment: "Screen reader text describing the behavior of the map recenter on trip button (e.g. “Recenter map on train”)"
+                                        ), size: 32) {
+                                            mapVM.recenter(type: .trip)
+                                        }
                                     }
                                 }
-                            }.frame(maxWidth: .infinity, alignment: .topTrailing)
+                            }.frame(maxWidth: .infinity, alignment: .top)
                         }
                     }
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -234,7 +248,7 @@ struct ContentView: View {
                                 stopId: $0,
                                 stopFilter: nil,
                                 tripFilter: nil
-                            )) }, onBack: { nearbyVM.goBack() }, onClose: { nearbyVM.popToEntrypoint() },
+                            )) }, navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM
                         )
                         .toolbar(.hidden, for: .tabBar)
@@ -265,8 +279,7 @@ struct ContentView: View {
                                     )
                                 }
                             },
-                            onClose: { nearbyVM.popToEntrypoint() },
-                            onBack: { nearbyVM.goBack() }
+                            navCallbacks: navCallbacks
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -284,6 +297,7 @@ struct ContentView: View {
                                 stopFilter: stopFilter,
                                 tripFilter: tripFilter
                             ),
+                            navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM,
                             nearbyVM: nearbyVM,
                             mapVM: mapVM,
@@ -305,7 +319,7 @@ struct ContentView: View {
                     TabView {
                         TripDetailsPage(
                             filter: filter,
-                            onClose: { nearbyVM.goBack() },
+                            navCallbacks: navCallbacks,
                             nearbyVM: nearbyVM,
                         )
                         .toolbar(.hidden, for: .tabBar)
@@ -330,8 +344,11 @@ struct ContentView: View {
             Color.sheetBackground.ignoresSafeArea(.all)
             VStack {
                 VStack(spacing: 16) {
-                    SheetHeader(title: NSLocalizedString("Nearby Transit", comment: ""))
-                        .loadingPlaceholder(withShimmer: false)
+                    SheetHeader(
+                        title: NSLocalizedString("Nearby Transit", comment: ""),
+                        navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                    )
+                    .loadingPlaceholder(withShimmer: false)
                     ScrollView {
                         LazyVStack(alignment: .center, spacing: 14) {
                             ForEach(0 ..< 5) { _ in
@@ -394,7 +411,7 @@ struct ContentView: View {
                 TabView {
                     EditFavoritesPage(
                         viewModel: favoritesVM,
-                        onClose: { nearbyVM.popToEntrypoint() },
+                        navCallbacks: navCallbacks,
                         errorBannerVM: errorBannerVM,
                         toastVM: toastVM,
                     )
@@ -543,6 +560,14 @@ struct ContentView: View {
                 EmptyView()
             }
         }
+    }
+
+    var navCallbacks: NavigationCallbacks {
+        .init(
+            onBack: { nearbyVM.goBack() },
+            onClose: { nearbyVM.popToEntrypoint() },
+            sheetBackState: selectedDetent == .almostFull || hideMaps ? .shown : .hidden
+        )
     }
 
     @ViewBuilder

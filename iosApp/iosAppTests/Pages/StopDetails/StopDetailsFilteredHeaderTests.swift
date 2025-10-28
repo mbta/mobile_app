@@ -21,7 +21,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0)
+        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
         XCTAssertNotNil(try sut.inspect().find(text: "at **\(stop.name)**"))
     }
 
@@ -29,7 +29,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route()
         let stop = objects.stop { _ in }
-        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0)
+        let sut = StopDetailsFilteredHeader(route: route, stop: stop, direction: 0, navCallbacks: .companion.empty)
         XCTAssertNotNil(try sut.inspect().find(RoutePill.self))
     }
 
@@ -42,7 +42,8 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
             route: route,
             stop: stop,
             direction: 0,
-            onFavorite: { tapExpectation.fulfill() }
+            onFavorite: { tapExpectation.fulfill() },
+            navCallbacks: .companion.empty
         )
         XCTAssertNoThrow(try sut.inspect().find(StarButton.self).find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)
@@ -57,7 +58,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
             route: route,
             stop: stop,
             direction: 0,
-            onClose: { tapExpectation.fulfill() }
+            navCallbacks: .init(onBack: nil, onClose: { tapExpectation.fulfill() }, sheetBackState: .hidden)
         )
         XCTAssertNoThrow(try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)

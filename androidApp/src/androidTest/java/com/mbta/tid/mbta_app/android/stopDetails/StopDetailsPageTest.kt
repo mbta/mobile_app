@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.android.pages.StopDetailsPage
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
 import junit.framework.TestCase.assertTrue
 import org.junit.Before
@@ -42,9 +43,9 @@ class StopDetailsPageTest : KoinTest {
 
         composeTestRule.setContent {
             StopDetailsPage(
-                allAlerts = alerts,
                 filters = filters,
-                onClose = {},
+                allAlerts = alerts,
+                navCallbacks = NavigationCallbacks.empty,
                 updateStopFilter = {},
                 updateTripFilter = {},
                 tileScrollState = rememberScrollState(),

@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
@@ -30,7 +31,7 @@ fun StopDetailsUnfilteredView(
     stopId: String,
     now: EasternTimeInstant,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
@@ -89,7 +90,7 @@ fun StopDetailsUnfilteredView(
                 now,
                 globalResponse,
                 isFavorite,
-                onClose,
+                navCallbacks,
                 onTapRoutePill,
                 updateStopFilter,
                 openModal,
@@ -114,7 +115,7 @@ fun StopDetailsUnfilteredView(
                     now,
                     globalResponse,
                     isFavorite = { false },
-                    onClose = onClose,
+                    navCallbacks,
                     onTapRoutePill = {},
                     updateStopFilter = {},
                     openModal = {},

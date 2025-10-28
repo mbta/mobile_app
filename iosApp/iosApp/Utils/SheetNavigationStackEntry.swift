@@ -269,4 +269,11 @@ extension [SheetNavigationStackEntry] {
             false
         }
     }
+
+    func hasFloatingBackButton() -> Bool {
+        switch self.lastSafe() {
+        case .alertDetails, .editFavorites, .favorites, .more, .nearby, .routeDetails, .routePicker: false
+        case .stopDetails, .tripDetails: true
+        }
+    }
 }

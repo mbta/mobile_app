@@ -17,6 +17,7 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
@@ -24,8 +25,7 @@ fun RouteDetailsView(
     selectionId: LineOrRoute.Id,
     context: RouteDetailsContext,
     onOpenStopDetails: (String) -> Unit,
-    onBack: () -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
@@ -57,8 +57,7 @@ fun RouteDetailsView(
                     }
             }
         },
-        onBack = onBack,
-        onClose = onClose,
+        navCallbacks,
         openModal = openModal,
         errorBannerViewModel,
         defaultSelectedRouteId = (selectionId as? Route.Id).takeUnless { it == lineOrRoute.id },

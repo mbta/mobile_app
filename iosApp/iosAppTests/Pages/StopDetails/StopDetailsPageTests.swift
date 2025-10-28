@@ -76,6 +76,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let sut = StopDetailsPage(
             filters: filters,
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
@@ -95,13 +96,9 @@ final class StopDetailsPageTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM = NearbyViewModel(
-            navigationStack: [
-                .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-                .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-                .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
-            ]
-        )
+        let nearbyVM = NearbyViewModel()
+
+        let closeExp = expectation(description: "close button pressed")
 
         let sut = StopDetailsPage(
             filters: .init(
@@ -109,6 +106,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
+            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, sheetBackState: .hidden),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
@@ -117,10 +115,8 @@ final class StopDetailsPageTests: XCTestCase {
             viewportProvider: .init()
         ).withFixedSettings([:])
 
-        XCTAssertEqual(3, nearbyVM.navigationStack.count)
-
         try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
-        XCTAssertEqual(2, nearbyVM.navigationStack.count)
+        wait(for: [closeExp], timeout: 1)
     }
 
     func testRejoinsPredictionsAfterBackgrounding() throws {
@@ -149,6 +145,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: stopFilter,
                 tripFilter: nil
             ),
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),
@@ -217,6 +214,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
@@ -286,6 +284,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let sut = StopDetailsPage(
             filters: initialFilters,
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),

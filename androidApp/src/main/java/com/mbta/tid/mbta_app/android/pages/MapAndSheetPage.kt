@@ -41,7 +41,6 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -80,7 +79,6 @@ import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.navigateFrom
 import com.mbta.tid.mbta_app.android.util.plus
-import com.mbta.tid.mbta_app.android.util.popBackStackFrom
 import com.mbta.tid.mbta_app.android.util.rememberPrevious
 import com.mbta.tid.mbta_app.android.util.selectedStopId
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
@@ -96,10 +94,10 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
-import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
@@ -108,7 +106,6 @@ import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import io.github.dellisd.spatialk.geojson.Position
-import kotlin.reflect.KClass
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
@@ -265,6 +262,22 @@ fun MapAndSheetPage(
 
     val analytics: Analytics = koinInject()
 
+    val navCallbacks =
+        NavigationCallbacks(
+            onBack = { navController.popBackStack() },
+            onClose = {
+                if (sheetNavEntrypoint != null) navController.navigate(sheetNavEntrypoint)
+                else navController.popBackStack(SheetRoutes.Entrypoint::class, inclusive = false)
+            },
+            sheetBackState =
+                if (
+                    nearbyTransit.scaffoldState.bottomSheetState.currentValue == SheetValue.Large ||
+                        hideMaps
+                )
+                    NavigationCallbacks.SheetBackState.Shown
+                else NavigationCallbacks.SheetBackState.Hidden,
+        )
+
     fun updateVisitHistory(stopId: String) {
         CoroutineScope(Dispatchers.Default).launch {
             visitHistoryUsecase.addVisit(Visit.StopVisit(stopId))
@@ -387,25 +400,10 @@ fun MapAndSheetPage(
         )
     }
 
-    val popUp: NavOptionsBuilder.() -> Unit = {
-        popUpTo(navController.graph.id) { inclusive = true }
-    }
-
     fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
         try {
-            navController.navigate(entrypoint, popUp)
-        } catch (e: IllegalStateException) {
-            // This should only happen in tests when the navigation graph hasn't been initialized
-            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
-        }
-    }
-
-    fun <T : SheetRoutes> navigateToEntrypointFrom(routeType: KClass<T>) {
-        try {
-            if (sheetNavEntrypoint != null) {
-                navController.navigateFrom(routeType, sheetNavEntrypoint as SheetRoutes, popUp)
-            }
-        } catch (e: IllegalStateException) {
+            navController.navigate(entrypoint) { popUpTo(entrypoint) }
+        } catch (_: IllegalStateException) {
             // This should only happen in tests when the navigation graph hasn't been initialized
             Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
         }
@@ -505,7 +503,10 @@ fun MapAndSheetPage(
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             SheetPage {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SheetHeader(title = stringResource(R.string.nearby_transit))
+                    SheetHeader(
+                        title = stringResource(R.string.nearby_transit),
+                        navCallbacks = navCallbacks,
+                    )
                     ErrorBanner(errorBannerViewModel)
                     RouteCardList(
                         routeCardData = null,
@@ -544,7 +545,7 @@ fun MapAndSheetPage(
             EditFavoritesPage(
                 global = nearbyTransit.globalResponse,
                 favoritesViewModel = favoritesViewModel,
-                onClose = { navController.popBackStackFrom(SheetRoutes.EditFavorites::class) },
+                navCallbacks = navCallbacks,
                 openModalWithCloseCallback = ::openModalWithCloseCallback,
             )
         }
@@ -572,7 +573,7 @@ fun MapAndSheetPage(
                 modifier = modifier,
                 filters = filters,
                 allAlerts = nearbyTransit.alertData,
-                onClose = { navController.popBackStack() },
+                navCallbacks = navCallbacks,
                 updateStopFilter = { updateStopFilter(navRoute.stopId, it) },
                 updateTripFilter = { updateTripFilter(navRoute.stopId, it) },
                 tileScrollState = tileScrollState,
@@ -603,7 +604,7 @@ fun MapAndSheetPage(
                 allAlerts = nearbyTransit.alertData,
                 openModal = ::openModal,
                 openSheetRoute = navController::navigate,
-                onClose = { navController.popBackStack() },
+                navCallbacks = navCallbacks,
             )
         }
     }
@@ -630,15 +631,7 @@ fun MapAndSheetPage(
                 },
                 onOpenRouteDetails = ::handlePickRouteNavigation,
                 onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
-                onBack = onBack@{
-                        val currentPickerRoute =
-                            navController.currentRouteAs(SheetRoutes.RoutePicker::class)
-                                ?: return@onBack
-                        if (currentPickerRoute.path != RoutePickerPath.Root) {
-                            navController.popBackStackFrom(SheetRoutes.RoutePicker::class)
-                        }
-                    },
-                onClose = { navigateToEntrypointFrom(SheetRoutes.RoutePicker::class) },
+                navCallbacks,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -662,8 +655,7 @@ fun MapAndSheetPage(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
                 onOpenStopDetails = ::handleStopNavigation,
-                onBack = { navController.popBackStackFrom(SheetRoutes.RouteDetails::class) },
-                onClose = { navigateToEntrypointFrom(SheetRoutes.RouteDetails::class) },
+                navCallbacks = navCallbacks,
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
             )
@@ -871,6 +863,13 @@ fun MapAndSheetPage(
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = { handleVehicleTap(it) },
+                        handleBack =
+                            if (
+                                currentNavEntry is SheetRoutes.StopDetails ||
+                                    currentNavEntry is SheetRoutes.TripDetails
+                            ) {
+                                { navController.popBackStack() }
+                            } else null,
                         vehiclesData = vehiclesData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,

@@ -41,6 +41,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
 @Composable
@@ -59,7 +60,7 @@ fun StopDetailsFilteredPickerView(
     updateFavorites: (Map<RouteStopDirection, FavoriteSettings?>, Int) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
 ) {
     val leaf = routeStopData.data.find { it.directionId == stopFilter.directionId }
 
@@ -98,7 +99,7 @@ fun StopDetailsFilteredPickerView(
             stop,
             isFavorite = isFavorite(rsd),
             onFavorite = { inSaveFavoritesFlow = true },
-            onClose = onClose,
+            navCallbacks,
         )
 
         ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))

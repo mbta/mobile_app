@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import kotlin.time.Duration.Companion.seconds
@@ -31,7 +32,7 @@ fun StopDetailsPage(
     modifier: Modifier = Modifier,
     filters: StopDetailsPageFilters,
     allAlerts: AlertsStreamDataResponse?,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     updateTripFilter: (TripDetailsFilter?) -> Unit,
     tileScrollState: ScrollState,
@@ -92,7 +93,7 @@ fun StopDetailsPage(
         now,
         ::isFavorite,
         ::updateFavorites,
-        onClose,
+        navCallbacks,
         updateStopFilter,
         updateTripFilter,
         tileScrollState,

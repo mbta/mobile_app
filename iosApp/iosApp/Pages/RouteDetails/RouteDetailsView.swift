@@ -13,8 +13,7 @@ struct RouteDetailsView: View {
     let selectionId: LineOrRoute.Id
     let context: RouteDetailsContext
     let onOpenStopDetails: (String) -> Void
-    let onBack: () -> Void
-    let onClose: () -> Void
+    let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
 
     @State var globalData: GlobalResponse?
@@ -40,8 +39,7 @@ struct RouteDetailsView: View {
                         case let .favorites(isFavorited: _, onTapStar: onTapStar): onTapStar()
                         }
                     },
-                    onBack: onBack,
-                    onClose: onClose,
+                    navCallbacks: navCallbacks,
                     errorBannerVM: errorBannerVM,
                     defaultSelectedRouteId: defaultSelectedRouteId,
                     rightSideContent: rightSideContent
@@ -72,8 +70,7 @@ struct RouteDetailsView: View {
             context: context,
             globalData: globalData ?? GlobalResponse(objects: .init()),
             onClick: { _ in },
-            onBack: {},
-            onClose: {},
+            navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden),
             errorBannerVM: errorBannerVM,
             rightSideContent: rightSideContent,
             toastVM: toastVM

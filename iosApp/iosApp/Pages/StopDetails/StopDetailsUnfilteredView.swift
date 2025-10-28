@@ -21,6 +21,7 @@ struct StopDetailsUnfilteredView: View {
 
     var setStopFilter: (StopDetailsFilter?) -> Void
 
+    let navCallbacks: NavigationCallbacks
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
 
@@ -39,6 +40,7 @@ struct StopDetailsUnfilteredView: View {
         global: GlobalResponse?,
         now: EasternTimeInstant,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
+        navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel
     ) {
@@ -48,6 +50,7 @@ struct StopDetailsUnfilteredView: View {
         self.global = global
         self.now = now
         self.setStopFilter = setStopFilter
+        self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
     }
@@ -84,7 +87,7 @@ struct StopDetailsUnfilteredView: View {
                 VStack(spacing: 0) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
-                        onClose: { nearbyVM.goBack() }
+                        navCallbacks: navCallbacks,
                     ).padding(.bottom, 16)
                     if debugMode {
                         DebugView {

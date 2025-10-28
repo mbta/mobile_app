@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
@@ -45,7 +46,12 @@ fun RecenterButton(
                 .background(color = colorResource(R.color.fill3), shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(painter, contentDescription, tint = colorResource(R.color.key))
+            Icon(
+                painter,
+                contentDescription,
+                Modifier.size(24.dp),
+                tint = colorResource(R.color.key),
+            )
         }
     }
 }
@@ -64,4 +70,14 @@ fun RecenterButton(
 @Composable
 fun RecenterButtonPreview() {
     RecenterButton(Icons.Default.LocationOn, stringResource(R.string.recenter), onClick = {})
+}
+
+@Preview
+@Composable
+fun RecenterBackButtonPreview() {
+    RecenterButton(
+        painterResource(R.drawable.fa_chevron_left),
+        stringResource(R.string.back_button_label),
+        onClick = {},
+    )
 }

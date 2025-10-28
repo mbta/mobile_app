@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.test.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -52,7 +53,12 @@ class StopDetailsFilteredSheetHeaderTest {
                 line = null,
                 stop = stop,
                 onFavorite = {},
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
             )
         }
 
@@ -76,7 +82,12 @@ class StopDetailsFilteredSheetHeaderTest {
                 stop = stop,
                 isFavorite = false,
                 onFavorite = { pinCalled = true },
-                onClose = { closeCalled = true },
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = { closeCalled = true },
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
             )
         }
 

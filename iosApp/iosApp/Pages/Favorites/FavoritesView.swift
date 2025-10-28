@@ -29,6 +29,7 @@ struct FavoritesView: View {
         VStack(alignment: .leading, spacing: 0) {
             SheetHeader(
                 title: NSLocalizedString("Favorites", comment: "Header for favorites sheet"),
+                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden),
                 rightActionContents: {
                     if let routeCardData = favoritesVMState.routeCardData, !routeCardData.isEmpty {
                         ActionButton(kind: .plus, circleColor: Color.translucentContrast, action: { onAddStops() })

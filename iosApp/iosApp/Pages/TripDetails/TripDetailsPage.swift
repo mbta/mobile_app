@@ -11,7 +11,7 @@ import SwiftUI
 
 struct TripDetailsPage: View {
     var filter: TripDetailsPageFilter
-    var onClose: () -> Void
+    var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel = ViewModelDI().errorBanner
     var mapVM: IMapViewModel = ViewModelDI().map
@@ -54,7 +54,7 @@ struct TripDetailsPage: View {
         ZStack {
             routeAccents.color.ignoresSafeArea()
             VStack {
-                TripDetailsHeader(route: route, direction: direction, onClose: onClose)
+                TripDetailsHeader(route: route, direction: direction, navCallbacks: navCallbacks)
                 HaloScrollView {
                     TripDetailsView(
                         tripFilter: filter,

@@ -11,7 +11,7 @@ import SwiftUI
 
 struct EditFavoritesPage: View {
     let viewModel: IFavoritesViewModel
-    let onClose: () -> Void
+    let navCallbacks: NavigationCallbacks
 
     @State var globalResponse: GlobalResponse?
     @State var favoritesVMState: FavoritesViewModel.State = .init()
@@ -74,9 +74,11 @@ struct EditFavoritesPage: View {
                     title: NSLocalizedString("Edit Favorites", comment: "Title for flow to edit favorites"),
                     buttonColor: Color.key,
                     buttonTextColor: Color.fill3,
-                    onClose: {
-                        onClose()
-                    },
+                    navCallbacks: navCallbacks.doCopy(
+                        onBack: nil,
+                        onClose: navCallbacks.onClose,
+                        sheetBackState: navCallbacks.sheetBackState
+                    ),
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
                 EditFavoritesList(

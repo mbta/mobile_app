@@ -22,12 +22,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.ActionButton
-import com.mbta.tid.mbta_app.android.component.ActionButtonKind
 import com.mbta.tid.mbta_app.android.component.DirectionLabel
 import com.mbta.tid.mbta_app.android.component.RoutePill
 import com.mbta.tid.mbta_app.android.component.RoutePillHeight
 import com.mbta.tid.mbta_app.android.component.RoutePillType
+import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.overRouteColor
@@ -36,47 +35,48 @@ import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 
 @Composable
-fun TripDetailsPageHeader(route: Route?, direction: Direction?, onClose: () -> Unit) {
-    Row(
-        Modifier.padding(horizontal = 16.dp).padding(bottom = 8.dp),
-        Arrangement.spacedBy(8.dp),
-        Alignment.CenterVertically,
-    ) {
-        Row(
-            Modifier.weight(1f).padding(top = 4.dp).semantics(mergeDescendants = true) {
-                heading()
-            },
-            Arrangement.spacedBy(8.dp),
-            Alignment.CenterVertically,
-        ) {
-            val pillDescription = routeModeLabel(LocalContext.current, line = null, route)
-            if (route != null) {
-                RoutePill(
-                    route = route,
-                    type = RoutePillType.FlexCompact,
-                    height = RoutePillHeight.Large,
-                    modifier =
-                        Modifier.semantics { contentDescription = pillDescription }
-                            .placeholderIfLoading(),
-                    border = BorderStroke(2.dp, colorResource(R.color.route_color_contrast)),
-                )
+fun TripDetailsPageHeader(route: Route?, direction: Direction?, navCallbacks: NavigationCallbacks) {
+    SheetHeader(
+        Modifier.padding(bottom = 8.dp),
+        title = {
+            Row(
+                Modifier.weight(1f).padding(top = 4.dp).semantics(mergeDescendants = true) {
+                    heading()
+                },
+                Arrangement.spacedBy(8.dp),
+                Alignment.CenterVertically,
+            ) {
+                val pillDescription = routeModeLabel(LocalContext.current, line = null, route)
+                if (route != null) {
+                    RoutePill(
+                        route = route,
+                        type = RoutePillType.FlexCompact,
+                        height = RoutePillHeight.Large,
+                        modifier =
+                            Modifier.semantics { contentDescription = pillDescription }
+                                .placeholderIfLoading(),
+                        border = BorderStroke(2.dp, colorResource(R.color.route_color_contrast)),
+                    )
+                }
+                if (direction != null) {
+                    DirectionLabel(
+                        direction,
+                        modifier =
+                            Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
+                        textColor = route?.textColor?.let { Color.fromHex(it) } ?: Color.Unspecified,
+                    )
+                } else {
+                    Spacer(Modifier.weight(1f))
+                }
             }
-            if (direction != null) {
-                DirectionLabel(
-                    direction,
-                    modifier = Modifier.semantics { heading() }.weight(1f).placeholderIfLoading(),
-                    textColor = route?.textColor?.let { Color.fromHex(it) } ?: Color.Unspecified,
-                )
-            } else {
-                Spacer(Modifier.weight(1f))
-            }
-        }
-
-        ActionButton(ActionButtonKind.Close, colors = ButtonDefaults.overRouteColor()) { onClose() }
-    }
+        },
+        navCallbacks = navCallbacks,
+        buttonColors = ButtonDefaults.overRouteColor(),
+    )
 }
 
 @Preview
@@ -93,7 +93,16 @@ private fun TripDetailsPageHeaderPreview() {
                 directionId,
             )
         Box(Modifier.background(Color.fromHex(route.color))) {
-            TripDetailsPageHeader(route, direction, onClose = {})
+            TripDetailsPageHeader(
+                route,
+                direction,
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
+            )
         }
     }
 

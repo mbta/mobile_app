@@ -44,6 +44,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.MockErrorBannerViewModel
 import kotlin.time.Duration.Companion.minutes
@@ -60,7 +61,7 @@ fun StopDetailsUnfilteredRoutesView(
     now: EasternTimeInstant,
     globalData: GlobalResponse?,
     isFavorite: (RouteStopDirection) -> Boolean?,
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     onTapRoutePill: (PillFilter) -> Unit,
     updateStopFilter: (StopDetailsFilter?) -> Unit,
     openModal: (ModalRoutes) -> Unit,
@@ -79,7 +80,7 @@ fun StopDetailsUnfilteredRoutesView(
             SheetHeader(
                 if (!multiRoute) Modifier.padding(bottom = 8.dp) else Modifier,
                 title = stop.name,
-                onClose = onClose,
+                navCallbacks = navCallbacks,
             )
             if (multiRoute) {
                 Box(Modifier.height(56.dp).fillMaxWidth()) {
@@ -295,7 +296,12 @@ private fun StopDetailsRoutesViewPreview() {
                 now = now,
                 globalData,
                 isFavorite = { false },
-                onClose = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = {},
+                        onClose = {},
+                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    ),
                 onTapRoutePill = {},
                 updateStopFilter = {},
                 openModal = {},

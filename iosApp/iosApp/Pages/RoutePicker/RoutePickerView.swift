@@ -18,8 +18,7 @@ struct RoutePickerView: View {
     var searchRoutesViewModel: ISearchRoutesViewModel = ViewModelDI().searchRoutes
     let onOpenRouteDetails: (LineOrRoute.Id, RouteDetailsContext) -> Void
     let onOpenPickerPath: (RoutePickerPath, RouteDetailsContext) -> Void
-    let onClose: () -> Void
-    let onBack: () -> Void
+    let navCallbacks: NavigationCallbacks
 
     @State var globalData: GlobalResponse?
     @State var routes: [LineOrRoute] = []
@@ -161,16 +160,12 @@ struct RoutePickerView: View {
             titleColor: path.textColor,
             buttonColor: Color.routeColorContrast,
             buttonTextColor: Color.routeColorContrastText,
-            onBack: !(path is RoutePickerPath.Root) ? onBack : nil,
-            rightActionContents: {
-                NavTextButton(
-                    string: NSLocalizedString("Done", comment: "Button text for closing flow"),
-                    backgroundColor: Color.routeColorContrast,
-                    textColor: Color.routeColorContrastText,
-                    height: 32,
-                    action: onClose
-                )
-            }
+            navCallbacks: navCallbacks.doCopy(
+                onBack: path == .Root.shared ? nil : navCallbacks.onBack,
+                onClose: navCallbacks.onClose,
+                sheetBackState: navCallbacks.sheetBackState
+            ),
+            closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
         )
     }
 

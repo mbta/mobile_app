@@ -24,6 +24,7 @@ struct StopDetailsView: View {
     var onUpdateFavorites: () -> Void
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
+    var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -41,6 +42,7 @@ struct StopDetailsView: View {
         onUpdateFavorites: @escaping () -> Void,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
+        navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
@@ -54,6 +56,7 @@ struct StopDetailsView: View {
         self.onUpdateFavorites = onUpdateFavorites
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
+        self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
@@ -73,6 +76,7 @@ struct StopDetailsView: View {
                 onUpdateFavorites: onUpdateFavorites,
                 setStopFilter: setStopFilter,
                 setTripFilter: setTripFilter,
+                navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
                 mapVM: mapVM,
@@ -87,6 +91,7 @@ struct StopDetailsView: View {
                 global: global,
                 now: now.toEasternInstant(),
                 setStopFilter: setStopFilter,
+                navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
                 nearbyVM: nearbyVM,
             )

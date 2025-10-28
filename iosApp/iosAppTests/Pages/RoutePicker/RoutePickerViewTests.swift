@@ -33,8 +33,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .init(onBack: nil, onClose: {}, sheetBackState: .hidden)
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Add favorite stops"))
@@ -62,8 +61,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: { closeCalled = true },
-            onBack: {}
+            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, sheetBackState: .hidden)
         )
 
         try sut.inspect().find(button: "Done").tap()
@@ -91,8 +89,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: { backCalled = true }
+            navCallbacks: .init(onBack: { backCalled = true }, onClose: nil, sheetBackState: .shown)
         )
 
         try sut.inspect().find(viewWithAccessibilityLabel: "Back").implicitAnyView().button().tap()
@@ -114,8 +111,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Bus"))
@@ -143,8 +139,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Subway"))
@@ -189,8 +184,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -233,8 +227,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -268,8 +261,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -302,8 +294,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -341,8 +332,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -383,8 +373,7 @@ final class RoutePickerViewTests: XCTestCase {
                 selectedContext = context
             },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -432,8 +421,7 @@ final class RoutePickerViewTests: XCTestCase {
             searchRoutesViewModel: mockSearchVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
@@ -474,8 +462,7 @@ final class RoutePickerViewTests: XCTestCase {
             searchRoutesViewModel: mockSearchVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -518,8 +505,7 @@ final class RoutePickerViewTests: XCTestCase {
             searchRoutesViewModel: mockSearchVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            onClose: {},
-            onBack: {}
+            navCallbacks: .companion.empty
         )
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in

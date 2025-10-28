@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,6 +86,7 @@ fun HomeMapView(
     currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
+    handleBack: (() -> Unit)?,
     vehiclesData: List<Vehicle>,
     viewModel: IMapViewModel,
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
@@ -340,12 +340,14 @@ fun HomeMapView(
                 )
             }
 
-            val recenterContainerModifier =
-                if (allowTargeting)
-                    Modifier.align(Alignment.TopEnd).padding(top = 85.dp).statusBarsPadding()
-                else Modifier.align(Alignment.TopEnd).padding(top = 16.dp).statusBarsPadding()
+            val buttonTopPadding = if (allowTargeting) 85.dp else 16.dp
 
-            Column(recenterContainerModifier, Arrangement.spacedBy(16.dp)) {
+            Column(
+                Modifier.align(Alignment.TopEnd)
+                    .padding(top = buttonTopPadding)
+                    .statusBarsPadding(),
+                Arrangement.spacedBy(16.dp),
+            ) {
                 if (
                     showCurrentLocation &&
                         !viewportProvider.isFollowingPuck &&
@@ -384,6 +386,20 @@ fun HomeMapView(
                 ) {
                     isTargeting = true
                 }
+            }
+
+            if (handleBack != null) {
+                RecenterButton(
+                    painterResource(R.drawable.fa_chevron_left),
+                    stringResource(R.string.back_button_label),
+                    modifier =
+                        Modifier.align(Alignment.TopStart)
+                            .padding(top = buttonTopPadding)
+                            .statusBarsPadding()
+                            .padding(horizontal = 16.dp)
+                            .testTag("backButton"),
+                    onClick = { handleBack() },
+                )
             }
 
             if (isTargeting && allowTargeting) {

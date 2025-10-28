@@ -60,6 +60,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),
@@ -103,6 +104,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),
@@ -159,6 +161,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),
@@ -226,6 +229,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: .init(),
             mapVM: MockMapViewModel(),
@@ -240,14 +244,11 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let oldEntry: SheetNavigationStackEntry = .stopDetails(stopId: "oldStop", stopFilter: nil, tripFilter: nil)
-
-        let nearbyVM: NearbyViewModel = .init(
-            navigationStack: [oldEntry, .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
-        )
+        let nearbyVM: NearbyViewModel = .init()
 
         let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
 
+        var closeCalled = false
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
@@ -257,6 +258,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, sheetBackState: .hidden),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
@@ -265,7 +267,7 @@ final class StopDetailsViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         try sut.inspect().find(viewWithAccessibilityLabel: "Close").button().tap()
-        XCTAssertEqual([oldEntry], nearbyVM.navigationStack)
+        XCTAssert(closeCalled)
     }
 
     func testDebugModeNotShownByDefault() throws {
@@ -289,6 +291,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
@@ -320,6 +323,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),

@@ -74,6 +74,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
@@ -85,7 +86,7 @@ fun EditFavoritesPage(
     global: GlobalResponse?,
     favoritesViewModel: IFavoritesViewModel,
     toastViewModel: IToastViewModel = koinInject(),
-    onClose: () -> Unit,
+    navCallbacks: NavigationCallbacks,
     openModalWithCloseCallback: (ModalRoutes, () -> Unit) -> Unit,
 ) {
     val state by favoritesViewModel.models.collectAsState()
@@ -107,8 +108,8 @@ fun EditFavoritesPage(
         SheetHeader(
             title = stringResource(R.string.edit_favorites),
             closeText = stringResource(R.string.done),
+            navCallbacks = navCallbacks,
             buttonColors = ButtonDefaults.key(),
-            onClose = onClose,
         )
         EditFavoritesList(
             state.favorites,

@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -180,7 +181,7 @@ class StopDetailsFilteredPickerViewTest {
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -225,7 +226,7 @@ class StopDetailsFilteredPickerViewTest {
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -279,7 +280,7 @@ class StopDetailsFilteredPickerViewTest {
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -322,7 +323,7 @@ class StopDetailsFilteredPickerViewTest {
                 updateFavorites = { _, _ -> },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -369,7 +370,7 @@ class StopDetailsFilteredPickerViewTest {
                 },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -433,7 +434,7 @@ class StopDetailsFilteredPickerViewTest {
                 },
                 openModal = {},
                 openSheetRoute = {},
-                onClose = {},
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
