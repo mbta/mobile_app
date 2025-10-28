@@ -85,12 +85,12 @@ jobs:
           SENTRY_ENVIRONMENT: ${{ inputs.sentry-environment }}
         run: |
           bundle exec fastlane android build flavor:${{ inputs.flavor }} build_type:${{ inputs.build-type }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-aab
