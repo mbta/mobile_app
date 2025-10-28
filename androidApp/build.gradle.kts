@@ -111,6 +111,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.work)
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
     implementation(libs.compose.placeholder.material3)

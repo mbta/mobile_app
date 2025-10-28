@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.util
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
@@ -38,128 +40,127 @@ data class FormattedAlert(
         predictionReplacement(alert.effect),
     )
 
+    fun cause(context: Context) = causeRes?.let { context.getString(it) }
+
     val cause
-        @Composable get() = causeRes?.let { stringResource(it) }
+        @Composable get() = cause(LocalContext.current)
+
+    fun effect(context: Context) = context.getString(R.string.effect, context.getString(effectRes))
 
     val effect
-        @Composable get() = stringResource(R.string.effect, stringResource(effectRes))
+        @Composable get() = effect(LocalContext.current)
 
-    private val downstreamEffect
-        @Composable get() = stringResource(R.string.effect_ahead, stringResource(sentenceEffectRes))
+    private fun downstreamEffect(context: Context) =
+        context.getString(R.string.effect_ahead, context.getString(sentenceEffectRes))
 
-    private val delaysDueToCause
-        @Composable
-        get() =
-            dueToCauseRes?.let { stringResource(R.string.delays_due_to_cause, stringResource(it)) }
-                ?: stringResource(R.string.delays_unknown_reason)
+    private fun delaysDueToCause(context: Context) =
+        dueToCauseRes?.let {
+            context.getString(R.string.delays_due_to_cause, context.getString(it))
+        } ?: context.getString(R.string.delays_unknown_reason)
 
-    private val delayHeader
-        @Composable
-        get() =
-            // Show "Single Tracking" if there is an informational delay alert with that cause
-            // (Any other information severity delay alerts are never shown)
-            cause?.let {
-                if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
-                    AnnotatedString.fromHtml(stringResource(R.string.effect, it))
-                } else null
-            } ?: AnnotatedString.fromHtml(delaysDueToCause)
+    private fun delayHeader(context: Context) =
+        // Show "Single Tracking" if there is an informational delay alert with that cause
+        // (Any other information severity delay alerts are never shown)
+        cause(context)?.let {
+            if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
+                AnnotatedString.fromHtml(context.getString(R.string.effect, it))
+            } else null
+        } ?: AnnotatedString.fromHtml(delaysDueToCause(context))
 
-    private val elevatorHeader
-        @Composable
-        get() =
-            AnnotatedString(
-                alert.informedEntity
-                    .mapNotNull { alert.facilities?.get(it.facility) }
-                    .filter { it.type == Facility.Type.Elevator }
-                    .distinct()
-                    .singleOrNull()
-                    ?.shortName
-                    ?.let { facilityName ->
-                        stringResource(R.string.alert_elevator_header, facilityName)
-                    } ?: alert.header ?: effect
-            )
+    private fun elevatorHeader(context: Context) =
+        AnnotatedString(
+            alert.informedEntity
+                .mapNotNull { alert.facilities?.get(it.facility) }
+                .filter { it.type == Facility.Type.Elevator }
+                .distinct()
+                .singleOrNull()
+                ?.shortName
+                ?.let { facilityName ->
+                    context.getString(R.string.alert_elevator_header, facilityName)
+                } ?: alert.header ?: effect(context)
+        )
 
-    private val summary
-        @Composable
-        get() =
-            alertSummary?.let {
-                AnnotatedString.fromHtml(
-                    stringResource(
-                        R.string.alert_summary,
-                        stringResource(sentenceEffectRes),
-                        summaryLocation,
-                        summaryTimeframe,
-                    )
+    private fun summary(context: Context) =
+        alertSummary?.let {
+            AnnotatedString.fromHtml(
+                context.getString(
+                    R.string.alert_summary,
+                    context.getString(sentenceEffectRes),
+                    summaryLocation(context),
+                    summaryTimeframe(context),
                 )
-            }
-
-    @Composable
-    fun alertCardHeader(spec: AlertCardSpec) =
-        when (spec) {
-            AlertCardSpec.Downstream -> summary ?: AnnotatedString.fromHtml(downstreamEffect)
-            AlertCardSpec.Elevator -> elevatorHeader
-            AlertCardSpec.Delay -> delayHeader
-            AlertCardSpec.Secondary -> summary ?: AnnotatedString.fromHtml(effect)
-            else -> AnnotatedString.fromHtml(effect)
+            )
         }
 
+    fun alertCardHeader(spec: AlertCardSpec, context: Context) =
+        when (spec) {
+            AlertCardSpec.Downstream ->
+                summary(context) ?: AnnotatedString.fromHtml(downstreamEffect(context))
+            AlertCardSpec.Elevator -> elevatorHeader(context)
+            AlertCardSpec.Delay -> delayHeader(context)
+            AlertCardSpec.Secondary -> summary(context) ?: AnnotatedString.fromHtml(effect(context))
+            else -> AnnotatedString.fromHtml(effect(context))
+        }
+
+    @Composable
+    fun alertCardHeader(spec: AlertCardSpec) = alertCardHeader(spec, LocalContext.current)
+
+    fun alertCardMajorBody(context: Context) =
+        summary(context) ?: AnnotatedString(alert.header ?: "")
+
     val alertCardMajorBody
-        @Composable get() = summary ?: AnnotatedString(alert.header ?: "")
+        @Composable get() = alertCardMajorBody(LocalContext.current)
 
-    private val summaryLocation
-        @Composable
-        get() =
-            alertSummary?.location?.let {
-                when (it) {
-                    is AlertSummary.Location.SingleStop ->
-                        stringResource(R.string.alert_summary_location_single, it.stopName)
-                    is AlertSummary.Location.SuccessiveStops ->
-                        stringResource(
-                            R.string.alert_summary_location_successive,
-                            it.startStopName,
-                            it.endStopName,
-                        )
-                    is AlertSummary.Location.StopToDirection ->
-                        stringResource(
-                            R.string.alert_summary_location_stop_to_direction,
-                            it.startStopName,
-                            stringResource(directionNameFormatted(it.direction)),
-                        )
-                    is AlertSummary.Location.DirectionToStop ->
-                        stringResource(
-                            R.string.alert_summary_location_direction_to_stop,
-                            stringResource(directionNameFormatted(it.direction)),
-                            it.endStopName,
-                        )
-                }
-            } ?: ""
+    private fun summaryLocation(context: Context) =
+        alertSummary?.location?.let {
+            when (it) {
+                is AlertSummary.Location.SingleStop ->
+                    context.getString(R.string.alert_summary_location_single, it.stopName)
+                is AlertSummary.Location.SuccessiveStops ->
+                    context.getString(
+                        R.string.alert_summary_location_successive,
+                        it.startStopName,
+                        it.endStopName,
+                    )
+                is AlertSummary.Location.StopToDirection ->
+                    context.getString(
+                        R.string.alert_summary_location_stop_to_direction,
+                        it.startStopName,
+                        context.getString(directionNameFormatted(it.direction)),
+                    )
+                is AlertSummary.Location.DirectionToStop ->
+                    context.getString(
+                        R.string.alert_summary_location_direction_to_stop,
+                        context.getString(directionNameFormatted(it.direction)),
+                        it.endStopName,
+                    )
+            }
+        } ?: ""
 
-    private val summaryTimeframe
-        @Composable
-        get() =
-            alertSummary?.timeframe?.let {
-                when (it) {
-                    AlertSummary.Timeframe.EndOfService ->
-                        stringResource(R.string.alert_summary_timeframe_end_of_service)
-                    AlertSummary.Timeframe.Tomorrow ->
-                        stringResource(R.string.alert_summary_timeframe_tomorrow)
-                    is AlertSummary.Timeframe.LaterDate ->
-                        stringResource(
-                            R.string.alert_summary_timeframe_later_date,
-                            it.time.formattedServiceDate(),
-                        )
-                    is AlertSummary.Timeframe.ThisWeek ->
-                        stringResource(
-                            R.string.alert_summary_timeframe_this_week,
-                            it.time.formattedServiceDay(),
-                        )
-                    is AlertSummary.Timeframe.Time ->
-                        stringResource(
-                            R.string.alert_summary_timeframe_time,
-                            it.time.formattedTime(),
-                        )
-                }
-            } ?: ""
+    private fun summaryTimeframe(context: Context) =
+        alertSummary?.timeframe?.let {
+            when (it) {
+                AlertSummary.Timeframe.EndOfService ->
+                    context.getString(R.string.alert_summary_timeframe_end_of_service)
+                AlertSummary.Timeframe.Tomorrow ->
+                    context.getString(R.string.alert_summary_timeframe_tomorrow)
+                is AlertSummary.Timeframe.LaterDate ->
+                    context.getString(
+                        R.string.alert_summary_timeframe_later_date,
+                        it.time.formattedServiceDate(),
+                    )
+                is AlertSummary.Timeframe.ThisWeek ->
+                    context.getString(
+                        R.string.alert_summary_timeframe_this_week,
+                        it.time.formattedServiceDay(),
+                    )
+                is AlertSummary.Timeframe.Time ->
+                    context.getString(
+                        R.string.alert_summary_timeframe_time,
+                        it.time.formattedTime(),
+                    )
+            }
+        } ?: ""
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,

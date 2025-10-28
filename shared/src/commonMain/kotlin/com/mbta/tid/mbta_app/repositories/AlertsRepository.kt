@@ -4,22 +4,31 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.AlertsChannel
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
+import io.ktor.client.call.body
+import io.ktor.http.path
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import org.koin.core.component.KoinComponent
 
 public interface IAlertsRepository {
     public fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit)
 
+    public suspend fun getSnapshot(): ApiResult<AlertsStreamDataResponse>
+
     public fun disconnect()
 }
 
-internal class AlertsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
-    IAlertsRepository, KoinComponent {
+internal class AlertsRepository(
+    socket: PhoenixSocket,
+    private val mobileBackendClient: MobileBackendClient,
+    private val ioDispatcher: CoroutineDispatcher,
+) : IAlertsRepository, KoinComponent {
     private val channelOwner = ChannelOwner(socket, ioDispatcher)
     internal var channel: PhoenixChannel? by channelOwner::channel
 
@@ -30,6 +39,11 @@ internal class AlertsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDi
             handleError = { onReceive(ApiResult.Error(message = it)) },
         )
     }
+
+    override suspend fun getSnapshot(): ApiResult<AlertsStreamDataResponse> =
+        withContext(ioDispatcher) {
+            ApiResult.runCatching { mobileBackendClient.get { url { path("api/alerts") } }.body() }
+        }
 
     override fun disconnect() {
         channelOwner.disconnect()
@@ -77,6 +91,10 @@ internal constructor(
         receiveCallback = onReceive
         onConnect()
         onReceive(result)
+    }
+
+    override suspend fun getSnapshot(): ApiResult<AlertsStreamDataResponse> {
+        return result
     }
 
     override fun disconnect() {

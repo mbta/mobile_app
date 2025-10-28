@@ -45,7 +45,7 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
         return EasternTimeInstant(instant)
     }
 
-    internal val serviceDate: LocalDate
+    public val serviceDate: LocalDate
         get() = if (local.hour >= 3) local.date else local.date.minus(DatePeriod(days = 1))
 
     // Service end times will be set to 3:00 in Alerts UI, which means that a LocalDateTime
