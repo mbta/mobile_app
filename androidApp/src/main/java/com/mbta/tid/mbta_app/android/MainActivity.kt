@@ -28,7 +28,6 @@ import com.mbta.tid.mbta_app.routes.DeepLinkState
 import kotlin.toString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -36,12 +35,13 @@ class MainActivity : ComponentActivity() {
 
     fun handleIntent(intent: Intent?) {
         val deepLinkUri: Uri? = intent?.data?.takeIf { intent.action == Intent.ACTION_VIEW }
-        deepLinkStateFlow.update {
+        deepLinkStateFlow.value =
             deepLinkUri?.let { DeepLinkState.from(it.toString()) } ?: DeepLinkState.None
-        }
     }
 
-    fun clearDeepLink() = deepLinkStateFlow.update { null }
+    fun clearDeepLink() {
+        deepLinkStateFlow.value = null
+    }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
