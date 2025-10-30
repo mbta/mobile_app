@@ -31,7 +31,6 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
-import kotlin.time.Instant
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
@@ -199,17 +198,25 @@ class AlertsRepositoryTests {
                 MobileBackendClient(mockEngine, AppVariant.Staging),
                 Dispatchers.IO,
             )
-        assertEquals(AlertsStreamDataResponse(mapOf("3" to Alert(
-            id = "3",
-            activePeriod = emptyList(),
-            description = null,
-            effectName = null,
-            header = null,
-            informedEntity = emptyList(),
-            lifecycle = Alert.Lifecycle.New,
-            severity = 5,
-            updatedAt = EasternTimeInstant(2025, Month.OCTOBER, 30, 15, 5),
-            facilities = null,
-        ))), alertsRepo.getSnapshot().dataOrThrow())
+        assertEquals(
+            AlertsStreamDataResponse(
+                mapOf(
+                    "3" to
+                        Alert(
+                            id = "3",
+                            activePeriod = emptyList(),
+                            description = null,
+                            effectName = null,
+                            header = null,
+                            informedEntity = emptyList(),
+                            lifecycle = Alert.Lifecycle.New,
+                            severity = 5,
+                            updatedAt = EasternTimeInstant(2025, Month.OCTOBER, 30, 15, 5),
+                            facilities = null,
+                        )
+                )
+            ),
+            alertsRepo.getSnapshot().dataOrThrow(),
+        )
     }
 }
