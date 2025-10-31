@@ -49,13 +49,15 @@ import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import io.github.dellisd.spatialk.geojson.Position
+import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentView(
-    deepLinkState: DeepLinkState = DeepLinkState.None,
+    deepLinkStateFlow: StateFlow<DeepLinkState?>,
+    deepLinkCallback: () -> Unit,
     socket: PhoenixSocket = koinInject(),
     viewModel: ContentViewModel = koinViewModel(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
@@ -115,12 +117,6 @@ fun ContentView(
 
     LaunchedEffect(Unit) { mapViewModel.setViewportManager(viewportProvider) }
 
-    LaunchedEffect(deepLinkState) {
-        when (deepLinkState) {
-            DeepLinkState.None -> {}
-        }
-    }
-
     LifecycleResumeEffect(null) {
         socket.attach()
         (socket as? PhoenixSocketWrapper)?.attachLogging()
@@ -172,6 +168,8 @@ fun ContentView(
                     locationDataManager = locationDataManager,
                     viewportProvider = viewportProvider,
                 ),
+                deepLinkStateFlow = deepLinkStateFlow,
+                deepLinkCallback = deepLinkCallback,
                 sheetNavEntrypoint = sheetNavEntrypoint,
                 navBarVisible = navBarVisible,
                 showNavBar = { navBarVisible = true },

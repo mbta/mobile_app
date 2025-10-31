@@ -43,16 +43,20 @@ public sealed class LineOrRoute {
                     PrimitiveKind.STRING,
                 )
 
-            private const val LINE_PREFIX = "line-"
-
             override fun serialize(encoder: Encoder, value: Id) {
                 encoder.encodeString(value.idText)
             }
 
             override fun deserialize(decoder: Decoder): Id {
-                val decodedValue = decoder.decodeString()
-                return if (decodedValue.startsWith(LINE_PREFIX)) LineId(decodedValue)
-                else RouteId(decodedValue)
+                return fromString(decoder.decodeString())
+            }
+        }
+
+        public companion object {
+            private const val LINE_PREFIX = "line-"
+
+            public fun fromString(id: String): Id {
+                return if (id.startsWith(LINE_PREFIX)) LineId(id) else RouteId(id)
             }
         }
     }

@@ -72,6 +72,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
@@ -227,6 +228,7 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        val flow = MutableStateFlow(null).asStateFlow()
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         loadMocks()
         composeTestRule.setContent {
@@ -244,6 +246,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = MockLocationDataManager(),
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     SheetRoutes.NearbyTransit,
                     false,
                     {},
@@ -285,6 +289,8 @@ class MapAndSheetPageTest : KoinTest {
         val mockErrorVM = mock<IErrorBannerViewModel>(MockMode.autofill)
         every { mockErrorVM.models } returns MutableStateFlow(ErrorBannerViewModel.State())
 
+        val flow = MutableStateFlow(null).asStateFlow()
+
         loadMocks()
         composeTestRule.setContent {
             var entrypoint by remember {
@@ -305,6 +311,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = MockLocationDataManager(),
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     entrypoint,
                     false,
                     {},
@@ -342,6 +350,8 @@ class MapAndSheetPageTest : KoinTest {
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
         val mockConfigManager = MockConfigManager()
 
+        val flow = MutableStateFlow(null).asStateFlow()
+
         loadMocks()
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -358,6 +368,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = MockLocationDataManager(),
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     SheetRoutes.NearbyTransit,
                     false,
                     {},
@@ -383,6 +395,8 @@ class MapAndSheetPageTest : KoinTest {
     fun testHidesMap() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        val flow = MutableStateFlow(null).asStateFlow()
+
         loadMocks(hideMaps = true)
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -399,6 +413,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = MockLocationDataManager(),
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     SheetRoutes.NearbyTransit,
                     false,
                     {},
@@ -416,6 +432,7 @@ class MapAndSheetPageTest : KoinTest {
     fun testLocationServicesButtonWhenMapHidden() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        val flow = MutableStateFlow(null).asStateFlow()
         loadMocks(hideMaps = true)
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -432,6 +449,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = MockLocationDataManager(),
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     SheetRoutes.NearbyTransit,
                     false,
                     {},
@@ -489,6 +508,8 @@ class MapAndSheetPageTest : KoinTest {
         viewportProvider.isFollowingPuck = false
         var followCallCount = 0
 
+        val flow = MutableStateFlow(null).asStateFlow()
+
         everySuspend { viewportProvider.follow(any()) } calls { followCallCount += 1 }
 
         loadKoinMocks(builder, clock = mockClock)
@@ -509,6 +530,8 @@ class MapAndSheetPageTest : KoinTest {
                         locationDataManager = locationDataManager,
                         viewportProvider = viewportProvider,
                     ),
+                    flow,
+                    {},
                     SheetRoutes.NearbyTransit,
                     false,
                     {},

@@ -26,10 +26,12 @@ public object StopDetailsUtils {
         filterAtTime: EasternTimeInstant,
         globalData: GlobalResponse?,
     ): TripDetailsFilter? {
-        val route = routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId } ?: return null
+        val route =
+            routeCardData?.find { it.lineOrRoute.id == stopFilter?.routeId }
+                ?: return currentTripFilter
         val leaf =
             route.stopData.singleOrNull()?.data?.find { it.directionId == stopFilter?.directionId }
-                ?: return null
+                ?: return currentTripFilter
         if (currentTripFilter?.selectionLock == true) return currentTripFilter
 
         val leafFormat = leaf.format(filterAtTime, globalData)

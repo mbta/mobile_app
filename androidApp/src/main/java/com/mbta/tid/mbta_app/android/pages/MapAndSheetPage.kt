@@ -64,6 +64,7 @@ import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
+import com.mbta.tid.mbta_app.android.modalRoute
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
@@ -95,6 +96,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
@@ -112,6 +114,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
@@ -135,6 +138,8 @@ data class NearbyTransit(
 fun MapAndSheetPage(
     modifier: Modifier = Modifier,
     nearbyTransit: NearbyTransit,
+    deepLinkStateFlow: StateFlow<DeepLinkState?>,
+    deepLinkCallback: () -> Unit,
     sheetNavEntrypoint: SheetRoutes.Entrypoint?,
     navBarVisible: Boolean,
     showNavBar: () -> Unit,
@@ -163,9 +168,21 @@ fun MapAndSheetPage(
     val currentNavEntry = currentNavBackStackEntry?.let { SheetRoutes.fromNavBackStackEntry(it) }
     val previousNavEntry: SheetRoutes? = rememberPrevious(currentNavEntry)
 
+    var navControllerInitialized: Boolean by rememberSaveable { mutableStateOf(false) }
+
+    val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var currentModal by
+        rememberSaveable(saver = stateJsonSaver()) {
+            mutableStateOf<Pair<ModalRoutes, () -> Unit>?>(null)
+        }
+
     val density = LocalDensity.current
 
     val now by timer(updateInterval = 5.seconds)
+
+    val routeCardDataState by routeCardDataViewModel.models.collectAsState()
+    val tileScrollState = rememberScrollState()
+    val scope = rememberCoroutineScope()
 
     fun updateStopDetailsFilters(filters: StopDetailsPageFilters) {
         nearbyTabViewModel.setStopDetailsFilters(
@@ -196,6 +213,33 @@ fun MapAndSheetPage(
         )
     }
 
+    fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
+        try {
+            navController.navigate(entrypoint) { popUpTo(entrypoint) }
+        } catch (_: IllegalStateException) {
+            // This should only happen in tests when the navigation graph hasn't been initialized
+            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
+        }
+    }
+
+    fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
+        currentModal = Pair(modal, onClose)
+        // modalSheetState.show() is implied by the `if (currentModal != null)`
+    }
+
+    fun openModal(modal: ModalRoutes) {
+        openModalWithCloseCallback(modal, {})
+    }
+
+    fun closeModal() {
+        scope
+            .launch {
+                currentModal?.second()
+                modalSheetState.hide()
+            }
+            .invokeOnCompletion { currentModal = null }
+    }
+
     val filters =
         (when (currentNavEntry) {
             is SheetRoutes.StopDetails ->
@@ -223,9 +267,29 @@ fun MapAndSheetPage(
         }
     }
 
-    val routeCardDataState by routeCardDataViewModel.models.collectAsState()
-    val tileScrollState = rememberScrollState()
-    val scope = rememberCoroutineScope()
+    LaunchedEffect(currentNavBackStackEntry) {
+        navControllerInitialized = navControllerInitialized || currentNavBackStackEntry != null
+    }
+
+    val deepLinkState by deepLinkStateFlow.collectAsState()
+    LaunchedEffect(deepLinkState, navControllerInitialized) {
+        val state = deepLinkState
+        if (!navControllerInitialized || state == null) return@LaunchedEffect
+        sheetNavEntrypoint?.let { navigateToEntrypoint(it) }
+        when (state) {
+            is DeepLinkState.Alert -> {
+                state.stopId?.let {
+                    navController.navigate(SheetRoutes.StopDetails(it, null, null))
+                }
+                openModal(state.modalRoute)
+            }
+            is DeepLinkState.Stop -> {
+                navController.navigate(state.sheetRoute)
+            }
+            else -> {}
+        }
+        deepLinkCallback()
+    }
 
     LaunchedEffect(currentNavEntry) {
         if (
@@ -259,6 +323,8 @@ fun MapAndSheetPage(
 
     var searchExpanded by rememberSaveable { mutableStateOf(false) }
     val searchFocusRequester = remember { FocusRequester() }
+
+    fun openSearch() = searchFocusRequester.requestFocus()
 
     val analytics: Analytics = koinInject()
 
@@ -400,19 +466,6 @@ fun MapAndSheetPage(
         )
     }
 
-    fun navigateToEntrypoint(entrypoint: SheetRoutes.Entrypoint) {
-        try {
-            navController.navigate(entrypoint) { popUpTo(entrypoint) }
-        } catch (_: IllegalStateException) {
-            // This should only happen in tests when the navigation graph hasn't been initialized
-            Log.w("MapAndSheetPage", "Failed to navigate to sheet entrypoint")
-        }
-    }
-
-    fun openSearch() {
-        searchFocusRequester.requestFocus()
-    }
-
     var backgroundTimestamp: Long? by rememberSaveable { mutableStateOf(null) }
     LifecycleResumeEffect(null) {
         backgroundTimestamp?.let {
@@ -455,30 +508,6 @@ fun MapAndSheetPage(
     }
 
     LaunchedEffect(currentNavEntry) { errorBannerViewModel.setSheetRoute(currentNavEntry) }
-
-    val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var currentModal by
-        rememberSaveable(saver = stateJsonSaver()) {
-            mutableStateOf<Pair<ModalRoutes, () -> Unit>?>(null)
-        }
-
-    fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
-        currentModal = Pair(modal, onClose)
-        // modalSheetState.show() is implied by the `if (currentModal != null)`
-    }
-
-    fun openModal(modal: ModalRoutes) {
-        openModalWithCloseCallback(modal, {})
-    }
-
-    fun closeModal() {
-        scope
-            .launch {
-                currentModal?.second()
-                modalSheetState.hide()
-            }
-            .invokeOnCompletion { currentModal = null }
-    }
 
     @Composable
     fun SheetPage(

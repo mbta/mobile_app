@@ -30,6 +30,7 @@ import dev.mokkery.answering.returns
 import dev.mokkery.every
 import dev.mokkery.mock
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Rule
 import org.junit.Test
 
@@ -73,6 +74,9 @@ class MapAndSheetPageTest {
         val viewportProvider = ViewportProvider(MapViewportState())
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+
+        val flow = MutableStateFlow(null).asStateFlow()
+
         composeTestRule.setContent {
             MapAndSheetPage(
                 nearbyTransit =
@@ -85,6 +89,8 @@ class MapAndSheetPageTest {
                         locationDataManager = locationDataManager,
                         viewportProvider = viewportProvider,
                     ),
+                deepLinkStateFlow = flow,
+                deepLinkCallback = {},
                 sheetNavEntrypoint = SheetRoutes.NearbyTransit,
                 navBarVisible = false,
                 showNavBar = {},

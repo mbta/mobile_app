@@ -27,6 +27,8 @@ import dev.mokkery.answering.returns
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
 import kotlin.test.assertEquals
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -47,11 +49,12 @@ class ContentViewTests : KoinTest {
 
     @Test
     fun testSwitchingTabs() {
+        val flow = MutableStateFlow(null).asStateFlow()
         composeTestRule.setContent {
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
-                ContentView()
+                ContentView(flow, {})
             }
         }
 
@@ -64,6 +67,7 @@ class ContentViewTests : KoinTest {
 
     @Test
     fun testSetsDefaultTab() {
+        val flow = MutableStateFlow(null).asStateFlow()
         val repo = MockTabPreferencesRepository(DefaultTab.Favorites)
         loadKoinMocks { tabPreferences = repo }
 
@@ -71,7 +75,7 @@ class ContentViewTests : KoinTest {
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
-                ContentView()
+                ContentView(flow, {})
             }
         }
 
@@ -102,10 +106,11 @@ class ContentViewTests : KoinTest {
             )
 
         composeTestRule.setContent {
+            val flow = MutableStateFlow(null).asStateFlow()
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
-                ContentView(viewModel = vm)
+                ContentView(flow, {}, viewModel = vm)
             }
         }
 
@@ -121,6 +126,7 @@ class ContentViewTests : KoinTest {
         var onAttachCount = 0
         var onDetatchCount = 0
 
+        val flow = MutableStateFlow(null).asStateFlow()
         loadKoinMocks(socket = MockPhoenixSocket({ onAttachCount += 1 }, { onDetatchCount += 1 }))
 
         composeTestRule.setContent {
@@ -128,7 +134,7 @@ class ContentViewTests : KoinTest {
                 LocalLocationClient provides MockFusedLocationProviderClient(),
                 LocalLifecycleOwner provides lifecycleOwner,
             ) {
-                ContentView()
+                ContentView(flow, {})
             }
         }
 
