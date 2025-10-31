@@ -7,21 +7,25 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.Units
-import io.github.dellisd.spatialk.turf.destination
 import kotlin.random.Random
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.coroutines.runBlocking
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.turf.measurement.offset
+import org.maplibre.spatialk.units.Bearing
+import org.maplibre.spatialk.units.extensions.degrees
+import org.maplibre.spatialk.units.extensions.miles
+import org.maplibre.spatialk.units.extensions.times
 
 internal class NearbyRepositoryTest {
     val searchPoint = Position(latitude = 42.3513706803105, longitude = -71.06649626809957)
 
-    @OptIn(ExperimentalTurfApi::class)
     fun pointAtDistance(distanceMiles: Double): Position =
-        destination(searchPoint, distanceMiles, Random.Default.nextDouble(), Units.Miles)
+        searchPoint.offset(
+            distanceMiles.miles,
+            Bearing.North + Random.Default.nextDouble() * 360.degrees,
+        )
 
     fun ObjectCollectionBuilder.rpsAtDistance(
         distanceMiles: Double,

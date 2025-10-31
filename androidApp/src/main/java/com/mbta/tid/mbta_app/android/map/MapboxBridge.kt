@@ -31,17 +31,17 @@ import com.mbta.tid.mbta_app.map.style.LineLayer
 import com.mbta.tid.mbta_app.map.style.SymbolLayer
 import com.mbta.tid.mbta_app.map.style.TextAnchor
 import com.mbta.tid.mbta_app.map.style.TextJustify
-import io.github.dellisd.spatialk.geojson.Geometry
-import io.github.dellisd.spatialk.geojson.GeometryCollection
-import io.github.dellisd.spatialk.geojson.LineString
-import io.github.dellisd.spatialk.geojson.MultiLineString
-import io.github.dellisd.spatialk.geojson.MultiPoint
-import io.github.dellisd.spatialk.geojson.MultiPolygon
-import io.github.dellisd.spatialk.geojson.Point
-import io.github.dellisd.spatialk.geojson.Polygon
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.maplibre.spatialk.geojson.Geometry
+import org.maplibre.spatialk.geojson.GeometryCollection
+import org.maplibre.spatialk.geojson.LineString
+import org.maplibre.spatialk.geojson.MultiLineString
+import org.maplibre.spatialk.geojson.MultiPoint
+import org.maplibre.spatialk.geojson.MultiPolygon
+import org.maplibre.spatialk.geojson.Point
+import org.maplibre.spatialk.geojson.Polygon
+import org.maplibre.spatialk.geojson.Position
 
 fun Position.toMapbox() = toPoint()
 
@@ -52,7 +52,7 @@ private fun List<List<Position>>.toMapbox() = map { it.toMapbox() }
 
 private fun Geometry.toMapbox(): MapboxGeometry =
     when (this) {
-        is GeometryCollection ->
+        is GeometryCollection<*> ->
             MapboxGeometryCollection.fromGeometries(this.geometries.map { it.toMapbox() })
         is Point -> MapboxPoint.fromLngLat(this.coordinates.longitude, this.coordinates.latitude)
         is MultiPoint -> MapboxMultiPoint.fromLngLats(this.coordinates.toMapbox())

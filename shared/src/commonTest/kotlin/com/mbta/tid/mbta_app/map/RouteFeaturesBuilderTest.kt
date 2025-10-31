@@ -16,15 +16,13 @@ import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.GreenLineTestHelper
-import io.github.dellisd.spatialk.geojson.LineString
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.lineSlice
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
+import org.maplibre.spatialk.geojson.LineString
+import org.maplibre.spatialk.turf.misc.slice
 
-@OptIn(ExperimentalTurfApi::class)
 class RouteFeaturesBuilderTest {
     @Test
     fun `creates route source data`() = runBlocking {
@@ -63,11 +61,11 @@ class RouteFeaturesBuilderTest {
         )
 
         assertEquals(
-            lineSlice(
-                start = MapTestDataHelper.stopAlewife.position,
-                stop = MapTestDataHelper.stopDavis.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC2.polyline!!)),
-            ),
+            LineString(Polyline.decode(MapTestDataHelper.shapeRedC2.polyline!!))
+                .slice(
+                    start = MapTestDataHelper.stopAlewife.position,
+                    stop = MapTestDataHelper.stopDavis.position,
+                ),
             routeSources
                 .first { it.routeId == MapTestDataHelper.routeRed.id }
                 .features
@@ -77,11 +75,11 @@ class RouteFeaturesBuilderTest {
         )
 
         assertEquals(
-            lineSlice(
-                start = MapTestDataHelper.stopAssembly.position,
-                stop = MapTestDataHelper.stopSullivan.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeOrangeC1.polyline!!)),
-            ),
+            LineString(Polyline.decode(MapTestDataHelper.shapeOrangeC1.polyline!!))
+                .slice(
+                    start = MapTestDataHelper.stopAssembly.position,
+                    stop = MapTestDataHelper.stopSullivan.position,
+                ),
             routeSources
                 .first { it.routeId == MapTestDataHelper.routeOrange.id }
                 .features
@@ -154,11 +152,11 @@ class RouteFeaturesBuilderTest {
             redFeatures[0].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
-            lineSlice(
-                start = MapTestDataHelper.stopAlewife.position,
-                stop = MapTestDataHelper.stopDavis.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
-            ),
+            LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!))
+                .slice(
+                    start = MapTestDataHelper.stopAlewife.position,
+                    stop = MapTestDataHelper.stopDavis.position,
+                ),
             redFeatures[0].geometry,
         )
 
@@ -167,11 +165,11 @@ class RouteFeaturesBuilderTest {
             redFeatures[1].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
-            lineSlice(
-                start = MapTestDataHelper.stopPorter.position,
-                stop = MapTestDataHelper.stopHarvard.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
-            ),
+            LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline))
+                .slice(
+                    start = MapTestDataHelper.stopPorter.position,
+                    stop = MapTestDataHelper.stopHarvard.position,
+                ),
             redFeatures[1].geometry,
         )
         assertEquals(
@@ -179,11 +177,11 @@ class RouteFeaturesBuilderTest {
             redFeatures[2].properties[RouteFeaturesBuilder.propAlertStateKey],
         )
         assertEquals(
-            lineSlice(
-                start = MapTestDataHelper.stopHarvard.position,
-                stop = MapTestDataHelper.stopCentral.position,
-                line = LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline!!)),
-            ),
+            LineString(Polyline.decode(MapTestDataHelper.shapeRedC1.polyline))
+                .slice(
+                    start = MapTestDataHelper.stopHarvard.position,
+                    stop = MapTestDataHelper.stopCentral.position,
+                ),
             redFeatures[2].geometry,
         )
     }
@@ -277,7 +275,7 @@ class RouteFeaturesBuilderTest {
                                             otherPatternsByStopId = emptyMap(),
                                         )
                                     ),
-                                shape = shapeWithStops.shape!!,
+                                shape = shapeWithStops.shape,
                             )
                         ),
                 )

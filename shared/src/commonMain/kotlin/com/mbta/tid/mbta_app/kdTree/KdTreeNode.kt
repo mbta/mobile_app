@@ -1,9 +1,8 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.Units
-import io.github.dellisd.spatialk.turf.distance
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.turf.measurement.distance
+import org.maplibre.spatialk.units.Length
 
 internal data class KdTreeNode(
     val ids: List<String>,
@@ -12,15 +11,14 @@ internal data class KdTreeNode(
     val lowChild: KdTreeNode?,
     val highChild: KdTreeNode?,
 ) {
-    @OptIn(ExperimentalTurfApi::class)
     fun findNodesWithin(
         searchFrom: Position,
-        radiusMiles: Double,
-        selectPredicate: (String, Double) -> Boolean,
-        results: MutableList<Pair<String, Double>>,
+        radius: Length,
+        selectPredicate: (String, Length) -> Boolean,
+        results: MutableList<Pair<String, Length>>,
     ) {
-        val distanceHere = distance(searchFrom, position, Units.Miles)
-        if (distanceHere <= radiusMiles) {
+        val distanceHere = distance(searchFrom, position)
+        if (distanceHere <= radius) {
             ids.filter { selectPredicate(it, distanceHere) }
                 .forEach { results.add(Pair(it, distanceHere)) }
         }
@@ -30,12 +28,11 @@ internal data class KdTreeNode(
             } else {
                 Pair(highChild, lowChild)
             }
-        nearChild?.findNodesWithin(searchFrom, radiusMiles, selectPredicate, results)
+        nearChild?.findNodesWithin(searchFrom, radius, selectPredicate, results)
         val considerFar =
-            distance(searchFrom, searchFrom.butWith(splitAxis, position[splitAxis]), Units.Miles) <=
-                radiusMiles
+            distance(searchFrom, searchFrom.butWith(splitAxis, position[splitAxis])) <= radius
         if (considerFar) {
-            farChild?.findNodesWithin(searchFrom, radiusMiles, selectPredicate, results)
+            farChild?.findNodesWithin(searchFrom, radius, selectPredicate, results)
         }
     }
 

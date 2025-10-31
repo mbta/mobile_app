@@ -63,7 +63,6 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.spy
 import dev.mokkery.verify
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Clock
 import kotlin.time.Duration
@@ -77,6 +76,7 @@ import kotlinx.coroutines.runBlocking
 import org.junit.Rule
 import org.junit.Test
 import org.koin.test.KoinTest
+import org.maplibre.spatialk.geojson.Position
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalTestApi::class)
 class MapAndSheetPageTest : KoinTest {

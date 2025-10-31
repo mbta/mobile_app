@@ -12,9 +12,9 @@ import com.mapbox.maps.plugin.viewport.data.FollowPuckViewportStateOptions
 import com.mapbox.maps.plugin.viewport.state.FollowPuckViewportState
 import com.mapbox.maps.plugin.viewport.state.OverviewViewportState
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.math.pow
 import kotlin.math.round
+import org.maplibre.spatialk.geojson.Position
 
 fun MapViewportState.followPuck(
     zoom: Double? = null,

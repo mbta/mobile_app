@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.time.Duration
@@ -15,6 +14,8 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.units.Length
 
 // type aliases can't be nested :(
 
@@ -544,7 +545,7 @@ public data class RouteCardData(
     }
 
     /** The distance from the given position to the first stop in this route card. */
-    internal fun distanceFrom(position: Position): Double =
+    internal fun distanceFrom(position: Position): Length =
         this.stopData.first().stop.distanceFrom(position)
 
     override fun toString(): String = "[RouteCardData]"

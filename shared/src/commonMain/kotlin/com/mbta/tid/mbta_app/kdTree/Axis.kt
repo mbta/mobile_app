@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.Position
+import org.maplibre.spatialk.geojson.Position
 
 internal enum class Axis {
     Longitude,

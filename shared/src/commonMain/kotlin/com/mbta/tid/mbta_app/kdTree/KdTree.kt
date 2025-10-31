@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.Position
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.units.Length
 
 /**
  * A [k-d tree](https://en.wikipedia.org/wiki/K-d_tree) in two dimensions, containing IDs and
@@ -18,11 +19,11 @@ internal class KdTree(elements: List<Pair<String, Position>>) {
      */
     fun findNodesWithin(
         searchFrom: Position,
-        radiusMiles: Double,
-        selectPredicate: (id: String, distance: Double) -> Boolean = { _, _ -> true },
-    ): List<Pair<String, Double>> {
-        val results = mutableListOf<Pair<String, Double>>()
-        root?.findNodesWithin(searchFrom, radiusMiles, selectPredicate, results)
+        radius: Length,
+        selectPredicate: (id: String, distance: Length) -> Boolean = { _, _ -> true },
+    ): List<Pair<String, Length>> {
+        val results = mutableListOf<Pair<String, Length>>()
+        root?.findNodesWithin(searchFrom, radius, selectPredicate, results)
         results.sortBy { it.second }
         return results
     }
