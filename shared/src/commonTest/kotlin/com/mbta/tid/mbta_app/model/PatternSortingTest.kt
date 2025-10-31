@@ -105,6 +105,11 @@ class PatternSortingTest {
     fun compareStopsOnRoute() {
         objects.route()
         val position = Position(latitude = 0.0, longitude = 0.0)
+        val veryNearStop =
+            objects.stop {
+                latitude = 0.0001
+                longitude = 0.0001
+            }
         val nearStop =
             objects.stop {
                 latitude = 0.1
@@ -116,6 +121,11 @@ class PatternSortingTest {
                 longitude = 2.0
             }
 
+        val veryNearNoService =
+            stopData(
+                veryNearStop,
+                leaf(stop = veryNearStop, pattern = pattern(directionId = 0, sortOrder = 0)),
+            )
         val nearService0 =
             stopData(
                 nearStop,
@@ -147,7 +157,7 @@ class PatternSortingTest {
         )
         assertEquals(0, PatternSorting.compareStopsOnRoute(null).compare(nearService0, farService))
 
-        val expected = listOf(nearService0, farService, nearNoService)
+        val expected = listOf(veryNearNoService, nearService0, farService, nearNoService)
         assertEquals(
             expected,
             expected.reversed().sortedWith(PatternSorting.compareStopsOnRoute(position)),
@@ -163,6 +173,11 @@ class PatternSortingTest {
     @Test
     fun compareRouteCards() {
         val position = Position(latitude = 0.0, longitude = 0.0)
+        val veryNearStop =
+            objects.stop {
+                latitude = 0.0001
+                longitude = 0.0001
+            }
         val nearStop =
             objects.stop {
                 latitude = 0.1
@@ -177,7 +192,7 @@ class PatternSortingTest {
         fun routeCard(
             service: Service,
             subway: Boolean,
-            near: Boolean,
+            stop: Stop,
             sortOrder: Int,
         ): RouteCardData {
             val route =
@@ -186,7 +201,6 @@ class PatternSortingTest {
                     this.sortOrder = sortOrder
                 }
             val lineOrRoute = LineOrRoute.Route(route)
-            val stop = if (near) nearStop else farStop
             return routeCard(
                 route,
                 stopData(
@@ -202,16 +216,20 @@ class PatternSortingTest {
                 ),
             )
         }
-        val routeCard1 = routeCard(service = Service.Yes, subway = true, near = true, sortOrder = 1)
+        val routeCard0 =
+            routeCard(service = Service.No, subway = false, stop = veryNearStop, sortOrder = 100)
+        val routeCard1 =
+            routeCard(service = Service.Yes, subway = true, stop = nearStop, sortOrder = 1)
         val routeCard2 =
-            routeCard(service = Service.Yes, subway = true, near = true, sortOrder = 50)
+            routeCard(service = Service.Yes, subway = true, stop = nearStop, sortOrder = 50)
         val routeCard3 =
-            routeCard(service = Service.Yes, subway = true, near = false, sortOrder = 1)
+            routeCard(service = Service.Yes, subway = true, stop = farStop, sortOrder = 1)
         val routeCard4 =
-            routeCard(service = Service.Yes, subway = false, near = true, sortOrder = 1)
+            routeCard(service = Service.Yes, subway = false, stop = nearStop, sortOrder = 1)
         val routeCard5 =
-            routeCard(service = Service.Ended, subway = true, near = true, sortOrder = 1)
-        val routeCard6 = routeCard(service = Service.No, subway = true, near = true, sortOrder = 1)
+            routeCard(service = Service.Ended, subway = true, stop = nearStop, sortOrder = 1)
+        val routeCard6 =
+            routeCard(service = Service.No, subway = true, stop = nearStop, sortOrder = 1)
 
         assertEquals(
             0,
@@ -220,7 +238,15 @@ class PatternSortingTest {
         )
 
         val expected =
-            listOf(routeCard1, routeCard2, routeCard3, routeCard4, routeCard5, routeCard6)
+            listOf(
+                routeCard0,
+                routeCard1,
+                routeCard2,
+                routeCard3,
+                routeCard4,
+                routeCard5,
+                routeCard6,
+            )
         assertEquals(
             expected,
             expected
