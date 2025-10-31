@@ -42,15 +42,77 @@ extension [[[GeojsonPosition]]] {
 extension GeojsonGeometry {
     func toMapbox() -> Geometry {
         switch onEnum(of: self) {
-        case let .geometryCollection(collection): .geometryCollection(GeometryCollection(geometries: collection
-                    .geometries.map { $0.toMapbox() }))
-        case let .point(point): .point(Point(point.coordinates.toMapbox()))
-        case let .multiPoint(multiPoint): .multiPoint(MultiPoint(multiPoint.coordinates.toMapbox()))
-        case let .lineString(lineString): .lineString(LineString(lineString.coordinates.toMapbox()))
-        case let .multiLineString(multiLineString): .multiLineString(MultiLineString(multiLineString.coordinates
-                    .map { $0.toMapbox() }))
-        case let .polygon(polygon): .polygon(Polygon(polygon.coordinates.toMapbox()))
-        case let .multiPolygon(multiPolygon): .multiPolygon(MultiPolygon(multiPolygon.coordinates.toMapbox()))
+        case let .geometryCollection(collection): .geometryCollection(toMapbox(collection: collection))
+        case let .singleGeometry(geometry): toMapbox(singleGeometry: geometry)
+        case let .multiGeometry(geometry): toMapbox(multiGeometry: geometry)
+        case let .lineStringGeometry(geometry): toMapbox(lineStringGeometry: geometry)
+        case let .pointGeometry(geometry): toMapbox(pointGeometry: geometry)
+        case let .polygonGeometry(geometry): toMapbox(polygonGeometry: geometry)
+        }
+    }
+
+    private func toMapbox(collection: GeojsonGeometryCollection<AnyObject>) -> GeometryCollection {
+        .init(geometries: collection.geometries.compactMap { ($0 as? GeojsonGeometry)?.toMapbox() })
+    }
+
+    private func toMapbox(lineString: GeojsonLineString) -> LineString {
+        .init(lineString.coordinates.toMapbox())
+    }
+
+    private func toMapbox(point: GeojsonPoint) -> Point {
+        .init(point.coordinates.toMapbox())
+    }
+
+    private func toMapbox(polygon: GeojsonPolygon) -> Polygon {
+        .init(polygon.coordinates.toMapbox())
+    }
+
+    private func toMapbox(multiLineString: GeojsonMultiLineString) -> MultiLineString {
+        .init(multiLineString.coordinates.toMapbox())
+    }
+
+    private func toMapbox(multiPoint: GeojsonMultiPoint) -> MultiPoint {
+        .init(multiPoint.coordinates.toMapbox())
+    }
+
+    private func toMapbox(multiPolygon: GeojsonMultiPolygon) -> MultiPolygon {
+        .init(multiPolygon.coordinates.toMapbox())
+    }
+
+    private func toMapbox(singleGeometry: GeojsonSingleGeometry) -> Geometry {
+        switch onEnum(of: singleGeometry) {
+        case let .lineString(lineString): .lineString(toMapbox(lineString: lineString))
+        case let .point(point): .point(toMapbox(point: point))
+        case let .polygon(polygon): .polygon(toMapbox(polygon: polygon))
+        }
+    }
+
+    private func toMapbox(multiGeometry: GeojsonMultiGeometry) -> Geometry {
+        switch onEnum(of: multiGeometry) {
+        case let .multiLineString(multiLineString): .multiLineString(toMapbox(multiLineString: multiLineString))
+        case let .multiPoint(multiPoint): .multiPoint(toMapbox(multiPoint: multiPoint))
+        case let .multiPolygon(multiPolygon): .multiPolygon(toMapbox(multiPolygon: multiPolygon))
+        }
+    }
+
+    private func toMapbox(lineStringGeometry: GeojsonLineStringGeometry) -> Geometry {
+        switch onEnum(of: lineStringGeometry) {
+        case let .lineString(lineString): .lineString(toMapbox(lineString: lineString))
+        case let .multiLineString(multiLineString): .multiLineString(toMapbox(multiLineString: multiLineString))
+        }
+    }
+
+    private func toMapbox(pointGeometry: GeojsonPointGeometry) -> Geometry {
+        switch onEnum(of: pointGeometry) {
+        case let .point(point): .point(toMapbox(point: point))
+        case let .multiPoint(multiPoint): .multiPoint(toMapbox(multiPoint: multiPoint))
+        }
+    }
+
+    private func toMapbox(polygonGeometry: GeojsonPolygonGeometry) -> Geometry {
+        switch onEnum(of: polygonGeometry) {
+        case let .polygon(polygon): .polygon(toMapbox(polygon: polygon))
+        case let .multiPolygon(multiPolygon): .multiPolygon(toMapbox(multiPolygon: multiPolygon))
         }
     }
 }

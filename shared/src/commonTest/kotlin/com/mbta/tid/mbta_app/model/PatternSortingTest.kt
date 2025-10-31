@@ -2,11 +2,11 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import org.maplibre.spatialk.geojson.Position
 
 class PatternSortingTest {
     var objects = ObjectCollectionBuilder()

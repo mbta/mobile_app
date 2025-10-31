@@ -27,7 +27,6 @@ import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentially
 import dev.mokkery.everySuspend
 import dev.mokkery.mock
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -46,6 +45,7 @@ import org.koin.core.context.stopKoin
 import org.koin.core.qualifier.named
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import org.maplibre.spatialk.geojson.Position
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FavoritesViewModelTest : KoinTest {

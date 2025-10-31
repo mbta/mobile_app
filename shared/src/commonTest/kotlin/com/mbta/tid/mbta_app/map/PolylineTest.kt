@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.map
 
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.maplibre.spatialk.geojson.Position
 
 class PolylineTest {
     @Test

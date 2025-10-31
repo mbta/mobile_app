@@ -1,11 +1,11 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.distance
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.turf.measurement.distance
+import org.maplibre.spatialk.units.Length
 
 @Serializable
 public data class Stop
@@ -47,8 +47,7 @@ internal constructor(
 
     public fun resolveParent(global: GlobalResponse): Stop = resolveParent(global.stops)
 
-    @OptIn(ExperimentalTurfApi::class)
-    internal fun distanceFrom(position: Position): Double = distance(position, this.position)
+    internal fun distanceFrom(position: Position): Length = distance(position, this.position)
 
     /**
      * Is this stop the last stop for all patterns in which it appears? True if for each patterns in

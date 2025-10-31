@@ -8,9 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.debounce
+import org.maplibre.spatialk.geojson.Position
 
 @Composable
 fun managedTargetLocation(nearbyTransit: NearbyTransit, reset: () -> Unit = {}): State<Position?> {

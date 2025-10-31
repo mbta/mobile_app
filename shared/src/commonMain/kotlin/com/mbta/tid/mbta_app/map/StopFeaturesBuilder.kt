@@ -8,13 +8,12 @@ import com.mbta.tid.mbta_app.map.style.buildFeatureProperties
 import com.mbta.tid.mbta_app.model.GlobalMapData
 import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import io.github.dellisd.spatialk.geojson.Point
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.nearestPointOnLine
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.maplibre.spatialk.geojson.Point
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.turf.misc.nearestPointTo
 
 internal data class StopFeatureData(val stop: MapStop, val feature: Feature)
 
@@ -67,7 +66,6 @@ public object StopFeaturesBuilder {
         return otherStops + routeStops
     }
 
-    @OptIn(ExperimentalTurfApi::class)
     private fun generateRouteAssociatedStops(
         stops: Map<String, MapStop>,
         routeSourceDetails: List<RouteSourceData>,
@@ -85,7 +83,7 @@ public object StopFeaturesBuilder {
                     }
 
                     val snappedCoord =
-                        nearestPointOnLine(line = lineData.line, point = stop.position).point
+                        lineData.line.nearestPointTo(stop.position).geometry.coordinates
                     touchedStopIds.add(stop.id)
                     return@mapNotNull StopFeatureData(
                         stop = mapStop,
