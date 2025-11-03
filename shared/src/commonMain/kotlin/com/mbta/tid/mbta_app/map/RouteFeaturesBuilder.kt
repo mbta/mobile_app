@@ -24,12 +24,11 @@ import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.ShapeWithStops
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.utils.resolveParentId
-import io.github.dellisd.spatialk.geojson.LineString
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.lineSlice
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import org.maplibre.spatialk.geojson.LineString
+import org.maplibre.spatialk.turf.misc.slice
 
 public data class RouteLineData
 internal constructor(
@@ -177,7 +176,6 @@ public object RouteFeaturesBuilder {
         }
     }
 
-    @OptIn(ExperimentalTurfApi::class)
     private fun routeSegmentToRouteLineData(
         segment: AlertAwareRouteSegment,
         fullLineString: LineString,
@@ -187,8 +185,7 @@ public object RouteFeaturesBuilder {
         val firstStop = stopsById?.get(firstStopId) ?: return null
         val lastStopId = segment.stopIds.lastOrNull() ?: return null
         val lastStop = stopsById.get(lastStopId) ?: return null
-        val lineSegment =
-            lineSlice(start = firstStop.position, stop = lastStop.position, line = fullLineString)
+        val lineSegment = fullLineString.slice(start = firstStop.position, stop = lastStop.position)
         return RouteLineData(
             id = segment.id,
             sourceRoutePatternId = segment.sourceRoutePatternId,

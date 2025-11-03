@@ -36,8 +36,8 @@ import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
+import org.maplibre.spatialk.geojson.Position
 
 @Composable
 fun FavoritesView(

@@ -4,13 +4,13 @@ import com.mbta.tid.mbta_app.model.MapStop
 import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.utils.TestData
-import io.github.dellisd.spatialk.geojson.Point
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
+import org.maplibre.spatialk.geojson.Point
+import org.maplibre.spatialk.geojson.Position
 
 class StopFeaturesBuilderTest {
     @Test

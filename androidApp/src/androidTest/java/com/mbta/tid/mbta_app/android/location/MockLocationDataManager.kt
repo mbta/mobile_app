@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.android.location
 
 import android.location.Location
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.maplibre.spatialk.geojson.Position
 
 class MockLocationDataManager(position: Position? = Position(latitude = 0.0, longitude = 0.0)) :
     LocationDataManager() {

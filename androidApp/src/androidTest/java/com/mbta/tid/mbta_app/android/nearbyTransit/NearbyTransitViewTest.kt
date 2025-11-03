@@ -21,13 +21,13 @@ import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
 import org.koin.test.KoinTest
+import org.maplibre.spatialk.geojson.Position
 
 class NearbyTransitViewTest : KoinTest {
     val builder = ObjectCollectionBuilder()

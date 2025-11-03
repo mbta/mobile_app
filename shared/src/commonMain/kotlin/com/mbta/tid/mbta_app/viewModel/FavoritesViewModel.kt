@@ -20,7 +20,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
@@ -28,6 +27,7 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import org.maplibre.spatialk.geojson.Position
 
 @OptIn(ExperimentalObjCRefinement::class)
 public interface IFavoritesViewModel {

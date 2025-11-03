@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
-import io.github.dellisd.spatialk.geojson.Position
+import org.maplibre.spatialk.geojson.Position
 
 internal object PatternSorting {
     private fun patternServiceBucket(leafData: RouteCardData.Leaf) =

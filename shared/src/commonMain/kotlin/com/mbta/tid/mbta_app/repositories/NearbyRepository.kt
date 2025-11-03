@@ -6,8 +6,10 @@ import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
-import io.github.dellisd.spatialk.geojson.Position
 import org.koin.core.component.KoinComponent
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.units.Length
+import org.maplibre.spatialk.units.extensions.miles
 
 public interface INearbyRepository {
     /**
@@ -22,21 +24,19 @@ public class NearbyRepository : KoinComponent, INearbyRepository {
     override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> {
         val searchPosition = Position(latitude = location.latitude, longitude = location.longitude)
 
-        var radiusMiles = 0.5
-        var crRadiusMiles = 1.0
+        var radius = 0.5.miles
+        var crRadius = 1.0.miles
 
-        fun findLeafStops(): List<Pair<String, Double>> =
-            global.leafStopsKdTree.findNodesWithin(searchPosition, crRadiusMiles) { stopId, distance
-                ->
-                distance < radiusMiles ||
-                    global.stops[stopId]?.vehicleType == RouteType.COMMUTER_RAIL
+        fun findLeafStops(): List<Pair<String, Length>> =
+            global.leafStopsKdTree.findNodesWithin(searchPosition, crRadius) { stopId, distance ->
+                distance < radius || global.stops[stopId]?.vehicleType == RouteType.COMMUTER_RAIL
             }
 
         var nearbyLeafStops = findLeafStops()
 
         if (nearbyLeafStops.isEmpty()) {
-            radiusMiles = 2.0
-            crRadiusMiles = 10.0
+            radius = 2.0.miles
+            crRadius = 10.0.miles
             nearbyLeafStops = findLeafStops()
         }
 
@@ -52,7 +52,7 @@ public class NearbyRepository : KoinComponent, INearbyRepository {
                                 .mapNotNull(global.stops::get)
                         else listOf(stop)
                     val selectedStops =
-                        if (distance <= radiusMiles) stopSiblings
+                        if (distance <= radius) stopSiblings
                         else stopSiblings.filter { it.vehicleType == RouteType.COMMUTER_RAIL }
                     selectedStops.map { it.id }
                 }

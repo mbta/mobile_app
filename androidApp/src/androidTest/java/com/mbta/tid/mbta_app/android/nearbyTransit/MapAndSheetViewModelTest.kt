@@ -9,11 +9,11 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
+import org.maplibre.spatialk.geojson.Position
 
 class MapAndSheetViewModelTest {
     @get:Rule val composeTestRule = createComposeRule()

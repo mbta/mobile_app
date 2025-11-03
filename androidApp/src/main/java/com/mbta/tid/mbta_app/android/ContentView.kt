@@ -48,10 +48,10 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.StateFlow
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.maplibre.spatialk.geojson.Position
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

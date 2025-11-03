@@ -25,10 +25,10 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import org.maplibre.spatialk.geojson.Position
 
 @Composable
 fun NearbyTransitView(

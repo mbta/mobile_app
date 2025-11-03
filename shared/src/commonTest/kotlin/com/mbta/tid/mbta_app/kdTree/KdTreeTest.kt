@@ -1,13 +1,5 @@
 package com.mbta.tid.mbta_app.kdTree
 
-import io.github.dellisd.spatialk.geojson.BoundingBox
-import io.github.dellisd.spatialk.geojson.Feature
-import io.github.dellisd.spatialk.geojson.FeatureCollection
-import io.github.dellisd.spatialk.geojson.Position
-import io.github.dellisd.spatialk.geojson.dsl.feature
-import io.github.dellisd.spatialk.geojson.dsl.lineString
-import io.github.dellisd.spatialk.turf.ExperimentalTurfApi
-import io.github.dellisd.spatialk.turf.toPolygon
 import kotlin.math.log2
 import kotlin.math.max
 import kotlin.math.round
@@ -15,7 +7,22 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import org.maplibre.spatialk.geojson.BoundingBox
+import org.maplibre.spatialk.geojson.Feature
+import org.maplibre.spatialk.geojson.FeatureCollection
+import org.maplibre.spatialk.geojson.Geometry
+import org.maplibre.spatialk.geojson.Point
+import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.geojson.dsl.buildFeature
+import org.maplibre.spatialk.geojson.dsl.lineStringOf
+import org.maplibre.spatialk.geojson.toJson
+import org.maplibre.spatialk.turf.measurement.toPolygon
+import org.maplibre.spatialk.units.extensions.inMiles
+import org.maplibre.spatialk.units.extensions.miles
 
 class KdTreeTest {
     private fun point(id: String, latitude: Double, longitude: Double) =
@@ -414,8 +421,8 @@ class KdTreeTest {
                 Pair("NEC-2287-12", 0.592),
                 Pair("NEC-2287-13", 0.592),
             ),
-            tree.findNodesWithin(queryPoint, 1.0).map {
-                Pair(it.first, round(it.second * 1000) / 1000)
+            tree.findNodesWithin(queryPoint, 1.0.miles).map {
+                Pair(it.first, round(it.second.inMiles * 1000) / 1000)
             },
         )
     }
@@ -436,35 +443,36 @@ class KdTreeTest {
                     )
                     .orEmpty()
             )
-            .json()
+            .toJson()
 
-    @OptIn(ExperimentalTurfApi::class)
-    internal fun KdTreeNode.asFeatures(boundingBox: BoundingBox): List<Feature> {
+    internal fun KdTreeNode.asFeatures(
+        boundingBox: BoundingBox
+    ): List<Feature<Geometry?, JsonObject?>> {
         val id = ids.first()
         val thisFeature =
             listOf(
-                feature(
-                    io.github.dellisd.spatialk.geojson.dsl.point(
-                        latitude = position.latitude,
-                        longitude = position.longitude,
-                    ),
-                    id,
-                ) {
-                    put("ids", JsonArray(ids.map(::JsonPrimitive)))
+                buildFeature {
+                    this.id = JsonPrimitive(id)
+                    geometry = Point(position)
+                    properties = buildJsonObject { put("ids", JsonArray(ids.map(::JsonPrimitive))) }
                 },
-                feature(
-                    lineString {
-                        +boundingBox.southwest.butWith(splitAxis, position[splitAxis])
-                        +boundingBox.northeast.butWith(splitAxis, position[splitAxis])
-                    },
-                    id = "$id-line",
-                ),
-                feature(boundingBox.toPolygon(), id = "$id-box") {
-                    put("fill-opacity", 0.1)
-                    put("stroke-opacity", 0)
+                buildFeature {
+                    this.id = JsonPrimitive("$id-line")
+                    geometry =
+                        lineStringOf(
+                            boundingBox.southwest.butWith(splitAxis, position[splitAxis]),
+                            boundingBox.northeast.butWith(splitAxis, position[splitAxis]),
+                        )
+                },
+                buildFeature(boundingBox.toPolygon()) {
+                    this.id = JsonPrimitive("$id-box")
+                    properties = buildJsonObject {
+                        put("fill-opacity", 0.1)
+                        put("stroke-opacity", 0)
+                    }
                 },
             )
-        var lowFeatures: List<Feature>? = null
+        var lowFeatures: List<Feature<Geometry?, JsonObject?>>? = null
         if (lowChild != null) {
             val lowBox =
                 BoundingBox(
@@ -473,7 +481,7 @@ class KdTreeTest {
                 )
             lowFeatures = lowChild.asFeatures(lowBox)
         }
-        var highFeatures: List<Feature>? = null
+        var highFeatures: List<Feature<Geometry?, JsonObject?>>? = null
         if (highChild != null) {
             val highBox =
                 BoundingBox(
