@@ -37,6 +37,9 @@ public data class RouteCardData(
 ) {
     public val id: LineOrRoute.Id = lineOrRoute.id
 
+    public val routeStopDirections: Set<RouteStopDirection> =
+        stopData.flatMap { it.routeStopDirections }.toSet()
+
     public enum class Context {
         NearbyTransit,
         StopDetailsFiltered,
@@ -92,6 +95,9 @@ public data class RouteCardData(
         )
 
         internal val id = stop.id
+
+        public val routeStopDirections: Set<RouteStopDirection> =
+            data.map { it.routeStopDirection }.toSet()
 
         /** The directions for the lineOrRoute that are actually served by this stop */
         val availableDirections: Set<Int> = data.map { it.directionId }.toSet()
