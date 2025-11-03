@@ -1,8 +1,16 @@
 package com.mbta.tid.mbta_app.model
 
 import org.maplibre.spatialk.geojson.Position
+import org.maplibre.spatialk.units.Length
+import org.maplibre.spatialk.units.extensions.feet
 
 internal object PatternSorting {
+    private fun veryCloseBucket(distance: Length) =
+        when {
+            distance <= 100.feet -> 1
+            else -> 2
+        }
+
     private fun patternServiceBucket(leafData: RouteCardData.Leaf) =
         when {
             // showing either a trip or an alert
@@ -24,6 +32,11 @@ internal object PatternSorting {
         context: RouteCardData.Context,
     ): Comparator<RouteCardData> =
         compareBy(
+            if (sortByDistanceFrom != null) {
+                { veryCloseBucket(it.distanceFrom(sortByDistanceFrom)) }
+            } else {
+                { 0 }
+            },
             { patternServiceBucket(it.stopData.first().data.first()) },
             if (context != RouteCardData.Context.Favorites) {
                 { subwayBucket(it.lineOrRoute.sortRoute) }
@@ -42,6 +55,11 @@ internal object PatternSorting {
         sortByDistanceFrom: Position?
     ): Comparator<RouteCardData.RouteStopData> =
         compareBy(
+            if (sortByDistanceFrom != null) {
+                { veryCloseBucket(it.stop.distanceFrom(sortByDistanceFrom)) }
+            } else {
+                { 0 }
+            },
             { patternServiceBucket(it.data.first()) },
             if (sortByDistanceFrom != null) {
                 { it.stop.distanceFrom(sortByDistanceFrom) }
