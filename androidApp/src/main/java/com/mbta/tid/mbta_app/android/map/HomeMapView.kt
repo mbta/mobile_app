@@ -189,6 +189,9 @@ fun HomeMapView(
                 val locationProvider = remember { PassthroughLocationProvider() }
 
                 MapEffect { map ->
+                    val layerManager = MapLayerManager(map.mapboxMap, context)
+                    layerManager.loadImages()
+                    layerManager.setUpAnchorLayers()
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
                             handleStopNavigation(it)
@@ -209,9 +212,10 @@ fun HomeMapView(
                         showAccuracyRing = true
                         this.accuracyRingColor = accuracyRingColor
                         this.accuracyRingBorderColor = accuracyRingBorderColor
+                        layerBelow = MapLayerManager.puckAnchorLayerId
                     }
 
-                    viewModel.layerManagerInitialized(MapLayerManager(map.mapboxMap, context))
+                    viewModel.layerManagerInitialized(layerManager)
                 }
 
                 MapEffect(showCurrentLocation) { map ->

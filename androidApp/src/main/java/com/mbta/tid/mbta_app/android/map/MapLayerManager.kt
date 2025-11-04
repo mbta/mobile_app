@@ -27,14 +27,16 @@ import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class MapLayerManager(val map: MapboxMap, context: Context) : IMapLayerManager {
-    init {
-        for (icon in StopIcons.all + AlertIcons.all) {
-            val drawable = context.resources.getDrawable(drawableByName(icon), null)
+class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManager {
 
-            map.addImage(icon, (drawable as BitmapDrawable).bitmap)
+    suspend fun loadImages() =
+        withContext(Dispatchers.Main) {
+            for (icon in StopIcons.all + AlertIcons.all) {
+                val drawable = context.resources.getDrawable(drawableByName(icon), null)
+
+                map.addImage(icon, (drawable as BitmapDrawable).bitmap)
+            }
         }
-    }
 
     private suspend fun addSource(source: GeoJsonSource) {
         withContext(Dispatchers.Main) {
@@ -78,34 +80,26 @@ class MapLayerManager(val map: MapboxMap, context: Context) : IMapLayerManager {
         setLayers(routeLayers, stopLayers)
     }
 
+    override fun resetPuckPosition() {
+        /* no-op */
+    }
+
     private suspend fun setLayers(routeLayers: List<MapboxLayer>, stopLayers: List<MapboxLayer>) {
         withContext(Dispatchers.Main) {
-            if (!map.styleLayerExists(bufferLayerId)) {
-                val layer = SlotLayer(bufferLayerId)
-                if (map.styleLayerExists("puck")) {
-                    map.addLayerBelow(layer, below = "puck")
-                } else {
-                    map.addLayer(layer)
-                }
-            }
             val oldLayers = map.styleLayers.mapTo(mutableSetOf()) { it.id }
             for (layer in routeLayers) {
                 oldLayers.remove(layer.layerId)
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {
                     map.removeStyleLayer(layer.layerId)
                 }
-                map.addLayerBelow(layer, below = bufferLayerId)
+                map.addLayerBelow(layer, below = routeAnchorLayerId)
             }
             for (layer in stopLayers) {
                 oldLayers.remove(layer.layerId)
                 if (map.styleLayerExists(checkNotNull(layer.layerId))) {
                     map.removeStyleLayer(layer.layerId)
                 }
-                if (map.styleLayerExists("puck")) {
-                    map.addLayerBelow(layer, below = "puck")
-                } else {
-                    map.addLayer(layer)
-                }
+                map.addLayerBelow(layer, below = stopAnchorLayerId)
             }
             for (layer in oldLayers) {
                 if (layer.startsWith(RouteLayerGenerator.routeLayerId)) {
@@ -115,11 +109,21 @@ class MapLayerManager(val map: MapboxMap, context: Context) : IMapLayerManager {
         }
     }
 
-    override fun resetPuckPosition() {
-        if (map.styleLayerExists("puck")) {
-            map.moveStyleLayer("puck", null)
+    suspend fun setUpAnchorLayers() =
+        withContext(Dispatchers.Main) {
+            if (
+                map.styleLayerExists(puckAnchorLayerId) ||
+                    map.styleLayerExists(stopAnchorLayerId) ||
+                    map.styleLayerExists(routeAnchorLayerId)
+            )
+                return@withContext
+            val puckAnchorLayer = SlotLayer(puckAnchorLayerId)
+            val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
+            val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
+            map.addLayer(puckAnchorLayer)
+            map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
+            map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
         }
-    }
 
     private suspend fun updateSourceData(sourceId: String, data: FeatureCollection) {
         // styleSourceExists is not thread safe, but setStyleGeoJSONSourceData is
@@ -153,6 +157,8 @@ class MapLayerManager(val map: MapboxMap, context: Context) : IMapLayerManager {
     }
 
     companion object {
-        private val bufferLayerId = "empty-layer-between-routes-and-stops"
+        val puckAnchorLayerId = "puck-anchor-layer"
+        private val routeAnchorLayerId = "route-anchor-layer"
+        private val stopAnchorLayerId = "stop-anchor-layer"
     }
 }
