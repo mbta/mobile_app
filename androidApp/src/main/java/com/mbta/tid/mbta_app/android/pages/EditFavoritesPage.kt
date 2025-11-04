@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -55,7 +56,8 @@ import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorLazyColumn
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.LoadingRouteCard
-import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardContainer
+import com.mbta.tid.mbta_app.android.component.routeCard.StopSubheader
+import com.mbta.tid.mbta_app.android.component.routeCard.TransitHeader
 import com.mbta.tid.mbta_app.android.favorites.NoFavoritesView
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -65,6 +67,7 @@ import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.DragDirection
 import com.mbta.tid.mbta_app.android.util.modifiers.dragAction
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LeafFormat
@@ -100,6 +103,23 @@ fun EditFavoritesPage(
     }
     val toastUndoLabel = stringResource(R.string.undo)
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    // to make deletion animations work nicely, we persist the first staticRouteCardData we saw, and
+    // then we visually hide things that are no longer in the favorites
+    var firstStaticRouteCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
+    val firstDataFavorites =
+        firstStaticRouteCardData.orEmpty().flatMap { it.routeStopDirections }.toSet()
+    val currentDataFavorites =
+        state.staticRouteCardData.orEmpty().flatMap { it.routeStopDirections }
+    val removedFavorites = firstDataFavorites - currentDataFavorites
+    // to avoid breaking creation, we reset the staticRouteCardData if anything appears that we
+    // didn’t already know about
+    if (
+        state.staticRouteCardData != null &&
+            (firstStaticRouteCardData == null ||
+                !firstDataFavorites.containsAll(currentDataFavorites))
+    ) {
+        firstStaticRouteCardData = state.staticRouteCardData
+    }
 
     LaunchedEffect(Unit) { favoritesViewModel.setContext(FavoritesViewModel.Context.Edit) }
     DisposableEffect(Unit) { onDispose { toastViewModel.hideToast() } }
@@ -113,7 +133,8 @@ fun EditFavoritesPage(
         )
         EditFavoritesList(
             state.favorites,
-            state.staticRouteCardData,
+            firstStaticRouteCardData,
+            removedFavorites,
             global,
             deleteFavorite = { deletedFavorite ->
                 val deletedSettings = state.favorites?.get(deletedFavorite) ?: FavoriteSettings()
@@ -166,6 +187,7 @@ fun EditFavoritesPage(
 private fun EditFavoritesList(
     favorites: Map<RouteStopDirection, FavoriteSettings>?,
     routeCardData: List<RouteCardData>?,
+    removedFavorites: Set<RouteStopDirection>,
     global: GlobalResponse?,
     deleteFavorite: (RouteStopDirection) -> Unit,
     editFavorite: (RouteStopDirection) -> Unit,
@@ -192,23 +214,35 @@ private fun EditFavoritesList(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(routeCardData, key = { it.id.idText }) {
-                RouteCardContainer(
-                    modifier = Modifier.animateItem(),
-                    data = it,
-                    showStopHeader = true,
-                ) { stopData ->
-                    FavoriteDepartures(
-                        favorites,
-                        stopData,
-                        global,
-                        { leaf -> deleteFavorite(leaf.routeStopDirection) },
-                    ) { leaf ->
-                        val selectedFavorite = leaf.routeStopDirection
-                        if (notificationsFlag) {
-                            editFavorite(selectedFavorite)
-                        } else {
-                            deleteFavorite(selectedFavorite)
+            items(
+                routeCardData.filter { data ->
+                    !removedFavorites.containsAll(data.routeStopDirections)
+                },
+                key = { it.id.idText },
+            ) {
+                Column(Modifier.animateItem().haloContainer(1.dp)) {
+                    TransitHeader(it.lineOrRoute) {}
+
+                    it.stopData.forEach { stopData ->
+                        val visible =
+                            stopData.data.any { leaf ->
+                                !removedFavorites.contains(leaf.routeStopDirection)
+                            }
+                        AnimatedVisibility(visible = visible) { StopSubheader(stopData) }
+
+                        FavoriteDepartures(
+                            favorites,
+                            stopData,
+                            removedFavorites,
+                            global,
+                            { leaf -> deleteFavorite(leaf.routeStopDirection) },
+                        ) { leaf ->
+                            val selectedFavorite = leaf.routeStopDirection
+                            if (notificationsFlag) {
+                                editFavorite(selectedFavorite)
+                            } else {
+                                deleteFavorite(selectedFavorite)
+                            }
                         }
                     }
                 }
@@ -221,6 +255,7 @@ private fun EditFavoritesList(
 private fun FavoriteDepartures(
     favorites: Map<RouteStopDirection, FavoriteSettings>?,
     stopData: RouteCardData.RouteStopData,
+    removedFavorites: Set<RouteStopDirection>,
     globalData: GlobalResponse?,
     onDrag: (RouteCardData.Leaf) -> Unit,
     onClick: (RouteCardData.Leaf) -> Unit,
@@ -234,116 +269,121 @@ private fun FavoriteDepartures(
             val formatted = leaf.format(EasternTimeInstant.now(), globalData)
             val direction = stopData.directions.first { it.id == leaf.directionId }
             val overriddenClickLabel = stringResource(R.string.delete)
-
-            Box(
-                Modifier.background(colorResource(R.color.delete)),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                Row(
-                    modifier = Modifier.height(IntrinsicSize.Max).width(IntrinsicSize.Min),
-                    horizontalArrangement = Arrangement.End,
-                    verticalAlignment = Alignment.CenterVertically,
+            val visible = !removedFavorites.contains(leaf.routeStopDirection)
+            AnimatedVisibility(visible = visible) {
+                Box(
+                    Modifier.background(colorResource(R.color.delete)),
+                    contentAlignment = Alignment.CenterEnd,
                 ) {
-                    Column(
-                        Modifier.onGloballyPositioned { coordinates ->
-                                dragWidth = with(localDensity) { coordinates.size.width.toDp() }
-                            }
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Icon(
-                            painterResource(R.drawable.fa_delete),
-                            null,
-                            modifier = Modifier.size(24.dp),
-                            tint = colorResource(R.color.delete_background),
-                        )
-                        Text(
-                            stringResource(R.string.remove),
-                            color = colorResource(R.color.delete_background),
-                            style = Typography.footnote,
-                        )
-                    }
-                }
-
-                @Composable
-                fun rightContent() {
-                    if (notificationsFlag) {
-                        NotificationStatusIcon(favorites?.get(leaf.routeStopDirection))
-                        EditIcon { onClick(leaf) }
-                    } else {
-                        DeleteIcon(action = { onClick(leaf) })
-                    }
-                }
-
-                androidx.compose.runtime.key(leaf.routeStopDirection) {
                     Row(
-                        modifier =
-                            Modifier.dragAction(
-                                    DragDirection.LEFT,
-                                    dragWidth,
-                                    notificationsFlag,
-                                    { onDrag(leaf) },
-                                )
-                                .background(colorResource(R.color.fill3))
-                                .fillMaxHeight()
-                                .padding(vertical = 10.dp, horizontal = 16.dp)
-                                .semantics(mergeDescendants = true) {
-                                    role = Role.Button
-                                    onClick(overriddenClickLabel) {
-                                        onClick(leaf)
-                                        true
-                                    }
-                                }
+                        modifier = Modifier.height(IntrinsicSize.Max).width(IntrinsicSize.Min),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        when (formatted) {
-                            is LeafFormat.Single -> {
-                                Column(
-                                    horizontalAlignment = Alignment.Start,
-                                    verticalArrangement =
-                                        Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.semantics {},
-                                    ) {
-                                        DirectionLabel(
-                                            direction,
-                                            pillDecoration =
-                                                formatted.route?.let {
-                                                    PillDecoration.OnDirectionDestination(it)
-                                                },
-                                            modifier = Modifier.weight(1f),
-                                        )
-                                        rightContent()
-                                    }
+                        Column(
+                            Modifier.onGloballyPositioned { coordinates ->
+                                    dragWidth = with(localDensity) { coordinates.size.width.toDp() }
                                 }
-                            }
+                                .padding(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.fa_delete),
+                                null,
+                                modifier = Modifier.size(24.dp),
+                                tint = colorResource(R.color.delete_background),
+                            )
+                            Text(
+                                stringResource(R.string.remove),
+                                color = colorResource(R.color.delete_background),
+                                style = Typography.footnote,
+                            )
+                        }
+                    }
 
-                            is LeafFormat.Branched -> {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
+                    @Composable
+                    fun rightContent() {
+                        if (notificationsFlag) {
+                            NotificationStatusIcon(favorites?.get(leaf.routeStopDirection))
+                            EditIcon { onClick(leaf) }
+                        } else {
+                            DeleteIcon(action = { onClick(leaf) })
+                        }
+                    }
+
+                    androidx.compose.runtime.key(leaf.routeStopDirection) {
+                        Row(
+                            modifier =
+                                Modifier.dragAction(
+                                        DragDirection.LEFT,
+                                        dragWidth,
+                                        notificationsFlag,
+                                        { onDrag(leaf) },
+                                    )
+                                    .background(colorResource(R.color.fill3))
+                                    .fillMaxHeight()
+                                    .padding(vertical = 10.dp, horizontal = 16.dp)
+                                    .semantics(mergeDescendants = true) {
+                                        role = Role.Button
+                                        onClick(overriddenClickLabel) {
+                                            onClick(leaf)
+                                            true
+                                        }
+                                    }
+                        ) {
+                            when (formatted) {
+                                is LeafFormat.Single -> {
                                     Column(
                                         horizontalAlignment = Alignment.Start,
                                         verticalArrangement =
                                             Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
-                                        modifier = Modifier.weight(1f),
                                     ) {
-                                        DirectionLabel(direction, showDestination = false)
-                                        BranchRows(formatted)
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.semantics {},
+                                        ) {
+                                            DirectionLabel(
+                                                direction,
+                                                pillDecoration =
+                                                    formatted.route?.let {
+                                                        PillDecoration.OnDirectionDestination(it)
+                                                    },
+                                                modifier = Modifier.weight(1f),
+                                            )
+                                            rightContent()
+                                        }
                                     }
-                                    rightContent()
+                                }
+
+                                is LeafFormat.Branched -> {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                    ) {
+                                        Column(
+                                            horizontalAlignment = Alignment.Start,
+                                            verticalArrangement =
+                                                Arrangement.spacedBy(
+                                                    6.dp,
+                                                    Alignment.CenterVertically,
+                                                ),
+                                            modifier = Modifier.weight(1f),
+                                        ) {
+                                            DirectionLabel(direction, showDestination = false)
+                                            BranchRows(formatted)
+                                        }
+                                        rightContent()
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            if (index < stopData.data.lastIndex) {
-                HaloSeparator()
+                if (index < stopData.data.lastIndex) {
+                    HaloSeparator()
+                }
             }
         }
     }
