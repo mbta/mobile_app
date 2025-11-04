@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import org.maplibre.spatialk.geojson.Position
 
 @Serializable
 public data class Vehicle(

@@ -1,8 +1,8 @@
 package com.mbta.tid.mbta_app.map
 
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.experimental.and
 import kotlin.math.round
+import org.maplibre.spatialk.geojson.Position
 
 // https://developers.google.com/maps/documentation/utilities/polylinealgorithm
 internal object Polyline {

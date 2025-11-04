@@ -11,12 +11,12 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.maplibre.spatialk.geojson.Position
 
 class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
     KoinComponent, ViewModel() {

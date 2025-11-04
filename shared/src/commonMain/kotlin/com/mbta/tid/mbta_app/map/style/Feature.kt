@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.map.style
 
-import io.github.dellisd.spatialk.geojson.Geometry
+import org.maplibre.spatialk.geojson.Geometry
 
 public data class Feature
 internal constructor(

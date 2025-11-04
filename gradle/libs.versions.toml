@@ -11,6 +11,8 @@ androidx-navigationCompose = "2.9.5"
 # changelog: https://developer.android.com/jetpack/androidx/releases/test
 androidx-test-monitor = "1.8.0"
 androidx-test-rules = "1.7.0"
+# changelog: https://developer.android.com/jetpack/androidx/releases/work
+androidx-work = "2.11.0"
 # changelog: https://developer.android.com/build/releases/past-releases
 agp = "8.10.1"
 # bom: https://developer.android.com/develop/ui/compose/bom/bom-mapping
@@ -42,10 +44,10 @@ molecule = "2.2.0"
 okhttp = "5.2.1"
 okio = "3.16.2"
 playServicesLocation = "21.3.0"
-sentry-android-gradle = "5.12.1"
+sentry-android-gradle = "5.12.2"
 sentry-kmp = "0.19.0"
 skie = "0.10.6"
-spatialk = "0.3.0"
+spatialk = "0.5.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "8.0.0"
 turbine = "1.2.1"
@@ -59,6 +61,7 @@ androidx-lifecycle-viewmodel-android = { group = "androidx.lifecycle", name = "l
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigationCompose" }
 androidx-test-monitor = { module = "androidx.test:monitor", version.ref = "androidx-test-monitor" }
 androidx-test-rules = { module = "androidx.test:rules", version.ref = "androidx-test-rules" }
+androidx-work = { module = "androidx.work:work-runtime-ktx", version.ref = "androidx-work" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-foundation = { module = "androidx.compose.foundation:foundation" }
 compose-material3 = { module = "androidx.compose.material3:material3", version.ref = "android-material3" }
@@ -107,8 +110,9 @@ okio-fakefilesystem = { module = "com.squareup.okio:okio-fakefilesystem", versio
 playServices-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 sentry-kmp = { module = "io.sentry:sentry-kotlin-multiplatform", version.ref = "sentry-kmp" }
 skie-configuration-annotations = { module = "co.touchlab.skie:configuration-annotations", version.ref = "skie" }
-spatialk-geojson = { module = "io.github.dellisd.spatialk:geojson", version.ref = "spatialk" }
-spatialk-turf = { module = "io.github.dellisd.spatialk:turf", version.ref = "spatialk" }
+spatialk-geojson = { module = "org.maplibre.spatialk:geojson", version.ref = "spatialk" }
+spatialk-turf = { module = "org.maplibre.spatialk:turf", version.ref = "spatialk" }
+spatialk-units = { module = "org.maplibre.spatialk:units", version.ref = "spatialk" }
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]

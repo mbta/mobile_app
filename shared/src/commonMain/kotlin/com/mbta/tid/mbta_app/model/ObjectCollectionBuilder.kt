@@ -2,11 +2,11 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import io.github.dellisd.spatialk.geojson.Position
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+import org.maplibre.spatialk.geojson.Position
 
 /**
  * Allows related objects to be built and tracked more conveniently. Provides default values where

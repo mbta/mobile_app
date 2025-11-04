@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
+import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -39,3 +40,14 @@ sealed interface ModalRoutes {
         val context: EditFavoritesContext,
     ) : ModalRoutes
 }
+
+val DeepLinkState.Alert.modalRoute: ModalRoutes.AlertDetails
+    get() {
+        val lineOrRouteId = this.routeId?.let { LineOrRoute.Id.fromString(it) }
+        return ModalRoutes.AlertDetails(
+            this.alertId,
+            lineOrRouteId as? Line.Id,
+            (lineOrRouteId as? Route.Id)?.let { listOf(it) },
+            this.stopId,
+        )
+    }

@@ -32,7 +32,9 @@ public fun makeNativeModule(
         single<ICurrentAppVersionRepository> { currentAppVersion }
         single<INetworkConnectivityMonitor> { networkConnectivityMonitor }
         single<PhoenixSocket> { socket }
-        factory<IAlertsRepository> { AlertsRepository(get(), get(named("coroutineDispatcherIO"))) }
+        factory<IAlertsRepository> {
+            AlertsRepository(get(), get(), get(named("coroutineDispatcherIO")))
+        }
         factory<IPredictionsRepository> {
             PredictionsRepository(get(), get(named("coroutineDispatcherIO")))
         }

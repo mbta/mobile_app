@@ -72,9 +72,9 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.State
-import io.github.dellisd.spatialk.geojson.Position
 import kotlinx.coroutines.flow.map
 import org.koin.compose.koinInject
+import org.maplibre.spatialk.geojson.Position
 
 @Composable
 fun HomeMapView(
