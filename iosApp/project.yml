@@ -108,6 +108,8 @@ targets:
       - package: CustomAlert
       - package: Firebase
         product: FirebaseAnalyticsCore
+      - package: Firebase
+        product: FirebaseMessaging
       - package: MapboxMaps
       - package: Reachability
       - package: swift-collections
