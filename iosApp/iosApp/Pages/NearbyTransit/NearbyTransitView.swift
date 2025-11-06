@@ -20,7 +20,6 @@ struct NearbyTransitView: View {
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
     @State var favorites: Favorites = LoadedFavorites.last
-    @State var loadingFavorites = true
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
@@ -52,7 +51,7 @@ struct NearbyTransitView: View {
                 loadingBody()
             }
         }
-        .favorites($favorites, awaitingUpdate: $loadingFavorites)
+        .favorites($favorites)
         .global($globalData, errorKey: "NearbyTransitView")
         .onAppear {
             loadEverything()
