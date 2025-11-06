@@ -14,41 +14,37 @@ class LoadedFavorites {
 }
 
 struct FavoritesModifier: ViewModifier {
-    var favoritesRepository: IFavoritesRepository = RepositoryDI().favorites
-    @Binding var favorites: Favorites
-    @Binding var awaitingUpdate: Bool
+    @State var favoritesVM = ViewModelDI().favorites
+    @Binding var favorites: Favorites = LoadedFavorites.last
+
+    @MainActor
+    func activateListener() async {
+        for await state in favoritesVM.models {
+            favorites = if let nextFavorites = state.favorites {
+                Favorites(routeStopDirection: nextFavorites)
+            } else {
+                Favorites(routeStopDirection: [:])
+            }
+            LoadedFavorites.last = favorites
+        }
+    }
 
     func loadFavorites() {
-        favorites = LoadedFavorites.last
+        Task(priority: .high) {
+            await activateListener()
+        }
         Task {
-            do {
-                let nextFavorites = try await favoritesRepository.getFavorites()
-                Task { @MainActor in
-                    favorites = nextFavorites
-                    LoadedFavorites.last = nextFavorites
-                    awaitingUpdate = false
-                }
-            } catch is CancellationError {
-                // do nothing on cancellation
-            } catch {
-                // getFavorites shouldn't actually fail
-                debugPrint(error)
-            }
+            favoritesVM.reloadFavorites()
         }
     }
 
     func body(content: Content) -> some View {
-        content
-            .onAppear { loadFavorites() }
-            .onChange(of: awaitingUpdate) { shouldUpdate in
-                guard shouldUpdate else { return }
-                loadFavorites()
-            }
+        content.onAppear { loadFavorites() }
     }
 }
 
 public extension View {
-    func favorites(_ favorites: Binding<Favorites>, awaitingUpdate: Binding<Bool>) -> some View {
-        modifier(FavoritesModifier(favorites: favorites, awaitingUpdate: awaitingUpdate))
+    func favorites(_ favorites: Binding<Favorites>) -> some View {
+        modifier(FavoritesModifier(favorites: favorites))
     }
 }

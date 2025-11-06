@@ -37,10 +37,9 @@ struct RouteStopListView<RightSideContent: View>: View {
     let errorBannerVM: IErrorBannerViewModel
     let defaultSelectedRouteId: Route.Id?
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
+    let favoritesVM: IFavoritesViewModel
     let toastVM: IToastViewModel
 
-    let favoritesUsecases: FavoritesUsecases
-    @State var favorites: Set<RouteStopDirection>?
     let routeStopsRepository: IRouteStopsRepository
     @State var routeStops: RouteStopsResult?
     @State var stopList: RouteDetailsStopList?
@@ -60,8 +59,8 @@ struct RouteStopListView<RightSideContent: View>: View {
         defaultSelectedRouteId: Route.Id? = nil,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
         routeStopsRepository: IRouteStopsRepository = RepositoryDI().routeStops,
-        favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
-        toastVM: IToastViewModel = ViewModelDI().toast
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
+        toastVM: IToastViewModel = ViewModelDI().toast,
     ) {
         self.lineOrRoute = lineOrRoute
         self.context = context
@@ -72,7 +71,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         self.defaultSelectedRouteId = defaultSelectedRouteId
         self.rightSideContent = rightSideContent
         self.routeStopsRepository = routeStopsRepository
-        self.favoritesUsecases = favoritesUsecases
+        self.favoritesVM = favoritesVM
         self.toastVM = toastVM
 
         selectedRouteId = defaultSelectedRouteId ?? lineOrRoute.sortRoute.id
@@ -107,7 +106,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
             rightSideContent: rightSideContent,
-            favoritesUsecases: favoritesUsecases,
+            favoritesVM: favoritesVM,
             toastVM: toastVM
         )
         .onAppear {
@@ -193,10 +192,10 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
+    let favoritesVM: IFavoritesViewModel
     let toastVM: IToastViewModel
 
-    let favoritesUsecases: FavoritesUsecases
-    @State var favorites: Set<RouteStopDirection>?
+    @State var favorites: Favorites = LoadedFavorites.last
 
     @State var showFavoritesStopConfirmation: Stop? = nil
     @State var showFirstTimeFavoritesToast: Bool? = nil
@@ -219,7 +218,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
-        favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases,
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
         toastVM: IToastViewModel = ViewModelDI().toast
     ) {
         self.lineOrRoute = lineOrRoute
@@ -236,7 +235,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.rightSideContent = rightSideContent
-        self.favoritesUsecases = favoritesUsecases
+        self.favoritesVM = favoritesVM
         self.toastVM = toastVM
     }
 
@@ -287,10 +286,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
             routeStopList(stopList: stopList, onTapStop: onClick)
         }
+        .favorites($favorites)
         .background { routeColor.ignoresSafeArea() }
-        .onAppear {
-            loadFavorites()
-        }
         .task {
             for await model in toastVM.models {
                 displayedToast = switch onEnum(of: model) {
@@ -305,12 +302,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 favoriteDialog(stop: showFavoritesStopConfirmation)
             }
         }
-        .onChange(of: favorites) { _ in
+        .onChange(of: favorites) { favorites in
             // Only set first time toast on first favorites load, otherwise keep the current value
             showFirstTimeFavoritesToast = if let showFirstTimeFavoritesToast {
                 showFirstTimeFavoritesToast
             } else {
-                context is RouteDetailsContext.Favorites && (favorites?.isEmpty ?? true)
+                context is RouteDetailsContext.Favorites && favorites.routeStopDirection.isEmpty
             }
         }
         .onChange(of: showFirstTimeFavoritesToast) { _ in
@@ -474,22 +471,16 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             case .details: EditFavoritesContext.routeDetails
             }
 
-            try? await favoritesUsecases.updateRouteStopDirections(
-                newValues: updatedValues,
-                context: editContext, defaultDirection: selectedDirection
+            favoritesVM.updateFavorites(
+                updatedFavorites: updatedValues,
+                context: editContext,
+                defaultDirection: selectedDirection
             )
-            loadFavorites()
         }
     }
 
     private func isFavorite(_ routeStopDirection: RouteStopDirection) -> Bool {
-        favorites?.contains(routeStopDirection) ?? false
-    }
-
-    private func loadFavorites() {
-        Task {
-            favorites = try? await Set(favoritesUsecases.getRouteStopDirectionFavorites().keys)
-        }
+        favorites.routeStopDirection[routeStopDirection] != nil
     }
 
     private func stopRowContext(_ stop: Stop) -> RouteDetailsRowContext {
