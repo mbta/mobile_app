@@ -148,17 +148,13 @@ struct SaveFavoritesFlow: View {
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
-            if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
+            if settingsCache.get(.notifications) {
+                VStack {}.onAppear { openSaveModal() }
+            } else if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
                 VStack {}
                     .onAppear {
-                        if settingsCache.get(.notifications) {
-                            openSaveModal()
-                            return
-                        }
-
                         let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
                         updateAndToast([rsd: isFavorite(rsd) ? nil : .init()])
-
                         onClose()
                     }
             } else {
@@ -197,10 +193,6 @@ struct FavoriteConfirmationDialog: View {
     var body: some View {
         VStack {}
             .onAppear {
-                if settingsCache.get(.notifications) {
-                    openSaveModal()
-                    return
-                }
                 favoritesToSave = Dictionary(uniqueKeysWithValues: directions
                     .map { ($0, proposedFavorites[$0.id] ?? nil) })
                 showDialog = true
