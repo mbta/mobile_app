@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.parametric.parametricTest
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
@@ -434,6 +433,51 @@ class UpcomingTripTest {
     }
 
     @Test
+    fun `tripsFromData ignores stop sequence on cancelled trips`() {
+        fun ObjectCollectionBuilder.ScheduleBuilder.sts(
+            stopId: String,
+            tripId: String,
+            stopSequence: Int,
+        ) {
+            this.stopId = stopId
+            this.tripId = tripId
+            this.stopSequence = stopSequence
+        }
+        fun ObjectCollectionBuilder.PredictionBuilder.sts(
+            stopId: String,
+            tripId: String,
+            stopSequence: Int,
+        ) {
+            this.stopId = stopId
+            this.tripId = tripId
+            this.stopSequence = stopSequence
+        }
+
+        val objects = ObjectCollectionBuilder()
+
+        // schedule and prediction match
+        val trip = objects.trip()
+        val schedule = objects.schedule { sts("stop1", trip.id, 1) }
+        val prediction =
+            objects.prediction {
+                sts("stop1", trip.id, 2)
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+        val result =
+            UpcomingTrip.tripsFromData(
+                objects.stops,
+                objects.schedules.values.toList(),
+                objects.predictions.values.toList(),
+                objects.trips,
+                objects.vehicles,
+                EasternTimeInstant.now(),
+            )
+
+        assertEquals(listOf(UpcomingTrip(trip, schedule, prediction)), result)
+    }
+
+    @Test
     fun `time uses schedule time if there's no prediction`() {
         val now = EasternTimeInstant.now()
         val trip = trip()
@@ -625,8 +669,8 @@ class UpcomingTripTest {
         val prediction2 = prediction { stopSequence = 2 }
 
         assertEquals(1, UpcomingTrip(trip, schedule1, prediction1).stopSequence)
-        assertFails { UpcomingTrip(trip, schedule1, prediction2).stopSequence }
-        assertFails { UpcomingTrip(trip, schedule2, prediction1).stopSequence }
+        assertEquals(1, UpcomingTrip(trip, schedule1, prediction2).stopSequence)
+        assertEquals(2, UpcomingTrip(trip, schedule2, prediction1).stopSequence)
         assertEquals(2, UpcomingTrip(trip, schedule2, prediction2).stopSequence)
     }
 
