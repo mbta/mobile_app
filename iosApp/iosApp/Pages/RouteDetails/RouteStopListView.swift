@@ -33,6 +33,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     let context: RouteDetailsContext
     let globalData: GlobalResponse
     let onClick: (RouteDetailsRowContext) -> Void
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
     let defaultSelectedRouteId: Route.Id?
@@ -54,6 +55,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         defaultSelectedRouteId: Route.Id? = nil,
@@ -66,6 +68,7 @@ struct RouteStopListView<RightSideContent: View>: View {
         self.context = context
         self.globalData = globalData
         self.onClick = onClick
+        self.pushNavEntry = pushNavEntry
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.defaultSelectedRouteId = defaultSelectedRouteId
@@ -103,6 +106,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             context: context,
             globalData: globalData,
             onClick: onClick,
+            pushNavEntry: pushNavEntry,
             navCallbacks: navCallbacks,
             errorBannerVM: errorBannerVM,
             rightSideContent: rightSideContent,
@@ -189,6 +193,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let context: RouteDetailsContext
     let globalData: GlobalResponse
     let onClick: (RouteDetailsRowContext) -> Void
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let navCallbacks: NavigationCallbacks
     let errorBannerVM: IErrorBannerViewModel
     let rightSideContent: (RouteDetailsRowContext) -> RightSideContent
@@ -215,6 +220,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         context: RouteDetailsContext,
         globalData: GlobalResponse,
         onClick: @escaping (RouteDetailsRowContext) -> Void,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
         rightSideContent: @escaping (RouteDetailsRowContext) -> RightSideContent,
@@ -232,6 +238,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
         self.context = context
         self.globalData = globalData
         self.onClick = onClick
+        self.pushNavEntry = pushNavEntry
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
         self.rightSideContent = rightSideContent
@@ -451,15 +458,10 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             selectedDirection: selectedDirection,
             context: .favorites,
             global: globalData,
-            isFavorite: { rsd in
-                isFavorite(rsd)
-            },
-            updateFavorites: { newFavorites in
-                confirmFavorites(updatedValues: newFavorites)
-            },
-            onClose: {
-                showFavoritesStopConfirmation = nil
-            },
+            isFavorite: { rsd in isFavorite(rsd) },
+            updateFavorites: { newFavorites in confirmFavorites(updatedValues: newFavorites) },
+            onClose: { showFavoritesStopConfirmation = nil },
+            pushNavEntry: pushNavEntry,
             toastVM: toastVM,
         )
     }

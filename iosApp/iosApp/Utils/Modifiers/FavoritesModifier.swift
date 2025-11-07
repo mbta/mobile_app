@@ -15,7 +15,7 @@ class LoadedFavorites {
 
 struct FavoritesModifier: ViewModifier {
     @State var favoritesVM = ViewModelDI().favorites
-    @Binding var favorites: Favorites = LoadedFavorites.last
+    @Binding var favorites: Favorites
 
     @MainActor
     func activateListener() async {
@@ -30,6 +30,7 @@ struct FavoritesModifier: ViewModifier {
     }
 
     func loadFavorites() {
+        favorites = LoadedFavorites.last
         Task(priority: .high) {
             await activateListener()
         }

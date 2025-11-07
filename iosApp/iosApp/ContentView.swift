@@ -246,8 +246,9 @@ struct ContentView: View {
                                 stopFilter: nil,
                                 tripFilter: nil
                             )) },
+                            pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                             navCallbacks: navCallbacks,
-                            errorBannerVM: errorBannerVM
+                            errorBannerVM: errorBannerVM,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -515,7 +516,7 @@ struct ContentView: View {
                     // Don't navigate back if hideMaps has been changed and the cover is being switched over
                     if hideMaps == false { return }
                     switch nearbyVM.navigationStack.last {
-                    case .alertDetails, .more: nearbyVM.goBack()
+                    case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
                     default: break
                     }
                 }, content: coverContents)
@@ -549,7 +550,7 @@ struct ContentView: View {
                                 // Don't navigate back if hideMaps has been changed and the cover is being switched over
                                 if hideMaps { return }
                                 switch nearbyVM.navigationStack.last {
-                                case .alertDetails, .more: nearbyVM.goBack()
+                                case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
                                 default: break
                                 }
                             },
@@ -599,6 +600,23 @@ struct ContentView: View {
                         .tag(SelectedTab.more)
                         .tabItem { TabLabel(tab: SelectedTab.more) }
                 }
+
+            case let .saveFavorite(routeId, stopId, selectedDirection, context):
+                SaveFavoritePage(
+                    routeId: routeId,
+                    stopId: stopId,
+                    selectedDirection: selectedDirection,
+                    context: context,
+                    updateFavorites: { favorites in
+                        favoritesVM.updateFavorites(
+                            updatedFavorites: favorites,
+                            context: context,
+                            defaultDirection: selectedDirection
+                        )
+                    },
+                    navCallbacks: navCallbacks,
+                    nearbyVM: nearbyVM
+                )
 
             default:
                 EmptyView()
