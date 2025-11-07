@@ -18,6 +18,7 @@ final class FavoritesModifierTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
+    @MainActor
     func testLoadsFromRepo() throws {
         let repoExp = expectation(description: "favorites loaded from repo")
         let setExp = expectation(description: "favorites binding was set")
@@ -30,7 +31,6 @@ final class FavoritesModifierTests: XCTestCase {
             guard $0 == updatedFavorites else { return }
             setExp.fulfill()
         })
-        let loadingBinding = Binding(get: { true }, set: { _ in })
 
         var repoFulfilled = false
         let mockRepos = MockRepositories()
@@ -44,29 +44,14 @@ final class FavoritesModifierTests: XCTestCase {
         )
         loadKoinMocks(repositories: mockRepos)
 
-        let sut = Text("test").favorites(favoritesBinding, awaitingUpdate: loadingBinding)
+        let sut = Text("test").favorites(favoritesBinding)
 
         ViewHosting.host(view: sut)
 
         wait(for: [repoExp, setExp], timeout: 1)
     }
 
-    func testSetsLoadingToFalseWhenDone() throws {
-        let loadExp = expectation(description: "favorites loaded binding set")
-
-        let favoritesBinding = Binding(get: { Favorites(routeStopDirection: [:]) }, set: { _ in })
-        let loadingBinding = Binding(get: { true }, set: {
-            XCTAssertFalse($0)
-            loadExp.fulfill()
-        })
-
-        let sut = Text("test").favorites(favoritesBinding, awaitingUpdate: loadingBinding)
-
-        ViewHosting.host(view: sut)
-
-        wait(for: [loadExp], timeout: 1)
-    }
-
+    @MainActor
     func testSetsPreviouslyLoadedValueWhileFetching() throws {
         let setExp = expectation(description: "favorites binding set to previously loaded value")
 
@@ -80,9 +65,8 @@ final class FavoritesModifierTests: XCTestCase {
                 setExp.fulfill()
             }
         })
-        let loadingBinding = Binding(get: { true }, set: { _ in })
 
-        let sut = Text("test").favorites(favoritesBinding, awaitingUpdate: loadingBinding)
+        let sut = Text("test").favorites(favoritesBinding)
 
         ViewHosting.host(view: sut)
 

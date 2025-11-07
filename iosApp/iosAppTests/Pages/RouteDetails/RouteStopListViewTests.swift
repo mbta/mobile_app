@@ -62,6 +62,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { clicks.append($0) },
+            pushNavEntry: { _ in },
             navCallbacks: .init(
                 onBack: { backTapped = true },
                 onClose: { closeTapped = true },
@@ -146,6 +147,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
+            pushNavEntry: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             defaultSelectedRouteId: route2.id,
@@ -213,6 +215,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
+            pushNavEntry: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             rightSideContent: { _ in EmptyView() }
@@ -272,6 +275,7 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { _ in },
+            pushNavEntry: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerVM,
             rightSideContent: { _ in EmptyView() }
