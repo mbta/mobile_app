@@ -174,7 +174,7 @@ struct StopDetailsFilteredView: View {
                         )
                     },
                     onClose: { inSaveFavoritesFlow = false },
-                    openModal: { entry in nearbyVM.pushNavEntry(entry) }
+                    pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 )
             }
 
