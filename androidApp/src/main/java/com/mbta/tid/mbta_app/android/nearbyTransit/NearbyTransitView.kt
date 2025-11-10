@@ -70,7 +70,7 @@ fun NearbyTransitView(
                 NavigationCallbacks(
                     onBack = null,
                     onClose = null,
-                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                 ),
         )
         ErrorBanner(errorBannerViewModel)

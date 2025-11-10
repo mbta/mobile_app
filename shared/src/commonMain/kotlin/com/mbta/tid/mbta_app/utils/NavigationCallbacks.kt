@@ -3,12 +3,12 @@ package com.mbta.tid.mbta_app.utils
 public data class NavigationCallbacks(
     val onBack: (() -> Unit)?,
     val onClose: (() -> Unit)?,
-    val sheetBackState: SheetBackState,
+    val backButtonPresentation: BackButtonPresentation,
 ) {
-    public sealed class SheetBackState {
-        public data object Hidden : SheetBackState()
+    public sealed class BackButtonPresentation {
+        public data object Floating : BackButtonPresentation()
 
-        public data object Shown : SheetBackState()
+        public data object Header : BackButtonPresentation()
     }
 
     public companion object {
@@ -16,7 +16,7 @@ public data class NavigationCallbacks(
             NavigationCallbacks(
                 onBack = null,
                 onClose = null,
-                sheetBackState = SheetBackState.Hidden,
+                backButtonPresentation = BackButtonPresentation.Floating,
             )
     }
 }

@@ -67,6 +67,18 @@ public sealed class SheetRoutes {
                 else -> null
             }
 
+    public val hasFloatingBackButton: Boolean
+        get() =
+            when (this) {
+                is StopDetails,
+                is TripDetails -> true
+                is RouteDetails,
+                is EditFavorites,
+                is Favorites,
+                is NearbyTransit,
+                is RoutePicker -> false
+            }
+
     public companion object {
 
         public fun shouldResetSheetHeight(first: SheetRoutes?, second: SheetRoutes?): Boolean {

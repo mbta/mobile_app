@@ -184,7 +184,7 @@ fun LoadingRouteStopListView(
                 NavigationCallbacks(
                     onBack = null,
                     onClose = null,
-                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                 ),
             openModal = {},
             errorBannerViewModel = errorBannerViewModel,

@@ -183,7 +183,7 @@ struct ContentView: View {
                         if !searchObserver.isSearching {
                             HStack(alignment: .top) {
                                 VStack(alignment: .leading) {
-                                    if nearbyVM.navigationStack.hasFloatingBackButton() {
+                                    if navCallbacks.backButtonPresentation == .floating {
                                         RecenterButton(
                                             icon: .faChevronLeft,
                                             label: Text("Back", comment: "VoiceOver label for a generic back button"),
@@ -245,7 +245,8 @@ struct ContentView: View {
                                 stopId: $0,
                                 stopFilter: nil,
                                 tripFilter: nil
-                            )) }, navCallbacks: navCallbacks,
+                            )) },
+                            navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM
                         )
                         .toolbar(.hidden, for: .tabBar)
@@ -385,7 +386,7 @@ struct ContentView: View {
                 VStack(spacing: 16) {
                     SheetHeader(
                         title: NSLocalizedString("Nearby Transit", comment: ""),
-                        navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                        navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
                     )
                     .loadingPlaceholder(withShimmer: false)
                     ScrollView {
@@ -450,7 +451,11 @@ struct ContentView: View {
                 TabView {
                     EditFavoritesPage(
                         viewModel: favoritesVM,
-                        navCallbacks: navCallbacks,
+                        navCallbacks: navCallbacks.doCopy(
+                            onBack: navCallbacks.onBack,
+                            onClose: navCallbacks.onClose,
+                            backButtonPresentation: .header
+                        ),
                         errorBannerVM: errorBannerVM,
                         toastVM: toastVM,
                     )
@@ -605,7 +610,8 @@ struct ContentView: View {
         .init(
             onBack: { nearbyVM.goBack() },
             onClose: { nearbyVM.popToEntrypoint() },
-            sheetBackState: selectedDetent == .almostFull || hideMaps ? .shown : .hidden
+            backButtonPresentation: selectedDetent == .almostFull || hideMaps ||
+                !nearbyVM.navigationStack.hasFloatingBackButton() ? .header : .floating
         )
     }
 

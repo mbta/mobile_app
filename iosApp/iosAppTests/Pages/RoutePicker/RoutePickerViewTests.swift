@@ -33,7 +33,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            navCallbacks: .init(onBack: nil, onClose: {}, sheetBackState: .hidden)
+            navCallbacks: .init(onBack: nil, onClose: {}, backButtonPresentation: .floating)
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Add favorite stops"))
@@ -61,7 +61,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, sheetBackState: .hidden)
+            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, backButtonPresentation: .floating)
         )
 
         try sut.inspect().find(button: "Done").tap()
@@ -89,7 +89,7 @@ final class RoutePickerViewTests: XCTestCase {
             errorBannerVM: errorBannerVM,
             onOpenRouteDetails: { _, _ in },
             onOpenPickerPath: { _, _ in },
-            navCallbacks: .init(onBack: { backCalled = true }, onClose: nil, sheetBackState: .shown)
+            navCallbacks: .init(onBack: { backCalled = true }, onClose: nil, backButtonPresentation: .header)
         )
 
         try sut.inspect().find(viewWithAccessibilityLabel: "Back").implicitAnyView().button().tap()

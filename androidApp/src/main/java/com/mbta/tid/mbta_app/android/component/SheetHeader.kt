@@ -52,7 +52,8 @@ fun SheetHeader(
     val touchTarget = 48.dp
     val hasButtons =
         (navCallbacks.onBack != null &&
-            navCallbacks.sheetBackState != NavigationCallbacks.SheetBackState.Hidden) ||
+            navCallbacks.backButtonPresentation !=
+                NavigationCallbacks.BackButtonPresentation.Floating) ||
             navCallbacks.onClose != null ||
             rightActionContents != null
 
@@ -61,7 +62,8 @@ fun SheetHeader(
         val onBack = navCallbacks.onBack
         if (
             onBack != null &&
-                navCallbacks.sheetBackState != NavigationCallbacks.SheetBackState.Hidden
+                navCallbacks.backButtonPresentation !=
+                    NavigationCallbacks.BackButtonPresentation.Floating
         ) {
             ActionButton(
                 ActionButtonKind.Back,
@@ -110,7 +112,8 @@ fun SheetHeader(
     // the back button is always floating, so if it’s in the sheet header, we have
     if (
         navCallbacks.onBack != null &&
-            navCallbacks.sheetBackState != NavigationCallbacks.SheetBackState.Hidden &&
+            navCallbacks.backButtonPresentation !=
+                NavigationCallbacks.BackButtonPresentation.Floating &&
             navCallbacks.onClose != null
     ) {
         Column(modifier.padding(horizontal = 16.dp)) {
@@ -151,7 +154,8 @@ fun SheetHeader(
     val touchTarget = 48.dp
     val hasButtons =
         (navCallbacks.onBack != null &&
-            navCallbacks.sheetBackState != NavigationCallbacks.SheetBackState.Hidden) ||
+            navCallbacks.backButtonPresentation !=
+                NavigationCallbacks.BackButtonPresentation.Floating) ||
             navCallbacks.onClose != null ||
             rightActionContents != null
     var buttonPadding by remember { mutableStateOf(0.dp) }
@@ -193,8 +197,9 @@ fun SheetHeader(
                                 start =
                                     if (
                                         navCallbacks.onBack == null ||
-                                            navCallbacks.sheetBackState ==
-                                                NavigationCallbacks.SheetBackState.Hidden ||
+                                            navCallbacks.backButtonPresentation ==
+                                                NavigationCallbacks.BackButtonPresentation
+                                                    .Floating ||
                                             navCallbacks.onClose != null
                                     )
                                         8.dp
@@ -228,7 +233,7 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -238,7 +243,7 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -248,7 +253,7 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = null,
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -258,7 +263,7 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header,
                     ),
             )
             HorizontalDivider()
@@ -269,7 +274,7 @@ private fun SheetHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header,
                     ),
             )
         }

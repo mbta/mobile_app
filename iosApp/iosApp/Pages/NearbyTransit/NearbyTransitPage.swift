@@ -42,7 +42,7 @@ struct NearbyTransitPage: View {
             VStack(spacing: 0) {
                 SheetHeader(
                     title: NSLocalizedString("Nearby Transit", comment: "Header for nearby transit sheet"),
-                    navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                    navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
                 )
                 .padding(.bottom, 16)
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))

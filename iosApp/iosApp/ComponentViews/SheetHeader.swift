@@ -35,7 +35,7 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
     }
 
     var body: some View {
-        if navCallbacks.onBack != nil, navCallbacks.sheetBackState != .hidden, navCallbacks.onClose != nil {
+        if navCallbacks.onBack != nil, navCallbacks.backButtonPresentation != .floating, navCallbacks.onClose != nil {
             VStack(alignment: .leading) {
                 HStack {
                     backButton
@@ -65,7 +65,7 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
     }
 
     @ViewBuilder private var backButton: some View {
-        if let onBack = navCallbacks.onBack, navCallbacks.sheetBackState != .hidden {
+        if let onBack = navCallbacks.onBack, navCallbacks.backButtonPresentation != .floating {
             ActionButton(kind: .back, circleColor: buttonColor, iconColor: buttonTextColor, action: { onBack() })
                 .preventScrollTaps()
         }
@@ -135,14 +135,17 @@ struct SheetHeader_Previews: PreviewProvider {
         List {
             SheetHeader(
                 title: "This is a very long sheet title it should wrap",
-                navCallbacks: .init(onBack: {}, onClose: {}, sheetBackState: .hidden)
+                navCallbacks: .init(onBack: {}, onClose: {}, backButtonPresentation: .floating)
             )
-            SheetHeader(title: "short", navCallbacks: .init(onBack: {}, onClose: nil, sheetBackState: .shown))
+            SheetHeader(title: "short", navCallbacks: .init(onBack: {}, onClose: nil, backButtonPresentation: .header))
             SheetHeader(
                 title: "no back button",
-                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
-            SheetHeader(title: "Back and close", navCallbacks: .init(onBack: {}, onClose: {}, sheetBackState: .shown))
+            SheetHeader(
+                title: "Back and close",
+                navCallbacks: .init(onBack: {}, onClose: {}, backButtonPresentation: .header)
+            )
         }
     }
 }

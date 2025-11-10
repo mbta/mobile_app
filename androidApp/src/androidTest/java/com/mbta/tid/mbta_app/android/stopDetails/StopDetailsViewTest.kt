@@ -242,7 +242,7 @@ class StopDetailsViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 updateStopFilter = filterState::value::set,
                 updateTripFilter = {},

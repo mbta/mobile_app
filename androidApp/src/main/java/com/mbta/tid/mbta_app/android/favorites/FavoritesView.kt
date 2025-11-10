@@ -114,7 +114,7 @@ fun FavoritesView(
                 NavigationCallbacks(
                     onBack = null,
                     onClose = null,
-                    sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                    backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                 ),
             rightActionContents = {
                 Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {

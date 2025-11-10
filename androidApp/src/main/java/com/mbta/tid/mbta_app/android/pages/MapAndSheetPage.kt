@@ -335,13 +335,14 @@ fun MapAndSheetPage(
                 if (sheetNavEntrypoint != null) navController.navigate(sheetNavEntrypoint)
                 else navController.popBackStack(SheetRoutes.Entrypoint::class, inclusive = false)
             },
-            sheetBackState =
+            backButtonPresentation =
                 if (
                     nearbyTransit.scaffoldState.bottomSheetState.currentValue == SheetValue.Large ||
-                        hideMaps
+                        hideMaps ||
+                        currentNavEntry?.hasFloatingBackButton != true
                 )
-                    NavigationCallbacks.SheetBackState.Shown
-                else NavigationCallbacks.SheetBackState.Hidden,
+                    NavigationCallbacks.BackButtonPresentation.Header
+                else NavigationCallbacks.BackButtonPresentation.Floating,
         )
 
     fun updateVisitHistory(stopId: String) {
@@ -892,16 +893,10 @@ fun MapAndSheetPage(
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = { handleVehicleTap(it) },
-                        handleBack =
-                            if (
-                                currentNavEntry is SheetRoutes.StopDetails ||
-                                    currentNavEntry is SheetRoutes.TripDetails
-                            ) {
-                                { navController.popBackStack() }
-                            } else null,
                         vehiclesData = vehiclesData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,
+                        navCallbacks = navCallbacks,
                     )
                 }
             }

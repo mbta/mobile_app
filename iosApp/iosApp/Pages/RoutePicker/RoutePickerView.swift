@@ -163,7 +163,7 @@ struct RoutePickerView: View {
             navCallbacks: navCallbacks.doCopy(
                 onBack: path == .Root.shared ? nil : navCallbacks.onBack,
                 onClose: navCallbacks.onClose,
-                sheetBackState: navCallbacks.sheetBackState
+                backButtonPresentation: navCallbacks.backButtonPresentation
             ),
             closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
         )

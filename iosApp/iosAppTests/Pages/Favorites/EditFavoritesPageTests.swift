@@ -28,7 +28,7 @@ final class EditFavoritesPageTests: XCTestCase {
         var onCloseCalled = false
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
-            navCallbacks: .init(onBack: nil, onClose: { onCloseCalled = true }, sheetBackState: .hidden),
+            navCallbacks: .init(onBack: nil, onClose: { onCloseCalled = true }, backButtonPresentation: .floating),
             errorBannerVM: MockErrorBannerViewModel(),
             toastVM: MockToastViewModel(),
         )

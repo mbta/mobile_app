@@ -51,7 +51,7 @@ class TripDetailsPageTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { onCloseCalled = true },
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

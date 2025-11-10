@@ -116,21 +116,21 @@ struct StopDetailsFilteredHeader_Previews: PreviewProvider {
                 line: nil,
                 stop: stop,
                 direction: 0,
-                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
             StopDetailsFilteredHeader(
                 route: longestStopNameRoute,
                 line: nil,
                 stop: longestStopName,
                 direction: 0,
-                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
             StopDetailsFilteredHeader(
                 route: crRoute,
                 line: nil,
                 stop: crStop,
                 direction: 0,
-                navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
             )
         }
     }

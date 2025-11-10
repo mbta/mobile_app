@@ -123,7 +123,7 @@ private fun StopDetailsFilteredHeaderPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
             HorizontalDivider()
@@ -137,7 +137,7 @@ private fun StopDetailsFilteredHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = null,
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

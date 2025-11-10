@@ -117,7 +117,7 @@ final class TripDetailsPageTests: XCTestCase {
                 stopId: "",
                 stopSequence: nil
             ),
-            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, sheetBackState: .hidden),
+            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             nearbyVM: nearbyVM,
         )
         try sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()

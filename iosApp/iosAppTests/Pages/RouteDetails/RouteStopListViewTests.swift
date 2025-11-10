@@ -62,7 +62,11 @@ final class RouteStopListViewTests: XCTestCase {
             context: .Details.shared,
             globalData: .init(objects: objects),
             onClick: { clicks.append($0) },
-            navCallbacks: .init(onBack: { backTapped = true }, onClose: { closeTapped = true }, sheetBackState: .shown),
+            navCallbacks: .init(
+                onBack: { backTapped = true },
+                onClose: { closeTapped = true },
+                backButtonPresentation: .header
+            ),
             errorBannerVM: errorBannerVM,
             rightSideContent: { switch $0 {
             case let .details(stop: stop): return Text(verbatim: "rightSideContent for \(stop.name)")

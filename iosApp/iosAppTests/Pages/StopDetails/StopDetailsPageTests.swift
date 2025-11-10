@@ -106,7 +106,7 @@ final class StopDetailsPageTests: XCTestCase {
                 stopFilter: nil,
                 tripFilter: nil
             ),
-            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, sheetBackState: .hidden),
+            navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
