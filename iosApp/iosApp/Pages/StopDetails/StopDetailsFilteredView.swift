@@ -57,7 +57,7 @@ struct StopDetailsFilteredView: View {
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
-        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
     ) {
         self.stopId = stopId
