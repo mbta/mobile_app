@@ -74,11 +74,7 @@ struct EditFavoritesPage: View {
                     title: NSLocalizedString("Edit Favorites", comment: "Title for flow to edit favorites"),
                     buttonColor: Color.key,
                     buttonTextColor: Color.fill3,
-                    navCallbacks: navCallbacks.doCopy(
-                        onBack: nil,
-                        onClose: navCallbacks.onClose,
-                        sheetBackState: navCallbacks.sheetBackState
-                    ),
+                    navCallbacks: navCallbacks,
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
                 EditFavoritesList(

@@ -52,7 +52,7 @@ struct TripDetailsHeader_Previews: PreviewProvider {
                 TripDetailsHeader(
                     route: routeGreen,
                     direction: Direction(directionId: 0, route: routeGreen),
-                    navCallbacks: .init(onBack: {}, onClose: {}, sheetBackState: .hidden),
+                    navCallbacks: .init(onBack: {}, onClose: {}, backButtonPresentation: .floating),
                 ).padding(.bottom, 16)
             }
             ZStack {
@@ -60,7 +60,7 @@ struct TripDetailsHeader_Previews: PreviewProvider {
                 TripDetailsHeader(
                     route: routeOrange,
                     direction: Direction(directionId: 0, route: routeOrange),
-                    navCallbacks: .init(onBack: {}, onClose: {}, sheetBackState: .hidden),
+                    navCallbacks: .init(onBack: {}, onClose: {}, backButtonPresentation: .floating),
                 ).padding(.bottom, 16)
             }
             ZStack {
@@ -68,7 +68,7 @@ struct TripDetailsHeader_Previews: PreviewProvider {
                 TripDetailsHeader(
                     route: route87,
                     direction: Direction(directionId: 0, route: route87),
-                    navCallbacks: .init(onBack: {}, onClose: {}, sheetBackState: .hidden),
+                    navCallbacks: .init(onBack: {}, onClose: {}, backButtonPresentation: .floating),
                 ).padding(.bottom, 16)
             }
         }

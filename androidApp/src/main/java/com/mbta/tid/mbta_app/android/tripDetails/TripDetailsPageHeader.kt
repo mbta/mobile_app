@@ -100,7 +100,7 @@ private fun TripDetailsPageHeaderPreview() {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

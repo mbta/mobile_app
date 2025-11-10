@@ -77,7 +77,7 @@ class RoutePickerViewTest {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 errorBannerViewModel = koinInject(),
             )
@@ -365,7 +365,7 @@ class RoutePickerViewTest {
                     NavigationCallbacks(
                         onBack = { backCalled = true },
                         onClose = null,
-                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header,
                     ),
                 errorBannerViewModel = koinInject(),
             )
@@ -401,7 +401,7 @@ class RoutePickerViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { closeCalled = true },
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 errorBannerViewModel = koinInject(),
             )

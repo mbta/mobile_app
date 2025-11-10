@@ -70,7 +70,7 @@ struct RouteDetailsView: View {
             context: context,
             globalData: globalData ?? GlobalResponse(objects: .init()),
             onClick: { _ in },
-            navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden),
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
             errorBannerVM: errorBannerVM,
             rightSideContent: rightSideContent,
             toastVM: toastVM

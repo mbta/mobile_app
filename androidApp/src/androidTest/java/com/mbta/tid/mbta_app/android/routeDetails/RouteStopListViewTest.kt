@@ -504,7 +504,7 @@ class RouteStopListViewTest {
                     NavigationCallbacks(
                         onBack = { backTapped = true },
                         onClose = null,
-                        sheetBackState = NavigationCallbacks.SheetBackState.Shown,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header,
                     ),
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),
@@ -560,7 +560,7 @@ class RouteStopListViewTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { closeTapped = true },
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 openModal = { _ -> },
                 errorBannerViewModel = koinInject(),

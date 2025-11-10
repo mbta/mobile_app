@@ -8,7 +8,7 @@
 
 import Shared
 
-extension NavigationCallbacks.SheetBackState {
-    static let hidden = NavigationCallbacks.SheetBackStateHidden.shared
-    static let shown = NavigationCallbacks.SheetBackStateShown.shared
+extension NavigationCallbacks.BackButtonPresentation {
+    static let floating = NavigationCallbacks.BackButtonPresentationFloating.shared
+    static let header = NavigationCallbacks.BackButtonPresentationHeader.shared
 }

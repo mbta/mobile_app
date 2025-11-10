@@ -23,7 +23,11 @@ final class SheetHeaderTests: XCTestCase {
         let closeExp = XCTestExpectation(description: "Close button pressed")
         let sut = SheetHeader(
             title: "Header Text",
-            navCallbacks: .init(onBack: { backExp.fulfill() }, onClose: { closeExp.fulfill() }, sheetBackState: .shown)
+            navCallbacks: .init(
+                onBack: { backExp.fulfill() },
+                onClose: { closeExp.fulfill() },
+                backButtonPresentation: .header
+            )
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
@@ -35,7 +39,7 @@ final class SheetHeaderTests: XCTestCase {
     func testNoBackButtonWhenNoAction() throws {
         let sut = SheetHeader(
             title: "Header Text",
-            navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .shown)
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .header)
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Header Text"))
         XCTAssertThrowsError(try sut.inspect().find(ActionButton.self))

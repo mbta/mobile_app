@@ -335,13 +335,13 @@ fun MapAndSheetPage(
                 if (sheetNavEntrypoint != null) navController.navigate(sheetNavEntrypoint)
                 else navController.popBackStack(SheetRoutes.Entrypoint::class, inclusive = false)
             },
-            sheetBackState =
+            backButtonPresentation =
                 if (
                     nearbyTransit.scaffoldState.bottomSheetState.currentValue == SheetValue.Large ||
                         hideMaps
                 )
-                    NavigationCallbacks.SheetBackState.Shown
-                else NavigationCallbacks.SheetBackState.Hidden,
+                    NavigationCallbacks.BackButtonPresentation.Header
+                else NavigationCallbacks.BackButtonPresentation.Floating,
         )
 
     fun updateVisitHistory(stopId: String) {
@@ -574,7 +574,10 @@ fun MapAndSheetPage(
             EditFavoritesPage(
                 global = nearbyTransit.globalResponse,
                 favoritesViewModel = favoritesViewModel,
-                navCallbacks = navCallbacks,
+                navCallbacks =
+                    navCallbacks.copy(
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
+                    ),
                 openModalWithCloseCallback = ::openModalWithCloseCallback,
             )
         }
@@ -660,7 +663,9 @@ fun MapAndSheetPage(
                 },
                 onOpenRouteDetails = ::handlePickRouteNavigation,
                 onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
-                navCallbacks,
+                navCallbacks.copy(
+                    backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
+                ),
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -684,7 +689,10 @@ fun MapAndSheetPage(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
                 onOpenStopDetails = ::handleStopNavigation,
-                navCallbacks = navCallbacks,
+                navCallbacks =
+                    navCallbacks.copy(
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
+                    ),
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
             )

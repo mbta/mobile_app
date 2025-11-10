@@ -57,7 +57,7 @@ class StopDetailsFilteredSheetHeaderTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }
@@ -86,7 +86,7 @@ class StopDetailsFilteredSheetHeaderTest {
                     NavigationCallbacks(
                         onBack = null,
                         onClose = { closeCalled = true },
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
             )
         }

@@ -58,7 +58,7 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
             route: route,
             stop: stop,
             direction: 0,
-            navCallbacks: .init(onBack: nil, onClose: { tapExpectation.fulfill() }, sheetBackState: .hidden)
+            navCallbacks: .init(onBack: nil, onClose: { tapExpectation.fulfill() }, backButtonPresentation: .floating)
         )
         XCTAssertNoThrow(try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)

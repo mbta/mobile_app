@@ -258,7 +258,7 @@ final class StopDetailsViewTests: XCTestCase {
             onUpdateFavorites: {},
             setStopFilter: { _ in },
             setTripFilter: { _ in },
-            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, sheetBackState: .hidden),
+            navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, backButtonPresentation: .floating),
             errorBannerVM: MockErrorBannerViewModel(),
             nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),

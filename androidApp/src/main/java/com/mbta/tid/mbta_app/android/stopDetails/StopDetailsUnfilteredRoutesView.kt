@@ -300,7 +300,7 @@ private fun StopDetailsRoutesViewPreview() {
                     NavigationCallbacks(
                         onBack = {},
                         onClose = {},
-                        sheetBackState = NavigationCallbacks.SheetBackState.Hidden,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                     ),
                 onTapRoutePill = {},
                 updateStopFilter = {},

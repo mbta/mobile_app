@@ -245,7 +245,12 @@ struct ContentView: View {
                                 stopId: $0,
                                 stopFilter: nil,
                                 tripFilter: nil
-                            )) }, navCallbacks: navCallbacks,
+                            )) },
+                            navCallbacks: navCallbacks.doCopy(
+                                onBack: navCallbacks.onBack,
+                                onClose: navCallbacks.onClose,
+                                backButtonPresentation: .header
+                            ),
                             errorBannerVM: errorBannerVM
                         )
                         .toolbar(.hidden, for: .tabBar)
@@ -276,7 +281,11 @@ struct ContentView: View {
                                     )
                                 }
                             },
-                            navCallbacks: navCallbacks
+                            navCallbacks: navCallbacks.doCopy(
+                                onBack: navCallbacks.onBack,
+                                onClose: navCallbacks.onClose,
+                                backButtonPresentation: .header
+                            )
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -385,7 +394,7 @@ struct ContentView: View {
                 VStack(spacing: 16) {
                     SheetHeader(
                         title: NSLocalizedString("Nearby Transit", comment: ""),
-                        navCallbacks: .init(onBack: nil, onClose: nil, sheetBackState: .hidden)
+                        navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
                     )
                     .loadingPlaceholder(withShimmer: false)
                     ScrollView {
@@ -450,7 +459,11 @@ struct ContentView: View {
                 TabView {
                     EditFavoritesPage(
                         viewModel: favoritesVM,
-                        navCallbacks: navCallbacks,
+                        navCallbacks: navCallbacks.doCopy(
+                            onBack: navCallbacks.onBack,
+                            onClose: navCallbacks.onClose,
+                            backButtonPresentation: .header
+                        ),
                         errorBannerVM: errorBannerVM,
                         toastVM: toastVM,
                     )
@@ -605,7 +618,7 @@ struct ContentView: View {
         .init(
             onBack: { nearbyVM.goBack() },
             onClose: { nearbyVM.popToEntrypoint() },
-            sheetBackState: selectedDetent == .almostFull || hideMaps ? .shown : .hidden
+            backButtonPresentation: selectedDetent == .almostFull || hideMaps ? .header : .floating
         )
     }
 
