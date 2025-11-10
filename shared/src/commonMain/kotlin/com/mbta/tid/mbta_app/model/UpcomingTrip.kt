@@ -1,8 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
-import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.resolveParentId
 
@@ -53,10 +51,8 @@ constructor(
     }
 
     val stopSequence: Int? = run {
-        if (schedule != null && prediction?.stopSequence != null) {
-            check(schedule.stopSequence == prediction.stopSequence)
-        }
-        prediction?.stopSequence ?: schedule?.stopSequence
+        // don’t check that they match since cancelled trip predictions may include extra stops
+        schedule?.stopSequence ?: prediction?.stopSequence
     }
 
     val headsign: String
@@ -146,49 +142,6 @@ constructor(
     }
 
     internal companion object {
-        fun <Key> tripsMappedBy(
-            stops: Map<String, Stop>,
-            schedules: ScheduleResponse?,
-            predictions: PredictionsStreamDataResponse?,
-            scheduleKey: (Schedule, ScheduleResponse) -> Key?,
-            predictionKey: (Prediction, PredictionsStreamDataResponse) -> Key?,
-            filterAtTime: EasternTimeInstant,
-        ): Map<Key, List<UpcomingTrip>>? {
-
-            val schedulesMap =
-                schedules?.let { scheduleData ->
-                    scheduleData.schedules.groupBy { schedule ->
-                        scheduleKey(schedule, scheduleData)
-                    }
-                }
-            val predictionsMap =
-                predictions?.let { predictionData ->
-                    predictionData.predictions.values.groupBy { prediction ->
-                        predictionKey(prediction, predictionData)
-                    }
-                }
-            return if (schedulesMap != null || predictionsMap != null) {
-                val trips = schedules?.trips.orEmpty() + predictions?.trips.orEmpty()
-                val upcomingTripKeys =
-                    schedulesMap?.keys.orEmpty().filterNotNull() +
-                        predictionsMap?.keys.orEmpty().filterNotNull()
-                upcomingTripKeys.associateWith { upcomingTripKey ->
-                    val schedulesHere = schedulesMap?.get(upcomingTripKey)
-                    val predictionsHere = predictionsMap?.get(upcomingTripKey)
-                    tripsFromData(
-                        stops,
-                        schedulesHere.orEmpty(),
-                        predictionsHere.orEmpty(),
-                        trips,
-                        predictions?.vehicles.orEmpty(),
-                        filterAtTime,
-                    )
-                }
-            } else {
-                null
-            }
-        }
-
         /**
          * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
          * [vehicles]. Matches by trip ID, parent stop ID, and stop sequence.
@@ -221,10 +174,32 @@ constructor(
                     stops.resolveParentId(prediction.stopId),
                     prediction.stopSequence,
                 )
+
+                fun dropStopSequenceIfCancelled(cancelledTrips: Set<String>): UpcomingTripKey =
+                    if (tripId in cancelledTrips) this.copy(stopSequence = null) else this
             }
 
-            val schedulesMap = schedules.associateBy { UpcomingTripKey(it) }
-            val predictionsMap = predictions.associateBy { UpcomingTripKey(it) }
+            // apparently, one of the differences between Skipped and Cancelled is that Cancelled
+            // only ever applies to the entire trip. predictions for cancelled bus trips sometimes
+            // have bad stop sequence values for reasons, so we want to ignore the stop sequence for
+            // trips with cancelled predictions
+            val cancelledTrips =
+                predictions
+                    .mapNotNull { prediction ->
+                        prediction.tripId.takeIf {
+                            prediction.scheduleRelationship ==
+                                Prediction.ScheduleRelationship.Cancelled
+                        }
+                    }
+                    .toSet()
+            val schedulesMap =
+                schedules.associateBy {
+                    UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
+                }
+            val predictionsMap =
+                predictions.associateBy {
+                    UpcomingTripKey(it).dropStopSequenceIfCancelled(cancelledTrips)
+                }
 
             val keys = schedulesMap.keys + predictionsMap.keys
 

@@ -1,11 +1,12 @@
 import FirebaseAnalytics
 import FirebaseCore
+import FirebaseMessaging
 import os
 import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
-class AppDelegate: NSObject, UIApplicationDelegate {
+class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     func application(
         _: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -16,7 +17,33 @@ class AppDelegate: NSObject, UIApplicationDelegate {
         #endif
         FirebaseApp.configure()
 
+        UNUserNotificationCenter.current().delegate = self
+
+        Messaging.messaging().delegate = self
+
         return true
+    }
+
+    func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+
+    func application(_: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        return .noData
+    }
+
+    func userNotificationCenter(_: UNUserNotificationCenter,
+                                willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+        let userInfo = notification.request.content.userInfo
+        Messaging.messaging().appDidReceiveMessage(userInfo)
+        return [[.banner, .list, .sound]]
+    }
+
+    func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+        let userInfo = response.notification.request.content.userInfo
+        Messaging.messaging().appDidReceiveMessage(userInfo)
     }
 }
 
