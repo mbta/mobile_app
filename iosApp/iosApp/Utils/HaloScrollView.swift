@@ -21,16 +21,19 @@ struct HaloScrollView<Content>: View where Content: View {
 
     var haloColor: Color
     var haloHeight: CGFloat
+    var alwaysShowHalo: Bool
 
     init(
         _ axes: Axis.Set = .vertical,
         haloColor: Color = .halo,
         haloHeight: CGFloat = 2,
+        alwaysShowHalo: Bool = false,
         @ViewBuilder content: () -> Content
     ) {
         self.axes = axes
         self.haloColor = haloColor
         self.haloHeight = haloHeight
+        self.alwaysShowHalo = alwaysShowHalo
         self.content = content()
     }
 
@@ -63,7 +66,7 @@ struct HaloScrollView<Content>: View where Content: View {
                     }
                 }
             }
-            if haloVisible {
+            if haloVisible || alwaysShowHalo {
                 HaloSeparator(height: haloHeight, haloColor: haloColor).transition(.opacity)
             }
         }

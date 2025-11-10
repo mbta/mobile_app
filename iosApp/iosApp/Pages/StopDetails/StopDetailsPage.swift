@@ -87,7 +87,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
-            .favorites($favorites, awaitingUpdate: $loadingFavorites)
+            .favorites($favorites)
             .global($global, errorKey: "StopDetailsPage")
             .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)

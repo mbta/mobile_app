@@ -11,22 +11,20 @@ import Foundation
 import Shared
 import SwiftUI
 
-enum SaveFavoritesContext {
-    case favorites
-    case stopDetails
-}
-
 struct SaveFavoritesFlow: View {
     let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
-    let context: SaveFavoritesContext
+    let context: EditFavoritesContext
     let global: GlobalResponse?
     let isFavorite: (RouteStopDirection) -> Bool
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     let onClose: () -> Void
+    let pushNavEntry: (SheetNavigationStackEntry) -> Void
     let toastVM: IToastViewModel
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var selectedDirectionIsAvailableAtStop: Bool { directions.contains(where: { $0.id == selectedDirection }) }
 
@@ -41,10 +39,11 @@ struct SaveFavoritesFlow: View {
 
     init(
         lineOrRoute: LineOrRoute, stop: Stop, directions: [Direction], selectedDirection: Int32,
-        context: SaveFavoritesContext, global: GlobalResponse?,
+        context: EditFavoritesContext, global: GlobalResponse?,
         isFavorite: @escaping (RouteStopDirection) -> Bool,
         updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         onClose: @escaping () -> Void,
+        pushNavEntry: @escaping (SheetNavigationStackEntry) -> Void,
         toastVM: IToastViewModel = ViewModelDI().toast
     ) {
         self.lineOrRoute = lineOrRoute
@@ -56,6 +55,7 @@ struct SaveFavoritesFlow: View {
         self.isFavorite = isFavorite
         self.updateFavorites = updateFavorites
         self.onClose = onClose
+        self.pushNavEntry = pushNavEntry
         self.toastVM = toastVM
     }
 
@@ -133,15 +133,28 @@ struct SaveFavoritesFlow: View {
         }
     }
 
+    func openSaveModal() {
+        pushNavEntry(
+            .saveFavorite(
+                routeId: lineOrRoute.id,
+                stopId: stop.id,
+                selectedDirection: selectedDirection,
+                context: context
+            )
+        )
+        onClose()
+    }
+
     var body: some View {
         // Save automatically without confirmation modal
         VStack(spacing: 0) {
-            if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
+            if settingsCache.get(.notifications) {
+                VStack {}.onAppear { openSaveModal() }
+            } else if isUnFavoriting || isBusOneDirection, selectedDirectionIsAvailableAtStop {
                 VStack {}
                     .onAppear {
                         let rsd = RouteStopDirection(route: lineOrRoute.id, stop: stop.id, direction: selectedDirection)
                         updateAndToast([rsd: isFavorite(rsd) ? nil : .init()])
-
                         onClose()
                     }
             } else {
@@ -152,7 +165,9 @@ struct SaveFavoritesFlow: View {
                     selectedDirection: selectedDirection,
                     context: context,
                     proposedFavorites: proposedFavorites(),
-                    updateFavorites: updateAndToast, onClose: onClose
+                    updateFavorites: updateAndToast,
+                    onClose: onClose,
+                    openSaveModal: openSaveModal,
                 )
             }
         }.onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -164,13 +179,16 @@ struct FavoriteConfirmationDialog: View {
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
-    let context: SaveFavoritesContext
+    let context: EditFavoritesContext
     let proposedFavorites: [Int32: FavoriteSettings?]
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     let onClose: () -> Void
+    let openSaveModal: () -> Void
 
     @State var showDialog = false
     @State var favoritesToSave: [Direction: FavoriteSettings?] = [:]
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         VStack {}
@@ -221,12 +239,12 @@ struct FavoriteConfirmationDialogContents: View {
     let stop: Stop
     let directions: [Direction]
     let selectedDirection: Int32
-    let context: SaveFavoritesContext
+    let context: EditFavoritesContext
     let favoritesToSave: [Direction: FavoriteSettings?]
     let updateLocalFavorite: (Direction, FavoriteSettings?) -> Void
 
     var body: some View {
-        let headerText = if context == SaveFavoritesContext.favorites {
+        let headerText = if context == .favorites {
             String(format: NSLocalizedString("Add **%1$@** at **%2$@**",
                                              comment: """
                                              Title for a confirmation modal when a user adds a favorite route + stop \
