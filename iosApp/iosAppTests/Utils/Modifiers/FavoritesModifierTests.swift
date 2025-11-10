@@ -47,6 +47,8 @@ final class FavoritesModifierTests: XCTestCase {
         let sut = Text("test").favorites(favoritesBinding)
 
         ViewHosting.host(view: sut)
+        let viewModel = ViewModelDI().favorites
+        viewModel.reloadFavorites()
 
         wait(for: [repoExp, setExp], timeout: 1)
     }
