@@ -27,6 +27,7 @@ import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.repositories.MockStopRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
@@ -78,10 +79,10 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -119,10 +120,10 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
         composeTestRule.waitUntilDoesNotExistDefaultTimeout(
@@ -171,10 +172,10 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
         composeTestRule
@@ -211,10 +212,10 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.NearbyTransit,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
         composeTestRule.onNodeWithText("Location Services is off").assertIsDisplayed()
@@ -249,10 +250,10 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -288,10 +289,10 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -327,10 +328,10 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -369,10 +370,10 @@ class HomeMapViewTests {
                 currentNavEntry = SheetRoutes.StopDetails(TestData.getStop("121").id, null, null),
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = mapVM,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
 
@@ -415,10 +416,15 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = {},
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = {},
+                        onClose = null,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                    ),
             )
         }
         composeTestRule.onNodeWithContentDescription("Back").assertIsDisplayed()
@@ -453,10 +459,13 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks =
+                    NavigationCallbacks.empty.copy(
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
+                    ),
             )
         }
         composeTestRule.onNodeWithContentDescription("Back").assertDoesNotExist()
@@ -499,10 +508,10 @@ class HomeMapViewTests {
                 currentNavEntry = null,
                 handleStopNavigation = {},
                 handleVehicleTap = {},
-                handleBack = null,
                 vehiclesData = emptyList(),
                 viewModel = viewModel,
                 configManager,
+                navCallbacks = NavigationCallbacks.empty,
             )
         }
         composeTestRule.onNodeWithTag("Empty map grid").assertIsDisplayed()
