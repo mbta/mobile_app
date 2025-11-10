@@ -69,6 +69,7 @@ import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.routes.SheetRoutes
+import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.State
@@ -86,10 +87,10 @@ fun HomeMapView(
     currentNavEntry: SheetRoutes?,
     handleStopNavigation: (String) -> Unit,
     handleVehicleTap: (Vehicle) -> Unit,
-    handleBack: (() -> Unit)?,
     vehiclesData: List<Vehicle>,
     viewModel: IMapViewModel,
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
+    navCallbacks: NavigationCallbacks,
 ) {
     val globalData = getGlobalData("HomeMapView")
     val state by viewModel.models.collectAsState()
@@ -392,7 +393,10 @@ fun HomeMapView(
                 }
             }
 
-            if (handleBack != null) {
+            if (
+                navCallbacks.backButtonPresentation ==
+                    NavigationCallbacks.BackButtonPresentation.Floating
+            ) {
                 RecenterButton(
                     painterResource(R.drawable.fa_chevron_left),
                     stringResource(R.string.back_button_label),
@@ -402,7 +406,7 @@ fun HomeMapView(
                             .statusBarsPadding()
                             .padding(horizontal = 16.dp)
                             .testTag("backButton"),
-                    onClick = { handleBack() },
+                    onClick = { navCallbacks.onBack?.let { it() } },
                 )
             }
 

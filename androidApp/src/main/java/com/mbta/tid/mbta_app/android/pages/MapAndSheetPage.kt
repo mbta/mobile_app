@@ -338,7 +338,8 @@ fun MapAndSheetPage(
             backButtonPresentation =
                 if (
                     nearbyTransit.scaffoldState.bottomSheetState.currentValue == SheetValue.Large ||
-                        hideMaps
+                        hideMaps ||
+                        currentNavEntry?.hasFloatingBackButton != true
                 )
                     NavigationCallbacks.BackButtonPresentation.Header
                 else NavigationCallbacks.BackButtonPresentation.Floating,
@@ -574,10 +575,7 @@ fun MapAndSheetPage(
             EditFavoritesPage(
                 global = nearbyTransit.globalResponse,
                 favoritesViewModel = favoritesViewModel,
-                navCallbacks =
-                    navCallbacks.copy(
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
-                    ),
+                navCallbacks = navCallbacks,
                 openModalWithCloseCallback = ::openModalWithCloseCallback,
             )
         }
@@ -663,9 +661,7 @@ fun MapAndSheetPage(
                 },
                 onOpenRouteDetails = ::handlePickRouteNavigation,
                 onRouteSearchExpandedChange = ::handleRouteSearchExpandedChange,
-                navCallbacks.copy(
-                    backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
-                ),
+                navCallbacks,
                 errorBannerViewModel = errorBannerViewModel,
             )
         }
@@ -689,10 +685,7 @@ fun MapAndSheetPage(
                 selectionId = navRoute.routeId,
                 context = navRoute.context,
                 onOpenStopDetails = ::handleStopNavigation,
-                navCallbacks =
-                    navCallbacks.copy(
-                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Header
-                    ),
+                navCallbacks = navCallbacks,
                 openModal = ::openModal,
                 errorBannerViewModel = errorBannerViewModel,
             )
@@ -900,16 +893,10 @@ fun MapAndSheetPage(
                         currentNavEntry = currentNavEntry,
                         handleStopNavigation = ::handleStopNavigation,
                         handleVehicleTap = { handleVehicleTap(it) },
-                        handleBack =
-                            if (
-                                currentNavEntry is SheetRoutes.StopDetails ||
-                                    currentNavEntry is SheetRoutes.TripDetails
-                            ) {
-                                { navController.popBackStack() }
-                            } else null,
                         vehiclesData = vehiclesData,
                         viewModel = mapViewModel,
                         mapboxConfigManager = mapboxConfigManager,
+                        navCallbacks = navCallbacks,
                     )
                 }
             }

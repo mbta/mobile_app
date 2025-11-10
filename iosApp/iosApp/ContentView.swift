@@ -183,7 +183,7 @@ struct ContentView: View {
                         if !searchObserver.isSearching {
                             HStack(alignment: .top) {
                                 VStack(alignment: .leading) {
-                                    if nearbyVM.navigationStack.hasFloatingBackButton() {
+                                    if navCallbacks.backButtonPresentation == .floating {
                                         RecenterButton(
                                             icon: .faChevronLeft,
                                             label: Text("Back", comment: "VoiceOver label for a generic back button"),
@@ -246,11 +246,7 @@ struct ContentView: View {
                                 stopFilter: nil,
                                 tripFilter: nil
                             )) },
-                            navCallbacks: navCallbacks.doCopy(
-                                onBack: navCallbacks.onBack,
-                                onClose: navCallbacks.onClose,
-                                backButtonPresentation: .header
-                            ),
+                            navCallbacks: navCallbacks,
                             errorBannerVM: errorBannerVM
                         )
                         .toolbar(.hidden, for: .tabBar)
@@ -281,11 +277,7 @@ struct ContentView: View {
                                     )
                                 }
                             },
-                            navCallbacks: navCallbacks.doCopy(
-                                onBack: navCallbacks.onBack,
-                                onClose: navCallbacks.onClose,
-                                backButtonPresentation: .header
-                            )
+                            navCallbacks: navCallbacks
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -618,7 +610,8 @@ struct ContentView: View {
         .init(
             onBack: { nearbyVM.goBack() },
             onClose: { nearbyVM.popToEntrypoint() },
-            backButtonPresentation: selectedDetent == .almostFull || hideMaps ? .header : .floating
+            backButtonPresentation: selectedDetent == .almostFull || hideMaps ||
+                !nearbyVM.navigationStack.hasFloatingBackButton() ? .header : .floating
         )
     }
 
