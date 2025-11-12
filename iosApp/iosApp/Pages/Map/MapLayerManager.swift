@@ -13,7 +13,7 @@ import SwiftUI
 
 protocol IMapLayerManager {
     var currentScheme: ColorScheme? { get }
-    func addIcons(recreate: Bool)
+    func addIcons(recreate: Bool) async
     func addLayers(
         routes: [MapFriendlyRouteResponse.RouteWithSegmentedShapes],
         state: StopLayerGenerator.State,
@@ -53,14 +53,16 @@ class MapLayerManager: iosApp.IMapLayerManager {
     var currentScheme: ColorScheme?
     let map: MapboxMap
 
-    private static let bufferLayerId = "empty-layer-between-routes-and-stops"
+    private let puckAnchorLayerId = "puck-anchor-layer"
+    private let routeAnchorLayerId = "route-anchor-layer"
+    private let stopAnchorLayerId = "stop-anchor-layer"
 
     init(map: MapboxMap) {
         self.map = map
-        addIcons()
     }
 
-    func addIcons(recreate: Bool = false) {
+    @MainActor
+    func addIcons(recreate: Bool = false) async {
         for iconId in StopIcons.shared.all + AlertIcons.shared.all {
             Task {
                 guard let image = UIImage(named: iconId) else { throw MapImageError() }
@@ -92,6 +94,19 @@ class MapLayerManager: iosApp.IMapLayerManager {
                 Logger().error("Failed to add source \(source.id)\n\(error)")
             }
         }
+    }
+
+    @MainActor
+    func setUpAnchorLayers() async throws {
+        if map.layerExists(withId: puckAnchorLayerId) ||
+            map.layerExists(withId: stopAnchorLayerId) ||
+            map.layerExists(withId: routeAnchorLayerId) { return }
+        let puckAnchorLayer = SlotLayer(id: puckAnchorLayerId)
+        let stopAnchorLayer = SlotLayer(id: stopAnchorLayerId)
+        let routeAnchorLayer = SlotLayer(id: routeAnchorLayerId)
+        try map.addPersistentLayer(puckAnchorLayer)
+        try map.addPersistentLayer(stopAnchorLayer, layerPosition: .below(puckAnchorLayerId))
+        try map.addPersistentLayer(routeAnchorLayer, layerPosition: .below(stopAnchorLayerId))
     }
 
     /*
@@ -128,14 +143,6 @@ class MapLayerManager: iosApp.IMapLayerManager {
         routeLayers: [MapboxMaps.Layer],
         stopLayers: [MapboxMaps.Layer]
     ) {
-        if !map.layerExists(withId: Self.bufferLayerId) {
-            let layer = SlotLayer(id: Self.bufferLayerId)
-            if map.layerExists(withId: "puck") {
-                try? map.addPersistentLayer(layer, layerPosition: .below("puck"))
-            } else {
-                try? map.addPersistentLayer(layer)
-            }
-        }
         var oldLayers = Set(map.allLayerIdentifiers.map(\.id))
         for layer in routeLayers {
             do {
@@ -143,8 +150,7 @@ class MapLayerManager: iosApp.IMapLayerManager {
                 if map.layerExists(withId: layer.id) {
                     try map.removeLayer(withId: layer.id)
                 }
-
-                try map.addPersistentLayer(layer, layerPosition: .below(Self.bufferLayerId))
+                try map.addPersistentLayer(layer, layerPosition: .below(routeAnchorLayerId))
             } catch {
                 Logger().error("Failed to add layer \(layer.id)\n\(error)")
             }
@@ -156,11 +162,7 @@ class MapLayerManager: iosApp.IMapLayerManager {
                     try map.removeLayer(withId: layer.id)
                 }
 
-                if map.layerExists(withId: "puck") {
-                    try map.addPersistentLayer(layer, layerPosition: .below("puck"))
-                } else {
-                    try map.addPersistentLayer(layer)
-                }
+                try map.addPersistentLayer(layer, layerPosition: .below(stopAnchorLayerId))
             } catch {
                 Logger().error("Failed to add layer \(layer.id)\n\(error)")
             }
@@ -184,7 +186,7 @@ class MapLayerManager: iosApp.IMapLayerManager {
     func resetPuckPosition() {
         do {
             if map.layerExists(withId: "puck") {
-                try map.moveLayer(withId: "puck", to: .default)
+                try map.moveLayer(withId: "puck", to: .below(puckAnchorLayerId))
             }
         } catch {
             Logger().error("Failed to set puck as top layer")
