@@ -51,7 +51,7 @@ internal class FavoritesRepository : IFavoritesRepository, KoinComponent {
         val favorites =
             jsonPersistence.read<Favorites>(SystemPaths.Category.Data, null, favoritesKey.name)
         if (favorites != null) {
-            println("~~~ repo get")
+            //            println("~~~ repo get")
             _state.value = favorites
             return favorites
         }
@@ -62,7 +62,7 @@ internal class FavoritesRepository : IFavoritesRepository, KoinComponent {
     }
 
     override suspend fun setFavorites(favorites: Favorites) {
-        println("~~~ repo set")
+        //        println("~~~ repo set")
         _state.value = favorites
 
         jsonPersistence.write(SystemPaths.Category.Data, null, favoritesKey.name, favorites)

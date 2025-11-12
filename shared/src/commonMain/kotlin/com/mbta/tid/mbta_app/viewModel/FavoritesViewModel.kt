@@ -147,10 +147,10 @@ public class FavoritesViewModel(
         }
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
-            println("~~~ handle VM event ${event::class.simpleName}")
+            //            println("~~~ handle VM event ${event::class.simpleName}")
             when (event) {
                 Event.ReloadFavorites -> {
-                    println("~~~ VM reload")
+                    //                    println("~~~ VM reload")
                     favorites = favoritesUsecases.getRouteStopDirectionFavorites()
                 }
 
@@ -161,7 +161,7 @@ public class FavoritesViewModel(
                     }
                 }
                 is Event.UpdateFavorites -> {
-                    println("~~~ VM update")
+                    //                    println("~~~ VM update")
                     favoritesUsecases.updateRouteStopDirections(
                         event.updatedFavorites,
                         event.context,
@@ -275,7 +275,7 @@ public class FavoritesViewModel(
         fcmToken: String?,
         includeAccessibility: Boolean,
     ) {
-        println("~~~ fire Event.UpdateFavorites")
+        //        println("~~~ fire Event.UpdateFavorites")
         fireEvent(
             Event.UpdateFavorites(
                 updatedFavorites,

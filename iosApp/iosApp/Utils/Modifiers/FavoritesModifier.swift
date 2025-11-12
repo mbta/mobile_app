@@ -16,7 +16,7 @@ struct FavoritesModifier: ViewModifier {
     @MainActor
     func activateListener() async {
         for await state in favoritesRepo.state {
-            print("~~~ modifier update from repo state")
+//            print("~~~ modifier update from repo state")
             favorites = if let nextFavorites = state {
                 nextFavorites
             } else {
@@ -27,7 +27,7 @@ struct FavoritesModifier: ViewModifier {
 
     func loadFavorites() {
         Task(priority: .high) {
-            print("~~~ modifier activate")
+//            print("~~~ modifier activate")
             await activateListener()
         }
         Task {

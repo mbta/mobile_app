@@ -82,7 +82,7 @@ struct SaveFavoritePage: View {
     }
 
     func updateCloseAndToast(_ update: [RouteStopDirection: FavoriteSettings?]) {
-        print("~~~ update SaveFavoritePage.updateCloseAndToast call")
+//        print("~~~ update SaveFavoritePage.updateCloseAndToast call")
         updateFavorites(update)
 
         let favorited = update.filter { $0.value != nil }
@@ -183,7 +183,7 @@ struct SaveFavoritePage: View {
                 Spacer()
                 NavTextButton(string: "Save", backgroundColor: Color.key, textColor: Color.fill3) {
                     Task(priority: .high) {
-                        print("~~~ update tap Save button")
+//                        print("~~~ update tap Save button")
                         updateCloseAndToast(Dictionary(uniqueKeysWithValues: favoritesToSave.map { direction, setting in
                             (RouteStopDirection(route: routeId, stop: stopId, direction: direction.id), setting)
                         }))

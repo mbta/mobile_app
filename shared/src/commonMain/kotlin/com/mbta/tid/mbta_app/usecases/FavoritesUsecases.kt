@@ -50,7 +50,7 @@ public class FavoritesUsecases(
         fcmToken: String?,
         includeAccessibility: Boolean,
     ) {
-        println("~~~ usecase update")
+        //        println("~~~ usecase update")
         val storedFavorites = repository.state.value ?: Favorites(emptyMap())
         val currentFavorites = storedFavorites.routeStopDirection.toMutableMap()
 

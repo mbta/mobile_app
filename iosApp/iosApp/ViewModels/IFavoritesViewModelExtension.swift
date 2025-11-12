@@ -14,7 +14,7 @@ extension IFavoritesViewModel {
         context: EditFavoritesContext,
         defaultDirection: Int32,
     ) {
-        print("~~~ update in VM extension")
+//        print("~~~ update in VM extension")
         __updateFavorites(
             updatedFavorites: updatedFavorites,
             context: context,
