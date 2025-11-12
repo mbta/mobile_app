@@ -9,33 +9,30 @@
 import Shared
 import SwiftUI
 
-class LoadedFavorites {
-    static var last = Favorites(routeStopDirection: [:])
-}
-
 struct FavoritesModifier: ViewModifier {
-    @State var favoritesVM = ViewModelDI().favorites
+    @State var favoritesRepo = RepositoryDI().favorites
     @Binding var favorites: Favorites
 
     @MainActor
     func activateListener() async {
-        for await state in favoritesVM.models {
-            favorites = if let nextFavorites = state.favorites {
-                Favorites(routeStopDirection: nextFavorites)
+        for await state in favoritesRepo.state {
+            print("~~~ modifier update from repo state")
+            favorites = if let nextFavorites = state {
+                nextFavorites
             } else {
                 Favorites(routeStopDirection: [:])
             }
-            LoadedFavorites.last = favorites
         }
     }
 
     func loadFavorites() {
-        favorites = LoadedFavorites.last
         Task(priority: .high) {
+            print("~~~ modifier activate")
             await activateListener()
         }
         Task {
-            favoritesVM.reloadFavorites()
+//            print("~~~ modifier get")
+//            try? await favoritesRepo.getFavorites()
         }
     }
 

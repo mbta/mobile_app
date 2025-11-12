@@ -100,6 +100,6 @@ public fun repositoriesModule(repositories: IRepositories): Module {
         single { ConfigUseCase(get(), get()) }
         single<IFeaturePromoUseCase> { FeaturePromoUseCase(get(), get()) }
         single { VisitHistoryUsecase(get()) }
-        single { FavoritesUsecases(get(), get(), get()) }
+        single { FavoritesUsecases(get(), get(), get(named("coroutineDispatcherIO")), get()) }
     }
 }

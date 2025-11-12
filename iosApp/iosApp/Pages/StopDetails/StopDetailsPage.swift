@@ -23,7 +23,7 @@ struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
     var navCallbacks: NavigationCallbacks
 
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites = .init(routeStopDirection: [:])
     @State var global: GlobalResponse?
     @State var loadingFavorites = true
     @State var now = Date.now

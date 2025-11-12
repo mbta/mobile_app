@@ -200,7 +200,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     let favoritesVM: IFavoritesViewModel
     let toastVM: IToastViewModel
 
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites = .init(routeStopDirection: [:])
 
     @State var showFavoritesStopConfirmation: Stop? = nil
     @State var showFirstTimeFavoritesToast: Bool? = nil

@@ -608,6 +608,7 @@ struct ContentView: View {
                     selectedDirection: selectedDirection,
                     context: context,
                     updateFavorites: { favorites in
+                        print("~~~ update in ContentView")
                         favoritesVM.updateFavorites(
                             updatedFavorites: favorites,
                             context: context,

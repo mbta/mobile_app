@@ -19,7 +19,7 @@ struct NearbyTransitView: View {
     var schedulesRepository = RepositoryDI().schedules
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites = .init(routeStopDirection: [:])
     @State var globalData: GlobalResponse?
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var scheduleResponse: ScheduleResponse?
