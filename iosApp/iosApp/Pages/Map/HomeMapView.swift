@@ -211,17 +211,17 @@ struct HomeMapView: View {
 
 struct ProxyModifiedMap: View {
     var mapContent: AnyView
-    var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) -> Void
+    var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) async throws -> Void
     var handleAccessTokenLoaded: (_ map: MapboxMap?) -> Void
 
     var body: some View {
         MapReader { proxy in
             mapContent
-                .onAppear {
-                    handleAppear(proxy.location, proxy.map)
-                }
                 .onChange(of: MapboxOptions.accessToken) { _ in
                     handleAccessTokenLoaded(proxy.map)
+                }
+                .task {
+                    try? await handleAppear(proxy.location, proxy.map)
                 }
         }
     }

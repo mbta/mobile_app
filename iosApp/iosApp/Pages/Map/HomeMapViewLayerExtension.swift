@@ -14,17 +14,21 @@ import SwiftUI
  Functions for manipulating the layers displayed on the map.
  */
 extension HomeMapView {
-    func handleTryLayerInit(map: MapboxMap?) {
+    @MainActor
+    func handleTryLayerInit(map: MapboxMap?) async throws {
         guard let map else { return }
-        handleLayerInit(map)
+        try await handleLayerInit(map)
     }
 
     func handleAccessTokenLoaded(_ map: MapboxMap?) {
         map?.mapStyle = .init(uri: appVariant.styleUri(colorScheme: colorScheme))
     }
 
-    func handleLayerInit(_ map: MapboxMap) {
+    @MainActor
+    func handleLayerInit(_ map: MapboxMap) async throws {
         let layerManager = MapLayerManager(map: map)
+        await layerManager.addIcons()
+        try await layerManager.setUpAnchorLayers()
         mapVM.layerManagerInitialized(layerManager: layerManager)
     }
 }

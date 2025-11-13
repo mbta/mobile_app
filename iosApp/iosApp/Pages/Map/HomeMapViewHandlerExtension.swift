@@ -15,8 +15,9 @@ import SwiftUI
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
  */
 extension HomeMapView {
-    func handleAppear(location: LocationManager?, map: MapboxMap?) {
-        handleTryLayerInit(map: map)
+    @MainActor
+    func handleAppear(location: LocationManager?, map: MapboxMap?) async throws {
+        try await handleTryLayerInit(map: map)
 
         // Set MapBox to use the current location to display puck
         location?.override(locationProvider: locationDataManager.$currentLocation.map {
