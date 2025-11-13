@@ -6,18 +6,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
+import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -31,9 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -65,8 +65,6 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
-import com.mbta.tid.mbta_app.android.util.modifiers.DragDirection
-import com.mbta.tid.mbta_app.android.util.modifiers.dragAction
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -261,8 +259,6 @@ private fun FavoriteDepartures(
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
-    val localDensity = LocalDensity.current
-    var dragWidth by remember { mutableStateOf(64.dp) }
 
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
@@ -271,20 +267,27 @@ private fun FavoriteDepartures(
             val overriddenClickLabel = stringResource(R.string.delete)
             val visible = !removedFavorites.contains(leaf.routeStopDirection)
             AnimatedVisibility(visible = visible) {
-                Box(
-                    Modifier.background(colorResource(R.color.delete)),
-                    contentAlignment = Alignment.CenterEnd,
-                ) {
-                    Row(
-                        modifier = Modifier.height(IntrinsicSize.Max).width(IntrinsicSize.Min),
-                        horizontalArrangement = Arrangement.End,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
+                // frustratingly, if we retain the same state after an undo, we’ll just delete the
+                // favorite again, so we need a fresh state if this was hidden and then shown again.
+                // conveniently, this is as easy as remembering non-saveable
+                val positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
+                val swipeToDismissBoxState = remember {
+                    SwipeToDismissBoxState(SwipeToDismissBoxValue.Settled, positionalThreshold)
+                }
+
+                SwipeToDismissBox(
+                    state = swipeToDismissBoxState,
+                    backgroundContent = {
+                        if (
+                            swipeToDismissBoxState.dismissDirection ==
+                                SwipeToDismissBoxValue.EndToStart
+                        ) {
+                            Spacer(Modifier.weight(1f))
+                        }
                         Column(
-                            Modifier.onGloballyPositioned { coordinates ->
-                                    dragWidth = with(localDensity) { coordinates.size.width.toDp() }
-                                }
-                                .padding(8.dp),
+                            Modifier.padding(8.dp)
+                                .align(Alignment.CenterVertically)
+                                .clearAndSetSemantics {},
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Icon(
@@ -299,8 +302,10 @@ private fun FavoriteDepartures(
                                 style = Typography.footnote,
                             )
                         }
-                    }
-
+                    },
+                    Modifier.background(colorResource(R.color.delete)),
+                    onDismiss = { onDrag(leaf) },
+                ) {
                     @Composable
                     fun rightContent() {
                         if (notificationsFlag) {
@@ -311,70 +316,59 @@ private fun FavoriteDepartures(
                         }
                     }
 
-                    androidx.compose.runtime.key(leaf.routeStopDirection) {
-                        Row(
-                            modifier =
-                                Modifier.dragAction(
-                                        DragDirection.LEFT,
-                                        dragWidth,
-                                        notificationsFlag,
-                                        { onDrag(leaf) },
-                                    )
-                                    .background(colorResource(R.color.fill3))
-                                    .fillMaxHeight()
-                                    .padding(vertical = 10.dp, horizontal = 16.dp)
-                                    .semantics(mergeDescendants = true) {
-                                        role = Role.Button
-                                        onClick(overriddenClickLabel) {
-                                            onClick(leaf)
-                                            true
-                                        }
+                    Row(
+                        modifier =
+                            Modifier.background(colorResource(R.color.fill3))
+                                .fillMaxHeight()
+                                .padding(vertical = 10.dp, horizontal = 16.dp)
+                                .semantics(mergeDescendants = true) {
+                                    role = Role.Button
+                                    onClick(overriddenClickLabel) {
+                                        onClick(leaf)
+                                        true
                                     }
-                        ) {
-                            when (formatted) {
-                                is LeafFormat.Single -> {
+                                }
+                    ) {
+                        when (formatted) {
+                            is LeafFormat.Single -> {
+                                Column(
+                                    horizontalAlignment = Alignment.Start,
+                                    verticalArrangement =
+                                        Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                                ) {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.semantics {},
+                                    ) {
+                                        DirectionLabel(
+                                            direction,
+                                            pillDecoration =
+                                                formatted.route?.let {
+                                                    PillDecoration.OnDirectionDestination(it)
+                                                },
+                                            modifier = Modifier.weight(1f),
+                                        )
+                                        rightContent()
+                                    }
+                                }
+                            }
+
+                            is LeafFormat.Branched -> {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
                                     Column(
                                         horizontalAlignment = Alignment.Start,
                                         verticalArrangement =
                                             Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
+                                        modifier = Modifier.weight(1f),
                                     ) {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.SpaceBetween,
-                                            modifier = Modifier.semantics {},
-                                        ) {
-                                            DirectionLabel(
-                                                direction,
-                                                pillDecoration =
-                                                    formatted.route?.let {
-                                                        PillDecoration.OnDirectionDestination(it)
-                                                    },
-                                                modifier = Modifier.weight(1f),
-                                            )
-                                            rightContent()
-                                        }
+                                        DirectionLabel(direction, showDestination = false)
+                                        BranchRows(formatted)
                                     }
-                                }
-
-                                is LeafFormat.Branched -> {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.SpaceBetween,
-                                    ) {
-                                        Column(
-                                            horizontalAlignment = Alignment.Start,
-                                            verticalArrangement =
-                                                Arrangement.spacedBy(
-                                                    6.dp,
-                                                    Alignment.CenterVertically,
-                                                ),
-                                            modifier = Modifier.weight(1f),
-                                        ) {
-                                            DirectionLabel(direction, showDestination = false)
-                                            BranchRows(formatted)
-                                        }
-                                        rightContent()
-                                    }
+                                    rightContent()
                                 }
                             }
                         }
