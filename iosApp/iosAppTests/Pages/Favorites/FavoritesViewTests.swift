@@ -49,6 +49,7 @@ final class FavoritesViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
+                        subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .favorites
                     )],
@@ -71,6 +72,7 @@ final class FavoritesViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: false,
+                        subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .favorites
                     )],
@@ -135,6 +137,7 @@ final class FavoritesViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
+                        subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .favorites
                     )],
@@ -157,6 +160,7 @@ final class FavoritesViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: false,
+                        subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .favorites
                     )],

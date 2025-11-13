@@ -223,6 +223,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
                                 alertsDownstream = emptyList(),
                                 context = context,
                             )
@@ -252,6 +253,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
                                 alertsDownstream = emptyList(),
                                 context = context,
                             ),
@@ -265,6 +267,7 @@ private fun StopDetailsRoutesViewPreview() {
                                 alertsHere = emptyList(),
                                 allDataLoaded = true,
                                 hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
                                 alertsDownstream = emptyList(),
                                 context = context,
                             ),

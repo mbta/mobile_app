@@ -135,6 +135,7 @@ public abstract class Analytics {
             }
         val noTrips =
             when (noTrips) {
+                is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning -> "subway early AM"
                 UpcomingFormat.NoTripsFormat.NoSchedulesToday -> "no service today"
                 UpcomingFormat.NoTripsFormat.PredictionsUnavailable -> "predictions unavailable"
                 UpcomingFormat.NoTripsFormat.ServiceEndedToday -> "service ended"

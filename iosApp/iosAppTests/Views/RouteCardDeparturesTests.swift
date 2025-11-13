@@ -34,7 +34,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                 lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: .nearbyTransit
             )]
         )
@@ -78,7 +78,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                 lineOrRoute: .route(route), stop: stop,
                 directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                 upcomingTrips: [.init(trip: trip, schedule: schedule)], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: .nearbyTransit
             )]
         )
@@ -215,7 +215,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE0, prediction: predE0),
                     .init(trip: tripC02, prediction: predC02),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [downstreamAlert],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [downstreamAlert],
                 context: context
             ),
             .init(
@@ -230,7 +230,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                     .init(trip: tripE1, prediction: predE1),
                     .init(trip: tripC12, prediction: predC12),
                 ], alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: context
             )]
         )
@@ -298,7 +298,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                 stopIds: [stop.id],
                 upcomingTrips: [trip],
                 alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: context
             )]
         )
@@ -346,7 +346,7 @@ final class RouteCardDeparturesTests: XCTestCase {
                 stopIds: [stop.id],
                 upcomingTrips: [trip],
                 alertsHere: [], allDataLoaded: true,
-                hasSchedulesToday: true, alertsDownstream: [],
+                hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                 context: context
             )]
         )

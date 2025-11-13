@@ -112,6 +112,7 @@ class StopSubheaderTest {
                             listOf(alert),
                             true,
                             true,
+                            null,
                             emptyList(),
                             RouteCardData.Context.StopDetailsUnfiltered,
                         )

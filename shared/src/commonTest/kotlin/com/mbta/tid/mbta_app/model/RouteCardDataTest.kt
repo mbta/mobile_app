@@ -1420,142 +1420,149 @@ class RouteCardDataTest {
         }
 
     @Test
-    fun `ListBuilder addUpcomingTrips sets hasSchedulesToday per leaf`() = runBlocking {
-        val objects = ObjectCollectionBuilder()
+    fun `ListBuilder addUpcomingTrips sets hasSchedulesToday and subwayServiceStartTime per leaf`() =
+        runBlocking {
+            val objects = ObjectCollectionBuilder()
 
-        val stop1 = objects.stop()
-        val stop2 = objects.stop()
-        val stop3 = objects.stop()
+            val stop1 = objects.stop()
+            val stop2 = objects.stop()
+            val stop3 = objects.stop()
 
-        val route = objects.route { type = RouteType.HEAVY_RAIL }
+            val route = objects.route { type = RouteType.HEAVY_RAIL }
 
-        val pattern1 =
-            objects.routePattern(route) {
-                sortOrder = 1
-                representativeTrip { headsign = "Future Schedule" }
-            }
-        val pattern2 =
-            objects.routePattern(route) {
-                sortOrder = 2
-                representativeTrip { headsign = "Past Schedule" }
-            }
-        val pattern3 =
-            objects.routePattern(route) {
-                sortOrder = 3
-                representativeTrip { headsign = "No Schedule" }
-            }
+            val pattern1 =
+                objects.routePattern(route) {
+                    sortOrder = 1
+                    representativeTrip { headsign = "Future Schedule" }
+                }
+            val pattern2 =
+                objects.routePattern(route) {
+                    sortOrder = 2
+                    representativeTrip { headsign = "Past Schedule" }
+                }
+            val pattern3 =
+                objects.routePattern(route) {
+                    sortOrder = 3
+                    representativeTrip { headsign = "No Schedule" }
+                }
 
-        val global =
-            GlobalResponse(
-                objects,
-                patternIdsByStop =
-                    mapOf(
-                        stop1.id to listOf(pattern1.id),
-                        stop2.id to listOf(pattern2.id),
-                        stop3.id to listOf(pattern3.id),
-                    ),
-            )
-        val context = RouteCardData.Context.NearbyTransit
-        val now = EasternTimeInstant.now()
-
-        val futureSchedule =
-            objects.schedule {
-                trip = objects.trip(pattern1)
-                stopId = stop1.id
-                departureTime = now + 2.hours
-            }
-        objects.schedule {
-            trip = objects.trip(pattern2)
-            stopId = stop2.id
-            departureTime = now - 2.hours
-        }
-
-        val lineOrRoute = LineOrRoute.Route(route)
-        assertEquals(
-            mapOf<LineOrRoute.Id, RouteCardData.Builder>(
-                route.id to
-                    RouteCardData.Builder(
-                        lineOrRoute,
+            val global =
+                GlobalResponse(
+                    objects,
+                    patternIdsByStop =
                         mapOf(
-                            stop1.id to
-                                RouteCardData.RouteStopDataBuilder(
-                                    route,
-                                    stop1,
-                                    mapOf(
-                                        0 to
-                                            RouteCardData.LeafBuilder(
-                                                lineOrRoute = lineOrRoute,
-                                                stop = stop1,
-                                                directionId = 0,
-                                                routePatterns = listOf(pattern1),
-                                                stopIds = setOf(stop1.id),
-                                                upcomingTrips =
-                                                    listOf(objects.upcomingTrip(futureSchedule)),
-                                                allDataLoaded = true,
-                                                hasSchedulesTodayByPattern =
-                                                    mapOf(pattern1.id to true),
-                                                context = context,
-                                            )
-                                    ),
-                                    global,
-                                ),
-                            stop2.id to
-                                RouteCardData.RouteStopDataBuilder(
-                                    route,
-                                    stop2,
-                                    mapOf(
-                                        0 to
-                                            RouteCardData.LeafBuilder(
-                                                lineOrRoute = lineOrRoute,
-                                                stop = stop2,
-                                                directionId = 0,
-                                                routePatterns = listOf(pattern2),
-                                                stopIds = setOf(stop2.id),
-                                                upcomingTrips = null,
-                                                allDataLoaded = true,
-                                                hasSchedulesTodayByPattern =
-                                                    mapOf(pattern2.id to true),
-                                                context = context,
-                                            )
-                                    ),
-                                    global,
-                                ),
-                            stop3.id to
-                                RouteCardData.RouteStopDataBuilder(
-                                    route,
-                                    stop3,
-                                    mapOf(
-                                        0 to
-                                            RouteCardData.LeafBuilder(
-                                                lineOrRoute = lineOrRoute,
-                                                stop = stop3,
-                                                directionId = 0,
-                                                routePatterns = listOf(pattern3),
-                                                stopIds = setOf(stop3.id),
-                                                upcomingTrips = null,
-                                                allDataLoaded = true,
-                                                hasSchedulesTodayByPattern =
-                                                    mapOf(pattern3.id to false),
-                                                context = context,
-                                            )
-                                    ),
-                                    global,
-                                ),
+                            stop1.id to listOf(pattern1.id),
+                            stop2.id to listOf(pattern2.id),
+                            stop3.id to listOf(pattern3.id),
                         ),
-                        now,
-                    )
-            ),
-            RouteCardData.ListBuilder(true, context, now)
-                .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global, context, null)
-                .addUpcomingTrips(
-                    ScheduleResponse(objects),
-                    PredictionsStreamDataResponse(objects),
-                    filterAtTime = now,
-                    globalData = global,
                 )
-                .data,
-        )
-    }
+            val context = RouteCardData.Context.NearbyTransit
+            val now = EasternTimeInstant.now()
+
+            val futureSchedule =
+                objects.schedule {
+                    trip = objects.trip(pattern1)
+                    stopId = stop1.id
+                    departureTime = now + 2.hours
+                }
+            val pastSchedule =
+                objects.schedule {
+                    trip = objects.trip(pattern2)
+                    stopId = stop2.id
+                    departureTime = now - 2.hours
+                }
+
+            val lineOrRoute = LineOrRoute.Route(route)
+            assertEquals(
+                mapOf<LineOrRoute.Id, RouteCardData.Builder>(
+                    route.id to
+                        RouteCardData.Builder(
+                            lineOrRoute,
+                            mapOf(
+                                stop1.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route,
+                                        stop1,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute,
+                                                    stop = stop1,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(pattern1),
+                                                    stopIds = setOf(stop1.id),
+                                                    upcomingTrips =
+                                                        listOf(
+                                                            objects.upcomingTrip(futureSchedule)
+                                                        ),
+                                                    allDataLoaded = true,
+                                                    hasSchedulesTodayByPattern =
+                                                        mapOf(pattern1.id to true),
+                                                    subwayServiceStartTime =
+                                                        futureSchedule.stopTime,
+                                                    context = context,
+                                                )
+                                        ),
+                                        global,
+                                    ),
+                                stop2.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route,
+                                        stop2,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute,
+                                                    stop = stop2,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(pattern2),
+                                                    stopIds = setOf(stop2.id),
+                                                    upcomingTrips = null,
+                                                    allDataLoaded = true,
+                                                    hasSchedulesTodayByPattern =
+                                                        mapOf(pattern2.id to true),
+                                                    subwayServiceStartTime = pastSchedule.stopTime,
+                                                    context = context,
+                                                )
+                                        ),
+                                        global,
+                                    ),
+                                stop3.id to
+                                    RouteCardData.RouteStopDataBuilder(
+                                        route,
+                                        stop3,
+                                        mapOf(
+                                            0 to
+                                                RouteCardData.LeafBuilder(
+                                                    lineOrRoute = lineOrRoute,
+                                                    stop = stop3,
+                                                    directionId = 0,
+                                                    routePatterns = listOf(pattern3),
+                                                    stopIds = setOf(stop3.id),
+                                                    upcomingTrips = null,
+                                                    allDataLoaded = true,
+                                                    hasSchedulesTodayByPattern =
+                                                        mapOf(pattern3.id to false),
+                                                    context = context,
+                                                )
+                                        ),
+                                        global,
+                                    ),
+                            ),
+                            now,
+                        )
+                ),
+                RouteCardData.ListBuilder(true, context, now)
+                    .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global, context, null)
+                    .addUpcomingTrips(
+                        ScheduleResponse(objects),
+                        PredictionsStreamDataResponse(objects),
+                        filterAtTime = now,
+                        globalData = global,
+                    )
+                    .data,
+            )
+        }
 
     @Test
     fun `ListBuilder addAlerts filters to relevant routes`() = parametricTest {
@@ -1758,6 +1765,7 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
+                                        subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     )
@@ -1785,6 +1793,7 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
+                                        subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     )
@@ -1867,6 +1876,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -1894,6 +1904,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -2557,6 +2568,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -2669,6 +2681,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -2690,6 +2703,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -2794,6 +2808,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -2906,6 +2921,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -2935,6 +2951,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3100,6 +3117,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3197,6 +3215,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3217,6 +3236,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3395,6 +3415,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = scheduleSoonSchedule.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3428,6 +3449,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -3444,6 +3466,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -3523,6 +3546,7 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
+                                        subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     )
@@ -3622,6 +3646,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -3638,6 +3663,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -3730,6 +3756,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -3799,6 +3826,7 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = false,
                                         hasSchedulesToday = false,
+                                        subwayServiceStartTime = null,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     )
@@ -3885,6 +3913,7 @@ class RouteCardDataTest {
                                         alertsHere = emptyList(),
                                         allDataLoaded = true,
                                         hasSchedulesToday = true,
+                                        subwayServiceStartTime = sched1.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     )
@@ -3955,6 +3984,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = false,
                                             hasSchedulesToday = false,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -4036,6 +4066,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = sched.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -4094,12 +4125,13 @@ class RouteCardDataTest {
 
             val time = EasternTimeInstant(2024, Month.MARCH, 14, 12, 23, 44)
 
-            objects.schedule {
-                trip = trip1
-                stopId = stop.id
-                stopSequence = 90
-                departureTime = time - 2.hours
-            }
+            val pastSchedule =
+                objects.schedule {
+                    trip = trip1
+                    stopId = stop.id
+                    stopSequence = 90
+                    departureTime = time - 2.hours
+                }
 
             val lineOrRoute = LineOrRoute.Route(route)
             val context = RouteCardData.Context.NearbyTransit
@@ -4127,6 +4159,7 @@ class RouteCardDataTest {
                                                 routePatternB.id to false,
                                                 routePatternC.id to false,
                                             ),
+                                        subwayServiceStartTime = pastSchedule.stopTime,
                                         alertsDownstream = emptyList(),
                                         context,
                                     )
@@ -4243,6 +4276,7 @@ class RouteCardDataTest {
                                             routePatternB.id to true,
                                             routePatternC.id to true,
                                         ),
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context,
                                 )
@@ -4379,6 +4413,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -4416,6 +4451,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = sched2.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -4678,6 +4714,7 @@ class RouteCardDataTest {
                                                 routePatternC1.id to true,
                                                 routePatternE1.id to true,
                                             ),
+                                        subwayServiceStartTime = schedB1.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     ),
@@ -4711,6 +4748,7 @@ class RouteCardDataTest {
                                                 routePatternC2.id to true,
                                                 routePatternE2.id to true,
                                             ),
+                                        subwayServiceStartTime = schedB2.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     ),
@@ -4838,6 +4876,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = schedB1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -4857,6 +4896,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = schedB2.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         ),
@@ -4957,6 +4997,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -5229,6 +5270,7 @@ class RouteCardDataTest {
                                                 orangeSouthboundDiversion.id to true,
                                                 orangeSouthboundTypical.id to false,
                                             ),
+                                        subwayServiceStartTime = southboundSchedule.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     ),
@@ -5250,6 +5292,7 @@ class RouteCardDataTest {
                                                 orangeNorthboundDiversion.id to true,
                                                 orangeNorthboundTypical.id to false,
                                             ),
+                                        subwayServiceStartTime = northboundSchedule.stopTime,
                                         alertsDownstream = emptyList(),
                                         context = context,
                                     ),
@@ -5374,6 +5417,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = sched1.stopTime,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -5490,6 +5534,7 @@ class RouteCardDataTest {
                                             alertsHere = emptyList(),
                                             allDataLoaded = true,
                                             hasSchedulesToday = true,
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -5665,6 +5710,7 @@ class RouteCardDataTest {
                                                     routePatternAshmont.id to true,
                                                     routePatternBraintree.id to true,
                                                 ),
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = southboundDownstreamAlerts,
                                             context = context,
                                         )
@@ -5779,6 +5825,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )
@@ -5822,6 +5869,7 @@ class RouteCardDataTest {
                                             allDataLoaded = true,
                                             hasSchedulesTodayByPattern =
                                                 mapOf(routePatternPvd.id to true),
+                                            subwayServiceStartTime = null,
                                             alertsDownstream = emptyList(),
                                             context = context,
                                         )

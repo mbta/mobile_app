@@ -147,6 +147,7 @@ final class StopDetailsViewTests: XCTestCase {
                             alertsHere: [alert],
                             allDataLoaded: true,
                             hasSchedulesToday: true,
+                            subwayServiceStartTime: nil,
                             alertsDownstream: [],
                             context: .stopDetailsUnfiltered
                         )],
@@ -198,7 +199,7 @@ final class StopDetailsViewTests: XCTestCase {
             stopIds: Set([stop.id]),
             upcomingTrips: [.init(trip: trip, prediction: prediction)],
             alertsHere: [], allDataLoaded: true,
-            hasSchedulesToday: true, alertsDownstream: [],
+            hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
             context: .stopDetailsFiltered
         )
         let stopData = RouteCardData.RouteStopData(

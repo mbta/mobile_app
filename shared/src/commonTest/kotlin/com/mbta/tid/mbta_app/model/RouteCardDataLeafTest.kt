@@ -45,6 +45,7 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -95,6 +96,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
+                        null,
                         emptyList(),
                         context,
                     )
@@ -140,6 +142,7 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -193,6 +196,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
@@ -250,6 +254,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
@@ -299,6 +304,7 @@ class RouteCardDataLeafTest {
                     listOf(alert),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -348,6 +354,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     listOf(alert),
                     anyEnumValue(),
                 )
@@ -378,6 +385,41 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
+                    emptyList(),
+                    anyEnumValue(),
+                )
+                .format(now, GlobalResponse(objects)),
+        )
+    }
+
+    @Test
+    fun `formats as subway early morning with subway early morning`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        val serviceStart = now + 10.minutes
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = anyOf(RouteType.HEAVY_RAIL, RouteType.LIGHT_RAIL) }
+
+        assertEquals(
+            LeafFormat.Single(
+                route = null,
+                headsign = null,
+                UpcomingFormat.NoTrips(
+                    UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(serviceStart)
+                ),
+            ),
+            RouteCardData.Leaf(
+                    LineOrRoute.Route(route),
+                    objects.stop(),
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    emptyList(),
+                    emptyList(),
+                    true,
+                    true,
+                    serviceStart,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -413,6 +455,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -453,6 +496,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValue(),
                     )
@@ -479,6 +523,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     false,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -534,6 +579,7 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -591,6 +637,7 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -626,6 +673,7 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -656,6 +704,7 @@ class RouteCardDataLeafTest {
                     listOf(),
                     true,
                     false,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -773,6 +822,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -869,6 +919,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
+                        subwayServiceStartTime = null,
                         listOf(downstreamAlert),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -936,6 +987,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1019,6 +1071,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -1116,6 +1169,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
+                        subwayServiceStartTime = null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -1241,6 +1295,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1309,6 +1364,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1430,6 +1486,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValue(),
                 )
@@ -1498,6 +1555,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     true,
                     true,
+                    null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1578,6 +1636,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1663,6 +1722,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     RouteCardData.Context.StopDetailsFiltered,
                 )
@@ -1731,6 +1791,7 @@ class RouteCardDataLeafTest {
                     emptyList(),
                     allDataLoaded = true,
                     hasSchedulesToday = true,
+                    subwayServiceStartTime = null,
                     emptyList(),
                     anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                 )
@@ -1793,6 +1854,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = true,
+                        subwayServiceStartTime = null,
                         emptyList(),
                         anyEnumValue(),
                     )
@@ -1822,6 +1884,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValue(),
                     )
@@ -1909,6 +1972,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValue(),
                     )
@@ -1954,6 +2018,7 @@ class RouteCardDataLeafTest {
                         emptyList(),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValue(),
                     )
@@ -2052,6 +2117,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -2145,6 +2211,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -2251,6 +2318,7 @@ class RouteCardDataLeafTest {
                             GreenLine.dWestbound.id to true,
                             GreenLine.eWestbound.id to true,
                         ),
+                        null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -2324,6 +2392,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -2419,6 +2488,7 @@ class RouteCardDataLeafTest {
                         listOf(alert),
                         true,
                         true,
+                        null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
                     )
@@ -2455,6 +2525,7 @@ class RouteCardDataLeafTest {
                 alertsHere = listOf(generalAlert, trip1Alert, trip2Alert),
                 hasSchedulesToday = true,
                 allDataLoaded = true,
+                subwayServiceStartTime = null,
                 alertsDownstream = listOf(generalAlert, trip1Alert, trip2Alert),
                 context = RouteCardData.Context.StopDetailsFiltered,
             )

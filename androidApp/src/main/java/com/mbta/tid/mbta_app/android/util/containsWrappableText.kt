@@ -7,7 +7,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 fun UpcomingFormat.containsWrappableText() =
     when (this) {
         is UpcomingFormat.Some -> this.trips.any { it.format.containsWrappableText() }
-        is UpcomingFormat.NoTrips -> true
+        is UpcomingFormat.NoTrips -> this.noTripsFormat.containsWrappableText()
         is UpcomingFormat.Disruption -> false
         UpcomingFormat.Loading -> false
     }
@@ -15,9 +15,17 @@ fun UpcomingFormat.containsWrappableText() =
 fun UpcomingTripViewState.containsWrappableText() =
     when (this) {
         is UpcomingTripViewState.Some -> this.trip.containsWrappableText()
-        is UpcomingTripViewState.NoTrips -> true
+        is UpcomingTripViewState.NoTrips -> this.format.containsWrappableText()
         is UpcomingTripViewState.Disruption -> false
         UpcomingTripViewState.Loading -> false
+    }
+
+fun UpcomingFormat.NoTripsFormat.containsWrappableText() =
+    when (this) {
+        is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning -> false
+        UpcomingFormat.NoTripsFormat.PredictionsUnavailable -> true
+        UpcomingFormat.NoTripsFormat.ServiceEndedToday -> true
+        UpcomingFormat.NoTripsFormat.NoSchedulesToday -> true
     }
 
 fun TripInstantDisplay.containsWrappableText() =

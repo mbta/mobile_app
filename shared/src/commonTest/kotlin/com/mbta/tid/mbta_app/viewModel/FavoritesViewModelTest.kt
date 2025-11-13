@@ -224,6 +224,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
                                 )
@@ -250,6 +251,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
                                 )
@@ -287,6 +289,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
                                 )
@@ -321,6 +324,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.Favorites,
                                 )
@@ -406,6 +410,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
                                 )
@@ -435,6 +440,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
                                 )
@@ -528,6 +534,7 @@ internal class FavoritesViewModelTest : KoinTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = true,
                                     hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     RouteCardData.Context.Favorites,
                                 )
@@ -801,6 +808,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         alertsHere = emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = false,
+                        subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
                     )
@@ -823,6 +831,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         alertsHere = emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = false,
+                        subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
                     )
@@ -845,6 +854,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         alertsHere = emptyList(),
                         allDataLoaded = true,
                         hasSchedulesToday = false,
+                        subwayServiceStartTime = null,
                         alertsDownstream = emptyList(),
                         RouteCardData.Context.Favorites,
                     )

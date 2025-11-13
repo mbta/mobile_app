@@ -242,6 +242,7 @@ fun StopDetailsFilteredDeparturesView(
                 StopDetailsNoTripCard(
                     status = noPredictionsStatus,
                     accentColor = routeColor,
+                    directionLabel = selectedDirection.destination ?: selectedDirection.name ?: "",
                     routeType = routeType,
                 )
             }

@@ -234,6 +234,15 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM cancelled/#))
     }
 
+    func testSubwayEarlyMorning() throws {
+        let date = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 10, minute: 22, second: 0)
+        let sut =
+            UpcomingTripView(prediction: .noTrips(UpcomingFormat.NoTripsFormatSubwayEarlyMorning(scheduledTime: date)))
+        XCTAssertNotNil(try sut.inspect().find(textWhere: { value, _ in
+            try #/First 10:22\sAM/#.wholeMatch(in: value) != nil
+        }))
+    }
+
     func testShuttleAccessibilityLabel() throws {
         let sut = UpcomingTripView(
             prediction: .disruption(

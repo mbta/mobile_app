@@ -42,6 +42,7 @@ final class DirectionPickerTests: XCTestCase {
             alertsHere: [],
             allDataLoaded: true,
             hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: context
         )
@@ -55,6 +56,7 @@ final class DirectionPickerTests: XCTestCase {
             alertsHere: [],
             allDataLoaded: true,
             hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
             alertsDownstream: [],
             context: context
         )

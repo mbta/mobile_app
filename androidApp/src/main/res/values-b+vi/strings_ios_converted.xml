@@ -166,6 +166,7 @@
     <string name="from">Từ</string>
     <string name="full_description">Mô tả đầy đủ</string>
     <string name="get_disruption_notifications">Nhận thông báo gián đoạn</string>
+    <string name="good_morning">Chào buổi sáng!</string>
     <string name="got_it">Đã hiểu</string>
     <string name="hazmat_condition">Tình trạng có vật liệu nguy hiểm</string>
     <string name="hazmat_condition_lowercase">tình trạng nguy hiểm</string>
@@ -362,6 +363,8 @@
     <string name="strike">Biểu tình</string>
     <string name="strike_lowercase">biểu tình</string>
     <string name="subway">Tàu điện ngầm</string>
+    <string name="subway_early_am_detail">Chuyến tàu &lt;b>%1$s&lt;/b> đầu tiên dự kiến ​​sẽ đến vào lúc &lt;b>%2$s&lt;/b>. Chúng tôi chưa có dự đoán nào để hiển thị cho bạn, nhưng chúng sẽ xuất hiện ở đây khi gần đến thời gian dự kiến.</string>
+    <string name="subway_early_am_first_time">Đầu tiên &lt;b>%1$s&lt;/b></string>
     <string name="summary">Bản tóm tắt</string>
     <string name="suspension">Đình chỉ</string>
     <string name="switch_issue">Vấn đề chuyển đổi</string>

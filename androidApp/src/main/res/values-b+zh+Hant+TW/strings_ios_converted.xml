@@ -166,6 +166,7 @@
     <string name="from">從</string>
     <string name="full_description">完整說明</string>
     <string name="get_disruption_notifications">取得中斷通知</string>
+    <string name="good_morning">早安!</string>
     <string name="got_it">知道了</string>
     <string name="hazmat_condition">危險物質</string>
     <string name="hazmat_condition_lowercase">危險物質</string>
@@ -362,6 +363,8 @@
     <string name="strike">罷工</string>
     <string name="strike_lowercase">罷工</string>
     <string name="subway">地鐵</string>
+    <string name="subway_early_am_detail">首班&lt;b>%1$s&lt;/b>列車預計將於 &lt;b>%2$s&lt;/b> 抵達。我們目前還沒有預測訊息，但會在臨近預定到達時間時在此處顯示。</string>
+    <string name="subway_early_am_first_time">第一的 &lt;b>%1$s&lt;/b></string>
     <string name="summary">概觀</string>
     <string name="suspension">暫停</string>
     <string name="switch_issue">道岔問題</string>

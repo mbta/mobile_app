@@ -211,6 +211,7 @@ class EditFavoritesPageTest : KoinTest {
                             emptyList(),
                             true,
                             true,
+                            null,
                             emptyList(),
                             RouteCardData.Context.Favorites,
                         )
@@ -239,6 +240,7 @@ class EditFavoritesPageTest : KoinTest {
                             emptyList(),
                             true,
                             true,
+                            null,
                             emptyList(),
                             RouteCardData.Context.Favorites,
                         )

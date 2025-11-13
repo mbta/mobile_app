@@ -139,6 +139,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 StopDetailsNoTripCard(
                     status: noPredictionsStatus,
                     accentColor: routeColor,
+                    directionLabel: selectedDirection.destination ?? selectedDirection.name ?? "",
                     routeType: routeType
                 )
                 .accessibilityHeading(.h3)
@@ -219,7 +220,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
         if let status {
             switch onEnum(of: status) {
-            case .predictionsUnavailable: setViewportToStop(midZoom: true)
+            case .subwayEarlyMorning, .predictionsUnavailable: setViewportToStop(midZoom: true)
             case .noSchedulesToday, .serviceEndedToday: setViewportToStop()
             }
         }

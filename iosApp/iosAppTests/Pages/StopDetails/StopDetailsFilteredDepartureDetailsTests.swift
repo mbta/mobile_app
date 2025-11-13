@@ -72,7 +72,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             routePatterns: patterns,
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
-            alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true,
+            alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true, subwayServiceStartTime: nil,
             alertsDownstream: alertsDownstream,
             context: .stopDetailsFiltered
         )

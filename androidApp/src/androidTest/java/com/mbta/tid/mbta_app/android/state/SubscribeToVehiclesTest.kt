@@ -162,6 +162,7 @@ class SubscribeToVehiclesTest {
                                         emptyList(),
                                         true,
                                         true,
+                                        null,
                                         emptyList(),
                                         RouteCardData.Context.StopDetailsFiltered,
                                     )

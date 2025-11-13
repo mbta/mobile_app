@@ -524,6 +524,20 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithNoTripsSubwayEarlyMorning() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.NoTrips(
+                    UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(
+                        EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 41)
+                    )
+                )
+            )
+        }
+        composeTestRule.onNode(hasTextMatching(Regex("^First 9:41\\sAM"))).assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithLoading() {
         composeTestRule.setContent { UpcomingTripView(UpcomingTripViewState.Loading) }
         composeTestRule.onNodeWithContentDescription("Loading...").assertIsDisplayed()
