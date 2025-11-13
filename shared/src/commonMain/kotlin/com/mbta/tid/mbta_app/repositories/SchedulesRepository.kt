@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.ktor.client.call.body
+import io.ktor.client.plugins.timeout
 import io.ktor.http.path
 import kotlinx.coroutines.suspendCancellableCoroutine
 import org.koin.core.component.KoinComponent
@@ -31,6 +32,7 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
         ApiResult.runCatching {
             mobileBackendClient
                 .get {
+                    timeout { requestTimeoutMillis = 3000 }
                     url {
                         path("api/schedules")
                         parameters.append("stop_ids", stopIds.joinToString(separator = ","))

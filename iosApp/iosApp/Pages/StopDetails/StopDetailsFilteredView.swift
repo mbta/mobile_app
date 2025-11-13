@@ -29,6 +29,7 @@ struct StopDetailsFilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
+    var tripDetailsVM: ITripDetailsViewModel
     var favoritesUsecases: FavoritesUsecases
 
     @State var inSaveFavoritesFlow = false
@@ -56,6 +57,7 @@ struct StopDetailsFilteredView: View {
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
+        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
         favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases
     ) {
         self.stopId = stopId
@@ -73,6 +75,7 @@ struct StopDetailsFilteredView: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+        self.tripDetailsVM = tripDetailsVM
         self.favoritesUsecases = favoritesUsecases
     }
 
@@ -85,9 +88,18 @@ struct StopDetailsFilteredView: View {
     ) }
     var stop: Stop? { global?.getStop(stopId: stopId) }
     var stopData: RouteCardData.RouteStopData? {
-        if case let .filtered(data) = onEnum(of: routeData) {
+        if case let .filtered(data) = onEnum(of: routeData), routeData?.filters.stopId == stopId,
+           routeData?.filters.stopFilter == stopFilter {
             data.stopData
         } else { nil }
+    }
+
+    var tripPageFilter: TripDetailsPageFilter? {
+        if let tripFilter {
+            .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
+        } else {
+            nil
+        }
     }
 
     var body: some View {
@@ -124,6 +136,12 @@ struct StopDetailsFilteredView: View {
                 alertSummaries = model.alertSummaries as? [String: AlertSummary?] ?? [:]
             }
         }
+        .manageVM(
+            tripDetailsVM,
+            alerts: nearbyVM.alerts,
+            context: .stopDetails,
+            filters: tripPageFilter,
+        )
         .accessibilityHidden(inSaveFavoritesFlow)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
