@@ -66,6 +66,7 @@ import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -254,6 +255,7 @@ private fun SaveFavoritePagePreviewAdd() {
                     FavoritesUsecases(
                         MockFavoritesRepository(),
                         MockSubscriptionsRepository(),
+                        Dispatchers.IO,
                         MockAnalytics(),
                     )
                 }
@@ -308,6 +310,7 @@ private fun SaveFavoritePagePreviewEdit() {
                             )
                         ),
                         MockSubscriptionsRepository(),
+                        Dispatchers.IO,
                         MockAnalytics(),
                     )
                 }

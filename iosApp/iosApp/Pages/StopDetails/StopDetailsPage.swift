@@ -23,7 +23,7 @@ struct StopDetailsPage: View {
     var filters: StopDetailsPageFilters
     var navCallbacks: NavigationCallbacks
 
-    @State var favorites: Favorites = LoadedFavorites.last
+    @State var favorites: Favorites = .init(routeStopDirection: [:])
     @State var global: GlobalResponse?
     @State var loadingFavorites = true
     @State var now = Date.now
@@ -87,7 +87,7 @@ struct StopDetailsPage: View {
 
     var body: some View {
         stopDetails
-            .favorites($favorites, awaitingUpdate: $loadingFavorites)
+            .favorites($favorites)
             .global($global, errorKey: "StopDetailsPage")
             .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)
