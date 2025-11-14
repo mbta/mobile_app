@@ -180,7 +180,7 @@ struct ContentView: View {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
                             }
                         }
-                        if !searchObserver.isSearching {
+                        if !searchObserver.isSearching || !nearbyVM.navigationStack.lastSafe().isEntrypoint {
                             HStack(alignment: .top) {
                                 VStack(alignment: .leading) {
                                     if navCallbacks.backButtonPresentation == .floating {

@@ -242,6 +242,35 @@ final class ContentViewTests: XCTestCase {
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 
+    @MainActor func testBackAppearanceWhileSearching() throws {
+        let sut = ContentView(contentVM: .init())
+        let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
+        let tripFilter = TripDetailsFilter(
+            tripId: "trip",
+            vehicleId: "vehicle",
+            stopSequence: nil,
+            selectionLock: false
+        )
+
+        let exp1 = sut.inspection.inspect(after: 1) { view in
+            try view.actualView().nearbyVM.navigationStack = [
+                .nearby,
+                .stopDetails(stopId: "stop", stopFilter: stopFilter, tripFilter: tripFilter),
+            ]
+            try view.actualView().searchObserver.isFocused = true
+        }
+        let exp2 = sut.inspection.inspect(after: 2) { view in
+            // Implicitly verifying the back button exists here
+            try view.find(viewWithAccessibilityLabel: "Back").callOnTapGesture()
+        }
+        let exp3 = sut.inspection.inspect(after: 3) { view in
+            XCTAssertThrowsError(try view.find(viewWithAccessibilityLabel: "Back"))
+        }
+
+        ViewHosting.host(view: withDefaultEnvironmentObjects(sut: sut))
+        wait(for: [exp1, exp2, exp3], timeout: 5)
+    }
+
     class FakeContentVM: ContentViewModel {
         let loadConfigCallback: () -> Void
         let configMapboxCallback: () -> Void
