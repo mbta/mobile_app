@@ -15,7 +15,7 @@ struct TripDetailsView: View {
     var tripFilter: TripDetailsPageFilter?
 
     var alertSummaries: [String: AlertSummary?]
-    var isTripDetailsPage: Bool
+    var context: TripDetailsViewModel.Context
     var now: EasternTimeInstant
 
     let onOpenAlertDetails: (Shared.Alert) -> Void
@@ -38,7 +38,7 @@ struct TripDetailsView: View {
     init(
         tripFilter: TripDetailsPageFilter?,
         alertSummaries: [String: AlertSummary?],
-        isTripDetailsPage: Bool = false,
+        context: TripDetailsViewModel.Context,
         now: EasternTimeInstant,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         errorBannerVM: IErrorBannerViewModel,
@@ -49,7 +49,7 @@ struct TripDetailsView: View {
     ) {
         self.tripFilter = tripFilter
         self.alertSummaries = alertSummaries
-        self.isTripDetailsPage = isTripDetailsPage
+        self.context = context
         self.now = now
         self.onOpenAlertDetails = onOpenAlertDetails
         self.errorBannerVM = errorBannerVM
@@ -83,15 +83,14 @@ struct TripDetailsView: View {
         content
             .explainer($explainer)
             .global($global, errorKey: "TripDetailsView")
-            .manageVM(
-                tripDetailsVM,
-                $tripDetailsVMState,
-                alerts: nearbyVM.alerts,
-                context: isTripDetailsPage ? .tripDetails : .stopDetails,
-                filters: tripFilter,
-            )
             .onAppear {
+                tripDetailsVMState = tripDetailsVM.models.value
                 setVehicle(tripDetailsVM.selectedVehicleUpdates.value)
+            }
+            .task {
+                for await models in tripDetailsVM.models {
+                    tripDetailsVMState = models
+                }
             }
             .task(id: global) {
                 for await vehicleUpdate in tripDetailsVM.selectedVehicleUpdates {
@@ -180,7 +179,7 @@ struct TripDetailsView: View {
 
         // You can't open track this trip before the trip has started,
         // so if this is true, it means that the selected trip is complete
-        if isTripDetailsPage, vehicleOnOtherTrip {
+        if context == .tripDetails, vehicleOnOtherTrip {
             TripCompleteCard(routeAccents: routeAccents).padding(.horizontal, 16)
         } else {
             VStack(spacing: 0) {
@@ -222,7 +221,7 @@ struct TripDetailsView: View {
                 routeAccents: routeAccents,
                 onTap: onTap,
                 now: now,
-                onFollowTrip: !isTripDetailsPage ? onFollowTrip : nil,
+                onFollowTrip: context != .tripDetails ? onFollowTrip : nil,
             )
         }
     }

@@ -39,7 +39,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var analytics: Analytics = AnalyticsProvider.shared
 
     @State var global: GlobalResponse?
-    @State var leafFormat: LeafFormat
+
+    var leafFormat: LeafFormat { leaf.format(now: now, globalData: global) }
 
     var tiles: [TileData] { leafFormat.tileData(directionDestination: selectedDirection.destination) }
     var noPredictionsStatus: UpcomingFormat.NoTripsFormat? { leafFormat.noPredictionsStatus() }
@@ -86,6 +87,18 @@ struct StopDetailsFilteredDepartureDetails: View {
         let now: EasternTimeInstant
     }
 
+    var alertSummaryParams: AlertSummaryParams {
+        AlertSummaryParams(
+            global: global,
+            alerts: alerts,
+            downstreamAlerts: downstreamAlerts,
+            stopId: stopId,
+            directionId: stopFilter.directionId,
+            patternsHere: patternsHere,
+            now: now
+        )
+    }
+
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
@@ -111,8 +124,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
-
-        leafFormat = leaf.format(now: now, globalData: nil)
     }
 
     var body: some View {
@@ -164,6 +175,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 TripDetailsView(
                     tripFilter: tripPageFilter,
                     alertSummaries: alertSummaries,
+                    context: .stopDetails,
                     now: now,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
                     errorBannerVM: errorBannerVM,
@@ -175,41 +187,14 @@ struct StopDetailsFilteredDepartureDetails: View {
         .global($global, errorKey: "StopDetailsFilteredDepartureDetails")
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
-            setAlertSummaries(
-                AlertSummaryParams(
-                    global: global,
-                    alerts: alerts,
-                    downstreamAlerts: downstreamAlerts,
-                    stopId: stopId,
-                    directionId: stopFilter.directionId,
-                    patternsHere: patternsHere,
-                    now: now
-                )
-            )
+            setAlertSummaries(alertSummaryParams)
         }
         .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
         }
-        .onChange(of: leaf) { leaf in
-            leafFormat = leaf.format(now: now, globalData: global)
-        }
-        .onChange(of: now) { now in
-            leafFormat = leaf.format(now: now, globalData: global)
-        }
-        .onChange(of: global) { global in
-            leafFormat = leaf.format(now: now, globalData: global)
-        }
-        .onChange(of: AlertSummaryParams(
-            global: global,
-            alerts: alerts,
-            downstreamAlerts: downstreamAlerts,
-            stopId: stopId,
-            directionId: stopFilter.directionId,
-            patternsHere: patternsHere,
-            now: now
-        )) { newParams in
+        .onChange(of: alertSummaryParams) { newParams in
             setAlertSummaries(newParams)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }

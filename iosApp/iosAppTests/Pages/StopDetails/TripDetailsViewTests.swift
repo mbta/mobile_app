@@ -82,6 +82,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
+            context: .stopDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -169,6 +170,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
+            context: .stopDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -252,6 +254,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
+            context: .stopDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -333,6 +336,7 @@ final class TripDetailsViewTests: XCTestCase {
         let sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
+            context: .stopDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -420,6 +424,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
+            context: .stopDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -505,7 +510,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
-            isTripDetailsPage: true,
+            context: .tripDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
@@ -586,7 +591,7 @@ final class TripDetailsViewTests: XCTestCase {
         var sut = TripDetailsView(
             tripFilter: tripFilter,
             alertSummaries: [:],
-            isTripDetailsPage: true,
+            context: .tripDetails,
             now: now,
             onOpenAlertDetails: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
