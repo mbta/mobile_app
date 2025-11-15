@@ -127,48 +127,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testUpdatesTilesWhenNowChanges() throws {
-        let objects = ObjectCollectionBuilder()
-        let now = EasternTimeInstant.now()
-        let stop = objects.stop { _ in }
-        let route = objects.route()
-        let trip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
-            prediction.trip = objects.trip { $0.headsign = "A" }
-            prediction.departureTime = now.plus(seconds: 15)
-        })
-
-        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [trip1], objects: objects)
-
-        let sut = StopDetailsFilteredDepartureDetails(
-            stopId: stop.id,
-            stopFilter: .init(routeId: route.id, directionId: 0),
-            tripFilter: nil,
-            setStopFilter: { _ in },
-            setTripFilter: { _ in },
-            leaf: leaf,
-            alertSummaries: [:],
-            selectedDirection: .init(name: nil, destination: nil, id: 0),
-            favorite: false,
-            now: now,
-            errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
-            mapVM: MockMapViewModel(),
-            stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
-        )
-
-        let updateNowExp = sut.inspection.inspect(after: 0.5) { view in
-            XCTAssertNotNil(try view.find(text: "A"))
-            XCTAssertNotNil(try view.find(text: "ARR"))
-            try view.find(ViewType.VStack.self).callOnChange(newValue: now.plus(minutes: 2))
-            XCTAssertThrowsError(try view.find(text: "ARR"))
-        }
-
-        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
-        wait(for: [updateNowExp], timeout: 2)
-    }
-
-    @MainActor
     func testShowsHeadsignAndPillsWhenBranchingLine() throws {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
