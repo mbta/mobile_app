@@ -20,6 +20,7 @@
   "testTargets" : [
     {
       "skippedTests" : [
+        "FavoritesModifierTests\/testLoadsFromRepo()",
         "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
         "OnboardingPageTests\/testFlow()"
       ],

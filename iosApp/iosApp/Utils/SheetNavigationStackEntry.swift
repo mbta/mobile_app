@@ -22,6 +22,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case nearby
     case routeDetails(SheetRoutes.RouteDetails)
     case routePicker(SheetRoutes.RoutePicker)
+    case saveFavorite(routeId: LineOrRoute.Id, stopId: String, selectedDirection: Int32, context: EditFavoritesContext)
     case stopDetails(stopId: String, stopFilter: StopDetailsFilter?, tripFilter: TripDetailsFilter?)
     case tripDetails(filter: TripDetailsPageFilter)
 
@@ -65,6 +66,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case .nearby: "nearby"
         case .routeDetails: "routeDetails"
         case .routePicker: "routePicker"
+        case .saveFavorite: "saveFavorite"
         case .stopDetails: "stopDetails"
         case .tripDetails: "tripDetails"
         }
@@ -119,6 +121,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         case let .tripDetails(filter): SheetRoutes.TripDetails(filter: filter)
         case .alertDetails: nil
         case .more: nil
+        case .saveFavorite: nil
         }
     }
 }
@@ -152,6 +155,7 @@ struct NearbyCoverItem: Identifiable {
         switch stackEntry {
         case let .alertDetails(alertId, _, _, _): alertId
         case .more: "more"
+        case let .saveFavorite(routeId, stopId, selectedDirection, _): "\(routeId.idText)-\(stopId)-\(selectedDirection)"
         default: ""
         }
     }
@@ -272,7 +276,8 @@ extension [SheetNavigationStackEntry] {
 
     func hasFloatingBackButton() -> Bool {
         switch self.lastSafe() {
-        case .alertDetails, .editFavorites, .favorites, .more, .nearby, .routeDetails, .routePicker: false
+        case .alertDetails, .editFavorites, .favorites, .more, .nearby, .routeDetails, .routePicker,
+             .saveFavorite: false
         case .stopDetails, .tripDetails: true
         }
     }

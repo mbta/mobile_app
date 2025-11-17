@@ -30,7 +30,7 @@ struct StopDetailsFilteredView: View {
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
     var tripDetailsVM: ITripDetailsViewModel
-    var favoritesUsecases: FavoritesUsecases
+    var favoritesVM: IFavoritesViewModel
 
     @State var inSaveFavoritesFlow = false
     @State var alertSummaries: [String: AlertSummary?] = [:]
@@ -57,8 +57,8 @@ struct StopDetailsFilteredView: View {
         nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
+        favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
-        favoritesUsecases: FavoritesUsecases = UsecaseDI().favoritesUsecases
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -75,8 +75,8 @@ struct StopDetailsFilteredView: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+        self.favoritesVM = favoritesVM
         self.tripDetailsVM = tripDetailsVM
-        self.favoritesUsecases = favoritesUsecases
     }
 
     var isFavorite: Bool { if let routeStopDirection { favorites.isFavorite(routeStopDirection) } else { false }}
@@ -132,6 +132,9 @@ struct StopDetailsFilteredView: View {
             }
         }
         .task {
+            // There's no good way to know if favorites have been updated through the edit favorites flow,
+            // so reload them any time this page is opened
+            onUpdateFavorites()
             for await model in stopDetailsVM.models {
                 alertSummaries = model.alertSummaries as? [String: AlertSummary?] ?? [:]
             }
@@ -164,17 +167,14 @@ struct StopDetailsFilteredView: View {
                     global: global,
                     isFavorite: { favorites.isFavorite($0) },
                     updateFavorites: { updatedValues in
-                        Task {
-                            try? await favoritesUsecases.updateRouteStopDirections(
-                                newValues: updatedValues,
-                                context: .stopDetails, defaultDirection: routeStopDirection.direction
-                            )
-                            onUpdateFavorites()
-                        }
+                        favoritesVM.updateFavorites(
+                            updatedFavorites: updatedValues,
+                            context: .stopDetails,
+                            defaultDirection: routeStopDirection.direction
+                        )
                     },
-                    onClose: {
-                        inSaveFavoritesFlow = false
-                    }
+                    onClose: { inSaveFavoritesFlow = false },
+                    pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 )
             }
 
