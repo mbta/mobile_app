@@ -59,7 +59,7 @@ struct TripDetailsPage: View {
                     TripDetailsView(
                         tripFilter: filter,
                         alertSummaries: alertSummaries,
-                        isTripDetailsPage: true,
+                        context: .tripDetails,
                         now: now,
                         onOpenAlertDetails: onOpenAlertDetails,
                         errorBannerVM: errorBannerVM,
@@ -71,6 +71,12 @@ struct TripDetailsPage: View {
             }
         }
         .manageVM(tripDetailsPageVM, $tripDetailsPageState, alerts: nearbyVM.alerts, filter: filter, now: now)
+        .manageVM(
+            tripDetailsVM,
+            alerts: nearbyVM.alerts,
+            context: .tripDetails,
+            filters: filter,
+        )
         .global($global, errorKey: "TripDetailsPage")
         .task {
             while !Task.isCancelled {

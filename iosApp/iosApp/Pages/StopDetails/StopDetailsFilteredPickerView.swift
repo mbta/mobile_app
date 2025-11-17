@@ -18,7 +18,6 @@ struct StopDetailsFilteredPickerView: View {
 
     var stopData: RouteCardData.RouteStopData
     var alertSummaries: [String: AlertSummary?]
-    var leaf: RouteCardData.Leaf?
 
     var favorite: Bool
 
@@ -64,8 +63,14 @@ struct StopDetailsFilteredPickerView: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+    }
 
-        leaf = stopData.data.first { $0.directionId == stopFilter.directionId }
+    var leaf: RouteCardData.Leaf? {
+        stopData.data
+            .first {
+                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.directionId == stopFilter
+                    .directionId
+            }
     }
 
     var body: some View {

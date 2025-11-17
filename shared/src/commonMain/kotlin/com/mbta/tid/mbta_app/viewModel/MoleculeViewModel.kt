@@ -5,6 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MonotonicFrameClock
 import app.cash.molecule.RecompositionMode
 import app.cash.molecule.launchMolecule
+import com.mbta.tid.mbta_app.PlatformType
+import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import kotlin.time.Duration
 import kotlinx.coroutines.CoroutineScope
@@ -32,6 +34,14 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
             extraBufferCapacity = 10,
             onBufferOverflow = BufferOverflow.SUSPEND,
         )
+
+    // Using ContextClock on iOS was resulting in rare cases where molecule would start hanging and
+    // never calling runLogic after state was changed.
+    private val recompositionMode =
+        when (getPlatform().type) {
+            PlatformType.Android -> RecompositionMode.ContextClock
+            else -> RecompositionMode.Immediate
+        }
 
     internal class TimeoutException(
         className: String?,
@@ -67,7 +77,7 @@ public abstract class MoleculeViewModel<Event, Model> : MoleculeScopeViewModel()
      */
     protected val internalModels: StateFlow<Model> by
         lazy(LazyThreadSafetyMode.NONE) {
-            scope.launchMolecule(mode = RecompositionMode.ContextClock) { runLogic() }
+            scope.launchMolecule(mode = recompositionMode) { runLogic() }
         }
 
     internal fun modelsForUnitTests(scope: CoroutineScope, clock: MonotonicFrameClock) =

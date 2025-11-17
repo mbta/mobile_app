@@ -145,10 +145,11 @@ public class StopDetailsViewModel(
             }
         }
 
-        LaunchedEffect(stopIds, globalData, schedules, predictions, alerts, now, filters) {
+        LaunchedEffect(stopIds, globalData, schedules, predictions, alerts, now, filters, active) {
             val resolvedFilters = filters
             if (
-                stopIds == null ||
+                !active ||
+                    stopIds == null ||
                     globalData == null ||
                     schedules == null ||
                     predictions == null ||

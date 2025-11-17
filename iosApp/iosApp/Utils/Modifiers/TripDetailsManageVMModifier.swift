@@ -11,10 +11,13 @@ import SwiftUI
 
 struct TripDetailsManageVMModifier: ViewModifier {
     var viewModel: ITripDetailsViewModel
-    @Binding var vmState: TripDetailsViewModel.State?
     var alerts: AlertsStreamDataResponse?
     var context: TripDetailsViewModel.Context
     var filters: TripDetailsPageFilter?
+
+    @State var vmState: TripDetailsViewModel.State?
+
+    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     func body(content: Content) -> some View {
         content
@@ -43,6 +46,9 @@ struct TripDetailsManageVMModifier: ViewModifier {
                 onInactive: { viewModel.setActive(active: false, wasSentToBackground: false) },
                 onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) },
             )
+            .onReceive(timer) { _ in
+                viewModel.setActive(active: true, wasSentToBackground: false)
+            }
             .onDisappear {
                 // Only set to inactive if the loaded filter and context match the current state,
                 // this will be true when the page is closed, but not when the loading view disappears,
@@ -59,14 +65,12 @@ struct TripDetailsManageVMModifier: ViewModifier {
 public extension View {
     func manageVM(
         _ viewModel: ITripDetailsViewModel,
-        _ state: Binding<TripDetailsViewModel.State?>,
         alerts: AlertsStreamDataResponse?,
         context: TripDetailsViewModel.Context,
         filters: TripDetailsPageFilter?,
     ) -> some View {
         modifier(TripDetailsManageVMModifier(
             viewModel: viewModel,
-            vmState: state,
             alerts: alerts,
             context: context,
             filters: filters,

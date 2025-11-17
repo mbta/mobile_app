@@ -111,13 +111,14 @@ internal fun getTripData(
             vehicleRepository,
         )
 
-    LaunchedEffect(tripFilter?.stopId) { clearAll() }
-    LaunchedEffect(tripFilter?.tripId) {
+    LaunchedEffect(tripFilter?.tripId, active) {
         clearAll()
-        tripFilter?.tripId?.let { tripId ->
-            params.let { params ->
-                fetchTrip(tripId, params) { trip = it }
-                fetchTripSchedules(tripId, params) { tripSchedules = it }
+        if (active) {
+            tripFilter?.tripId?.let { tripId ->
+                params.let { params ->
+                    fetchTrip(tripId, params) { trip = it }
+                    fetchTripSchedules(tripId, params) { tripSchedules = it }
+                }
             }
         }
     }
