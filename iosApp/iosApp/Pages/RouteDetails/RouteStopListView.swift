@@ -207,6 +207,8 @@ struct RouteStopListContentView<RightSideContent: View>: View {
     @State var displayedToast: ToastViewModel.Toast? = nil
     @State var firstTimeToast: ToastViewModel.Toast? = nil
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     let inspection = Inspection<Self>()
 
     init(
@@ -460,7 +462,14 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             global: globalData,
             isFavorite: { rsd in isFavorite(rsd) },
             updateFavorites: { newFavorites in confirmFavorites(updatedValues: newFavorites) },
-            onClose: { showFavoritesStopConfirmation = nil },
+            onClose: { 
+                showFavoritesStopConfirmation = nil
+                if settingsCache.get(.notifications) {
+                    Task {
+                        await NotificationPermissionUtil.requestPermission()
+                    }
+                }
+            },
             pushNavEntry: pushNavEntry,
             toastVM: toastVM,
         )
