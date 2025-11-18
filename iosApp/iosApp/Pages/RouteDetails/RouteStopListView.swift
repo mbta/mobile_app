@@ -462,7 +462,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             global: globalData,
             isFavorite: { rsd in isFavorite(rsd) },
             updateFavorites: { newFavorites in confirmFavorites(updatedValues: newFavorites) },
-            onClose: { 
+            onClose: {
                 showFavoritesStopConfirmation = nil
                 if settingsCache.get(.notifications) {
                     Task {
