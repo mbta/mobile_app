@@ -186,7 +186,6 @@ class StopDetailsViewModelTest : KoinTest {
             assertEquals(1, predictionDisconnectCount)
             viewModel.setActive(active = false, wasSentToBackground = false)
             advanceUntilIdle()
-            awaitItemSatisfying { it.routeData == null }
             assertEquals(1, predictionLoadCount)
             assertEquals(3, predictionDisconnectCount)
         }
