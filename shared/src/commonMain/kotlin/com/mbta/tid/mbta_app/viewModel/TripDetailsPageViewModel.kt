@@ -68,14 +68,13 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
         LaunchedEffect(filter) { tripDetailsVM.setFilters(filter) }
 
         val patterns =
-            remember(global, filter, route, trip) {
+            remember(global, filter, route) {
                 val filter = filter
                 val allPatterns =
                     if (filter != null && global != null && route != null)
                         global.getPatternsFor(filter.stopId, LineOrRoute.Route(route))
                     else emptyList()
-                if (trip != null) allPatterns.filter { it.id == trip.routePatternId }
-                else if (filter != null) allPatterns.filter { it.directionId == filter.directionId }
+                if (filter != null) allPatterns.filter { it.directionId == filter.directionId }
                 else allPatterns
             }
         val direction =
