@@ -55,6 +55,35 @@ struct RoutePill: View {
     }
 
     init(
+        lineOrRoute: LineOrRoute,
+        type: RoutePillSpec.Type_,
+        height: RoutePillSpec.Height = .medium,
+        isActive: Bool = true,
+        borderWidth: CGFloat = 0,
+        borderColor: Color = .halo,
+    ) {
+        switch onEnum(of: lineOrRoute) {
+        case let .line(resolved): self.init(
+                route: nil,
+                line: resolved.line,
+                type: type,
+                height: height,
+                isActive: isActive,
+                borderWidth: borderWidth,
+                borderColor: borderColor
+            )
+        case let .route(resolved): self.init(
+                route: resolved.route,
+                type: type,
+                height: height,
+                isActive: isActive,
+                borderWidth: borderWidth,
+                borderColor: borderColor
+            )
+        }
+    }
+
+    init(
         spec: RoutePillSpec,
         isActive: Bool = true,
         borderWidth: CGFloat = 0,

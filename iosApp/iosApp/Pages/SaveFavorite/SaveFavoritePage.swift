@@ -12,20 +12,43 @@ import SwiftUI
 struct SaveFavoritePage: View {
     var routeId: LineOrRoute.Id
     var stopId: String
-    var selectedDirection: Int32
+    var initialSelectedDirection: Int32
     var context: EditFavoritesContext
 
     let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
     var navCallbacks: NavigationCallbacks
     var nearbyVM: NearbyViewModel
-    var toastVM: IToastViewModel = ViewModelDI().toast
+    var toastVM: IToastViewModel
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
     @State var loadingFavorites: Bool = true
     @State var favoritesToSave: [Direction: FavoriteSettings?] = [:]
+    @State var selectedDirection: Int32
 
     let inspection = Inspection<Self>()
+
+    init(
+        routeId: LineOrRoute.Id,
+        stopId: String,
+        initialSelectedDirection: Int32,
+        context: EditFavoritesContext,
+        updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
+        navCallbacks: NavigationCallbacks,
+        nearbyVM: NearbyViewModel,
+        toastVM: IToastViewModel = ViewModelDI().toast
+    ) {
+        self.routeId = routeId
+        self.stopId = stopId
+        self.initialSelectedDirection = initialSelectedDirection
+        self.context = context
+        self.updateFavorites = updateFavorites
+        self.navCallbacks = navCallbacks
+        self.nearbyVM = nearbyVM
+        self.toastVM = toastVM
+
+        selectedDirection = initialSelectedDirection
+    }
 
     var lineOrRoute: LineOrRoute? { globalResponse?.getLineOrRoute(lineOrRouteId: routeId) }
     var stop: Stop? { globalResponse?.getStop(stopId: stopId) }
@@ -57,12 +80,6 @@ struct SaveFavoritePage: View {
                     )
             }
         } else { [] }
-    }
-
-    var displayedDirection: Int32 {
-        if stopDirections.count == 1, let direction = stopDirections.first {
-            direction.id
-        } else { selectedDirection }
     }
 
     func setFavoritesToSave() {
@@ -140,30 +157,68 @@ struct SaveFavoritePage: View {
         }
     }
 
+    func deleteCloseAndToast(_ rsd: RouteStopDirection) {
+        let settings = favorites.routeStopDirection[rsd]
+        updateFavorites([rsd: nil])
+
+        let labels = rsd.getLabels(globalResponse)
+        let toastMessage = if let labels {
+            String(format: NSLocalizedString(
+                "**%1$@ %2$@** at **%3$@** removed from Favorites",
+                comment: """
+                Favorite removed toast text, the first value is the direction (southbound, inbound, etc),
+                the second is the route name (Red Line, 1 bus), and the third is a stop name (Ruggles, Alewife).
+                The asterisks surround bolded text. ex. \"[Outbound] [71 bus] at [Harvard] removed from Favorites\"
+                """
+            ), labels.direction, labels.route, labels.stop)
+        } else {
+            NSLocalizedString(
+                "Removed from Favorites",
+                comment: "Favorite removed toast fallback text when more details are unavailable"
+            )
+        }
+
+        navCallbacks.onBack?()
+
+        toastVM.showToast(toast: .init(
+            message: toastMessage,
+            duration: .short,
+            isTip: false,
+            action: ToastViewModel.ToastActionCustom(
+                actionLabel: NSLocalizedString(
+                    "Undo",
+                    comment: "Button label to undo an action that was just performed"
+                ),
+                onAction: {
+                    updateFavorites([rsd: settings])
+                }
+            ),
+        ))
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             saveFavoriteHeader
             HaloScrollView([], alwaysShowHalo: true) {
                 if let lineOrRoute, let stop {
-                    VStack {
-                        FavoriteConfirmationDialogContents(
-                            lineOrRoute: lineOrRoute,
-                            stop: stop,
-                            directions: stopDirections,
-                            selectedDirection: displayedDirection,
-                            context: context,
-                            favoritesToSave: favoritesToSave,
-                            updateLocalFavorite: { direction, isFavorite in
-                                favoritesToSave[direction] = isFavorite
-                            },
-                        )
-                    }.padding(16)
+                    VStack(spacing: 24) {
+                        stopDirectionCard(lineOrRoute, stop)
+                        if isFavorite {
+                            HaloSeparator(height: 2)
+                            deleteButton
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 22)
                 } else {
                     Text(verbatim: "Placeholder loading")
                 }
             }
         }
-        .onAppear { setFavoritesToSave() }
+        .onAppear {
+            setFavoritesToSave()
+            selectedDirection = initialSelectedDirection
+        }
         .onChange(of: stopDirections) { _ in setFavoritesToSave() }
         .frame(maxHeight: .infinity)
         .background(Color.fill2)
@@ -191,5 +246,57 @@ struct SaveFavoritePage: View {
         .padding([.bottom, .trailing], 16)
         .foregroundStyle(Color.text)
         .background(Color.fill3)
+    }
+
+    @ViewBuilder
+    private func stopDirectionCard(_ lineOrRoute: LineOrRoute, _ stop: Stop) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 12) {
+                (stop.locationType == .stop ? Image(.mapStopCloseBUS) : Image(.mbtaLogo)).resizable().scaledToFit()
+                    .frame(
+                        width: 24,
+                        height: 24
+                    ).accessibilityHidden(true)
+                Text(stop.name).font(Typography.bodySemibold)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .background(Color.halo)
+            HStack(alignment: .center, spacing: 8) {
+                RoutePill(lineOrRoute: lineOrRoute, type: .fixed)
+                if let direction = stopDirections.first { $0.id == selectedDirection } {
+                    DirectionLabel(direction: direction).frame(maxWidth: .infinity, alignment: .leading)
+                }
+                if stopDirections.count > 1, !isFavorite {
+                    ActionButton(kind: .exchange) {
+                        selectedDirection = 1 - selectedDirection
+                    }
+                }
+            }
+            .padding(.horizontal, 8)
+            .padding(.vertical, 10)
+        }
+        .background(Color.fill3)
+        .withRoundedBorder(width: 2)
+    }
+
+    @ViewBuilder
+    private var deleteButton: some View {
+        Button(
+            action: { deleteCloseAndToast(selectedRouteStopDirection) },
+            label: {
+                HStack(alignment: .center, spacing: 16) {
+                    Text("Remove from Favorites", comment: "Button to delete an individual favorite")
+                        .font(Typography.bodySemibold)
+                    Image(.trashCan).resizable().scaledToFit().frame(width: 24, height: 24)
+                }.frame(maxWidth: .infinity, alignment: .center)
+            }
+        )
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(Color.delete)
+        .foregroundStyle(Color.deleteBackground)
+        .withRoundedBorder(width: 0)
     }
 }
