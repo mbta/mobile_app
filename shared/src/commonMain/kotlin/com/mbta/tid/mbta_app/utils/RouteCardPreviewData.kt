@@ -90,6 +90,7 @@ public open class RouteCardPreviewData {
                         listOfNotNull(alertHere[0]),
                         true,
                         true,
+                        subwayServiceStartTime = null,
                         listOfNotNull(alertDownstream[0]),
                         context,
                     )
@@ -104,6 +105,7 @@ public open class RouteCardPreviewData {
                         listOfNotNull(alertHere[1]),
                         true,
                         true,
+                        subwayServiceStartTime = null,
                         listOfNotNull(alertDownstream[1]),
                         context,
                     )

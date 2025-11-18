@@ -168,7 +168,7 @@ final class RouteCardTests: XCTestCase {
                         lineOrRoute: .route(route), stop: stop,
                         directionId: 0, routePatterns: [pattern], stopIds: [stop.id],
                         upcomingTrips: [], alertsHere: [], allDataLoaded: true,
-                        hasSchedulesToday: true, alertsDownstream: [],
+                        hasSchedulesToday: true, subwayServiceStartTime: nil, alertsDownstream: [],
                         context: .nearbyTransit
                     )]
                 )],

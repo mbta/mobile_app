@@ -9905,6 +9905,53 @@
         }
       }
     },
+    "First **%@**" : {
+      "comment" : "Label for a first trip of the morning, e.g. “First 5:21 AM”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Primero **%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "D’abord **%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Premye **%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Primeiro **%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đầu tiên **%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "第一的 **%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "第一的 **%@**"
+          }
+        }
+      }
+    },
     "flooding" : {
       "comment" : "Alert cause, used in 'Delays due to [cause]'",
       "localizations" : {
@@ -10466,6 +10513,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "開始"
+          }
+        }
+      }
+    },
+    "Good morning!" : {
+      "comment" : "Heading when subway service has not yet started",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¡Buen día!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bonjour!"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bonjou!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bom dia!"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chào buổi sáng!"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "早上好！"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "早安!"
           }
         }
       }
@@ -19641,6 +19735,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "如果尚未分配車輛，%@位置可能無法提前使用。一旦司機開始行程，我們將開始顯示即時位置。"
+          }
+        }
+      }
+    },
+    "The first **%1$@** train is scheduled to arrive at **%2$@**. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time." : {
+      "comment" : "Detail when subway service has not yet started, e.g. “The first Forest Hills train is scheduled to arrive at 5:21 AM.”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "El primer tren de **%1$@** tiene prevista su llegada a las **%2$@**. Aún no disponemos de predicciones para mostrarles, pero aparecerán aquí más cerca de la hora prevista."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Le premier train **%1$@** devrait arriver à **%2$@**. Nous n’avons pas encore de prévisions à vous communiquer, mais elles apparaîtront ici à l’approche de l’heure prévue."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Premye tren **%1$@** la pwograme pou rive a **%2$@**. Nou poko gen prediksyon pou montre w ankò, men y ap parèt isit la pi pre lè pwograme a."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "O primeiro trem **%1$@** está programado para chegar às **%2$@**. Ainda não temos previsões para mostrar, mas elas aparecerão aqui mais perto do horário previsto."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến tàu **%1$@** đầu tiên dự kiến ​​sẽ đến vào lúc **%2$@**. Chúng tôi chưa có dự đoán nào để hiển thị cho bạn, nhưng chúng sẽ xuất hiện ở đây khi gần đến thời gian dự kiến."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "首班**%1$@**列车预计将于 **%2$@** 到达。我们目前还没有预测信息，但会在临近预定到达时间时在此处显示。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "首班**%1$@**列車預計將於 **%2$@** 抵達。我們目前還沒有預測訊息，但會在臨近預定到達時間時在此處顯示。"
           }
         }
       }

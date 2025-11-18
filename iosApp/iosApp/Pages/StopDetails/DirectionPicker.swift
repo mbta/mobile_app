@@ -120,6 +120,7 @@ struct DirectionPicker: View {
         alertsHere: [],
         allDataLoaded: true,
         hasSchedulesToday: true,
+        subwayServiceStartTime: nil,
         alertsDownstream: [],
         context: context
     )
@@ -133,6 +134,7 @@ struct DirectionPicker: View {
         alertsHere: [],
         allDataLoaded: true,
         hasSchedulesToday: true,
+        subwayServiceStartTime: nil,
         alertsDownstream: [],
         context: context
     )

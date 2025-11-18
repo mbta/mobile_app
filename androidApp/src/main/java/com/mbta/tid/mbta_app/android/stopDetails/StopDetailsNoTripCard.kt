@@ -9,9 +9,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
@@ -21,12 +24,13 @@ import com.mbta.tid.mbta_app.repositories.Settings
 fun StopDetailsNoTripCard(
     status: UpcomingFormat.NoTripsFormat,
     accentColor: Color,
+    directionLabel: String,
     routeType: RouteType,
 ) {
 
     StopDetailsIconCard(
         accentColor = accentColor,
-        details = detailText(status, routeType),
+        details = detailText(status, directionLabel, routeType),
         header = { modifier -> HeaderText(status, modifier) },
     ) { modifier ->
         HeaderImage(status, routeType, modifier)
@@ -36,6 +40,8 @@ fun StopDetailsNoTripCard(
 @Composable
 private fun HeaderText(status: UpcomingFormat.NoTripsFormat, modifier: Modifier = Modifier) {
     when (status) {
+        is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning ->
+            Text(stringResource(R.string.good_morning), modifier = modifier)
         is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
             Text(stringResource(R.string.no_predictions), modifier = modifier)
         is UpcomingFormat.NoTripsFormat.NoSchedulesToday ->
@@ -48,6 +54,7 @@ private fun HeaderText(status: UpcomingFormat.NoTripsFormat, modifier: Modifier 
 @Composable
 private fun detailText(
     status: UpcomingFormat.NoTripsFormat,
+    directionLabel: String,
     routeType: RouteType,
 ): (@Composable () -> Unit)? {
     val context = LocalContext.current
@@ -71,7 +78,21 @@ private fun detailText(
                 )
             }
         }
-        else -> null
+        is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning -> {
+            {
+                Text(
+                    AnnotatedString.fromHtml(
+                        stringResource(
+                            R.string.subway_early_am_detail,
+                            directionLabel,
+                            status.scheduledTime.formattedTime(),
+                        )
+                    )
+                )
+            }
+        }
+        UpcomingFormat.NoTripsFormat.ServiceEndedToday,
+        UpcomingFormat.NoTripsFormat.NoSchedulesToday -> null
     }
 }
 
@@ -82,6 +103,8 @@ private fun HeaderImage(
     modifier: Modifier = Modifier,
 ) {
     when (status) {
+        is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning ->
+            Icon(painterResource(R.drawable.sunrise), null, modifier = modifier.testTag("sunrise"))
         is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
             Icon(
                 painterResource(R.drawable.live_data_slash),

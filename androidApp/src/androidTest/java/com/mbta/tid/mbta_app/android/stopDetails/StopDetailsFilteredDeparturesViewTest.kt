@@ -313,6 +313,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 alertsHere = emptyList(),
                 allDataLoaded = true,
                 hasSchedulesToday = true,
+                subwayServiceStartTime = null,
                 alertsDownstream = emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )
@@ -376,6 +377,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 emptyList(),
                 true,
                 true,
+                null,
                 emptyList(),
                 RouteCardData.Context.StopDetailsFiltered,
             )

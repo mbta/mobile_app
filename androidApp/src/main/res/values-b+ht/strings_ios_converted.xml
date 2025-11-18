@@ -181,6 +181,7 @@
     <string name="from">Soti nan</string>
     <string name="full_description">Deskripsyon Konplè</string>
     <string name="get_disruption_notifications">Jwenn notifikasyon dezòd</string>
+    <string name="good_morning">Bonjou!</string>
     <string name="got_it">Mwen konprann</string>
     <string name="hazmat_condition">Eta Matyè Danjere</string>
     <string name="hazmat_condition_lowercase">kondisyon danje</string>
@@ -382,6 +383,8 @@
     <string name="strike">Grèv</string>
     <string name="strike_lowercase">grèv</string>
     <string name="subway">Subway</string>
+    <string name="subway_early_am_detail">Premye tren &lt;b>%1$s&lt;/b> la pwograme pou rive a &lt;b>%2$s&lt;/b>. Nou poko gen prediksyon pou montre w ankò, men y ap parèt isit la pi pre lè pwograme a.</string>
+    <string name="subway_early_am_first_time">Premye &lt;b>%1$s&lt;/b></string>
     <string name="summary">Rezime</string>
     <string name="suspension">Sispansyon</string>
     <string name="switch_issue">Pwoblèm nan switch ray</string>

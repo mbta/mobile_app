@@ -8,6 +8,7 @@ All you need to do is paste, wait, and copy.
 """
 
 import json
+import re
 import subprocess
 import time
 
@@ -31,7 +32,7 @@ if len(missing_keys) == 0:
 print("Found", len(missing_keys), "strings that need placeholder translations.")
 
 sheet_header = ["key", "en"] + target_locales
-sheet_rows = [[key, missing_keys[key]] + [f'=GOOGLETRANSLATE("{missing_keys[key]}", "en", "{target}")' for target in target_locales] for key in sorted(missing_keys.keys())]
+sheet_rows = [[key, missing_keys[key]] + [f'=GOOGLETRANSLATE("{missing_keys[key]}", "en", "{re.sub("-Han.-", "-", target)}")' for target in target_locales] for key in sorted(missing_keys.keys())]
 sheet_out = [sheet_header] + sheet_rows
 
 subprocess.run("pbcopy", input="\n".join("\t".join(row) for row in sheet_out), text=True)
@@ -53,11 +54,19 @@ sheet_in = [line.strip().split("\t") for line in paste.stdout.split("\n") if lin
 
 sheet_in_header = sheet_in[0]
 
+# if the % or the @ comes back fullwidth, it’s really hard to see
+fullwidth_placeholder = re.compile("[%\uFF05][@\uFF20]")
+
 for body_row in sheet_in[1:]:
     key = body_row[0]
     localizations = dict()
     for col in range(2, len(body_row)):
-        localization = {"stringUnit": {"state": "needs_review", "value": body_row[col]}}
+        value = body_row[col]
+        if "fr" in sheet_in_header[col]:
+            value = value.sub("'", "’")
+        if "zh" in sheet_in_header[col]:
+            value = fullwidth_placeholder.sub("%@", body_row[col])
+        localization = {"stringUnit": {"state": "needs_review", "value": value}}
         localizations[sheet_in_header[col]] = localization
     xcstrings["strings"][key]["localizations"] = localizations
     print("Adding placeholder translations for key", repr(key))

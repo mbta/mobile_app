@@ -172,6 +172,7 @@
     <string name="from">Depuis</string>
     <string name="full_description">Description complète</string>
     <string name="get_disruption_notifications">Recevez des notifications de perturbation</string>
+    <string name="good_morning">Bonjour!</string>
     <string name="got_it">J’ai compris</string>
     <string name="hazmat_condition">Présence de matières dangereuses</string>
     <string name="hazmat_condition_lowercase">incident impliquant des matières dangereuses</string>
@@ -370,6 +371,8 @@
     <string name="strike">Grève</string>
     <string name="strike_lowercase">grève</string>
     <string name="subway">Métro</string>
+    <string name="subway_early_am_detail">Le premier train &lt;b>%1$s&lt;/b> devrait arriver à &lt;b>%2$s&lt;/b>. Nous n’avons pas encore de prévisions à vous communiquer, mais elles apparaîtront ici à l’approche de l’heure prévue.</string>
+    <string name="subway_early_am_first_time">D’abord &lt;b>%1$s&lt;/b></string>
     <string name="summary">Résumé</string>
     <string name="suspension">Interruption</string>
     <string name="switch_issue">Problème de commutation</string>

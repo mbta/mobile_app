@@ -171,6 +171,18 @@ struct UpcomingTripView: View {
             DisruptionView(spec: formattedAlert.predictionReplacement, iconName: iconName, maxTextAlpha: maxTextAlpha)
         case let .noTrips(format):
             switch onEnum(of: format) {
+            case let .subwayEarlyMorning(format):
+                HStack {
+                    Image(.faClock).resizable().scaledToFit().frame(width: 12, height: 12)
+                    Text(AttributedString.tryMarkdown(String(
+                        format: NSLocalizedString(
+                            "First **%@**",
+                            comment: "Label for a first trip of the morning, e.g. “First 5:21 AM”"
+                        ),
+                        format.scheduledTime.formatted(date: .omitted, time: .shortened)
+                    )))
+                }
+                .opacity(min(0.6, maxTextAlpha))
             case .predictionsUnavailable:
                 Text(
                     "Predictions unavailable",

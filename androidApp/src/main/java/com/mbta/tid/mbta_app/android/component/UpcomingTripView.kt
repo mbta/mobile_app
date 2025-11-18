@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -322,6 +323,24 @@ fun UpcomingTripView(
             )
         is UpcomingTripViewState.NoTrips ->
             when (state.format) {
+                is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning ->
+                    Row(
+                        modifier.alpha(min(maxTextAlpha, 0.6F)),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(painterResource(R.drawable.fa_clock), null, Modifier.size(12.dp))
+                        Text(
+                            AnnotatedString.fromHtml(
+                                stringResource(
+                                    R.string.subway_early_am_first_time,
+                                    state.format.scheduledTime.formattedTime(),
+                                )
+                            ),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnote,
+                        )
+                    }
                 is UpcomingFormat.NoTripsFormat.PredictionsUnavailable ->
                     Text(
                         stringResource(R.string.no_predictions),
@@ -413,6 +432,13 @@ fun UpcomingTripViewPreview() {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
                     TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes)
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.NoTrips(
+                    UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(
+                        EasternTimeInstant.now() + 10.minutes
+                    )
                 )
             )
             UpcomingTripView(UpcomingTripViewState.Loading)

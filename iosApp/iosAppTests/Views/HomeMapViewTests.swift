@@ -169,6 +169,7 @@ final class HomeMapViewTests: XCTestCase {
                         alertsHere: [],
                         allDataLoaded: true,
                         hasSchedulesToday: true,
+                        subwayServiceStartTime: nil,
                         alertsDownstream: [],
                         context: .stopDetailsFiltered
                     ),

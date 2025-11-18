@@ -146,6 +146,7 @@ class StopDetailsViewTest {
                                                 alertsHere = emptyList(),
                                                 allDataLoaded = false,
                                                 hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
                                                 alertsDownstream = emptyList(),
                                                 context =
                                                     RouteCardData.Context.StopDetailsUnfiltered,
@@ -214,6 +215,7 @@ class StopDetailsViewTest {
                                     alertsHere = emptyList(),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )
@@ -295,6 +297,7 @@ class StopDetailsViewTest {
                                                 alertsHere = listOf(alert),
                                                 allDataLoaded = false,
                                                 hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
                                                 alertsDownstream = emptyList(),
                                                 context =
                                                     RouteCardData.Context.StopDetailsUnfiltered,
@@ -369,6 +372,7 @@ class StopDetailsViewTest {
                                     alertsHere = listOf(alert),
                                     allDataLoaded = false,
                                     hasSchedulesToday = true,
+                                    subwayServiceStartTime = null,
                                     alertsDownstream = emptyList(),
                                     context = RouteCardData.Context.StopDetailsFiltered,
                                 )

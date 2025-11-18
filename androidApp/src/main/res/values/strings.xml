@@ -171,6 +171,7 @@
     <string name="from">From</string>
     <string name="full_description">Full Description</string>
     <string name="get_disruption_notifications">Get disruption notifications</string>
+    <string name="good_morning">Good morning!</string>
     <string name="got_it">Got it</string>
     <string name="group_by_direction" translatable="false">Group by Direction</string>
     <string name="hazmat_condition">Hazmat Condition</string>
@@ -369,6 +370,8 @@
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
     <string name="subway">Subway</string>
+    <string name="subway_early_am_detail">The first &lt;b>%1$s&lt;/b> train is scheduled to arrive at &lt;b>%2$s&lt;/b>. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.</string>
+    <string name="subway_early_am_first_time">First &lt;b>%1$s&lt;/b></string>
     <string name="summary">Summary</string>
     <string name="suspension">Suspension</string>
     <string name="switch_issue">Switch Issue</string>

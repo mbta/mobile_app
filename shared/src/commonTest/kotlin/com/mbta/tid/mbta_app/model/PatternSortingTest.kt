@@ -63,6 +63,7 @@ class PatternSortingTest {
                 else emptyList(),
             allDataLoaded = allDataLoaded,
             hasSchedulesToday = hasSchedulesToday,
+            subwayServiceStartTime = null,
             alertsDownstream = emptyList(),
             context = RouteCardData.Context.NearbyTransit,
         )

@@ -12,6 +12,7 @@ import SwiftUI
 struct StopDetailsNoTripCard: View {
     var status: UpcomingFormat.NoTripsFormat
     var accentColor: Color
+    var directionLabel: String
     var routeType: RouteType
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -27,6 +28,14 @@ struct StopDetailsNoTripCard: View {
 
     var detailText: Text? {
         switch onEnum(of: status) {
+        case let .subwayEarlyMorning(status): Text(AttributedString.tryMarkdown(String(
+                format: NSLocalizedString(
+                    "The first **%1$@** train is scheduled to arrive at **%2$@**. We don’t have predictions to show you yet, but they’ll appear here closer to the scheduled time.",
+                    comment: "Detail when subway service has not yet started, e.g. “The first Forest Hills train is scheduled to arrive at 5:21 AM.”"
+                ),
+                directionLabel,
+                status.scheduledTime.formatted(date: .omitted, time: .shortened)
+            )))
         case .predictionsUnavailable: Text(settingsCache
                 .get(.hideMaps) ? predictionsUnavailableStringNoMap : predictionsUnavailableString)
         default: nil
@@ -38,6 +47,8 @@ struct StopDetailsNoTripCard: View {
         // Text needed to be copied from UpcomingTripView because that sets the font style,
         // which means we're unable to override to use a larger font if we use that view directly
         switch onEnum(of: status) {
+        case .subwayEarlyMorning:
+            Text("Good morning!", comment: "Heading when subway service has not yet started")
         case .predictionsUnavailable:
             Text("Predictions unavailable")
         case .noSchedulesToday:
@@ -49,6 +60,7 @@ struct StopDetailsNoTripCard: View {
 
     var headerImage: Image {
         switch onEnum(of: status) {
+        case .subwayEarlyMorning: Image(.sunrise)
         case .predictionsUnavailable: Image(.liveDataSlash)
         case .noSchedulesToday, .serviceEndedToday: routeSlashIcon(routeType)
         }

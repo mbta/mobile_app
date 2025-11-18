@@ -2,9 +2,13 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.LocalTime
 
 public sealed class UpcomingFormat {
     public sealed class NoTripsFormat {
+        public data class SubwayEarlyMorning(val scheduledTime: EasternTimeInstant) :
+            NoTripsFormat()
+
         public data object NoSchedulesToday : NoTripsFormat()
 
         public data object ServiceEndedToday : NoTripsFormat()
@@ -21,9 +25,18 @@ public sealed class UpcomingFormat {
                 upcomingTrips: List<UpcomingTrip>,
                 hasSchedulesToday: Boolean,
                 now: EasternTimeInstant,
+                subwayServiceStartTime: EasternTimeInstant?,
             ): NoTripsFormat {
                 val hasUpcomingTrips =
                     upcomingTrips.any { it.time != null && it.time > now && !it.isCancelled }
+
+                if (
+                    subwayServiceStartTime != null &&
+                        now.local.time >= LocalTime(3, 30) &&
+                        now <= subwayServiceStartTime
+                ) {
+                    return SubwayEarlyMorning(subwayServiceStartTime)
+                }
 
                 return when {
                     !hasSchedulesToday -> NoSchedulesToday

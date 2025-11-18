@@ -124,6 +124,7 @@ public data class RouteCardData(
         private val alertsHere: List<Alert>,
         internal val allDataLoaded: Boolean,
         internal val hasSchedulesTodayByPattern: Map<String, Boolean>,
+        private val subwayServiceStartTime: EasternTimeInstant?,
         private val alertsDownstream: List<Alert>,
         internal val context: Context,
     ) {
@@ -139,6 +140,7 @@ public data class RouteCardData(
             alertsHere: List<Alert>,
             allDataLoaded: Boolean,
             hasSchedulesToday: Boolean,
+            subwayServiceStartTime: EasternTimeInstant?,
             alertsDownstream: List<Alert>,
             context: Context,
         ) : this(
@@ -154,6 +156,7 @@ public data class RouteCardData(
             // when routePatterns are not specified in the test
             if (routePatterns.isEmpty()) mapOf("fakeId" to hasSchedulesToday)
             else routePatterns.associate { it.id to hasSchedulesToday },
+            subwayServiceStartTime,
             alertsDownstream,
             context,
         )
@@ -426,6 +429,7 @@ public data class RouteCardData(
                                     groupedData.allUpcomingTrips,
                                     groupedData.hasSchedulesToday,
                                     now,
+                                    subwayServiceStartTime,
                                 )
 
                             if (noTripsFormat == NoTripsFormat.PredictionsUnavailable) {
@@ -520,6 +524,7 @@ public data class RouteCardData(
                                     upcomingTrips,
                                     hasSchedulesToday,
                                     now,
+                                    subwayServiceStartTime,
                                 ),
                                 secondaryAlert,
                             ),
@@ -815,6 +820,19 @@ public data class RouteCardData(
                     hasSchedulesTodayByPattern?.let {
                         patternIds.associateWith { patternId -> it.getOrElse(patternId) { false } }
                     }
+                leafBuilder.subwayServiceStartTime =
+                    if (leafBuilder.lineOrRoute.isSubway)
+                        schedules
+                            ?.schedules
+                            ?.filter {
+                                leafBuilder.lineOrRoute.containsRoute(it.routeId) &&
+                                    leafBuilder.stopIds.orEmpty().contains(it.stopId) &&
+                                    schedules.trips[it.tripId]?.directionId ==
+                                        leafBuilder.directionId
+                            }
+                            ?.mapNotNull { it.stopTime }
+                            ?.minOrNull()
+                    else null
             }
             return this
         }
@@ -1031,6 +1049,7 @@ public data class RouteCardData(
         var alertsHere: List<Alert>? = null,
         var allDataLoaded: Boolean? = null,
         var hasSchedulesTodayByPattern: Map<String, Boolean>? = null,
+        var subwayServiceStartTime: EasternTimeInstant? = null,
         var alertsDownstream: List<Alert>? = null,
         val context: Context,
     ) {
@@ -1047,6 +1066,7 @@ public data class RouteCardData(
                 allDataLoaded ?: false,
                 hasSchedulesTodayByPattern
                     ?: checkNotNull(routePatterns).associate { it.id to false },
+                subwayServiceStartTime,
                 checkNotNull(alertsDownstream),
                 context,
             )

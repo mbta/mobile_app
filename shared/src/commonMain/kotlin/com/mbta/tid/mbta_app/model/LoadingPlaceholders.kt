@@ -83,6 +83,7 @@ public object LoadingPlaceholders {
                 alertsHere = emptyList(),
                 allDataLoaded = false,
                 hasSchedulesToday = true,
+                subwayServiceStartTime = null,
                 alertsDownstream = emptyList(),
                 context = context,
             )
@@ -97,6 +98,7 @@ public object LoadingPlaceholders {
                 alertsHere = emptyList(),
                 allDataLoaded = false,
                 hasSchedulesToday = true,
+                subwayServiceStartTime = null,
                 alertsDownstream = emptyList(),
                 context = context,
             )
