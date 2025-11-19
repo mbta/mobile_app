@@ -47,6 +47,10 @@ struct TripDetailsManageVMModifier: ViewModifier {
                 onBackground: { viewModel.setActive(active: false, wasSentToBackground: true) },
             )
             .onReceive(timer) { _ in
+                // In some cases, the onDisappear of one stop details page can deactivate the VM after another
+                // stop details page has already appeared and loaded a new trip's details.
+                // This timer ensures that the VM will never get stuck deactivated
+                // when a view that requires it to be active is visible.
                 viewModel.setActive(active: true, wasSentToBackground: false)
             }
             .onDisappear {
