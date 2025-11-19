@@ -4,10 +4,10 @@
     <string name="access_issue_sentence_case">Problema de acesso</string>
     <string name="accident">Acidente</string>
     <string name="accident_lowercase">acidente</string>
-    <string name="add_another_time_period">Adicionar outro período de tempo</string>
+    <string name="add_another_time_period">Adicionar outro período</string>
     <string name="add_confirmation_button">Adicionar</string>
     <string name="add_favorite_label">adicionar favorito</string>
-    <string name="add_favorite_title">Adicionar aos favoritos</string>
+    <string name="add_favorite_title">Adicionar favorito</string>
     <string name="add_stops">Adicionar paradas</string>
     <string name="add_to_favorites_title">Adicionar &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Adicionar &lt;b>%1$s&lt;/b> em &lt;b>%2$s&lt;/b> aos Favoritos</string>
@@ -104,7 +104,7 @@
     <string name="drawbridge_being_raised_lowercase">ponte levadiça sendo levantada</string>
     <string name="eastbound">Sentido leste</string>
     <string name="edit">Editar</string>
-    <string name="edit_favorite_title">Editar Favorito</string>
+    <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à frente</string>
     <string name="electrical_work">Obra elétrica</string>
@@ -171,7 +171,7 @@
     <string name="freight_train_interference_lowercase">interferência de trem de carga</string>
     <string name="from">De</string>
     <string name="full_description">Descrição completa</string>
-    <string name="get_disruption_notifications">Receba notificações de interrupção</string>
+    <string name="get_disruption_notifications">Receba notificações sobre interrupções no serviço</string>
     <string name="good_morning">Bom dia!</string>
     <string name="got_it">Entendi</string>
     <string name="hazmat_condition">Condição de material perigoso</string>
@@ -221,7 +221,7 @@
     <string name="more_section_resources">Recursos</string>
     <string name="more_section_settings">Configurações</string>
     <string name="more_section_support">Informações Gerais e Suporte da MBTA</string>
-    <string name="more_section_support_note_accessibility">711 para chamadores TTY; VRS para chamadores ASL</string>
+    <string name="more_section_support_note_accessibility">711 para usuários de TTY e VRS para usuários de ASL.</string>
     <string name="more_section_support_note_hours">De segunda a sexta: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Trânsito próximo</string>
@@ -242,7 +242,7 @@
     <string name="northbound">Sentido norte</string>
     <string name="not_accessible">Não acessível</string>
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
-    <string name="notifications_enabled">notificações habilitadas</string>
+    <string name="notifications_enabled">notificações ativadas</string>
     <string name="now">Agora</string>
     <string name="now_at">Agora em</string>
     <string name="okay">Ok</string>
@@ -286,14 +286,14 @@
     <string name="rail_defect_lowercase">defeito nos trilhos</string>
     <string name="real_time_arrivals_updating_live">Atualização em tempo real ao vivo das chegadas</string>
     <string name="recenter">Mapa mais recente sobre minha localização</string>
-    <string name="recenter_map_on_vehicle">Mapa mais recente em %1$s</string>
+    <string name="recenter_map_on_vehicle">Centralizar o mapa em %1$s</string>
     <string name="recently_viewed">Visto(s) recentemente</string>
     <string name="refresh">Atualizar</string>
     <string name="refresh_predictions">Atualizar previsões</string>
     <string name="reload_data">Recarregar dados</string>
     <string name="remove">Remover</string>
     <string name="remove_favorite">remover favorito</string>
-    <string name="remove_from_favorites">Remover dos Favoritos</string>
+    <string name="remove_from_favorites">Remover dos favoritos</string>
     <string name="resources_link_fare_info">Informações sobre tarifas</string>
     <string name="resources_link_mticket">Bilhetes de transporte diário por trem e balsa</string>
     <string name="resources_link_mticket_note">Aplicativo mTicket</string>
@@ -379,7 +379,7 @@
     <string name="switch_issue_lowercase">problema na agulha</string>
     <string name="switch_problem">Problema de troca</string>
     <string name="switch_problem_lowercase">problema na agulha</string>
-    <string name="tap_favorites_hint">Paradas de toque para adicionar aos favoritos</string>
+    <string name="tap_favorites_hint">Toque nas paradas para adicioná-las aos favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
@@ -404,7 +404,7 @@
     <string name="trip_cancelled">Viagem cancelada</string>
     <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
     <string name="trip_complete">Viagem concluída</string>
-    <string name="trip_complete_body">Este %1$s chegou ao seu destino.</string>
+    <string name="trip_complete_body">%1$s chegou ao destino.</string>
     <string name="try_a_different_spelling_or_name">Tente uma ortografia ou nome diferente.</string>
     <string name="try_your_search_again">Tente pesquisar novamente.</string>
     <string name="unable_to_connect">Impossível conectar</string>

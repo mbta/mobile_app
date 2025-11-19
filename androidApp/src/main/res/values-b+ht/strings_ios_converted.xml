@@ -7,7 +7,7 @@
     <string name="add_another_time_period">Ajoute yon lòt peryòd tan</string>
     <string name="add_confirmation_button">Ajoute</string>
     <string name="add_favorite_label">ajoute yon preferans</string>
-    <string name="add_favorite_title">Ajoute Favorite</string>
+    <string name="add_favorite_title">Ajoute nan Favorite</string>
     <string name="add_stops">Ajoute arè</string>
     <string name="add_to_favorites_title">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> Preferans yo</string>
@@ -93,7 +93,7 @@
     <string name="disabled_bus_lowercase">otobis anpann</string>
     <string name="disabled_train">Tren Ki Pa Aktif</string>
     <string name="disabled_train_lowercase">tren anpann</string>
-    <string name="dismiss">Ranvwaye</string>
+    <string name="dismiss">Anile</string>
     <string name="display_more_information">montre plis enfòmasyon</string>
     <string name="displays_more_info">montre plis enfòmasyon</string>
     <string name="dock_closed">Waf Fèmen</string>
@@ -107,7 +107,7 @@
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
-    <string name="edit_favorite_title">Edit Favorite</string>
+    <string name="edit_favorite_title">Modifye Favorite yo</string>
     <string name="edit_favorites">Modifye Preferans yo</string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> devan</string>
     <string name="electrical_work">Travay Elektrik</string>
@@ -180,7 +180,7 @@
     <string name="freight_train_interference_lowercase">entèferans tren machandiz</string>
     <string name="from">Soti nan</string>
     <string name="full_description">Deskripsyon Konplè</string>
-    <string name="get_disruption_notifications">Jwenn notifikasyon dezòd</string>
+    <string name="get_disruption_notifications">Jwenn notifikasyon anka pwoblèm</string>
     <string name="good_morning">Bonjou!</string>
     <string name="got_it">Mwen konprann</string>
     <string name="hazmat_condition">Eta Matyè Danjere</string>
@@ -295,14 +295,14 @@
     <string name="rail_defect_lowercase">defo nan ray</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
     <string name="recenter">Resantre kat jeyografik la sou pozisyon mwen</string>
-    <string name="recenter_map_on_vehicle">Kat ki pi resan sou %1$s</string>
+    <string name="recenter_map_on_vehicle">Resantre Kat la sou %1$s</string>
     <string name="recently_viewed">Sa w fenk sot Wè</string>
     <string name="refresh">Rafrechi</string>
     <string name="refresh_predictions">Rafrechi prediksyon</string>
     <string name="reload_data">Rechaje done</string>
     <string name="remove">Retire</string>
     <string name="remove_favorite">retire yon preferans</string>
-    <string name="remove_from_favorites">Retire nan Favorites</string>
+    <string name="remove_from_favorites">Retire nan Favorites yo</string>
     <string name="resources_link_fare_info">Enfòmasyon Tarif</string>
     <string name="resources_link_mticket">Tikè Tren Vil la ak Bato</string>
     <string name="resources_link_mticket_note">Aplikasyon mTicket</string>
@@ -391,7 +391,7 @@
     <string name="switch_issue_lowercase">pwoblèm nan switch ray</string>
     <string name="switch_problem">Pann nan switch ray</string>
     <string name="switch_problem_lowercase">pann nan switch ray</string>
-    <string name="tap_favorites_hint">Tape sispann pou ajoute nan Favorites</string>
+    <string name="tap_favorites_hint">Tape sou arè yo pou ajoute yo nan Favorites</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
     <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>

@@ -2,4 +2,4 @@
 "CFBundleName" = "MTBA Go";
 
 /* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "La localisation sera utilisée pour afficher les options de transport à proximité.";
+"NSLocationWhenInUseUsageDescription" = "Le service de localisation sera utilisé pour afficher les options de transport à proximité.";

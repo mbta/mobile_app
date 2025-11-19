@@ -2621,14 +2621,14 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldparada antes de"
+                  "state" : "translated",
+                  "value" : "%ld parada de distancia"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldparadas antes de"
+                  "state" : "translated",
+                  "value" : "%ld paradas de distancia"
                 }
               }
             }
@@ -2639,13 +2639,13 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
+                  "state" : "translated",
                   "value" : "%ldarrêt restant"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
+                  "state" : "translated",
                   "value" : "%ldarrêts restants"
                 }
               }
@@ -2657,32 +2657,38 @@
             "plural" : {
               "few" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldkanpe lwen"
+                  "state" : "translated",
+                  "value" : "nan%ldarè"
                 }
               },
               "many" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldkanpe lwen"
+                  "state" : "translated",
+                  "value" : "nan%ldarè"
                 }
               },
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
+                  "state" : "translated",
                   "value" : "%ldkanpe lwen"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldkanpe lwen"
+                  "state" : "translated",
+                  "value" : "nan%ldarè"
                 }
               },
               "two" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldkanpe lwen"
+                  "state" : "translated",
+                  "value" : "nan%ldarè"
+                }
+              },
+              "zero" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "nan%ldarè"
                 }
               }
             }
@@ -2693,14 +2699,14 @@
             "plural" : {
               "one" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldparada"
+                  "state" : "translated",
+                  "value" : "a %ld parada"
                 }
               },
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "%ldparadas"
+                  "state" : "translated",
+                  "value" : "a %ld paradas"
                 }
               }
             }
@@ -2711,7 +2717,7 @@
             "plural" : {
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
+                  "state" : "translated",
                   "value" : "%ldđiểm dừng nữa"
                 }
               }
@@ -2723,8 +2729,8 @@
             "plural" : {
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "还有%ld站"
+                  "state" : "translated",
+                  "value" : "距离%ld站"
                 }
               }
             }
@@ -2735,8 +2741,8 @@
             "plural" : {
               "other" : {
                 "stringUnit" : {
-                  "state" : "needs_review",
-                  "value" : "還有%ld站"
+                  "state" : "translated",
+                  "value" : "距離%ld站"
                 }
               }
             }
@@ -2749,44 +2755,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "711 para quienes llaman por TTY; VRS para quienes llaman por ASL"
+            "state" : "translated",
+            "value" : "711 para usuarios de TTY; VRS para usuarios de ASL."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "711 pour les appelants TTY ; VRS pour les appelants ASL"
+            "state" : "translated",
+            "value" : "711 pour le service TTY; VRS pour la langue des signes"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "711 pou moun ki rele TTY; VRS pou moun kap rele ASL"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "711 para chamadores TTY; VRS para chamadores ASL"
+            "state" : "translated",
+            "value" : "711 para usuários de TTY e VRS para usuários de ASL."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "711 dành cho người gọi TTY; VRS dành cho người gọi ASL"
+            "state" : "translated",
+            "value" : "711 với người gọi TTY; VRS với người gọi ASL"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "TTY 呼叫者请拨打 711；ASL 呼叫者请拨打 VRS"
+            "state" : "translated",
+            "value" : "TTY呼叫者请拨打711；ASL呼叫者请使用VRS"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "TTY 來電者請撥打 711；ASL 來電者請撥打 VRS"
+            "state" : "translated",
+            "value" : "TTY呼叫者請致電711；ASL呼叫者請使用VRS"
           }
         }
       }
@@ -3144,44 +3150,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Añadir otro período de tiempo"
+            "state" : "translated",
+            "value" : "Agregar otro período de tiempo"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ajouter une autre période"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ajoute yon lòt peryòd tan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Adicionar outro período de tempo"
+            "state" : "translated",
+            "value" : "Adicionar outro período"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thêm một khoảng thời gian khác"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "添加另一个时间段"
+            "state" : "translated",
+            "value" : "添加其他时间段"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "新增另一個時間段"
+            "state" : "translated",
+            "value" : "新增其他時間段"
           }
         }
       }
@@ -3240,43 +3246,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Añadir favorito"
+            "state" : "translated",
+            "value" : "Agregar a favorito"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ajouter aux favoris"
+            "state" : "translated",
+            "value" : "Ajouter aux Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ajoute Favorite"
+            "state" : "translated",
+            "value" : "Ajoute nan Favorite"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Adicionar aos favoritos"
+            "state" : "translated",
+            "value" : "Adicionar favorito"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thêm mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "添加收藏"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "新增收藏"
           }
         }
@@ -3569,44 +3575,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Añade a favoritos"
+            "state" : "translated",
+            "value" : "Agregar a favoritos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ajoute aux favoris"
+            "state" : "translated",
+            "value" : "Ajoute aux Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ajoute nan favorites"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Adicionar aos favoritos"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Thêm vào mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "添加到收藏夹"
+            "state" : "translated",
+            "value" : "添加至收藏夹"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "加入收藏夾"
+            "state" : "translated",
+            "value" : "新增至我的最愛"
           }
         }
       }
@@ -7593,44 +7599,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Despedir"
+            "state" : "translated",
+            "value" : "Descartar"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Rejeter"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ranvwaye"
+            "state" : "translated",
+            "value" : "Anile"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Liberar"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Miễn nhiệm"
+            "state" : "translated",
+            "value" : "Đóng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "解雇"
+            "state" : "translated",
+            "value" : "关闭"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "解僱"
+            "state" : "translated",
+            "value" : "關閉"
           }
         }
       }
@@ -8349,44 +8355,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Editar favorito"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Modifier les favoris"
+            "state" : "translated",
+            "value" : "Modifier les Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Edit Favorite"
+            "state" : "translated",
+            "value" : "Modifye Favorite yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Editar Favorito"
+            "state" : "translated",
+            "value" : "Editar favorito"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Chỉnh sửa yêu thích"
+            "state" : "translated",
+            "value" : "Chỉnh sửa mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "编辑收藏夹"
+            "state" : "translated",
+            "value" : "编辑收藏"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "編輯收藏夾"
+            "state" : "translated",
+            "value" : "編輯收藏"
           }
         }
       }
@@ -9345,8 +9351,8 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Las paradas favoritas reemplazan la función de rutas destacadas anterior."
+            "state" : "translated",
+            "value" : "Las paradas favoritas reemplazan la función anterior de rutas marcadas con asterisco."
           }
         },
         "fr" : {
@@ -9357,32 +9363,32 @@
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Estasyon pi renmen yo ranplase karakteristik wout ak zetwal anvan an."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "As paradas favoritas substituem o recurso anterior de rotas marcadas com estrela."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Điểm dừng yêu thích thay thế tính năng tuyến đường có dấu sao trước đó."
+            "state" : "translated",
+            "value" : "Điểm dừng yêu thích thay thế tính năng tuyến đường được gắn dấu sao trước đó."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "收藏站点取代了之前的加星标路线功能。"
+            "state" : "translated",
+            "value" : "收藏站点功能已替代原有的星标线路功能。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "收藏站點取代了先前的加星標路線功能。"
+            "state" : "translated",
+            "value" : "收藏網站功能已替代原有的星標線路功能。"
           }
         }
       }
@@ -10145,43 +10151,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Seguir"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Suivre"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Swiv"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Seguir"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Theo"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "跟随"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "跟隨"
           }
         }
@@ -10287,44 +10293,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "De"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Depuis"
+            "state" : "translated",
+            "value" : "À partir de"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Soti nan"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "De"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Từ"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "从"
+            "state" : "translated",
+            "value" : "出发地"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "從"
+            "state" : "translated",
+            "value" : "出發地"
           }
         }
       }
@@ -10429,44 +10435,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Recibir notificaciones de interrupciones"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Recevez des notifications de perturbation"
+            "state" : "translated",
+            "value" : "Recevoir des notifications en cas de perturbation"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Jwenn notifikasyon dezòd"
+            "state" : "translated",
+            "value" : "Jwenn notifikasyon anka pwoblèm"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Receba notificações de interrupção"
+            "state" : "translated",
+            "value" : "Receba notificações sobre interrupções no serviço"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Nhận thông báo gián đoạn"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "获取中断通知"
+            "state" : "translated",
+            "value" : "接收运营变动通知"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "取得中斷通知"
+            "state" : "translated",
+            "value" : "接收營運變動通知"
           }
         }
       }
@@ -11579,43 +11585,43 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%2$@ %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%1$@ %2$@"
           }
         }
@@ -12987,44 +12993,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Nueva función. %@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Nouvelle fonctionnalité. %@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Nouvo karakteristik. %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Novo recurso. %@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Tính năng mới. %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "新功能。%@"
+            "state" : "translated",
+            "value" : "新增功能。%@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "新功能。 %@"
+            "state" : "translated",
+            "value" : "新增功能。%@"
           }
         }
       }
@@ -13505,44 +13511,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "notificaciones habilitadas"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "notifications activées"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "notifikasyon yo pèmèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "notificações habilitadas"
+            "state" : "translated",
+            "value" : "notificações ativadas"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "thông báo đã được bật"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "已启用通知"
+            "state" : "translated",
+            "value" : "通知已开启"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "已啟用通知"
+            "state" : "translated",
+            "value" : "通知已開啟"
           }
         }
       }
@@ -13836,44 +13842,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Sólo %@ a"
+            "state" : "translated",
+            "value" : "Solo %@ a"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Seulement %@ à"
+            "state" : "translated",
+            "value" : "Seulement %@ vers"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Sèlman %@ pou"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Apenas %@ para"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Chỉ %@ đến"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "仅限 %@ 至"
+            "state" : "translated",
+            "value" : "仅%@方向前往"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "僅限 %@ 至"
+            "state" : "translated",
+            "value" : "僅%@方向前往"
           }
         }
       }
@@ -15062,44 +15068,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Volver a centrar el mapa en %@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Carte recentrée sur %@"
+            "state" : "translated",
+            "value" : "Recentrer la carte sur %@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Kat ki pi resan sou %@"
+            "state" : "translated",
+            "value" : "Resantre Kat la sou %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Mapa mais recente em %@"
+            "state" : "translated",
+            "value" : "Centralizar o mapa em %@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Căn chỉnh lại bản đồ trên %@"
+            "state" : "translated",
+            "value" : "Căn bản đồ vào giữa %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "将地图重新​​定位到 %@"
+            "state" : "translated",
+            "value" : "将地图重新定位至%@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "將地圖重新定位到 %@"
+            "state" : "translated",
+            "value" : "將地圖重新定位至%@"
           }
         }
       }
@@ -15344,44 +15350,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Eliminar"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retirer"
+            "state" : "translated",
+            "value" : "Supprimer"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Retire"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Remover"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Di dời"
+            "state" : "translated",
+            "value" : "Xóa"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "消除"
+            "state" : "translated",
+            "value" : "移除"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "消除"
+            "state" : "translated",
+            "value" : "移除"
           }
         }
       }
@@ -15440,44 +15446,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Eliminar de favoritos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Supprimer des favoris"
+            "state" : "translated",
+            "value" : "Supprimer des Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retire nan Favorites"
+            "state" : "translated",
+            "value" : "Retire nan Favorites yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Remover dos Favoritos"
+            "state" : "translated",
+            "value" : "Remover dos favoritos"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Xóa khỏi mục Yêu thích"
+            "state" : "translated",
+            "value" : "Xóa khỏi mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "从收藏夹中移除"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "從收藏夾移除"
+            "state" : "translated",
+            "value" : "從我的最愛中移除"
           }
         }
       }
@@ -15581,44 +15587,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Elimina de favoritos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Supprime des favoris"
+            "state" : "translated",
+            "value" : "Supprime des Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Retire nan pi renmen yo"
+            "state" : "translated",
+            "value" : "Retire nan Favorites yo"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Remove dos favoritos"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Xóa khỏi mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "从收藏夹中移除"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "從收藏夾移除"
+            "state" : "translated",
+            "value" : "從我的最愛中移除"
           }
         }
       }
@@ -15863,44 +15869,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ahorrar"
+            "state" : "translated",
+            "value" : "Guardar"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Sauvegarder"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Sove"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Salvar"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Cứu"
+            "state" : "translated",
+            "value" : "Lưu"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "节省"
+            "state" : "translated",
+            "value" : "保存"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "節省"
+            "state" : "translated",
+            "value" : "儲存"
           }
         }
       }
@@ -19462,44 +19468,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Toca las paradas para añadirlas a Favoritos"
+            "state" : "translated",
+            "value" : "Toque las paradas para agregarlas a favoritos"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Appuyez sur les arrêts pour ajouter aux favoris"
+            "state" : "translated",
+            "value" : "Appuyez sur des arrêts pour les ajouter aux Favoris"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Tape sispann pou ajoute nan Favorites"
+            "state" : "translated",
+            "value" : "Tape sou arè yo pou ajoute yo nan Favorites"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Paradas de toque para adicionar aos favoritos"
+            "state" : "translated",
+            "value" : "Toque nas paradas para adicioná-las aos favoritos"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Nhấn dừng để thêm vào mục Yêu thích"
+            "state" : "translated",
+            "value" : "Nhấn vào điểm dừng để thêm vào mục yêu thích"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "点击站点即可添加到收藏夹"
+            "state" : "translated",
+            "value" : "点击站点可添加至收藏夹"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "點擊站點即可新增至收藏夾"
+            "state" : "translated",
+            "value" : "按一下網站可新增至我的最愛"
           }
         }
       }
@@ -19791,44 +19797,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Este %@ ha llegado a su destino."
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Ce %@ a atteint sa destination."
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%@ sa a rive nan destinasyon li."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Este %@ chegou ao seu destino."
+            "state" : "translated",
+            "value" : "%@ chegou ao destino."
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "%@ này đã đến đích."
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "此 %@ 已到达目的地。"
+            "state" : "translated",
+            "value" : "本%@已到达目的地。"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "此 %@ 已到達目的地。"
+            "state" : "translated",
+            "value" : "本%@已到達目的地。"
           }
         }
       }
@@ -20227,43 +20233,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Propina: %1$@"
+            "state" : "translated",
+            "value" : "Consejo: %1$@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Astuce : %1$@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Konsèy: %1$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Dica: %1$@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Mẹo: %1$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "提示：%1$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "提示：%1$@"
           }
         }
@@ -20275,44 +20281,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "A"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "À"
+            "state" : "translated",
+            "value" : "Jusqu’à"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Pou"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Para"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "ĐẾN"
+            "state" : "translated",
+            "value" : "Đến"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "到"
+            "state" : "translated",
+            "value" : "目的地"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "到"
+            "state" : "translated",
+            "value" : "目的地"
           }
         }
       }
@@ -20371,43 +20377,43 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "alternar dirección"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "basculer la direction"
+            "state" : "translated",
+            "value" : "inverser la direction"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "baskile direksyon"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "alternar direção"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "chuyển hướng"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "切换方向"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "切換方向"
           }
         }
@@ -21076,44 +21082,44 @@
       "localizations" : {
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Viaje completo"
+            "state" : "translated",
+            "value" : "Viaje completado"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Voyage terminé"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Vwayaj konplè"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Viagem concluída"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "Chuyến đi hoàn tất"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "行程完成"
+            "state" : "translated",
+            "value" : "行程结束"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "行程完成"
+            "state" : "translated",
+            "value" : "行程結束"
           }
         }
       }
@@ -21894,44 +21900,44 @@
         },
         "es" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "versión %1$@ (%2$@)"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "version %1$@ (%2$@)"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "vèsyon %1$@ (%2$@)"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "versão %1$@ (%2$@)"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "needs_review",
+            "state" : "translated",
             "value" : "phiên bản %1$@ (%2$@)"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "版本 %1$@（%2$@）"
+            "state" : "translated",
+            "value" : "版本%1$@(%2$@)"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "版本 %1$@（%2$@）"
+            "state" : "translated",
+            "value" : "版本%1$@(%2$@)"
           }
         }
       }

@@ -2,4 +2,4 @@
 "CFBundleName" = "MBTA Go";
 
 /* Privacy - Location When In Use Usage Description */
-"NSLocationWhenInUseUsageDescription" = "位置功能將用於顯示附近的交通選擇。";
+"NSLocationWhenInUseUsageDescription" = "位置資訊將用於顯示附近的交通出行選項。";

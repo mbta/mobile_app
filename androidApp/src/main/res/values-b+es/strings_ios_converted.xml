@@ -4,10 +4,10 @@
     <string name="access_issue_sentence_case">Problema de accesibilidad</string>
     <string name="accident">Accidente</string>
     <string name="accident_lowercase">accidente</string>
-    <string name="add_another_time_period">Añadir otro período de tiempo</string>
+    <string name="add_another_time_period">Agregar otro período de tiempo</string>
     <string name="add_confirmation_button">Agregar</string>
     <string name="add_favorite_label">agregar favorito</string>
-    <string name="add_favorite_title">Añadir favorito</string>
+    <string name="add_favorite_title">Agregar a favorito</string>
     <string name="add_stops">Agregar paradas</string>
     <string name="add_to_favorites_title">Agregar &lt;b>%1$s&lt;/b> a la(s) &lt;b>%2$s&lt;/b></string>
     <string name="add_to_favorites_title_stop_details">Agregar &lt;b>%1$s&lt;/b> a la(s) &lt;b>%2$s&lt;/b> a Favoritos</string>
@@ -90,7 +90,7 @@
     <string name="disabled_bus_lowercase">autobús averiado</string>
     <string name="disabled_train">Tren averiado</string>
     <string name="disabled_train_lowercase">tren averiado</string>
-    <string name="dismiss">Despedir</string>
+    <string name="dismiss">Descartar</string>
     <string name="display_more_information">mostrar más información</string>
     <string name="displays_more_info">muestra más información</string>
     <string name="dock_closed">Dársena cerrada</string>
@@ -140,7 +140,7 @@
     <string name="facility_issue">Problema en las instalaciones</string>
     <string name="facility_issue_sentence_case">Problema en las instalaciones</string>
     <string name="favorite_stop">parada favorita</string>
-    <string name="favorite_stops_first_time_toast_message">Las paradas favoritas reemplazan la función de rutas destacadas anterior.</string>
+    <string name="favorite_stops_first_time_toast_message">Las paradas favoritas reemplazan la función anterior de rutas marcadas con asterisco.</string>
     <string name="favorites_link">Favoritos</string>
     <string name="favorites_toast_add">&lt;b>%1$s %2$s&lt;/b> a la(s) &lt;b>%3$s&lt;/b> se agregó a Favoritos</string>
     <string name="favorites_toast_add_fallback">Se agregó a Favoritos</string>
@@ -221,7 +221,7 @@
     <string name="more_section_resources">Recursos</string>
     <string name="more_section_settings">Configuración</string>
     <string name="more_section_support">Información general y soporte de MBTA</string>
-    <string name="more_section_support_note_accessibility">711 para quienes llaman por TTY; VRS para quienes llaman por ASL</string>
+    <string name="more_section_support_note_accessibility">711 para usuarios de TTY; VRS para usuarios de ASL.</string>
     <string name="more_section_support_note_hours">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Tránsito cercano</string>
@@ -257,7 +257,7 @@
     <string name="onboarding_map_display_header">Establecer preferencia de visualización del mapa</string>
     <string name="onboarding_station_accessibility_body">Al suscribirse, podemos mostrarle qué estaciones son inaccesibles o tienen cierres de ascensores.</string>
     <string name="onboarding_station_accessibility_header">Establecer preferencia de información de accesibilidad de la estación</string>
-    <string name="only_direction_to">Sólo %1$s a</string>
+    <string name="only_direction_to">Solo %1$s a</string>
     <string name="only_served_at_certain_times">Solo se prestan servicios en determinados momentos del día</string>
     <string name="open_for_more_arrivals">Abierto para más llegadas</string>
     <string name="other_link_privacy_policy">Política de privacidad</string>
@@ -303,7 +303,7 @@
     <string name="route_mode_label">%1$s %2$s</string>
     <string name="route_picker_header_favorites">Agregar paradas favoritas</string>
     <string name="routes">Rutas</string>
-    <string name="save">Ahorrar</string>
+    <string name="save">Guardar</string>
     <string name="schedule_change">Cambio de horario</string>
     <string name="schedule_change_sentence_case">Cambio de horario</string>
     <string name="scheduled_to_depart">Programado para salir</string>
@@ -379,14 +379,14 @@
     <string name="switch_issue_lowercase">problema de cambio de carril</string>
     <string name="switch_problem">Problema de cambio de carril</string>
     <string name="switch_problem_lowercase">problema del interruptor</string>
-    <string name="tap_favorites_hint">Toca las paradas para añadirlas a Favoritos</string>
+    <string name="tap_favorites_hint">Toque las paradas para agregarlas a favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
     <string name="to">A</string>
-    <string name="toast_tip_prefix">Propina: %1$s</string>
+    <string name="toast_tip_prefix">Consejo: %1$s</string>
     <string name="toggle_direction">alternar dirección</string>
     <string name="track_change">Cambio de pista</string>
     <string name="track_change_sentence_case">Cambio de pista</string>
@@ -403,7 +403,7 @@
     <string name="trains">trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
-    <string name="trip_complete">Viaje completo</string>
+    <string name="trip_complete">Viaje completado</string>
     <string name="trip_complete_body">Este %1$s ha llegado a su destino.</string>
     <string name="try_a_different_spelling_or_name">Pruebe con una ortografía o un nombre diferentes.</string>
     <string name="try_your_search_again">Busque de nuevo.</string>
