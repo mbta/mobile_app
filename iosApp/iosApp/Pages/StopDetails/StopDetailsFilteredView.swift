@@ -173,7 +173,14 @@ struct StopDetailsFilteredView: View {
                             defaultDirection: routeStopDirection.direction
                         )
                     },
-                    onClose: { inSaveFavoritesFlow = false },
+                    onClose: {
+                        inSaveFavoritesFlow = false
+                        if settingsCache.get(.notifications) {
+                            Task {
+                                await NotificationPermissionUtil.requestPermission()
+                            }
+                        }
+                    },
                     pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 )
             }
