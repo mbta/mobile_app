@@ -123,7 +123,7 @@ fun TripStops(
                 val firstStop = splitStops.firstStop
                 if (firstStop != null) {
                     TripStopRow(
-                        stop = firstStop,
+                        entry = firstStop,
                         trip,
                         now,
                         onTapLink,
@@ -190,7 +190,7 @@ fun TripStops(
                     HaloUnderRouteLine(routeAccents.color)
                 }
                 TripStopRow(
-                    stop = target,
+                    entry = target,
                     trip,
                     now,
                     onTapLink,

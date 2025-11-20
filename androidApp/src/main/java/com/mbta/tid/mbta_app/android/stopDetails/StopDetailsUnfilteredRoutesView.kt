@@ -114,7 +114,7 @@ fun StopDetailsUnfilteredRoutesView(
                                         null,
                                         AlertCardSpec.Elevator,
                                         Color.Unspecified,
-                                        MaterialTheme.colorScheme.onPrimary,
+                                        colorResource(R.color.text),
                                         {
                                             openModal(
                                                 ModalRoutes.AlertDetails(it.id, null, null, stop.id)
