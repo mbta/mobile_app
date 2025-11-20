@@ -41,9 +41,11 @@ kotlin {
 
     androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
 
-    iosX64()
-    iosArm64()
-    iosSimulatorArm64()
+    if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+        iosX64()
+        iosArm64()
+        iosSimulatorArm64()
+    }
 
     jvm { mainRun { mainClass.set("com.mbta.tid.mbta_app.ProjectUtilsKt") } }
 
@@ -110,7 +112,9 @@ kotlin {
                 implementation(libs.ktor.client.okhttp)
             }
         }
-        val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
+        if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+            val iosMain by getting { dependencies { implementation(libs.ktor.client.darwin) } }
+        }
         val jvmMain by getting {
             dependencies {
                 implementation(kotlin("reflect"))
@@ -166,11 +170,8 @@ task("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
 
 if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosX64").dependsOn("bomCodegenIos")
-
     tasks.getByName("compileKotlinIosArm64").dependsOn("bomCodegenIos")
-
     tasks.getByName("compileKotlinIosSimulatorArm64").dependsOn("bomCodegenIos")
-
     tasks.findByName("compileIosMainKotlinMetadata")?.dependsOn("bomCodegenIos")
 }
 
