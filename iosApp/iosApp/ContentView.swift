@@ -605,7 +605,7 @@ struct ContentView: View {
                 SaveFavoritePage(
                     routeId: routeId,
                     stopId: stopId,
-                    selectedDirection: selectedDirection,
+                    initialSelectedDirection: selectedDirection,
                     context: context,
                     updateFavorites: { favorites in
                         favoritesVM.updateFavorites(
@@ -615,7 +615,7 @@ struct ContentView: View {
                         )
                     },
                     navCallbacks: navCallbacks,
-                    nearbyVM: nearbyVM
+                    nearbyVM: nearbyVM,
                 )
 
             default:

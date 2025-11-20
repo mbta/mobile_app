@@ -320,7 +320,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
         }
         .onChange(of: showFirstTimeFavoritesToast) { _ in
-            if showFirstTimeFavoritesToast == true {
+            if showFirstTimeFavoritesToast == true, displayedToast == nil {
                 let toast = ToastViewModel.Toast(
                     message: NSLocalizedString("Tap stops to add to Favorites", comment: ""),
                     duration: .indefinite,

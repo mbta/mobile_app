@@ -14,6 +14,7 @@ struct ActionButton: View {
         case close
         case clear
         case dismiss
+        case exchange
         case plus
 
         var accessibilityLabel: String {
@@ -26,6 +27,11 @@ struct ActionButton: View {
                 NSLocalizedString("Clear", comment: "VoiceOver label for a generic clear button")
             case .dismiss:
                 NSLocalizedString("Dismiss", comment: "VoiceOver label for a dismiss  button")
+            case .exchange:
+                NSLocalizedString(
+                    "toggle direction",
+                    comment: "Screen reader label for a button that swaps between southbound and northbound, eastbound and westbound, inbound and outbound"
+                )
             case .plus:
                 NSLocalizedString("Add stops", comment: "VoiceOver label for add stops button")
             }
@@ -37,6 +43,8 @@ struct ActionButton: View {
                 .faChevronLeft
             case .close, .clear, .dismiss:
                 .faXmark
+            case .exchange:
+                .faExchange
             case .plus:
                 .plus
             }
@@ -51,6 +59,7 @@ struct ActionButton: View {
     @ScaledMetric private var circleSize: CGFloat = 32
     @ScaledMetric private var backIconSize: CGFloat = 14
     @ScaledMetric private var closeIconSize: CGFloat = 12
+    @ScaledMetric private var exchangeIconSize: CGFloat = 24
     @ScaledMetric private var plusIconSize: CGFloat = 13
 
     var iconSize: CGFloat {
@@ -61,6 +70,8 @@ struct ActionButton: View {
             closeIconSize
         case .clear:
             closeIconSize / 2
+        case .exchange:
+            exchangeIconSize
         case .plus:
             plusIconSize
         }
@@ -81,6 +92,8 @@ struct ActionButton: View {
                 Color.contrast
             case .clear:
                 Color.deemphasized
+            case .exchange:
+                Color.halo
             }
         }
         self.iconColor = if let iconColor {
@@ -91,6 +104,8 @@ struct ActionButton: View {
                 Color.fill2
             case .clear:
                 Color.fill3
+            case .exchange:
+                Color.text
             }
         }
         self.action = action

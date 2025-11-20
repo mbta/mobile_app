@@ -3194,7 +3194,6 @@
     },
     "add favorite" : {
       "comment" : "On-click label, as in “double-tap to add favorite”",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -8351,7 +8350,6 @@
     },
     "Edit Favorite" : {
       "comment" : "Title for editing an individual favorite’s settings",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15442,7 +15440,6 @@
     },
     "Remove from Favorites" : {
       "comment" : "Button to delete an individual favorite",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15865,7 +15862,6 @@
     },
     "Save" : {
       "comment" : "Button to save a favorite that’s being added or edited",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
