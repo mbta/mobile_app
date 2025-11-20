@@ -45,7 +45,7 @@ import org.koin.dsl.module
 
 @Composable
 fun TripStopRow(
-    stop: TripDetailsStopList.Entry,
+    entry: TripDetailsStopList.Entry,
     trip: Trip,
     now: EasternTimeInstant,
     onTapLink: (TripDetailsStopList.Entry) -> Unit,
@@ -59,31 +59,32 @@ fun TripStopRow(
     firstStop: Boolean = false,
     lastStop: Boolean = false,
 ) {
-    val activeElevatorAlerts = stop.activeElevatorAlerts(now)
+    val activeElevatorAlerts = entry.activeElevatorAlerts(now)
 
-    val disruption = stop.disruption?.takeIf { it.alert.hasNoThroughService && showDownstreamAlert }
+    val disruption =
+        entry.disruption?.takeIf { it.alert.hasNoThroughService && showDownstreamAlert }
 
     StopListRow(
-        stop = stop.stop,
+        stop = entry.stop,
         stopLane = RouteBranchSegment.Lane.Center,
         stickConnections =
             RouteBranchSegment.StickConnection.forward(
                 "".takeUnless { firstStop },
-                stop.stop.id,
+                entry.stop.id,
                 "".takeUnless { lastStop },
                 RouteBranchSegment.Lane.Center,
             ),
-        onClick = { onTapLink(stop) },
+        onClick = { onTapLink(entry) },
         routeAccents = routeAccents,
         stopListContext = StopListContext.Trip,
         modifier = modifier,
         activeElevatorAlerts = activeElevatorAlerts.size,
         alertSummaries = alertSummaries,
-        connectingRoutes = stop.routes,
+        connectingRoutes = entry.routes,
         disruption = disruption,
         getAlertState = { fromStop, toStop ->
             when {
-                fromStop == stop.stop.id &&
+                fromStop == entry.stop.id &&
                     showDownstreamAlert &&
                     disruption?.alert?.effect == Alert.Effect.Shuttle -> SegmentAlertState.Shuttle
                 else -> SegmentAlertState.Normal
@@ -92,10 +93,10 @@ fun TripStopRow(
         stopPlacement = StopPlacement(firstStop, lastStop),
         onOpenAlertDetails = onOpenAlertDetails,
         targeted = targeted,
-        trackNumber = stop.trackNumber,
+        trackNumber = entry.trackNumber,
         rightSideContent = { rightSideModifier ->
             CompositionLocalProvider(LocalContentColor provides colorResource(R.color.text)) {
-                val state = upcomingTripViewState(stop, trip, now, route)
+                val state = upcomingTripViewState(entry, trip, now, route)
                 if (state != null) {
                     UpcomingTripView(
                         state,
@@ -153,7 +154,7 @@ private fun TripStopRowPreview() {
         MyApplicationTheme {
             Column(Modifier.background(colorResource(R.color.fill3))) {
                 TripStopRow(
-                    stop =
+                    entry =
                         TripDetailsStopList.Entry(
                             objects.stop {
                                 name = "Charles/MGH"
@@ -183,7 +184,7 @@ private fun TripStopRowPreview() {
                     alertSummaries = emptyMap(),
                 )
                 TripStopRow(
-                    stop =
+                    entry =
                         TripDetailsStopList.Entry(
                             objects.stop { name = "Park Street" },
                             stopSequence = 10,
@@ -210,7 +211,7 @@ private fun TripStopRowPreview() {
                     alertSummaries = emptyMap(),
                 )
                 TripStopRow(
-                    stop =
+                    entry =
                         TripDetailsStopList.Entry(
                             objects.stop { name = "South Station" },
                             stopSequence = 10,
@@ -270,7 +271,7 @@ private fun TripStopRowDisruptionsPreview() {
                 )
                 Column(Modifier.padding(top = 6.dp)) {
                     TripStopRow(
-                        stop =
+                        entry =
                             TripDetailsStopList.Entry(
                                 objects.stop { name = "Charles/MGH" },
                                 stopSequence = 10,
@@ -302,7 +303,7 @@ private fun TripStopRowDisruptionsPreview() {
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
-                        stop =
+                        entry =
                             TripDetailsStopList.Entry(
                                 objects.stop { name = "Park Street" },
                                 stopSequence = 10,
@@ -331,7 +332,7 @@ private fun TripStopRowDisruptionsPreview() {
                         showDownstreamAlert = true,
                     )
                     TripStopRow(
-                        stop =
+                        entry =
                             TripDetailsStopList.Entry(
                                 objects.stop { name = "South Station" },
                                 stopSequence = 10,
