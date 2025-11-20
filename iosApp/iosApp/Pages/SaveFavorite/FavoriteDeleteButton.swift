@@ -19,7 +19,7 @@ struct FavoriteDeleteButton: View {
                 HStack(alignment: .center, spacing: 16) {
                     Text("Remove from Favorites", comment: "Button to delete an individual favorite")
                         .font(Typography.bodySemibold)
-                    Image(.trashCan).resizable().scaledToFit().frame(width: 24, height: 24)
+                    Image(.faDelete).resizable().scaledToFit().frame(width: 24, height: 24)
                 }.frame(maxWidth: .infinity, alignment: .center)
             }
         )

@@ -12,6 +12,7 @@ import SwiftUI
 struct EditFavoritesPage: View {
     let viewModel: IFavoritesViewModel
     let navCallbacks: NavigationCallbacks
+    let onOpenEditModal: (RouteStopDirection) -> Void
 
     @State var globalResponse: GlobalResponse?
     @State var favoritesVMState: FavoritesViewModel.State = .init()
@@ -78,9 +79,11 @@ struct EditFavoritesPage: View {
                     closeText: NSLocalizedString("Done", comment: "Button text for closing flow")
                 )
                 EditFavoritesList(
+                    favorites: favoritesState,
                     routeCardData: favoritesVMState.staticRouteCardData,
                     global: globalResponse,
-                    deleteFavorite: { rsd in deleteAndToast(rsd) }
+                    deleteFavorite: deleteAndToast,
+                    onOpenEditModal: onOpenEditModal,
                 )
             }
             .onAppear {
@@ -106,9 +109,13 @@ struct EditFavoritesPage: View {
 }
 
 struct EditFavoritesList: View {
+    let favorites: [RouteStopDirection: FavoriteSettings?]
     let routeCardData: [RouteCardData]?
     let global: GlobalResponse?
     let deleteFavorite: (RouteStopDirection) -> Void
+    let onOpenEditModal: (RouteStopDirection) -> Void
+
+    @EnvironmentObject var settingsCache: SettingsCache
 
     var body: some View {
         if let routeCardData, !routeCardData.isEmpty {
@@ -120,15 +127,15 @@ struct EditFavoritesList: View {
                             showStopHeader: true
                         ) { stopData in
                             FavoriteDepartures(
+                                favorites: favorites,
                                 stopData: stopData,
                                 globalData: global
                             ) { leaf in
-                                let favToDelete = RouteStopDirection(
-                                    route: leaf.lineOrRoute.id,
-                                    stop: leaf.stop.id,
-                                    direction: leaf.directionId
-                                )
-                                deleteFavorite(favToDelete)
+                                if settingsCache.get(.notifications) {
+                                    onOpenEditModal(leaf.routeStopDirection)
+                                } else {
+                                    deleteFavorite(leaf.routeStopDirection)
+                                }
                             }
                         }
                     }
@@ -163,40 +170,50 @@ struct EditFavoritesList: View {
 }
 
 struct FavoriteDepartures: View {
+    let favorites: [RouteStopDirection: FavoriteSettings?]
     let stopData: RouteCardData.RouteStopData
     let globalData: GlobalResponse?
     let onClick: (RouteCardData.Leaf) -> Void
 
+    @EnvironmentObject var settingsCache: SettingsCache
+
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 0) {
             ForEach(stopData.data.enumerated().sorted(by: { $0.offset < $1.offset }), id: \.element.id) { index, leaf in
                 let formatted = leaf.format(now: EasternTimeInstant.now(), globalData: globalData)
                 let direction: Direction = stopData.directions.first(where: { $0.id == leaf.directionId })!
+                let favoriteSettings: FavoriteSettings? = favorites[leaf.routeStopDirection] ?? nil
 
-                HStack(spacing: 0) {
+                HStack(alignment: .center, spacing: 0) {
                     switch onEnum(of: formatted) {
                     case let .single(single):
-                        VStack(alignment: .center, spacing: 6) {
-                            HStack(alignment: .center, spacing: 0) {
-                                let pillDecoration: PredictionRowView.PillDecoration = if let route = single
-                                    .route { .onRow(route: route) } else { .none }
-                                DirectionLabel(
-                                    direction: direction,
-                                    showDestination: true,
-                                    pillDecoration: pillDecoration
-                                )
-                                Spacer()
-                                DeleteButton { onClick(leaf) }
-                            }
+                        HStack(alignment: .center, spacing: 8) {
+                            let pillDecoration: PredictionRowView.PillDecoration = if let route = single
+                                .route { .onRow(route: route) } else { .none }
+                            DirectionLabel(
+                                direction: direction,
+                                showDestination: true,
+                                pillDecoration: pillDecoration
+                            ).frame(maxWidth: .infinity, alignment: .leading)
+                            RowRightContent(
+                                leaf: leaf,
+                                favoriteSettings: favoriteSettings,
+                                onClick: onClick
+                            )
                         }
                     case let .branched(branched):
                         HStack(alignment: .center, spacing: 0) {
                             VStack(alignment: .leading, spacing: 6) {
                                 DirectionLabel(direction: direction, showDestination: false)
                                 BranchRows(formatted: branched)
-                            }.accessibilityElement(children: .combine)
-                            Spacer()
-                            DeleteButton { onClick(leaf) }
+                            }
+                            .accessibilityElement(children: .combine)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            RowRightContent(
+                                leaf: leaf,
+                                favoriteSettings: favoriteSettings,
+                                onClick: onClick
+                            )
                         }
                     }
                 }
@@ -207,6 +224,23 @@ struct FavoriteDepartures: View {
                     HaloSeparator()
                 }
             }
+        }
+    }
+}
+
+struct RowRightContent: View {
+    let leaf: RouteCardData.Leaf
+    let favoriteSettings: FavoriteSettings?
+    let onClick: (RouteCardData.Leaf) -> Void
+
+    @EnvironmentObject var settingsCache: SettingsCache
+
+    var body: some View {
+        if settingsCache.get(.notifications) {
+            NotificationStatusIcon(favoriteSetting: favoriteSettings)
+            EditButton { onClick(leaf) }
+        } else {
+            DeleteButton { onClick(leaf) }
         }
     }
 }
@@ -234,28 +268,66 @@ struct BranchRows: View {
     }
 }
 
+struct NotificationStatusIcon: View {
+    let favoriteSetting: FavoriteSettings?
+
+    @ScaledMetric private var imageSize = 18
+
+    var body: some View {
+        if favoriteSetting?.notifications.enabled == true {
+            Image(.faBell)
+                .resizable()
+                .scaledToFit()
+                .frame(width: imageSize, height: imageSize)
+                .foregroundStyle(Color.text)
+        }
+    }
+}
+
 struct DeleteButton: View {
     let action: () -> Void
     @ScaledMetric private var imageHeight = 16
     @ScaledMetric private var imageWidth = 14
     @ScaledMetric private var buttonSize = 44
     var body: some View {
-        Button(action: { action()
-        }) {
+        Button(action: action) {
             ZStack {
                 Circle()
                     .fill(Color.deleteBackground)
                     .frame(width: buttonSize, height: buttonSize)
-
-                Image(.trashCan)
+                Image(.faDelete)
                     .resizable()
                     .scaledToFit()
                     .frame(width: imageWidth, height: imageHeight)
-                    .foregroundColor(Color.delete)
+                    .foregroundStyle(Color.delete)
             }
         }.accessibilityLabel(Text(
             "Delete",
             comment: "Content description for a button that removes a favorited route/stop/direction"
+        ))
+    }
+}
+
+struct EditButton: View {
+    let action: () -> Void
+    @ScaledMetric private var imageSize = 24
+    @ScaledMetric private var buttonSize = 44
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                Circle()
+                    .fill(Color.halo)
+                    .frame(width: buttonSize, height: buttonSize)
+
+                Image(.faPencil)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: imageSize, height: imageSize)
+                    .foregroundStyle(Color.text)
+            }
+        }.accessibilityLabel(Text(
+            "Edit",
+            comment: "Button text to enter edit favorites flow"
         ))
     }
 }
