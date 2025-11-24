@@ -5,7 +5,7 @@ android-material3 = "1.4.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/activity
 androidx-activityCompose = "1.11.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/lifecycle
-androidx-lifecycle = "2.9.4"
+androidx-lifecycle = "2.10.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/navigation
 androidx-navigationCompose = "2.9.6"
 # changelog: https://developer.android.com/jetpack/androidx/releases/test
