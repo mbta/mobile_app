@@ -40,7 +40,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup
         with:
           for: ios-build
@@ -103,7 +103,7 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: actions/download-artifact@v6
         with:
           name: ios-ipa
