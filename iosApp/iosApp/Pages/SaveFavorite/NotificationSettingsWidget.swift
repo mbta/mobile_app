@@ -28,9 +28,15 @@ struct NotificationSettingsWidget: View {
                 HStack {
                     if settings.enabled {
                         Image(.faBellFilled)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
                             .foregroundStyle(Color.key)
                     } else {
                         Image(.faBell)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 24, height: 24)
                     }
                     Text("Get disruption notifications")
                 }
@@ -104,7 +110,7 @@ struct NotificationSettingsWidget: View {
             HStack(spacing: 0) {
                 if let deleteWindow {
                     Button(action: deleteWindow) {
-                        Image(.trashCan).accessibilityLabel(Text("Delete"))
+                        Image(.faDelete).accessibilityLabel(Text("Delete"))
                     }
                     .foregroundStyle(Color.error)
                     .frame(minWidth: 44)
