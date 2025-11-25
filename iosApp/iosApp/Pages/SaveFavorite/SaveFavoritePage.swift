@@ -174,7 +174,7 @@ struct SaveFavoritePage: View {
                         )
                         NotificationSettingsWidget(
                             settings: pendingSettings?.notifications ?? .companion.disabled,
-                            setSettings: { pendingSettings = pendingSettings?.doCopy(notifications: $0) }
+                            setSettings: { pendingSettings = .init(notifications: $0) }
                         )
                         if isFavorite {
                             HaloSeparator(height: 2)

@@ -19,7 +19,7 @@ struct NotificationSettingsWidget: View {
             Toggle(
                 isOn: .init(
                     get: { settings.enabled },
-                    set: { setSettings(settings.doCopy(
+                    set: { setSettings(.init(
                         enabled: $0,
                         windows: settings.windows.isEmpty ? [Self.defaultWindow()] : settings.windows
                     )) }
@@ -46,15 +46,15 @@ struct NotificationSettingsWidget: View {
                         window: window, setWindow: { newWindow in
                             var newWindows = settings.windows
                             newWindows[index] = newWindow
-                            setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
+                            setSettings(.init(enabled: settings.enabled, windows: newWindows))
                         }, deleteWindow: settings.windows.count > 1 ? {
                             var newWindows = settings.windows
                             newWindows.remove(at: index)
-                            setSettings(settings.doCopy(enabled: settings.enabled, windows: newWindows))
+                            setSettings(.init(enabled: settings.enabled, windows: newWindows))
                         } : nil
                     )
                 }
-                Button(action: { setSettings(settings.doCopy(
+                Button(action: { setSettings(.init(
                     enabled: settings.enabled,
                     windows: settings.windows + [Self.defaultWindow(existingWindows: settings.windows)]
                 )) }) {
@@ -113,7 +113,7 @@ struct NotificationSettingsWidget: View {
                     LabeledTimeInput(
                         label: Text("From"),
                         time: window.startTime,
-                        setTime: { setWindow(window.doCopy(
+                        setTime: { setWindow(.init(
                             startTime: $0,
                             endTime: window.endTime,
                             daysOfWeek: window.daysOfWeek
@@ -123,7 +123,7 @@ struct NotificationSettingsWidget: View {
                     LabeledTimeInput(
                         label: Text("To"),
                         time: window.endTime,
-                        setTime: { setWindow(window.doCopy(
+                        setTime: { setWindow(.init(
                             startTime: window.startTime,
                             endTime: $0,
                             daysOfWeek: window.daysOfWeek
@@ -131,7 +131,7 @@ struct NotificationSettingsWidget: View {
                     )
                     DaysOfWeekInput(
                         daysOfWeek: window.daysOfWeek,
-                        setDaysOfWeek: { setWindow(window.doCopy(
+                        setDaysOfWeek: { setWindow(.init(
                             startTime: window.startTime,
                             endTime: window.endTime,
                             daysOfWeek: $0
