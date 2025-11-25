@@ -138,7 +138,7 @@ final class EditFavoritesPageTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
 
-        XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell"))
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell-filled"))
     }
 
     @MainActor func testDeleteFavorite() throws {

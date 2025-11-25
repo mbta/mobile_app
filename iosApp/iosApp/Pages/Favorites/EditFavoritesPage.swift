@@ -275,7 +275,7 @@ struct NotificationStatusIcon: View {
 
     var body: some View {
         if favoriteSetting?.notifications.enabled == true {
-            Image(.faBell)
+            Image(.faBellFilled)
                 .resizable()
                 .scaledToFit()
                 .frame(width: imageSize, height: imageSize)

@@ -173,19 +173,6 @@ struct SaveFavoritePage: View {
                             } : nil,
                         )
                         if isFavorite {
-                            Toggle(isOn: .init(get: {
-                                pendingSettings?.notifications.enabled ?? false
-                            }, set: { enabled in
-                                pendingSettings = pendingSettings?.doCopy(notifications: .init(
-                                    enabled: enabled,
-                                    windows: []
-                                ))
-                            })) {
-                                Text(
-                                    "Get disruption notifications",
-                                    comment: "Setting for push notifications for alerts"
-                                )
-                            }
                             HaloSeparator(height: 2)
                             FavoriteDeleteButton {
                                 deleteCloseAndToast(selectedRouteStopDirection)
