@@ -457,6 +457,16 @@ struct ContentView: View {
                             onClose: navCallbacks.onClose,
                             backButtonPresentation: .header
                         ),
+                        onOpenEditModal: { rsd in
+                            nearbyVM.pushNavEntry(
+                                .saveFavorite(
+                                    routeId: rsd.route,
+                                    stopId: rsd.stop,
+                                    selectedDirection: rsd.direction,
+                                    context: .favorites
+                                )
+                            )
+                        },
                         errorBannerVM: errorBannerVM,
                         toastVM: toastVM,
                     )
