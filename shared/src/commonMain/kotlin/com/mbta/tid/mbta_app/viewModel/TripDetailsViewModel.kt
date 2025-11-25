@@ -52,8 +52,7 @@ public class TripDetailsViewModel(
     MoleculeViewModel<TripDetailsViewModel.Event, TripDetailsViewModel.State>(),
     ITripDetailsViewModel {
     public sealed class Event {
-        public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) :
-            Event()
+        public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event()
     }
 
     public data class State(

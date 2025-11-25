@@ -127,7 +127,7 @@ class GlobalRepositoryTest : KoinTest {
                             ]
                           }
                         }
-                                            """
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.OK,

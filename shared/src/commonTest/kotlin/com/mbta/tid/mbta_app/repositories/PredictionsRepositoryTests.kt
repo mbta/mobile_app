@@ -122,53 +122,53 @@ class PredictionsRepositoryTests : KoinTest {
                         MockMessage(
                             jsonBody =
                                 """
-                                    {"predictions_by_stop":
-                                        {"12345":
-                                            {
-                                                "p_1": {
-                                                    "id": "p_1",
-                                                    "arrival_time": null,
-                                                    "departure_time": null,
-                                                    "direction_id": 0,
-                                                    "revenue": false,
-                                                    "schedule_relationship": "scheduled",
-                                                    "status": null,
-                                                    "route_id": "66",
-                                                    "stop_id": "12345",
-                                                    "trip_id": "t_1",
-                                                    "vehicle_id": "v_1",
-                                                    "stop_sequence": 38
-                                                }
-                                            }
-                                        },
-                                        "trips": {
-                                            "t_1": {
-                                                "id": "t_1",
+                                {"predictions_by_stop":
+                                    {"12345":
+                                        {
+                                            "p_1": {
+                                                "id": "p_1",
+                                                "arrival_time": null,
+                                                "departure_time": null,
                                                 "direction_id": 0,
-                                                "headsign": "Nubian",
+                                                "revenue": false,
+                                                "schedule_relationship": "scheduled",
+                                                "status": null,
                                                 "route_id": "66",
-                                                "route_pattern_id": "66-0-0",
-                                                "shape_id": "shape_id",
-                                                "stop_ids": []
-                                            }
-                                        },
-                                        "vehicles": {
-                                            "v_1": {
-                                                "id": "v_1",
-                                                "bearing": 351,
-                                                "current_status": "in_transit_to",
-                                                "current_stop_sequence": 17,
-                                                "direction_id": 0,
-                                                "route_id": "66",
-                                                "trip_id": "t_1",
                                                 "stop_id": "12345",
-                                                "latitude": 42.34114183,
-                                                "longitude": -71.121119039,
-                                                "updated_at": "2024-09-23T11:30:26-04:00"
-
+                                                "trip_id": "t_1",
+                                                "vehicle_id": "v_1",
+                                                "stop_sequence": 38
                                             }
                                         }
+                                    },
+                                    "trips": {
+                                        "t_1": {
+                                            "id": "t_1",
+                                            "direction_id": 0,
+                                            "headsign": "Nubian",
+                                            "route_id": "66",
+                                            "route_pattern_id": "66-0-0",
+                                            "shape_id": "shape_id",
+                                            "stop_ids": []
+                                        }
+                                    },
+                                    "vehicles": {
+                                        "v_1": {
+                                            "id": "v_1",
+                                            "bearing": 351,
+                                            "current_status": "in_transit_to",
+                                            "current_stop_sequence": 17,
+                                            "direction_id": 0,
+                                            "route_id": "66",
+                                            "trip_id": "t_1",
+                                            "stop_id": "12345",
+                                            "latitude": 42.34114183,
+                                            "longitude": -71.121119039,
+                                            "updated_at": "2024-09-23T11:30:26-04:00"
+
+                                        }
                                     }
+                                }
                                 """
                                     .trimIndent()
                         )
@@ -209,53 +209,53 @@ class PredictionsRepositoryTests : KoinTest {
             MockMessage(
                 jsonBody =
                     """
-                        {
-                            "stop_id": "12345",
-                            "predictions":
-                                {
-                                    "p_1": {
-                                        "id": "p_1",
-                                        "arrival_time": null,
-                                        "departure_time": null,
-                                        "direction_id": 0,
-                                        "revenue": false,
-                                        "schedule_relationship": "scheduled",
-                                        "status": null,
-                                        "route_id": "66",
-                                        "stop_id": "12345",
-                                        "trip_id": "t_1",
-                                        "vehicle_id": "v_1",
-                                        "stop_sequence": 38
-                                    }
-                                },
-                                "trips": {
-                                    "t_1": {
-                                        "id": "t_1",
-                                        "direction_id": 0,
-                                        "headsign": "Nubian",
-                                        "route_id": "66",
-                                        "route_pattern_id": "66-0-0",
-                                        "shape_id": "shape_id",
-                                        "stop_ids": []
-                                    }
-                                },
-                                "vehicles": {
-                                    "v_1": {
-                                        "id": "v_1",
-                                        "bearing": 351,
-                                        "current_status": "in_transit_to",
-                                        "current_stop_sequence": 17,
-                                        "direction_id": 0,
-                                        "route_id": "66",
-                                        "trip_id": "t_1",
-                                        "stop_id": "12345",
-                                        "latitude": 42.34114183,
-                                        "longitude": -71.121119039,
-                                        "updated_at": "2024-09-23T11:30:26-04:00"
-
-                                    }
+                    {
+                        "stop_id": "12345",
+                        "predictions":
+                            {
+                                "p_1": {
+                                    "id": "p_1",
+                                    "arrival_time": null,
+                                    "departure_time": null,
+                                    "direction_id": 0,
+                                    "revenue": false,
+                                    "schedule_relationship": "scheduled",
+                                    "status": null,
+                                    "route_id": "66",
+                                    "stop_id": "12345",
+                                    "trip_id": "t_1",
+                                    "vehicle_id": "v_1",
+                                    "stop_sequence": 38
                                 }
-                        }
+                            },
+                            "trips": {
+                                "t_1": {
+                                    "id": "t_1",
+                                    "direction_id": 0,
+                                    "headsign": "Nubian",
+                                    "route_id": "66",
+                                    "route_pattern_id": "66-0-0",
+                                    "shape_id": "shape_id",
+                                    "stop_ids": []
+                                }
+                            },
+                            "vehicles": {
+                                "v_1": {
+                                    "id": "v_1",
+                                    "bearing": 351,
+                                    "current_status": "in_transit_to",
+                                    "current_stop_sequence": 17,
+                                    "direction_id": 0,
+                                    "route_id": "66",
+                                    "trip_id": "t_1",
+                                    "stop_id": "12345",
+                                    "latitude": 42.34114183,
+                                    "longitude": -71.121119039,
+                                    "updated_at": "2024-09-23T11:30:26-04:00"
+
+                                }
+                            }
+                    }
                     """
                         .trimIndent()
             )

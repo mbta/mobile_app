@@ -171,21 +171,21 @@ class AlertsRepositoryTests {
             assertEquals("/api/alerts", request.url.fullPath)
             respond(
                 """
-                    {
-                        "alerts": {
-                            "3": {
-                                "id": "3",
-                                "active_period": [],
-                                "description": null,
-                                "effect_name": null,
-                                "header": null,
-                                "informed_entity": [],
-                                "lifecycle": "new",
-                                "severity": 5,
-                                "updated_at": "2025-10-30T15:05:00-04:00"
-                            }
+                {
+                    "alerts": {
+                        "3": {
+                            "id": "3",
+                            "active_period": [],
+                            "description": null,
+                            "effect_name": null,
+                            "header": null,
+                            "informed_entity": [],
+                            "lifecycle": "new",
+                            "severity": 5,
+                            "updated_at": "2025-10-30T15:05:00-04:00"
                         }
                     }
+                }
                 """
                     .trimIndent(),
                 status = HttpStatusCode.OK,

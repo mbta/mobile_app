@@ -114,8 +114,7 @@ public class MapViewModel(
             val follow: Boolean,
         ) : Event
 
-        public data class NavChanged internal constructor(val currentNavEntry: SheetRoutes?) :
-            Event
+        public data class NavChanged internal constructor(val currentNavEntry: SheetRoutes?) : Event
 
         public data class Recenter(val type: RecenterType) : Event
 
@@ -126,8 +125,7 @@ public class MapViewModel(
 
         public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
 
-        public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) :
-            Event
+        public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) : Event
     }
 
     public sealed class State {

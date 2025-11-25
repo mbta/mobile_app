@@ -24,12 +24,12 @@ class MobileBackendClientTest : KoinTest {
                 content =
                     ByteReadChannel(
                         """
-                            {
-                              "schedules": [{
-                                }
-                              ],
-                              "trips": {}
+                        {
+                          "schedules": [{
                             }
+                          ],
+                          "trips": {}
+                        }
                         """
                             .trimIndent()
                     ),
