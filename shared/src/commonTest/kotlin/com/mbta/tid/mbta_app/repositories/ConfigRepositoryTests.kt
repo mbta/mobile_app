@@ -33,9 +33,9 @@ class ConfigRepositoryTests {
                 content =
                     ByteReadChannel(
                         """
-                            {
-                              "mapbox_public_token": "fake_token"
-                            }
+                        {
+                          "mapbox_public_token": "fake_token"
+                        }
                         """
                             .trimIndent()
                     ),
@@ -62,7 +62,7 @@ class ConfigRepositoryTests {
                     ByteReadChannel(
                         """
                         {"message": "oh no"}
-                          """
+                        """
                             .trimIndent()
                     ),
                 status = HttpStatusCode.Unauthorized,
