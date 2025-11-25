@@ -57,8 +57,7 @@ public class StopDetailsViewModel(
     MoleculeViewModel<StopDetailsViewModel.Event, StopDetailsViewModel.State>(),
     IStopDetailsViewModel {
     public sealed class Event {
-        public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) :
-            Event()
+        public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event()
     }
 
     public data class State(
