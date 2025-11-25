@@ -68,4 +68,43 @@ final class SaveFavoritePageTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Southbound to"))
         }
     }
+
+    @MainActor func testNotifications() {
+        let objects = TestData.clone()
+        let route = objects.getRoute(id: "Orange")
+        let stop = objects.getStop(id: "place-welln")
+        var updatedFavorites: [RouteStopDirection: FavoriteSettings?]?
+
+        loadKoinMocks(objects: objects)
+
+        let sut = SaveFavoritePage(
+            routeId: route.id,
+            stopId: stop.id,
+            initialSelectedDirection: 0,
+            context: .stopDetails,
+            updateFavorites: { updatedFavorites = $0 },
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+            nearbyVM: .init()
+        )
+
+        let exp = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "Add Favorite"))
+            try view.find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+            try view.find(button: "Save").tap()
+            XCTAssertEqual(updatedFavorites, [
+                .init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .init(
+                    enabled: true,
+                    windows: [.init(
+                        startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
+                        endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
+                        daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
+                    )]
+                )),
+            ])
+        }
+
+        ViewHosting.host(view: sut)
+
+        wait(for: [exp], timeout: 5)
+    }
 }

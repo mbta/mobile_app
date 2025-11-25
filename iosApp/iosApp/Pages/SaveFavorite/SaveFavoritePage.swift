@@ -161,7 +161,7 @@ struct SaveFavoritePage: View {
                 onCancel: { navCallbacks.onBack?() },
                 onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
             )
-            HaloScrollView([], alwaysShowHalo: true) {
+            HaloScrollView(alwaysShowHalo: true) {
                 if let lineOrRoute, let stop {
                     VStack(spacing: 22) {
                         FavoriteStopCard(
@@ -171,6 +171,10 @@ struct SaveFavoritePage: View {
                             toggleDirection: (stopDirections.count > 1 && !isFavorite) ? {
                                 selectedDirection = 1 - selectedDirection
                             } : nil,
+                        )
+                        NotificationSettingsWidget(
+                            settings: pendingSettings?.notifications ?? .companion.disabled,
+                            setSettings: { pendingSettings = .init(notifications: $0) }
                         )
                         if isFavorite {
                             HaloSeparator(height: 2)
@@ -188,6 +192,7 @@ struct SaveFavoritePage: View {
         }
         .onAppear { resetPendingSettings() }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
+        .onChange(of: favorites) { _ in resetPendingSettings() }
         .frame(maxHeight: .infinity)
         .background(Color.fill2)
         .favorites($favorites)

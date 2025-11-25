@@ -3146,7 +3146,6 @@
     },
     "Add another time period" : {
       "comment" : "Button when subscribing to notifications",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -10288,7 +10287,6 @@
     },
     "From" : {
       "comment" : "Start time of a notification window",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -10430,7 +10428,6 @@
     },
     "Get disruption notifications" : {
       "comment" : "Setting for push notifications for alerts",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -20274,7 +20271,6 @@
     },
     "To" : {
       "comment" : "End time of a notification window",
-      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
