@@ -15,7 +15,6 @@ import XCTest
 final class EditFavoritesPageTests: XCTestCase {
     @MainActor func testHeader() throws {
         let objects = ObjectCollectionBuilder()
-        let globalData = GlobalResponse(objects: objects)
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [:],
@@ -29,6 +28,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             navCallbacks: .init(onBack: nil, onClose: { onCloseCalled = true }, backButtonPresentation: .floating),
+            onOpenEditModal: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             toastVM: MockToastViewModel(),
         )
@@ -38,6 +38,107 @@ final class EditFavoritesPageTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Edit Favorites"))
         try sut.inspect().find(button: "Done").tap()
         XCTAssertTrue(onCloseCalled)
+    }
+
+    @MainActor func testOpenEdit() throws {
+        let objects = TestData.clone()
+
+        let route: Route = objects.getRoute(id: "Red")
+        let stop = objects.getStop(id: "place-asmnl")
+
+        let expectedRsd = RouteStopDirection(route: route.id, stop: stop.id, direction: 1)
+        let favoritesVM = MockFavoritesViewModel(initialState: .init(
+            awaitingPredictionsAfterBackground: false,
+            favorites: [expectedRsd: .init()],
+            shouldShowFirstTimeToast: false,
+            routeCardData: [],
+            staticRouteCardData: [],
+            loadedLocation: nil,
+        ))
+
+        var editRsd: RouteStopDirection?
+        // We can't test EditFavoritesPage directly until the feature flag is removed
+        // let sut = EditFavoritesPage(
+        //     viewModel: favoritesVM,
+        //     navCallbacks: .companion.empty,
+        //     onOpenEditModal: { rsd in editRsd = rsd },
+        //     errorBannerVM: MockErrorBannerViewModel(),
+        //     toastVM: MockToastViewModel(),
+        // )
+
+        let sut = FavoriteRowRightContent(
+            leaf: .init(
+                lineOrRoute: .Route(route: route),
+                stop: stop,
+                directionId: 1,
+                routePatterns: [],
+                stopIds: Set(),
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: true,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .favorites
+            ),
+            favoriteSettings: .init(),
+            onClick: { leaf in editRsd = leaf.routeStopDirection }
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+
+        try sut.inspect().findAll(EditFavoriteButton.self)[0].find(ViewType.Button.self).tap()
+        XCTAssertEqual(expectedRsd, editRsd)
+    }
+
+    @MainActor func testNotificationIcon() throws {
+        let objects = TestData.clone()
+
+        let route: Route = objects.getRoute(id: "Red")
+        let stop = objects.getStop(id: "place-asmnl")
+
+        let rsd = RouteStopDirection(route: route.id, stop: stop.id, direction: 1)
+        let favoritesVM = MockFavoritesViewModel(initialState: .init(
+            awaitingPredictionsAfterBackground: false,
+            favorites: [
+                rsd: .init(notifications: .init(enabled: true, windows: [])),
+            ],
+            shouldShowFirstTimeToast: false,
+            routeCardData: [],
+            staticRouteCardData: [],
+            loadedLocation: nil,
+        ))
+
+        // We can't test EditFavoritesPage directly until the feature flag is removed
+        // let sut = EditFavoritesPage(
+        //     viewModel: favoritesVM,
+        //     navCallbacks: .companion.empty,
+        //     onOpenEditModal: { _ in },
+        //     errorBannerVM: MockErrorBannerViewModel(),
+        //     toastVM: MockToastViewModel(),
+        // )
+        let sut = FavoriteRowRightContent(
+            leaf: .init(
+                lineOrRoute: .Route(route: route),
+                stop: stop,
+                directionId: 1,
+                routePatterns: [],
+                stopIds: Set(),
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: true,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .favorites
+            ),
+            favoriteSettings: .init(notifications: .init(enabled: true, windows: [])),
+            onClick: { _ in }
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+
+        XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell"))
     }
 
     @MainActor func testDeleteFavorite() throws {
@@ -110,6 +211,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             navCallbacks: .companion.empty,
+            onOpenEditModal: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             toastVM: toastVM,
         )
@@ -191,6 +293,7 @@ final class EditFavoritesPageTests: XCTestCase {
         let sut = EditFavoritesPage(
             viewModel: favoritesVM,
             navCallbacks: .companion.empty,
+            onOpenEditModal: { _ in },
             errorBannerVM: MockErrorBannerViewModel(),
             toastVM: toastVM,
         )

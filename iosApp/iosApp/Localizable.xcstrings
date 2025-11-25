@@ -3194,6 +3194,7 @@
     },
     "add favorite" : {
       "comment" : "On-click label, as in “double-tap to add favorite”",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -5839,7 +5840,7 @@
       }
     },
     "Cancel" : {
-      "comment" : "Cancel searching, clears the search term and closes the search page",
+      "comment" : "Button to cancel editing a favorite and return to previous screen\nCancel searching, clears the search term and closes the search page",
       "localizations" : {
         "es" : {
           "stringUnit" : {

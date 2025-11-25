@@ -195,7 +195,7 @@ struct FavoriteDepartures: View {
                                 showDestination: true,
                                 pillDecoration: pillDecoration
                             ).frame(maxWidth: .infinity, alignment: .leading)
-                            RowRightContent(
+                            FavoriteRowRightContent(
                                 leaf: leaf,
                                 favoriteSettings: favoriteSettings,
                                 onClick: onClick
@@ -209,7 +209,7 @@ struct FavoriteDepartures: View {
                             }
                             .accessibilityElement(children: .combine)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            RowRightContent(
+                            FavoriteRowRightContent(
                                 leaf: leaf,
                                 favoriteSettings: favoriteSettings,
                                 onClick: onClick
@@ -228,7 +228,7 @@ struct FavoriteDepartures: View {
     }
 }
 
-struct RowRightContent: View {
+struct FavoriteRowRightContent: View {
     let leaf: RouteCardData.Leaf
     let favoriteSettings: FavoriteSettings?
     let onClick: (RouteCardData.Leaf) -> Void
@@ -238,7 +238,7 @@ struct RowRightContent: View {
     var body: some View {
         if settingsCache.get(.notifications) {
             NotificationStatusIcon(favoriteSetting: favoriteSettings)
-            EditButton { onClick(leaf) }
+            EditFavoriteButton { onClick(leaf) }
         } else {
             DeleteButton { onClick(leaf) }
         }
@@ -308,7 +308,7 @@ struct DeleteButton: View {
     }
 }
 
-struct EditButton: View {
+struct EditFavoriteButton: View {
     let action: () -> Void
     @ScaledMetric private var imageSize = 24
     @ScaledMetric private var buttonSize = 44
