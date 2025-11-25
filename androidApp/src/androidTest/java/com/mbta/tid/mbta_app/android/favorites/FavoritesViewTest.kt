@@ -14,7 +14,7 @@ import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
 import dev.mokkery.MockMode
-import dev.mokkery.matcher.any
+import dev.mokkery.matcher.matchesBy
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
 import dev.mokkery.verify
@@ -65,15 +65,10 @@ class FavoritesViewTest {
             )
         }
 
-        verify(VerifyMode.exhaustiveOrder) {
-            toastVM.showToast(
-                ToastViewModel.Toast(
-                    "Favorite stops replaces the prior starred routes feature.",
-                    ToastViewModel.Duration.Indefinite,
-                    any(),
-                )
-            )
-        }
+        fun isCorrectToast(toast: ToastViewModel.Toast) =
+            toast.message == "Favorite stops replaces the prior starred routes feature." &&
+                toast.duration == ToastViewModel.Duration.Indefinite
+        verify(VerifyMode.exhaustiveOrder) { toastVM.showToast(matchesBy(::isCorrectToast)) }
         resetCalls(toastVM)
 
         composeTestRule.onNodeWithText("Add stops").performClick()
