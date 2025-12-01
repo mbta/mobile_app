@@ -8,7 +8,7 @@ import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     func application(
-        _: UIApplication,
+        _ app: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
         #if DEBUG
@@ -21,17 +21,40 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
         Messaging.messaging().delegate = self
 
+        app.registerForRemoteNotifications()
+
         return true
     }
 
     func application(_: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
         Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().token { token, error in
+            if let error {
+                print("Error fetching FCM registration token: \(error)")
+            } else if let token {
+                FcmTokenContainer.shared.token = token
+            }
+        }
     }
 
-    func application(_: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any]) async -> UIBackgroundFetchResult {
+    func application(
+        _: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: any Error
+    ) {
+        print("Failed to register remote notifications: \(error)")
+    }
+
+    func application(
+        _: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        return .noData
+        completionHandler(.noData)
+    }
+
+    func messaging(_: Messaging, didReceiveRegistrationToken token: String?) {
+        FcmTokenContainer.shared.token = token
     }
 
     func userNotificationCenter(_: UNUserNotificationCenter,

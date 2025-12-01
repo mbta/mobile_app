@@ -15,6 +15,7 @@ struct ContentView: View {
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     @ObservedObject var contentVM: ContentViewModel
+    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
 
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
     @State private var sheetHeight: CGFloat =
@@ -30,6 +31,8 @@ struct ContentView: View {
 
     @EnvironmentObject var settingsCache: SettingsCache
     var hideMaps: Bool { settingsCache.get(.hideMaps) }
+    var includeAccessibility: Bool { settingsCache.get(.stationAccessibility) }
+    var notificationsFlag: Bool { settingsCache.get(.notifications) }
 
     let transition: AnyTransition = .asymmetric(insertion: .push(from: .bottom), removal: .opacity)
     let analytics: Analytics = AnalyticsProvider.shared
@@ -71,6 +74,11 @@ struct ContentView: View {
             }
         }
         .global($globalData, errorKey: "ContentView")
+        .handleFcmTokenSubscriptions(
+            fcmToken: fcmTokenContainer.token,
+            includeAccessibility: includeAccessibility,
+            notificationsEnabled: notificationsFlag
+        )
         .onChange(of: contentVM.defaultTab) { newTab in
             selectedTab = switch newTab {
             case .favorites: .favorites
@@ -84,7 +92,6 @@ struct ContentView: View {
                 updateTabBarVisibility()
             }
         }
-
         .onChange(of: nearbyVM.navigationStack.lastSafe()) { _ in
             updateTabBarVisibility()
         }
@@ -621,7 +628,9 @@ struct ContentView: View {
                         favoritesVM.updateFavorites(
                             updatedFavorites: favorites,
                             context: context,
-                            defaultDirection: selectedDirection
+                            defaultDirection: selectedDirection,
+                            fcmToken: fcmTokenContainer.token,
+                            includeAccessibility: includeAccessibility,
                         )
                     },
                     navCallbacks: navCallbacks,

@@ -13,13 +13,15 @@ extension FavoritesUsecases {
         newValues: [RouteStopDirection: FavoriteSettings?],
         context: EditFavoritesContext,
         defaultDirection: Int32,
+        fcmToken: String?,
+        includeAccessibility: Bool,
     ) async throws {
         try await __updateRouteStopDirections(
             newValues: newValues as [RouteStopDirection: Any],
             context: context,
             defaultDirection: defaultDirection,
-            fcmToken: nil, // TODO:
-            includeAccessibility: false // TODO:
+            fcmToken: fcmToken,
+            includeAccessibility: includeAccessibility,
         )
     }
 }

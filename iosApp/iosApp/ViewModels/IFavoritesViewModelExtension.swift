@@ -13,13 +13,15 @@ extension IFavoritesViewModel {
         updatedFavorites: [RouteStopDirection: FavoriteSettings?],
         context: EditFavoritesContext,
         defaultDirection: Int32,
+        fcmToken: String?,
+        includeAccessibility: Bool,
     ) {
         __updateFavorites(
             updatedFavorites: updatedFavorites,
             context: context,
             defaultDirection: defaultDirection,
-            fcmToken: nil, // TODO:
-            includeAccessibility: false // TODO:
+            fcmToken: fcmToken,
+            includeAccessibility: includeAccessibility,
         )
     }
 }
