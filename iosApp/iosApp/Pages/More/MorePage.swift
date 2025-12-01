@@ -16,6 +16,9 @@ struct MorePage: View {
     @State var showingBuildNumber = false
     @State private var path = NavigationPath()
 
+    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @EnvironmentObject var settingsCache: SettingsCache
+
     private let translation = Bundle.main.preferredLocalizations.first ?? "en"
     var sections: [MoreSection] {
         viewModel.getSections(
@@ -66,7 +69,15 @@ struct MorePage: View {
                     VStack(alignment: .leading, spacing: 16) {
                         ForEach(sections, id: \.id) { section in
                             MoreSectionView(
-                                section: section
+                                section: section,
+                                updateAccessibility: { includeAccessibility in
+                                    if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
+                                        viewModel.updateAccessibility(
+                                            fcmToken: fcmToken,
+                                            includeAccessibility: includeAccessibility
+                                        )
+                                    }
+                                },
                             )
                         }
                         HStack(alignment: .center, spacing: 16) {

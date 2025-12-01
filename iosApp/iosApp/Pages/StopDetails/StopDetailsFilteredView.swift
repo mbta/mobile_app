@@ -35,6 +35,7 @@ struct StopDetailsFilteredView: View {
     @State var inSaveFavoritesFlow = false
     @State var alertSummaries: [String: AlertSummary?] = [:]
 
+    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -170,7 +171,9 @@ struct StopDetailsFilteredView: View {
                         favoritesVM.updateFavorites(
                             updatedFavorites: updatedValues,
                             context: .stopDetails,
-                            defaultDirection: routeStopDirection.direction
+                            defaultDirection: routeStopDirection.direction,
+                            fcmToken: fcmTokenContainer.token,
+                            includeAccessibility: settingsCache.get(.stationAccessibility),
                         )
                     },
                     onClose: {

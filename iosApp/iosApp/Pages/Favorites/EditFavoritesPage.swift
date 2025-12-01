@@ -22,6 +22,9 @@ struct EditFavoritesPage: View {
     let toastVM: IToastViewModel
     let globalRepository: IGlobalRepository = RepositoryDI().global
 
+    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @EnvironmentObject var settingsCache: SettingsCache
+
     let inspection = Inspection<Self>()
 
     func deleteAndToast(_ rsd: RouteStopDirection) {
@@ -29,7 +32,9 @@ struct EditFavoritesPage: View {
         viewModel.updateFavorites(
             updatedFavorites: [rsd: nil],
             context: .favorites,
-            defaultDirection: rsd.direction
+            defaultDirection: rsd.direction,
+            fcmToken: fcmTokenContainer.token,
+            includeAccessibility: settingsCache.get(.stationAccessibility),
         )
 
         let labels = rsd.getLabels(globalResponse)
@@ -54,13 +59,17 @@ struct EditFavoritesPage: View {
             duration: .short,
             isTip: false,
             action: ToastViewModel.ToastActionCustom(
-                actionLabel: NSLocalizedString("Undo",
-                                               comment: "Button label to undo an action that was just performed"),
+                actionLabel: NSLocalizedString(
+                    "Undo",
+                    comment: "Button label to undo an action that was just performed"
+                ),
                 onAction: {
                     viewModel.updateFavorites(
                         updatedFavorites: [rsd: settings],
                         context: .favorites,
-                        defaultDirection: rsd.direction
+                        defaultDirection: rsd.direction,
+                        fcmToken: fcmTokenContainer.token,
+                        includeAccessibility: settingsCache.get(.stationAccessibility),
                     )
                 }
             ),

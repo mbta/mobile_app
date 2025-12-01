@@ -94,9 +94,9 @@ public interface IRepositories {
     public val accessibilityStatus: IAccessibilityStatusRepository?
     public val alerts: IAlertsRepository?
     public val config: IConfigRepository
-    public val tabPreferences: ITabPreferencesRepository
     public val currentAppVersion: ICurrentAppVersionRepository?
     public val errorBanner: IErrorBannerStateRepository
+    public val favorites: IFavoritesRepository
     public val global: IGlobalRepository
     public val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository
     public val nearby: INearbyRepository
@@ -110,13 +110,13 @@ public interface IRepositories {
     public val sentry: ISentryRepository
     public val settings: ISettingsRepository
     public val stop: IStopRepository
+    public val subscriptions: ISubscriptionsRepository
+    public val tabPreferences: ITabPreferencesRepository
     public val trip: ITripRepository
     public val tripPredictions: ITripPredictionsRepository?
     public val vehicle: IVehicleRepository?
     public val vehicles: IVehiclesRepository?
     public val visitHistory: IVisitHistoryRepository
-    public val favorites: IFavoritesRepository
-    public val subscriptions: ISubscriptionsRepository
 }
 
 public class RepositoryDI : IRepositories, KoinComponent {
@@ -124,8 +124,8 @@ public class RepositoryDI : IRepositories, KoinComponent {
     override val alerts: IAlertsRepository by inject()
     override val config: IConfigRepository by inject()
     override val currentAppVersion: ICurrentAppVersionRepository by inject()
-    override val tabPreferences: ITabPreferencesRepository by inject()
     override val errorBanner: IErrorBannerStateRepository by inject()
+    override val favorites: IFavoritesRepository by inject()
     override val global: IGlobalRepository by inject()
     override val lastLaunchedAppVersion: ILastLaunchedAppVersionRepository by inject()
     override val nearby: INearbyRepository by inject()
@@ -139,13 +139,13 @@ public class RepositoryDI : IRepositories, KoinComponent {
     override val sentry: ISentryRepository by inject()
     override val settings: ISettingsRepository by inject()
     override val stop: IStopRepository by inject()
+    override val subscriptions: ISubscriptionsRepository by inject()
+    override val tabPreferences: ITabPreferencesRepository by inject()
     override val trip: ITripRepository by inject()
     override val tripPredictions: ITripPredictionsRepository by inject()
     override val vehicle: IVehicleRepository by inject()
     override val vehicles: IVehiclesRepository by inject()
     override val visitHistory: IVisitHistoryRepository by inject()
-    override val favorites: IFavoritesRepository by inject()
-    override val subscriptions: ISubscriptionsRepository by inject()
 }
 
 internal class RealRepositories : IRepositories {
@@ -156,8 +156,8 @@ internal class RealRepositories : IRepositories {
     override val alerts = null
     override val config = ConfigRepository()
     override val currentAppVersion = null
-    override val tabPreferences = TabPreferencesRepository()
     override val errorBanner = ErrorBannerStateRepository()
+    override val favorites = FavoritesRepository()
     override val global = GlobalRepository()
     override val lastLaunchedAppVersion = LastLaunchedAppVersionRepository()
     override val nearby = NearbyRepository()
@@ -171,13 +171,13 @@ internal class RealRepositories : IRepositories {
     override val sentry = SentryRepository()
     override val settings = SettingsRepository()
     override val stop = StopRepository()
+    override val subscriptions = SubscriptionsRepository()
+    override val tabPreferences = TabPreferencesRepository()
     override val trip = TripRepository()
     override val tripPredictions = null
     override val vehicle = null
     override val vehicles = null
     override val visitHistory = VisitHistoryRepository()
-    override val favorites = FavoritesRepository()
-    override val subscriptions = SubscriptionsRepository()
 }
 
 public class MockRepositories : IRepositories {
@@ -187,8 +187,8 @@ public class MockRepositories : IRepositories {
     override var config: IConfigRepository = MockConfigRepository()
     override var currentAppVersion: ICurrentAppVersionRepository =
         MockCurrentAppVersionRepository(AppVersion(0u, 0u, 0u))
-    override var tabPreferences: ITabPreferencesRepository = MockTabPreferencesRepository()
     override var errorBanner: IErrorBannerStateRepository = MockErrorBannerStateRepository()
+    override var favorites: IFavoritesRepository = MockFavoritesRepository()
     override var global: IGlobalRepository = IdleGlobalRepository()
     override var lastLaunchedAppVersion: ILastLaunchedAppVersionRepository =
         MockLastLaunchedAppVersionRepository(null)
@@ -203,13 +203,13 @@ public class MockRepositories : IRepositories {
     override var sentry: ISentryRepository = MockSentryRepository()
     override var settings: ISettingsRepository = MockSettingsRepository()
     override var stop: IStopRepository = IdleStopRepository()
+    override var subscriptions: ISubscriptionsRepository = MockSubscriptionsRepository()
+    override var tabPreferences: ITabPreferencesRepository = MockTabPreferencesRepository()
     override var trip: ITripRepository = IdleTripRepository()
     override var tripPredictions: ITripPredictionsRepository = MockTripPredictionsRepository()
     override var vehicle: IVehicleRepository = MockVehicleRepository()
     override var vehicles: IVehiclesRepository = MockVehiclesRepository()
     override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
-    override var favorites: IFavoritesRepository = MockFavoritesRepository()
-    override val subscriptions: ISubscriptionsRepository = MockSubscriptionsRepository()
 
     public fun useObjects(objects: ObjectCollectionBuilder) {
         alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))

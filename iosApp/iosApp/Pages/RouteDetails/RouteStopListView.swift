@@ -202,11 +202,12 @@ struct RouteStopListContentView<RightSideContent: View>: View {
 
     @State var favorites: Favorites = LoadedFavorites.last
 
-    @State var showFavoritesStopConfirmation: Stop? = nil
-    @State var showFirstTimeFavoritesToast: Bool? = nil
-    @State var displayedToast: ToastViewModel.Toast? = nil
-    @State var firstTimeToast: ToastViewModel.Toast? = nil
+    @State var showFavoritesStopConfirmation: Stop?
+    @State var showFirstTimeFavoritesToast: Bool?
+    @State var displayedToast: ToastViewModel.Toast?
+    @State var firstTimeToast: ToastViewModel.Toast?
 
+    @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
@@ -485,7 +486,9 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             favoritesVM.updateFavorites(
                 updatedFavorites: updatedValues,
                 context: editContext,
-                defaultDirection: selectedDirection
+                defaultDirection: selectedDirection,
+                fcmToken: fcmTokenContainer.token,
+                includeAccessibility: settingsCache.get(.stationAccessibility),
             )
         }
     }

@@ -11,6 +11,7 @@ import SwiftUI
 
 struct MoreSectionView: View {
     var section: MoreSection
+    var updateAccessibility: (Bool) -> Void = { _ in }
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -58,7 +59,13 @@ struct MoreSectionView: View {
                                 toggle.settings == .hideMaps ? !settingsCache.get(toggle.settings) : settingsCache
                                     .get(toggle.settings)
                             },
-                            set: { _ in settingsCache.set(toggle.settings, !settingsCache.get(toggle.settings)) }
+                            set: { _ in
+                                let newSetting = !settingsCache.get(toggle.settings)
+                                settingsCache.set(toggle.settings, newSetting)
+                                if toggle.settings == .stationAccessibility {
+                                    updateAccessibility(newSetting)
+                                }
+                            }
                         )) { Text(toggle.label.value) }
                             .padding(.vertical, 6)
                             .padding(.horizontal, 16)
