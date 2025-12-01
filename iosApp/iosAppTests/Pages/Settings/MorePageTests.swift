@@ -48,6 +48,43 @@ final class MorePageTests: XCTestCase {
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }
 
+    @MainActor func testAccessibilityToggleUpdatesSubscriptions() async throws {
+        let savedExp = expectation(description: "saved state")
+        let updateExp = expectation(description: "updated subscription accessibility")
+
+        let settingsRepository = MockSettingsRepository(
+            onSaveSettings: {
+                let accessibilitySetting = $0[.stationAccessibility] ?? false
+                XCTAssertTrue(accessibilitySetting.boolValue)
+                savedExp.fulfill()
+            }
+        )
+
+        let expectedToken = "fcm_token"
+        FcmTokenContainer.shared.token = expectedToken
+        let mockRepos = MockRepositories()
+        mockRepos.subscriptions = MockSubscriptionsRepository(
+            onUpdateSubscriptions: { _, _ in },
+            onUpdateAccessibility: { token, accessibility in
+                XCTAssertEqual(expectedToken, token)
+                XCTAssertTrue(accessibility.boolValue)
+                updateExp.fulfill()
+            }
+        )
+        loadKoinMocks(repositories: mockRepos)
+
+        let sut = MorePage()
+        let tapExp = sut.inspection.inspect(after: 1) { view in
+            try view.find(text: "Station Accessibility Info").parent().parent().find(ViewType.Toggle.self).tap()
+        }
+
+        ViewHosting.host(view: sut.environmentObject(
+            SettingsCache(settingsRepo: settingsRepository, cache: [.notifications: true])
+        ))
+
+        await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
+    }
+
     @MainActor func testLinksExist() async throws {
         let sut = MorePage()
         let exp = sut.inspection.inspect(after: 2) { view in
@@ -71,7 +108,8 @@ final class MorePageTests: XCTestCase {
 
         let infoPlist = Bundle.main.infoDictionary
         guard let version = infoPlist?["CFBundleShortVersionString"] as? String,
-              let build = infoPlist?["CFBundleVersion"] as? String else {
+              let build = infoPlist?["CFBundleVersion"] as? String
+        else {
             XCTFail("version info not found")
             return
         }
