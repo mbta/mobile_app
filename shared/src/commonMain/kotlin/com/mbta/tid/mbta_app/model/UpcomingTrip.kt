@@ -271,11 +271,6 @@ internal fun List<UpcomingTrip>.withFormat(
     now: EasternTimeInstant,
     route: Route,
     context: TripInstantDisplay.Context,
-    limit: Int?,
-): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>> {
-    return this.mapNotNull {
-            val format = it.format(now, route, context) ?: return@mapNotNull null
-            Pair(it, format)
-        }
-        .run { if (limit != null) take(limit) else this }
+): List<UpcomingFormat.Some.FormattedTrip> {
+    return this.mapNotNull { it.format(now, route, context) }
 }
