@@ -117,7 +117,7 @@ fun FavoritesView(
                     backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
                 ),
             rightActionContents = {
-                Row(Modifier, Arrangement.spacedBy(16.dp), Alignment.CenterVertically) {
+                Row(Modifier, Arrangement.spacedBy(8.dp), Alignment.CenterVertically) {
                     if (!routeCardData.isNullOrEmpty()) {
                         ActionButton(
                             ActionButtonKind.Plus,

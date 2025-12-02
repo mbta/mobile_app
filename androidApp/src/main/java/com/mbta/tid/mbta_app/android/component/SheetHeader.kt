@@ -50,28 +50,31 @@ fun SheetHeader(
 ) {
     val buttonSize = 32.dp
     val touchTarget = 48.dp
-    val hasButtons =
-        (navCallbacks.onBack != null &&
+
+    val showBackButton =
+        navCallbacks.onBack != null &&
             navCallbacks.backButtonPresentation !=
-                NavigationCallbacks.BackButtonPresentation.Floating) ||
-            navCallbacks.onClose != null ||
-            rightActionContents != null
+                NavigationCallbacks.BackButtonPresentation.Floating
+    val showCloseButton = navCallbacks.onClose != null
+    val showCloseCircleButton = showCloseButton && closeText == null
+
+    val hasButtons = showBackButton || showCloseButton || rightActionContents != null
+
+    val buttonStartPadding = if (showBackButton) 8.dp else 16.dp
+    val buttonEndPadding = if (showCloseCircleButton) 8.dp else 16.dp
 
     @Composable
     fun BackButton() {
-        val onBack = navCallbacks.onBack
-        if (
-            onBack != null &&
-                navCallbacks.backButtonPresentation !=
-                    NavigationCallbacks.BackButtonPresentation.Floating
-        ) {
-            ActionButton(
-                ActionButtonKind.Back,
-                modifier = Modifier.padding(top = buttonPadding),
-                size = buttonSize,
-                colors = buttonColors,
-                action = onBack,
-            )
+        navCallbacks.onBack?.let {
+            if (showBackButton) {
+                ActionButton(
+                    ActionButtonKind.Back,
+                    modifier = Modifier.padding(top = buttonPadding),
+                    size = buttonSize,
+                    colors = buttonColors,
+                    action = it,
+                )
+            }
         }
     }
 
@@ -109,25 +112,25 @@ fun SheetHeader(
         }
     }
 
-    // the back button is always floating, so if it’s in the sheet header, we have
-    if (
-        navCallbacks.onBack != null &&
-            navCallbacks.backButtonPresentation !=
-                NavigationCallbacks.BackButtonPresentation.Floating &&
-            navCallbacks.onClose != null
-    ) {
-        Column(modifier.padding(horizontal = 16.dp)) {
-            Row(Modifier.heightIn(min = touchTarget).fillMaxWidth()) {
+    if (showBackButton && showCloseButton) {
+        Column(modifier, Arrangement.spacedBy(4.dp)) {
+            Row(
+                Modifier.heightIn(min = touchTarget)
+                    .padding(start = buttonStartPadding, end = buttonEndPadding)
+                    .fillMaxWidth()
+            ) {
                 BackButton()
                 Spacer(Modifier.weight(1f))
                 RightActionContents()
                 CloseButton()
             }
-            Row { title() }
+            Row(Modifier.heightIn(min = 32.dp).padding(horizontal = 16.dp)) { title() }
         }
     } else {
         Row(
-            modifier.padding(horizontal = 16.dp).heightIn(min = touchTarget),
+            modifier
+                .padding(start = buttonStartPadding, end = buttonEndPadding)
+                .heightIn(min = touchTarget),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = if (hasButtons) Alignment.Top else Alignment.CenterVertically,
         ) {
@@ -152,12 +155,15 @@ fun SheetHeader(
 ) {
     val density = LocalDensity.current
     val touchTarget = 48.dp
-    val hasButtons =
-        (navCallbacks.onBack != null &&
+
+    val showBackButton =
+        navCallbacks.onBack != null &&
             navCallbacks.backButtonPresentation !=
-                NavigationCallbacks.BackButtonPresentation.Floating) ||
-            navCallbacks.onClose != null ||
-            rightActionContents != null
+                NavigationCallbacks.BackButtonPresentation.Floating
+    val showCloseButton = navCallbacks.onClose != null
+
+    val hasButtons = showBackButton || showCloseButton || rightActionContents != null
+
     var buttonPadding by remember { mutableStateOf(0.dp) }
     var textPadding by remember { mutableStateOf(0.dp) }
 
@@ -167,7 +173,9 @@ fun SheetHeader(
      */
     fun alignButtons(layout: TextLayoutResult) =
         with(density) {
-            if (hasButtons) {
+            // We want to apply padding only when the title is inline with buttons, if back and
+            // close are both shown, then they are on a separate row, not inline with the title
+            if (hasButtons && !(showBackButton && showCloseButton)) {
                 val lineHeight = (layout.getLineBottom(0) - layout.getLineTop(0)).toDp()
                 val padding = (lineHeight / 2) - (touchTarget / 2)
                 if (padding < 0.dp) {
@@ -193,18 +201,7 @@ fun SheetHeader(
                                 contentDescription = titleContentDescription ?: title
                             }
                             .padding(top = textPadding)
-                            .padding(
-                                start =
-                                    if (
-                                        navCallbacks.onBack == null ||
-                                            navCallbacks.backButtonPresentation ==
-                                                NavigationCallbacks.BackButtonPresentation
-                                                    .Floating ||
-                                            navCallbacks.onClose != null
-                                    )
-                                        8.dp
-                                    else 0.dp
-                            )
+                            .padding(start = if (showBackButton) 0.dp else 4.dp)
                             .weight(1f)
                             .placeholderIfLoading(),
                     style = Typography.title2Bold,

@@ -41,10 +41,10 @@ import com.mbta.tid.mbta_app.utils.TestData
 @Composable
 fun TripDetailsPageHeader(route: Route?, direction: Direction?, navCallbacks: NavigationCallbacks) {
     SheetHeader(
-        Modifier.padding(bottom = 8.dp),
+        Modifier.padding(bottom = 10.dp),
         title = {
             Row(
-                Modifier.weight(1f).padding(top = 4.dp).semantics(mergeDescendants = true) {
+                Modifier.weight(1f).padding(top = 8.dp).semantics(mergeDescendants = true) {
                     heading()
                 },
                 Arrangement.spacedBy(8.dp),

@@ -80,6 +80,8 @@ struct StopDetailsUnfilteredView: View {
         elevatorAlerts?.isEmpty == false || stop?.isWheelchairAccessible == false
     }
 
+    var hasPillFilters: Bool { servedRoutes.count > 1 }
+
     var body: some View {
         ZStack {
             Color.fill2.ignoresSafeArea(.all)
@@ -87,25 +89,31 @@ struct StopDetailsUnfilteredView: View {
                 VStack(spacing: 0) {
                     SheetHeader(
                         title: stop?.name ?? "Invalid Stop",
+                        buttonColor: .text.opacity(0.6),
+                        buttonTextColor: .fill2,
                         navCallbacks: navCallbacks,
-                    ).padding(.bottom, 16)
+                    ).padding(.bottom, hasPillFilters ? 4 : 16)
                     if debugMode {
                         DebugView {
                             Text(verbatim: "stop id: \(stopId)")
                         }.padding([.horizontal, .bottom], 16)
                     }
-                    ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
-                    if servedRoutes.count > 1 {
+                    ErrorBanner(errorBannerVM, padding: [
+                        .init([.horizontal], 16),
+                        .init([.top], hasPillFilters ? 8 : 0),
+                        .init([.bottom], hasPillFilters ? 8 : 16),
+                    ])
+                    if hasPillFilters {
                         StopDetailsFilterPills(
                             servedRoutes: servedRoutes,
                             tapRoutePill: tapRoutePill,
                             filter: nil,
                             setFilter: setStopFilter
-                        )
+                        ).padding(.bottom, 10)
                     }
                 }
-                .padding(.bottom, 6)
                 .border(Color.halo.opacity(0.15), width: 2)
+
                 ZStack {
                     Color.fill1.ignoresSafeArea(.all)
                     ScrollView {
@@ -154,8 +162,9 @@ struct StopDetailsUnfilteredView: View {
                                         pushNavEntry: { entry in nearbyVM.pushNavEntry(entry) },
                                         showStopHeader: false
                                     )
+                                    .padding(.top, 2)
                                     .padding(.horizontal, 16)
-                                    .padding(.bottom, 16)
+                                    .padding(.bottom, 14)
                                 }
                             } else {
                                 loadingBody()

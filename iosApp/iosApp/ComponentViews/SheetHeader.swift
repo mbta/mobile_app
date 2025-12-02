@@ -36,16 +36,16 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
 
     var body: some View {
         if navCallbacks.onBack != nil, navCallbacks.backButtonPresentation != .floating, navCallbacks.onClose != nil {
-            VStack(alignment: .leading) {
-                HStack {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 16) {
                     backButton
                     Spacer()
                     rightActionContents()
                     closeButton
-                }
-                HStack {
+                }.frame(minHeight: 32)
+                HStack(spacing: 16) {
                     titleView
-                }
+                }.frame(minHeight: 32)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 16)

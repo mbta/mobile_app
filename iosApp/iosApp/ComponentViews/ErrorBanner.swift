@@ -9,19 +9,9 @@
 import Shared
 import SwiftUI
 
-struct BannerPadding {
-    let edges: Edge.Set
-    let length: CGFloat?
-
-    init(_ edges: Edge.Set = .all, _ length: CGFloat? = 0) {
-        self.edges = edges
-        self.length = length
-    }
-}
-
 struct ErrorBanner: View {
     let errorBannerVM: IErrorBannerViewModel
-    let padding: BannerPadding
+    let padding: [BannerPadding]
     @State var errorBannerVMState: ErrorBannerViewModel.State = .init()
 
     let minHeight = 60.0
@@ -30,6 +20,14 @@ struct ErrorBanner: View {
     init(
         _ errorBannerVM: IErrorBannerViewModel,
         padding: BannerPadding = .init(),
+    ) {
+        self.errorBannerVM = errorBannerVM
+        self.padding = [padding]
+    }
+
+    init(
+        _ errorBannerVM: IErrorBannerViewModel,
+        padding: [BannerPadding],
     ) {
         self.errorBannerVM = errorBannerVM
         self.padding = padding
@@ -44,7 +42,7 @@ struct ErrorBanner: View {
         // The content must be wrapped in a VStack so that the task can run when the error banner is
         // an EmptyView, but applying padding directly to the ErrorBanner will result in that padding
         // sticking around even when the banner is empty. This removes provided padding when empty.
-        .padding(state != nil ? padding.edges : .all, state != nil ? padding.length : 0)
+        .bannerPadding(isEmpty: state == nil, padding)
         .task {
             for await model in errorBannerVM.models {
                 errorBannerVMState = model
@@ -104,6 +102,61 @@ struct ErrorBanner: View {
         case nil:
             EmptyView()
         }
+    }
+}
+
+public struct BannerPadding {
+    let edges: Edge.Set
+    let length: CGFloat?
+
+    init(_ edges: Edge.Set = .all, _ length: CGFloat? = 0) {
+        self.edges = edges
+        self.length = length
+    }
+}
+
+struct BannerPaddingModifier: ViewModifier {
+    var isEmpty: Bool
+    var padding: [BannerPadding]
+
+    func body(content: Content) -> some View {
+        if isEmpty {
+            content
+        } else {
+            var updatePadding = padding
+            let nextPadding: BannerPadding? = if !updatePadding.isEmpty {
+                updatePadding.remove(at: 0)
+            } else { nil }
+            withPadding(
+                content: content,
+                nextPadding: nextPadding,
+                remainingPadding: updatePadding,
+            )
+        }
+    }
+
+    @ViewBuilder private func withPadding(
+        content: Content,
+        nextPadding: BannerPadding?,
+        remainingPadding: [BannerPadding]
+    ) -> some View {
+        if let nextPadding {
+            content
+                .padding(nextPadding.edges, nextPadding.length)
+                .bannerPadding(isEmpty: isEmpty, remainingPadding)
+        } else {
+            content
+        }
+    }
+}
+
+public extension View {
+    func bannerPadding(isEmpty: Bool, _ padding: BannerPadding) -> some View {
+        modifier(BannerPaddingModifier(isEmpty: isEmpty, padding: [padding]))
+    }
+
+    func bannerPadding(isEmpty: Bool, _ padding: [BannerPadding]) -> some View {
+        modifier(BannerPaddingModifier(isEmpty: isEmpty, padding: padding))
     }
 }
 

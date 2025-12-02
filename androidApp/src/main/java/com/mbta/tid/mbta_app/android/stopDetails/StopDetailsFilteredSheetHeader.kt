@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import com.mbta.tid.mbta_app.android.component.RoutePillType
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.StarButton
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Line
@@ -47,11 +49,10 @@ fun StopDetailsFilteredHeader(
     navCallbacks: NavigationCallbacks,
 ) {
     SheetHeader(
-        Modifier.padding(bottom = 8.dp),
+        Modifier.padding(bottom = 12.dp),
         title = {
             Row(
                 Modifier.weight(1f)
-                    .padding(top = 4.dp)
                     .semantics(mergeDescendants = true) { heading() }
                     .align(Alignment.CenterVertically),
                 Arrangement.spacedBy(8.dp),
@@ -96,6 +97,7 @@ fun StopDetailsFilteredHeader(
                 StarButton(isFavorite, colorResource(R.color.text), onFavorite)
             }
         },
+        buttonColors = ButtonDefaults.contrastTranslucent(),
     )
 }
 

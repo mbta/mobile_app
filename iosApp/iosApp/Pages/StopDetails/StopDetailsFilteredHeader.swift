@@ -37,33 +37,39 @@ struct StopDetailsFilteredHeader: View {
                 comment: "Stop details header fallback voiceover text when data fails to load"
             )
         }
-        SheetHeader(title: {
-            HStack(alignment: .center, spacing: 8) {
-                let pillAccessibilityLabel =
-                    routeModeLabel(line: line, route: route)
-                if let line {
-                    RoutePill(route: nil, line: line, type: .fixed)
-                        .accessibilityLabel(pillAccessibilityLabel)
-                } else if let route {
-                    RoutePill(route: route, type: .fixed)
-                        .accessibilityLabel(pillAccessibilityLabel)
+        SheetHeader(
+            title: {
+                HStack(alignment: .center, spacing: 8) {
+                    let pillAccessibilityLabel =
+                        routeModeLabel(line: line, route: route)
+                    if let line {
+                        RoutePill(route: nil, line: line, type: .fixed)
+                            .accessibilityLabel(pillAccessibilityLabel)
+                    } else if let route {
+                        RoutePill(route: route, type: .fixed)
+                            .accessibilityLabel(pillAccessibilityLabel)
+                    }
+                    if let stop {
+                        Text(stopLabel(stop)).font(Typography.headline).layoutPriority(1)
+                    }
+                    Spacer(minLength: 0)
                 }
-                if let stop {
-                    Text(stopLabel(stop)).font(Typography.headline).layoutPriority(1)
-                }
-                Spacer(minLength: 0)
+                .accessibilityElement()
+                .accessibilityAddTraits(.isHeader)
+                .accessibilityHeading(.h1)
+                .accessibilityLabel(accessibilityLabel)
+            },
+            buttonColor: .text.opacity(0.6),
+            buttonTextColor: .fill2,
+            navCallbacks: navCallbacks,
+            rightActionContents: {
+                StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
+                    .id(direction) // don’t play animation when switching between favorited direction and unfavorited
+                    // direction
+                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: 44, maxHeight: 44)
             }
-            .accessibilityElement()
-            .accessibilityAddTraits(.isHeader)
-            .accessibilityHeading(.h1)
-            .accessibilityLabel(accessibilityLabel)
-        }, navCallbacks: navCallbacks, rightActionContents: {
-            StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
-                .id(direction) // don’t play animation when switching between favorited direction and unfavorited
-                // direction
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: 44, maxHeight: 44)
-        })
+        )
         .padding(.bottom, 16)
     }
 
