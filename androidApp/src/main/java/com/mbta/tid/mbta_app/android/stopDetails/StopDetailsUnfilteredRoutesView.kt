@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -31,6 +32,7 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Prediction
@@ -81,6 +83,7 @@ fun StopDetailsUnfilteredRoutesView(
                 if (!multiRoute) Modifier.padding(bottom = 8.dp) else Modifier,
                 title = stop.name,
                 navCallbacks = navCallbacks,
+                buttonColors = ButtonDefaults.contrastTranslucent(),
             )
             if (multiRoute) {
                 Box(Modifier.height(56.dp).fillMaxWidth()) {

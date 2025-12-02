@@ -102,7 +102,7 @@ fun StopDetailsFilteredPickerView(
             navCallbacks,
         )
 
-        ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
+        ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 16.dp))
 
         Box(Modifier.fillMaxSize().background(routeColor)) {
             HorizontalDivider(
