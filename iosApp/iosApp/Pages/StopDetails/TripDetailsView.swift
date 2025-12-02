@@ -185,6 +185,7 @@ struct TripDetailsView: View {
             VStack(spacing: 0) {
                 tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
                     .padding(.horizontal, 6)
+                    .padding(.top, 2)
                 TripStops(
                     targetId: filter.stopId,
                     stops: stops,
