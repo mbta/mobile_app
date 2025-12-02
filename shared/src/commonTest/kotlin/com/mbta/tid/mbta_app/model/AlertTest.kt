@@ -267,7 +267,11 @@ class AlertTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
                     route = "not matching",
                     routeType = route.type,
                     stop = stop.id,
@@ -295,7 +299,11 @@ class AlertTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 informedEntity(
-                    listOf(Alert.InformedEntity.Activity.Exit, Alert.InformedEntity.Activity.Ride),
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "not matching",
