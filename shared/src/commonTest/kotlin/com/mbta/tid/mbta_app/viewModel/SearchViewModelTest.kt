@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.history.Visit
 import com.mbta.tid.mbta_app.history.VisitHistory
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RoutePillSpec
 import com.mbta.tid.mbta_app.model.RouteType
@@ -39,6 +40,14 @@ class SearchViewModelTest {
         val objects = ObjectCollectionBuilder()
         val visitedStop = objects.stop { name = "visitedStopName" }
         val searchedStop = objects.stop { name = "stopName" }
+        val route =
+            objects.route {
+                shortName = "33"
+                type = RouteType.BUS
+            }
+        objects.routePattern(route) {
+            representativeTrip { stopIds = listOf(searchedStop.id, visitedStop.id) }
+        }
 
         val searchResults =
             SearchResults(
@@ -90,6 +99,22 @@ class SearchViewModelTest {
                 VisitHistoryUsecase(visitHistoryRepo),
             )
 
+        val routePill =
+            RoutePillSpec(
+                textColor = route.textColor,
+                routeColor = route.color,
+                content = RoutePillSpec.Content.Text(route.shortName),
+                height = RoutePillSpec.Height.Small,
+                width = RoutePillSpec.Width.Flex,
+                shape = RoutePillSpec.Shape.Rectangle,
+                contentDescription =
+                    RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                        routeName = route.shortName,
+                        routeType = RouteType.BUS,
+                        isOnly = true,
+                    ),
+            )
+
         testViewModelFlow(searchVM).test {
             assertEquals(SearchViewModel.State.Loading, awaitItem())
             searchVM.setQuery("")
@@ -100,7 +125,7 @@ class SearchViewModelTest {
                             visitedStop.id,
                             false,
                             visitedStop.name,
-                            emptyList(),
+                            listOf(routePill),
                         )
                     )
                 ),
@@ -115,7 +140,7 @@ class SearchViewModelTest {
                             searchedStop.id,
                             false,
                             searchedStop.name,
-                            emptyList(),
+                            listOf(routePill),
                         )
                     ),
                     emptyList(),
@@ -365,5 +390,126 @@ class SearchViewModelTest {
             ),
             state,
         )
+    }
+
+    @Test
+    fun testHidesNoService() = runTest {
+        val objects = ObjectCollectionBuilder()
+        val typicalStop = objects.stop { name = id }
+        val atypicalStop = objects.stop { name = id }
+        val noServiceStop = objects.stop { name = id }
+        val typicalRoute =
+            objects.route {
+                shortName = "1"
+                type = RouteType.BUS
+            }
+        objects.routePattern(typicalRoute) {
+            typicality = RoutePattern.Typicality.Typical
+            representativeTrip { stopIds = listOf(typicalStop.id) }
+        }
+        val atypicalRoute =
+            objects.route {
+                shortName = "2"
+                type = RouteType.BUS
+            }
+        objects.routePattern(atypicalRoute) {
+            typicality = RoutePattern.Typicality.Atypical
+            representativeTrip { stopIds = listOf(typicalStop.id, atypicalStop.id) }
+        }
+
+        val searchResults =
+            SearchResults(
+                routes = emptyList(),
+                stops =
+                    listOf(
+                        StopResult(
+                            id = noServiceStop.id,
+                            rank = 2,
+                            name = noServiceStop.name,
+                            zone = "stopZone",
+                            isStation = false,
+                            routes = emptyList(),
+                        ),
+                        StopResult(
+                            id = atypicalStop.id,
+                            rank = 2,
+                            name = atypicalStop.name,
+                            zone = "stopZone",
+                            isStation = false,
+                            routes = emptyList(),
+                        ),
+                        StopResult(
+                            id = typicalStop.id,
+                            rank = 2,
+                            name = typicalStop.name,
+                            zone = "stopZone",
+                            isStation = false,
+                            routes = emptyList(),
+                        ),
+                    ),
+            )
+
+        val searchVM =
+            SearchViewModel(
+                MockAnalytics(),
+                MockGlobalRepository(GlobalResponse(objects)),
+                object : ISearchResultRepository {
+                    override suspend fun getRouteFilterResults(
+                        query: String,
+                        lineIds: List<String>?,
+                        routeTypes: List<RouteType>?,
+                    ): ApiResult<SearchResults>? {
+                        fail("Route search should not be called here")
+                    }
+
+                    override suspend fun getSearchResults(query: String): ApiResult<SearchResults> {
+                        delay(10.milliseconds)
+                        return ApiResult.Ok(searchResults)
+                    }
+                },
+                MockSentryRepository(),
+                VisitHistoryUsecase(MockVisitHistoryRepository()),
+            )
+
+        fun routePill(route: Route) =
+            RoutePillSpec(
+                textColor = route.textColor,
+                routeColor = route.color,
+                content = RoutePillSpec.Content.Text(route.shortName),
+                height = RoutePillSpec.Height.Small,
+                width = RoutePillSpec.Width.Flex,
+                shape = RoutePillSpec.Shape.Rectangle,
+                contentDescription =
+                    RoutePillSpec.ContentDescription.StopSearchResultRoute(
+                        routeName = route.shortName,
+                        routeType = RouteType.BUS,
+                        isOnly = true,
+                    ),
+            )
+
+        testViewModelFlow(searchVM).test {
+            searchVM.setQuery("query")
+            assertEquals(SearchViewModel.State.Loading, awaitItem())
+            assertEquals(
+                SearchViewModel.State.Results(
+                    listOf(
+                        SearchViewModel.StopResult(
+                            atypicalStop.id,
+                            false,
+                            atypicalStop.name,
+                            listOf(routePill(atypicalRoute)),
+                        ),
+                        SearchViewModel.StopResult(
+                            typicalStop.id,
+                            false,
+                            typicalStop.name,
+                            listOf(routePill(typicalRoute)),
+                        ),
+                    ),
+                    emptyList(),
+                ),
+                awaitItem(),
+            )
+        }
     }
 }
