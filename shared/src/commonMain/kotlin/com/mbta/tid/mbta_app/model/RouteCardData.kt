@@ -206,25 +206,22 @@ public data class RouteCardData(
          * disrupted, etc. but should still be considered) could be shown
          */
         private fun potentialService(
-            now: EasternTimeInstant,
+            tripsUpcoming: List<UpcomingFormat.Some.FormattedTrip>,
             representativeRoute: Route,
             globalData: GlobalResponse?,
             context: Context,
         ): Set<PotentialService> {
             val potentialService: MutableMap<Pair<Route.Id, String>, MutableSet<String>> =
                 mutableMapOf()
-            val cutoffTime = now + 120.minutes
-            val tripsUpcoming =
-                if (context.isStopDetails()) upcomingTrips
-                else upcomingTrips.filter { it.isUpcomingWithin(now, cutoffTime) }
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider =
                 if (isBus && context != Context.StopDetailsFiltered)
                     tripsUpcoming.take(TYPICAL_LEAF_ROWS)
                 else tripsUpcoming
 
-            for (trip in tripsToConsider) {
-                if (context.isStopDetails() || trip.isUpcomingWithin(now, cutoffTime)) {
+            for (formattedTrip in tripsToConsider) {
+                val trip = formattedTrip.trip
+                if (context.isStopDetails() || trip.isUpcoming()) {
                     val existingPatterns =
                         potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
                             mutableSetOf()
@@ -332,7 +329,7 @@ public data class RouteCardData(
          */
         private fun formatForBranchedService(
             potentialService: Set<PotentialService>,
-            tripsWithFormat: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip>>,
+            formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
             globalData: GlobalResponse?,
@@ -349,7 +346,8 @@ public data class RouteCardData(
 
             if (disruptedHeadsigns.isEmpty()) {
                 return LeafFormat.Branched(
-                    tripsWithFormat.map { (trip, format) ->
+                    formattedTrips.map { format ->
+                        val trip = format.trip
                         val route =
                             if (shouldIncludeRoute) globalData?.getRoute(trip.trip.routeId)
                             else null
@@ -400,7 +398,8 @@ public data class RouteCardData(
             var remainingRowsToShow = max(1, BRANCHING_LEAF_ROWS - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
-                tripsWithFormat.take(remainingRowsToShow).map { (upcomingTrip, formatted) ->
+                formattedTrips.take(remainingRowsToShow).map { formatted ->
+                    val upcomingTrip = formatted.trip
                     val route =
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.trip.routeId)
                         else null
@@ -475,30 +474,31 @@ public data class RouteCardData(
 
         public fun format(now: EasternTimeInstant, globalData: GlobalResponse?): LeafFormat {
             val representativeRoute = this.lineOrRoute.sortRoute
-            val potentialService = potentialService(now, representativeRoute, globalData, context)
 
             // If we are dealing with a line, then we should show the route alongside the
             // UpcomingTripFormat
             val shouldIncludeRoute = this.lineOrRoute is LineOrRoute.Line
 
-            val isBranching = potentialService.size > 1
-
             val routeType = representativeRoute.type
             val translatedContext = context.toTripInstantDisplayContext()
+
+            val allTripsToShow =
+                upcomingTrips.withFormat(now, representativeRoute, translatedContext)
+
+            val potentialService =
+                potentialService(allTripsToShow, representativeRoute, globalData, context)
+
+            val isBranching = potentialService.size > 1
+
             val countTripsToDisplay =
                 when {
                     context == Context.StopDetailsFiltered -> null
                     isBranching && routeType != RouteType.BUS -> BRANCHING_LEAF_ROWS
                     else -> TYPICAL_LEAF_ROWS
                 }
-
             val tripsToShow =
-                upcomingTrips.withFormat(
-                    now,
-                    representativeRoute,
-                    translatedContext,
-                    countTripsToDisplay,
-                )
+                if (countTripsToDisplay != null) allTripsToShow.take(countTripsToDisplay)
+                else allTripsToShow
 
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 
@@ -547,7 +547,7 @@ public data class RouteCardData(
                         shouldIncludeRoute
                     },
                     potentialService.singleOrNull()?.headsign,
-                    tripsToShow.map { it.second },
+                    tripsToShow,
                     mapStopRoute,
                     secondaryAlert,
                 )
