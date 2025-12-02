@@ -335,48 +335,8 @@ struct ContentView: View {
             .animation(.easeOut, value: nearbyVM.navigationStack.lastSafe().sheetItemIdentifiable()?.id)
             .background { Color.fill2.ignoresSafeArea(edges: .all).animation(nil, value: "") }
         }
-        .onOpenURL { url in
-            let deepLink = DeepLinkState.companion.from(url: url.absoluteString)
-            nearbyVM.popToEntrypoint()
-
-            switch onEnum(of: deepLink) {
-            case let .stop(stop):
-                let nav = stop.sheetRoute
-                nearbyVM.pushNavEntry(.stopDetails(
-                    stopId: nav.stopId,
-                    stopFilter: nav.stopFilter,
-                    tripFilter: nav.tripFilter
-                ))
-
-            case let .alert(alert):
-                var stop: Stop?
-                if let stopId = alert.stopId {
-                    nearbyVM.pushNavEntry(
-                        .stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil)
-                    )
-                    stop = globalData?.getStop(stopId: alert.stopId)
-                }
-                var line: Line?
-                var routes: [Route]?
-                if let routeId = alert.routeId {
-                    let lineOrRouteId = LineOrRoute.Id.companion.fromString(id: routeId)
-                    let lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: lineOrRouteId)
-                    switch onEnum(of: lineOrRoute) {
-                    case let .line(resolved):
-                        line = resolved.line
-                        routes = Array(resolved.routes)
-                    case let .route(resolved):
-                        routes = [resolved.route]
-                    default: break
-                    }
-                }
-                nearbyVM.pushNavEntry(
-                    .alertDetails(alertId: alert.alertId, line: line, routes: routes, stop: stop)
-                )
-
-            default: break
-            }
-        }
+        .onContinueUserActivity(NSUserActivityTypeBrowsingWeb) { handleDeepLink(url: $0.webpageURL) }
+        .onOpenURL { handleDeepLink(url: $0) }
     }
 
     @ViewBuilder
@@ -649,6 +609,50 @@ struct ContentView: View {
             searchObserver.isSearching && nearbyVM.navigationStack.lastSafe().isEntrypoint
                 ? Color.fill2 : Color.clear
         ).ignoresSafeArea(.all)
+    }
+
+    private func handleDeepLink(url: URL?) {
+        guard let url else { return }
+        let deepLink = DeepLinkState.companion.from(url: url.absoluteString)
+        nearbyVM.popToEntrypoint()
+
+        switch onEnum(of: deepLink) {
+        case let .stop(stop):
+            let nav = stop.sheetRoute
+            nearbyVM.pushNavEntry(.stopDetails(
+                stopId: nav.stopId,
+                stopFilter: nav.stopFilter,
+                tripFilter: nav.tripFilter
+            ))
+
+        case let .alert(alert):
+            var stop: Stop?
+            if let stopId = alert.stopId {
+                nearbyVM.pushNavEntry(
+                    .stopDetails(stopId: stopId, stopFilter: nil, tripFilter: nil)
+                )
+                stop = globalData?.getStop(stopId: alert.stopId)
+            }
+            var line: Line?
+            var routes: [Route]?
+            if let routeId = alert.routeId {
+                let lineOrRouteId = LineOrRoute.Id.companion.fromString(id: routeId)
+                let lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: lineOrRouteId)
+                switch onEnum(of: lineOrRoute) {
+                case let .line(resolved):
+                    line = resolved.line
+                    routes = Array(resolved.routes)
+                case let .route(resolved):
+                    routes = [resolved.route]
+                default: break
+                }
+            }
+            nearbyVM.pushNavEntry(
+                .alertDetails(alertId: alert.alertId, line: line, routes: routes, stop: stop)
+            )
+
+        default: break
+        }
     }
 
     private func vehicleRouteType() -> RouteType? {
