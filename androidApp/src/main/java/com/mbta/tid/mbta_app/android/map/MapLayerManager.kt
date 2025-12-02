@@ -25,16 +25,22 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManager {
 
-    suspend fun loadImages() =
-        withContext(Dispatchers.Main) {
-            for (icon in StopIcons.all + AlertIcons.all) {
-                val drawable = context.resources.getDrawable(drawableByName(icon), null)
+    private val lock = Mutex()
 
-                map.addImage(icon, (drawable as BitmapDrawable).bitmap)
+    suspend fun loadImages() =
+        lock.withLock {
+            withContext(Dispatchers.Main) {
+                for (icon in StopIcons.all + AlertIcons.all) {
+                    val drawable = context.resources.getDrawable(drawableByName(icon), null)
+
+                    map.addImage(icon, (drawable as BitmapDrawable).bitmap)
+                }
             }
         }
 
@@ -85,44 +91,56 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
     }
 
     private suspend fun setLayers(routeLayers: List<MapboxLayer>, stopLayers: List<MapboxLayer>) {
-        withContext(Dispatchers.Main) {
-            val oldLayers = map.styleLayers.mapTo(mutableSetOf()) { it.id }
-            for (layer in routeLayers) {
-                oldLayers.remove(layer.layerId)
-                if (map.styleLayerExists(checkNotNull(layer.layerId))) {
-                    map.removeStyleLayer(layer.layerId)
+        lock.withLock {
+            withContext(Dispatchers.Main) {
+                val oldLayers = map.styleLayers.mapTo(mutableSetOf()) { it.id }
+                for (layer in routeLayers) {
+                    oldLayers.remove(layer.layerId)
+                    if (map.styleLayerExists(checkNotNull(layer.layerId))) {
+                        map.removeStyleLayer(layer.layerId)
+                    }
+                    if (map.styleLayerExists(routeAnchorLayerId)) {
+                        map.addLayerBelow(layer, below = routeAnchorLayerId)
+                    } else {
+                        map.addLayer(layer)
+                    }
                 }
-                map.addLayerBelow(layer, below = routeAnchorLayerId)
-            }
-            for (layer in stopLayers) {
-                oldLayers.remove(layer.layerId)
-                if (map.styleLayerExists(checkNotNull(layer.layerId))) {
-                    map.removeStyleLayer(layer.layerId)
+                for (layer in stopLayers) {
+                    oldLayers.remove(layer.layerId)
+                    if (map.styleLayerExists(checkNotNull(layer.layerId))) {
+                        map.removeStyleLayer(layer.layerId)
+                    }
+                    if (map.styleLayerExists(stopAnchorLayerId)) {
+                        map.addLayerBelow(layer, below = stopAnchorLayerId)
+                    } else {
+                        map.addLayer(layer)
+                    }
                 }
-                map.addLayerBelow(layer, below = stopAnchorLayerId)
-            }
-            for (layer in oldLayers) {
-                if (layer.startsWith(RouteLayerGenerator.routeLayerId)) {
-                    map.removeStyleLayer(layer)
+                for (layer in oldLayers) {
+                    if (layer.startsWith(RouteLayerGenerator.routeLayerId)) {
+                        map.removeStyleLayer(layer)
+                    }
                 }
             }
         }
     }
 
     suspend fun setUpAnchorLayers() =
-        withContext(Dispatchers.Main) {
-            if (
-                map.styleLayerExists(puckAnchorLayerId) ||
-                    map.styleLayerExists(stopAnchorLayerId) ||
-                    map.styleLayerExists(routeAnchorLayerId)
-            )
-                return@withContext
-            val puckAnchorLayer = SlotLayer(puckAnchorLayerId)
-            val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
-            val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
-            map.addLayer(puckAnchorLayer)
-            map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
-            map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
+        lock.withLock {
+            withContext(Dispatchers.Main) {
+                if (
+                    map.styleLayerExists(puckAnchorLayerId) ||
+                        map.styleLayerExists(stopAnchorLayerId) ||
+                        map.styleLayerExists(routeAnchorLayerId)
+                )
+                    return@withContext
+                val puckAnchorLayer = SlotLayer(puckAnchorLayerId)
+                val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
+                val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
+                map.addLayer(puckAnchorLayer)
+                map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
+                map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
+            }
         }
 
     private suspend fun updateSourceData(sourceId: String, data: FeatureCollection) {
