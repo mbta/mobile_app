@@ -114,7 +114,9 @@ public class SearchViewModel(
             fun forStop(stopId: String, globalData: GlobalResponse?): StopResult? {
                 val stop = globalData?.getStop(stopId) ?: return null
                 val isStation = stop.locationType == LocationType.STATION
-                val routes = globalData.getTypicalRoutesFor(stopId)
+                var routes = globalData.getTypicalRoutesFor(stopId)
+                if (routes.isEmpty()) routes = globalData.getAllRoutesFor(stopId)
+                if (routes.isEmpty()) return null
                 val routePills =
                     routes.sorted().map { route ->
                         val line: Line? = globalData.getLine(route.lineId)

@@ -170,6 +170,12 @@ internal constructor(
             .distinct()
     }
 
+    internal fun getAllRoutesFor(stopId: String): List<Route> {
+        return getPatternsFor(stopId)
+            .mapNotNull { routePattern -> routes[routePattern.routeId] }
+            .distinct()
+    }
+
     public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
         if (alert == null || routes == null) return null
         val routeEntities =
