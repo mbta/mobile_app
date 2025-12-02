@@ -219,7 +219,8 @@ public data class RouteCardData(
                     tripsUpcoming.take(TYPICAL_LEAF_ROWS)
                 else tripsUpcoming
 
-            for ((trip) in tripsToConsider) {
+            for (formattedTrip in tripsToConsider) {
+                val trip = formattedTrip.trip
                 if (context.isStopDetails() || trip.isUpcoming()) {
                     val existingPatterns =
                         potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
