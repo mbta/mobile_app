@@ -48,6 +48,10 @@ class SearchBarOverlayTest : KoinTest {
             shortName = "3½"
             type = RouteType.BUS
         }
+    private val routePattern =
+        builder.routePattern(route) {
+            representativeTrip { stopIds = listOf(visitedStop.id, searchedStop.id) }
+        }
 
     @get:Rule var composeTestRule = createComposeRule()
 
