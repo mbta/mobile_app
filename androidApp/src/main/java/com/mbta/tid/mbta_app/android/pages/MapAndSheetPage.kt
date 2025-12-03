@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseInOut
@@ -76,6 +78,7 @@ import com.mbta.tid.mbta_app.android.state.subscribeToVehicles
 import com.mbta.tid.mbta_app.android.typeMap
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.currentRoute
 import com.mbta.tid.mbta_app.android.util.currentRouteAs
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.navigateFrom
@@ -176,6 +179,7 @@ fun MapAndSheetPage(
             mutableStateOf<Pair<ModalRoutes, () -> Unit>?>(null)
         }
 
+    val activity = LocalActivity.current
     val density = LocalDensity.current
 
     val now by timer(updateInterval = 5.seconds)
@@ -516,6 +520,20 @@ fun MapAndSheetPage(
         body: @Composable () -> Unit,
     ) {
         val sheetState = nearbyTransit.scaffoldState.bottomSheetState.currentValue
+
+        // While at an entrypoint, close the app on system back, unless search is open
+        if (navController.currentRoute is SheetRoutes.Entrypoint) {
+            BackHandler {
+                if (searchExpanded) {
+                    handleSearchExpandedChange(false)
+                    return@BackHandler
+                }
+
+                activity?.finish()
+                navController.popBackStack()
+            }
+        }
+
         Column(
             Modifier.background(backgroundColor)
                 .padding(top = 12.dp)
