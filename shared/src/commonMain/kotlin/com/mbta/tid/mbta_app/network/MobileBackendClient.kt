@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.json
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.ClientRequestException
+import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.RedirectResponseException
@@ -32,6 +33,10 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
             install(HttpTimeout) { requestTimeoutMillis = 8000 }
+            install(HttpRequestRetry) {
+                retryOnExceptionOrServerErrors(maxRetries = 3)
+                exponentialDelay()
+            }
             defaultRequest { url(appVariant.backendRoot) }
             HttpResponseValidator {
                 validateResponse { response ->
