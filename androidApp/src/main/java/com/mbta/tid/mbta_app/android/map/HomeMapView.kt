@@ -132,11 +132,12 @@ fun HomeMapView(
     val accuracyRingColor: Int = colorResource(R.color.deemphasized).copy(alpha = 0.1F).toArgb()
     val accuracyRingBorderColor: Int = colorResource(R.color.halo).toArgb()
     val mapState = rememberMapState()
+    var mapStyleLoaded by remember { mutableStateOf(false) }
     mapState.gesturesSettings = GesturesSettings {
         rotateEnabled = false
         pitchEnabled = false
     }
-    LaunchedEffect(Unit) { mapState.styleLoadedEvents.collect { viewModel.mapStyleLoaded() } }
+    LaunchedEffect(Unit) { mapState.styleLoadedEvents.collect { mapStyleLoaded = true } }
     LaunchedEffect(Unit) {
         mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
     }
@@ -190,9 +191,6 @@ fun HomeMapView(
                 val locationProvider = remember { PassthroughLocationProvider() }
 
                 MapEffect { map ->
-                    val layerManager = MapLayerManager(map.mapboxMap, context)
-                    layerManager.loadImages()
-                    layerManager.setUpAnchorLayers()
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
                             handleStopNavigation(it)
@@ -213,10 +211,16 @@ fun HomeMapView(
                         showAccuracyRing = true
                         this.accuracyRingColor = accuracyRingColor
                         this.accuracyRingBorderColor = accuracyRingBorderColor
-                        layerBelow = MapLayerManager.puckAnchorLayerId
                     }
+                }
 
+                MapEffect(mapStyleLoaded) { map ->
+                    val layerManager = MapLayerManager(map.mapboxMap, context)
+                    layerManager.loadImages()
+                    layerManager.setUpAnchorLayers()
+                    map.location.updateSettings { layerBelow = MapLayerManager.puckAnchorLayerId }
                     viewModel.layerManagerInitialized(layerManager)
+                    viewModel.mapStyleLoaded()
                 }
 
                 MapEffect(showCurrentLocation) { map ->
