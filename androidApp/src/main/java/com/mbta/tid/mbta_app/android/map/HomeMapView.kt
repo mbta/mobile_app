@@ -72,7 +72,7 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
-import com.mbta.tid.mbta_app.viewModel.MapViewModel.State
+import com.mbta.tid.mbta_app.viewModel.MapViewModel.LayerState
 import kotlinx.coroutines.flow.map
 import org.koin.compose.koinInject
 import org.maplibre.spatialk.geojson.Position
@@ -105,14 +105,14 @@ fun HomeMapView(
     val allowTargeting = currentNavEntry?.allowTargeting ?: true
 
     var selectedVehicle by remember {
-        mutableStateOf<Vehicle?>((state as? State.TripSelected)?.vehicle)
+        mutableStateOf((state.layerState as? LayerState.TripSelected)?.vehicle)
     }
 
     val showTripRecenterButton =
-        when (state) {
-            is State.StopSelected,
-            is State.Overview -> false
-            is State.TripSelected -> !viewportProvider.isVehicleOverview
+        when (state.layerState) {
+            is LayerState.StopSelected,
+            is LayerState.Overview -> false
+            is LayerState.TripSelected -> !viewportProvider.isVehicleOverview
         }
 
     val analytics: Analytics = koinInject()
@@ -147,8 +147,8 @@ fun HomeMapView(
     LaunchedEffect(isDarkMode) { viewModel.colorPaletteChanged(isDarkMode) }
     LaunchedEffect(density) { viewModel.densityChanged(density.density) }
     LaunchedEffect(currentNavEntry) { viewModel.navChanged(currentNavEntry) }
-    LaunchedEffect((state as? State.TripSelected)?.vehicle) {
-        val vehicle = (state as? State.TripSelected)?.vehicle
+    LaunchedEffect((state.layerState as? LayerState.TripSelected)?.vehicle) {
+        val vehicle = (state.layerState as? LayerState.TripSelected)?.vehicle
         val skipSettingVehicle =
             selectedVehicle?.id == currentNavEntry?.vehicleId && vehicle == null
         if (skipSettingVehicle) return@LaunchedEffect
@@ -223,7 +223,9 @@ fun HomeMapView(
                     viewModel.mapStyleLoaded()
                 }
 
-                MapEffect(showCurrentLocation) { map ->
+                MapEffect(state.layersInitialized, showCurrentLocation) { map ->
+                    if (!state.layersInitialized) return@MapEffect
+
                     map.location.updateSettings {
                         locationPuck =
                             if (showCurrentLocation) {

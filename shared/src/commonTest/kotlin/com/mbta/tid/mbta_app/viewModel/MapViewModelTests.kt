@@ -25,7 +25,7 @@ import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
 import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
-import dev.mokkery.matcher.matching
+import dev.mokkery.matcher.matches
 import dev.mokkery.mock
 import dev.mokkery.resetCalls
 import dev.mokkery.verify
@@ -131,13 +131,16 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             val stop = TestData.stops["70113"]!!
             val stopDetails = SheetRoutes.StopDetails(stop.id, null, null)
             viewModel.navChanged(stopDetails)
-            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            assertEquals(
+                MapViewModel.State(MapViewModel.LayerState.StopSelected(stop, null), false),
+                awaitItem(),
+            )
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             delay(10)
             assertEquals(1, timesRestoreViewportCalled)
             assertEquals(1, timesSaveViewportCalled)
@@ -147,7 +150,10 @@ internal class MapViewModelTests : KoinTest {
                 SheetRoutes.TripDetails(TripDetailsPageFilter("", stopFilter, tripFilter))
             )
             assertEquals(
-                MapViewModel.State.TripSelected(null, stopFilter, tripFilter, null, true),
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(null, stopFilter, tripFilter, null, true),
+                    false,
+                ),
                 awaitItem(),
             )
         }
@@ -171,20 +177,32 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             viewModel.recenter()
             // This delay approach seems potentially flakey
             delay(10)
             assertEquals(1, timesFollowCalled)
             val stop = TestData.stops["70113"]!!
             viewModel.selectedStop(stop, null)
-            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            assertEquals(
+                MapViewModel.State(MapViewModel.LayerState.StopSelected(stop, null), false),
+                awaitItem(),
+            )
             viewModel.recenter()
             delay(10)
             assertEquals(2, timesFollowCalled)
             viewModel.selectedTrip(null, null, tripDetailsFilter, vehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(null, null, tripDetailsFilter, vehicle, false),
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(
+                        null,
+                        null,
+                        tripDetailsFilter,
+                        vehicle,
+                        false,
+                    ),
+                    false,
+                ),
                 awaitItem(),
             )
             delay(10)
@@ -209,17 +227,29 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             val stop = TestData.stops["70113"]!!
             viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(
+                        stop,
+                        null,
+                        tripDetailsFilter,
+                        vehicle,
+                        false,
+                    ),
+                    false,
+                ),
                 awaitItem(),
             )
             viewModel.navChanged(
                 SheetRoutes.RouteDetails(Route.Id(""), RouteDetailsContext.Details)
             )
-            assertEquals(MapViewModel.State.StopSelected(stop, null), awaitItem())
+            assertEquals(
+                MapViewModel.State(MapViewModel.LayerState.StopSelected(stop, null), false),
+                awaitItem(),
+            )
         }
     }
 
@@ -234,21 +264,33 @@ internal class MapViewModelTests : KoinTest {
         testViewModelFlow(viewModel).test {
             viewModel.setViewportManager(viewportProvider)
             viewModel.densityChanged(1f)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
             val stop = TestData.stops["70113"]!!
             viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(stop, null, tripDetailsFilter, vehicle, false),
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(
+                        stop,
+                        null,
+                        tripDetailsFilter,
+                        vehicle,
+                        false,
+                    ),
+                    false,
+                ),
                 awaitItem(),
             )
             val updatedVehicle = vehicle.copy(latitude = 0.1, longitude = 0.2)
             viewModel.selectedVehicleUpdated(updatedVehicle, false)
             assertEquals(
-                MapViewModel.State.TripSelected(
-                    stop,
-                    null,
-                    tripDetailsFilter,
-                    updatedVehicle,
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(
+                        stop,
+                        null,
+                        tripDetailsFilter,
+                        updatedVehicle,
+                        false,
+                    ),
                     false,
                 ),
                 awaitItem(),
@@ -297,16 +339,16 @@ internal class MapViewModelTests : KoinTest {
         advanceUntilIdle()
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it == MapViewModel.State.StopSelected(chestnutHill, null) }
+            awaitItemSatisfying { it == MapViewModel.LayerState.StopSelected(chestnutHill, null) }
             advanceUntilIdle()
-            verifySuspend { layerManger.updateRouteSourceData(matching { it.size == 1 }) }
+            verifySuspend { layerManger.updateRouteSourceData(matches { it.size == 1 }) }
             resetCalls(layerManger)
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
         }
         advanceUntilIdle()
 
         verifySuspend(VerifyMode.exactly(0)) {
-            layerManger.updateRouteSourceData(matching { it.size == 6 })
+            layerManger.updateRouteSourceData(matches { it.size == 6 })
         }
     }
 
@@ -349,15 +391,15 @@ internal class MapViewModelTests : KoinTest {
         viewModel.densityChanged(1f)
         advanceUntilIdle()
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it == MapViewModel.State.Overview }
+            awaitItemSatisfying { it == MapViewModel.LayerState.Overview }
             advanceUntilIdle()
-            verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+            verifySuspend() { layerManger.updateRouteSourceData(matches { it.size == 6 }) }
             resetCalls(layerManger)
             viewModel.alertsChanged(AlertsStreamDataResponse(objects))
         }
 
         advanceUntilIdle()
-        verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+        verifySuspend() { layerManger.updateRouteSourceData(matches { it.size == 6 }) }
     }
 
     @Test
@@ -380,16 +422,16 @@ internal class MapViewModelTests : KoinTest {
         advanceUntilIdle()
 
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it == MapViewModel.State.StopSelected(chestnutHill, null) }
+            awaitItemSatisfying { it == MapViewModel.LayerState.StopSelected(chestnutHill, null) }
             advanceUntilIdle()
-            verifySuspend { layerManger.updateRouteSourceData(matching { it.size == 1 }) }
+            verifySuspend { layerManger.updateRouteSourceData(matches { it.size == 1 }) }
             resetCalls(layerManger)
             viewModel.navChanged(SheetRoutes.NearbyTransit)
-            assertEquals(MapViewModel.State.Overview, awaitItem())
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
         }
         advanceUntilIdle()
 
-        verifySuspend() { layerManger.updateRouteSourceData(matching { it.size == 6 }) }
+        verifySuspend() { layerManger.updateRouteSourceData(matches { it.size == 6 }) }
     }
 
     @Test
@@ -446,7 +488,7 @@ internal class MapViewModelTests : KoinTest {
             advanceUntilIdle()
             verify {
                 sentryRepository.captureException(
-                    matching<MoleculeViewModel.TimeoutException> {
+                    matches<MoleculeViewModel.TimeoutException> {
                         it.message ==
                             "Timeout in MapViewModel handling event LocationPermissionsChanged(hasPermission=true)"
                     }
@@ -496,11 +538,13 @@ internal class MapViewModelTests : KoinTest {
         viewModel.densityChanged(1f)
         advanceUntilIdle()
         testViewModelFlow(viewModel).test {
-            awaitItemSatisfying { it == MapViewModel.State.Overview }
+            awaitItemSatisfying {
+                it == MapViewModel.State(MapViewModel.LayerState.Overview, false)
+            }
             advanceUntilIdle()
             verifySuspend {
                 layerManger.updateRouteSourceData(
-                    matching(
+                    matches(
                         toString = { "all segments normal" },
                         predicate = {
                             it.all { it.lines.all { it.alertState == SegmentAlertState.Normal } }
@@ -514,7 +558,7 @@ internal class MapViewModelTests : KoinTest {
             advanceUntilIdle()
             verifySuspend {
                 layerManger.updateRouteSourceData(
-                    matching(
+                    matches(
                         toString = { "some segment suspended" },
                         predicate = {
                             it.any {

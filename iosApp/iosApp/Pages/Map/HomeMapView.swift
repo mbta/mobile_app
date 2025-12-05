@@ -32,7 +32,10 @@ struct HomeMapView: View {
     @StateObject var locationDataManager: LocationDataManager
     @Binding var sheetHeight: CGFloat
 
-    @State var mapVMState: MapViewModel.State = MapViewModel.StateOverview.shared
+    @State var mapVMState: MapViewModel.State = .init(
+        layerState: MapViewModel.LayerStateOverview.shared,
+        layersInitialized: false
+    )
     @State var globalData: GlobalResponse?
     @Binding var selectedVehicle: Vehicle?
     @State var routeCardDataState: RouteCardDataViewModel.State?
@@ -92,9 +95,9 @@ struct HomeMapView: View {
                     mapVMState = state
                 }
             }
-            .onChange(of: mapVMState) { state in
+            .onChange(of: mapVMState.layerState) { layerState in
                 var vehicle: Vehicle? = nil
-                if case let .tripSelected(tripState) = onEnum(of: state) {
+                if case let .tripSelected(tripState) = onEnum(of: layerState) {
                     vehicle = tripState.vehicle
                 }
 

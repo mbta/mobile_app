@@ -128,12 +128,17 @@ public class MapViewModel(
         public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) : Event
     }
 
-    public sealed class State {
+    public data class State(
+        public val layerState: LayerState,
+        public val layersInitialized: Boolean,
+    )
+
+    public sealed class LayerState {
 
         internal abstract val stop: Stop?
         internal abstract val stopFilter: StopDetailsFilter?
 
-        public data object Overview : State() {
+        public data object Overview : LayerState() {
             override val stop: Stop? = null
             override val stopFilter: StopDetailsFilter? = null
         }
@@ -141,7 +146,7 @@ public class MapViewModel(
         public data class StopSelected(
             override val stop: Stop,
             override val stopFilter: StopDetailsFilter?,
-        ) : State()
+        ) : LayerState()
 
         public data class TripSelected
         internal constructor(
@@ -150,7 +155,7 @@ public class MapViewModel(
             internal val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
             val following: Boolean,
-        ) : State()
+        ) : LayerState()
     }
 
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
@@ -181,8 +186,11 @@ public class MapViewModel(
 
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
         var layerManager by remember { mutableStateOf<IMapLayerManager?>(null) }
-        var state by remember { mutableStateOf<State>(State.Overview) }
-        val (stopId: String?, stopFilter: StopDetailsFilter?) = state.stop?.id to state.stopFilter
+        var layersInitialized by remember { mutableStateOf(false) }
+        var layerState by remember { mutableStateOf<LayerState>(LayerState.Overview) }
+        var state by remember { mutableStateOf(State(layerState, layersInitialized)) }
+        val (stopId: String?, stopFilter: StopDetailsFilter?) =
+            layerState.stop?.id to layerState.stopFilter
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
@@ -198,8 +206,8 @@ public class MapViewModel(
             allStopSourceData?.let { layerManager?.updateStopSourceData(it) }
         }
 
-        LaunchedEffect(allRailRouteSourceData, allStopSourceData, state) {
-            if (state is State.Overview) {
+        LaunchedEffect(allRailRouteSourceData, allStopSourceData, layerState) {
+            if (layerState is LayerState.Overview) {
                 routeSourceData = allRailRouteSourceData
                 routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
                 stopLayerGeneratorState = StopLayerGenerator.State(null, null)
@@ -209,9 +217,9 @@ public class MapViewModel(
         EventSink(eventHandlingTimeout = 10.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
                 is Event.NavChanged -> {
-                    state =
+                    layerState =
                         handleNavChange(
-                            state,
+                            layerState,
                             event.currentNavEntry,
                             previousNavEntry,
                             globalData,
@@ -220,16 +228,16 @@ public class MapViewModel(
                     previousNavEntry = event.currentNavEntry
                 }
                 is Event.Recenter -> {
-                    when (state) {
-                        is State.Overview,
-                        is State.StopSelected -> {
+                    when (layerState) {
+                        is LayerState.Overview,
+                        is LayerState.StopSelected -> {
                             followPuck(null)
                         }
-                        is State.TripSelected -> {
+                        is LayerState.TripSelected -> {
                             when (event.type) {
                                 RecenterType.CurrentLocation -> followPuck(null)
                                 RecenterType.Trip -> {
-                                    val currentState = state as State.TripSelected
+                                    val currentState = layerState as LayerState.TripSelected
                                     handleViewportCentering(currentState, density)
                                 }
                             }
@@ -238,14 +246,14 @@ public class MapViewModel(
                 }
                 is Event.SelectedStop -> {
                     viewportManager.saveNearbyTransitViewport()
-                    val newState = State.StopSelected(event.stop, event.stopFilter)
+                    val newState = LayerState.StopSelected(event.stop, event.stopFilter)
                     handleViewportCentering(newState, density)
-                    state = newState
+                    layerState = newState
                 }
                 is Event.SelectedTrip -> {
-                    val currentState = (state as? State.TripSelected)
+                    val currentState = (layerState as? LayerState.TripSelected)
                     val newState =
-                        State.TripSelected(
+                        LayerState.TripSelected(
                             event.stop,
                             event.stopFilter,
                             event.tripFilter,
@@ -255,7 +263,7 @@ public class MapViewModel(
                     if (currentState?.vehicle?.id != newState.vehicle?.id || event.follow) {
                         handleViewportCentering(newState, density)
                     }
-                    state = newState
+                    layerState = newState
                 }
                 is Event.MapStyleLoaded -> {
                     layerManager?.run {
@@ -268,6 +276,7 @@ public class MapViewModel(
                             }
                             ?: return@run
                         resetPuckPosition()
+                        layersInitialized = true
                     }
                 }
                 is Event.LayerManagerInitialized -> {
@@ -280,10 +289,10 @@ public class MapViewModel(
                     }
                 }
                 is Event.SelectedVehicleUpdated -> {
-                    val currentState = (state as? State.TripSelected)
+                    val currentState = (layerState as? LayerState.TripSelected)
                     currentState?.let {
                         val newState =
-                            State.TripSelected(
+                            LayerState.TripSelected(
                                 it.stop,
                                 it.stopFilter,
                                 it.tripFilter,
@@ -293,7 +302,7 @@ public class MapViewModel(
                         if (it.vehicle?.id != newState.vehicle?.id || event.follow) {
                             handleViewportCentering(newState, density)
                         }
-                        state = newState
+                        layerState = newState
                     }
                 }
             }
@@ -342,6 +351,11 @@ public class MapViewModel(
                 layerManager,
             )
         }
+
+        LaunchedEffect(layerState, layersInitialized) {
+            state = State(layerState, layersInitialized)
+        }
+
         return state
     }
 
@@ -397,12 +411,12 @@ public class MapViewModel(
     }
 
     private fun handleNavChange(
-        currentState: State,
+        currentState: LayerState,
         newNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
         globalResponse: GlobalResponse?,
         density: Float?,
-    ): State {
+    ): LayerState {
         val currentNavEntryStopDetails =
             when (newNavEntry) {
                 is SheetRoutes.StopDetails -> newNavEntry
@@ -417,15 +431,15 @@ public class MapViewModel(
         val routePickerOrDetails =
             newNavEntry is SheetRoutes.RoutePicker || newNavEntry is SheetRoutes.RouteDetails
         val newState =
-            if (routePickerOrDetails && currentState is State.TripSelected) {
-                currentState.stop?.let { State.StopSelected(it, currentState.stopFilter) }
-                    ?: State.Overview
+            if (routePickerOrDetails && currentState is LayerState.TripSelected) {
+                currentState.stop?.let { LayerState.StopSelected(it, currentState.stopFilter) }
+                    ?: LayerState.Overview
             } else if (currentNavEntryTripDetails != null) {
                 val vehicle =
                     currentNavEntryTripDetails.filter.vehicleId?.let { vehicleId ->
                         vehiclesData.firstOrNull { it.id == vehicleId }
                     }
-                State.TripSelected(
+                LayerState.TripSelected(
                     stop,
                     currentNavEntryTripDetails.filter.stopFilter,
                     currentNavEntryTripDetails.filter.tripDetailsFilter,
@@ -433,17 +447,17 @@ public class MapViewModel(
                     true,
                 )
             } else if (currentNavEntryStopDetails == null) {
-                State.Overview
+                LayerState.Overview
             } else {
                 if (stop == null) {
-                    State.Overview
+                    LayerState.Overview
                 } else {
                     if (currentNavEntryStopDetails.tripFilter != null) {
                         val vehicle =
                             currentNavEntryStopDetails.tripFilter.vehicleId?.let { vehicleId ->
                                 vehiclesData.firstOrNull { it.id == vehicleId }
                             }
-                        State.TripSelected(
+                        LayerState.TripSelected(
                             stop,
                             currentNavEntryStopDetails.stopFilter,
                             currentNavEntryStopDetails.tripFilter,
@@ -451,7 +465,7 @@ public class MapViewModel(
                             false,
                         )
                     } else {
-                        State.StopSelected(stop, currentNavEntryStopDetails.stopFilter)
+                        LayerState.StopSelected(stop, currentNavEntryStopDetails.stopFilter)
                     }
                 }
             }
@@ -467,26 +481,28 @@ public class MapViewModel(
         return newState
     }
 
-    private fun handleViewportCentering(state: State, density: Float?) {
+    private fun handleViewportCentering(layerState: LayerState, density: Float?) {
         CoroutineScope(defaultCoroutineDispatcher).launch {
-            when (state) {
-                State.Overview -> {}
-                is State.StopSelected -> {
-                    viewportManager.stopCenter(state.stop)
+            when (layerState) {
+                LayerState.Overview -> {}
+                is LayerState.StopSelected -> {
+                    viewportManager.stopCenter(layerState.stop)
                 }
 
-                is State.TripSelected -> {
+                is LayerState.TripSelected -> {
                     // there is no vehicle associated with the trip, so just center on the stop
                     // if there is one
-                    if (state.tripFilter.vehicleId == null) {
-                        state.stop?.let { viewportManager.stopCenter(it) }
+                    if (layerState.tripFilter.vehicleId == null) {
+                        layerState.stop?.let { viewportManager.stopCenter(it) }
                     } else {
                         // If we're following a vehicle, exclude the stop so the map follows only
                         // the vehicle
-                        val stop = if (state.following) null else state.stop
+                        val stop = if (layerState.following) null else layerState.stop
                         // if there is a vehicle id associated with the trip but there
                         // isn't a vehicle yet, wait for one to load before centering
-                        state.vehicle?.let { viewportManager.vehicleOverview(it, stop, density) }
+                        layerState.vehicle?.let {
+                            viewportManager.vehicleOverview(it, stop, density)
+                        }
                     }
                 }
             }
@@ -639,7 +655,9 @@ public class MapViewModel(
 
 public class MockMapViewModel
 @DefaultArgumentInterop.Enabled
-constructor(initialState: MapViewModel.State = MapViewModel.State.Overview) : IMapViewModel {
+constructor(
+    initialState: MapViewModel.State = MapViewModel.State(MapViewModel.LayerState.Overview, false)
+) : IMapViewModel {
 
     public var onSelectedStop: (Stop, StopDetailsFilter?) -> Unit = { _, _ -> }
     public var onSelectedTrip:

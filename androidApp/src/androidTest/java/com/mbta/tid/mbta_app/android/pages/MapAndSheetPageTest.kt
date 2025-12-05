@@ -73,7 +73,8 @@ class MapAndSheetPageTest {
         val locationDataManager = MockLocationDataManager(stop1.position)
         val viewportProvider = ViewportProvider(MapViewportState())
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
 
         val flow = MutableStateFlow(null).asStateFlow()
 
