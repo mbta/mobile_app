@@ -24,6 +24,9 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 import kotlinx.datetime.toKotlinInstant
 import org.koin.core.context.loadKoinModules
 import org.koin.core.context.startKoin
@@ -139,5 +142,7 @@ public fun EasternTimeInstant.plusHours(hours: Int): EasternTimeInstant = this +
 
 @ObjCName("minus")
 public fun EasternTimeInstant.minusHours(hours: Int): EasternTimeInstant = this - hours.hours
+
+public fun LocalDate.plus(days: Int): LocalDate = this.plus(DatePeriod(days = days))
 
 public val SystemClock: Clock = Clock.System

@@ -14,11 +14,16 @@ import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.SettingsCache
+import com.mbta.tid.mbta_app.android.util.formattedServiceDayAndDate
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.repositories.Settings
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.plus
 
 @Composable
 fun StopDetailsNoTripCard(
@@ -26,11 +31,12 @@ fun StopDetailsNoTripCard(
     accentColor: Color,
     directionLabel: String,
     routeType: RouteType,
+    now: EasternTimeInstant,
+    nextScheduleResponse: NextScheduleResponse?,
 ) {
-
     StopDetailsIconCard(
         accentColor = accentColor,
-        details = detailText(status, directionLabel, routeType),
+        details = detailText(status, directionLabel, routeType, now, nextScheduleResponse),
         header = { modifier -> HeaderText(status, modifier) },
     ) { modifier ->
         HeaderImage(status, routeType, modifier)
@@ -56,6 +62,8 @@ private fun detailText(
     status: UpcomingFormat.NoTripsFormat,
     directionLabel: String,
     routeType: RouteType,
+    now: EasternTimeInstant,
+    nextScheduleResponse: NextScheduleResponse?,
 ): (@Composable () -> Unit)? {
     val context = LocalContext.current
     val hideMaps = SettingsCache.get(Settings.HideMaps)
@@ -92,7 +100,42 @@ private fun detailText(
             }
         }
         UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-        UpcomingFormat.NoTripsFormat.NoSchedulesToday -> null
+        UpcomingFormat.NoTripsFormat.NoSchedulesToday -> {
+            val nextScheduleTime = nextScheduleResponse?.nextSchedule?.stopTime
+            if (nextScheduleTime != null) {
+                {
+                    when {
+                        nextScheduleTime.serviceDate > now.serviceDate.plus(1, DateTimeUnit.DAY) ->
+                            Text(
+                                AnnotatedString.fromHtml(
+                                    stringResource(
+                                        R.string.next_trip_on,
+                                        nextScheduleTime.formattedServiceDayAndDate(),
+                                    )
+                                )
+                            )
+                        nextScheduleTime.local.date > now.local.date ->
+                            Text(
+                                AnnotatedString.fromHtml(
+                                    stringResource(
+                                        R.string.next_trip_at_tomorrow,
+                                        nextScheduleTime.formattedTime(),
+                                    )
+                                )
+                            )
+                        else ->
+                            Text(
+                                AnnotatedString.fromHtml(
+                                    stringResource(
+                                        R.string.next_trip_at,
+                                        nextScheduleTime.formattedTime(),
+                                    )
+                                )
+                            )
+                    }
+                }
+            } else null
+        }
     }
 }
 

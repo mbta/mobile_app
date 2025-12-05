@@ -237,6 +237,9 @@
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
     <string name="next_stop">Pwochen arè</string>
+    <string name="next_trip_at">Pwochen vwayaj la nan &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at_tomorrow">Pwochen vwayaj la nan &lt;b>%1$s&lt;/b> demen</string>
+    <string name="next_trip_on">Pwochen vwayaj la se sou &lt;b>%1$s&lt;/b></string>
     <string name="no_matching_routes">Pa gen wout %1$ski matche</string>
     <string name="no_predictions">Pa gen prediksyon disponib</string>
     <string name="no_results_found">Nou pa jwenn rezilta</string>

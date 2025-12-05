@@ -779,4 +779,54 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
         await fulfillment(of: [exp], timeout: 3)
     }
+
+    @MainActor func testLoadsNextTrip() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in route.id = "Red" }
+
+        let now = EasternTimeInstant.now()
+        let nextSchedule = objects.schedule { schedule in
+            schedule.departureTime = .init(
+                year: now.local.year + 1,
+                month: .december,
+                day: 8,
+                hour: 8,
+                minute: 0,
+                second: 0
+            )
+        }
+        let schedulesRepo = MockScheduleRepository(nextScheduleResponse: .init(nextSchedule: nextSchedule))
+
+        let leaf = makeLeaf(route: route, stop: stop, upcomingTrips: [], objects: objects)
+
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            alertSummaries: [:],
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: .now(),
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            schedulesRepository: schedulesRepo,
+            viewportProvider: .init()
+        )
+
+        let exp = sut.inspection.inspect(after: 0.5) { view in
+            XCTAssertNotNil(try view.find(textWhere: { text, _ in
+                text.hasPrefix("Next trip on") && text.hasSuffix(", Dec 8")
+            }))
+        }
+
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
+
+        wait(for: [exp], timeout: 2)
+    }
 }

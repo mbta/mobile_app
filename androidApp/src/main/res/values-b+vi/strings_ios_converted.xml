@@ -222,6 +222,9 @@
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>
     <string name="next_stop">Điểm dừng tiếp theo</string>
+    <string name="next_trip_at">Chuyến đi tiếp theo lúc &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at_tomorrow">Chuyến đi tiếp theo vào &lt;b>%1$s&lt;/b> ngày mai</string>
+    <string name="next_trip_on">Chuyến đi tiếp theo vào &lt;b>%1$s&lt;/b></string>
     <string name="no_matching_routes">Không có tuyến đường %1$s nào phù hợp</string>
     <string name="no_predictions">Dự đoán không có sẵn</string>
     <string name="no_results_found">Không tìm thấy kết quả 🤔</string>

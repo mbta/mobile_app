@@ -25,10 +25,13 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var now: EasternTimeInstant
 
+    @State var nextScheduleResponse: NextScheduleResponse?
+
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
+    var schedulesRepository: ISchedulesRepository
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -108,7 +111,8 @@ struct StopDetailsFilteredDepartureDetails: View {
         leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],
         selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel, viewportProvider _: ViewportProvider
+        stopDetailsVM: IStopDetailsViewModel, schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
+        viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -124,6 +128,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+        self.schedulesRepository = schedulesRepository
     }
 
     var body: some View {
@@ -151,10 +156,29 @@ struct StopDetailsFilteredDepartureDetails: View {
                     status: noPredictionsStatus,
                     accentColor: routeColor,
                     directionLabel: selectedDirection.destination ?? selectedDirection.name ?? "",
-                    routeType: routeType
+                    routeType: routeType,
+                    now: now,
+                    nextScheduleResponse: nextScheduleResponse
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+                .task {
+                    switch onEnum(of: noPredictionsStatus) {
+                    case .serviceEndedToday, .noSchedulesToday:
+                        let result = try? await schedulesRepository.getNextSchedule(
+                            route: leaf.lineOrRoute,
+                            stopId: stopId,
+                            directionId: selectedDirection.id,
+                            now: now,
+                        )
+                        switch onEnum(of: result) {
+                        case let .ok(result): nextScheduleResponse = result.data
+                        case .error, .none: nextScheduleResponse = nil
+                        }
+                    case .subwayEarlyMorning, .predictionsUnavailable:
+                        nextScheduleResponse = nil
+                    }
+                }
             } else if selectedTripIsCancelled {
                 StopDetailsIconCard(
                     accentColor: routeColor,

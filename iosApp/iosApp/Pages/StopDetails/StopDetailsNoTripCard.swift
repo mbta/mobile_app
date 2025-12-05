@@ -14,6 +14,8 @@ struct StopDetailsNoTripCard: View {
     var accentColor: Color
     var directionLabel: String
     var routeType: RouteType
+    var now: EasternTimeInstant
+    var nextScheduleResponse: NextScheduleResponse?
 
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -38,7 +40,36 @@ struct StopDetailsNoTripCard: View {
             )))
         case .predictionsUnavailable: Text(settingsCache
                 .get(.hideMaps) ? predictionsUnavailableStringNoMap : predictionsUnavailableString)
-        default: nil
+        case .serviceEndedToday, .noSchedulesToday:
+            if let nextScheduleTime = nextScheduleResponse?.nextSchedule?.stopTime {
+                if nextScheduleTime.serviceDate.compareTo(other: now.serviceDate.plus(days: 1)) > 0 {
+                    Text(AttributedString.tryMarkdown(String(
+                        format: NSLocalizedString(
+                            "Next trip on **%@**",
+                            comment: "A next trip time on some distant date, e.g. “Next trip on Monday, July 22”"
+                        ),
+                        nextScheduleTime.formatted(.init().weekday(.abbreviated).day().month())
+                    )))
+                } else if nextScheduleTime.local.date.compareTo(other: now.local.date) > 0 {
+                    Text(AttributedString.tryMarkdown(String(
+                        format: NSLocalizedString(
+                            "Next trip at **%@** tomorrow",
+                            comment: "A next trip time tomorrow, e.g. “Next trip at 6:27 AM tomorrow”"
+                        ),
+                        nextScheduleTime.formatted(date: .omitted, time: .shortened)
+                    )))
+                } else {
+                    Text(AttributedString.tryMarkdown(String(
+                        format: NSLocalizedString(
+                            "Next trip at **%@**",
+                            comment: "A next trip time later today, e.g. “Next trip at 6:27 AM”"
+                        ),
+                        nextScheduleTime.formatted(date: .omitted, time: .shortened)
+                    )))
+                }
+            } else {
+                nil
+            }
         }
     }
 

@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -19,6 +21,13 @@ public interface ISchedulesRepository {
     ): ApiResult<ScheduleResponse>
 
     public suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse>
+
+    public suspend fun getNextSchedule(
+        route: LineOrRoute,
+        stopId: String,
+        directionId: Int,
+        now: EasternTimeInstant,
+    ): ApiResult<NextScheduleResponse>
 }
 
 internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
@@ -45,18 +54,48 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
         return getSchedule(stopIds, EasternTimeInstant.now())
     }
+
+    override suspend fun getNextSchedule(
+        route: LineOrRoute,
+        stopId: String,
+        directionId: Int,
+        now: EasternTimeInstant,
+    ): ApiResult<NextScheduleResponse> =
+        ApiResult.runCatching {
+            mobileBackendClient
+                .get {
+                    timeout { requestTimeoutMillis = 3000 }
+                    url {
+                        path("api/schedules/next")
+                        parameters.append(
+                            "route",
+                            when (route) {
+                                is LineOrRoute.Line ->
+                                    route.routes.joinToString(separator = ",") { it.id.idText }
+                                is LineOrRoute.Route -> route.id.idText
+                            },
+                        )
+                        parameters.append("stop", stopId)
+                        parameters.append("direction", directionId.toString())
+                        parameters.append("date_time", now.toString())
+                    }
+                }
+                .body()
+        }
 }
 
 public class MockScheduleRepository(
     private val response: ApiResult<ScheduleResponse>,
+    private val nextResponse: ApiResult<NextScheduleResponse>,
     private val callback: (stopIds: List<String>) -> Unit = {},
 ) : ISchedulesRepository {
 
     @DefaultArgumentInterop.Enabled
     public constructor(
         scheduleResponse: ScheduleResponse = ScheduleResponse(listOf(), mapOf()),
+        nextScheduleResponse: NextScheduleResponse = NextScheduleResponse(null),
         callback: (stopIds: List<String>) -> Unit = {},
-    ) : this(ApiResult.Ok(scheduleResponse), callback)
+    ) : this(ApiResult.Ok(scheduleResponse), ApiResult.Ok(nextScheduleResponse), callback)
 
     public constructor() :
         this(
@@ -76,6 +115,15 @@ public class MockScheduleRepository(
         callback(stopIds)
         return response
     }
+
+    override suspend fun getNextSchedule(
+        route: LineOrRoute,
+        stopId: String,
+        directionId: Int,
+        now: EasternTimeInstant,
+    ): ApiResult<NextScheduleResponse> {
+        return nextResponse
+    }
 }
 
 public class IdleScheduleRepository : ISchedulesRepository {
@@ -87,6 +135,15 @@ public class IdleScheduleRepository : ISchedulesRepository {
     }
 
     override suspend fun getSchedule(stopIds: List<String>): ApiResult<ScheduleResponse> {
+        return suspendCancellableCoroutine {}
+    }
+
+    override suspend fun getNextSchedule(
+        route: LineOrRoute,
+        stopId: String,
+        directionId: Int,
+        now: EasternTimeInstant,
+    ): ApiResult<NextScheduleResponse> {
         return suspendCancellableCoroutine {}
     }
 }

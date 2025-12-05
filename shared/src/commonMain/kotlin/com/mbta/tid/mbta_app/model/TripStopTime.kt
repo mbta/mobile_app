@@ -2,20 +2,20 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
-internal interface TripStopTime : Comparable<TripStopTime> {
-    val arrivalTime: EasternTimeInstant?
-    val departureTime: EasternTimeInstant?
+public interface TripStopTime : Comparable<TripStopTime> {
+    public val arrivalTime: EasternTimeInstant?
+    public val departureTime: EasternTimeInstant?
 
-    val stopTime
+    public val stopTime: EasternTimeInstant?
         get() = arrivalTime ?: departureTime
 
-    fun stopTimeAfter(now: EasternTimeInstant) =
+    public fun stopTimeAfter(now: EasternTimeInstant): EasternTimeInstant? =
         arrivalTime?.takeUnless { it < now } ?: departureTime
 
     /**
      * Is the current time between the arrival & departure times for this prediction (inclusive)?
      */
-    fun hasArrivedButNotDeparted(now: EasternTimeInstant): Boolean {
+    public fun hasArrivedButNotDeparted(now: EasternTimeInstant): Boolean {
         return (arrivalTime?.let { it <= now } ?: false) &&
             (departureTime?.let { it >= now } ?: false)
     }
