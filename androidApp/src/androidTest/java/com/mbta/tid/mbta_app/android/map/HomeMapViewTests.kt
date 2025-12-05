@@ -355,7 +355,11 @@ class HomeMapViewTests {
 
         val mapVM = mock<IMapViewModel>(MockMode.autofill)
         val configManager = mock<IMapboxConfigManager>(MockMode.autofill)
-        val state = MapViewModel.State.StopSelected(TestData.getStop("121"), null)
+        val state =
+            MapViewModel.State(
+                MapViewModel.LayerState.StopSelected(TestData.getStop("121"), null),
+                true,
+            )
         every { mapVM.models } returns MutableStateFlow(state)
         every { configManager.configLoadAttempted } returns MutableStateFlow(true)
         composeTestRule.setContent {

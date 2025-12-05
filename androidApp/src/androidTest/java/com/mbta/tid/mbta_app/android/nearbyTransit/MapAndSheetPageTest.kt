@@ -229,7 +229,8 @@ class MapAndSheetPageTest : KoinTest {
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
         val flow = MutableStateFlow(null).asStateFlow()
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         loadMocks()
         composeTestRule.setContent {
             CompositionLocalProvider(
@@ -258,11 +259,13 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
 
+        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading..."))
+
         composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(
             hasContentDescription("Mapbox Attribution")
         )
         composeTestRule.onNodeWithContentDescription("Mapbox Attribution").assertIsDisplayed()
-        composeTestRule.waitUntilDoesNotExistDefaultTimeout(hasContentDescription("Loading..."))
+
         composeTestRule
             .onNodeWithContentDescription("Drag handle")
             .performSemanticsAction(SemanticsActions.Expand)
@@ -284,7 +287,8 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testErrorBannerPageChangeCalled() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
 
         val mockErrorVM = mock<IErrorBannerViewModel>(MockMode.autofill)
         every { mockErrorVM.models } returns MutableStateFlow(ErrorBannerViewModel.State())
@@ -347,7 +351,8 @@ class MapAndSheetPageTest : KoinTest {
             }
         }
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         val mockConfigManager = MockConfigManager()
 
         val flow = MutableStateFlow(null).asStateFlow()
@@ -394,7 +399,8 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testHidesMap() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         val flow = MutableStateFlow(null).asStateFlow()
 
         loadMocks(hideMaps = true)
@@ -431,7 +437,8 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testLocationServicesButtonWhenMapHidden() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         val flow = MutableStateFlow(null).asStateFlow()
         loadMocks(hideMaps = true)
         composeTestRule.setContent {
@@ -481,7 +488,8 @@ class MapAndSheetPageTest : KoinTest {
         val startLocation = Position(0.0, 0.0)
         val locationDataManager = MockLocationDataManager(startLocation)
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
-        every { mockMapVM.models } returns MutableStateFlow(MapViewModel.State.Overview)
+        every { mockMapVM.models } returns
+            MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
         val viewportProvider =
             spy<IViewportProvider>(
                 ViewportProvider(
