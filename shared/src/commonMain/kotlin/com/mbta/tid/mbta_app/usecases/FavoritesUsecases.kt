@@ -52,7 +52,7 @@ public class FavoritesUsecases(
 
         newValues.forEach { (routeStopDirection, settings) ->
             if (settings != null) {
-                currentFavorites.put(routeStopDirection, settings)
+                currentFavorites[routeStopDirection] = settings
             } else {
                 currentFavorites.remove(routeStopDirection)
             }
@@ -70,4 +70,5 @@ public enum class EditFavoritesContext {
     Favorites,
     StopDetails,
     RouteDetails,
+    StaleCheck,
 }
