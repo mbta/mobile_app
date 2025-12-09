@@ -174,10 +174,9 @@ fun MapAndSheetPage(
     var navControllerInitialized: Boolean by rememberSaveable { mutableStateOf(false) }
 
     val modalSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var currentModal by
-        rememberSaveable(saver = stateJsonSaver()) {
-            mutableStateOf<Pair<ModalRoutes, () -> Unit>?>(null)
-        }
+    var currentModalRoute by
+        rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<ModalRoutes?>(null) }
+    var currentModalCallback by remember { mutableStateOf<(() -> Unit)?>(null) }
 
     val activity = LocalActivity.current
     val density = LocalDensity.current
@@ -227,7 +226,8 @@ fun MapAndSheetPage(
     }
 
     fun openModalWithCloseCallback(modal: ModalRoutes, onClose: () -> Unit) {
-        currentModal = Pair(modal, onClose)
+        currentModalRoute = modal
+        currentModalCallback = onClose
         // modalSheetState.show() is implied by the `if (currentModal != null)`
     }
 
@@ -238,10 +238,13 @@ fun MapAndSheetPage(
     fun closeModal() {
         scope
             .launch {
-                currentModal?.second()
+                currentModalCallback?.invoke()
                 modalSheetState.hide()
             }
-            .invokeOnCompletion { currentModal = null }
+            .invokeOnCompletion {
+                currentModalRoute = null
+                currentModalCallback = null
+            }
     }
 
     val filters =
@@ -920,14 +923,14 @@ fun MapAndSheetPage(
             }
         }
     }
-    if (currentModal != null) {
+    if (currentModalRoute != null) {
         ModalBottomSheet(
             onDismissRequest = { closeModal() },
             sheetState = modalSheetState,
             dragHandle = null,
         ) {
             Column {
-                when (val modal = currentModal?.first) {
+                when (val modal = currentModalRoute) {
                     is ModalRoutes.AlertDetails ->
                         AlertDetailsPage(
                             modal.alertId,
