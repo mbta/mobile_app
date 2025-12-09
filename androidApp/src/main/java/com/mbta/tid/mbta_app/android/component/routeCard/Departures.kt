@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,8 +49,6 @@ fun Departures(
     analytics: Analytics = koinInject(),
     onClick: (RouteCardData.Leaf) -> Unit,
 ) {
-    val localContext = LocalContext.current
-
     Column {
         stopData.data.withIndex().forEach { (index, leaf) ->
             fun analyticsTappedDeparture(leafFormat: LeafFormat) {
@@ -81,7 +78,7 @@ fun Departures(
                     onClick(leaf)
                     analyticsTappedDeparture(formatted)
                 },
-                onClickLabel = localContext.getString(R.string.open_for_more_arrivals),
+                onClickLabel = stringResource(R.string.open_for_more_arrivals),
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 16.dp),
             ) { modifier ->
                 Column(
