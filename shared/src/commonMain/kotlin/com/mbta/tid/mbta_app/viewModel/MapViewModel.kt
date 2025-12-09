@@ -267,6 +267,7 @@ public class MapViewModel(
                 }
                 is Event.MapStyleLoaded -> {
                     layerManager?.run {
+                        layersInitialized = false
                         val state = stopLayerGeneratorState
                         val globalResponse = globalData ?: return@run
                         val colorPalette = if (isDarkMode) ColorPalette.dark else ColorPalette.light
