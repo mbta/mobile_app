@@ -132,12 +132,10 @@ fun HomeMapView(
     val accuracyRingColor: Int = colorResource(R.color.deemphasized).copy(alpha = 0.1F).toArgb()
     val accuracyRingBorderColor: Int = colorResource(R.color.halo).toArgb()
     val mapState = rememberMapState()
-    var mapStyleLoaded by remember { mutableStateOf(false) }
     mapState.gesturesSettings = GesturesSettings {
         rotateEnabled = false
         pitchEnabled = false
     }
-    LaunchedEffect(Unit) { mapState.styleLoadedEvents.collect { mapStyleLoaded = true } }
     LaunchedEffect(Unit) {
         mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
     }
@@ -214,13 +212,17 @@ fun HomeMapView(
                     }
                 }
 
-                MapEffect(mapStyleLoaded) { map ->
-                    val layerManager = MapLayerManager(map.mapboxMap, context)
-                    layerManager.loadImages()
-                    layerManager.setUpAnchorLayers()
-                    map.location.updateSettings { layerBelow = MapLayerManager.puckAnchorLayerId }
-                    viewModel.layerManagerInitialized(layerManager)
-                    viewModel.mapStyleLoaded()
+                MapEffect(null) { map ->
+                    mapState.styleLoadedEvents.collect {
+                        val layerManager = MapLayerManager(map.mapboxMap, context)
+                        layerManager.loadImages()
+                        layerManager.setUpAnchorLayers()
+                        map.location.updateSettings {
+                            layerBelow = MapLayerManager.puckAnchorLayerId
+                        }
+                        viewModel.layerManagerInitialized(layerManager)
+                        viewModel.mapStyleLoaded()
+                    }
                 }
 
                 MapEffect(state.layersInitialized, showCurrentLocation) { map ->
