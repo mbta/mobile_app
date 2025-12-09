@@ -98,6 +98,8 @@ fun ContentView(
         }
     }
 
+    LaunchedEffect(fcmToken, globalResponse) { favoritesViewModel.clearStaleFavorites(fcmToken) }
+
     val locationDataManager = rememberLocationDataManager()
     val mapViewportState = rememberMapViewportState {
         setCameraOptions {

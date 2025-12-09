@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -909,6 +910,116 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying { it.shouldShowFirstTimeToast }
             viewModel.setIsFirstExposureToNewFavorites(false)
             awaitItemSatisfying { !it.shouldShowFirstTimeToast }
+        }
+    }
+
+    @Test
+    fun `clears stale favorites when stop is missing`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val favoritesBefore = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0)
+            routeStopDirection(route1.id, "removed stop", 0)
+        }
+        val favoritesAfter = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+
+        everySuspend { favoritesRepo.getFavorites() } sequentially
+            {
+                returns(favoritesBefore)
+                repeat { returns(favoritesAfter) }
+            }
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
+            viewModel.clearStaleFavorites("")
+            awaitItemSatisfying { it.favorites == favoritesAfter.routeStopDirection }
+        }
+    }
+
+    @Test
+    fun `clears stale favorites when route is missing`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val favoritesBefore = buildFavorites {
+            routeStopDirection(route1.id, stop1.id, 0)
+            routeStopDirection(LineOrRoute.Id.fromString("removed route"), stop1.id, 0)
+        }
+        val favoritesAfter = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+
+        everySuspend { favoritesRepo.getFavorites() } sequentially
+            {
+                returns(favoritesBefore)
+                repeat { returns(favoritesAfter) }
+            }
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
+            viewModel.clearStaleFavorites("")
+            awaitItemSatisfying { it.favorites == favoritesAfter.routeStopDirection }
+        }
+    }
+
+    @Test
+    fun `clears stale favorites when direction is missing`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        objects.routePattern(route) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(stop.id) }
+        }
+
+        val favoritesBefore = buildFavorites {
+            routeStopDirection(route.id, stop.id, 0)
+            routeStopDirection(route.id, stop.id, 1)
+        }
+        val favoritesAfter = buildFavorites { routeStopDirection(route.id, stop.id, 0) }
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+
+        everySuspend { favoritesRepo.getFavorites() } sequentially
+            {
+                returns(favoritesBefore)
+                repeat { returns(favoritesAfter) }
+            }
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
+            viewModel.clearStaleFavorites("")
+            awaitItemSatisfying { it.favorites == favoritesAfter.routeStopDirection }
         }
     }
 }

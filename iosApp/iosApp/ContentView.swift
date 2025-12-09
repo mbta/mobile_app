@@ -79,6 +79,12 @@ struct ContentView: View {
             includeAccessibility: includeAccessibility,
             notificationsEnabled: notificationsFlag
         )
+        .onChange(of: fcmTokenContainer.token) { token in
+            favoritesVM.clearStaleFavorites(fcmToken: token)
+        }
+        .onChange(of: globalData) { _ in
+            favoritesVM.clearStaleFavorites(fcmToken: fcmTokenContainer.token)
+        }
         .onChange(of: contentVM.defaultTab) { newTab in
             selectedTab = switch newTab {
             case .favorites: .favorites
