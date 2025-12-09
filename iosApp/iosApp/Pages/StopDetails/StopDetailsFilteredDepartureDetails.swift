@@ -162,23 +162,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
-                .task {
-                    switch onEnum(of: noPredictionsStatus) {
-                    case .serviceEndedToday, .noSchedulesToday:
-                        let result = try? await schedulesRepository.getNextSchedule(
-                            route: leaf.lineOrRoute,
-                            stopId: stopId,
-                            directionId: selectedDirection.id,
-                            now: now,
-                        )
-                        switch onEnum(of: result) {
-                        case let .ok(result): nextScheduleResponse = result.data
-                        case .error, .none: nextScheduleResponse = nil
-                        }
-                    case .subwayEarlyMorning, .predictionsUnavailable:
-                        nextScheduleResponse = nil
-                    }
-                }
             } else if selectedTripIsCancelled {
                 StopDetailsIconCard(
                     accentColor: routeColor,
@@ -212,9 +195,13 @@ struct StopDetailsFilteredDepartureDetails: View {
         .global($global, errorKey: "StopDetailsFilteredDepartureDetails")
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
+            loadNextScheduleForStatus(noPredictionsStatus)
             setAlertSummaries(alertSummaryParams)
         }
-        .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
+        .onChange(of: noPredictionsStatus) { status in
+            handleViewportForStatus(status)
+            loadNextScheduleForStatus(status)
+        }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
@@ -231,6 +218,26 @@ struct StopDetailsFilteredDepartureDetails: View {
             switch onEnum(of: status) {
             case .subwayEarlyMorning, .predictionsUnavailable: setViewportToStop(midZoom: true)
             case .noSchedulesToday, .serviceEndedToday: setViewportToStop()
+            }
+        }
+    }
+
+    func loadNextScheduleForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
+        Task {
+            switch onEnum(of: status) {
+            case .serviceEndedToday, .noSchedulesToday:
+                let result = try? await schedulesRepository.getNextSchedule(
+                    route: leaf.lineOrRoute,
+                    stopId: stopId,
+                    directionId: selectedDirection.id,
+                    now: now,
+                )
+                switch onEnum(of: result) {
+                case let .ok(result): nextScheduleResponse = result.data
+                case .error, .none: nextScheduleResponse = nil
+                }
+            case .subwayEarlyMorning, .predictionsUnavailable, .none:
+                nextScheduleResponse = nil
             }
         }
     }
