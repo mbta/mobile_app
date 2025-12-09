@@ -7,12 +7,18 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.loadKoinMocks
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
+import kotlinx.datetime.plus
 import org.junit.Rule
 import org.junit.Test
 
@@ -32,6 +38,8 @@ class StopDetailsNoTripCardTests {
                 accentColor = Color.Black,
                 directionLabel = "Forest Hills",
                 routeType = RouteType.HEAVY_RAIL,
+                now = EasternTimeInstant.now(),
+                nextScheduleResponse = null,
             )
         }
 
@@ -57,6 +65,8 @@ class StopDetailsNoTripCardTests {
                 accentColor = Color.Black,
                 directionLabel = "Forest Hills",
                 routeType = RouteType.BUS,
+                now = EasternTimeInstant.now(),
+                nextScheduleResponse = null,
             )
         }
 
@@ -80,6 +90,8 @@ class StopDetailsNoTripCardTests {
                 accentColor = Color.Black,
                 directionLabel = "Forest Hills",
                 routeType = RouteType.BUS,
+                now = EasternTimeInstant.now(),
+                nextScheduleResponse = null,
             )
         }
 
@@ -93,6 +105,18 @@ class StopDetailsNoTripCardTests {
 
     @Test
     fun testServiceEnded() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val schedule =
+            objects.schedule {
+                departureTime =
+                    EasternTimeInstant(
+                        LocalDateTime(
+                            now.local.date.plus(DatePeriod(days = 1)),
+                            time = LocalTime(hour = 9, minute = 15),
+                        )
+                    )
+            }
         loadKoinMocks()
         composeTestRule.setContent {
             StopDetailsNoTripCard(
@@ -100,14 +124,28 @@ class StopDetailsNoTripCardTests {
                 accentColor = Color.Black,
                 directionLabel = "Winthrop",
                 routeType = RouteType.FERRY,
+                now = now,
+                nextScheduleResponse = NextScheduleResponse(schedule),
             )
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("Service ended").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM tomorrow$")))
+            .assertIsDisplayed()
     }
 
     @Test
     fun testNoSchedulesToday() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val schedule =
+            objects.schedule {
+                departureTime =
+                    EasternTimeInstant(
+                        LocalDateTime(now.local.date, time = LocalTime(hour = 9, minute = 15))
+                    )
+            }
         loadKoinMocks()
         composeTestRule.setContent {
             StopDetailsNoTripCard(
@@ -115,9 +153,14 @@ class StopDetailsNoTripCardTests {
                 accentColor = Color.Black,
                 directionLabel = "Fitchburg",
                 routeType = RouteType.COMMUTER_RAIL,
+                now = now,
+                nextScheduleResponse = NextScheduleResponse(schedule),
             )
         }
         composeTestRule.onNodeWithTag("route_slash_icon").assertIsDisplayed()
         composeTestRule.onNodeWithText("No service today").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("^Next trip at 9:15\\sAM$")))
+            .assertIsDisplayed()
     }
 }

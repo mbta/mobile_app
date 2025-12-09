@@ -6,8 +6,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ErrorBannerState
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
@@ -50,6 +52,15 @@ class GetScheduleTest {
                 ): ApiResult<ScheduleResponse> {
                     throw IllegalStateException("Can't getSchedule with no time in this mock")
                 }
+
+                override suspend fun getNextSchedule(
+                    route: LineOrRoute,
+                    stopId: String,
+                    directionId: Int,
+                    now: EasternTimeInstant,
+                ): ApiResult<NextScheduleResponse> {
+                    throw IllegalStateException("Can't getNextSchedule in this mock")
+                }
             }
 
         var stopIds by mutableStateOf(stops1)
@@ -84,7 +95,8 @@ class GetScheduleTest {
 
     @Test
     fun testErrorCase() {
-        val schedulesRepo = MockScheduleRepository(ApiResult.Error(500, "oops"))
+        val schedulesRepo =
+            MockScheduleRepository(ApiResult.Error(500, "oops"), ApiResult.Error(500, "oops"))
 
         val errorRepo = MockErrorBannerStateRepository()
 

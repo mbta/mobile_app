@@ -25,10 +25,13 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var now: EasternTimeInstant
 
+    @State var nextScheduleResponse: NextScheduleResponse?
+
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
+    var schedulesRepository: ISchedulesRepository
 
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -108,7 +111,8 @@ struct StopDetailsFilteredDepartureDetails: View {
         leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],
         selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
         errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel, viewportProvider _: ViewportProvider
+        stopDetailsVM: IStopDetailsViewModel, schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
+        viewportProvider _: ViewportProvider
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -124,6 +128,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
+        self.schedulesRepository = schedulesRepository
     }
 
     var body: some View {
@@ -151,7 +156,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                     status: noPredictionsStatus,
                     accentColor: routeColor,
                     directionLabel: selectedDirection.destination ?? selectedDirection.name ?? "",
-                    routeType: routeType
+                    routeType: routeType,
+                    now: now,
+                    nextScheduleResponse: nextScheduleResponse
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
@@ -188,9 +195,13 @@ struct StopDetailsFilteredDepartureDetails: View {
         .global($global, errorKey: "StopDetailsFilteredDepartureDetails")
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
+            loadNextScheduleForStatus(noPredictionsStatus)
             setAlertSummaries(alertSummaryParams)
         }
-        .onChange(of: noPredictionsStatus) { status in handleViewportForStatus(status) }
+        .onChange(of: noPredictionsStatus) { status in
+            handleViewportForStatus(status)
+            loadNextScheduleForStatus(status)
+        }
         .onChange(of: selectedTripIsCancelled) { if $0 { setViewportToStop() } }
         .onChange(of: tripFilter) { tripFilter in
             selectedDepartureFocus = tiles.first { $0.isSelected(tripFilter: tripFilter) }?.id ?? cardFocusId
@@ -207,6 +218,26 @@ struct StopDetailsFilteredDepartureDetails: View {
             switch onEnum(of: status) {
             case .subwayEarlyMorning, .predictionsUnavailable: setViewportToStop(midZoom: true)
             case .noSchedulesToday, .serviceEndedToday: setViewportToStop()
+            }
+        }
+    }
+
+    func loadNextScheduleForStatus(_ status: UpcomingFormat.NoTripsFormat?) {
+        Task {
+            switch onEnum(of: status) {
+            case .serviceEndedToday, .noSchedulesToday:
+                let result = try? await schedulesRepository.getNextSchedule(
+                    route: leaf.lineOrRoute,
+                    stopId: stopId,
+                    directionId: selectedDirection.id,
+                    now: now,
+                )
+                switch onEnum(of: result) {
+                case let .ok(result): nextScheduleResponse = result.data
+                case .error, .none: nextScheduleResponse = nil
+                }
+            case .subwayEarlyMorning, .predictionsUnavailable, .none:
+                nextScheduleResponse = nil
             }
         }
     }

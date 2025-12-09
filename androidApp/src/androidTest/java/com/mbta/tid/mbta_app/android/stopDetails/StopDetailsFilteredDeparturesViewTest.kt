@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
@@ -27,9 +28,11 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.ISettingsRepository
+import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
@@ -39,6 +42,8 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.Month
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -878,5 +883,65 @@ class StopDetailsFilteredDeparturesViewTest {
         }
 
         composeTestRule.onNodeWithText("This stop is not accessible").assertIsDisplayed()
+    }
+
+    @Test
+    fun testLoadsNextTrip(): Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val route = objects.route { id = "Red" }
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val leaf =
+            RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
+                0,
+                emptyList(),
+                setOf(stop.id),
+                emptyList(),
+                emptyList(),
+                true,
+                true,
+                null,
+                emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+
+        val now = EasternTimeInstant.now()
+        val nextSchedule =
+            objects.schedule {
+                departureTime =
+                    EasternTimeInstant(LocalDateTime(now.local.year + 1, Month.DECEMBER, 8, 8, 0))
+            }
+
+        val viewModel = MockStopDetailsViewModel()
+
+        loadKoinMocks {
+            schedules =
+                MockScheduleRepository(nextScheduleResponse = NextScheduleResponse(nextSchedule))
+        }
+
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = StopDetailsFilter(route.id, 0),
+                tripFilter = null,
+                leaf = leaf,
+                selectedDirection = Direction(null, null, 0),
+                allAlerts = null,
+                now = now,
+                viewModel = viewModel,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+            )
+        }
+
+        composeTestRule
+            .onNode(hasTextMatching(Regex("^Next trip on \\w+, Dec 8$")))
+            .assertIsDisplayed()
     }
 }

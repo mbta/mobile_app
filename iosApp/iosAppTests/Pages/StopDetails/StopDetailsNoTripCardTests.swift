@@ -23,7 +23,8 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             status: UpcomingFormat.NoTripsFormatSubwayEarlyMorning(scheduledTime: serviceStart),
             accentColor: Color.text,
             directionLabel: "Forest Hills",
-            routeType: .heavyRail
+            routeType: .heavyRail,
+            now: .now()
         ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(imageName: "sunrise"))
         XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))
@@ -41,7 +42,8 @@ final class StopDetailsNoTripCardTests: XCTestCase {
             status: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
             accentColor: Color.text,
             directionLabel: "Forest Hills",
-            routeType: .bus
+            routeType: .bus,
+            now: .now()
         ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(imageName: "live-data-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "Predictions unavailable"))
@@ -53,26 +55,46 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     }
 
     func testServiceEnded() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = EasternTimeInstant.now()
+        let schedule = objects.schedule { $0.departureTime = .init(local: .init(
+            date: now.local.date.plus(days: 1),
+            time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
+        )) }
         let sut = StopDetailsNoTripCard(
             status: UpcomingFormat.NoTripsFormatServiceEndedToday(),
             accentColor: Color.text,
             directionLabel: "Winthrop",
-            routeType: .ferry
+            routeType: .ferry,
+            now: now,
+            nextScheduleResponse: .init(nextSchedule: schedule)
         ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-ferry-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "Service ended"))
-        XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
+        XCTAssertNotNil(try sut.inspect().find(textWhere: { text, _ in
+            text.wholeMatch(of: #/Next trip at 9:15\sAM tomorrow/#) != nil
+        }))
     }
 
     func testNoSchedulesToday() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = EasternTimeInstant.now()
+        let schedule = objects.schedule { $0.departureTime = .init(local: .init(
+            date: now.local.date,
+            time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
+        )) }
         let sut = StopDetailsNoTripCard(
             status: UpcomingFormat.NoTripsFormatNoSchedulesToday(),
             accentColor: Color.text,
             directionLabel: "Fitchburg",
-            routeType: .commuterRail
+            routeType: .commuterRail,
+            now: now,
+            nextScheduleResponse: .init(nextSchedule: schedule)
         ).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
         XCTAssertNotNil(try sut.inspect().find(text: "No service today"))
-        XCTAssertThrowsError(try sut.inspect().find(ViewType.Divider.self))
+        XCTAssertNotNil(try sut.inspect().find(textWhere: { text, _ in
+            text.wholeMatch(of: #/Next trip at 9:15\sAM/#) != nil
+        }))
     }
 }

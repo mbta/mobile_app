@@ -63,7 +63,7 @@ for body_row in sheet_in[1:]:
     for col in range(2, len(body_row)):
         value = body_row[col]
         if "fr" in sheet_in_header[col]:
-            value = value.sub("'", "’")
+            value = value.replace("'", "’")
         if "zh" in sheet_in_header[col]:
             value = fullwidth_placeholder.sub("%@", body_row[col])
         localization = {"stringUnit": {"state": "needs_review", "value": value}}

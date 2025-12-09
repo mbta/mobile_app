@@ -228,6 +228,9 @@
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
     <string name="next_stop">Next stop</string>
+    <string name="next_trip_at">Next trip at &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at_tomorrow">Next trip at &lt;b>%1$s&lt;/b> tomorrow</string>
+    <string name="next_trip_on">Next trip on &lt;b>%1$s&lt;/b></string>
     <string name="no_matching_routes">No matching %1$s routes</string>
     <string name="no_predictions">Predictions unavailable</string>
     <string name="no_results_found">No results found 🤔</string>

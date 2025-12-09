@@ -13078,6 +13078,147 @@
         }
       }
     },
+    "Next trip at **%@**" : {
+      "comment" : "A next trip time later today, e.g. “Next trip at 6:27 AM”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próximo viaje a las **%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prochain voyage à **%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwochen vwayaj la nan **%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próxima viagem em **%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi tiếp theo lúc **%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下次旅行在**%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下次旅行在**%@**"
+          }
+        }
+      }
+    },
+    "Next trip at **%@** tomorrow" : {
+      "comment" : "A next trip time tomorrow, e.g. “Next trip at 6:27 AM tomorrow”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próximo viaje a las **%@** mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prochaine visite à **%@** demain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwochen vwayaj la nan **%@** demen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próxima viagem às **%@** amanhã"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi tiếp theo vào **%@** ngày mai"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "明天下一趟行程是**%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "明天下一趟行程是**%@**"
+          }
+        }
+      }
+    },
+    "Next trip on **%@**" : {
+      "comment" : "A next trip time on some distant date, e.g. “Next trip on Monday, July 22”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próximo viaje el **%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prochain voyage sur **%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwochen vwayaj la se sou **%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Próxima viagem em **%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi tiếp theo vào **%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下一次旅行在**%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "下次旅行在**%@**"
+          }
+        }
+      }
+    },
     "No matching %1$@ routes" : {
       "comment" : "Text for the empty state on the route picker page when the filter text doesn't match any routes. The interpolated value can be \"bus\", \"ferry\", or \"train\" (localized).",
       "extractionState" : "manual",

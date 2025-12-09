@@ -228,6 +228,9 @@
     <string name="nearby_transit_link">Proche</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>
     <string name="next_stop">Prochain arrêt</string>
+    <string name="next_trip_at">Prochain voyage à &lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at_tomorrow">Prochaine visite à &lt;b>%1$s&lt;/b> demain</string>
+    <string name="next_trip_on">Prochain voyage sur &lt;b>%1$s&lt;/b></string>
     <string name="no_matching_routes">Aucune correspondance de routes de %1$s</string>
     <string name="no_predictions">Les prévisions ne sont pas encore disponibles</string>
     <string name="no_results_found">Aucun résultat trouvé 🤔</string>

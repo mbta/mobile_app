@@ -222,6 +222,9 @@
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
     <string name="next_stop">下一站</string>
+    <string name="next_trip_at">下次旅行在&lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_at_tomorrow">明天下一趟行程是&lt;b>%1$s&lt;/b></string>
+    <string name="next_trip_on">下一次旅行在&lt;b>%1$s&lt;/b></string>
     <string name="no_matching_routes">没有匹配的%1$s路线</string>
     <string name="no_predictions">预测不可用</string>
     <string name="no_results_found">未找到结果🤔</string>

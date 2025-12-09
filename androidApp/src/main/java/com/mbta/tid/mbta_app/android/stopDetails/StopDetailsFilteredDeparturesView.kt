@@ -19,8 +19,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -46,8 +48,12 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
+import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -239,11 +245,33 @@ fun StopDetailsFilteredDeparturesView(
             Box {}
         } else if (noPredictionsStatus != null) {
             Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
+                val schedulesRepository: ISchedulesRepository = koinInject()
+                var nextScheduleResponse: NextScheduleResponse? by remember { mutableStateOf(null) }
+                LaunchedEffect(noPredictionsStatus) {
+                    nextScheduleResponse =
+                        if (
+                            noPredictionsStatus == UpcomingFormat.NoTripsFormat.NoSchedulesToday ||
+                                noPredictionsStatus ==
+                                    UpcomingFormat.NoTripsFormat.ServiceEndedToday
+                        ) {
+                            val response =
+                                schedulesRepository.getNextSchedule(
+                                    lineOrRoute,
+                                    stopId,
+                                    selectedDirection.id,
+                                    now,
+                                )
+                            (response as? ApiResult.Ok)?.data
+                        } else null
+                }
+
                 StopDetailsNoTripCard(
                     status = noPredictionsStatus,
                     accentColor = routeColor,
                     directionLabel = selectedDirection.destination ?: selectedDirection.name ?: "",
                     routeType = routeType,
+                    now = now,
+                    nextScheduleResponse = nextScheduleResponse,
                 )
             }
         } else if (selectedTripIsCancelled) {
