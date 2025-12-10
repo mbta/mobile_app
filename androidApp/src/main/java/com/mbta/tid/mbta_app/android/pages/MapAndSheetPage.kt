@@ -653,6 +653,7 @@ fun MapAndSheetPage(
                 openModal = ::openModal,
                 openSheetRoute = navController::navigate,
                 navCallbacks = navCallbacks,
+                errorBannerViewModel = errorBannerViewModel,
             )
         }
     }

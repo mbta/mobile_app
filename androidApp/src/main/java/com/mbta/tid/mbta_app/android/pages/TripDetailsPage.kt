@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.ScrollSeparatorColumn
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
@@ -28,7 +29,9 @@ import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
+import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsPageViewModel
+import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
 import kotlin.time.Duration.Companion.seconds
 import org.koin.compose.currentKoinScope
 import org.koin.compose.koinInject
@@ -40,18 +43,26 @@ fun TripDetailsPage(
     openModal: (ModalRoutes) -> Unit,
     openSheetRoute: (SheetRoutes) -> Unit,
     navCallbacks: NavigationCallbacks,
+    errorBannerViewModel: IErrorBannerViewModel = koinInject(),
     tripDetailsPageVM: ITripDetailsPageViewModel = koinInject(),
+    tripDetailsVM: ITripDetailsViewModel = koinInject(),
 ) {
     val now by timer(updateInterval = 5.seconds)
     val global = getGlobalData("TripDetailsPage")
 
     tripDetailsPageVM.koinScope = currentKoinScope()
     val tripDetailsPageState by tripDetailsPageVM.models.collectAsState()
+    val tripDetailsState by tripDetailsVM.models.collectAsState()
 
     val route = global?.getRoute(tripDetailsPageState.trip?.routeId ?: filter.routeId as? Route.Id)
 
     LaunchedEffect(allAlerts) { tripDetailsPageVM.setAlerts(allAlerts) }
     LaunchedEffect(filter) { tripDetailsPageVM.setFilter(filter) }
+    LaunchedEffect(tripDetailsState.awaitingPredictionsAfterBackground) {
+        errorBannerViewModel.setIsLoadingWhenPredictionsStale(
+            tripDetailsState.awaitingPredictionsAfterBackground
+        )
+    }
 
     val direction = tripDetailsPageState.direction
     val alertSummaries = tripDetailsPageState.alertSummaries
@@ -83,6 +94,7 @@ fun TripDetailsPage(
                 )
             }
         }
+        ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 8.dp))
         ScrollSeparatorColumn {
             TripDetailsView(
                 filter,

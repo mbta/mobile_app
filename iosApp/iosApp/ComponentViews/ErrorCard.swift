@@ -31,8 +31,8 @@ struct ErrorCard<Content: View>: View {
             }
         }
         .padding(16)
-        .background(.gray.opacity(0.1))
-        .clipShape(.rect(cornerRadius: 15.0))
+        .background(Color.fill3)
+        .withRoundedBorder()
         .frame(maxWidth: .infinity)
     }
 }
