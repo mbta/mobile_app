@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -101,5 +102,27 @@ class NotificationSettingsWidgetTest {
             setOf(DayOfWeek.SUNDAY, DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.THURSDAY),
             settings.value.windows.single().daysOfWeek,
         )
+    }
+
+    @Test
+    fun testValidatesTime() {
+        lateinit var settings: MutableState<FavoriteSettings.Notifications>
+        composeTestRule.setContent {
+            settings = remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
+            var settings by settings
+            NotificationSettingsWidget(settings, setSettings = { settings = it })
+        }
+
+        composeTestRule.onNodeWithText("Get disruption notifications").performClick()
+        composeTestRule.onNode(hasTextMatching(Regex("8:00\\sAM"))).performClick()
+        composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("10")
+        composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("45")
+        composeTestRule.onNodeWithText("Okay").performClick()
+        assertEquals(LocalTime(10, 45), settings.value.windows.single().startTime)
+        assertEquals(LocalTime(11, 45), settings.value.windows.single().endTime)
+        composeTestRule.onNode(hasTextMatching(Regex("11:45\\sAM"))).performClick()
+        composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("10")
+        composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("40")
+        composeTestRule.onNodeWithText("Okay").assertIsNotEnabled()
     }
 }
