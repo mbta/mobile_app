@@ -37,7 +37,7 @@ struct TripDetailsHeader: View {
             }
         }, buttonColor: .routeColorContrast, buttonTextColor: .routeColorContrastText, navCallbacks: navCallbacks)
             .padding(.top, 3)
-            .padding(.bottom, 9)
+            .padding(.bottom, 12)
     }
 }
 
