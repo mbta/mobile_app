@@ -55,6 +55,7 @@ struct TripDetailsPage: View {
             routeAccents.color.ignoresSafeArea()
             VStack {
                 TripDetailsHeader(route: route, direction: direction, navCallbacks: navCallbacks)
+                ErrorBanner(errorBannerVM, padding: [.init(.bottom, 8), .init(.horizontal, 14)])
                 HaloScrollView {
                     TripDetailsView(
                         tripFilter: filter,

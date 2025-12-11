@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.10.1" type="baseline" client="gradle" dependencies="false" name="AGP (8.10.1)" variant="all" version="8.10.1">
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="            context.getString(R.string.favorites_toast_remove, it.direction, it.route, it.stop)"
+        errorLine2="            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/EditFavoritesPage.kt"
+            line="99"
+            column="13"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="        } ?: context.getString(R.string.favorites_toast_remove_fallback)"
+        errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/EditFavoritesPage.kt"
+            line="100"
+            column="14"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    context.getString(R.string.favorite_stops_first_time_toast_message),"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/favorites/FavoritesView.kt"
+            line="95"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                        localContext.getString("
+        errorLine2="                        ^">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/SaveFavoritePage.kt"
+            line="135"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    } ?: localContext.getString(R.string.favorites_toast_add_fallback)"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/SaveFavoritePage.kt"
+            line="141"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                        localContext.getString("
+        errorLine2="                        ^">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/SaveFavoritePage.kt"
+            line="152"
+            column="25"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    } ?: localContext.getString(R.string.favorites_toast_add_fallback)"
+        errorLine2="                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/pages/SaveFavoritePage.kt"
+            line="157"
+            column="26"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    localContext.getString("
+        errorLine2="                    ^">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/component/SaveFavoritesFlow.kt"
+            line="101"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                } ?: localContext.getString(R.string.favorites_toast_add_fallback)"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/component/SaveFavoritesFlow.kt"
+            line="107"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    localContext.getString(R.string.favorites_toast_add_multi, it.route, it.stop)"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/component/SaveFavoritesFlow.kt"
+            line="118"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                } ?: localContext.getString(R.string.favorites_toast_add_fallback)"
+        errorLine2="                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/component/SaveFavoritesFlow.kt"
+            line="119"
+            column="22"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                                                context.getString("
+        errorLine2="                                                ^">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/component/StopListRow.kt"
+            line="174"
+            column="49"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                    context.getString(R.string.track_number, it),"
+        errorLine2="                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/stopDetails/TripHeaderCard.kt"
+            line="301"
+            column="21"/>
+    </issue>
+
+    <issue
+        id="LocalContextGetResourceValueCall"
+        message="Querying resource values using LocalContext.current"
+        errorLine1="                            contentDescription = context.getString(R.string.boarding_track, it)"
+        errorLine2="                                                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/java/com/mbta/tid/mbta_app/android/stopDetails/TripHeaderCard.kt"
+            line="303"
+            column="50"/>
+    </issue>
+</issues>

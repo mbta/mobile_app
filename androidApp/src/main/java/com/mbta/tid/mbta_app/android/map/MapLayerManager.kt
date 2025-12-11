@@ -128,18 +128,17 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
     suspend fun setUpAnchorLayers() =
         lock.withLock {
             withContext(Dispatchers.Main) {
-                if (
-                    map.styleLayerExists(puckAnchorLayerId) ||
-                        map.styleLayerExists(stopAnchorLayerId) ||
-                        map.styleLayerExists(routeAnchorLayerId)
-                )
-                    return@withContext
-                val puckAnchorLayer = SlotLayer(puckAnchorLayerId)
-                val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
-                val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
-                map.addLayer(puckAnchorLayer)
-                map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
-                map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
+                if (!map.styleLayerExists(puckAnchorLayerId)) {
+                    map.addLayer(SlotLayer(puckAnchorLayerId))
+                }
+                if (!map.styleLayerExists(stopAnchorLayerId)) {
+                    val stopAnchorLayer = SlotLayer(stopAnchorLayerId)
+                    map.addLayerBelow(stopAnchorLayer, puckAnchorLayerId)
+                }
+                if (!map.styleLayerExists(routeAnchorLayerId)) {
+                    val routeAnchorLayer = SlotLayer(routeAnchorLayerId)
+                    map.addLayerBelow(routeAnchorLayer, stopAnchorLayerId)
+                }
             }
         }
 

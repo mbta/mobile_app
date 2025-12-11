@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.material3.Icon
@@ -34,6 +33,7 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -127,11 +127,7 @@ fun ErrorCard(
     button: (@Composable () -> Unit)? = null,
 ) {
     Row(
-        modifier =
-            modifier
-                .padding(horizontal = 16.dp)
-                .heightIn(60.dp)
-                .background(Color.Gray.copy(alpha = 0.1f), shape = RoundedCornerShape(15.dp)),
+        modifier = modifier.padding(horizontal = 12.dp).heightIn(60.dp).haloContainer(2.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(modifier = Modifier.padding(horizontal = 16.dp).weight(1f)) { details() }
