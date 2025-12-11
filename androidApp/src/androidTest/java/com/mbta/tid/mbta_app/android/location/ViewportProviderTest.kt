@@ -95,12 +95,12 @@ class ViewportProviderTest {
 
         val stopCenter =
             async(Dispatchers.Default) {
-                delay(1.milliseconds)
+                delay(10.milliseconds)
                 viewportProvider.stopCenter(stop)
             }
         val setPadding =
             async(Dispatchers.Default) {
-                delay(2.milliseconds)
+                delay(20.milliseconds)
                 viewportProvider.setSheetPadding(
                     PaddingValues(paddingAfter.dp),
                     density,
@@ -109,7 +109,7 @@ class ViewportProviderTest {
             }
         val vehicleOverview =
             async(Dispatchers.Default) {
-                delay(3.milliseconds)
+                delay(30.milliseconds)
                 viewportProvider.vehicleOverview(vehicle, stop, 1f)
             }
 
