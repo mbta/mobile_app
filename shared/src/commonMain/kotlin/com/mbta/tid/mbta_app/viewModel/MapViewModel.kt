@@ -36,6 +36,8 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
+import io.ktor.util.reflect.instanceOf
+import kotlin.reflect.KClass
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
@@ -510,21 +512,30 @@ public class MapViewModel(
         }
     }
 
+    private fun routeMatches(
+        navEntry: SheetRoutes?,
+        matchRoutes: List<KClass<out SheetRoutes>>,
+    ): Boolean = matchRoutes.any { navEntry?.instanceOf(it) ?: false }
+
+    private val entrypoints: List<KClass<out SheetRoutes>> =
+        listOf(SheetRoutes.NearbyTransit::class, SheetRoutes.Favorites::class)
+
+    private val deepRoutes: List<KClass<out SheetRoutes>> =
+        listOf(SheetRoutes.StopDetails::class, SheetRoutes.TripDetails::class)
+
     private fun handleViewportRestoration(
         currentNavEntry: SheetRoutes?,
         previousNavEntry: SheetRoutes?,
     ) {
         CoroutineScope(defaultCoroutineDispatcher).launch {
             if (
-                (previousNavEntry is SheetRoutes.NearbyTransit ||
-                    previousNavEntry is SheetRoutes.Favorites) &&
-                    currentNavEntry is SheetRoutes.StopDetails
+                routeMatches(previousNavEntry, entrypoints) &&
+                    routeMatches(currentNavEntry, deepRoutes)
             ) {
                 viewportManager.saveNearbyTransitViewport()
             } else if (
-                previousNavEntry is SheetRoutes.StopDetails &&
-                    (currentNavEntry is SheetRoutes.NearbyTransit ||
-                        currentNavEntry is SheetRoutes.Favorites)
+                routeMatches(previousNavEntry, deepRoutes) &&
+                    routeMatches(currentNavEntry, entrypoints)
             ) {
                 viewportManager.restoreNearbyTransitViewport()
             }
