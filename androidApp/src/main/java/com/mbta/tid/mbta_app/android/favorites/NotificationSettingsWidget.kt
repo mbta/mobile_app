@@ -206,13 +206,26 @@ private fun WindowWidget(
             LabeledTimeInput(
                 stringResource(R.string.from),
                 window.startTime,
-                setTime = { setWindow(window.copy(startTime = it)) },
+                setTime = {
+                    setWindow(
+                        window.copy(
+                            startTime = it,
+                            endTime =
+                                if (window.endTime > it) window.endTime
+                                else
+                                    LocalTime.fromSecondOfDay(
+                                        minOf(it.toSecondOfDay() + 60 * 60, (24 * 60 - 1) * 60)
+                                    ),
+                        )
+                    )
+                },
             )
             HaloSeparator()
             LabeledTimeInput(
                 stringResource(R.string.to),
                 window.endTime,
                 setTime = { setWindow(window.copy(endTime = it)) },
+                minimumTime = window.startTime,
             )
             DaysOfWeekInput(
                 window.daysOfWeek,
@@ -224,10 +237,13 @@ private fun WindowWidget(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun LabeledTimeInput(label: String, time: LocalTime, setTime: (LocalTime) -> Unit) {
+private fun LabeledTimeInput(
+    label: String,
+    time: LocalTime,
+    setTime: (LocalTime) -> Unit,
+    minimumTime: LocalTime? = null,
+) {
     var isPicking by remember { mutableStateOf(false) }
-    val timePickerState =
-        rememberTimePickerState(initialHour = time.hour, initialMinute = time.minute)
     Row(
         Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -252,6 +268,8 @@ private fun LabeledTimeInput(label: String, time: LocalTime, setTime: (LocalTime
         }
     }
     if (isPicking) {
+        val timePickerState =
+            rememberTimePickerState(initialHour = time.hour, initialMinute = time.minute)
         AlertDialog(
             onDismissRequest = { isPicking = false },
             confirmButton = {
@@ -259,7 +277,10 @@ private fun LabeledTimeInput(label: String, time: LocalTime, setTime: (LocalTime
                     onClick = {
                         setTime(LocalTime(timePickerState.hour, timePickerState.minute))
                         isPicking = false
-                    }
+                    },
+                    enabled =
+                        minimumTime == null ||
+                            minimumTime < LocalTime(timePickerState.hour, timePickerState.minute),
                 ) {
                     Text(stringResource(R.string.okay))
                 }

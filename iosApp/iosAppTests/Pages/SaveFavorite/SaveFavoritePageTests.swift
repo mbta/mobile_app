@@ -87,9 +87,12 @@ final class SaveFavoritePageTests: XCTestCase {
             nearbyVM: .init()
         )
 
-        let exp = sut.inspection.inspect(after: 1) { view in
+        let exp1 = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Add Favorite"))
             try view.find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        }
+
+        let exp2 = sut.inspection.inspect(after: 2) { view in
             try view.find(button: "Save").tap()
             XCTAssertEqual(updatedFavorites, [
                 .init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .init(
@@ -105,6 +108,6 @@ final class SaveFavoritePageTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        wait(for: [exp], timeout: 5)
+        wait(for: [exp1, exp2], timeout: 5)
     }
 }

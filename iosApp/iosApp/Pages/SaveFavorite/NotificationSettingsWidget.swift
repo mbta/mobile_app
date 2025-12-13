@@ -9,22 +9,29 @@
 import Shared
 import SwiftUI
 
+private extension DateComponents {
+    var nextDate: Date {
+        get {
+            let calendar = Calendar(identifier: .iso8601)
+            let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
+            let result = calendar.nextDate(after: beforeDayStart, matching: self, matchingPolicy: .strict)!
+            return result
+        }
+        set {
+            // in this file, we only use hour/minute/second
+            let components: Set<Calendar.Component> = [.hour, .minute, .second]
+            let calendar = Calendar(identifier: .iso8601)
+            self = calendar.dateComponents(components, from: newValue)
+        }
+    }
+}
+
 struct NotificationSettingsWidget: View {
-    // unfortunately, we can’t use bindings directly
-    let settings: FavoriteSettings.Notifications
-    let setSettings: (FavoriteSettings.Notifications) -> Void
+    @ObservedObject var settings: MutableFavoriteSettings.Notifications
 
     var body: some View {
         VStack(spacing: 8) {
-            Toggle(
-                isOn: .init(
-                    get: { settings.enabled },
-                    set: { setSettings(.init(
-                        enabled: $0,
-                        windows: settings.windows.isEmpty ? [Self.defaultWindow()] : settings.windows
-                    )) }
-                )
-            ) {
+            Toggle(isOn: $settings.enabled) {
                 HStack {
                     if settings.enabled {
                         Image(.faBellFilled)
@@ -46,24 +53,20 @@ struct NotificationSettingsWidget: View {
             .padding(.vertical, 8)
             .background(Color.fill3)
             .withRoundedBorder()
+            .onChange(of: settings.enabled) {
+                if $0, settings.windows.count == 0 {
+                    settings.windows = [Self.defaultWindow()]
+                }
+            }
             if settings.enabled {
-                ForEach(Array(settings.windows.enumerated()), id: \.offset) { index, window in
+                ForEach(settings.windows) { window in
                     WindowWidget(
-                        window: window, setWindow: { newWindow in
-                            var newWindows = settings.windows
-                            newWindows[index] = newWindow
-                            setSettings(.init(enabled: settings.enabled, windows: newWindows))
-                        }, deleteWindow: settings.windows.count > 1 ? {
-                            var newWindows = settings.windows
-                            newWindows.remove(at: index)
-                            setSettings(.init(enabled: settings.enabled, windows: newWindows))
+                        window: window, deleteWindow: settings.windows.count > 1 ? {
+                            settings.windows.removeAll(where: { $0.id == window.id })
                         } : nil
                     )
                 }
-                Button(action: { setSettings(.init(
-                    enabled: settings.enabled,
-                    windows: settings.windows + [Self.defaultWindow(existingWindows: settings.windows)]
-                )) }) {
+                Button(action: { settings.windows += [Self.defaultWindow(existingWindows: settings.windows)] }) {
                     HStack(spacing: 12) {
                         Image(.plus)
                             .resizable()
@@ -84,26 +87,26 @@ struct NotificationSettingsWidget: View {
         }
     }
 
-    static func defaultWindow(existingWindows: [FavoriteSettings.NotificationsWindow] = []) -> FavoriteSettings
-        .NotificationsWindow {
+    static func defaultWindow(existingWindows: [MutableFavoriteSettings.Notifications.Window] = [])
+        -> MutableFavoriteSettings
+        .Notifications.Window {
         if existingWindows.isEmpty {
             .init(
-                startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
+                startTime: .init(hour: 8, minute: 0, second: 0),
+                endTime: .init(hour: 9, minute: 0, second: 0),
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )
         } else {
             .init(
-                startTime: .init(hour: 12, minute: 0, second: 0, nanosecond: 0),
-                endTime: .init(hour: 13, minute: 0, second: 0, nanosecond: 0),
+                startTime: .init(hour: 12, minute: 0, second: 0),
+                endTime: .init(hour: 13, minute: 0, second: 0),
                 daysOfWeek: [.saturday, .sunday]
             )
         }
     }
 
     struct WindowWidget: View {
-        let window: FavoriteSettings.NotificationsWindow
-        let setWindow: (FavoriteSettings.NotificationsWindow) -> Void
+        @ObservedObject var window: MutableFavoriteSettings.Notifications.Window
         let deleteWindow: (() -> Void)?
 
         var body: some View {
@@ -118,31 +121,26 @@ struct NotificationSettingsWidget: View {
                 VStack(spacing: 0) {
                     LabeledTimeInput(
                         label: Text("From"),
-                        time: window.startTime,
-                        setTime: { setWindow(.init(
-                            startTime: $0,
-                            endTime: window.endTime,
-                            daysOfWeek: window.daysOfWeek
-                        )) }
+                        time: $window.startTime,
+                        minimumTime: nil
                     )
+                    .onChange(of: window.startTime) { startTime in
+                        if startTime.hour! > window.endTime.hour! ||
+                            (startTime.hour! == window.endTime.hour! && startTime.minute! > window.endTime.minute!) {
+                            if startTime.hour! < 23 {
+                                window.endTime = .init(hour: startTime.hour! + 1, minute: startTime.minute!, second: 0)
+                            } else {
+                                window.endTime = .init(hour: 23, minute: 59, second: 0)
+                            }
+                        }
+                    }
                     HaloSeparator()
                     LabeledTimeInput(
                         label: Text("To"),
-                        time: window.endTime,
-                        setTime: { setWindow(.init(
-                            startTime: window.startTime,
-                            endTime: $0,
-                            daysOfWeek: window.daysOfWeek
-                        )) }
+                        time: $window.endTime,
+                        minimumTime: window.startTime
                     )
-                    DaysOfWeekInput(
-                        daysOfWeek: window.daysOfWeek,
-                        setDaysOfWeek: { setWindow(.init(
-                            startTime: window.startTime,
-                            endTime: window.endTime,
-                            daysOfWeek: $0
-                        )) }
-                    )
+                    DaysOfWeekInput(daysOfWeek: $window.daysOfWeek)
                 }
                 .background(Color.fill3)
                 .clipShape(RoundedRectangle(cornerRadius: 7))
@@ -155,22 +153,38 @@ struct NotificationSettingsWidget: View {
 
     struct LabeledTimeInput: View {
         let label: Text
-        let time: Kotlinx_datetimeLocalTime
-        let setTime: (Kotlinx_datetimeLocalTime) -> Void
+        @Binding var time: DateComponents
+        let minimumTime: DateComponents?
+
+        init(
+            label: Text,
+            time: Binding<DateComponents>,
+            minimumTime: DateComponents? = nil
+        ) {
+            self.label = label
+            _time = time
+            self.minimumTime = minimumTime
+        }
+
+        var dateRange: ClosedRange<Date> {
+            let calendar = Calendar(identifier: .iso8601)
+            let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
+            let minimum: DateComponents = minimumTime ?? .init(hour: 0, minute: 0, second: 0)
+            let start = calendar.nextDate(
+                after: beforeDayStart,
+                matching: minimum,
+                matchingPolicy: .strict
+            )!
+            let end = calendar.nextDate(
+                after: start,
+                matching: .init(hour: 23, minute: 59, second: 59),
+                matchingPolicy: .strict
+            )!
+            return start ... end
+        }
 
         var body: some View {
-            DatePicker(selection: .init(get: {
-                Calendar(identifier: .iso8601).nextDate(
-                    after: .now,
-                    matching: .init(hour: Int(time.hour), minute: Int(time.minute), second: Int(time.second)),
-                    matchingPolicy: .strict
-                ) ?? .now
-            }, set: {
-                let components = Calendar(identifier: .iso8601).dateComponents([.hour, .minute, .second], from: $0)
-                if let hour = components.hour, let minute = components.minute, let second = components.second {
-                    setTime(.init(hour: Int32(hour), minute: Int32(minute), second: Int32(second), nanosecond: 0))
-                }
-            }), displayedComponents: [.hourAndMinute]) {
+            DatePicker(selection: $time.nextDate, in: dateRange, displayedComponents: [.hourAndMinute]) {
                 label
             }
             .datePickerStyle(.compact)
@@ -180,8 +194,7 @@ struct NotificationSettingsWidget: View {
     }
 
     struct DaysOfWeekInput: View {
-        let daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
-        let setDaysOfWeek: (Set<Kotlinx_datetimeDayOfWeek>) -> Void
+        @Binding var daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
 
         static var days: [Kotlinx_datetimeDayOfWeek] {
             [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday, .saturday]
@@ -211,7 +224,7 @@ struct NotificationSettingsWidget: View {
                     .frame(maxWidth: .infinity)
                     .padding(.top, 8)
                     .onTapGesture {
-                        setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
+                        daysOfWeek.formSymmetricDifference([day])
                     }
                     .background(isIncluded ? Color.key : Color.fill1)
                     .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -222,7 +235,7 @@ struct NotificationSettingsWidget: View {
                         // labelled with the full name of the day
                         Toggle(
                             isOn: .init(get: { isIncluded }, set: { _ in
-                                setDaysOfWeek(daysOfWeek.symmetricDifference([day]))
+                                daysOfWeek.formSymmetricDifference([day])
                             }),
                             label: {
                                 Text(calendar.standaloneWeekdaySymbols[Int(day.ordinal + 1) % 7])
@@ -239,7 +252,7 @@ struct NotificationSettingsWidget: View {
 
 struct NotificationSettingsWidget_Previews: PreviewProvider {
     struct Holder: View {
-        @State var settings = FavoriteSettings.Notifications(
+        @State var settings = MutableFavoriteSettings.Notifications(
             enabled: true,
             windows: [
                 NotificationSettingsWidget.defaultWindow(),
@@ -248,7 +261,7 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
         )
 
         var body: some View {
-            NotificationSettingsWidget(settings: settings, setSettings: { settings = $0 })
+            NotificationSettingsWidget(settings: settings)
         }
     }
 

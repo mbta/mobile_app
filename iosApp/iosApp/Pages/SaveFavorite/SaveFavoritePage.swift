@@ -22,7 +22,7 @@ struct SaveFavoritePage: View {
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
-    @State var pendingSettings: FavoriteSettings?
+    @State var pendingSettings: MutableFavoriteSettings
     @State var selectedDirection: Int32
 
     let inspection = Inspection<Self>()
@@ -45,6 +45,7 @@ struct SaveFavoritePage: View {
         self.navCallbacks = navCallbacks
         self.nearbyVM = nearbyVM
         self.toastVM = toastVM
+        pendingSettings = .init(.init())
 
         selectedDirection = initialSelectedDirection
     }
@@ -82,8 +83,9 @@ struct SaveFavoritePage: View {
     }
 
     func resetPendingSettings() {
-        pendingSettings = favorites
-            .routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
+        pendingSettings = .init(
+            favorites.routeStopDirection[selectedRouteStopDirection] ?? .init(notifications: .companion.disabled)
+        )
     }
 
     func updateCloseAndToast(_ rsd: RouteStopDirection, _ setting: FavoriteSettings?) {
@@ -159,7 +161,7 @@ struct SaveFavoritePage: View {
             SaveFavoriteHeader(
                 isFavorite: isFavorite,
                 onCancel: { navCallbacks.onBack?() },
-                onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings) },
+                onSave: { updateCloseAndToast(selectedRouteStopDirection, pendingSettings.toShared()) },
             )
             HaloScrollView(alwaysShowHalo: true) {
                 if let lineOrRoute, let stop {
@@ -173,8 +175,7 @@ struct SaveFavoritePage: View {
                             } : nil,
                         )
                         NotificationSettingsWidget(
-                            settings: pendingSettings?.notifications ?? .companion.disabled,
-                            setSettings: { pendingSettings = .init(notifications: $0) }
+                            settings: pendingSettings.notifications,
                         )
                         if isFavorite {
                             HaloSeparator(height: 2)
