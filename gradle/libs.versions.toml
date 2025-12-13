@@ -45,7 +45,7 @@ okhttp = "5.3.2"
 okio = "3.16.4"
 playServicesLocation = "21.3.0"
 sentry-android-gradle = "5.12.2"
-sentry-kmp = "0.19.0"
+sentry-kmp = "0.22.0"
 skie = "0.10.8"
 spatialk = "0.6.1"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
