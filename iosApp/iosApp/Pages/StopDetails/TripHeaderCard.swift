@@ -354,7 +354,8 @@ struct TripVehicleCard_Previews: PreviewProvider {
             updatedAt: now.minus(seconds: 10),
             routeId: .init("66"),
             stopId: "place-davis",
-            tripId: trip.id
+            tripId: trip.id,
+            decoration: nil
         )
 
         let stop = objects.stop { stop in

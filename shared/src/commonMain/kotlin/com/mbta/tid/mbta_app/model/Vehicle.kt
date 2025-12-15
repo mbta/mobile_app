@@ -18,6 +18,7 @@ public data class Vehicle(
     @SerialName("route_id") val routeId: Route.Id?,
     @SerialName("stop_id") val stopId: String?,
     @SerialName("trip_id") val tripId: String?,
+    val decoration: Decoration? = null,
 ) : BackendObject<String> {
     val position: Position = Position(latitude = latitude, longitude = longitude)
 
@@ -26,6 +27,13 @@ public data class Vehicle(
         @SerialName("incoming_at") IncomingAt,
         @SerialName("stopped_at") StoppedAt,
         @SerialName("in_transit_to") InTransitTo,
+    }
+
+    @Serializable
+    public enum class Decoration {
+        @SerialName("pride") Pride,
+        @SerialName("winter_holiday") WinterHoliday,
+        @SerialName("googly_eyes") GooglyEyes,
     }
 
     override fun toString(): String = "Vehicle(id=$id)"

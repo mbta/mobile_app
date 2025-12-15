@@ -473,6 +473,7 @@ private constructor(
         public var routeId: String? = null
         public var stopId: String? = null
         public var tripId: String = ""
+        public var decoration: Vehicle.Decoration? = null
 
         override fun built(): Vehicle =
             Vehicle(
@@ -487,6 +488,7 @@ private constructor(
                 routeId?.let { Route.Id(it) },
                 stopId,
                 tripId,
+                decoration,
             )
     }
 
