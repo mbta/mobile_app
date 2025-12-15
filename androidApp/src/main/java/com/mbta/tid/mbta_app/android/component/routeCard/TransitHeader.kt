@@ -31,14 +31,14 @@ fun TransitHeader(
     transit: LineOrRoute,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
-    val (modeIcon, modeDescription) = routeIcon(transit.sortRoute)
+    val modeIcon = routeIcon(transit.sortRoute)
     TransitHeader(
         transit.name,
         routeType = transit.type,
         backgroundColor = Color.fromHex(transit.backgroundColor),
         textColor = Color.fromHex(transit.textColor),
         modeIcon = modeIcon,
-        modeDescription = modeDescription,
+        modeDescription = null,
         rightContent,
     )
 }

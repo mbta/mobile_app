@@ -156,10 +156,10 @@ fun RoutePill(
             )
 
         is RoutePillSpec.Content.ModeImage -> {
-            val (painter, contentDescription) = routeIcon(routeType = pillContent.mode)
+            val painter = routeIcon(routeType = pillContent.mode)
             Icon(
                 painter = painter,
-                contentDescription = contentDescription,
+                contentDescription = null,
                 modifier = finalModifier.size(pillHeight),
                 tint = if (isActive) textColor else LocalContentColor.current,
             )

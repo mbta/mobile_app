@@ -12,10 +12,10 @@ import com.mbta.tid.mbta_app.model.RouteType
 @Composable
 fun routeIcon(routeType: RouteType) =
     when (routeType) {
-        RouteType.BUS -> Pair(painterResource(id = R.drawable.mode_bus), null)
-        RouteType.COMMUTER_RAIL -> Pair(painterResource(id = R.drawable.mode_cr), null)
-        RouteType.FERRY -> Pair(painterResource(id = R.drawable.mode_ferry), null)
-        else -> Pair(painterResource(id = R.drawable.mode_subway), null)
+        RouteType.BUS -> painterResource(id = R.drawable.mode_bus)
+        RouteType.COMMUTER_RAIL -> painterResource(id = R.drawable.mode_cr)
+        RouteType.FERRY -> painterResource(id = R.drawable.mode_ferry)
+        else -> painterResource(id = R.drawable.mode_subway)
     }
 
 @Composable

@@ -62,6 +62,7 @@ import com.mbta.tid.mbta_app.android.location.IViewportProvider
 import com.mbta.tid.mbta_app.android.location.LocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.getStopIdAt
 import com.mbta.tid.mbta_app.android.util.plus
 import com.mbta.tid.mbta_app.android.util.toPoint
@@ -332,9 +333,10 @@ fun HomeMapView(
                     ) {
                         VehiclePuck(
                             vehicle = vehicle,
-                            route = route,
+                            routeAccents = TripRouteAccents(route),
                             selected = isSelected,
                             onClick = { handleVehicleTap(vehicle) },
+                            enlargeIfDecorated = true,
                         )
                     }
                 }
@@ -378,7 +380,7 @@ fun HomeMapView(
                     selectedVehicle?.let { vehicle ->
                         globalData?.getRoute(vehicle.routeId)?.type?.let { routeType ->
                             RecenterButton(
-                                routeIcon(routeType).first,
+                                routeIcon(routeType),
                                 stringResource(
                                     R.string.recenter_map_on_vehicle,
                                     routeType.typeText(LocalContext.current, isOnly = true),
