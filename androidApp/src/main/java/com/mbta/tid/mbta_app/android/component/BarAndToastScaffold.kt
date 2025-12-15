@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -118,6 +119,7 @@ fun BarAndToastScaffold(
                 Snackbar(
                     modifier =
                         Modifier.padding(start = 8.dp, bottom = 16.dp, end = 8.dp)
+                            .navigationBarsPadding()
                             .clearAndSetSemantics {
                                 contentDescription = overriddenContentDescription
                                 onClick(clickLabel) {

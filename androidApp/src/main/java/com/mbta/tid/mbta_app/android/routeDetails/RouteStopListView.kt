@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ButtonDefaults
@@ -399,7 +400,8 @@ private fun RouteStops(
 
     ScrollSeparatorColumn(
         Modifier.padding(horizontal = 14.dp)
-            .padding(top = 8.dp, bottom = 40.dp)
+            .padding(top = 8.dp, bottom = 16.dp)
+            .navigationBarsPadding()
             .haloContainer(
                 2.dp,
                 outlineColor = haloColor,

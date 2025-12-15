@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -79,8 +80,11 @@ fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinI
     var showingBuildNumber by remember { mutableStateOf(false) }
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
-    Scaffold(bottomBar = bottomBar) { outerSheetPadding ->
-        Column(Modifier.padding(outerSheetPadding).background(colorResource(R.color.fill3))) {
+    Scaffold(
+        Modifier.fillMaxSize().background(colorResource(R.color.fill3)),
+        bottomBar = bottomBar,
+    ) { outerSheetPadding ->
+        Column(Modifier.padding(outerSheetPadding)) {
             NavHost(navController, startDestination = "more") {
                 composable("more") {
                     Column {

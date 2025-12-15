@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,9 +73,9 @@ fun AlertDetailsPage(
             Color.fromHex(it)
         } ?: colorResource(R.color.text)
 
-    Column(Modifier.background(colorResource(R.color.fill2))) {
+    Column {
         Row(
-            Modifier.background(headerColor).padding(16.dp).safeDrawingPadding(),
+            Modifier.background(headerColor).padding(16.dp).statusBarsPadding(),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {

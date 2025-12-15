@@ -829,43 +829,38 @@ fun MapAndSheetPage(
                 }
             }
 
-            SearchBarOverlay(
-                searchExpanded,
-                showSearchBar,
-                ::handleSearchExpandedChange,
-                ::handleStopNavigation,
-                ::handleRouteNavigation,
-                searchFocusRequester,
-                onBarGloballyPositioned = {},
-            ) {
-                Column(modifier = Modifier.background(colorResource(R.color.sheet_background))) {
-                    val shouldShowAuthButton =
-                        !nearbyTransit.locationDataManager.hasPermission &&
-                            (currentNavEntry?.allowTargeting == true)
-                    if (shouldShowAuthButton) {
-                        LocationAuthButton(
-                            nearbyTransit.locationDataManager,
-                            modifier =
-                                Modifier.align(Alignment.CenterHorizontally)
-                                    .padding(top = 80.dp)
-                                    .statusBarsPadding(),
+            Box(Modifier.fillMaxSize().background(colorResource(R.color.sheet_background))) {
+                SearchBarOverlay(
+                    searchExpanded,
+                    showSearchBar,
+                    ::handleSearchExpandedChange,
+                    ::handleStopNavigation,
+                    ::handleRouteNavigation,
+                    searchFocusRequester,
+                    onBarGloballyPositioned = {},
+                ) {
+                    Column {
+                        val shouldShowAuthButton =
+                            !nearbyTransit.locationDataManager.hasPermission &&
+                                (currentNavEntry?.allowTargeting == true)
+                        if (shouldShowAuthButton) {
+                            LocationAuthButton(
+                                nearbyTransit.locationDataManager,
+                                modifier =
+                                    Modifier.align(Alignment.CenterHorizontally)
+                                        .padding(top = 64.dp)
+                                        .statusBarsPadding(),
+                            )
+                        }
+                        SheetContent(
+                            Modifier.fillMaxSize()
+                                .padding(outerSheetPadding)
+                                .padding(
+                                    top =
+                                        if (showSearchBar && !shouldShowAuthButton) 64.dp else 0.dp
+                                )
                         )
                     }
-                    SheetContent(
-                        Modifier.background(colorResource(R.color.sheet_background))
-                            .padding(outerSheetPadding)
-                            .padding(
-                                top = if (showSearchBar && !shouldShowAuthButton) 80.dp else 0.dp
-                            )
-                            .then(
-                                if (showSearchBar) {
-                                    Modifier
-                                } else {
-                                    Modifier.statusBarsPadding()
-                                }
-                            )
-                            .fillMaxSize()
-                    )
                 }
             }
         } else {
@@ -927,10 +922,12 @@ fun MapAndSheetPage(
     if (currentModalRoute != null) {
         ModalBottomSheet(
             onDismissRequest = { closeModal() },
+            modifier = Modifier.fillMaxSize(),
             sheetState = modalSheetState,
             dragHandle = null,
+            contentWindowInsets = { WindowInsets(0, 0, 0, 0) },
         ) {
-            Column {
+            Box(Modifier.fillMaxSize()) {
                 when (val modal = currentModalRoute) {
                     is ModalRoutes.AlertDetails ->
                         AlertDetailsPage(

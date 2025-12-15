@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -167,9 +168,10 @@ fun SaveFavoritePage(
         }
     }
 
-    Column(Modifier.background(colorResource(R.color.fill2)).systemBarsPadding()) {
+    Column {
         Column(
             Modifier.background(colorResource(R.color.fill3))
+                .statusBarsPadding()
                 .padding(vertical = 16.dp)
                 .padding(end = 16.dp)
         ) {
@@ -199,8 +201,10 @@ fun SaveFavoritePage(
         HaloSeparator()
         Column(
             Modifier.fillMaxHeight()
+                .background(colorResource(R.color.fill2))
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp, vertical = 24.dp),
+                .padding(horizontal = 16.dp, vertical = 24.dp)
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             FavoriteStopCard(
