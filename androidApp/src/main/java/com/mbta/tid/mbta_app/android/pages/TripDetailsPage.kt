@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.pages
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -105,7 +106,7 @@ fun TripDetailsPage(
                 openModal = openModal,
                 now = now,
                 isTripDetailsPage = true,
-                modifier = Modifier.padding(horizontal = 10.dp),
+                modifier = Modifier.padding(horizontal = 10.dp).navigationBarsPadding(),
             )
         }
     }

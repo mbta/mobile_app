@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ButtonDefaults
@@ -148,7 +149,9 @@ fun RoutePickerView(
             }
         }
         ScrollSeparatorColumn(
-            Modifier.imePadding().padding(start = 14.dp, top = 10.dp, end = 14.dp, bottom = 26.dp),
+            Modifier.navigationBarsPadding()
+                .imePadding()
+                .padding(start = 14.dp, top = 10.dp, end = 14.dp, bottom = 16.dp),
             Arrangement.spacedBy(4.dp),
             haloColor = path.haloColor,
             scrollState = routeScroll,

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -83,8 +84,11 @@ fun AlertDetails(
 
     Column(
         Modifier.verticalScroll(rememberScrollState())
+            .background(colorResource(R.color.fill2))
             .padding(horizontal = 16.dp)
-            .padding(top = 24.dp),
+            .padding(top = 24.dp)
+            .padding(bottom = 8.dp)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)

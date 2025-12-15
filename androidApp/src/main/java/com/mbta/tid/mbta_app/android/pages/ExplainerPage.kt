@@ -8,9 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +42,7 @@ import java.util.Locale
 fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: () -> Unit) {
     Column(Modifier.background(colorResource(R.color.fill2))) {
         Row(
-            Modifier.background(routeAccents.color).padding(16.dp).safeDrawingPadding(),
+            Modifier.background(routeAccents.color).padding(16.dp).statusBarsPadding(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -63,7 +64,7 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
             }
         }
         Column(
-            Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+            Modifier.padding(horizontal = 16.dp, vertical = 24.dp).navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(24.dp),
             horizontalAlignment = Alignment.Start,
         ) {

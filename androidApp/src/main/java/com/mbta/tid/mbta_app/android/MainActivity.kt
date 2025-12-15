@@ -1,23 +1,15 @@
 package com.mbta.tid.mbta_app.android
 
 import android.content.Intent
-import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.messaging.FirebaseMessaging
@@ -54,45 +46,18 @@ class MainActivity : ComponentActivity() {
         getFCMToken()
         handleIntent(intent)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        enableEdgeToEdge(
-            navigationBarStyle =
-                if (isDarkModeOn()) {
-                    SystemBarStyle.dark(scrim = getColor(R.color.fill2))
-                } else {
-                    SystemBarStyle.light(
-                        scrim = getColor(R.color.fill2),
-                        darkScrim = getColor(R.color.fill2),
-                    )
-                },
-            statusBarStyle =
-                if (isDarkModeOn()) {
-                    SystemBarStyle.dark(scrim = Color(0x00000000).toArgb())
-                } else {
-                    SystemBarStyle.light(
-                        scrim = Color(0x00000000).toArgb(),
-                        darkScrim = Color(0x00000000).toArgb(),
-                    )
-                },
-        )
+        enableEdgeToEdge()
+
+        window.attributes.layoutInDisplayCutoutMode =
+            WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS
 
         setContent {
             MyApplicationTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize().navigationBarsPadding(),
-                    color = MaterialTheme.colorScheme.background,
-                ) {
-                    CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
-                        ContentView(deepLinkStateFlow.asStateFlow(), ::clearDeepLink)
-                    }
+                CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
+                    ContentView(deepLinkStateFlow.asStateFlow(), ::clearDeepLink)
                 }
             }
         }
-    }
-
-    private fun isDarkModeOn(): Boolean {
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        val isDarkModeOn = nightModeFlags == Configuration.UI_MODE_NIGHT_YES
-        return isDarkModeOn
     }
 
     private fun initSentry() {

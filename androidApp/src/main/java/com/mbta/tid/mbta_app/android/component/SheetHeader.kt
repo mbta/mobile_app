@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -32,9 +33,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contrast
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.math.abs
 
@@ -112,8 +115,11 @@ fun SheetHeader(
         }
     }
 
+    val hideMaps = SettingsCache.get(Settings.HideMaps)
+    val headerModifier = if (hideMaps) modifier.statusBarsPadding() else modifier
+
     if (showBackButton && showCloseButton) {
-        Column(modifier, Arrangement.spacedBy(4.dp)) {
+        Column(headerModifier, Arrangement.spacedBy(4.dp)) {
             Row(
                 Modifier.heightIn(min = touchTarget)
                     .padding(start = buttonStartPadding, end = buttonEndPadding)
@@ -128,7 +134,7 @@ fun SheetHeader(
         }
     } else {
         Row(
-            modifier
+            headerModifier
                 .padding(start = buttonStartPadding, end = buttonEndPadding)
                 .heightIn(min = touchTarget),
             horizontalArrangement = Arrangement.spacedBy(8.dp),

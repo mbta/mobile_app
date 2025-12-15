@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -98,7 +99,11 @@ fun StopDetailsUnfilteredRoutesView(
 
         ErrorBanner(errorBannerViewModel, Modifier.padding(vertical = 16.dp))
 
-        Box(Modifier.background(MaterialTheme.colorScheme.surface).fillMaxSize()) {
+        Box(
+            Modifier.background(MaterialTheme.colorScheme.surface)
+                .navigationBarsPadding()
+                .fillMaxSize()
+        ) {
             HorizontalDivider(
                 Modifier.fillMaxWidth().zIndex(1f).border(2.dp, colorResource(R.color.halo))
             )
