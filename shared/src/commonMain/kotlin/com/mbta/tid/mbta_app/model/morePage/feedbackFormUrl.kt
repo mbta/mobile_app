@@ -1,18 +1,31 @@
 package com.mbta.tid.mbta_app.model.morePage
 
-public fun localizedFeedbackFormUrl(
+import com.mbta.tid.mbta_app.PlatformType
+import io.ktor.http.URLBuilder
+import io.ktor.util.appendAll
+
+public fun feedbackFormUrl(
     baseUrl: String,
     translation: String,
-    separateHTForm: Boolean = false,
+    version: String?,
+    platform: PlatformType,
 ): String {
-    return when (translation) {
-        "es" -> "${baseUrl}?lang=es-US"
-        "fr" -> "${baseUrl}?lang=fr"
-        "ht" -> if (separateHTForm) "${baseUrl}-ht" else baseUrl
-        "pt-BR" -> "${baseUrl}?lang=pt-BR"
-        "vi" -> "${baseUrl}?lang=vi"
-        "zh-Hans-CN" -> "${baseUrl}?lang=zh-Hans"
-        "zh-Hant-TW" -> "${baseUrl}?lang=zh-Hant"
-        else -> baseUrl
-    }
+    val builder = URLBuilder(baseUrl)
+    builder.parameters
+        .appendAll(
+            mapOf(
+                Pair("language", translation),
+                Pair("version", version ?: "null"),
+                Pair(
+                    "platform",
+                    when (platform) {
+                        PlatformType.iOS -> "iOS"
+                        else -> "Android"
+                    },
+                ),
+            )
+        )
+        .build()
+
+    return builder.build().toString()
 }

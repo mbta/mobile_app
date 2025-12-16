@@ -20,9 +20,14 @@ struct MorePage: View {
     @EnvironmentObject var settingsCache: SettingsCache
 
     private let translation = Bundle.main.preferredLocalizations.first ?? "en"
+
+    var infoPlist: [String: Any]? { Bundle.main.infoDictionary }
+    var version: String? { infoPlist?["CFBundleShortVersionString"] as? String }
+
     var sections: [MoreSection] {
         viewModel.getSections(
             translation: translation,
+            version: version,
             licensesCallback: {
                 path.append(MoreNavTarget.licenses)
             }
@@ -38,8 +43,6 @@ struct MorePage: View {
                         .accessibilityAddTraits(.isHeader)
                         .accessibilityHeading(.h1)
                     Spacer()
-                    let infoPlist = Bundle.main.infoDictionary
-                    let version = infoPlist?["CFBundleShortVersionString"] as? String
                     let build = infoPlist?["CFBundleVersion"] as? String ?? "?"
                     if let version {
                         if showingBuildNumber {

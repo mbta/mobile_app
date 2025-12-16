@@ -13,9 +13,10 @@ class MoreViewModelTests {
     @Test
     fun testLocalizedFeedbackLink() {
         val vm = MoreViewModel(Dispatchers.Default, MockSubscriptionsRepository())
-        val sections = vm.getSections("es", {})
+        val sections = vm.getSections("es", "1.2.3", {})
+
         assertEquals(
-            "https://mbta.com/androidappfeedback?lang=es-US",
+            "https://mbta.com/androidappfeedback?language=es&version=1.2.3&platform=Android",
             sections
                 .first { it.id == MoreSection.Category.Feedback }
                 .items
@@ -28,7 +29,7 @@ class MoreViewModelTests {
     @Test
     fun testMTicketURL() {
         val vm = MoreViewModel(Dispatchers.Default, MockSubscriptionsRepository())
-        val sections = vm.getSections("", {})
+        val sections = vm.getSections("", "", {})
         assertEquals(
             "https://play.google.com/store/apps/details?id=com.mbta.mobileapp",
             sections
