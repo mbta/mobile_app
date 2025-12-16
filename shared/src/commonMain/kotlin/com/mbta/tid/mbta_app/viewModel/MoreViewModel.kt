@@ -4,7 +4,7 @@ import com.mbta.tid.mbta_app.PlatformType
 import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
-import com.mbta.tid.mbta_app.model.morePage.localizedFeedbackFormUrl
+import com.mbta.tid.mbta_app.model.morePage.feedbackFormUrl
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.SharedString
@@ -17,17 +17,30 @@ public class MoreViewModel(
     private val subscriptionsRepository: ISubscriptionsRepository,
 ) {
 
-    public fun getSections(translation: String, licensesCallback: () -> Unit): List<MoreSection> {
+    public fun getSections(
+        translation: String,
+        version: String?,
+        licensesCallback: () -> Unit,
+    ): List<MoreSection> {
         val platform = getPlatform()
         val feedbackFormUrl =
             when (platform.type) {
-                PlatformType.iOS -> {
-                    localizedFeedbackFormUrl("https://mbta.com/appfeedback", translation, true)
-                }
+                PlatformType.iOS ->
+                    feedbackFormUrl(
+                        "https://mbta.com/appfeedback",
+                        translation,
+                        version,
+                        platform.type,
+                    )
+
                 PlatformType.Android,
-                PlatformType.JVM -> {
-                    localizedFeedbackFormUrl("https://mbta.com/androidappfeedback", translation)
-                }
+                PlatformType.JVM ->
+                    feedbackFormUrl(
+                        "https://mbta.com/androidappfeedback",
+                        translation,
+                        version,
+                        platform.type,
+                    )
             }
         val mTicketURL =
             when (platform.type) {

@@ -74,7 +74,9 @@ fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinI
     val navController = rememberNavController()
 
     val sections = remember {
-        viewModel.getSections(translation) { navController.navigate("licenses") }
+        viewModel.getSections(translation, BuildConfig.VERSION_NAME) {
+            navController.navigate("licenses")
+        }
     }
     val dependencies = Dependency.getAllDependencies()
     var showingBuildNumber by remember { mutableStateOf(false) }
