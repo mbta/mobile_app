@@ -31,6 +31,7 @@ class VehiclesOnRouteChannelTest {
                             put("route_id", "1")
                             put("stop_id", "99")
                             put("trip_id", "61391720")
+                            put("decoration", "pride")
                         }
                     }
                 }
@@ -54,6 +55,7 @@ class VehiclesOnRouteChannelTest {
                             Route.Id("1"),
                             "99",
                             "61391720",
+                            Vehicle.Decoration.Pride,
                         )
                 )
             ),

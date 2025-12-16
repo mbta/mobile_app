@@ -251,8 +251,8 @@ class PredictionsRepositoryTests : KoinTest {
                                     "stop_id": "12345",
                                     "latitude": 42.34114183,
                                     "longitude": -71.121119039,
-                                    "updated_at": "2024-09-23T11:30:26-04:00"
-
+                                    "updated_at": "2024-09-23T11:30:26-04:00",
+                                    "decoration": null
                                 }
                             }
                     }
