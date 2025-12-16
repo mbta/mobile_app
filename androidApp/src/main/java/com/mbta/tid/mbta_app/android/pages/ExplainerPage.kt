@@ -46,10 +46,10 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val (icon, description) = routeIcon(routeAccents.type)
+            val icon = routeIcon(routeAccents.type)
             Image(
                 icon,
-                description,
+                null,
                 Modifier.clearAndSetSemantics {}.size(24.dp),
                 colorFilter = ColorFilter.tint(routeAccents.textColor),
             )

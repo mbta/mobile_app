@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.endToEnd.endToEndModule
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.experimental.ExperimentalObjCName
@@ -114,6 +115,9 @@ public fun startKoinE2E() {
         )
     }
 }
+
+// rather than having 2^n variants of copy via SKIE, define the exact one we need
+public fun Vehicle.butWith(bearing: Double): Vehicle = copy(bearing = bearing)
 
 /** Converts an [NSDate] into an [EasternTimeInstant]. */
 public fun NSDate.toEasternInstant(): EasternTimeInstant =

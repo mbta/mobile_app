@@ -141,10 +141,11 @@ struct AnnotatedMap: View {
                         let isSelected = vehicle.id == selectedVehicle?.id
                         MapViewAnnotation(coordinate: vehicle.coordinate) {
                             VehicleMarkerView(
-                                route: route,
                                 vehicle: vehicle,
+                                routeAccents: .init(route: route),
                                 isSelected: isSelected,
-                                onTap: { handleTapVehicle(vehicle) }
+                                onTap: { handleTapVehicle(vehicle) },
+                                enlargeIfDecorated: true
                             )
                         }
                         .priority(isSelected ? 1 : 0)

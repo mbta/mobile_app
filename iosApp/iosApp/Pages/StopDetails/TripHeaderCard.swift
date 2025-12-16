@@ -242,30 +242,23 @@ struct TripHeaderCard: View {
 
     @ViewBuilder private func vehiclePuck(_ vehicle: Vehicle, _ stop: Stop) -> some View {
         ZStack {
-            Group {
-                Image(.vehicleHalo)
-                    .resizable()
-                    .frame(width: 36, height: 36)
-                    .foregroundStyle(Color.fill3)
-                Image(.vehiclePuck)
-                    .resizable()
-                    .frame(width: 32, height: 32)
-                    .foregroundStyle(routeAccents.color)
-            }
-            .rotationEffect(.degrees(225))
-            routeIcon(routeAccents.type)
-                .resizable()
-                .frame(width: 27.5, height: 27.5)
-                .foregroundColor(routeAccents.textColor)
-                .overlay {
-                    if targetId == stop.id, vehicle.currentStatus == .stoppedAt {
-                        Image(.stopPinIndicator)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 26)
-                            .padding(.bottom, 36)
-                    }
+            VehicleMarkerView(
+                vehicle: vehicle.butWith(bearing: 180),
+                routeAccents: routeAccents,
+                isSelected: false,
+                onTap: {},
+                enlargeIfDecorated: false
+            )
+            .padding(-8)
+            .overlay {
+                if targetId == stop.id, vehicle.currentStatus == .stoppedAt {
+                    Image(.stopPinIndicator)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 26)
+                        .padding(.bottom, 36)
                 }
+            }
         }
         .accessibilityHidden(true)
         .padding(.bottom, 6)
@@ -355,7 +348,7 @@ struct TripVehicleCard_Previews: PreviewProvider {
             routeId: .init("66"),
             stopId: "place-davis",
             tripId: trip.id,
-            decoration: nil
+            decoration: .pride
         )
 
         let stop = objects.stop { stop in

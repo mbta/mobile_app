@@ -22,14 +22,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.LocalContentColor
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -55,6 +53,7 @@ import com.mbta.tid.mbta_app.android.component.TightWrapText
 import com.mbta.tid.mbta_app.android.component.UpcomingTripView
 import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
+import com.mbta.tid.mbta_app.android.map.VehiclePuck
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.containsWrappableText
@@ -370,7 +369,7 @@ private fun TripMarker(spec: TripHeaderSpec, targetId: String, routeAccents: Tri
 @Composable
 private fun VehicleCircle(routeAccents: TripRouteAccents) {
     Box(Modifier.size(32.dp).background(routeAccents.color, CircleShape)) {
-        val (icon, _) = routeIcon(routeAccents.type)
+        val icon = routeIcon(routeAccents.type)
         Image(
             icon,
             null,
@@ -389,26 +388,12 @@ private fun VehiclePuck(
 ) {
     Box(Modifier.clearAndSetSemantics {}, contentAlignment = Alignment.Center) {
         Box(contentAlignment = Alignment.Center) {
-            Box(Modifier.rotate(225f), contentAlignment = Alignment.Center) {
-                Image(
-                    painterResource(R.drawable.vehicle_halo),
-                    null,
-                    Modifier.size(36.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
-                )
-                Image(
-                    painterResource(R.drawable.vehicle_puck),
-                    null,
-                    Modifier.size(32.dp),
-                    colorFilter = ColorFilter.tint(routeAccents.color),
-                )
-            }
-            val (icon, _) = routeIcon(routeAccents.type)
-            Image(
-                icon,
-                null,
-                Modifier.size(27.5.dp).align(Alignment.Center),
-                colorFilter = ColorFilter.tint(routeAccents.textColor),
+            VehiclePuck(
+                vehicle.copy(bearing = 180.0),
+                routeAccents,
+                selected = false,
+                onClick = null,
+                enlargeIfDecorated = false,
             )
         }
 
@@ -582,6 +567,7 @@ private fun TripHeaderCardPreview() {
             routeId = "66"
             stopId = "place-davis"
             tripId = trip.id
+            decoration = Vehicle.Decoration.Pride
         }
     val davis = objects.stop { name = "Davis" }
     val cityPoint = objects.stop { name = "City Point Bus Terminal" }

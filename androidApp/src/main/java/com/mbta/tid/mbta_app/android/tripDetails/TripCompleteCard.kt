@@ -44,10 +44,10 @@ fun TripCompleteCard(routeAccents: TripRouteAccents, modifier: Modifier = Modifi
                 Modifier.size(iconSize).clip(CircleShape).background(routeAccents.color),
                 Alignment.Center,
             ) {
-                val (painter, contentDescription) = routeIcon(routeAccents.type)
+                val painter = routeIcon(routeAccents.type)
                 Icon(
                     painter = painter,
-                    contentDescription = contentDescription,
+                    contentDescription = null,
                     modifier = Modifier.size(iconSize),
                     tint = routeAccents.textColor,
                 )

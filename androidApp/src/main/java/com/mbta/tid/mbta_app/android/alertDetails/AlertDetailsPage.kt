@@ -86,10 +86,10 @@ fun AlertDetailsPage(
                     Modifier.height(18.dp),
                 )
             } else if (firstRoute != null) {
-                val (icon, description) = routeIcon(firstRoute)
+                val icon = routeIcon(firstRoute)
                 Image(
                     icon,
-                    description,
+                    null,
                     Modifier.size(24.dp),
                     colorFilter = ColorFilter.tint(headerTextColor),
                 )

@@ -49,7 +49,7 @@ fun RoutePickerRootRow(
     onTap: () -> Unit,
     label: @Composable () -> Unit,
 ) {
-    val (icon, description) = routeIcon(routeType)
+    val icon = routeIcon(routeType)
 
     Row(
         Modifier.fillMaxWidth()
@@ -61,12 +61,7 @@ fun RoutePickerRootRow(
         Alignment.CenterVertically,
     ) {
         Row(Modifier.weight(1f), Arrangement.spacedBy(8.dp), Alignment.CenterVertically) {
-            Image(
-                icon,
-                description,
-                Modifier.size(24.dp),
-                colorFilter = ColorFilter.tint(textColor),
-            )
+            Image(icon, null, Modifier.size(24.dp), colorFilter = ColorFilter.tint(textColor))
             label()
         }
         Image(
