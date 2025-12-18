@@ -56,6 +56,18 @@ class MapLayerManager: iosApp.IMapLayerManager {
     private let puckAnchorLayerId = "puck-anchor-layer"
     private let routeAnchorLayerId = "route-anchor-layer"
     private let stopAnchorLayerId = "stop-anchor-layer"
+    private let landmarkLayerIds = [
+        "Boston Common",
+        "Boston Public Garden",
+        "Boston Public Library",
+        "Citgo Sign",
+        "Fenway Park",
+        "Gillette Stadium",
+        "Logan International Airport",
+        "Museum of Fine Arts",
+        "Museum of Science",
+        "TD Garden",
+    ]
 
     init(map: MapboxMap) {
         self.map = map
@@ -172,6 +184,13 @@ class MapLayerManager: iosApp.IMapLayerManager {
                 try? map.removeLayer(withId: oldLayer)
             }
         }
+        for landmarkLayer in landmarkLayerIds {
+            if map.layerExists(withId: landmarkLayer) {
+                // Make sure landmark icons aren't drawn below route lines
+                try? map.moveLayer(withId: landmarkLayer, to: .above(routeAnchorLayerId))
+            }
+        }
+
         resetPuckPosition()
     }
 
