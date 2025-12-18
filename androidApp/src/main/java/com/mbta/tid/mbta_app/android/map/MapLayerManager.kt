@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.util.Log
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.maps.GeoJSONSourceData
+import com.mapbox.maps.LayerPosition
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.extension.style.layers.Layer as MapboxLayer
 import com.mapbox.maps.extension.style.layers.addLayer
@@ -121,6 +122,19 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
                         map.removeStyleLayer(layer)
                     }
                 }
+                for (landmarkLayer in landmarkLayerIds) {
+                    if (map.styleLayerExists(landmarkLayer)) {
+                        try {
+                            // Make sure landmark icons aren't drawn below route lines
+                            map.moveStyleLayer(
+                                landmarkLayer,
+                                LayerPosition(routeAnchorLayerId, null, null),
+                            )
+                        } catch (_: Exception) {
+                            println("Failed to move landmark layer $landmarkLayer above routes")
+                        }
+                    }
+                }
             }
         }
     }
@@ -177,5 +191,19 @@ class MapLayerManager(val map: MapboxMap, val context: Context) : IMapLayerManag
         val puckAnchorLayerId = "puck-anchor-layer"
         private val routeAnchorLayerId = "route-anchor-layer"
         private val stopAnchorLayerId = "stop-anchor-layer"
+
+        private val landmarkLayerIds =
+            listOf(
+                "Boston Common",
+                "Boston Public Garden",
+                "Boston Public Library",
+                "Citgo Sign",
+                "Fenway Park",
+                "Gillette Stadium",
+                "Logan International Airport",
+                "Museum of Fine Arts",
+                "Museum of Science",
+                "TD Garden",
+            )
     }
 }
