@@ -15,8 +15,12 @@ import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 import org.koin.compose.koinInject
 
+internal fun tripPredictionsErrorKey(prefix: String) = "$prefix.subscribeToTripPredictions"
+
+@OptIn(ExperimentalTime::class)
 @Composable
 internal fun subscribeToTripPredictions(
     tripId: String?,
@@ -28,7 +32,7 @@ internal fun subscribeToTripPredictions(
     tripPredictionsRepository: ITripPredictionsRepository = koinInject(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsStreamDataResponse? {
-    val errorKey = "$errorKey.subscribeToTripPredictions"
+    val errorKey = tripPredictionsErrorKey(errorKey)
     val staleTimer by timer(checkPredictionsStaleInterval)
 
     var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
