@@ -59,9 +59,7 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     var stop: Stop? { global?.getStop(stopId: stopId) }
 
-    var routeColor: Color { Color(hex: leaf.lineOrRoute.backgroundColor) }
-    var routeTextColor: Color { Color(hex: leaf.lineOrRoute.textColor) }
-    var routeType: RouteType { leaf.lineOrRoute.type }
+    var routeAccents: TripRouteAccents { .init(route: leaf.lineOrRoute.sortRoute) }
 
     var selectedTripIsCancelled: Bool {
         if let tripFilter {
@@ -154,9 +152,9 @@ struct StopDetailsFilteredDepartureDetails: View {
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(
                     status: noPredictionsStatus,
-                    accentColor: routeColor,
+                    accentColor: routeAccents.color,
                     directionLabel: selectedDirection.destination ?? selectedDirection.name ?? "",
-                    routeType: routeType,
+                    routeType: routeAccents.type,
                     now: now,
                     nextScheduleResponse: nextScheduleResponse
                 )
@@ -164,7 +162,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
             } else if selectedTripIsCancelled {
                 StopDetailsIconCard(
-                    accentColor: routeColor,
+                    accentColor: routeAccents.color,
                     details: Text(
                         "This trip has been cancelled. We’re sorry for the inconvenience.",
                         comment: "Explanation for a cancelled trip on stop details"
@@ -173,7 +171,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         "Trip cancelled",
                         comment: "Header for a cancelled trip card on stop details"
                     ),
-                    icon: routeSlashIcon(routeType)
+                    icon: routeSlashIcon(routeAccents.type)
                 )
                 .accessibilityHeading(.h4)
             } else {
@@ -185,6 +183,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     alertSummaries: alertSummaries,
                     context: .stopDetails,
                     now: now,
+                    routeAccents: routeAccents,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
@@ -266,7 +265,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 stopId: leaf.stop.id,
                                 pinned: favorite,
                                 alert: alerts.count > 0,
-                                routeType: leaf.lineOrRoute.type,
+                                routeType: routeAccents.type,
                                 noTrips: nil
                             )
                             view.scrollTo(tileData.id)
@@ -360,8 +359,8 @@ struct StopDetailsFilteredDepartureDetails: View {
             alert: alert,
             alertSummary: summary,
             spec: spec,
-            color: routeColor,
-            textColor: routeTextColor,
+            color: routeAccents.color,
+            textColor: routeAccents.textColor,
             onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
         )
     }
