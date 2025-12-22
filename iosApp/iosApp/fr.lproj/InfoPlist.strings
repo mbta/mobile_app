@@ -1,5 +1,5 @@
 /* Bundle name */
-"CFBundleName" = "MTBA Go";
+"CFBundleName" = "MBTA Go";
 
 /* Privacy - Location When In Use Usage Description */
 "NSLocationWhenInUseUsageDescription" = "Le service de localisation sera utilisé pour afficher les options de transport à proximité.";

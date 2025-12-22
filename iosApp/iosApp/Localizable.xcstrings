@@ -12200,7 +12200,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MTBA Go"
+            "value" : "MBTA Go"
           }
         },
         "ht" : {
@@ -12292,7 +12292,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MTBA Go fonctionne mieux lorsque les services de localisation sont activés"
+            "value" : "MBTA Go fonctionne mieux lorsque les services de localisation sont activés"
           }
         },
         "ht" : {
@@ -12339,7 +12339,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Logo de MTBA"
+            "value" : "Logo de MBTA"
           }
         },
         "ht" : {
@@ -22693,7 +22693,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vous verrez les options de transport à proximité et obtiendrez de meilleurs résultats de recherche lorsque vous activez les services de localisation pour MTBA Go."
+            "value" : "Vous verrez les options de transport à proximité et obtiendrez de meilleurs résultats de recherche lorsque vous activez les services de localisation pour MBTA Go."
           }
         },
         "ht" : {
