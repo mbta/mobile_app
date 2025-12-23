@@ -66,9 +66,9 @@ fun VehiclePuck(
     val scale = if (vehicle.decoration != null && enlargeIfDecorated) 1.5f else 1f
     Box(
         modifier =
-            Modifier.scale(scale)
+            Modifier.clip(CircleShape)
+                .scale(scale)
                 .size(56.dp * scale)
-                .clip(CircleShape)
                 .then(if (onClick != null) Modifier.clickable { onClick() } else Modifier),
         contentAlignment = Alignment.Center,
     ) {
