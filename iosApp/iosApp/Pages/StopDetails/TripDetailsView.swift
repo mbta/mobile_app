@@ -126,11 +126,14 @@ struct TripDetailsView: View {
                     route
                 )
                 .onAppear { didLoadData?(self) }
-            } else if tripFilter != nil, let tripData = tripDetailsVMState?.tripData, tripData.vehicle != nil,
+            } else if tripFilter != nil,
+                      let tripData = tripDetailsVMState?.tripData,
+                      tripData.vehicle != nil,
                       tripData.trip == nil {
                 MissingTripCard(type: .notAvailable, routeAccents: routeAccents)
                     .padding(.horizontal, 14)
                     .padding(.top, 6)
+                    .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
             }

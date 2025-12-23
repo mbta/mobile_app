@@ -80,6 +80,20 @@ internal open class IdleTripRepository : ITripRepository {
     }
 }
 
+internal open class ErroringTripRepository : ITripRepository {
+    override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
+        return ApiResult.Error(404, "")
+    }
+
+    override suspend fun getTrip(tripId: String): ApiResult<TripResponse> {
+        return ApiResult.Error(404, "")
+    }
+
+    override suspend fun getTripShape(tripId: String): ApiResult<TripShape> {
+        return ApiResult.Error(404, "")
+    }
+}
+
 public class MockTripRepository
 @DefaultArgumentInterop.Enabled
 constructor(

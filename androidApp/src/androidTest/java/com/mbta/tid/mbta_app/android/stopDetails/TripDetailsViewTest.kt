@@ -113,6 +113,7 @@ class TripDetailsViewTest {
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
                 now,
+                TripRouteAccents.default,
                 isTripDetailsPage = false,
                 tripDetailsVM = viewModel,
                 analytics = analytics,
@@ -191,6 +192,7 @@ class TripDetailsViewTest {
                 openSheetRoute = openedSheetRoutes::add,
                 openModal = {},
                 now,
+                TripRouteAccents.default,
                 isTripDetailsPage = false,
                 tripDetailsVM = viewModel,
                 analytics = analytics,
@@ -279,5 +281,40 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
+        composeTestRule.onNodeWithText("Trip complete")
+    }
+
+    @Test
+    fun testDisplaysTripNotAvailableCard() {
+        val openedSheetRoutes = mutableListOf<SheetRoutes>()
+        val loggedEvents = mutableListOf<Pair<String, Map<String, String>>>()
+        val analytics =
+            MockAnalytics(
+                onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
+            )
+
+        val unavailableTripData = TripData(tripFilter, null, null, null, true, vehicle)
+
+        val tripVMState = TripDetailsViewModel.State(unavailableTripData, null)
+        val viewModel = MockTripDetailsViewModel(tripVMState)
+
+        composeTestRule.setContent {
+            TripDetailsView(
+                tripFilter,
+                allAlerts = AlertsStreamDataResponse(objects),
+                alertSummaries = emptyMap(),
+                onOpenAlertDetails = {},
+                openSheetRoute = openedSheetRoutes::add,
+                openModal = {},
+                now,
+                TripRouteAccents.default,
+                isTripDetailsPage = false,
+                tripDetailsVM = viewModel,
+                analytics = analytics,
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Trip not available").assertIsDisplayed()
     }
 }
