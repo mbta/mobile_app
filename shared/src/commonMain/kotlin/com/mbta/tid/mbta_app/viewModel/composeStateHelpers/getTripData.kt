@@ -22,30 +22,44 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-private fun fetchTrip(tripId: String, params: FetchParams, updateTrip: (Trip?) -> Unit) {
+private fun fetchTripErrorKey(prefix: String) = "${prefix}.fetchTrip"
+
+private fun fetchTrip(
+    tripId: String,
+    params: FetchParams,
+    onError: () -> Unit,
+    updateTrip: (Trip?) -> Unit,
+) {
     CoroutineScope(params.coroutineDispatcher).launch {
         fetchApi(
             errorBannerRepo = params.errorBannerRepository,
-            errorKey = "${params.errorKey}.fetchTrip",
+            errorKey = fetchTripErrorKey(params.errorKey),
             getData = { params.tripRepository.getTrip(tripId) },
             onSuccess = { updateTrip(it.trip) },
-            onRefreshAfterError = { fetchTrip(tripId, params, updateTrip) },
+            onRefreshAfterError = { fetchTrip(tripId, params, onError, updateTrip) },
+            onError = { onError() },
         )
     }
 }
 
+private fun fetchTripSchedulesErrorKey(prefix: String) = "${prefix}.fetchTripSchedules"
+
 private fun fetchTripSchedules(
     tripId: String,
     params: FetchParams,
+    onError: () -> Unit,
     updateTripSchedules: (TripSchedulesResponse?) -> Unit,
 ) {
     CoroutineScope(params.coroutineDispatcher).launch {
         fetchApi(
             errorBannerRepo = params.errorBannerRepository,
-            errorKey = "${params.errorKey}.fetchTripSchedules",
+            errorKey = fetchTripSchedulesErrorKey(params.errorKey),
             getData = { params.tripRepository.getTripSchedules(tripId) },
             onSuccess = updateTripSchedules,
-            onRefreshAfterError = { fetchTripSchedules(tripId, params, updateTripSchedules) },
+            onRefreshAfterError = {
+                fetchTripSchedules(tripId, params, onError, updateTripSchedules)
+            },
+            onError = { onError() },
         )
     }
 }
@@ -76,6 +90,7 @@ internal fun getTripData(
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }
     var tripPredictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
     var vehicle: Vehicle? by remember { mutableStateOf(null) }
+    var tripLoading: Boolean by remember { mutableStateOf(true) }
 
     var result: TripData? by remember { mutableStateOf(null) }
 
@@ -89,18 +104,50 @@ internal fun getTripData(
         tripSchedules = null
         tripPredictions = null
         vehicle = null
+        tripLoading = true
+    }
+
+    val shouldTryLoadingTrip = trip != null || tripLoading
+
+    fun fetchStaticData(tripId: String) {
+        fetchTrip(
+            tripId,
+            params,
+            {
+                tripLoading = false
+                if (trip == null && vehicle != null) {
+                    errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
+                }
+            },
+        ) {
+            tripLoading = false
+            trip = it
+        }
+        fetchTripSchedules(
+            tripId,
+            params,
+            {
+                if (trip == null && vehicle != null) {
+                    errorBannerRepository.clearDataError(fetchTripSchedulesErrorKey(errorKey))
+                }
+            },
+        ) {
+            tripSchedules = it
+        }
     }
 
     tripPredictions =
-        subscribeToTripPredictions(
-            tripFilter?.tripId,
-            errorKey,
-            active,
-            context,
-            onPredictionMessageReceived,
-            errorBannerRepository,
-            tripPredictionsRepository,
-        )
+        if (shouldTryLoadingTrip)
+            subscribeToTripPredictions(
+                tripFilter?.tripId,
+                errorKey,
+                active,
+                context,
+                onPredictionMessageReceived,
+                errorBannerRepository,
+                tripPredictionsRepository,
+            )
+        else null
 
     vehicle =
         subscribeToVehicle(
@@ -111,15 +158,25 @@ internal fun getTripData(
             vehicleRepository,
         )
 
+    LaunchedEffect(shouldTryLoadingTrip) {
+        if (!shouldTryLoadingTrip) {
+            errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
+            errorBannerRepository.clearDataError(fetchTripSchedulesErrorKey(errorKey))
+            errorBannerRepository.clearDataError(tripPredictionsErrorKey(errorKey))
+        }
+    }
+
     LaunchedEffect(tripFilter?.tripId, active) {
         clearAll()
         if (active) {
-            tripFilter?.tripId?.let { tripId ->
-                params.let { params ->
-                    fetchTrip(tripId, params) { trip = it }
-                    fetchTripSchedules(tripId, params) { tripSchedules = it }
-                }
-            }
+            tripFilter?.tripId?.let { tripId -> if (shouldTryLoadingTrip) fetchStaticData(tripId) }
+        }
+    }
+
+    LaunchedEffect(vehicle) {
+        // If a trip is not loaded but the vehicle has updated, try loading the trip again
+        if (!shouldTryLoadingTrip && active) {
+            tripFilter?.tripId?.let { tripId -> fetchStaticData(tripId) }
         }
     }
 
@@ -133,6 +190,8 @@ internal fun getTripData(
                     (tripFilter.vehicleId == null || tripFilter.vehicleId == vehicle?.id)
             ) {
                 TripData(tripFilter, resolvedTrip, tripSchedules, tripPredictions, true, vehicle)
+            } else if (tripFilter != null && vehicle != null && !tripLoading) {
+                TripData(tripFilter, null, null, null, true, vehicle)
             } else {
                 null
             }

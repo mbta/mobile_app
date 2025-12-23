@@ -10,14 +10,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 public data class TripData(
     val tripFilter: TripDetailsPageFilter,
-    val trip: Trip,
+    val trip: Trip?,
     val tripSchedules: TripSchedulesResponse?,
     val tripPredictions: PredictionsStreamDataResponse?,
     val tripPredictionsLoaded: Boolean = false,
     val vehicle: Vehicle?,
 ) {
     public val vehicleOnOtherTrip: Boolean =
-        (trip.id != vehicle?.tripId || trip.directionId != vehicle.directionId)
+        (trip != null && (trip.id != vehicle?.tripId || trip.directionId != vehicle.directionId))
 }
 
 public val TripData?.vehicleOnOtherTrip: Boolean

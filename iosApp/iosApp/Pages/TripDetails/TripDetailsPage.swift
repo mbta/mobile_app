@@ -56,12 +56,21 @@ struct TripDetailsPage: View {
             VStack {
                 TripDetailsHeader(route: route, direction: direction, navCallbacks: navCallbacks)
                 ErrorBanner(errorBannerVM, padding: [.init(.bottom, 8), .init(.horizontal, 14)])
+                DebugView {
+                    VStack {
+                        Text(verbatim: "trip id: \(filter.tripId)").foregroundStyle(routeAccents.textColor)
+                        Text(verbatim: "vehicle id: \(filter.vehicleId ?? "nil")")
+                            .foregroundStyle(routeAccents.textColor)
+                    }
+                }
+                .padding(.horizontal, 6)
                 HaloScrollView {
                     TripDetailsView(
                         tripFilter: filter,
                         alertSummaries: alertSummaries,
                         context: .tripDetails,
                         now: now,
+                        routeAccents: routeAccents,
                         onOpenAlertDetails: onOpenAlertDetails,
                         errorBannerVM: errorBannerVM,
                         nearbyVM: nearbyVM,

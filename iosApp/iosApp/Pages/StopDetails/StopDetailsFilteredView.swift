@@ -199,6 +199,14 @@ struct StopDetailsFilteredView: View {
                     navCallbacks: navCallbacks,
                 )
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
+                DebugView {
+                    VStack {
+                        Text(verbatim: "stop id: \(stopId)")
+                        Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
+                        Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")
+                    }
+                }
+                .padding(.horizontal, 6)
             }
             .fixedSize(horizontal: false, vertical: true)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)

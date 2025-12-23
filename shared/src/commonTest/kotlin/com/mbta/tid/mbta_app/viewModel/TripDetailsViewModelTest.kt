@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.repositories.ErroringTripRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockTripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
@@ -302,5 +304,35 @@ class TripDetailsViewModelTest : KoinTest {
         viewModel.setActive(active = true, wasSentToBackground = false)
 
         testViewModelFlow(viewModel).test { assertNull(awaitItem().tripData) }
+    }
+
+    @Test
+    fun testTripDataIsLoadedWithVehicleWithNoTrip() = runTest {
+        val objects = TestData.clone()
+        val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.IncomingAt }
+
+        val vehicleRepo =
+            MockVehicleRepository(outcome = ApiResult.Ok(VehicleStreamDataResponse(vehicle)))
+        val tripRepo = ErroringTripRepository()
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(objects, dispatcher) {
+            this.trip = tripRepo
+            this.vehicle = vehicleRepo
+        }
+
+        val viewModel: TripDetailsViewModel = get()
+        val filters =
+            TripDetailsPageFilter(vehicle.tripId ?: "", vehicle.id, Route.Id(""), 0, "", 0)
+        viewModel.setFilters(filters)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setActive(active = true, wasSentToBackground = false)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(
+                TripData(filters, null, null, null, true, vehicle),
+                awaitItemSatisfying { it.tripData != null }.tripData,
+            )
+        }
     }
 }

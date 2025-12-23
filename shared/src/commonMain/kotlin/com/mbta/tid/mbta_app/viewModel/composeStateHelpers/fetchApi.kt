@@ -14,6 +14,7 @@ internal suspend fun <T : Any> fetchApi(
     getData: suspend () -> ApiResult<T>,
     onSuccess: suspend (T) -> Unit = {},
     onRefreshAfterError: () -> Unit,
+    onError: (ApiResult.Error<T>) -> Unit = {},
 ) {
     val result: ApiResult<T> =
         try {
@@ -29,6 +30,7 @@ internal suspend fun <T : Any> fetchApi(
                 details = result.toString(),
                 action = onRefreshAfterError,
             )
+            onError(result)
         }
         is ApiResult.Ok -> {
             errorBannerRepo.clearDataError(key = errorKey)
