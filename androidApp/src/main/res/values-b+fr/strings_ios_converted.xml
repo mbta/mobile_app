@@ -198,9 +198,9 @@
     <string name="loading">Chargement...</string>
     <string name="location_not_available_yet">La localisation n’est pas encore disponible</string>
     <string name="location_services_off">Les services de localisation sont désactivés</string>
-    <string name="location_settings_prompt_body">Vous verrez les options de transport à proximité et obtiendrez de meilleurs résultats de recherche lorsque vous activez les services de localisation pour MTBA Go.</string>
+    <string name="location_settings_prompt_body">Vous verrez les options de transport à proximité et obtiendrez de meilleurs résultats de recherche lorsque vous activez les services de localisation pour MBTA Go.</string>
     <string name="location_settings_prompt_keep_off">Désactiver les services de localisation</string>
-    <string name="location_settings_prompt_title">MTBA Go fonctionne mieux lorsque les services de localisation sont activés</string>
+    <string name="location_settings_prompt_title">MBTA Go fonctionne mieux lorsque les services de localisation sont activés</string>
     <string name="location_settings_prompt_turn_on">Activer dans les paramètres</string>
     <string name="maintenance">Maintenance</string>
     <string name="maintenance_lowercase">entretien</string>
@@ -223,7 +223,7 @@
     <string name="more_section_support">Informations générales et assistance MBTA</string>
     <string name="more_section_support_note_accessibility">711 pour le service TTY; VRS pour la langue des signes</string>
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
-    <string name="more_title">MTBA Go</string>
+    <string name="more_title">MBTA Go</string>
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>
