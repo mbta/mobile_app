@@ -41,7 +41,7 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
         ApiResult.runCatching {
             mobileBackendClient
                 .get {
-                    timeout { requestTimeoutMillis = 3000 }
+                    timeout { requestTimeoutMillis = 4000 }
                     url {
                         path("api/schedules")
                         parameters.append("stop_ids", stopIds.joinToString(separator = ","))
@@ -64,7 +64,7 @@ internal class SchedulesRepository : ISchedulesRepository, KoinComponent {
         ApiResult.runCatching {
             mobileBackendClient
                 .get {
-                    timeout { requestTimeoutMillis = 3000 }
+                    timeout { requestTimeoutMillis = 4000 }
                     url {
                         path("api/schedules/next")
                         parameters.append(
