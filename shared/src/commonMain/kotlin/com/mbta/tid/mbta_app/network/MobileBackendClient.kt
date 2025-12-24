@@ -32,11 +32,13 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
             install(ContentEncoding) { gzip(0.9F) }
-            install(HttpTimeout) { requestTimeoutMillis = 8000 }
             install(HttpRequestRetry) {
-                retryOnExceptionOrServerErrors(maxRetries = 3)
-                exponentialDelay()
+                retryOnException(retryOnTimeout = true)
+                retryOnServerErrors()
+                maxRetries = 3
+                constantDelay(1)
             }
+            install(HttpTimeout) { requestTimeoutMillis = 8000 }
             defaultRequest { url(appVariant.backendRoot) }
             HttpResponseValidator {
                 validateResponse { response ->
