@@ -124,6 +124,7 @@ struct HomeMapView: View {
             }
             .onAppear {
                 checkOnboardingLoaded()
+                mapVM.colorPaletteChanged(isDarkMode: colorScheme == .dark)
             }
             .onChange(of: colorScheme) { newColorScheme in
                 mapVM.colorPaletteChanged(isDarkMode: newColorScheme == .dark)
