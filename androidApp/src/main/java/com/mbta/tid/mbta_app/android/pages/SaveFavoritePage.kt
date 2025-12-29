@@ -18,11 +18,11 @@ import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -34,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.mapbox.maps.extension.style.expressions.dsl.generated.string
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
@@ -42,10 +43,11 @@ import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.stopCard.FavoriteStopCard
 import com.mbta.tid.mbta_app.android.favorites.NotificationSettingsWidget
 import com.mbta.tid.mbta_app.android.state.getGlobalData
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.android.util.getLabels
 import com.mbta.tid.mbta_app.android.util.key
-import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -61,13 +63,14 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.utils.TestData
+import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.MockToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
-import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 import org.koin.compose.KoinIsolatedContext
@@ -83,21 +86,23 @@ fun SaveFavoritePage(
     initialDirection: Int,
     context: EditFavoritesContext,
     goBack: () -> Unit,
+    favoritesViewModel: IFavoritesViewModel = koinInject(),
     toastViewModel: IToastViewModel = koinInject(),
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val localContext = LocalContext.current
 
     val global = getGlobalData("SaveFavoritePage")
     val lineOrRoute = global?.getLineOrRoute(routeId)
     val stop = global?.getStop(stopId)
 
-    val (favorites, updateFavorites) = manageFavorites()
-
     if (global == null || lineOrRoute == null || stop == null) {
         Text("Loading")
         return
     }
+
+    val favoritesState by favoritesViewModel.models.collectAsState()
+    val favorites = favoritesState.favorites
+
     val allPatternsForStop = global.getPatternsFor(stop.id, lineOrRoute)
     val stopDirections =
         lineOrRoute.directions(global, stop, allPatternsForStop.filter { it.isTypical() }).filter {
@@ -120,52 +125,90 @@ fun SaveFavoritePage(
 
     val notificationPermissionState = notificationPermissionState()
 
+    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
+
+    fun updateFavorites(update: Map<RouteStopDirection, FavoriteSettings?>) {
+        favoritesViewModel.updateFavorites(
+            update,
+            context,
+            selectedDirection,
+            fcmToken,
+            includeAccessibility,
+        )
+    }
+
     fun updateCloseAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
         notificationPermissionState.launchPermissionRequest()
-        coroutineScope.launch {
-            updateFavorites(update, context, selectedDirection)
-            val favorited = update.filter { it.value != null }
-            val firstFavorite = favorited.entries.firstOrNull()
-            val labels = firstFavorite?.key?.getLabels(global, localContext)
-            var toastText: String? = null
+        updateFavorites(update)
+        val favorited = update.filter { it.value != null }
+        val firstFavorite = favorited.entries.firstOrNull()
+        val labels = firstFavorite?.key?.getLabels(global, localContext)
+        var toastText: String? = null
 
-            // If there's only a single favorite, show direction, route, and stop in the toast
-            if (favorited.size == 1) {
-                toastText =
-                    labels?.let {
-                        localContext.getString(
-                            R.string.favorites_toast_add,
-                            it.direction,
-                            it.route,
-                            it.stop,
-                        )
-                    } ?: localContext.getString(R.string.favorites_toast_add_fallback)
-            }
-            // If there are two favorites and they both have the same route and stop, omit direction
-            else if (
-                favorited.size == 2 &&
-                    favorited.keys.all {
-                        it.route == firstFavorite?.key?.route && it.stop == firstFavorite.key.stop
-                    }
-            ) {
-                toastText =
-                    labels?.let {
-                        localContext.getString(
-                            R.string.favorites_toast_add_multi,
-                            it.route,
-                            it.stop,
-                        )
-                    } ?: localContext.getString(R.string.favorites_toast_add_fallback)
-            }
-
-            goBack()
-
-            toastText?.let {
-                toastViewModel.showToast(
-                    ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short)
-                )
-            }
+        // If there's only a single favorite, show direction, route, and stop in the toast
+        if (favorited.size == 1) {
+            toastText =
+                labels?.let {
+                    localContext.getString(
+                        R.string.favorites_toast_add,
+                        it.direction,
+                        it.route,
+                        it.stop,
+                    )
+                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
         }
+        // If there are two favorites and they both have the same route and stop, omit direction
+        else if (
+            favorited.size == 2 &&
+                favorited.keys.all {
+                    it.route == firstFavorite?.key?.route && it.stop == firstFavorite.key.stop
+                }
+        ) {
+            toastText =
+                labels?.let {
+                    localContext.getString(R.string.favorites_toast_add_multi, it.route, it.stop)
+                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
+        }
+
+        goBack()
+
+        toastText?.let {
+            toastViewModel.showToast(
+                ToastViewModel.Toast(it, duration = ToastViewModel.Duration.Short)
+            )
+        }
+    }
+
+    val removeToastText = stringResource(R.string.favorites_toast_remove)
+    val removeToastFallbackText = stringResource(R.string.favorites_toast_remove_fallback)
+    val removeToastUndoButtonText = stringResource(R.string.undo)
+
+    fun removeCloseAndToast(removeFavorite: RouteStopDirection) {
+        val deletedSettings = favorites?.get(removeFavorite) ?: FavoriteSettings()
+
+        updateFavorites(mapOf(removeFavorite to null))
+
+        val labels = removeFavorite.getLabels(global, localContext)
+        val toastText =
+            labels?.let { removeToastText.format(it.direction, it.route, it.stop) }
+                ?: removeToastFallbackText
+
+        goBack()
+
+        toastViewModel.showToast(
+            ToastViewModel.Toast(
+                toastText,
+                duration = ToastViewModel.Duration.Short,
+                action =
+                    ToastViewModel.ToastAction.Custom(
+                        actionLabel = removeToastUndoButtonText,
+                        onAction = {
+                            updateFavorites(mapOf(removeFavorite to deletedSettings))
+                            toastViewModel.hideToast()
+                        },
+                    ),
+            )
+        )
     }
 
     Column {
@@ -225,11 +268,11 @@ fun SaveFavoritePage(
             if (isFavorite) {
                 HaloSeparator()
                 Button(
-                    onClick = { updateCloseAndToast(mapOf(selectedRouteStopDirection to null)) },
+                    onClick = { removeCloseAndToast(selectedRouteStopDirection) },
                     Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(8.dp),
                     colors =
-                        ButtonDefaults.buttonColors(
+                        buttonColors(
                             colorResource(R.color.delete),
                             contentColor = colorResource(R.color.delete_background),
                         ),
