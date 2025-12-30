@@ -195,7 +195,11 @@ private fun EditFavoritesList(
     editFavorite: (RouteStopDirection) -> Unit,
 ) {
     val notificationsFlag = SettingsCache.get(Settings.Notifications)
-    if (routeCardData == null) {
+
+    val displayedFavorites =
+        routeCardData?.filter { data -> !removedFavorites.containsAll(data.routeStopDirections) }
+
+    if (displayedFavorites == null) {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
             ScrollSeparatorLazyColumn(
                 contentPadding =
@@ -207,7 +211,7 @@ private fun EditFavoritesList(
                 item { Spacer(Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)) }
             }
         }
-    } else if (routeCardData.isEmpty()) {
+    } else if (displayedFavorites.isEmpty()) {
         ScrollSeparatorColumn(Modifier.padding(8.dp).navigationBarsPadding(), Arrangement.Center) {
             NoFavoritesView({}, false)
         }
@@ -217,12 +221,7 @@ private fun EditFavoritesList(
             verticalArrangement = Arrangement.spacedBy(14.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(
-                routeCardData.filter { data ->
-                    !removedFavorites.containsAll(data.routeStopDirections)
-                },
-                key = { it.id.idText },
-            ) {
+            items(displayedFavorites, key = { it.id.idText }) {
                 Column(Modifier.animateItem().haloContainer(1.dp)) {
                     TransitHeader(it.lineOrRoute) {}
 
