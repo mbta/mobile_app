@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
@@ -126,7 +126,7 @@ fun RoutePill(
         }
 
     val contentDescription =
-        spec.contentDescription?.text ?: routeModeLabel(LocalContext.current, line, route)
+        spec.contentDescription?.text ?: routeModeLabel(LocalResources.current, line, route)
 
     val finalModifier =
         modifier
@@ -172,7 +172,7 @@ val RoutePillSpec.ContentDescription.text: String
     get() =
         when (this) {
             is RoutePillSpec.ContentDescription.StopSearchResultRoute ->
-                routeModeLabel(LocalContext.current, routeName, routeType, isOnly)
+                routeModeLabel(LocalResources.current, routeName, routeType, isOnly)
         }
 
 @Preview

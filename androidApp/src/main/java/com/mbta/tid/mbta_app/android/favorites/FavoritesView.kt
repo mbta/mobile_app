@@ -12,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -53,7 +52,6 @@ fun FavoritesView(
 ) {
     val now by timer(updateInterval = 5.seconds)
     val state by favoritesViewModel.models.collectAsState()
-    val context = LocalContext.current
 
     fun onAddFavorites() {
         favoritesViewModel.setIsFirstExposureToNewFavorites(false)
@@ -88,11 +86,13 @@ fun FavoritesView(
         state.loadedLocation?.let { setLastLocation(it) }
         setIsTargeting(false)
     }
+
+    val toastText = stringResource(R.string.favorite_stops_first_time_toast_message)
     LaunchedEffect(state.shouldShowFirstTimeToast) {
         if (state.shouldShowFirstTimeToast) {
             toastViewModel.showToast(
                 ToastViewModel.Toast(
-                    context.getString(R.string.favorite_stops_first_time_toast_message),
+                    toastText,
                     action =
                         ToastViewModel.ToastAction.Close(
                             onClose = {

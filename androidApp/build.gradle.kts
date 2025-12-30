@@ -101,7 +101,6 @@ android {
         @Suppress("UnstableApiUsage")
         generateLocaleConfig = true
     }
-    lint { baseline = file("lint-baseline.xml") }
 }
 
 dependencies {

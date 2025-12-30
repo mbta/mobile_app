@@ -21,7 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -85,26 +85,24 @@ fun SaveFavoritesFlow(
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))
 
     val isBusOneDirection = directions.size == 1 && lineOrRoute.sortRoute.type == RouteType.BUS
-    val localContext = LocalContext.current
+    val resources = LocalResources.current
+
+    val updateToastSingleText = stringResource(R.string.favorites_toast_add)
+    val updateToastMultiText = stringResource(R.string.favorites_toast_add_multi)
+    val updateToastFallbackText = stringResource(R.string.favorites_toast_add_fallback)
 
     fun updateAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
         updateFavorites(update)
         val favorited = update.filter { it.value != null }
         val firstFavorite = favorited.entries.firstOrNull() ?: return
-        val labels = firstFavorite.key.getLabels(global, localContext)
+        val labels = firstFavorite.key.getLabels(global, resources)
         var toastText: String? = null
 
         // If there's only a single favorite, show direction, route, and stop in the toast
         if (favorited.size == 1) {
             toastText =
-                labels?.let {
-                    localContext.getString(
-                        R.string.favorites_toast_add,
-                        it.direction,
-                        it.route,
-                        it.stop,
-                    )
-                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
+                labels?.let { updateToastSingleText.format(it.direction, it.route, it.stop) }
+                    ?: updateToastFallbackText
         }
         // If there are two favorites and they both have the same route and stop, omit direction
         else if (
@@ -114,9 +112,8 @@ fun SaveFavoritesFlow(
                 }
         ) {
             toastText =
-                labels?.let {
-                    localContext.getString(R.string.favorites_toast_add_multi, it.route, it.stop)
-                } ?: localContext.getString(R.string.favorites_toast_add_fallback)
+                labels?.let { updateToastMultiText.format(it.route, it.stop) }
+                    ?: updateToastFallbackText
         }
 
         toastText?.let {

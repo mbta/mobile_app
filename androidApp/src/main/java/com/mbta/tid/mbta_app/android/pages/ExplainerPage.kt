@@ -19,7 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -78,7 +78,7 @@ fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: (
 
 @Composable
 fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     Text(
         when (type) {
             ExplainerType.FinishingAnotherTrip ->
@@ -87,7 +87,7 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
             ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_headline_no_vehicle,
-                        routeType.typeText(context, true),
+                        routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
@@ -137,13 +137,13 @@ fun routeTurnaroundResource(routeType: RouteType) =
 
 @Composable
 fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifier = Modifier) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     Text(
         when (type) {
             ExplainerType.FinishingAnotherTrip ->
                 stringResource(
                         R.string.explainer_text_finishing_another,
-                        routeType.typeText(context, true),
+                        routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
@@ -152,7 +152,7 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
             ExplainerType.NoVehicle ->
                 stringResource(
                         R.string.explainer_text_no_vehicle,
-                        routeType.typeText(context, true),
+                        routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
                         if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()

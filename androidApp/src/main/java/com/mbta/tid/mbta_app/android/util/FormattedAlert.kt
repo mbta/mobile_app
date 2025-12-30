@@ -1,9 +1,9 @@
 package com.mbta.tid.mbta_app.android.util
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
@@ -40,34 +40,35 @@ data class FormattedAlert(
         predictionReplacement(alert.effect),
     )
 
-    fun cause(context: Context) = causeRes?.let { context.getString(it) }
+    fun cause(resources: Resources) = causeRes?.let { resources.getString(it) }
 
     val cause
-        @Composable get() = cause(LocalContext.current)
+        @Composable get() = cause(LocalResources.current)
 
-    fun effect(context: Context) = context.getString(R.string.effect, context.getString(effectRes))
+    fun effect(resources: Resources) =
+        resources.getString(R.string.effect, resources.getString(effectRes))
 
     val effect
-        @Composable get() = effect(LocalContext.current)
+        @Composable get() = effect(LocalResources.current)
 
-    private fun downstreamEffect(context: Context) =
-        context.getString(R.string.effect_ahead, context.getString(sentenceEffectRes))
+    private fun downstreamEffect(resources: Resources) =
+        resources.getString(R.string.effect_ahead, resources.getString(sentenceEffectRes))
 
-    private fun delaysDueToCause(context: Context) =
+    private fun delaysDueToCause(resources: Resources) =
         dueToCauseRes?.let {
-            context.getString(R.string.delays_due_to_cause, context.getString(it))
-        } ?: context.getString(R.string.delays_unknown_reason)
+            resources.getString(R.string.delays_due_to_cause, resources.getString(it))
+        } ?: resources.getString(R.string.delays_unknown_reason)
 
-    private fun delayHeader(context: Context) =
+    private fun delayHeader(resources: Resources) =
         // Show "Single Tracking" if there is an informational delay alert with that cause
         // (Any other information severity delay alerts are never shown)
-        cause(context)?.let {
+        cause(resources)?.let {
             if (alert.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
-                AnnotatedString.fromHtml(context.getString(R.string.effect, it))
+                AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
             } else null
-        } ?: AnnotatedString.fromHtml(delaysDueToCause(context))
+        } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
 
-    private fun elevatorHeader(context: Context) =
+    private fun elevatorHeader(resources: Resources) =
         AnnotatedString(
             alert.informedEntity
                 .mapNotNull { alert.facilities?.get(it.facility) }
@@ -76,86 +77,87 @@ data class FormattedAlert(
                 .singleOrNull()
                 ?.shortName
                 ?.let { facilityName ->
-                    context.getString(R.string.alert_elevator_header, facilityName)
-                } ?: alert.header ?: effect(context)
+                    resources.getString(R.string.alert_elevator_header, facilityName)
+                } ?: alert.header ?: effect(resources)
         )
 
-    private fun summary(context: Context) =
+    private fun summary(resources: Resources) =
         alertSummary?.let {
             AnnotatedString.fromHtml(
-                context.getString(
+                resources.getString(
                     R.string.alert_summary,
-                    context.getString(sentenceEffectRes),
-                    summaryLocation(context),
-                    summaryTimeframe(context),
+                    resources.getString(sentenceEffectRes),
+                    summaryLocation(resources),
+                    summaryTimeframe(resources),
                 )
             )
         }
 
-    fun alertCardHeader(spec: AlertCardSpec, context: Context) =
+    fun alertCardHeader(spec: AlertCardSpec, resources: Resources) =
         when (spec) {
             AlertCardSpec.Downstream ->
-                summary(context) ?: AnnotatedString.fromHtml(downstreamEffect(context))
-            AlertCardSpec.Elevator -> elevatorHeader(context)
-            AlertCardSpec.Delay -> delayHeader(context)
-            AlertCardSpec.Secondary -> summary(context) ?: AnnotatedString.fromHtml(effect(context))
-            else -> AnnotatedString.fromHtml(effect(context))
+                summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
+            AlertCardSpec.Elevator -> elevatorHeader(resources)
+            AlertCardSpec.Delay -> delayHeader(resources)
+            AlertCardSpec.Secondary ->
+                summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
+            else -> AnnotatedString.fromHtml(effect(resources))
         }
 
     @Composable
-    fun alertCardHeader(spec: AlertCardSpec) = alertCardHeader(spec, LocalContext.current)
+    fun alertCardHeader(spec: AlertCardSpec) = alertCardHeader(spec, LocalResources.current)
 
-    fun alertCardMajorBody(context: Context) =
-        summary(context) ?: AnnotatedString(alert.header ?: "")
+    fun alertCardMajorBody(resources: Resources) =
+        summary(resources) ?: AnnotatedString(alert.header ?: "")
 
     val alertCardMajorBody
-        @Composable get() = alertCardMajorBody(LocalContext.current)
+        @Composable get() = alertCardMajorBody(LocalResources.current)
 
-    private fun summaryLocation(context: Context) =
+    private fun summaryLocation(resources: Resources) =
         alertSummary?.location?.let {
             when (it) {
                 is AlertSummary.Location.SingleStop ->
-                    context.getString(R.string.alert_summary_location_single, it.stopName)
+                    resources.getString(R.string.alert_summary_location_single, it.stopName)
                 is AlertSummary.Location.SuccessiveStops ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_location_successive,
                         it.startStopName,
                         it.endStopName,
                     )
                 is AlertSummary.Location.StopToDirection ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_location_stop_to_direction,
                         it.startStopName,
-                        context.getString(directionNameFormatted(it.direction)),
+                        resources.getString(directionNameFormatted(it.direction)),
                     )
                 is AlertSummary.Location.DirectionToStop ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_location_direction_to_stop,
-                        context.getString(directionNameFormatted(it.direction)),
+                        resources.getString(directionNameFormatted(it.direction)),
                         it.endStopName,
                     )
             }
         } ?: ""
 
-    private fun summaryTimeframe(context: Context) =
+    private fun summaryTimeframe(resources: Resources) =
         alertSummary?.timeframe?.let {
             when (it) {
                 AlertSummary.Timeframe.EndOfService ->
-                    context.getString(R.string.alert_summary_timeframe_end_of_service)
+                    resources.getString(R.string.alert_summary_timeframe_end_of_service)
                 AlertSummary.Timeframe.Tomorrow ->
-                    context.getString(R.string.alert_summary_timeframe_tomorrow)
+                    resources.getString(R.string.alert_summary_timeframe_tomorrow)
                 is AlertSummary.Timeframe.LaterDate ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_timeframe_later_date,
                         it.time.formattedServiceDate(),
                     )
                 is AlertSummary.Timeframe.ThisWeek ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_timeframe_this_week,
                         it.time.formattedServiceDay(),
                     )
                 is AlertSummary.Timeframe.Time ->
-                    context.getString(
+                    resources.getString(
                         R.string.alert_summary_timeframe_time,
                         it.time.formattedTime(),
                     )

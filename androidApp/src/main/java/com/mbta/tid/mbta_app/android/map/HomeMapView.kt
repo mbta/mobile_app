@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -383,7 +384,7 @@ fun HomeMapView(
                                 routeIcon(routeType),
                                 stringResource(
                                     R.string.recenter_map_on_vehicle,
-                                    routeType.typeText(LocalContext.current, isOnly = true),
+                                    routeType.typeText(LocalResources.current, isOnly = true),
                                 ),
                                 onClick = {
                                     viewModel.recenter(MapViewModel.Event.RecenterType.Trip)

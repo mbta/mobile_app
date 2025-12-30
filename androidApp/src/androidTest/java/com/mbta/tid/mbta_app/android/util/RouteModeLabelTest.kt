@@ -2,7 +2,7 @@ package com.mbta.tid.mbta_app.android.util
 
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
@@ -25,7 +25,7 @@ class RouteModeLabelTest {
         val name = "1"
         val type = RouteType.BUS
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, name, type)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, name, type)) }
 
         composeTestRule.onNodeWithText("1 bus").assertIsDisplayed()
     }
@@ -35,7 +35,9 @@ class RouteModeLabelTest {
         val name = "Red Line"
         val type = RouteType.HEAVY_RAIL
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, name, type, false)) }
+        composeTestRule.setContent {
+            Text(routeModeLabel(LocalResources.current, name, type, false))
+        }
 
         composeTestRule.onNodeWithText("Red Line trains").assertIsDisplayed()
     }
@@ -44,7 +46,7 @@ class RouteModeLabelTest {
     fun testNameOnly() {
         val name = "Blue Line"
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, name, null)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, name, null)) }
 
         composeTestRule.onNodeWithText(name).assertIsDisplayed()
     }
@@ -53,7 +55,7 @@ class RouteModeLabelTest {
     fun testTypeOnly() {
         val type = RouteType.FERRY
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, null, type)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, null, type)) }
 
         composeTestRule.onNodeWithText("ferry").assertIsDisplayed()
     }
@@ -64,7 +66,7 @@ class RouteModeLabelTest {
 
         composeTestRule.setContent {
             Text(
-                routeModeLabel(LocalContext.current, name = null, type = null),
+                routeModeLabel(LocalResources.current, name = null, type = null),
                 Modifier.testTag("empty"),
             )
         }
@@ -88,7 +90,7 @@ class RouteModeLabelTest {
                 type = RouteType.FERRY
             }
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, route)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, route)) }
 
         composeTestRule.onNodeWithText("Lynn Ferry").assertIsDisplayed()
     }
@@ -103,7 +105,7 @@ class RouteModeLabelTest {
                 lineId = line.id.idText
             }
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, line, route)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, line, route)) }
 
         composeTestRule.onNodeWithText("Green Line train").assertIsDisplayed()
     }
@@ -120,7 +122,7 @@ class RouteModeLabelTest {
             }
         val lineOrRoute = LineOrRoute.Line(line, setOf(route))
 
-        composeTestRule.setContent { Text(routeModeLabel(LocalContext.current, lineOrRoute)) }
+        composeTestRule.setContent { Text(routeModeLabel(LocalResources.current, lineOrRoute)) }
 
         composeTestRule.onNodeWithText("Silver Line bus").assertIsDisplayed()
     }

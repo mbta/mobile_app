@@ -5,7 +5,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -65,11 +65,14 @@ private fun detailText(
     now: EasternTimeInstant,
     nextScheduleResponse: NextScheduleResponse?,
 ): (@Composable () -> Unit)? {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val hideMaps = SettingsCache.get(Settings.HideMaps)
 
     var predictionsUnavailableString =
-        stringResource(R.string.predictions_unavailable_details, routeType.typeText(context, false))
+        stringResource(
+            R.string.predictions_unavailable_details,
+            routeType.typeText(resources, false),
+        )
 
     var predictionsUnavailableStringNoMap =
         stringResource(R.string.predictions_unavailable_details_hide_maps)

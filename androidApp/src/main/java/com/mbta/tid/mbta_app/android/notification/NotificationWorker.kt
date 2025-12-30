@@ -42,7 +42,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
 
         val content =
             NotificationContent.build(
-                applicationContext,
+                applicationContext.resources,
                 alertId,
                 subscriptions,
                 alertsRepository,
