@@ -78,6 +78,9 @@
     <string name="crossing_issue_lowercase">pwoblèm nan pasaj a nivo</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="crossing_malfunction_lowercase">malfonksyònman nan pasaj a nivo</string>
+    <string name="crowding_crowded">Anpil moun</string>
+    <string name="crowding_not_crowded">Pa gen moun</string>
+    <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Reta&lt;/b></string>

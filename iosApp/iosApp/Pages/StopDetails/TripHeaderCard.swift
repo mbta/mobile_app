@@ -75,6 +75,43 @@ struct TripHeaderCard: View {
         .accessibilityHeading(.h4)
     }
 
+    @ViewBuilder private var busCrowding: some View {
+        switch spec {
+        case let .vehicle(vehicle, _, _, atTerminal):
+            if let crowding = vehicle.occupancyStatus.crowdingLevel, route.type == .bus, !atTerminal {
+                HStack(alignment: .center, spacing: 8) {
+                    let crowdingImage: ImageResource = switch crowding {
+                    case .crowded: .crowdingBusCrowded
+                    case .notCrowded: .crowdingBusNotCrowded
+                    case .someCrowding: .crowdingBusSomeCrowding
+                    }
+                    Image(crowdingImage).resizable().frame(width: 16, height: 12, alignment: .center).scaledToFit()
+                    Text(crowdingText(crowding)).font(.footnote).foregroundStyle(Color.text.opacity(0.6))
+                }
+            } else {
+                EmptyView()
+            }
+        default: EmptyView()
+        }
+    }
+
+    private func crowdingText(_ crowding: Vehicle.CrowdingLevel) -> String {
+        switch crowding {
+        case .crowded: NSLocalizedString(
+                "Crowded",
+                comment: "Text for the highest crowding level, with no seats available"
+            )
+        case .notCrowded: NSLocalizedString(
+                "Not crowded",
+                comment: "Text for the lowest crowding level, with many available seats"
+            )
+        case .someCrowding: NSLocalizedString(
+                "Some crowding",
+                comment: "Text for a moderate crowding level, with some seats available"
+            )
+        }
+    }
+
     @ViewBuilder private var description: some View {
         switch spec {
         case .finishingAnotherTrip: finishingAnotherTripDescription
@@ -142,6 +179,7 @@ struct TripHeaderCard: View {
                         .font(Typography.footnote)
                     Text(stop.name)
                         .font(Typography.headlineBold)
+                    busCrowding
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
@@ -338,12 +376,15 @@ struct TripVehicleCard_Previews: PreviewProvider {
             trip.headsign = "Alewife"
         }
         let vehicle = Vehicle(
-            id: "y1234", bearing: nil,
+            id: "y1234",
+            bearing: nil,
+            carriages: [],
             currentStatus: __Bridge__Vehicle_CurrentStatus.inTransitTo,
             currentStopSequence: 30,
             directionId: 1,
             latitude: 0.0,
             longitude: 0.0,
+            occupancyStatus: .noDataAvailable,
             updatedAt: now.minus(seconds: 10),
             routeId: .init("66"),
             stopId: "place-davis",
