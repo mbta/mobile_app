@@ -24,18 +24,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
-import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSignificance
 import com.mbta.tid.mbta_app.model.AlertSummary
@@ -44,7 +44,6 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
@@ -106,11 +105,7 @@ fun StopDetailsFilteredDeparturesView(
             leaf.upcomingTrips.any { it.trip.id == tripFilter.tripId && it.isCancelled }
         else false
 
-    val routeHex: String = lineOrRoute.backgroundColor
-    val routeColor: Color = Color.fromHex(routeHex)
-    val routeType: RouteType = lineOrRoute.sortRoute.type
-    val textHex: String = lineOrRoute.textColor
-    val routeTextColor: Color = Color.fromHex(textHex)
+    val routeAccents = TripRouteAccents(lineOrRoute.sortRoute)
 
     // keys are trip IDs
     val bringIntoViewRequesters = remember { mutableStateMapOf<String, BringIntoViewRequester>() }
@@ -166,6 +161,16 @@ fun StopDetailsFilteredDeparturesView(
         }
     }
 
+    DebugView {
+        Column(
+            Modifier.align(Alignment.CenterHorizontally),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text("stop id: $stopId")
+            Text("trip id: ${tripFilter?.tripId ?: "null"}")
+            Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
+        }
+    }
     Column(Modifier.navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
             DepartureTiles(
@@ -200,8 +205,8 @@ fun StopDetailsFilteredDeparturesView(
                 alert,
                 summary,
                 spec,
-                color = routeColor,
-                textColor = routeTextColor,
+                color = routeAccents.color,
+                textColor = routeAccents.textColor,
                 onViewDetails = { openAlertDetails(alert, spec) },
             )
         }
@@ -268,9 +273,9 @@ fun StopDetailsFilteredDeparturesView(
 
                 StopDetailsNoTripCard(
                     status = noPredictionsStatus,
-                    accentColor = routeColor,
+                    accentColor = routeAccents.color,
                     directionLabel = selectedDirection.destination ?: selectedDirection.name ?: "",
-                    routeType = routeType,
+                    routeType = routeAccents.type,
                     now = now,
                     nextScheduleResponse = nextScheduleResponse,
                 )
@@ -278,14 +283,14 @@ fun StopDetailsFilteredDeparturesView(
         } else if (selectedTripIsCancelled) {
             Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
                 StopDetailsIconCard(
-                    routeColor,
+                    routeAccents.color,
                     details = { Text(stringResource(R.string.trip_cancelled_details)) },
                     header = { modifier ->
                         Text(stringResource(R.string.trip_cancelled), modifier = modifier)
                     },
                     icon = { modifier ->
                         Icon(
-                            painter = routeSlashIcon(routeType = routeType),
+                            painter = routeSlashIcon(routeType = routeAccents.type),
                             contentDescription = null,
                             modifier = modifier.testTag("route_slash_icon"),
                         )
@@ -305,6 +310,7 @@ fun StopDetailsFilteredDeparturesView(
                 openSheetRoute = openSheetRoute,
                 openModal = openModal,
                 now = now,
+                routeAccents = routeAccents,
                 isTripDetailsPage = false,
                 modifier = Modifier.padding(horizontal = 10.dp),
             )

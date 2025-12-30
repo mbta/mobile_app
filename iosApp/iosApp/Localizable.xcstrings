@@ -19974,6 +19974,53 @@
         }
       }
     },
+    "This %@ is not assigned to a trip yet." : {
+      "comment" : "Body text for a card in trip details when a vehicle has a trip that doesn't exist in the API, the interpolated value can be \"bus\" or \"train\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este %@ aún no está asignado a ningún viaje."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ce %@ n’est pas encore affecté à un voyage."
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ sa a poko resevwa yon vwayaj."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Este %@ ainda não foi atribuído a uma viagem."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Mã %@ này chưa được chỉ định cho chuyến đi nào."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此 %@ 尚未分配给任何行程。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "此 %@ 尚未分配給任何行程。"
+          }
+        }
+      }
+    },
     "This stop has %ld elevators closed" : {
       "comment" : "Describe an elevator outage at the stop in the list of all stops on the trip",
       "localizations" : {
@@ -21254,6 +21301,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "行程結束"
+          }
+        }
+      }
+    },
+    "Trip not available" : {
+      "comment" : "Header text for a card in trip details when a vehicle has a trip that doesn't exist in the API",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viaje no disponible"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Voyage non disponible"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vwayaj pa disponib"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Viagem não disponível"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chuyến đi không khả dụng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程不可用"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "行程不可用"
           }
         }
       }

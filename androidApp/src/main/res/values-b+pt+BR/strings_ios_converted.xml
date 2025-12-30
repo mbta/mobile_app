@@ -408,6 +408,8 @@
     <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
     <string name="trip_complete">Viagem concluída</string>
     <string name="trip_complete_body">%1$s chegou ao destino.</string>
+    <string name="trip_not_available">Viagem não disponível</string>
+    <string name="trip_not_available_body">Este %1$s ainda não foi atribuído a uma viagem.</string>
     <string name="try_a_different_spelling_or_name">Tente uma ortografia ou nome diferente.</string>
     <string name="try_your_search_again">Tente pesquisar novamente.</string>
     <string name="unable_to_connect">Impossível conectar</string>

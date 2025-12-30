@@ -2,22 +2,21 @@ package com.mbta.tid.mbta_app.android.stopDetails
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.offset
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
-import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.state.getGlobalData
-import com.mbta.tid.mbta_app.android.tripDetails.TripCompleteCard
+import com.mbta.tid.mbta_app.android.tripDetails.MissingTripCard
+import com.mbta.tid.mbta_app.android.tripDetails.MissingTripCardType
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
 import com.mbta.tid.mbta_app.model.Alert
@@ -51,6 +50,7 @@ fun TripDetailsView(
     openSheetRoute: (SheetRoutes) -> Unit,
     openModal: (ModalRoutes) -> Unit,
     now: EasternTimeInstant,
+    routeAccents: TripRouteAccents,
     isTripDetailsPage: Boolean,
     modifier: Modifier = Modifier,
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
@@ -95,23 +95,23 @@ fun TripDetailsView(
         )
     }
 
+    val trip = tripData?.trip
     if (
         tripFilter != null &&
             tripData != null &&
+            trip != null &&
             globalResponse != null &&
             stopList != null &&
             tripData.tripFilter == tripFilter &&
-            stopList.trip.id == tripData.trip.id
+            stopList.trip.id == trip.id
     ) {
         val route =
-            globalResponse.getRoute(tripData.trip.routeId)
+            globalResponse.getRoute(trip.routeId)
                 ?: run {
-                    Sentry.captureMessage(
-                        "Trip ${tripData.trip.id} on unknown route ${tripData.trip.routeId}"
-                    )
+                    Sentry.captureMessage("Trip ${trip.id} on unknown route ${trip.routeId}")
                     return
                 }
-        val terminalStop = getParentFor(tripData.trip.stopIds?.firstOrNull(), globalResponse)
+        val terminalStop = getParentFor(trip.stopIds?.firstOrNull(), globalResponse)
         val vehicleStop = vehicle?.let { getParentFor(it.stopId, globalResponse) }
         val tripId = tripFilter.tripId
         val headerSpec: TripHeaderSpec? =
@@ -142,8 +142,8 @@ fun TripDetailsView(
                     TripDetailsPageFilter(
                         tripId,
                         tripData.tripFilter.vehicleId,
-                        tripData.trip.routeId,
-                        tripData.trip.directionId,
+                        trip.routeId,
+                        trip.directionId,
                         tripFilter.stopId,
                         tripData.tripFilter.stopSequence,
                     )
@@ -152,7 +152,7 @@ fun TripDetailsView(
         }
 
         TripDetails(
-            tripData.trip,
+            trip,
             headerSpec,
             tripData.vehicleOnOtherTrip,
             onHeaderTap,
@@ -167,6 +167,12 @@ fun TripDetailsView(
             globalResponse,
             isTripDetailsPage,
             modifier,
+        )
+    } else if (tripData != null && trip == null && tripData.vehicle != null) {
+        MissingTripCard(
+            MissingTripCardType.NotAvailable,
+            routeAccents,
+            Modifier.padding(horizontal = 16.dp),
         )
     } else {
         val placeholderTripInfo = LoadingPlaceholders.tripDetailsInfo()
@@ -227,20 +233,10 @@ fun TripDetails(
     val routeAccents = TripRouteAccents(route)
 
     Column(modifier) {
-        DebugView {
-            Column(
-                Modifier.align(Alignment.CenterHorizontally),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text("trip id: ${tripFilter.tripId}")
-                Text("vehicle id: ${tripFilter.vehicleId ?: "null"}")
-            }
-        }
-
-        // You can't open track this trip before the trip has started,
-        // so if this is true, it means that the selected trip is complete
+        // If the loaded trip's ID does not match the trip ID of the vehicle,
+        // it means that the selected trip is complete
         if (isTripDetailsPage && vehicleOnOtherTrip) {
-            TripCompleteCard(routeAccents)
+            MissingTripCard(MissingTripCardType.Complete, routeAccents)
         } else {
             Column(Modifier.zIndex(1F)) {
                 TripHeaderCard(

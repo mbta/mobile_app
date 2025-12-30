@@ -17,6 +17,7 @@ struct TripDetailsView: View {
     var alertSummaries: [String: AlertSummary?]
     var context: TripDetailsViewModel.Context
     var now: EasternTimeInstant
+    var routeAccents: TripRouteAccents
 
     let onOpenAlertDetails: (Shared.Alert) -> Void
 
@@ -29,8 +30,6 @@ struct TripDetailsView: View {
     @State var global: GlobalResponse?
     @State var tripDetailsVMState: TripDetailsViewModel.State?
 
-    @EnvironmentObject var settingsCache: SettingsCache
-
     let analytics: Analytics
     var didLoadData: ((Self) -> Void)?
     let inspection = Inspection<Self>()
@@ -40,6 +39,7 @@ struct TripDetailsView: View {
         alertSummaries: [String: AlertSummary?],
         context: TripDetailsViewModel.Context,
         now: EasternTimeInstant,
+        routeAccents: TripRouteAccents,
         onOpenAlertDetails: @escaping (Shared.Alert) -> Void,
         errorBannerVM: IErrorBannerViewModel,
         nearbyVM: NearbyViewModel,
@@ -51,6 +51,7 @@ struct TripDetailsView: View {
         self.alertSummaries = alertSummaries
         self.context = context
         self.now = now
+        self.routeAccents = routeAccents
         self.onOpenAlertDetails = onOpenAlertDetails
         self.errorBannerVM = errorBannerVM
         self.nearbyVM = nearbyVM
@@ -66,13 +67,13 @@ struct TripDetailsView: View {
     }
 
     func onFollowTrip() {
-        if let tripData = tripDetailsVMState?.tripData, tripData.tripFilter == tripFilter {
+        if let tripData = tripDetailsVMState?.tripData, let trip = tripData.trip, tripData.tripFilter == tripFilter {
             let dataFilter = tripData.tripFilter
             nearbyVM.pushNavEntry(.tripDetails(filter: TripDetailsPageFilter(
                 tripId: dataFilter.tripId,
                 vehicleId: dataFilter.vehicleId,
-                routeId: tripData.trip.routeId,
-                directionId: tripData.trip.directionId,
+                routeId: trip.routeId,
+                directionId: trip.directionId,
                 stopId: dataFilter.stopId,
                 stopSequence: dataFilter.stopSequence,
             )))
@@ -102,29 +103,21 @@ struct TripDetailsView: View {
 
     @ViewBuilder private var content: some View {
         VStack(spacing: 16) {
-            if settingsCache.get(.devDebugMode) {
-                DebugView {
-                    VStack {
-                        Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
-                        Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")
-                    }
-                }
-                .padding(.horizontal, 6)
-            }
             let vehicle = tripDetailsVMState?.tripData?.vehicle
             if let tripFilter,
                tripFilter.vehicleId != nil ? vehicle != nil : true,
                let stops = tripDetailsVMState?.stopList,
                let tripData = tripDetailsVMState?.tripData,
+               let trip = tripData.trip,
                tripData.tripFilter == tripFilter,
                tripData.tripPredictionsLoaded,
                let global,
-               let route = global.getRoute(routeId: tripData.trip.routeId) {
-                let terminalStop = getParentFor(tripData.trip.stopIds?.first)
+               let route = global.getRoute(routeId: trip.routeId) {
+                let terminalStop = getParentFor(trip.stopIds?.first)
                 let vehicleStop = getParentFor(vehicle?.stopId)
                 tripDetails(
                     tripFilter,
-                    tripData.trip,
+                    trip,
                     tripData.vehicleOnOtherTrip,
                     stops,
                     terminalStop,
@@ -133,6 +126,14 @@ struct TripDetailsView: View {
                     route
                 )
                 .onAppear { didLoadData?(self) }
+            } else if tripFilter != nil,
+                      let tripData = tripDetailsVMState?.tripData,
+                      tripData.vehicle != nil,
+                      tripData.trip == nil {
+                MissingTripCard(type: .notAvailable, routeAccents: routeAccents)
+                    .padding(.horizontal, 14)
+                    .padding(.top, 6)
+                    .onAppear { didLoadData?(self) }
             } else {
                 loadingBody()
             }
@@ -180,7 +181,7 @@ struct TripDetailsView: View {
         // You can't open track this trip before the trip has started,
         // so if this is true, it means that the selected trip is complete
         if context == .tripDetails, vehicleOnOtherTrip {
-            TripCompleteCard(routeAccents: routeAccents).padding(.horizontal, 16)
+            MissingTripCard(type: .complete, routeAccents: routeAccents).padding(.horizontal, 16)
         } else {
             VStack(spacing: 0) {
                 tripHeaderCard(filter.stopId, trip, headerSpec, onHeaderTap, route, routeAccents).zIndex(1)
@@ -265,7 +266,7 @@ struct TripDetailsView: View {
         else { stop.stop }
         nearbyVM.appendNavEntry(.stopDetails(stopId: parentStop.id, stopFilter: nil, tripFilter: nil))
         analytics.tappedDownstreamStop(
-            routeId: tripDetailsVMState?.tripData?.trip.routeId,
+            routeId: tripDetailsVMState?.tripData?.trip?.routeId,
             stopId: stop.stop.id,
             tripId: tripFilter?.tripId ?? "",
             connectingRouteId: nil
