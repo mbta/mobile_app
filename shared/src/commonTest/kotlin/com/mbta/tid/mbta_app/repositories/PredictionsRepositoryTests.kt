@@ -156,6 +156,7 @@ class PredictionsRepositoryTests : KoinTest {
                                         "v_1": {
                                             "id": "v_1",
                                             "bearing": 351,
+                                            "carriages": null,
                                             "current_status": "in_transit_to",
                                             "current_stop_sequence": 17,
                                             "direction_id": 0,
@@ -164,6 +165,7 @@ class PredictionsRepositoryTests : KoinTest {
                                             "stop_id": "12345",
                                             "latitude": 42.34114183,
                                             "longitude": -71.121119039,
+                                            "occupancy_status": "full",
                                             "updated_at": "2024-09-23T11:30:26-04:00"
 
                                         }
@@ -243,6 +245,7 @@ class PredictionsRepositoryTests : KoinTest {
                                 "v_1": {
                                     "id": "v_1",
                                     "bearing": 351,
+                                    "carriages": null,
                                     "current_status": "in_transit_to",
                                     "current_stop_sequence": 17,
                                     "direction_id": 0,
@@ -251,6 +254,7 @@ class PredictionsRepositoryTests : KoinTest {
                                     "stop_id": "12345",
                                     "latitude": 42.34114183,
                                     "longitude": -71.121119039,
+                                    "occupancy_status": "crushed_standing_room_only",
                                     "updated_at": "2024-09-23T11:30:26-04:00",
                                     "decoration": null
                                 }

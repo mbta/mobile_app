@@ -75,6 +75,9 @@
     <string name="crossing_issue_lowercase">crossing issue</string>
     <string name="crossing_malfunction">Crossing Malfunction</string>
     <string name="crossing_malfunction_lowercase">crossing malfunction</string>
+    <string name="crowding_crowded">Crowded</string>
+    <string name="crowding_not_crowded">Not crowded</string>
+    <string name="crowding_some_crowding">Some crowding</string>
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>

@@ -464,11 +464,14 @@ private constructor(
     public inner class VehicleBuilder : ObjectBuilder<Vehicle> {
         public var id: String = objectId()
         public var bearing: Double = 0.0
+        public var carriages: List<Vehicle.Carriage>? = null
         public lateinit var currentStatus: Vehicle.CurrentStatus
         public var currentStopSequence: Int? = null
         public var directionId: Int = 0
         public var latitude: Double = 1.2
         public var longitude: Double = 3.4
+        public var occupancyStatus: Vehicle.OccupancyStatus =
+            Vehicle.OccupancyStatus.NoDataAvailable
         public var updatedAt: EasternTimeInstant = EasternTimeInstant.now() - 10.seconds
         public var routeId: String? = null
         public var stopId: String? = null
@@ -479,11 +482,13 @@ private constructor(
             Vehicle(
                 id,
                 bearing,
+                carriages,
                 currentStatus,
                 currentStopSequence,
                 directionId,
                 latitude,
                 longitude,
+                occupancyStatus,
                 updatedAt,
                 routeId?.let { Route.Id(it) },
                 stopId,

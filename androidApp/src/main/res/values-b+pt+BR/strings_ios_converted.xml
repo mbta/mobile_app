@@ -75,6 +75,9 @@
     <string name="crossing_issue_lowercase">problema de travessia</string>
     <string name="crossing_malfunction">Problemas no cruzamento</string>
     <string name="crossing_malfunction_lowercase">mau funcionamento do cruzamento</string>
+    <string name="crowding_crowded">Superlotado</string>
+    <string name="crowding_not_crowded">Não estava lotado</string>
+    <string name="crowding_some_crowding">Alguma aglomeração</string>
     <string name="delay">Atraso</string>
     <string name="delays_due_to_cause">Atrasos devido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Atrasos&lt;/b></string>

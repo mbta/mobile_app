@@ -181,6 +181,43 @@ fun TripHeaderCard(
 }
 
 @Composable
+private fun BusCrowding(crowding: Vehicle.CrowdingLevel?, modifier: Modifier = Modifier) {
+    if (crowding != null) {
+        val crowdingImage =
+            painterResource(
+                when (crowding) {
+                    Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_bus_crowded
+                    Vehicle.CrowdingLevel.NotCrowded -> R.drawable.crowding_bus_not_crowded
+                    Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_bus_some_crowding
+                }
+            )
+
+        Row(
+            modifier.sizeIn(minHeight = 18.dp),
+            Arrangement.spacedBy(8.dp),
+            Alignment.CenterVertically,
+        ) {
+            Image(crowdingImage, null, Modifier.size(16.dp, 12.dp))
+            Text(
+                crowdingText(crowding),
+                color = colorResource(R.color.text).copy(0.6f),
+                style = Typography.footnote,
+            )
+        }
+    }
+}
+
+@Composable
+private fun crowdingText(crowding: Vehicle.CrowdingLevel) =
+    stringResource(
+        when (crowding) {
+            Vehicle.CrowdingLevel.Crowded -> R.string.crowding_crowded
+            Vehicle.CrowdingLevel.NotCrowded -> R.string.crowding_not_crowded
+            Vehicle.CrowdingLevel.SomeCrowding -> R.string.crowding_some_crowding
+        }
+    )
+
+@Composable
 private fun Description(
     spec: TripHeaderSpec,
     tripId: String,
@@ -294,6 +331,9 @@ private fun VehicleDescription(
                     style = Typography.headlineBold,
                     modifier = Modifier.placeholderIfLoading(),
                 )
+                if (routeAccents.type == RouteType.BUS && !spec.atTerminal) {
+                    BusCrowding(spec.vehicle.occupancyStatus.crowdingLevel)
+                }
             }
             spec.entry?.trackNumber?.let {
                 Text(

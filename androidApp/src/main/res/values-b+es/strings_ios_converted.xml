@@ -75,6 +75,9 @@
     <string name="crossing_issue_lowercase">problema en el cruce</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="crossing_malfunction_lowercase">mal funcionamiento del cruce</string>
+    <string name="crowding_crowded">Atestado</string>
+    <string name="crowding_not_crowded">No hay mucha gente</string>
+    <string name="crowding_some_crowding">Algunas aglomeraciones</string>
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retrasos&lt;/b></string>

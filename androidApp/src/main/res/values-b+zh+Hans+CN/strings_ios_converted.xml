@@ -73,6 +73,9 @@
     <string name="crossing_issue_lowercase">交通信号灯问题</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
     <string name="crossing_malfunction_lowercase">交通信号灯故障</string>
+    <string name="crowding_crowded">挤</string>
+    <string name="crowding_not_crowded">不拥挤。</string>
+    <string name="crowding_some_crowding">有些拥挤</string>
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
     <string name="delays_unknown_reason">&lt;b>延误&lt;/b></string>

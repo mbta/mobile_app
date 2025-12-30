@@ -9,11 +9,13 @@ import org.maplibre.spatialk.geojson.Position
 public data class Vehicle(
     override val id: String,
     val bearing: Double?,
+    val carriages: List<Carriage>?,
     @SerialName("current_status") val currentStatus: CurrentStatus,
     @SerialName("current_stop_sequence") val currentStopSequence: Int?,
     @SerialName("direction_id") val directionId: Int,
     val latitude: Double,
     val longitude: Double,
+    @SerialName("occupancy_status") val occupancyStatus: OccupancyStatus,
     @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     @SerialName("route_id") val routeId: Route.Id?,
     @SerialName("stop_id") val stopId: String?,
@@ -35,6 +37,46 @@ public data class Vehicle(
         @SerialName("winter_holiday") WinterHoliday,
         @SerialName("googly_eyes") GooglyEyes,
     }
+
+    @Serializable
+    public enum class OccupancyStatus {
+        @SerialName("many_seats_available") ManySeatsAvailable,
+        @SerialName("few_seats_available") FewSeatsAvailable,
+        @SerialName("standing_room_only") StandingRoomOnly,
+        @SerialName("crushed_standing_room_only") CrushedStandingRoomOnly,
+        @SerialName("full") Full,
+        @SerialName("not_accepting_passengers") NotAcceptingPassengers,
+        @SerialName("no_data_available") NoDataAvailable;
+
+        public val crowdingLevel: CrowdingLevel?
+            get() =
+                when (this) {
+                    CrushedStandingRoomOnly,
+                    Full,
+                    NotAcceptingPassengers,
+                    StandingRoomOnly -> CrowdingLevel.Crowded
+                    FewSeatsAvailable -> CrowdingLevel.SomeCrowding
+                    ManySeatsAvailable -> CrowdingLevel.NotCrowded
+                    else -> null
+                }
+    }
+
+    /* This is the user facing 1-3 crowding scale that is determined from the occupancy status, it
+     * does not exist as a concept in the API or GTFS, we use it to display crowding icon and text
+     */
+    @Serializable
+    public enum class CrowdingLevel {
+        Crowded,
+        NotCrowded,
+        SomeCrowding,
+    }
+
+    @Serializable
+    public data class Carriage(
+        @SerialName("occupancy_status") val occupancyStatus: OccupancyStatus,
+        @SerialName("occupancy_percentage") val occupancyPercentage: Int?,
+        val label: String?,
+    )
 
     override fun toString(): String = "Vehicle(id=$id)"
 }

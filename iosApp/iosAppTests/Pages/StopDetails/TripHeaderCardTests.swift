@@ -97,6 +97,67 @@ final class TripHeaderCardTests: XCTestCase {
         try XCTAssertNotNil(stoppedSut.inspect().find(text: "Now at"))
     }
 
+    func testDisplaysBusCrowding() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in
+            route.type = .bus
+        }
+        let trip = objects.trip { _ in }
+
+        let notCrowdedVehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.occupancyStatus = .manySeatsAvailable
+        }
+        let notCrowdedSut = TripHeaderCard(
+            spec: .vehicle(notCrowdedVehicle, stop, nil, false),
+            trip: trip,
+            targetId: "",
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: nil,
+        )
+        try XCTAssertNotNil(notCrowdedSut.inspect().find(text: "Not crowded"))
+
+        let someCrowdingVehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.occupancyStatus = .fewSeatsAvailable
+        }
+        let someCrowdingSut = TripHeaderCard(
+            spec: .vehicle(someCrowdingVehicle, stop, nil, false),
+            trip: trip,
+            targetId: "",
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: nil,
+        )
+        try XCTAssertNotNil(someCrowdingSut.inspect().find(text: "Some crowding"))
+
+        let crowdedVehicle = objects.vehicle { vehicle in
+            vehicle.currentStatus = .inTransitTo
+            vehicle.tripId = trip.id
+            vehicle.occupancyStatus = .standingRoomOnly
+        }
+        let crowdedSut = TripHeaderCard(
+            spec: .vehicle(crowdedVehicle, stop, nil, false),
+            trip: trip,
+            targetId: "",
+            route: route,
+            routeAccents: .init(route: route),
+            onTap: nil,
+            now: now,
+            onFollowTrip: nil,
+        )
+        try XCTAssertNotNil(crowdedSut.inspect().find(text: "Crowded"))
+    }
+
     func testDifferentTrip() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()

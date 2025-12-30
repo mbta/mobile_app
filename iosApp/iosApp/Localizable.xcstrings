@@ -6980,6 +6980,53 @@
         }
       }
     },
+    "Crowded" : {
+      "comment" : "Text for the highest crowding level, with no seats available",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Atestado"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bondé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Anpil moun"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Superlotado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đông đúc"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "挤"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擠"
+          }
+        }
+      }
+    },
     "Debug Mode" : {
       "comment" : "A setting on the More page to display debug information (only visible for developers)",
       "localizations" : {
@@ -13642,6 +13689,53 @@
         }
       }
     },
+    "Not crowded" : {
+      "comment" : "Text for the lowest crowding level, with many available seats",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No hay mucha gente"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pas bondé"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pa gen moun"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Não estava lotado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không đông đúc"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不拥挤。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不擁擠。"
+          }
+        }
+      }
+    },
     "notifications enabled" : {
       "comment" : "Screen reader text for an icon on the edit favorites page that displays whether or not the user has notifications turned on for a specific row",
       "extractionState" : "manual",
@@ -17948,6 +18042,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "軟體許可證"
+          }
+        }
+      }
+    },
+    "Some crowding" : {
+      "comment" : "Text for a moderate crowding level, with some seats available",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Algunas aglomeraciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Quelques attroupements"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Gen kèk moun ki te twò chaje"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alguma aglomeração"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Một số chỗ chật chội"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "有些拥挤"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "有些擁擠"
           }
         }
       }

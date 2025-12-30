@@ -135,6 +135,56 @@ class TripHeaderCardTest {
     }
 
     @Test
+    fun testDisplaysBusCrowding() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop {}
+        val trip = objects.trip()
+
+        val vehicleState =
+            mutableStateOf<Vehicle>(
+                objects.vehicle {
+                    currentStatus = Vehicle.CurrentStatus.InTransitTo
+                    tripId = trip.id
+                    occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable
+                }
+            )
+        val route = objects.route { type = RouteType.BUS }
+
+        composeTestRule.setContent {
+            val vehicle: Vehicle by vehicleState
+            TripHeaderCard(
+                trip,
+                TripHeaderSpec.VehicleOnTrip(vehicle, stop, null, false),
+                "",
+                route,
+                TripRouteAccents(route),
+                now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Not crowded", useUnmergedTree = true).assertIsDisplayed()
+
+        vehicleState.value =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                tripId = trip.id
+                occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable
+            }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Some crowding", useUnmergedTree = true).assertIsDisplayed()
+
+        vehicleState.value =
+            objects.vehicle {
+                currentStatus = Vehicle.CurrentStatus.InTransitTo
+                tripId = trip.id
+                occupancyStatus = Vehicle.OccupancyStatus.CrushedStandingRoomOnly
+            }
+        composeTestRule.waitForIdle()
+        composeTestRule.onNodeWithText("Crowded", useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test
     fun testDifferentTrip() {
         val now = EasternTimeInstant.now()
         val objects = ObjectCollectionBuilder()

@@ -73,6 +73,9 @@
     <string name="crossing_issue_lowercase">vấn đề tại điểm giao cắt</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="crossing_malfunction_lowercase">sự cố tại điểm giao cắt</string>
+    <string name="crowding_crowded">Đông đúc</string>
+    <string name="crowding_not_crowded">Không đông đúc</string>
+    <string name="crowding_some_crowding">Một số chỗ chật chội</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
