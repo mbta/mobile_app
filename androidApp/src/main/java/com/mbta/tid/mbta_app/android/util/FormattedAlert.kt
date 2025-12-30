@@ -134,6 +134,7 @@ data class FormattedAlert(
                         context.getString(directionNameFormatted(it.direction)),
                         it.endStopName,
                     )
+                AlertSummary.Location.Unknown -> null
             }
         } ?: ""
 
@@ -159,6 +160,7 @@ data class FormattedAlert(
                         R.string.alert_summary_timeframe_time,
                         it.time.formattedTime(),
                     )
+                AlertSummary.Timeframe.Unknown -> null
             }
         } ?: ""
 

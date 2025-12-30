@@ -9,35 +9,64 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 public data class AlertSummary(
     internal val effect: Alert.Effect,
     val location: Location? = null,
     val timeframe: Timeframe? = null,
 ) {
+    @Serializable
     public sealed class Location {
-        public data class DirectionToStop(val direction: Direction, val endStopName: String) :
-            Location()
+        @Serializable
+        @SerialName("direction_to_stop")
+        public data class DirectionToStop(
+            val direction: Direction,
+            @SerialName("end_stop_name") val endStopName: String,
+        ) : Location()
 
-        public data class SingleStop(val stopName: String) : Location()
+        @Serializable
+        @SerialName("single_stop")
+        public data class SingleStop(@SerialName("stop_name") val stopName: String) : Location()
 
-        public data class StopToDirection(val startStopName: String, val direction: Direction) :
-            Location()
+        @Serializable
+        @SerialName("stop_to_direction")
+        public data class StopToDirection(
+            @SerialName("start_stop_name") val startStopName: String,
+            val direction: Direction,
+        ) : Location()
 
-        public data class SuccessiveStops(val startStopName: String, val endStopName: String) :
-            Location()
+        @Serializable
+        @SerialName("successive_stops")
+        public data class SuccessiveStops(
+            @SerialName("start_stop_name") val startStopName: String,
+            @SerialName("end_stop_name") val endStopName: String,
+        ) : Location()
+
+        @Serializable public data object Unknown : Location()
     }
 
+    @Serializable
     public sealed class Timeframe {
-        public data object EndOfService : Timeframe()
+        @Serializable @SerialName("end_of_service") public data object EndOfService : Timeframe()
 
-        public data object Tomorrow : Timeframe()
+        @Serializable @SerialName("tomorrow") public data object Tomorrow : Timeframe()
 
+        @Serializable
+        @SerialName("later_date")
         public data class LaterDate(val time: EasternTimeInstant) : Timeframe()
 
+        @Serializable
+        @SerialName("this_week")
         public data class ThisWeek(val time: EasternTimeInstant) : Timeframe()
 
+        @Serializable
+        @SerialName("time")
         public data class Time(val time: EasternTimeInstant) : Timeframe()
+
+        @Serializable public data object Unknown : Timeframe()
     }
 
     internal companion object {

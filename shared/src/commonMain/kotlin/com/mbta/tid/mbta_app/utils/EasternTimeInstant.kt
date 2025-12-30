@@ -10,14 +10,17 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.minus
 import kotlinx.datetime.offsetAt
+import kotlinx.datetime.offsetIn
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 
@@ -98,22 +101,24 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
     }
 
     internal object Serializer : KSerializer<EasternTimeInstant> {
-        private val delegateSerializer = Instant.serializer()
-
         override val descriptor =
-            SerialDescriptor(
+            PrimitiveSerialDescriptor(
                 "com.mbta.tid.mbta_app.utils.EasternTimeInstant",
-                delegateSerializer.descriptor,
+                PrimitiveKind.STRING,
             )
 
         override fun serialize(encoder: Encoder, value: EasternTimeInstant) {
-            val data = value.instant
-            encoder.encodeSerializableValue(delegateSerializer, data)
+            val data =
+                value.instant.format(
+                    DateTimeComponents.Formats.ISO_DATE_TIME_OFFSET,
+                    value.instant.offsetIn(timeZone),
+                )
+            encoder.encodeString(data)
         }
 
         override fun deserialize(decoder: Decoder): EasternTimeInstant {
-            val data = decoder.decodeSerializableValue(delegateSerializer)
-            return EasternTimeInstant(data)
+            val data = decoder.decodeString()
+            return EasternTimeInstant(Instant.parse(data))
         }
     }
 
