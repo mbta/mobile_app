@@ -8,8 +8,11 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlinx.datetime.Month
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 import kotlinx.serialization.json.putJsonObject
 
 class VehiclesOnRouteChannelTest {
@@ -27,11 +30,24 @@ class VehiclesOnRouteChannelTest {
                             put("direction_id", 0)
                             put("latitude", 42.359901428222656)
                             put("longitude", -71.09449005126953)
+                            put("occupancy_status", "full")
                             put("updated_at", "2024-05-15T09:00:00-04:00")
                             put("route_id", "1")
                             put("stop_id", "99")
                             put("trip_id", "61391720")
                             put("decoration", "pride")
+                            putJsonArray("carriages") {
+                                addJsonObject {
+                                    put("occupancy_status", "no_data_available")
+                                    put("occupancy_percentage", JsonNull)
+                                    put("label", "1234")
+                                }
+                                addJsonObject {
+                                    put("occupancy_status", "not_accepting_passengers")
+                                    put("occupancy_percentage", 100)
+                                    put("label", "4321")
+                                }
+                            }
                         }
                     }
                 }
@@ -46,11 +62,25 @@ class VehiclesOnRouteChannelTest {
                         Vehicle(
                             "y1886",
                             315.0,
+                            listOf(
+                                Vehicle.Carriage(
+                                    occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable,
+                                    occupancyPercentage = null,
+                                    label = "1234",
+                                ),
+                                Vehicle.Carriage(
+                                    occupancyStatus =
+                                        Vehicle.OccupancyStatus.NotAcceptingPassengers,
+                                    occupancyPercentage = 100,
+                                    label = "4321",
+                                ),
+                            ),
                             Vehicle.CurrentStatus.InTransitTo,
                             30,
                             0,
                             42.359901428222656,
                             -71.09449005126953,
+                            Vehicle.OccupancyStatus.Full,
                             EasternTimeInstant(2024, Month.MAY, 15, 9, 0),
                             Route.Id("1"),
                             "99",
