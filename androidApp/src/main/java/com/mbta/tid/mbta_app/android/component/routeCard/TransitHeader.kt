@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
@@ -53,7 +53,7 @@ fun TransitHeader(
     modeDescription: String?,
     rightContent: (@Composable (textColor: Color) -> Unit)? = null,
 ) {
-    val routeContentDescription = routeModeLabel(LocalContext.current, name, routeType)
+    val routeContentDescription = routeModeLabel(LocalResources.current, name, routeType)
 
     Row(
         modifier = Modifier.background(backgroundColor).fillMaxWidth().padding(8.dp),

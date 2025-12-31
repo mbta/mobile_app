@@ -281,7 +281,7 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Follow").assertDoesNotExist()
-        composeTestRule.onNodeWithText("Trip complete")
+        composeTestRule.onNodeWithText("Trip complete").assertIsDisplayed()
     }
 
     @Test

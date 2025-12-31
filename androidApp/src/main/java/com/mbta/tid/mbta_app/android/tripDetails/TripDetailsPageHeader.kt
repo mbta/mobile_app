@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -50,7 +50,7 @@ fun TripDetailsPageHeader(route: Route?, direction: Direction?, navCallbacks: Na
                 Arrangement.spacedBy(8.dp),
                 Alignment.CenterVertically,
             ) {
-                val pillDescription = routeModeLabel(LocalContext.current, line = null, route)
+                val pillDescription = routeModeLabel(LocalResources.current, line = null, route)
                 if (route != null) {
                     RoutePill(
                         route = route,

@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -194,7 +195,7 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
                     style = style,
                     onTextLayout = { startWidth = it.size.width },
                 )
-                Text(currentPeriod.formatStart(LocalContext.current), style = style)
+                Text(currentPeriod.formatStart(LocalResources.current), style = style)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -206,7 +207,7 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
                     style = style,
                     onTextLayout = { endWidth = it.size.width },
                 )
-                Text(currentPeriod.formatEnd(LocalContext.current), style = style)
+                Text(currentPeriod.formatEnd(LocalResources.current), style = style)
             }
         }
     } else {

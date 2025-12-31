@@ -12,7 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -58,7 +58,7 @@ fun StopDetailsFilteredHeader(
                 Arrangement.spacedBy(8.dp),
                 Alignment.CenterVertically,
             ) {
-                val pillDescription = routeModeLabel(LocalContext.current, line, route)
+                val pillDescription = routeModeLabel(LocalResources.current, line, route)
                 if (line != null) {
                     RoutePill(
                         route = null,

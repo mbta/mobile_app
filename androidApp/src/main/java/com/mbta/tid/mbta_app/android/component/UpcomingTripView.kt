@@ -18,7 +18,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -84,7 +84,7 @@ fun UpcomingTripView(
     when (state) {
         is UpcomingTripViewState.Some -> {
             // TODO: actually pull through vehicle type
-            val vehicleType = routeType?.typeText(LocalContext.current, isOnly) ?: ""
+            val vehicleType = routeType?.typeText(LocalResources.current, isOnly) ?: ""
             val tripDescription = state.trip.contentDescription(isFirst, vehicleType)
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->

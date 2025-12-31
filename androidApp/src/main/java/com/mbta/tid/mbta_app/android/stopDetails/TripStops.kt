@@ -18,7 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -68,7 +68,7 @@ fun TripStops(
     route: Route,
     routeAccents: TripRouteAccents,
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     val trip = stops.trip
     val splitStops: TripDetailsStopList.TargetSplit =
@@ -78,7 +78,7 @@ fun TripStops(
 
     var stopsExpanded by rememberSaveable { mutableStateOf(false) }
 
-    val routeTypeText = routeAccents.type.typeText(context, isOnly = true)
+    val routeTypeText = routeAccents.type.typeText(resources, isOnly = true)
     val collapsedStops = splitStops.collapsedStops
     val stopsAway = collapsedStops?.size
     val target = splitStops.targetStop

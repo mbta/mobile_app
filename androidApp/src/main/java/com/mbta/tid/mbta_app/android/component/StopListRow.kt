@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -22,7 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -85,7 +85,7 @@ fun StopListRow(
     descriptor: @Composable () -> Unit = {},
     rightSideContent: @Composable RowScope.(Modifier) -> Unit = {},
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
     Column {
@@ -159,7 +159,7 @@ fun StopListRow(
                                                 stop,
                                                 targeted,
                                                 stopPlacement.isFirst,
-                                                context,
+                                                resources,
                                             )
                                     }
                                     .placeholderIfLoading(),
@@ -167,15 +167,11 @@ fun StopListRow(
                                 style = if (targeted) Typography.headlineBold else Typography.body,
                             )
                             if (trackNumber != null) {
+                                val boardingTrackText =
+                                    stringResource(R.string.boarding_track, trackNumber)
                                 Text(
                                     stringResource(R.string.track_number, trackNumber),
-                                    Modifier.semantics {
-                                            contentDescription =
-                                                context.getString(
-                                                    R.string.boarding_track,
-                                                    trackNumber,
-                                                )
-                                        }
+                                    Modifier.semantics { contentDescription = boardingTrackText }
                                         .placeholderIfLoading(),
                                     color = colorResource(R.color.text),
                                     style = Typography.footnote,
@@ -224,7 +220,7 @@ fun StopListRow(
                             connectingRoutes,
                             Modifier.clearAndSetSemantics {
                                 contentDescription =
-                                    scrollRoutesAccessibilityLabel(connectingRoutes, context)
+                                    scrollRoutesAccessibilityLabel(connectingRoutes, resources)
                             },
                         )
                     }
@@ -247,7 +243,7 @@ fun StopListRow(
     }
 }
 
-private fun connectionLabel(route: Route, context: Context) = routeModeLabel(context, route)
+private fun connectionLabel(route: Route, resources: Resources) = routeModeLabel(resources, route)
 
 @Composable
 fun ScrollRoutes(routes: List<Route>, modifier: Modifier = Modifier) {
@@ -264,25 +260,25 @@ fun ScrollRoutes(routes: List<Route>, modifier: Modifier = Modifier) {
 // leading "." creates sentence break
 private fun scrollRoutesAccessibilityLabel(
     connectingRoutes: List<Route>,
-    context: Context,
+    resources: Resources,
 ): String =
     ". " +
         when {
             connectingRoutes.isEmpty() -> ""
             connectingRoutes.size == 1 ->
-                context.getString(
+                resources.getString(
                     R.string.connection_to,
-                    connectionLabel(connectingRoutes.single(), context),
+                    connectionLabel(connectingRoutes.single(), resources),
                 )
             else -> {
                 val firstConnections = connectingRoutes.dropLast(1)
                 val lastConnection = connectingRoutes.last()
-                context.getString(
+                resources.getString(
                     R.string.connections_to_and,
                     firstConnections.joinToString(separator = ", ") {
-                        connectionLabel(it, context)
+                        connectionLabel(it, resources)
                     },
-                    connectionLabel(lastConnection, context),
+                    connectionLabel(lastConnection, resources),
                 )
             }
         }
@@ -291,13 +287,13 @@ private fun stopAccessibilityLabel(
     stop: Stop,
     targeted: Boolean,
     firstStop: Boolean,
-    context: Context,
+    resources: Resources,
 ): String {
     val name = stop.name
     return when {
-        targeted && firstStop -> context.getString(R.string.selected_stop_first_stop, name)
-        targeted -> context.getString(R.string.selected_stop, name)
-        firstStop -> context.getString(R.string.first_stop, name)
+        targeted && firstStop -> resources.getString(R.string.selected_stop_first_stop, name)
+        targeted -> resources.getString(R.string.selected_stop, name)
+        firstStop -> resources.getString(R.string.first_stop, name)
         else -> name
     }
 }

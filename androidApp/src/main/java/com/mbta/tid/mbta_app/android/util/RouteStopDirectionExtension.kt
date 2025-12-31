@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.util
 
-import android.content.Context
+import android.content.res.Resources
 import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -10,17 +10,19 @@ data class RouteStopDirectionLabels(val route: String, val stop: String, val dir
 
 fun RouteStopDirection.getLabels(
     global: GlobalResponse?,
-    context: Context,
+    resources: Resources,
 ): RouteStopDirectionLabels? {
     val lineOrRoute = global?.getLineOrRoute(this.route)
     val stop = global?.getStop(this.stop)
 
     if (lineOrRoute == null || stop == null) return null
 
-    val routeLabel = lineOrRoute.labelWithModeIfBus(context)
+    val routeLabel = lineOrRoute.labelWithModeIfBus(resources)
 
     val directionLabel =
-        context.getString(directionNameFormatted(Direction(this.direction, lineOrRoute.sortRoute)))
+        resources.getString(
+            directionNameFormatted(Direction(this.direction, lineOrRoute.sortRoute))
+        )
 
     return RouteStopDirectionLabels(routeLabel, stop.name, directionLabel)
 }

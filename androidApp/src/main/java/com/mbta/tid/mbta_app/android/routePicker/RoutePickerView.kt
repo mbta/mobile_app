@@ -23,7 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -209,7 +209,7 @@ fun RoutePickerView(
                             Text(
                                 stringResource(
                                     R.string.no_matching_routes,
-                                    path.routeType.typeText(LocalContext.current, true),
+                                    path.routeType.typeText(LocalResources.current, true),
                                 ),
                                 color = path.textColor,
                                 style = Typography.bodySemibold,

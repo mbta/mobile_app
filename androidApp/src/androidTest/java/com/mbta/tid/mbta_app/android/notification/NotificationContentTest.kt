@@ -1,7 +1,7 @@
 package com.mbta.tid.mbta_app.android.notification
 
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -146,13 +146,13 @@ class NotificationContentTest {
 
         var result: NotificationContent? = null
         composeTestRule.setContent {
-            val context = LocalContext.current
+            val resources = LocalResources.current
             val alertsRepository: IAlertsRepository = koinInject()
             val globalRepository: IGlobalRepository = koinInject()
             LaunchedEffect(Unit) {
                 result =
                     NotificationContent.build(
-                        context,
+                        resources,
                         alert.id,
                         listOf(RouteStopDirection(Line.Id("line-Green"), "place-boyls", 0)),
                         alertsRepository,

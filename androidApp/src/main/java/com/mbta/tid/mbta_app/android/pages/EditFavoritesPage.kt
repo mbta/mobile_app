@@ -37,7 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -95,15 +95,18 @@ fun EditFavoritesPage(
     openModalWithCloseCallback: (ModalRoutes, () -> Unit) -> Unit,
 ) {
     val state by favoritesViewModel.models.collectAsState()
-    val context = LocalContext.current
-    fun getToastLabel(routeStopDirection: RouteStopDirection): String {
-        val labels = routeStopDirection.getLabels(global, context)
+    val resources = LocalResources.current
 
-        return labels?.let {
-            context.getString(R.string.favorites_toast_remove, it.direction, it.route, it.stop)
-        } ?: context.getString(R.string.favorites_toast_remove_fallback)
+    val removeToastText = stringResource(R.string.favorites_toast_remove)
+    val removeToastFallbackText = stringResource(R.string.favorites_toast_remove_fallback)
+    val removeToastUndoButtonText = stringResource(R.string.undo)
+    fun getToastLabel(routeStopDirection: RouteStopDirection): String {
+        val labels = routeStopDirection.getLabels(global, resources)
+
+        return labels?.let { removeToastText.format(it.direction, it.route, it.stop) }
+            ?: removeToastFallbackText
     }
-    val toastUndoLabel = stringResource(R.string.undo)
+
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     // to make deletion animations work nicely, we persist the first staticRouteCardData we saw, and
     // then we visually hide things that are no longer in the favorites
@@ -154,7 +157,7 @@ fun EditFavoritesPage(
                         duration = ToastViewModel.Duration.Short,
                         action =
                             ToastViewModel.ToastAction.Custom(
-                                actionLabel = toastUndoLabel,
+                                actionLabel = removeToastUndoButtonText,
                                 onAction = {
                                     favoritesViewModel.updateFavorites(
                                         mapOf(deletedFavorite to deletedSettings),

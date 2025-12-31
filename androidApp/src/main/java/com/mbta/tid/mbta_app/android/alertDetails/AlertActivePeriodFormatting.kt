@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.alertDetails
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -23,7 +23,7 @@ import com.mbta.tid.mbta_app.model.Alert
  * @return A localized and formatted string describing the active period.
  */
 private fun format(
-    context: Context,
+    resources: Resources,
     period: Alert.ActivePeriod,
     isStart: Boolean,
 ): AnnotatedString {
@@ -32,7 +32,7 @@ private fun format(
         else
             period.end
                 ?: return AnnotatedString(
-                    context.getString(R.string.until_further_notice),
+                    resources.getString(R.string.until_further_notice),
                     SpanStyle(fontWeight = FontWeight.Bold),
                 )
 
@@ -40,11 +40,11 @@ private fun format(
     var formattedTime = instant.formattedTime()
 
     if (isStart && period.fromStartOfService) {
-        formattedTime = context.getString(R.string.start_of_service)
+        formattedTime = resources.getString(R.string.start_of_service)
     } else if (!isStart && period.toEndOfService) {
-        formattedTime = context.getString(R.string.end_of_service)
+        formattedTime = resources.getString(R.string.end_of_service)
     } else if (!isStart && period.endingLaterToday) {
-        formattedTime = context.getString(R.string.later_today)
+        formattedTime = resources.getString(R.string.later_today)
     }
 
     return buildAnnotatedString {
@@ -54,6 +54,6 @@ private fun format(
     }
 }
 
-fun Alert.ActivePeriod.formatStart(context: Context) = format(context, this, true)
+fun Alert.ActivePeriod.formatStart(resources: Resources) = format(resources, this, true)
 
-fun Alert.ActivePeriod.formatEnd(context: Context) = format(context, this, false)
+fun Alert.ActivePeriod.formatEnd(resources: Resources) = format(resources, this, false)

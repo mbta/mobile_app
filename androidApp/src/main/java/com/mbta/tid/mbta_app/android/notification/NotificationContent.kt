@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.notification
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.compose.ui.text.AnnotatedString
 import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
@@ -13,7 +13,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 data class NotificationContent(val title: AnnotatedString, val body: AnnotatedString) {
     companion object {
         suspend fun build(
-            context: Context,
+            resources: Resources,
             alertId: String,
             subscriptions: List<RouteStopDirection>,
             alertsRepository: IAlertsRepository,
@@ -46,8 +46,8 @@ data class NotificationContent(val title: AnnotatedString, val body: AnnotatedSt
                 )
             val formattedAlert = FormattedAlert(alert, alertSummary)
 
-            val title = formattedAlert.alertCardHeader(AlertCardSpec.Major, context)
-            val body = formattedAlert.alertCardMajorBody(context)
+            val title = formattedAlert.alertCardHeader(AlertCardSpec.Major, resources)
+            val body = formattedAlert.alertCardMajorBody(resources)
 
             return NotificationContent(title, body)
         }

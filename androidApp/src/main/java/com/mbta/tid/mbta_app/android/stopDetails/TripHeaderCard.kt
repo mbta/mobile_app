@@ -1,6 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
-import android.content.Context
+import android.content.res.Resources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,7 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -92,7 +92,7 @@ fun TripHeaderCard(
     val modifier =
         if (clickable) {
             modifier.clickable(onClickLabel = stringResource(R.string.display_more_information)) {
-                onTap?.let { it() }
+                onTap()
             }
         } else {
             // clickable(false) is announced to TalkBack as "disabled", which we don't want
@@ -255,7 +255,7 @@ private fun ScheduleDescription(
     routeAccents: TripRouteAccents,
     clickable: Boolean,
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     if (startTerminalEntry != null) {
         Column(
             Modifier.semantics {
@@ -264,7 +264,7 @@ private fun ScheduleDescription(
                         startTerminalEntry,
                         targetId,
                         routeAccents,
-                        context,
+                        resources,
                     )
             },
             verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -291,18 +291,18 @@ private fun scheduleDescriptionAccessibilityText(
     stopEntry: TripDetailsStopList.Entry,
     targetId: String,
     routeAccents: TripRouteAccents,
-    context: Context,
+    resources: Resources,
 ): String {
     return if (targetId == stopEntry.stop.id) {
-        context.getString(
+        resources.getString(
             R.string.scheduled_to_depart_selected_stop_accessibility_desc,
-            routeAccents.type.typeText(context, isOnly = true),
+            routeAccents.type.typeText(resources, isOnly = true),
             stopEntry.stop.name,
         )
     } else {
-        context.getString(
+        resources.getString(
             R.string.scheduled_to_depart_accessibility_desc,
-            routeAccents.type.typeText(context, isOnly = true),
+            routeAccents.type.typeText(resources, isOnly = true),
             stopEntry.stop.name,
         )
     }
@@ -315,13 +315,13 @@ private fun VehicleDescription(
     targetId: String,
     routeAccents: TripRouteAccents,
 ) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     if (spec.vehicle.tripId == tripId) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Column(
                 Modifier.clearAndSetSemantics {
                     contentDescription =
-                        vehicleDescriptionAccessibilityText(spec, targetId, routeAccents, context)
+                        vehicleDescriptionAccessibilityText(spec, targetId, routeAccents, resources)
                 },
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
@@ -337,9 +337,9 @@ private fun VehicleDescription(
             }
             spec.entry?.trackNumber?.let {
                 Text(
-                    context.getString(R.string.track_number, it),
+                    resources.getString(R.string.track_number, it),
                     Modifier.semantics {
-                            contentDescription = context.getString(R.string.boarding_track, it)
+                            contentDescription = resources.getString(R.string.boarding_track, it)
                         }
                         .placeholderIfLoading(),
                     style = Typography.footnote,
@@ -353,39 +353,39 @@ private fun vehicleDescriptionAccessibilityText(
     spec: TripHeaderSpec.VehicleOnTrip,
     targetId: String,
     routeAccents: TripRouteAccents,
-    context: Context,
+    resources: Resources,
 ): String {
     val stop = spec.stop
-    return context.getString(
+    return resources.getString(
         if (targetId == stop.id) R.string.vehicle_desc_accessibility_desc_selected_stop
         else R.string.vehicle_desc_accessibility_desc,
-        routeAccents.type.typeText(context, isOnly = true),
-        vehicleStatusString(context, spec.vehicle.currentStatus, spec.atTerminal),
+        routeAccents.type.typeText(resources, isOnly = true),
+        vehicleStatusString(resources, spec.vehicle.currentStatus, spec.atTerminal),
         stop.name,
     )
 }
 
 @Composable
 private fun VehicleStatusDescription(vehicleStatus: Vehicle.CurrentStatus, atTerminal: Boolean) {
-    val context = LocalContext.current
+    val resources = LocalResources.current
     Text(
-        vehicleStatusString(context, vehicleStatus, atTerminal),
+        vehicleStatusString(resources, vehicleStatus, atTerminal),
         style = Typography.footnote,
         modifier = Modifier.placeholderIfLoading(),
     )
 }
 
 private fun vehicleStatusString(
-    context: Context,
+    resources: Resources,
     vehicleStatus: Vehicle.CurrentStatus,
     atTerminal: Boolean,
 ): String {
     return when (vehicleStatus) {
-        Vehicle.CurrentStatus.IncomingAt -> context.getString(R.string.approaching)
-        Vehicle.CurrentStatus.InTransitTo -> context.getString(R.string.next_stop)
+        Vehicle.CurrentStatus.IncomingAt -> resources.getString(R.string.approaching)
+        Vehicle.CurrentStatus.InTransitTo -> resources.getString(R.string.next_stop)
         Vehicle.CurrentStatus.StoppedAt ->
-            if (atTerminal) context.getString(R.string.waiting_to_depart)
-            else context.getString(R.string.now_at)
+            if (atTerminal) resources.getString(R.string.waiting_to_depart)
+            else resources.getString(R.string.now_at)
     }
 }
 
