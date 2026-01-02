@@ -331,9 +331,9 @@ private fun VehicleDescription(
                     style = Typography.headlineBold,
                     modifier = Modifier.placeholderIfLoading(),
                 )
-                if (routeAccents.type == RouteType.BUS && !spec.atTerminal) {
-                    BusCrowding(spec.vehicle.occupancyStatus.crowdingLevel)
-                }
+            }
+            if (routeAccents.type == RouteType.BUS && !spec.atTerminal) {
+                BusCrowding(spec.vehicle.occupancyStatus.crowdingLevel)
             }
             spec.entry?.trackNumber?.let {
                 Text(

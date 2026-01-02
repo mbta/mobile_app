@@ -179,10 +179,10 @@ struct TripHeaderCard: View {
                         .font(Typography.footnote)
                     Text(stop.name)
                         .font(Typography.headlineBold)
-                    busCrowding
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
+                busCrowding
                 if let trackNumber = entry?.trackNumber {
                     Text(
                         "Track \(trackNumber)",
