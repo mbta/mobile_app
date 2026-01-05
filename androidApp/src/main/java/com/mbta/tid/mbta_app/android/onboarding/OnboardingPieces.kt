@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -81,9 +82,14 @@ object OnboardingPieces {
                         contentDescription = headerDescription
                         heading()
                     },
+                color = colorResource(R.color.text),
                 style = Typography.title1Bold,
             )
-            Text(AnnotatedString.fromHtml(stringResource(bodyId)), style = Typography.title3)
+            Text(
+                AnnotatedString.fromHtml(stringResource(bodyId)),
+                color = colorResource(R.color.text),
+                style = Typography.title3,
+            )
         }
     }
 
@@ -162,7 +168,9 @@ object OnboardingPieces {
                 Modifier.haloContainer(1.dp)
                     .background(colorResource(R.color.fill3))
                     .padding(horizontal = 16.dp, vertical = 10.dp),
-            label = label,
+            label = {
+                Text(label, color = colorResource(R.color.text), style = Typography.callout)
+            },
             value = currentSetting,
         ) {
             toggleSetting()
@@ -203,7 +211,8 @@ fun BoxScope.OnboardingContentColumn(content: @Composable ColumnScope.() -> Unit
         modifier =
             Modifier.align(Alignment.BottomCenter)
                 .padding(horizontal = 32.dp)
-                .padding(top = 16.dp, bottom = bottomPadding),
+                .padding(top = 16.dp, bottom = bottomPadding)
+                .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         content = content,
     )

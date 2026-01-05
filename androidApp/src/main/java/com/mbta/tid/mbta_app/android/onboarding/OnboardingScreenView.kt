@@ -176,6 +176,7 @@ fun OnboardingScreenView(
                     )
                     Text(
                         stringResource(R.string.onboarding_location_footer),
+                        color = colorResource(R.color.text),
                         style = Typography.body,
                     )
                 }
