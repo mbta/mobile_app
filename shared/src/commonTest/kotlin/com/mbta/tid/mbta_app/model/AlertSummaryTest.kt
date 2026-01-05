@@ -13,6 +13,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -138,6 +139,20 @@ class AlertSummaryTest {
                 location = AlertSummary.Location.Unknown,
                 timeframe = AlertSummary.Timeframe.Unknown,
             ),
+            json.decodeFromJsonElement(jsonObject),
+        )
+    }
+
+    @Test
+    fun `ignores unknown top-level keys when deserializing`() {
+        val jsonObject = buildJsonObject {
+            put("effect", "station_closure")
+            put("location", JsonNull)
+            put("timeframe", JsonNull)
+            put("hue", "octarine")
+        }
+        assertEquals(
+            AlertSummary(Alert.Effect.StationClosure, location = null, timeframe = null),
             json.decodeFromJsonElement(jsonObject),
         )
     }
