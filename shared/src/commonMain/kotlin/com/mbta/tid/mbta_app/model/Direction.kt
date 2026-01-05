@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import kotlinx.serialization.Serializable
 
+@Serializable
 public data class Direction(var name: String?, var destination: String?, var id: Int) {
     /**
      * This constructor is used to provide additional context to a Direction to allow for overriding

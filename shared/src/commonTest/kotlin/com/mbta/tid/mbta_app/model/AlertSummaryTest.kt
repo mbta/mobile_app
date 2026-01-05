@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
@@ -12,8 +13,150 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObjectBuilder
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
 
 class AlertSummaryTest {
+    @Test
+    fun `can serialize and deserialize full summary`() {
+        val jsonObject = buildJsonObject {
+            put("effect", "station_closure")
+            putJsonObject("location") {
+                put("type", "single_stop")
+                put("stop_name", "Lechmere")
+            }
+            putJsonObject("timeframe") { put("type", "tomorrow") }
+        }
+        val summary =
+            AlertSummary(
+                Alert.Effect.StationClosure,
+                AlertSummary.Location.SingleStop("Lechmere"),
+                AlertSummary.Timeframe.Tomorrow,
+            )
+        assertEquals(jsonObject, json.encodeToJsonElement(summary))
+        assertEquals(summary, json.decodeFromJsonElement(jsonObject))
+    }
+
+    @Test
+    fun `can deserialize all locations`() {
+        fun performCheck(
+            location: AlertSummary.Location,
+            jsonBuilder: JsonObjectBuilder.() -> Unit,
+        ) {
+            val jsonObject = buildJsonObject(jsonBuilder)
+            assertEquals(jsonObject, json.encodeToJsonElement(location))
+            assertEquals(location, json.decodeFromJsonElement(jsonObject))
+        }
+
+        performCheck(
+            AlertSummary.Location.DirectionToStop(Direction("East", "Union Square", 1), "Lechmere")
+        ) {
+            put("type", "direction_to_stop")
+            putJsonObject("direction") {
+                put("name", "East")
+                put("destination", "Union Square")
+                put("id", 1)
+            }
+            put("end_stop_name", "Lechmere")
+        }
+
+        performCheck(AlertSummary.Location.SingleStop("Lechmere")) {
+            put("type", "single_stop")
+            put("stop_name", "Lechmere")
+        }
+
+        performCheck(
+            AlertSummary.Location.StopToDirection("Lechmere", Direction("West", "Copley & West", 0))
+        ) {
+            put("type", "stop_to_direction")
+            put("start_stop_name", "Lechmere")
+            putJsonObject("direction") {
+                put("name", "West")
+                put("destination", "Copley & West")
+                put("id", 0)
+            }
+        }
+
+        performCheck(AlertSummary.Location.SuccessiveStops("Lechmere", "North Station")) {
+            put("type", "successive_stops")
+            put("start_stop_name", "Lechmere")
+            put("end_stop_name", "North Station")
+        }
+    }
+
+    @Test
+    fun `can deserialize all timeframes`() {
+        fun performCheck(
+            timeframe: AlertSummary.Timeframe,
+            jsonBuilder: JsonObjectBuilder.() -> Unit,
+        ) {
+            val jsonObject = buildJsonObject(jsonBuilder)
+            assertEquals(jsonObject, json.encodeToJsonElement(timeframe))
+            assertEquals(timeframe, json.decodeFromJsonElement(jsonObject))
+        }
+
+        performCheck(AlertSummary.Timeframe.EndOfService) { put("type", "end_of_service") }
+
+        performCheck(AlertSummary.Timeframe.Tomorrow) { put("type", "tomorrow") }
+
+        performCheck(
+            AlertSummary.Timeframe.LaterDate(EasternTimeInstant(2025, Month.DECEMBER, 30, 16, 11))
+        ) {
+            put("type", "later_date")
+            put("time", "2025-12-30T16:11:00-05:00")
+        }
+
+        performCheck(
+            AlertSummary.Timeframe.ThisWeek(EasternTimeInstant(2025, Month.DECEMBER, 30, 16, 12))
+        ) {
+            put("type", "this_week")
+            put("time", "2025-12-30T16:12:00-05:00")
+        }
+
+        performCheck(
+            AlertSummary.Timeframe.Time(EasternTimeInstant(2025, Month.DECEMBER, 30, 16, 12))
+        ) {
+            put("type", "time")
+            put("time", "2025-12-30T16:12:00-05:00")
+        }
+    }
+
+    @Test
+    fun `ignores unknown location and timeframe when deserializing`() {
+        val jsonObject = buildJsonObject {
+            put("effect", "station_closure")
+            putJsonObject("location") { put("type", "omnipresent") }
+            putJsonObject("timeframe") { put("type", "omnitemporal") }
+        }
+        assertEquals(
+            AlertSummary(
+                Alert.Effect.StationClosure,
+                location = AlertSummary.Location.Unknown,
+                timeframe = AlertSummary.Timeframe.Unknown,
+            ),
+            json.decodeFromJsonElement(jsonObject),
+        )
+    }
+
+    @Test
+    fun `ignores unknown top-level keys when deserializing`() {
+        val jsonObject = buildJsonObject {
+            put("effect", "station_closure")
+            put("location", JsonNull)
+            put("timeframe", JsonNull)
+            put("hue", "octarine")
+        }
+        assertEquals(
+            AlertSummary(Alert.Effect.StationClosure, location = null, timeframe = null),
+            json.decodeFromJsonElement(jsonObject),
+        )
+    }
+
     @Test
     fun `summary is null when there is no timeframe or location`() = runBlocking {
         val objects = ObjectCollectionBuilder()
