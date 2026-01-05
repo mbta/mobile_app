@@ -14,21 +14,14 @@ import androidx.work.WorkerParameters
 import com.mbta.tid.mbta_app.android.MainActivity
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.json
-import com.mbta.tid.mbta_app.model.RouteStopDirection
-import com.mbta.tid.mbta_app.repositories.IAlertsRepository
-import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.model.AlertSummary
 import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
-    private val alertsRepository: IAlertsRepository by inject()
-    private val globalRepository: IGlobalRepository by inject()
-
     override suspend fun doWork(): Result {
-        val alertId = inputData.getString("alertId") ?: return Result.failure()
-        val rawSubscriptions = inputData.getString("subscriptions") ?: return Result.failure()
-        val subscriptions: List<RouteStopDirection> = json.decodeFromString(rawSubscriptions)
+        val rawSummary = inputData.getString("summary") ?: return Result.failure()
+        val summary: AlertSummary = json.decodeFromString(rawSummary)
         val requestCode = 0
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -40,14 +33,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                 PendingIntent.FLAG_IMMUTABLE,
             )
 
-        val content =
-            NotificationContent.build(
-                applicationContext.resources,
-                alertId,
-                subscriptions,
-                alertsRepository,
-                globalRepository,
-            ) ?: return Result.failure()
+        val content = NotificationContent.build(applicationContext.resources, summary)
         val title = content.title
         val body = content.body
 

@@ -24,12 +24,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         val workRequest =
             OneTimeWorkRequestBuilder<NotificationWorker>()
-                .setInputData(
-                    workDataOf(
-                        "alertId" to message.data["alertId"],
-                        "subscriptions" to message.data["subscriptions"],
-                    )
-                )
+                .setInputData(workDataOf("summary" to message.data["summary"]))
                 .build()
         WorkManager.Companion.getInstance(this).enqueue(workRequest)
     }
