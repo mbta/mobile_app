@@ -63,7 +63,7 @@ android {
         targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "2.0.9"
+        versionName = "2.0.10"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
