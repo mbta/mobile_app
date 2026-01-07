@@ -58,9 +58,8 @@ struct TripDetailsPage: View {
                 ErrorBanner(errorBannerVM, padding: [.init(.bottom, 8), .init(.horizontal, 14)])
                 DebugView {
                     VStack {
-                        Text(verbatim: "trip id: \(filter.tripId)").foregroundStyle(routeAccents.textColor)
+                        Text(verbatim: "trip id: \(filter.tripId)")
                         Text(verbatim: "vehicle id: \(filter.vehicleId ?? "nil")")
-                            .foregroundStyle(routeAccents.textColor)
                     }
                 }
                 .padding(.horizontal, 6)

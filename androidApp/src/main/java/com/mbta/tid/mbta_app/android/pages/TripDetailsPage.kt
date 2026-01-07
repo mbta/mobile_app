@@ -12,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.ModalRoutes
@@ -103,13 +102,12 @@ fun TripDetailsPage(
         }
         ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 8.dp))
         DebugView {
-            val textColor = accents?.textColor ?: Color.Unspecified
             Column(
                 Modifier.align(Alignment.CenterHorizontally),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("trip id: ${filter.tripId}", color = textColor)
-                Text("vehicle id: ${filter.vehicleId ?: "null"}", color = textColor)
+                Text("trip id: ${filter.tripId}")
+                Text("vehicle id: ${filter.vehicleId ?: "null"}")
             }
         }
         ScrollSeparatorColumn {
