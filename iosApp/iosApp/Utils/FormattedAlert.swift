@@ -117,6 +117,8 @@ struct FormattedAlert: Equatable {
                                       """),
                     location.startStopName,
                     location.endStopName)
+
+            case .unknown: ""
             }
         } else {
             ""
@@ -172,6 +174,7 @@ struct FormattedAlert: Equatable {
                                       "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
                                       timeframe fragment.
                                       """), timeframe.time.formatted(date: .omitted, time: .shortened))
+            case .unknown: ""
             }
         } else {
             ""
