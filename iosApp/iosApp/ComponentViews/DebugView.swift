@@ -22,8 +22,11 @@ struct DebugView<Content: View>: View {
                 VStack(alignment: .leading) {
                     content()
                         .font(Typography.footnote)
-                }.padding(4)
+                }.padding(8)
             }
+            .frame(maxWidth: .infinity)
+            .background(Color.fill3)
+            .padding(4)
             .fixedSize(horizontal: false, vertical: true)
         }
     }

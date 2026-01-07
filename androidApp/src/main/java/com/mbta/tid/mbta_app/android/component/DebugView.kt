@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.runtime.Composable
@@ -21,14 +23,18 @@ import com.mbta.tid.mbta_app.repositories.Settings
 fun DebugView(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val debugMode = SettingsCache.get(Settings.DevDebugMode)
     if (!debugMode) return
-    val color = colorResource(R.color.text)
+    val textColor = colorResource(R.color.text)
+    val color = colorResource(R.color.fill3)
     val density = LocalDensity.current
     Column(
         modifier
+            .fillMaxWidth()
+            .background(color)
+            .padding(4.dp)
             .drawBehind {
                 // https://stackoverflow.com/a/67039676
                 drawRect(
-                    color,
+                    textColor,
                     style =
                         Stroke(
                             width = with(density) { 2.dp.toPx() },
@@ -39,8 +45,8 @@ fun DebugView(modifier: Modifier = Modifier, content: @Composable ColumnScope.()
                         ),
                 )
             }
-            .padding(4.dp)
+            .padding(8.dp)
     ) {
-        ProvideTextStyle(Typography.footnote) { content() }
+        ProvideTextStyle(Typography.footnote.copy(color = textColor)) { content() }
     }
 }

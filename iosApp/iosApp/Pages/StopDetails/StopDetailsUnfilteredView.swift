@@ -26,8 +26,6 @@ struct StopDetailsUnfilteredView: View {
     @ObservedObject var nearbyVM: NearbyViewModel
 
     @EnvironmentObject var settingsCache: SettingsCache
-
-    var debugMode: Bool { settingsCache.get(.devDebugMode) }
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -93,10 +91,8 @@ struct StopDetailsUnfilteredView: View {
                         buttonTextColor: .fill2,
                         navCallbacks: navCallbacks,
                     ).padding(.bottom, hasPillFilters ? 4 : 16)
-                    if debugMode {
-                        DebugView {
-                            Text(verbatim: "stop id: \(stopId)")
-                        }.padding([.horizontal, .bottom], 16)
+                    DebugView {
+                        Text(verbatim: "stop id: \(stopId)")
                     }
                     ErrorBanner(errorBannerVM, padding: [
                         .init([.horizontal], 16),
