@@ -23,7 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -156,7 +156,7 @@ private fun RefreshButton(
                     Icons.Rounded.Refresh,
                     contentDescription = label,
                     modifier = Modifier.width(20.dp),
-                    tint = Color.Unspecified,
+                    tint = colorResource(R.color.text),
                 )
             }
         }
