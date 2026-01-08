@@ -9,9 +9,9 @@
 import Foundation
 import Shared
 
-extension Alert {
+extension Alert.Cause {
     var causeLowercaseString: String? {
-        switch cause {
+        switch self {
         case .accident: NSLocalizedString("accident", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .amtrak: NSLocalizedString("Amtrak", comment: "Alert cause, used in 'Delays due to [cause]'")
         case .amtrakTrainTraffic: NSLocalizedString(
@@ -148,7 +148,7 @@ extension Alert {
     }
 
     var causeString: String? {
-        switch cause {
+        switch self {
         case .accident: NSLocalizedString("Accident", comment: "Possible alert cause")
         case .amtrak: NSLocalizedString("Amtrak", comment: "Possible alert cause")
         case .amtrakTrainTraffic: NSLocalizedString("Amtrak Train Traffic", comment: "Possible alert cause")
@@ -210,9 +210,11 @@ extension Alert {
         default: nil
         }
     }
+}
 
+extension Alert.Effect {
     var effectSentenceCaseString: String {
-        switch effect {
+        switch self {
         case .accessIssue: NSLocalizedString("Access issue", comment: "Possible alert effect")
         case .additionalService: NSLocalizedString("Additional service", comment: "Possible alert effect")
         case .amberAlert: NSLocalizedString("Amber alert", comment: "Possible alert effect")
@@ -248,7 +250,7 @@ extension Alert {
     }
 
     var effectString: String {
-        switch effect {
+        switch self {
         case .accessIssue: NSLocalizedString("Access Issue", comment: "Possible alert effect")
         case .additionalService: NSLocalizedString("Additional Service", comment: "Possible alert effect")
         case .amberAlert: NSLocalizedString("Amber Alert", comment: "Possible alert effect")

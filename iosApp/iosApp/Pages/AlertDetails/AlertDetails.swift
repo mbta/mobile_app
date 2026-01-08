@@ -36,9 +36,9 @@ struct AlertDetails: View {
         alert.effect == .elevatorClosure
     }
 
-    private var effectLabel: String { alert.effectString }
+    private var effectLabel: String { alert.effect.effectString }
 
-    private var causeLabel: String? { alert.causeString }
+    private var causeLabel: String? { alert.cause.causeString }
 
     private var affectedStopsLabel: AttributedString {
         AttributedString.tryMarkdown(String(format: NSLocalizedString(

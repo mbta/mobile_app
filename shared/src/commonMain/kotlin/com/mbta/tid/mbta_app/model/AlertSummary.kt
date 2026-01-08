@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +15,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class AlertSummary(
-    internal val effect: Alert.Effect,
+    val effect: Alert.Effect,
     val location: Location? = null,
     val timeframe: Timeframe? = null,
 ) {
@@ -69,8 +70,8 @@ public data class AlertSummary(
         @Serializable public data object Unknown : Timeframe()
     }
 
-    internal companion object {
-        suspend fun summarizing(
+    public companion object {
+        internal suspend fun summarizing(
             alert: Alert,
             stopId: String,
             directionId: Int,
@@ -419,5 +420,7 @@ public data class AlertSummary(
                     listOf("70503"), // Union Square
                 ),
             )
+
+        public fun deserialize(rawData: String): AlertSummary = json.decodeFromString(rawData)
     }
 }

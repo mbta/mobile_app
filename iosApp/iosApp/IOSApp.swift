@@ -50,7 +50,28 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        completionHandler(.noData)
+        let summaryRaw: String? = userInfo["summary"] as? String
+        if let summaryRaw {
+            let summary = AlertSummary.companion.deserialize(rawData: summaryRaw)
+            let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
+            let content = UNMutableNotificationContent()
+            // https://forums.swift.org/t/attributedstring-to-string/61667/2
+            content.title = String(formattedAlert.alertCardHeader(spec: .major).characters[...])
+            content.body = String(formattedAlert.alertCardMajorBody.characters[...])
+            let uuidString = UUID().uuidString
+            let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: nil)
+            let notificationCenter = UNUserNotificationCenter.current()
+            notificationCenter.add(request, withCompletionHandler: { error in
+                if let error {
+                    debugPrint(error)
+                    completionHandler(.failed)
+                } else {
+                    completionHandler(.newData)
+                }
+            })
+        } else {
+            completionHandler(.noData)
+        }
     }
 
     func messaging(_: Messaging, didReceiveRegistrationToken token: String?) {
