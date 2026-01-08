@@ -99,6 +99,7 @@ struct FavoritesView: View {
         }
         .onDisappear {
             toastVM.hideToast()
+            favoritesVM.setActive(active: false, wasSentToBackground: false)
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
             if shouldShow {
