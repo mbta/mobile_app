@@ -32,10 +32,10 @@ fun TripInstantDisplay.containsWrappableText() =
     when (this) {
         is TripInstantDisplay.Overridden -> true
         TripInstantDisplay.Hidden -> false
-        TripInstantDisplay.Boarding -> false
-        TripInstantDisplay.Arriving -> false
-        TripInstantDisplay.Approaching -> false
-        TripInstantDisplay.Now -> false
+        is TripInstantDisplay.Boarding -> false
+        is TripInstantDisplay.Arriving -> false
+        is TripInstantDisplay.Approaching -> false
+        is TripInstantDisplay.Now -> false
         is TripInstantDisplay.Time -> false
         is TripInstantDisplay.TimeWithStatus -> true
         is TripInstantDisplay.TimeWithSchedule -> false

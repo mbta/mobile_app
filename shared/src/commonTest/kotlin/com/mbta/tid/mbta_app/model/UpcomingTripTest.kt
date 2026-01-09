@@ -25,16 +25,18 @@ class UpcomingTripTest {
 
         @Test
         fun `status is non-null`() = parametricTest {
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Overridden("Custom Text"),
+                TripInstantDisplay.Overridden("Custom Text", lastTrip),
                 UpcomingTrip(trip {}, prediction { status = "Custom Text" })
-                    .display(EasternTimeInstant.now(), subway(), anyContext()),
+                    .display(EasternTimeInstant.now(), subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `scheduled trip skipped`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
                 TripInstantDisplay.Skipped(now + 15.minutes),
                 UpcomingTrip(
@@ -44,12 +46,13 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `unscheduled trip skipped`() = parametricTest {
+            val lastTrip = anyBoolean()
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(
@@ -58,37 +61,40 @@ class UpcomingTripTest {
                             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
                         },
                     )
-                    .display(EasternTimeInstant.now(), subway(), anyContext()),
+                    .display(EasternTimeInstant.now(), subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `departure_time is null`() = parametricTest {
+            val lastTrip = anyBoolean()
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, prediction { departureTime = null })
-                    .display(EasternTimeInstant.now(), subway(), anyContext()),
+                    .display(EasternTimeInstant.now(), subway(), anyContext(), lastTrip),
             )
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(trip {}, schedule { departureTime = null })
-                    .display(EasternTimeInstant.now(), subway(), anyContext()),
+                    .display(EasternTimeInstant.now(), subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `schedule instead of prediction`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.ScheduleMinutes(15),
+                TripInstantDisplay.ScheduleMinutes(15, lastTrip),
                 UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes })
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `departure_time in the past`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
                 TripInstantDisplay.Hidden,
                 UpcomingTrip(
@@ -98,15 +104,16 @@ class UpcomingTripTest {
                             departureTime = now.minus(2.seconds)
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `bus arriving now`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Now,
+                TripInstantDisplay.Now(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -114,15 +121,16 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         },
                     )
-                    .display(now, RouteType.BUS, anyContext()),
+                    .display(now, RouteType.BUS, anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `bus more than 30 seconds away`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2, lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -130,15 +138,16 @@ class UpcomingTripTest {
                             departureTime = now.plus(3.minutes)
                         },
                     )
-                    .display(now, RouteType.BUS, anyContext()),
+                    .display(now, RouteType.BUS, anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `seconds less than 0`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Arriving,
+                TripInstantDisplay.Arriving(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -146,7 +155,7 @@ class UpcomingTripTest {
                             departureTime = now.plus(10.seconds)
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
@@ -158,8 +167,9 @@ class UpcomingTripTest {
                 stopId = "12345"
                 tripId = "trip1"
             }
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Boarding,
+                TripInstantDisplay.Boarding(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction =
@@ -171,7 +181,7 @@ class UpcomingTripTest {
                             },
                         vehicle = vehicle,
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
@@ -184,8 +194,9 @@ class UpcomingTripTest {
                     stopId = "12345"
                     tripId = "trip1"
                 }
+                val lastTrip = anyBoolean()
                 assertEquals(
-                    TripInstantDisplay.Minutes(2),
+                    TripInstantDisplay.Minutes(2, lastTrip),
                     UpcomingTrip(
                             trip {},
                             prediction =
@@ -197,7 +208,7 @@ class UpcomingTripTest {
                                 },
                             vehicle = vehicle,
                         )
-                        .display(now, subway(), anyContext()),
+                        .display(now, subway(), anyContext(), lastTrip),
                 )
             }
 
@@ -210,8 +221,9 @@ class UpcomingTripTest {
                 stopId = "12345"
                 tripId = "trip1"
             }
+            val lastTrip = anyBoolean()
             assertNotEquals(
-                TripInstantDisplay.Boarding,
+                TripInstantDisplay.Boarding(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction =
@@ -223,7 +235,7 @@ class UpcomingTripTest {
                             },
                         vehicle = vehicle,
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
             // wrong stop ID
             vehicle = vehicle {
@@ -232,7 +244,7 @@ class UpcomingTripTest {
                 tripId = "trip1"
             }
             assertNotEquals(
-                TripInstantDisplay.Boarding,
+                TripInstantDisplay.Boarding(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction =
@@ -244,7 +256,7 @@ class UpcomingTripTest {
                             },
                         vehicle = vehicle,
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
             // wrong trip ID
             vehicle = vehicle {
@@ -253,7 +265,7 @@ class UpcomingTripTest {
                 tripId = "trip2"
             }
             assertNotEquals(
-                TripInstantDisplay.Boarding,
+                TripInstantDisplay.Boarding(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction =
@@ -265,15 +277,16 @@ class UpcomingTripTest {
                             },
                         vehicle = vehicle,
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `seconds less than 30`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Arriving,
+                TripInstantDisplay.Arriving(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -281,20 +294,21 @@ class UpcomingTripTest {
                             departureTime = now.plus(20.seconds)
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Arriving,
+                TripInstantDisplay.Arriving(lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(15.seconds) })
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
         @Test
         fun `seconds less than 60`() = parametricTest {
             val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Approaching,
+                TripInstantDisplay.Approaching(lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -302,12 +316,12 @@ class UpcomingTripTest {
                             departureTime = now.plus(50.seconds)
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Approaching,
+                TripInstantDisplay.Approaching(lastTrip),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(40.seconds) }))
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
@@ -316,9 +330,10 @@ class UpcomingTripTest {
             val now = EasternTimeInstant.now()
             val futureMinutes = 61
             val moreFutureMinutes = futureMinutes + 38
+            val lastTrip = anyBoolean()
 
             assertEquals(
-                TripInstantDisplay.Minutes(futureMinutes),
+                TripInstantDisplay.Minutes(futureMinutes, lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction {
@@ -326,15 +341,15 @@ class UpcomingTripTest {
                             departureTime = now.plus(futureMinutes.minutes).plus(1.minutes)
                         },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(moreFutureMinutes),
+                TripInstantDisplay.Minutes(moreFutureMinutes, lastTrip),
                 UpcomingTrip(
                         trip {},
                         prediction { departureTime = now.plus(moreFutureMinutes.minutes) },
                     )
-                    .display(now, subway(), anyContext()),
+                    .display(now, subway(), anyContext(), lastTrip),
             )
         }
 
@@ -343,35 +358,36 @@ class UpcomingTripTest {
             val now = EasternTimeInstant.now()
             val routeType = subway()
             val context = anyContext()
+            val lastTrip = anyBoolean()
             assertEquals(
-                TripInstantDisplay.Minutes(1),
+                TripInstantDisplay.Minutes(1, lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(89.seconds) })
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2, lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(90.seconds) })
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(2),
+                TripInstantDisplay.Minutes(2, lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(149.seconds) })
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(3),
+                TripInstantDisplay.Minutes(3, lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(150.seconds) })
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(3),
+                TripInstantDisplay.Minutes(3, lastTrip),
                 UpcomingTrip(trip {}, prediction { departureTime = now.plus(209.seconds) })
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
             assertEquals(
-                TripInstantDisplay.Minutes(45),
+                TripInstantDisplay.Minutes(45, lastTrip),
                 UpcomingTrip(trip {}, (prediction { departureTime = now.plus(45.minutes) }))
-                    .display(now, routeType, context),
+                    .display(now, routeType, context, lastTrip),
             )
         }
     }

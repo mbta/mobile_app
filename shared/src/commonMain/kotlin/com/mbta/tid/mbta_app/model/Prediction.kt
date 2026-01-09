@@ -18,6 +18,7 @@ internal constructor(
     @SerialName("arrival_time") override val arrivalTime: EasternTimeInstant?,
     @SerialName("departure_time") override val departureTime: EasternTimeInstant?,
     @SerialName("direction_id") val directionId: Int,
+    @SerialName("last_trip") val lastTrip: Boolean,
     val revenue: Boolean,
     @SerialName("schedule_relationship") val scheduleRelationship: ScheduleRelationship,
     val status: String?,
