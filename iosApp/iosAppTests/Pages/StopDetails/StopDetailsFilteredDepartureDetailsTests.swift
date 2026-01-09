@@ -636,6 +636,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let route = objects.route { _ in }
         let alert = objects.alert { alert in
             alert.effect = .delay
+            alert.activePeriod(
+                start: .init(year: 2000, month: .january, day: 1, hour: 0, minute: 0, second: 0), end: nil
+            )
             alert.header = "Delay header"
             alert.cause = .heavyRidership
             alert.severity = 10

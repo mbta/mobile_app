@@ -180,7 +180,6 @@ class AlertDetailsTest {
         val alert =
             objects.alert {
                 activePeriod(now - 10.minutes, now - 5.minutes)
-                activePeriod(now + 5.minutes, now + 10.minutes)
                 cause = Alert.Cause.UnrulyPassenger
                 effect = Alert.Effect.StopClosure
                 effectName = "Closure"

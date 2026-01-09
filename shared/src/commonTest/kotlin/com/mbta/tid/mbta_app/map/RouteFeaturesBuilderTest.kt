@@ -120,12 +120,14 @@ class RouteFeaturesBuilderTest {
                         stop = MapTestDataHelper.stopPorter,
                         relevantAlerts = listOf(redAlert),
                         stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        now = now,
                     ),
                 MapTestDataHelper.stopHarvard.id to
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopHarvard,
                         relevantAlerts = listOf(redAlert),
                         stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        now = now,
                     ),
             )
 
@@ -217,12 +219,14 @@ class RouteFeaturesBuilderTest {
                         stop = MapTestDataHelper.stopAlewife,
                         relevantAlerts = listOf(redAlert),
                         stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        now = now,
                     ),
                 MapTestDataHelper.stopDavis.id to
                     AlertAssociatedStop(
                         stop = MapTestDataHelper.stopDavis,
                         relevantAlerts = listOf(redAlert),
                         stateByRoute = mapOf(MapStopRoute.RED to StopAlertState.Shuttle),
+                        now = now,
                     ),
             )
 

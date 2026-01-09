@@ -80,6 +80,7 @@ fun AlertDetails(
     val stopLabel = stop?.name
     val formattedAlert = FormattedAlert(alert)
     val currentPeriod = alert.currentPeriod(now)
+    val nextPeriod = if (currentPeriod == null) alert.nextPeriod(now) else null
     val isElevatorAlert = alert.effect == Alert.Effect.ElevatorClosure
     val elevatorSubtitle = if (isElevatorAlert) alert.header else null
 
@@ -94,7 +95,7 @@ fun AlertDetails(
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)
         if (!isElevatorAlert) {
-            AlertPeriod(currentPeriod)
+            AlertPeriod(currentPeriod ?: nextPeriod)
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 AffectedStopCollapsible(
@@ -112,7 +113,7 @@ fun AlertDetails(
         }
         AlertDescription(alert, affectedStopsKnown = affectedStops.isNotEmpty())
         if (isElevatorAlert) {
-            AlertPeriod(currentPeriod)
+            AlertPeriod(currentPeriod ?: nextPeriod)
         }
         AlertFooter(alert.updatedAt)
     }

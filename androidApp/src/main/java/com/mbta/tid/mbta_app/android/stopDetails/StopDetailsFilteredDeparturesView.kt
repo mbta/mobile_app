@@ -189,12 +189,13 @@ fun StopDetailsFilteredDeparturesView(
 
         @Composable
         fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
+            val significance = alert.significance(now)
             val spec =
                 spec
-                    ?: if (alert.significance == AlertSignificance.Major && isAllServiceDisrupted) {
+                    ?: if (significance == AlertSignificance.Major && isAllServiceDisrupted) {
                         AlertCardSpec.Major
                     } else if (
-                        alert.significance == AlertSignificance.Minor &&
+                        significance == AlertSignificance.Minor &&
                             alert.effect == Alert.Effect.Delay
                     ) {
                         AlertCardSpec.Delay

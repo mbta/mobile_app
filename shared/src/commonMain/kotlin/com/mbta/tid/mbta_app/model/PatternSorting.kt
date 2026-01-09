@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import org.maplibre.spatialk.geojson.Position
 import org.maplibre.spatialk.units.Length
 import org.maplibre.spatialk.units.extensions.feet
@@ -11,10 +12,10 @@ internal object PatternSorting {
             else -> 2
         }
 
-    private fun patternServiceBucket(leafData: RouteCardData.Leaf) =
+    private fun patternServiceBucket(leafData: RouteCardData.Leaf, now: EasternTimeInstant) =
         when {
             // showing either a trip or an alert
-            leafData.hasMajorAlerts || leafData.upcomingTrips.isNotEmpty() -> 1
+            leafData.hasMajorAlerts(now) || leafData.upcomingTrips.isNotEmpty() -> 1
             // service ended
             leafData.hasSchedulesToday -> 2
             // no service today
@@ -37,7 +38,7 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.stopData.first().data.first()) },
+            { patternServiceBucket(it.stopData.first().data.first(), it.at) },
             if (context != RouteCardData.Context.Favorites) {
                 { subwayBucket(it.lineOrRoute.sortRoute) }
             } else {
@@ -60,7 +61,7 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.data.first()) },
+            { patternServiceBucket(it.data.first(), EasternTimeInstant.now()) },
             if (sortByDistanceFrom != null) {
                 { it.stop.distanceFrom(sortByDistanceFrom) }
             } else {
@@ -69,5 +70,5 @@ internal object PatternSorting {
         )
 
     fun compareLeavesAtStop(): Comparator<RouteCardData.Leaf> =
-        compareBy({ patternServiceBucket(it) }, { it.directionId })
+        compareBy({ patternServiceBucket(it, EasternTimeInstant.now()) }, { it.directionId })
 }

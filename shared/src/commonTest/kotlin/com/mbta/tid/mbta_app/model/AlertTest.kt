@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,7 +60,7 @@ class AlertTest {
                     }
                 assertEquals(
                     expectedSignificance,
-                    alert.significance,
+                    alert.significance(null),
                     "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops",
                 )
             }
@@ -110,12 +111,33 @@ class AlertTest {
                 cause = Alert.Cause.SingleTracking
             }
 
-        assertEquals(subwayDelaySevere.significance, AlertSignificance.Minor)
-        assertEquals(crDelaySevere.significance, AlertSignificance.Minor)
-        assertEquals(ferryDelaySevere.significance, AlertSignificance.Minor)
-        assertEquals(singleTrackingDelayInfo.significance, AlertSignificance.Minor)
-        assertEquals(subwayDelayNotSevere.significance, AlertSignificance.None)
-        assertEquals(busDelaySevere.significance, AlertSignificance.None)
+        assertEquals(subwayDelaySevere.significance(null), AlertSignificance.Minor)
+        assertEquals(crDelaySevere.significance(null), AlertSignificance.Minor)
+        assertEquals(ferryDelaySevere.significance(null), AlertSignificance.Minor)
+        assertEquals(singleTrackingDelayInfo.significance(null), AlertSignificance.Minor)
+        assertEquals(subwayDelayNotSevere.significance(null), AlertSignificance.None)
+        assertEquals(busDelaySevere.significance(null), AlertSignificance.None)
+    }
+
+    @Test
+    fun `alert significance limited for upcoming and past alerts`() {
+        val objects = ObjectCollectionBuilder()
+        val alertStart = EasternTimeInstant.now()
+        val alertEnd = alertStart + 2.hours
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(alertStart, alertEnd)
+            }
+
+        assertEquals(AlertSignificance.Major, alert.significance(atTime = null))
+        assertEquals(AlertSignificance.None, alert.significance(atTime = alertStart - 25.hours))
+        assertEquals(
+            AlertSignificance.Secondary,
+            alert.significance(atTime = alertStart - 12.hours),
+        )
+        assertEquals(AlertSignificance.Major, alert.significance(atTime = alertStart))
+        assertEquals(AlertSignificance.None, alert.significance(atTime = alertEnd + 1.minutes))
     }
 
     @Test

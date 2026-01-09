@@ -163,6 +163,10 @@ data class FormattedAlert(
                         R.string.alert_summary_timeframe_time,
                         it.time.formattedTime(),
                     )
+                AlertSummary.Timeframe.StartingTomorrow ->
+                    resources.getString(R.string.starting_tomorrow)
+                is AlertSummary.Timeframe.StartingLaterToday ->
+                    resources.getString(R.string.starting_later_today, it.time.formattedTime())
                 AlertSummary.Timeframe.Unknown -> null
             }
         } ?: ""

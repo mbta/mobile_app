@@ -94,7 +94,10 @@ struct TripStops: View {
                 .padding(1)
                 .withRoundedBorder(color: Color.halo, width: 2)
                 .padding(.horizontal, 6)
-                .padding(.bottom, splitStops.followingStops.last?.disruption?.alert.significance == .major ? 6 : 0)
+                .padding(
+                    .bottom,
+                    splitStops.followingStops.last?.disruption?.alert.significance(atTime: now) == .major ? 6 : 0
+                )
             VStack(alignment: .center, spacing: 0) {
                 if showFirstStopSeparately, let firstStop = splitStops.firstStop {
                     TripStopRow(

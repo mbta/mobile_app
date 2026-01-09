@@ -207,6 +207,100 @@
         }
       }
     },
+    " starting **%@** today" : {
+      "comment" : "Alert summary timeframe starting on a specific time later today. ex. \" starting 10:00 PM today\". The time component is localized by the OS. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " comenzando **%@** hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " à partir de **%@** aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " kòmanse **%@** jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " começando **%@** hoje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " bắt đầu từ **%@** hôm nay"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 从今天**%@**开始"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 從今天**%@**開始"
+          }
+        }
+      }
+    },
+    " starting tomorrow" : {
+      "comment" : "Alert summary timeframe starting tomorrow. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " a partir de mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " à partir de demain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " kòmanse demen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " a partir de amanhã"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " bắt đầu từ ngày mai"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 从明天开始"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 從明天開始"
+          }
+        }
+      }
+    },
     " through end of service" : {
       "comment" : "Alert summary timeframe ending at the end of service on the current day. The leading space should be retained, because this will be added in the %3 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a timeframe fragment.",
       "localizations" : {

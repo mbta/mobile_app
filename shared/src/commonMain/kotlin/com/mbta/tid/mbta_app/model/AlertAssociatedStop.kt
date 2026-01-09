@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.Serializable
 
 public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
@@ -13,6 +14,7 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
         stop: Stop,
         alertsByStop: Map<String, Set<Alert>>,
         nullStopAlerts: Set<Alert>,
+        now: EasternTimeInstant,
         global: GlobalResponse,
     ) : this(stop) {
         global.run {
@@ -28,7 +30,7 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
                 childStops
                     .map { child ->
                         val childAlert =
-                            AlertAssociatedStop(child, alertsByStop, nullStopAlerts, this)
+                            AlertAssociatedStop(child, alertsByStop, nullStopAlerts, now, this)
                         return@map child.id to childAlert
                     }
                     .toMap()
@@ -41,7 +43,7 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
                     } + relevantAlerts
             }
 
-            serviceAlerts = getServiceAlerts(relevantAlerts)
+            serviceAlerts = getServiceAlerts(relevantAlerts, now)
 
             stateByRoute = getAlertStateByRoute(stop, serviceAlerts, childAlerts, global)
         }
@@ -51,9 +53,10 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
         stop: Stop,
         relevantAlerts: List<Alert>,
         stateByRoute: Map<MapStopRoute, StopAlertState>,
+        now: EasternTimeInstant,
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
-        this.serviceAlerts = getServiceAlerts(relevantAlerts)
+        this.serviceAlerts = getServiceAlerts(relevantAlerts, now)
         this.childAlerts = mapOf()
         this.stateByRoute = stateByRoute
     }
@@ -63,9 +66,10 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
         relevantAlerts: List<Alert>,
         childAlerts: Map<String, AlertAssociatedStop>,
         stateByRoute: Map<MapStopRoute, StopAlertState>,
+        now: EasternTimeInstant,
     ) : this(stop) {
         this.relevantAlerts = relevantAlerts
-        this.serviceAlerts = getServiceAlerts(relevantAlerts)
+        this.serviceAlerts = getServiceAlerts(relevantAlerts, now)
         this.childAlerts = childAlerts
         this.stateByRoute = stateByRoute
     }
@@ -92,9 +96,9 @@ private fun entityMatcher(
     )
 }
 
-private fun getServiceAlerts(alerts: List<Alert>): List<Alert> {
+private fun getServiceAlerts(alerts: List<Alert>, atTime: EasternTimeInstant): List<Alert> {
     // In practice, AlertAssociatedStop is only used for the map, where only Major alerts are shown.
-    return alerts.filter { it.significance >= AlertSignificance.Major }
+    return alerts.filter { it.significance(atTime) >= AlertSignificance.Major }
 }
 
 private fun getAlertStateByRoute(

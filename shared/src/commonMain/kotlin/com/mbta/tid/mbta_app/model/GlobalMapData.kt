@@ -50,7 +50,13 @@ public data class GlobalMapData(
                         return@mapNotNull if (it.parentStationId != null) {
                             null
                         } else {
-                            generateAlertingStopFor(it, alertsByStop, nullStopAlerts, globalData)
+                            generateAlertingStopFor(
+                                it,
+                                alertsByStop,
+                                nullStopAlerts,
+                                filterAtTime,
+                                globalData,
+                            )
                         }
                     }
                     .associateBy { it.stop.id }
@@ -62,6 +68,7 @@ public data class GlobalMapData(
             stop: Stop,
             alertsByStop: Map<String, Set<Alert>>,
             nullStopAlerts: Set<Alert>,
+            now: EasternTimeInstant,
             globalData: GlobalResponse,
         ): AlertAssociatedStop? {
             val alertingStop =
@@ -69,6 +76,7 @@ public data class GlobalMapData(
                     stop = stop,
                     alertsByStop = alertsByStop,
                     nullStopAlerts = nullStopAlerts,
+                    now = now,
                     global = globalData,
                 )
 
