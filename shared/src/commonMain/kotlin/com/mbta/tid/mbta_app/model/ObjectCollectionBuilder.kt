@@ -194,6 +194,7 @@ private constructor(
         public var arrivalTime: EasternTimeInstant? = null
         public var departureTime: EasternTimeInstant? = null
         public var directionId: Int = 0
+        public var lastTrip: Boolean = false
         public var revenue: Boolean = true
         public var scheduleRelationship: Prediction.ScheduleRelationship =
             Prediction.ScheduleRelationship.Scheduled
@@ -218,6 +219,7 @@ private constructor(
                 arrivalTime,
                 departureTime,
                 directionId,
+                lastTrip,
                 revenue,
                 scheduleRelationship,
                 status,

@@ -117,28 +117,39 @@ constructor(
         now: EasternTimeInstant,
         routeType: RouteType?,
         context: TripInstantDisplay.Context,
-    ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context = context)
+        lastTrip: Boolean,
+    ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context, lastTrip)
 
     internal fun format(
         now: EasternTimeInstant,
         route: Route,
         context: TripInstantDisplay.Context,
-    ) = format(now, route.type, context, route.type.isSubway() || route.id in silverRoutes)
+        lastTrip: Boolean,
+    ) =
+        format(
+            now,
+            route.type,
+            context,
+            route.type.isSubway() || route.id in silverRoutes,
+            lastTrip,
+        )
 
     internal fun format(
         now: EasternTimeInstant,
         routeType: RouteType,
         context: TripInstantDisplay.Context,
         hideSchedule: Boolean,
+        lastTrip: Boolean,
     ): UpcomingFormat.Some.FormattedTrip? {
-        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context).takeUnless {
-            it.format is TripInstantDisplay.Hidden ||
-                it.format is TripInstantDisplay.Skipped ||
-                // API best practices call for hiding scheduled times on subway
-                (hideSchedule &&
-                    (it.format is TripInstantDisplay.ScheduleTime ||
-                        it.format is TripInstantDisplay.ScheduleMinutes))
-        }
+        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip)
+            .takeUnless {
+                it.format is TripInstantDisplay.Hidden ||
+                    it.format is TripInstantDisplay.Skipped ||
+                    // API best practices call for hiding scheduled times on subway
+                    (hideSchedule &&
+                        (it.format is TripInstantDisplay.ScheduleTime ||
+                            it.format is TripInstantDisplay.ScheduleMinutes))
+            }
     }
 
     internal companion object {
@@ -227,7 +238,16 @@ constructor(
             upcomingTrip: UpcomingTrip,
             routeType: RouteType,
             context: TripInstantDisplay.Context,
-        ) = formatUpcomingTrip(now, upcomingTrip, routeType, context, routeType.isSubway())
+            lastTrip: Boolean,
+        ) =
+            formatUpcomingTrip(
+                now,
+                upcomingTrip,
+                routeType,
+                context,
+                routeType.isSubway(),
+                lastTrip,
+            )
 
         fun formatUpcomingTrip(
             now: EasternTimeInstant,
@@ -235,13 +255,23 @@ constructor(
             routeType: RouteType,
             context: TripInstantDisplay.Context,
             isSubway: Boolean,
+            lastTrip: Boolean,
         ): UpcomingFormat.Some.FormattedTrip? {
-            return UpcomingFormat.Some.FormattedTrip(upcomingTrip, routeType, now, context)
+            return UpcomingFormat.Some.FormattedTrip(
+                    upcomingTrip,
+                    routeType,
+                    now,
+                    context,
+                    lastTrip,
+                )
                 .takeUnless {
                     it.format is TripInstantDisplay.Hidden ||
                         it.format is TripInstantDisplay.Skipped ||
                         // API best practices call for hiding scheduled times on subway
+                        // Unless it's the last trip, only on filtered stop details
                         (isSubway &&
+                            (!lastTrip ||
+                                context != TripInstantDisplay.Context.StopDetailsFiltered) &&
                             (it.format is TripInstantDisplay.ScheduleTime ||
                                 it.format is TripInstantDisplay.ScheduleMinutes))
                 }
@@ -272,5 +302,30 @@ internal fun List<UpcomingTrip>.withFormat(
     route: Route,
     context: TripInstantDisplay.Context,
 ): List<UpcomingFormat.Some.FormattedTrip> {
-    return this.mapNotNull { it.format(now, route, context) }
+    val formattedTrips =
+        this.mapNotNull {
+            val last =
+                (route.type.isSubway() && it.prediction?.lastTrip == true) ||
+                    (!route.type.isSubway() && this.last() == it)
+            it.format(now, route, context, last)
+        }
+
+    val lastNonCancelledTrip =
+        formattedTrips.lastOrNull { it.format !is TripInstantDisplay.Cancelled }
+    // If no trips are tagged as the last trip, this is subway and we shouldn't change anything
+    if (formattedTrips.none { it.lastTrip } || lastNonCancelledTrip?.lastTrip ?: true) {
+        return formattedTrips
+    }
+
+    // If the last non-cancelled trip is not flagged as the last trip, we need to set the last
+    // trip flag on the cancelled trip to false, and set it to true on the actual last trip
+    return formattedTrips.mapNotNull {
+        if (it == lastNonCancelledTrip) {
+            return@mapNotNull it.trip.format(now, route, context, true)
+        } else if (it.lastTrip) {
+            return@mapNotNull it.trip.format(now, route, context, false)
+        } else {
+            return@mapNotNull it
+        }
+    }
 }

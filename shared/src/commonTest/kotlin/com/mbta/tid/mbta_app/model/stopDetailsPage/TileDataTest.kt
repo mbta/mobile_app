@@ -26,7 +26,8 @@ class TileDataTest {
                 UpcomingFormat.Some.FormattedTrip(
                     upcomingTrip,
                     route.type,
-                    TripInstantDisplay.Arriving,
+                    TripInstantDisplay.Arriving(false),
+                    false,
                 ),
                 null,
             )
@@ -56,7 +57,8 @@ class TileDataTest {
                     UpcomingFormat.Some.FormattedTrip(
                         upcomingTrip,
                         route.type,
-                        TripInstantDisplay.Arriving,
+                        TripInstantDisplay.Arriving(false),
+                        false,
                     ),
                     null,
                 ),

@@ -146,8 +146,10 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.TimeWithStatus(
                                     EasternTimeInstant.now(),
                                     "Delay",
+                                    last = false,
                                     headline = true,
                                 ),
+                                lastTrip = false,
                             )
                         ),
                         secondaryAlert = null,
@@ -167,7 +169,8 @@ private fun DepartureTilePreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip2),
                                 RouteType.BUS,
-                                TripInstantDisplay.Minutes(9),
+                                TripInstantDisplay.Minutes(9, false),
+                                lastTrip = false,
                             )
                         ),
                         secondaryAlert = null,
@@ -189,8 +192,10 @@ private fun DepartureTilePreview() {
                                 TripInstantDisplay.ScheduleTimeWithStatusColumn(
                                     EasternTimeInstant.now() - 15.minutes,
                                     "Delay",
-                                    true,
+                                    last = false,
+                                    headline = true,
                                 ),
+                                lastTrip = false,
                             )
                         ),
                         secondaryAlert = null,
@@ -209,7 +214,8 @@ private fun DepartureTilePreview() {
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip3),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(12),
+                                TripInstantDisplay.Minutes(12, false),
+                                false,
                             )
                         ),
                         secondaryAlert = null,

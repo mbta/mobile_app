@@ -59,7 +59,8 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
 
             return UpcomingFormat.Some(
                 UpcomingTrip(trip, schedule, prediction, predictionStop, vehicle)
-                    .format(now, route, TripInstantDisplay.Context.TripDetails) ?: return null,
+                    .format(now, route, TripInstantDisplay.Context.TripDetails, false)
+                    ?: return null,
                 secondaryAlert = null,
             )
         }

@@ -13,23 +13,30 @@ class LeafFormatTest {
     fun `Single tileData returns trips`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         val routeType = anyEnumValue<RouteType>()
+        val lastTrip = anyBoolean()
         val trip1 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Arriving,
+                TripInstantDisplay.Arriving(lastTrip),
+                lastTrip,
             )
         val trip2 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Minutes(10),
+                TripInstantDisplay.Minutes(10, lastTrip),
+                lastTrip,
             )
         val trip3 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.ScheduleTime(EasternTimeInstant(Instant.DISTANT_FUTURE)),
+                TripInstantDisplay.ScheduleTime(
+                    EasternTimeInstant(Instant.DISTANT_FUTURE),
+                    lastTrip,
+                ),
+                lastTrip,
             )
         val format =
             LeafFormat.Single(
@@ -51,11 +58,13 @@ class LeafFormatTest {
     fun `Single tileData drops headsign if normal`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         val routeType = anyEnumValue<RouteType>()
+        val lastTrip = anyBoolean()
         val trip1 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Arriving,
+                TripInstantDisplay.Arriving(lastTrip),
+                lastTrip,
             )
         val format = LeafFormat.Single(null, "Headsign", UpcomingFormat.Some(listOf(trip1), null))
         assertEquals(
@@ -70,24 +79,28 @@ class LeafFormatTest {
         val routeType = anyEnumValue<RouteType>()
         val route1 = objects.route { type = routeType }
         val route2 = objects.route { type = routeType }
+        val lastTrip = anyBoolean()
 
         val trip1 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Approaching,
+                TripInstantDisplay.Approaching(lastTrip),
+                lastTrip,
             )
         val trip2 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.ScheduleMinutes(35),
+                TripInstantDisplay.ScheduleMinutes(35, lastTrip),
+                lastTrip,
             )
         val trip3 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Now,
+                TripInstantDisplay.Now(lastTrip),
+                lastTrip,
             )
 
         val format =
@@ -110,18 +123,21 @@ class LeafFormatTest {
     fun `Branched tileData ignores branches without trips`() = parametricTest {
         val objects = ObjectCollectionBuilder()
         val routeType = anyEnumValue<RouteType>()
+        val lastTrip = anyBoolean()
 
         val trip1 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.Approaching,
+                TripInstantDisplay.Approaching(lastTrip),
+                lastTrip,
             )
         val trip2 =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 routeType,
-                TripInstantDisplay.ScheduleMinutes(35),
+                TripInstantDisplay.ScheduleMinutes(35, lastTrip),
+                lastTrip,
             )
 
         val format =
@@ -197,11 +213,13 @@ class LeafFormatTest {
     @Test
     fun `Single noPredictionsStatus returns null if predictions`() = parametricTest {
         val objects = ObjectCollectionBuilder()
+        val lastTrip = anyBoolean()
         val trip =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 anyEnumValue(),
-                TripInstantDisplay.Minutes(15),
+                TripInstantDisplay.Minutes(15, lastTrip),
+                lastTrip,
             )
         val format =
             LeafFormat.Single(route = null, headsign = null, UpcomingFormat.Some(trip, null))
@@ -211,11 +229,13 @@ class LeafFormatTest {
     @Test
     fun `Branched noPredictionsStatus returns null if any predictions`() = parametricTest {
         val objects = ObjectCollectionBuilder()
+        val lastTrip = anyBoolean()
         val trip =
             UpcomingFormat.Some.FormattedTrip(
                 UpcomingTrip(objects.trip()),
                 anyEnumValue(),
-                TripInstantDisplay.Now,
+                TripInstantDisplay.Now(lastTrip),
+                lastTrip,
             )
         val format =
             LeafFormat.branched {

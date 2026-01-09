@@ -48,12 +48,14 @@ fun HeadsignRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(5),
+                            TripInstantDisplay.Minutes(5, false),
+                            lastTrip = false,
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(15),
+                            TripInstantDisplay.Minutes(15, false),
+                            lastTrip = false,
                         ),
                     ),
                     secondaryAlert = null,
@@ -66,12 +68,14 @@ fun HeadsignRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "1" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(5),
+                            TripInstantDisplay.Minutes(5, false),
+                            lastTrip = false,
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip { id = "2" }),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Minutes(15),
+                            TripInstantDisplay.Minutes(15, false),
+                            lastTrip = false,
                         ),
                     ),
                     secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),

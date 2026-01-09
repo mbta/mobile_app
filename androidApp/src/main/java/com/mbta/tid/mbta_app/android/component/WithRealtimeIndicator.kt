@@ -17,7 +17,7 @@ fun WithRealtimeIndicator(
     alignment: Alignment.Horizontal = Alignment.End,
     prediction: @Composable RowScope.() -> Unit,
 ) {
-    val subjectSpacing = 4.dp
+    val subjectSpacing = 1.dp
     val iconSize = 20.dp
 
     Row(

@@ -80,79 +80,104 @@ fun UpcomingTripView(
 ) {
     val modifier = modifier.widthIn(min = 48.dp).padding(vertical = 2.dp)
     val maxAlphaModifier = if (maxTextAlpha < 1.0f) Modifier.alpha(maxTextAlpha) else Modifier
+    val dimmedAlpha = min(maxTextAlpha, 0.6f)
 
     when (state) {
         is UpcomingTripViewState.Some -> {
             // TODO: actually pull through vehicle type
             val vehicleType = routeType?.typeText(LocalResources.current, isOnly) ?: ""
             val tripDescription = state.trip.contentDescription(isFirst, vehicleType)
+
             when (state.trip) {
                 is TripInstantDisplay.Overridden ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        TightWrapText(
-                            state.trip.text,
-                            modifier = Modifier.placeholderIfLoading(),
-                            style = Typography.footnote.merge(textAlign = TextAlign.End),
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            TightWrapText(
+                                state.trip.text,
+                                modifier =
+                                    Modifier.semantics { contentDescription = tripDescription }
+                                        .alignByBaseline()
+                                        .placeholderIfLoading()
+                                        .alpha(dimmedAlpha),
+                                style = Typography.footnoteSemibold.merge(textAlign = TextAlign.End),
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped -> {}
                 is TripInstantDisplay.Boarding ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        Text(
-                            stringResource(R.string.boarding_abbr),
-                            Modifier.semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            textAlign = TextAlign.End,
-                            style = Typography.headlineBold,
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                stringResource(R.string.boarding_abbr),
+                                Modifier.semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style = Typography.headlineBold,
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.Arriving ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        Text(
-                            stringResource(R.string.arriving_abbr),
-                            Modifier.semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            textAlign = TextAlign.End,
-                            style = Typography.headlineBold,
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                stringResource(R.string.arriving_abbr),
+                                Modifier.semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style = Typography.headlineBold,
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.Now ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        Text(
-                            stringResource(R.string.now),
-                            Modifier.semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            textAlign = TextAlign.End,
-                            style = Typography.headlineBold,
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                stringResource(R.string.now),
+                                Modifier.semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style = Typography.headlineBold,
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.Approaching ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        Text(
-                            text =
-                                AnnotatedString.fromHtml(stringResource(R.string.minutes_abbr, 1)),
-                            modifier =
-                                Modifier.semantics { contentDescription = tripDescription }
-                                    .placeholderIfLoading(),
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                text =
+                                    AnnotatedString.fromHtml(
+                                        stringResource(R.string.minutes_abbr, 1)
+                                    ),
+                                modifier =
+                                    Modifier.semantics { contentDescription = tripDescription }
+                                        .alignByBaseline()
+                                        .placeholderIfLoading(),
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.Time ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
-                        Text(
-                            state.trip.predictionTime.formattedTime(),
-                            Modifier.semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            textAlign = TextAlign.End,
-                            style =
-                                if (state.trip.headline) Typography.headlineSemibold
-                                else Typography.footnoteSemibold,
-                        )
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                state.trip.predictionTime.formattedTime(),
+                                Modifier.semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style =
+                                    if (state.trip.headline) Typography.headlineSemibold
+                                    else Typography.footnoteSemibold,
+                            )
+                        }
                     }
 
                 is TripInstantDisplay.TimeWithStatus ->
@@ -164,18 +189,20 @@ fun UpcomingTripView(
                             modifier.then(maxAlphaModifier),
                             hideRealtimeIndicators,
                         ) {
-                            Text(
-                                state.trip.predictionTime.formattedTime(),
-                                Modifier.placeholderIfLoading(),
-                                textAlign = TextAlign.End,
-                                style =
-                                    if (state.trip.headline) Typography.headlineSemibold
-                                    else Typography.footnoteSemibold,
-                            )
+                            WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                                Text(
+                                    state.trip.predictionTime.formattedTime(),
+                                    Modifier.alignByBaseline().placeholderIfLoading(),
+                                    textAlign = TextAlign.End,
+                                    style =
+                                        if (state.trip.headline) Typography.headlineSemibold
+                                        else Typography.footnoteSemibold,
+                                )
+                            }
                         }
                         Text(
                             state.trip.status,
-                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            color = LocalContentColor.current.copy(alpha = dimmedAlpha),
                             textAlign = TextAlign.End,
                             style = Typography.footnoteSemibold,
                         )
@@ -190,18 +217,20 @@ fun UpcomingTripView(
                             modifier.then(maxAlphaModifier),
                             hideRealtimeIndicators,
                         ) {
-                            Text(
-                                state.trip.predictionTime.formattedTime(),
-                                Modifier.placeholderIfLoading(),
-                                textAlign = TextAlign.End,
-                                style =
-                                    if (state.trip.headline) Typography.headlineSemibold
-                                    else Typography.footnoteSemibold,
-                            )
+                            WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                                Text(
+                                    state.trip.predictionTime.formattedTime(),
+                                    Modifier.alignByBaseline().placeholderIfLoading(),
+                                    textAlign = TextAlign.End,
+                                    style =
+                                        if (state.trip.headline) Typography.headlineSemibold
+                                        else Typography.footnoteSemibold,
+                                )
+                            }
                         }
                         Text(
                             state.trip.scheduledTime.formattedTime(),
-                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            color = LocalContentColor.current.copy(alpha = dimmedAlpha),
                             textAlign = TextAlign.End,
                             textDecoration = TextDecoration.LineThrough,
                             style = Typography.footnoteSemibold,
@@ -209,37 +238,49 @@ fun UpcomingTripView(
                     }
 
                 is TripInstantDisplay.ScheduleTime ->
-                    Text(
-                        state.trip.scheduledTime.formattedTime(),
-                        modifier
-                            .alpha(min(maxTextAlpha, 0.6F))
-                            .semantics { contentDescription = tripDescription }
-                            .placeholderIfLoading(),
-                        textAlign = TextAlign.End,
-                        style =
-                            if (state.trip.headline) Typography.headlineSemibold
-                            else Typography.footnoteSemibold,
-                    )
+                    Row(
+                        Modifier,
+                        Arrangement.spacedBy(4.dp, Alignment.End),
+                        Alignment.CenterVertically,
+                    ) {
+                        WithLastTripPrefix(state.trip.last, dimmedAlpha, true) {
+                            Text(
+                                state.trip.scheduledTime.formattedTime(),
+                                modifier
+                                    .alpha(dimmedAlpha)
+                                    .semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style =
+                                    if (state.trip.headline) Typography.headlineSemibold
+                                    else Typography.footnoteSemibold,
+                            )
+                        }
+                    }
 
                 is TripInstantDisplay.ScheduleTimeWithStatusColumn ->
                     Column(
                         modifier.clearAndSetSemantics { contentDescription = tripDescription },
                         horizontalAlignment = Alignment.End,
                     ) {
-                        Text(
-                            state.trip.scheduledTime.formattedTime(),
-                            modifier
-                                .alpha(min(maxTextAlpha, 0.6F))
-                                .semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            textAlign = TextAlign.End,
-                            style =
-                                if (state.trip.headline) Typography.headlineSemibold
-                                else Typography.footnoteSemibold,
-                        )
+                        WithLastTripPrefix(state.trip.last, dimmedAlpha, true) {
+                            Text(
+                                state.trip.scheduledTime.formattedTime(),
+                                modifier
+                                    .alpha(dimmedAlpha)
+                                    .semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
+                                    .placeholderIfLoading(),
+                                textAlign = TextAlign.End,
+                                style =
+                                    if (state.trip.headline) Typography.headlineSemibold
+                                    else Typography.footnoteSemibold,
+                            )
+                        }
                         Text(
                             state.trip.status,
-                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            color = LocalContentColor.current.copy(alpha = dimmedAlpha),
                             textAlign = TextAlign.End,
                             style = Typography.footnoteSemibold,
                         )
@@ -253,14 +294,14 @@ fun UpcomingTripView(
                     ) {
                         Text(
                             state.trip.status,
-                            color = LocalContentColor.current.copy(alpha = min(maxTextAlpha, 0.6f)),
+                            color = LocalContentColor.current.copy(alpha = dimmedAlpha),
                             textAlign = TextAlign.End,
                             style = Typography.footnote,
                         )
                         Text(
                             state.trip.scheduledTime.formattedTime(),
                             modifier
-                                .alpha(min(maxTextAlpha, 0.6F))
+                                .alpha(dimmedAlpha)
                                 .semantics { contentDescription = tripDescription }
                                 .placeholderIfLoading(),
                             textAlign = TextAlign.End,
@@ -269,30 +310,39 @@ fun UpcomingTripView(
                     }
                 is TripInstantDisplay.Minutes ->
                     WithRealtimeIndicator(modifier.then(maxAlphaModifier), hideRealtimeIndicators) {
+                        WithLastTripPrefix(state.trip.last, maxTextAlpha) {
+                            Text(
+                                text =
+                                    AnnotatedString.fromHtml(
+                                        predictionTextMinutes(state.trip.minutes)
+                                    ),
+                                modifier =
+                                    Modifier.semantics { contentDescription = tripDescription }
+                                        .alignByBaseline()
+                                        .placeholderIfLoading(),
+                            )
+                        }
+                    }
+
+                is TripInstantDisplay.ScheduleMinutes ->
+                    WithLastTripPrefix(state.trip.last, dimmedAlpha, true) {
                         Text(
                             text =
                                 AnnotatedString.fromHtml(predictionTextMinutes(state.trip.minutes)),
                             modifier =
-                                Modifier.semantics { contentDescription = tripDescription }
+                                modifier
+                                    .alpha(dimmedAlpha)
+                                    .semantics { contentDescription = tripDescription }
+                                    .alignByBaseline()
                                     .placeholderIfLoading(),
+                            textAlign = TextAlign.End,
                         )
                     }
-
-                is TripInstantDisplay.ScheduleMinutes ->
-                    Text(
-                        text = AnnotatedString.fromHtml(predictionTextMinutes(state.trip.minutes)),
-                        modifier =
-                            modifier
-                                .alpha(min(maxTextAlpha, 0.6F))
-                                .semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                        textAlign = TextAlign.End,
-                    )
 
                 is TripInstantDisplay.Cancelled ->
                     Row(
                         modifier
-                            .alpha(min(maxTextAlpha, 0.6f))
+                            .alpha(dimmedAlpha)
                             .semantics { contentDescription = tripDescription }
                             .placeholderIfLoading(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -325,11 +375,15 @@ fun UpcomingTripView(
             when (state.format) {
                 is UpcomingFormat.NoTripsFormat.SubwayEarlyMorning ->
                     Row(
-                        modifier.alpha(min(maxTextAlpha, 0.6F)),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier.alpha(dimmedAlpha),
+                        horizontalArrangement = Arrangement.spacedBy(2.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Icon(painterResource(R.drawable.fa_clock), null, Modifier.size(12.dp))
+                        Icon(
+                            painterResource(R.drawable.fa_clock),
+                            null,
+                            Modifier.padding(4.dp).size(12.dp),
+                        )
                         Text(
                             AnnotatedString.fromHtml(
                                 stringResource(
@@ -366,7 +420,7 @@ fun UpcomingTripView(
         is UpcomingTripViewState.Loading ->
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 UpcomingTripView(
-                    UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10)),
+                    UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10, false)),
                     modifier.then(maxAlphaModifier).loadingShimmer().placeholderIfLoading(),
                     routeType,
                     isFirst,
@@ -422,16 +476,28 @@ fun UpcomingTripViewPreview() {
             Modifier.background(colorResource(R.color.fill3)).padding(8.dp),
             horizontalAlignment = Alignment.End,
         ) {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now(false)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, false)))
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, true)
+                    TripInstantDisplay.ScheduleTimeWithStatusRow(
+                        EasternTimeInstant.now() + 10.minutes,
+                        "All aboard",
+                    )
                 )
             )
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes)
+                    TripInstantDisplay.ScheduleTime(
+                        EasternTimeInstant.now() + 10.minutes,
+                        last = false,
+                        headline = true,
+                    )
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, false)
                 )
             )
             UpcomingTripView(
@@ -469,6 +535,69 @@ fun DisruptionViewPreview() {
             UpcomingTripView(disruption(Alert.Effect.Detour))
             UpcomingTripView(disruption(Alert.Effect.SnowRoute))
             UpcomingTripView(disruption(Alert.Effect.Shuttle))
+        }
+    }
+}
+
+@Preview
+@Composable
+fun LastTripsPreview() {
+    MyApplicationTheme {
+        Column(
+            Modifier.background(colorResource(R.color.fill3)).padding(8.dp),
+            horizontalAlignment = Alignment.End,
+        ) {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now(true)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, true)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(
+                        EasternTimeInstant.now() + 7.minutes,
+                        "Now boarding",
+                        true,
+                    )
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithSchedule(
+                        EasternTimeInstant.now() + 7.minutes,
+                        EasternTimeInstant.now() + 10.minutes,
+                        true,
+                    )
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.Overridden("Stopped 10 stops away", true)
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(
+                        EasternTimeInstant.now() + 10.minutes,
+                        last = true,
+                        headline = true,
+                    )
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTime(EasternTimeInstant.now() + 10.minutes, true)
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(
+                        EasternTimeInstant.now() + 10.minutes,
+                        "All aboard",
+                        true,
+                    )
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(18, true))
+            )
         }
     }
 }

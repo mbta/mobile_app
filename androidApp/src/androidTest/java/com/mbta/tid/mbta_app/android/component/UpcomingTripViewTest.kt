@@ -34,9 +34,29 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithSomeOverridden() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test")))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", false))
+            )
         }
-        composeTestRule.onNodeWithText("Test").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Test")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("Test", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeOverriddenLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.Overridden("Test", true))
+            )
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Test")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("Test, Last trip", substring = true)
         composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
     }
 
@@ -76,7 +96,7 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithSomeNow() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now(false)))
         }
         composeTestRule
             .onNodeWithText("Now")
@@ -86,9 +106,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeNowLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Now(true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("Now")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving now, Last trip", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeBoarding() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding(false)))
         }
         composeTestRule
             .onNodeWithText("BRD")
@@ -99,9 +132,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeBoardingLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Boarding(true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("BRD")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("boarding now, Last trip", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeApproaching() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching(false)))
         }
         composeTestRule
             .onNodeWithText("1 min")
@@ -112,9 +158,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeApproachingLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Approaching(true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("1 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 1 min, Last trip", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeArriving() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Arriving))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Arriving(false)))
         }
         composeTestRule
             .onNodeWithText("ARR")
@@ -125,10 +184,23 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeArrivingLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Arriving(true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("ARR")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving now, Last trip", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeAsTime() {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant, false)))
         }
         composeTestRule
             .onNode(hasTextMatching(Regex("2:03\\sPM")))
@@ -139,12 +211,26 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeAsTimeLast() {
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Time(instant, true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:03\\sPM")))
+            .assertIsDisplayed()
+            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM, Last trip"))
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeAsTimeWithStatus() {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithStatus(instant, "All aboard")
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -163,11 +249,40 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeAsTimeWithStatusLast() {
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(instant, "All aboard", true)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:03\\sPM")), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNode(
+                hasContentDescriptionMatching(
+                    Regex("train arriving at 2:03\\sPM, All aboard, Last trip")
+                )
+            )
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeAsTimeWithStatusDelay() {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Delay")),
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(instant, "Delay", false)
+                ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
@@ -187,7 +302,9 @@ class UpcomingTripViewTest {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.TimeWithStatus(instant, "Late")),
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.TimeWithStatus(instant, "Late", false)
+                ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
         }
@@ -209,7 +326,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -239,7 +356,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -267,7 +384,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
                 isFirst = false,
@@ -299,7 +416,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant)
+                    TripInstantDisplay.TimeWithSchedule(predictionInstant, scheduleInstant, false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
                 isFirst = false,
@@ -328,7 +445,9 @@ class UpcomingTripViewTest {
         val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
 
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, false))
+            )
         }
         composeTestRule
             .onNode(hasTextMatching(Regex("2:03\\sPM")))
@@ -339,6 +458,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeScheduleTimeLast() {
+        val instant = EasternTimeInstant(2024, Month.AUGUST, 1, 14, 3, 4)
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleTime(instant, true))
+            )
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:03\\sPM")))
+            .assertIsDisplayed()
+            .assertContentDescriptionMatches(Regex(" arriving at 2:03\\sPM scheduled, Last trip"))
+        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeScheduleTimeWithStatusColumn() {
         val instant = EasternTimeInstant(2025, Month.AUGUST, 5, 14, 14)
         val status = "Delayed"
@@ -346,7 +481,7 @@ class UpcomingTripViewTest {
         composeTestRule.setContent {
             UpcomingTripView(
                 UpcomingTripViewState.Some(
-                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status)
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, false)
                 ),
                 routeType = RouteType.COMMUTER_RAIL,
             )
@@ -361,6 +496,30 @@ class UpcomingTripViewTest {
         composeTestRule
             .onNodeWithTag("realtimeIndicator", useUnmergedTree = true)
             .assertDoesNotExist()
+    }
+
+    @Test
+    fun testUpcomingTripViewWithSomeScheduleTimeWithStatusColumnLast() {
+        val instant = EasternTimeInstant(2025, Month.AUGUST, 5, 14, 14)
+        val status = "Delayed"
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.ScheduleTimeWithStatusColumn(instant, status, true)
+                ),
+                routeType = RouteType.COMMUTER_RAIL,
+            )
+        }
+        composeTestRule.onNodeWithText("Last", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule
+            .onNode(hasTextMatching(Regex("2:14\\sPM")), useUnmergedTree = true)
+            .assertIsDisplayed()
+        composeTestRule
+            .onNode(hasContentDescriptionMatching(Regex("2:14\\sPM train delayed, Last trip")))
+            .assertIsDisplayed()
+        composeTestRule
+            .onNodeWithTag("lastScheduleIndicator", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 
     @Test
@@ -395,7 +554,7 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithSomeMinutes() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, false)))
         }
         composeTestRule
             .onNodeWithText("5 min")
@@ -406,9 +565,22 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeMinutesLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, true)))
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains("arriving in 5 min, Last trip", substring = true)
+        composeTestRule.onNodeWithTag("realtimeIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeHoursAndMinutes() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65, false)))
         }
         composeTestRule
             .onNodeWithText("1 hr 5 min")
@@ -420,7 +592,7 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithSomeHours() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)))
+            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60, false)))
         }
         composeTestRule
             .onNodeWithText("1 hr")
@@ -432,7 +604,9 @@ class UpcomingTripViewTest {
     @Test
     fun testUpcomingTripViewWithSomeScheduleMinutes() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, false))
+            )
         }
         composeTestRule
             .onNodeWithText("5 min")
@@ -443,9 +617,29 @@ class UpcomingTripViewTest {
     }
 
     @Test
+    fun testUpcomingTripViewWithSomeScheduleMinutesLast() {
+        composeTestRule.setContent {
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(5, true))
+            )
+        }
+        composeTestRule.onNodeWithText("Last").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("5 min")
+            .assertIsDisplayed()
+            .assertContentDescriptionContains(
+                "arriving in 5 min scheduled, Last trip",
+                substring = true,
+            )
+        composeTestRule.onNodeWithTag("lastScheduleIndicator").assertIsDisplayed()
+    }
+
+    @Test
     fun testUpcomingTripViewWithSomeScheduleMinutesOver60() {
         composeTestRule.setContent {
-            UpcomingTripView(UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(75)))
+            UpcomingTripView(
+                UpcomingTripViewState.Some(TripInstantDisplay.ScheduleMinutes(75, false))
+            )
         }
         composeTestRule
             .onNodeWithText("1 hr 15 min")
@@ -459,7 +653,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeMinutesOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, false)),
                 routeType = RouteType.BUS,
                 isFirst = false,
             )
@@ -476,7 +670,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeHoursAndMinutesOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65)),
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(65, false)),
                 routeType = RouteType.BUS,
                 isFirst = false,
             )
@@ -493,7 +687,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeHoursOtherBus() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60)),
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(60, false)),
                 routeType = RouteType.BUS,
                 isFirst = false,
             )
@@ -510,7 +704,7 @@ class UpcomingTripViewTest {
     fun testUpcomingTripViewWithSomeMinutesFirstBus() {
         composeTestRule.setContent {
             UpcomingTripView(
-                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5)),
+                UpcomingTripViewState.Some(TripInstantDisplay.Minutes(5, false)),
                 routeType = RouteType.BUS,
                 isFirst = true,
                 isOnly = false,

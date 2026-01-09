@@ -42,8 +42,7 @@ public sealed class UpcomingFormat {
                     !hasSchedulesToday -> NoSchedulesToday
                     hasUpcomingTrips ->
                         // there are trips in the future but we're not showing them (maybe because
-                        // we're
-                        // on the subway and we have schedules but can't get predictions)
+                        // we're on the subway and we have schedules but can't get predictions)
                         PredictionsUnavailable
                     else ->
                         // if there were schedules but there are no trips in the future, service is
@@ -80,6 +79,7 @@ public sealed class UpcomingFormat {
             internal val trip: UpcomingTrip,
             val routeType: RouteType,
             val format: TripInstantDisplay,
+            val lastTrip: Boolean,
         ) {
             val id: String
                 get() = trip.id
@@ -89,7 +89,8 @@ public sealed class UpcomingFormat {
                 routeType: RouteType,
                 now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
-            ) : this(trip, routeType, trip.display(now, routeType, context))
+                lastTrip: Boolean,
+            ) : this(trip, routeType, trip.display(now, routeType, context, lastTrip), lastTrip)
 
             override fun toString(): String = format.toString()
         }

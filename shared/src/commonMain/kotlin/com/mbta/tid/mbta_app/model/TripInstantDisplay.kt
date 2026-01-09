@@ -10,52 +10,61 @@ import kotlin.time.DurationUnit
  * Can be localized in the frontend layer, except for `Overridden` which is always English.
  */
 public sealed class TripInstantDisplay {
-    public data class Overridden(val text: String) : TripInstantDisplay()
+    public data class Overridden(val text: String, val last: Boolean) : TripInstantDisplay()
 
     public data object Hidden : TripInstantDisplay()
 
-    public data object Boarding : TripInstantDisplay()
+    public data class Boarding(val last: Boolean) : TripInstantDisplay()
 
-    public data object Arriving : TripInstantDisplay()
+    public data class Arriving(val last: Boolean) : TripInstantDisplay()
 
-    public data object Approaching : TripInstantDisplay()
+    public data class Approaching(val last: Boolean) : TripInstantDisplay()
 
-    public data object Now : TripInstantDisplay()
+    public data class Now(val last: Boolean) : TripInstantDisplay()
 
-    public data class Time(val predictionTime: EasternTimeInstant, val headline: Boolean = false) :
-        TripInstantDisplay()
+    public data class Time(
+        val predictionTime: EasternTimeInstant,
+        val last: Boolean,
+        val headline: Boolean = false,
+    ) : TripInstantDisplay()
 
     public data class TimeWithStatus(
         val predictionTime: EasternTimeInstant,
         val status: String,
+        val last: Boolean,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
     public data class TimeWithSchedule(
         val predictionTime: EasternTimeInstant,
         val scheduledTime: EasternTimeInstant,
+        val last: Boolean,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
-    public data class Minutes(val minutes: Int) : TripInstantDisplay()
+    public data class Minutes(val minutes: Int, val last: Boolean) : TripInstantDisplay()
 
     public data class ScheduleTime(
         val scheduledTime: EasternTimeInstant,
+        val last: Boolean,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
     public data class ScheduleTimeWithStatusColumn(
         val scheduledTime: EasternTimeInstant,
         val status: String,
+        val last: Boolean,
         val headline: Boolean = false,
     ) : TripInstantDisplay()
 
+    // This has no last trip boolean because if there is a schedule time with a status and it's the
+    // last trip, it will always be shown in column form, even on nearby transit
     public data class ScheduleTimeWithStatusRow(
         val scheduledTime: EasternTimeInstant,
         val status: String,
     ) : TripInstantDisplay()
 
-    public data class ScheduleMinutes(val minutes: Int) : TripInstantDisplay()
+    public data class ScheduleMinutes(val minutes: Int, val last: Boolean) : TripInstantDisplay()
 
     public data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
 
@@ -78,6 +87,7 @@ public sealed class TripInstantDisplay {
             routeType: RouteType?,
             now: EasternTimeInstant,
             context: Context,
+            lastTrip: Boolean,
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
             val scheduleBasedRouteType =
@@ -93,22 +103,26 @@ public sealed class TripInstantDisplay {
                             return TimeWithStatus(
                                 predictionTime,
                                 prediction.status,
+                                lastTrip,
                                 showTimeAsHeadline,
                             )
-                        predictionTime != null -> return Time(predictionTime, showTimeAsHeadline)
-                        scheduleTime != null && context == Context.StopDetailsFiltered ->
+                        predictionTime != null ->
+                            return Time(predictionTime, lastTrip, showTimeAsHeadline)
+                        scheduleTime != null &&
+                            (context == Context.StopDetailsFiltered || lastTrip) ->
                             return ScheduleTimeWithStatusColumn(
                                 scheduleTime,
                                 prediction.status,
+                                lastTrip,
                                 showTimeAsHeadline,
                             )
                         scheduleTime != null && scheduleTime < now ->
                             return ScheduleTimeWithStatusRow(scheduleTime, prediction.status)
                         scheduleTime != null ->
-                            return ScheduleTime(scheduleTime, showTimeAsHeadline)
+                            return ScheduleTime(scheduleTime, lastTrip, showTimeAsHeadline)
                     }
                 }
-                return Overridden(prediction.status)
+                return Overridden(prediction.status, lastTrip)
             }
             if (prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Skipped) {
                 schedule?.stopTime?.let {
@@ -141,9 +155,9 @@ public sealed class TripInstantDisplay {
                         scheduleMinutesRemaining >=
                             SCHEDULE_CLOCK_CUTOFF.toDouble(DurationUnit.MINUTES) || forceAsTime
                     ) {
-                        ScheduleTime(scheduleTime, headline = showTimeAsHeadline)
+                        ScheduleTime(scheduleTime, lastTrip, headline = showTimeAsHeadline)
                     } else {
-                        ScheduleMinutes(scheduleMinutesRemaining)
+                        ScheduleMinutes(scheduleMinutesRemaining, lastTrip)
                     }
                 }
             }
@@ -165,9 +179,14 @@ public sealed class TripInstantDisplay {
                 return if (timeRemaining.isNegative()) {
                     Hidden
                 } else if (showDelayedSchedule) {
-                    TimeWithSchedule(predictionTime, scheduleTime, headline = showTimeAsHeadline)
+                    TimeWithSchedule(
+                        predictionTime,
+                        scheduleTime,
+                        lastTrip,
+                        headline = showTimeAsHeadline,
+                    )
                 } else {
-                    Time(predictionTime, headline = showTimeAsHeadline)
+                    Time(predictionTime, lastTrip, headline = showTimeAsHeadline)
                 }
             }
 
@@ -179,9 +198,9 @@ public sealed class TripInstantDisplay {
                 return if (timeRemaining.isNegative()) {
                     Hidden
                 } else if (timeRemaining <= ARRIVAL_CUTOFF) {
-                    Now
+                    Now(lastTrip)
                 } else {
-                    Minutes(minutes)
+                    Minutes(minutes, lastTrip)
                 }
             }
             if (
@@ -190,18 +209,18 @@ public sealed class TripInstantDisplay {
                     vehicle.tripId == prediction.tripId &&
                     (timeRemaining <= BOARDING_CUTOFF || prediction.hasArrivedButNotDeparted(now))
             ) {
-                return Boarding
+                return Boarding(lastTrip)
             }
             if (timeRemaining.isNegative()) {
                 return Hidden
             }
             if (timeRemaining <= ARRIVAL_CUTOFF || prediction.hasArrivedButNotDeparted(now)) {
-                return Arriving
+                return Arriving(lastTrip)
             }
             if (timeRemaining <= APPROACH_CUTOFF) {
-                return Approaching
+                return Approaching(lastTrip)
             }
-            return Minutes(minutes)
+            return Minutes(minutes, lastTrip)
         }
     }
 }

@@ -203,6 +203,8 @@
     <string name="ice_in_harbor_lowercase">glas nan pò</string>
     <string name="inbound">Antran</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
+    <string name="last">Dènye</string>
+    <string name="last_trip">Dènye vwayaj la</string>
     <string name="later_today">pita jodi a</string>
     <string name="less_common_stop">\u0020Arè ki mwen komen</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b> arè ki mwen komen</string>

@@ -155,14 +155,17 @@ private fun PredictionRowViewPreview() {
                                     EasternTimeInstant(2025, Month.AUGUST, 5, 12, 10),
                                     "Delayed",
                                 ),
+                                false,
                             ),
                             UpcomingFormat.Some.FormattedTrip(
                                 UpcomingTrip(trip),
                                 RouteType.COMMUTER_RAIL,
                                 TripInstantDisplay.Time(
                                     EasternTimeInstant(2025, Month.AUGUST, 5, 12, 45),
-                                    true,
+                                    last = false,
+                                    headline = true,
                                 ),
+                                false,
                             ),
                         ),
                         null,
@@ -177,7 +180,8 @@ private fun PredictionRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.LIGHT_RAIL,
-                            TripInstantDisplay.Boarding,
+                            TripInstantDisplay.Boarding(false),
+                            false,
                         ),
                         null,
                     )
@@ -190,7 +194,8 @@ private fun PredictionRowViewPreview() {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Overridden("Stopped 10 stops away"),
+                        TripInstantDisplay.Overridden("Stopped 10 stops away", false),
+                        false,
                     ),
                     null,
                 ),
@@ -204,7 +209,8 @@ private fun PredictionRowViewPreview() {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Overridden("Stopped 10 stops away"),
+                        TripInstantDisplay.Overridden("Stopped 10 stops away", false),
+                        false,
                     ),
                     null,
                 )
@@ -218,12 +224,14 @@ private fun PredictionRowViewPreview() {
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.BUS,
-                            TripInstantDisplay.ScheduleMinutes(6),
+                            TripInstantDisplay.ScheduleMinutes(6, false),
+                            false,
                         ),
                         UpcomingFormat.Some.FormattedTrip(
                             UpcomingTrip(trip),
                             RouteType.BUS,
-                            TripInstantDisplay.ScheduleMinutes(15),
+                            TripInstantDisplay.ScheduleMinutes(15, false),
+                            false,
                         ),
                     ),
                     null,

@@ -31,12 +31,14 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Minutes(2),
+                        TripInstantDisplay.Minutes(2, true),
+                        true,
                     ),
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "b" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Minutes(10),
+                        TripInstantDisplay.Minutes(10, true),
+                        true,
                     ),
                 ),
                 secondaryAlert = null,
@@ -57,7 +59,8 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Boarding,
+                        TripInstantDisplay.Boarding(true),
+                        true,
                     )
                 ),
                 secondaryAlert = null,
@@ -77,7 +80,8 @@ class HeadsignRowViewTest {
                     UpcomingFormat.Some.FormattedTrip(
                         UpcomingTrip(trip { id = "a" }),
                         RouteType.LIGHT_RAIL,
-                        TripInstantDisplay.Boarding,
+                        TripInstantDisplay.Boarding(true),
+                        true,
                     )
                 ),
                 secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue"),

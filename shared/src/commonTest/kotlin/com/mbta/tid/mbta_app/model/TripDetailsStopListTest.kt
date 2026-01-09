@@ -993,7 +993,8 @@ class TripDetailsStopListTest {
                 UpcomingFormat.Some.FormattedTrip(
                     objects.upcomingTrip(pred),
                     route.type,
-                    TripInstantDisplay.Time(now),
+                    TripInstantDisplay.Time(now, false),
+                    false,
                 ),
                 secondaryAlert = null,
             ),
@@ -1028,7 +1029,8 @@ class TripDetailsStopListTest {
                 UpcomingFormat.Some.FormattedTrip(
                     objects.upcomingTrip(pred),
                     route.type,
-                    TripInstantDisplay.Time(now),
+                    TripInstantDisplay.Time(now, false),
+                    false,
                 ),
                 secondaryAlert = null,
             ),
