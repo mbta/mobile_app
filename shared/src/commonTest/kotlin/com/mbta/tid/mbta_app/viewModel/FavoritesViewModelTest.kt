@@ -202,6 +202,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -388,6 +389,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -512,6 +514,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -592,6 +595,7 @@ internal class FavoritesViewModelTest : KoinTest {
         }
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setLocation(Position(0.0, 0.0))
 
@@ -648,6 +652,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -683,6 +688,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -715,7 +721,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher)
 
         val viewModel: FavoritesViewModel = get()
-
+        viewModel.setActive(true, false)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)
         viewModel.setLocation(stop1.position)
@@ -789,6 +795,7 @@ internal class FavoritesViewModelTest : KoinTest {
         setUpKoin(objects, dispatcher) { favorites = favoritesRepo }
 
         val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
         viewModel.setContext(FavoritesViewModel.Context.Favorites)
         viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
         viewModel.setNow(now)

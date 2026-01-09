@@ -99,6 +99,7 @@ struct FavoritesView: View {
         }
         .onDisappear {
             toastVM.hideToast()
+            favoritesVM.setActive(active: false, wasSentToBackground: false)
         }
         .onChange(of: favoritesVMState.shouldShowFirstTimeToast) { shouldShow in
             if shouldShow {
@@ -109,7 +110,9 @@ struct FavoritesView: View {
         .onChange(of: location?.positionKt) { favoritesVM.setLocation(location: $0) }
         .onChange(of: now) { favoritesVM.setNow(now: $0.toEasternInstant()) }
         .withScenePhaseHandlers(
-            onActive: { favoritesVM.setActive(active: true, wasSentToBackground: false) },
+            onActive: {
+                favoritesVM.setActive(active: true, wasSentToBackground: false)
+            },
             onInactive: { favoritesVM.setActive(active: false, wasSentToBackground: false) },
             onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) }
         )

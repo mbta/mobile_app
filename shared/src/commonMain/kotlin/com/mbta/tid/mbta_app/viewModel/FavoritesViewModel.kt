@@ -123,7 +123,7 @@ public class FavoritesViewModel(
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var loadedLocation: Position? by remember { mutableStateOf(null) }
 
-        var active: Boolean by remember { mutableStateOf(true) }
+        var active: Boolean by remember { mutableStateOf(false) }
 
         val errorKey = "FavoritesViewModel"
         val globalData = getGlobalData(errorKey)
