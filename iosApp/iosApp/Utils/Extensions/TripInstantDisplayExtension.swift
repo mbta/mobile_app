@@ -11,7 +11,7 @@ import SwiftUI
 
 extension TripInstantDisplay {
     func accessibilityLabel(isFirst: Bool, vehicleType: String) -> Text {
-        switch onEnum(of: self) {
+        let label = switch onEnum(of: self) {
         case .approaching, .minutes: predictedMinutesLabel(isFirst, vehicleType)
         case .arriving, .now: arrivingLabel(isFirst, vehicleType)
         case .boarding: boardingLabel(isFirst, vehicleType)
@@ -32,57 +32,67 @@ extension TripInstantDisplay {
                 isFirst,
                 vehicleType
             )
-        case let .overridden(trip): Text(verbatim: trip.text)
-        case .hidden, .skipped: Text(verbatim: "")
+        case let .overridden(trip): trip.text
+        case .hidden, .skipped: ""
         }
+
+        return Text(verbatim: withLastTripSuffix(label, last: lastTrip()))
     }
 
-    private func arrivingLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func arrivingLabel(_ isFirst: Bool, _ vehicleType: String) -> String {
         isFirst
-            ? Text("\(vehicleType) arriving now",
-                   comment: """
-                   Describe that a vehicle is arriving now, as read aloud for VoiceOver users.
-                   First value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'
-                   """)
-            : Text("and arriving now",
-                   comment: """
-                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                    For example, '[bus arriving in 1 minute], and arriving now'
-                   """)
+            ? String(format: NSLocalizedString(
+                "%@ arriving now",
+                comment: """
+                Describe that a vehicle is arriving now, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry). For example, 'bus arriving now'
+                """
+            ), vehicleType)
+            : NSLocalizedString(
+                "and arriving now",
+                comment: """
+                The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                 For example, '[bus arriving in 1 minute], and arriving now'
+                """
+            )
     }
 
-    private func boardingLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func boardingLabel(_ isFirst: Bool, _ vehicleType: String) -> String {
         isFirst
-            ? Text("\(vehicleType) boarding now",
-                   comment: """
-                   Describe that a vehicle is boarding now, as read aloud for VoiceOver users.
-                   First value is the type of vehicle (bus, train, ferry). For example, 'bus boarding now'
-                   """)
-            : Text("and boarding now",
-                   comment: """
-                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                    For example, '[bus arriving in 1 minute], and boarding now'
-                   """)
+            ? String(format: NSLocalizedString(
+                "%@ boarding now",
+                comment: """
+                Describe that a vehicle is boarding now, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry). For example, 'bus boarding now'
+                """
+            ), vehicleType)
+            : NSLocalizedString(
+                "and boarding now",
+                comment: """
+                The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                 For example, '[bus arriving in 1 minute], and boarding now'
+                """
+            )
     }
 
-    private func cancelledLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func cancelledLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
         let time = scheduledTime.formatted(date: .omitted, time: .shortened)
         return isFirst
-            ? Text(
-                "\(vehicleType) arriving at \(time) cancelled",
+            ? String(format: NSLocalizedString(
+                "%@ arriving at %@ cancelled",
                 comment: """
                 Describe the time at which a cancelled vehicle was scheduled to arrive, as read aloud for VoiceOver users.
                 First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
                 For example, 'bus arriving at 10:30AM cancelled'
                 """
-            )
-            : Text(
-                "and at \(time) cancelled",
+            ), vehicleType, time)
+            : String(format: NSLocalizedString(
+                "and at %@ cancelled",
                 comment: """
                 The second or more cancelled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
                 For example, '[bus arriving at 10:30AM], and at 10:45 AM cancelled'
                 """
-            )
+            ), time)
     }
 
     private func delayString(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
@@ -108,13 +118,13 @@ extension TripInstantDisplay {
             ), time, vehicleType)
     }
 
-    private func predictedMinutesLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func predictedMinutesLabel(_ isFirst: Bool, _ vehicleType: String) -> String {
         guard let minutes: Int32 = switch onEnum(of: self) {
         case .approaching: 1
         case let .minutes(trip): trip.minutes
         default: nil
         } else {
-            return Text(verbatim: "")
+            return ""
         }
 
         let minutesFormat = MinutesFormat.companion.from(minutes: minutes)
@@ -123,84 +133,93 @@ extension TripInstantDisplay {
             : predictedMinutesOtherLabel(minutesFormat)
     }
 
-    private func predictedMinutesFirstLabel(_ minutesFormat: MinutesFormat, _ vehicleType: String) -> Text {
+    private func predictedMinutesFirstLabel(_ minutesFormat: MinutesFormat, _ vehicleType: String) -> String {
         switch onEnum(of: minutesFormat) {
         case let .hour(format):
-            Text("\(vehicleType) arriving in \(format.hours, specifier: "%d") hr",
-                 comment: """
-                 Describe the number of hours until a vehicle will arrive, as read aloud for VoiceOver users.
-                 First value is the type of vehicle (bus, train, ferry), second is the number of hours until it arrives
-                 For example, '[bus] arriving in [1] hr'
-                 """)
+            String(format: NSLocalizedString(
+                "%@ arriving in %d hr",
+                comment: """
+                Describe the number of hours until a vehicle will arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the number of hours until it arrives
+                For example, '[bus] arriving in [1] hr'
+                """
+            ), vehicleType, format.hours)
         case let .hourMinute(format):
-            Text(
-                "\(vehicleType) arriving in \(format.hours, specifier: "%d") hr \(format.minutes, specifier: "%d") min",
+            String(format: NSLocalizedString(
+                "%@ arriving in %d hr %d min",
                 comment: """
                 Describe the number of hours and minutes until a vehicle will arrive, as read aloud for VoiceOver users.
                 First value is the type of vehicle (bus, train, ferry), second is number of hours, and third is minutes until it arrives
                 For example, '[bus] arriving in [1] hr [5] min'
                 """
-            )
+            ), vehicleType, format.hours, format.minutes)
         case let .minute(format):
-            Text("\(vehicleType) arriving in \(format.minutes, specifier: "%d") min",
-                 comment: """
-                 Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.
-                 First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
-                 For example, '[bus] arriving in [5] min'
-                 """)
+            String(format: NSLocalizedString(
+                "%@ arriving in %d min",
+                comment: """
+                Describe the number of minutes until a vehicle will arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
+                For example, '[bus] arriving in [5] min'
+                """
+            ), vehicleType, format.minutes)
         }
     }
 
-    private func predictedMinutesOtherLabel(_ minutesFormat: MinutesFormat) -> Text {
+    private func predictedMinutesOtherLabel(_ minutesFormat: MinutesFormat) -> String {
         switch onEnum(of: minutesFormat) {
         case let .hour(format):
-            Text("and in \(format.hours, specifier: "%d") hr",
-                 comment: """
-                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                   For example, '[bus arriving in 38 min], and in [1] hr'
-                 """)
-        case let .hourMinute(format):
-            Text("and in \(format.hours, specifier: "%d") hr \(format.minutes, specifier: "%d") min",
-                 comment: """
+            String(format: NSLocalizedString(
+                "and in %d hr",
+                comment: """
                   The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                  For example, '[bus arriving in 1 hr 5 min], and in [1] hr [45] min'
-                 """)
-        case let .minute(format):
-            Text("and in \(format.minutes, specifier: "%d") min",
-                 comment: """
+                  For example, '[bus arriving in 38 min], and in [1] hr'
+                """
+            ), format.hours)
+        case let .hourMinute(format):
+            String(format: NSLocalizedString(
+                "and in %d hr %d min",
+                comment: """
                  The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                 For example, '[bus arriving in 5 minutes], and in [10] min'
-                 """)
+                 For example, '[bus arriving in 1 hr 5 min], and in [1] hr [45] min'
+                """
+            ), format.hours, format.minutes)
+        case let .minute(format):
+            String(format: NSLocalizedString(
+                "and in %d min",
+                comment: """
+                The second or more arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving in 5 minutes], and in [10] min'
+                """
+            ), format.minutes)
         }
     }
 
-    private func predictedTimeLabel(_ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func predictedTimeLabel(_ isFirst: Bool, _ vehicleType: String) -> String {
         if case let .timeWithStatus(trip) = onEnum(of: self),
            TripInstantDisplay.companion.delayStatuses.contains(trip.status) {
-            return Text(delayString(trip.predictionTime, isFirst, vehicleType))
+            return delayString(trip.predictionTime, isFirst, vehicleType)
         }
 
         guard let predictionInstant: EasternTimeInstant = switch onEnum(of: self) {
         case let .time(trip): trip.predictionTime
         case let .timeWithStatus(trip): trip.predictionTime
         default: nil
-        } else { return Text(verbatim: "") }
+        } else { return "" }
 
         let predictionTime = predictionInstant.formatted(date: .omitted, time: .shortened)
         let timeString = predictedTimeString(predictionTime, isFirst, vehicleType)
-        let finalLabel = if case let .timeWithStatus(trip) = onEnum(of: self) {
+        return if case let .timeWithStatus(trip) = onEnum(of: self) {
             "\(timeString), \(trip.status)"
         } else {
             timeString
         }
-        return Text(verbatim: finalLabel)
     }
 
     private func predictedTimeWithScheduleLabel(
         _ trip: TripInstantDisplay.TimeWithSchedule,
         _ isFirst: Bool,
         _ vehicleType: String
-    ) -> Text {
+    ) -> String {
         let scheduledTime = trip.scheduledTime.formatted(date: .omitted, time: .shortened)
         let scheduleStatus = if trip.predictionTime.compareTo(other: trip.scheduledTime) >= 0 {
             delayString(trip.scheduledTime, isFirst, vehicleType)
@@ -233,7 +252,7 @@ extension TripInstantDisplay {
             ex, '[10:00 PM train delayed, ]arriving at 10:05 PM'
             """
         ), predictionTime)
-        return Text(verbatim: "\(scheduleStatus), \(actualArrival)")
+        return "\(scheduleStatus), \(actualArrival)"
     }
 
     private func predictedTimeString(_ predictionTime: String, _ isFirst: Bool, _ vehicleType: String) -> String {
@@ -255,7 +274,7 @@ extension TripInstantDisplay {
             ), predictionTime)
     }
 
-    private func scheduledMinutesLabel(_ minutes: Int32, _ isFirst: Bool, _ vehicleType: String) -> Text {
+    private func scheduledMinutesLabel(_ minutes: Int32, _ isFirst: Bool, _ vehicleType: String) -> String {
         let minutesFormat = MinutesFormat.companion.from(minutes: minutes)
 
         return isFirst
@@ -263,71 +282,84 @@ extension TripInstantDisplay {
             : scheduledMinutesOtherLabel(minutesFormat)
     }
 
-    private func scheduledMinutesFirstLabel(_ minutesFormat: MinutesFormat, _ vehicleType: String) -> Text {
+    private func scheduledMinutesFirstLabel(_ minutesFormat: MinutesFormat, _ vehicleType: String) -> String {
         switch onEnum(of: minutesFormat) {
         case let .hour(format):
-            Text("\(vehicleType) arriving in \(format.hours, specifier: "%d") hr scheduled",
-                 comment: """
-                 Describe the number of hours until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
-                 First value is the type of vehicle (bus, train, ferry), second is the number of hours until it arrives
-                 For example, 'bus arriving in 1 hr scheduled'
-                 """)
+            String(format: NSLocalizedString(
+                "%@ arriving in %d hr scheduled",
+                comment: """
+                Describe the number of hours until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the number of hours until it arrives
+                For example, 'bus arriving in 1 hr scheduled'
+                """
+            ), vehicleType, format.hours)
         case let .hourMinute(format):
-            Text(
-                "\(vehicleType) arriving in \(format.hours, specifier: "%d") hr \(format.minutes, specifier: "%d") min scheduled",
+            String(format: NSLocalizedString(
+                "%@ arriving in %d hr %d min scheduled",
                 comment: """
                 Describe the number of hours and minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
                 First value is the type of vehicle (bus, train, ferry), second is number of hours, and third is minutes until it arrives
                 For example, 'bus arriving in 1 hr 5 min scheduled'
                 """
-            )
+            ), vehicleType, format.hours, format.minutes)
         case let .minute(format):
-            Text("\(vehicleType) arriving in \(format.minutes, specifier: "%d") min scheduled",
-                 comment: """
-                 Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
-                 First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
-                 For example, 'bus arriving in 5 minutes, scheduled scheduled'
-                 """)
+            String(format: NSLocalizedString(
+                "%@ arriving in %d min scheduled",
+                comment: """
+                Describe the number of minutes until a vehicle is scheduled to arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the number of minutes until it arrives
+                For example, 'bus arriving in 5 minutes, scheduled scheduled'
+                """
+            ), vehicleType, format.minutes)
         }
     }
 
-    private func scheduledMinutesOtherLabel(_ minutesFormat: MinutesFormat) -> Text {
+    private func scheduledMinutesOtherLabel(_ minutesFormat: MinutesFormat) -> String {
         switch onEnum(of: minutesFormat) {
         case let .hour(format):
-            Text("and in \(format.hours, specifier: "%d") hr scheduled",
-                 comment: """
-                 The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                 For example, '[bus arriving in 38 min], and in [1] hr scheduled'
-                 """)
+            String(format: NSLocalizedString(
+                "and in %d hr scheduled",
+                comment: """
+                The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving in 38 min], and in [1] hr scheduled'
+                """
+            ), format.hours)
         case let .hourMinute(format):
-            Text("and in \(format.hours, specifier: "%d") hr \(format.minutes, specifier: "%d") min scheduled",
-                 comment: """
-                 The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                 For example, '[bus arriving in 1 hr 5 min], and in [1] hr [45] min scheduled'
-                 """)
+            String(format: NSLocalizedString(
+                "and in %d hr %d min scheduled",
+                comment: """
+                The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving in 1 hr 5 min], and in [1] hr [45] min scheduled'
+                """
+            ), format.hours, format.minutes)
         case let .minute(format):
-            Text("and in \(format.minutes, specifier: "%d") min scheduled",
-                 comment: """
-                 The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
-                 For example, '[bus arriving in 5 minutes], and in [10] minutes, scheduled'
-                 """)
+            String(format: NSLocalizedString(
+                "and in %d min scheduled",
+                comment: """
+                The second or more scheduled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving in 5 minutes], and in [10] minutes, scheduled'
+                """
+            ), format.minutes)
         }
     }
 
-    private func scheduleTimeLabel(_ scheduledTime: EasternTimeInstant, status: String?, _ isFirst: Bool,
-                                   _ vehicleType: String) -> Text {
+    private func scheduleTimeLabel(
+        _ scheduledTime: EasternTimeInstant,
+        status: String?,
+        _ isFirst: Bool,
+        _ vehicleType: String
+    ) -> String {
         if let status, TripInstantDisplay.companion.delayStatuses.contains(status) {
-            return Text(delayString(scheduledTime, isFirst, vehicleType))
+            return delayString(scheduledTime, isFirst, vehicleType)
         }
 
         let scheduledTime = scheduledTime.formatted(date: .omitted, time: .shortened)
         let timeString = scheduleTimeString(scheduledTime, isFirst, vehicleType)
-        let finalLabel = if let status {
+        return if let status {
             "\(timeString), \(status)"
         } else {
             timeString
         }
-        return Text(verbatim: finalLabel)
     }
 
     private func scheduleTimeString(_ time: String, _ isFirst: Bool, _ vehicleType: String) -> String {
@@ -347,5 +379,38 @@ extension TripInstantDisplay {
                 For example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'
                 """
             ), time)
+    }
+
+    private func lastTrip() -> Bool {
+        switch onEnum(of: self) {
+        case let .approaching(trip): trip.last
+        case let .arriving(trip): trip.last
+        case let .boarding(trip): trip.last
+        case let .minutes(trip): trip.last
+        case let .now(trip): trip.last
+        case let .overridden(trip): trip.last
+        case let .scheduleMinutes(trip): trip.last
+        case let .scheduleTime(trip): trip.last
+        case let .scheduleTimeWithStatusColumn(trip): trip.last
+        case let .time(trip): trip.last
+        case let .timeWithSchedule(trip): trip.last
+        case let .timeWithStatus(trip): trip.last
+        case .cancelled, .hidden, .skipped, .scheduleTimeWithStatusRow: false
+        }
+    }
+
+    private func withLastTripSuffix(_ label: String, last: Bool) -> String {
+        if last {
+            let lastTripString = NSLocalizedString(
+                "Last trip",
+                comment: """
+                Screen reader text for indicating the last trip of the day,
+                read out in conjunction with a prediction or schedule.
+                """
+            )
+            return "\(label), \(lastTripString)"
+        } else {
+            return label
+        }
     }
 }

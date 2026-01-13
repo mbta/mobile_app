@@ -25,13 +25,13 @@ struct WithRealtimeIndicator: View {
     }
 
     var body: some View {
-        HStack(spacing: Self.subjectSpacing) {
+        HStack(alignment: .firstTextBaseline, spacing: Self.subjectSpacing) {
             if !hideIndicator {
                 Image(.liveData)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: iconSize, height: iconSize)
-                    .padding(4)
+                    .padding(.bottom, -1)
                     .opacity(0.6)
                     .accessibilityHidden(true)
             }

@@ -268,10 +268,7 @@ constructor(
                     it.format is TripInstantDisplay.Hidden ||
                         it.format is TripInstantDisplay.Skipped ||
                         // API best practices call for hiding scheduled times on subway
-                        // Unless it's the last trip, only on filtered stop details
                         (isSubway &&
-                            (!lastTrip ||
-                                context != TripInstantDisplay.Context.StopDetailsFiltered) &&
                             (it.format is TripInstantDisplay.ScheduleTime ||
                                 it.format is TripInstantDisplay.ScheduleMinutes))
                 }
@@ -313,7 +310,7 @@ internal fun List<UpcomingTrip>.withFormat(
     val lastNonCancelledTrip =
         formattedTrips.lastOrNull { it.format !is TripInstantDisplay.Cancelled }
     // If no trips are tagged as the last trip, this is subway and we shouldn't change anything
-    if (formattedTrips.none { it.lastTrip } || lastNonCancelledTrip?.lastTrip ?: true) {
+    if (formattedTrips.none { it.lastTrip } || lastNonCancelledTrip?.lastTrip ?: false) {
         return formattedTrips
     }
 

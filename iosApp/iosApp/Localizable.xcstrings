@@ -11671,8 +11671,7 @@
       }
     },
     "Last" : {
-      "comment" : "A prefix included before the prediction or schedule for the final trip of the day. This is used in areas with limited vertical space, so it must be limited to as few characters as possible.",
-      "extractionState" : "manual",
+      "comment" : "A prefix included before the prediction or schedule for the final trip of the day.\nThis is used in areas with minimal horizontal space,\nso it must be limited to as few characters as possible.",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11719,8 +11718,7 @@
       }
     },
     "Last trip" : {
-      "comment" : "Screen reader text for indicating the last trip of the day, read out in conjunction with a prediction or schedule.",
-      "extractionState" : "manual",
+      "comment" : "Screen reader text for indicating the last trip of the day,\nread out in conjunction with a prediction or schedule.",
       "localizations" : {
         "es" : {
           "stringUnit" : {

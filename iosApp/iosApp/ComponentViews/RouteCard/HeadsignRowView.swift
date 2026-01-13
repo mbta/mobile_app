@@ -71,12 +71,14 @@ struct HeadsignRowView_Previews: PreviewProvider {
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                         .init(
                             trip: .init(trip: trip2, prediction: prediction2),
                             routeType: .heavyRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                     ], secondaryAlert: nil)
                 )
@@ -86,12 +88,14 @@ struct HeadsignRowView_Previews: PreviewProvider {
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.lightRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                         .init(
                             trip: .init(trip: trip2, prediction: prediction2),
                             routeType: .heavyRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                     ], secondaryAlert: secondaryAlert)
                 )

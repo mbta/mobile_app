@@ -89,24 +89,29 @@ struct PredictionRowView: View {
                     routeType: .commuterRail,
                     format: .ScheduleTimeWithStatusRow(
                         scheduledTime: .init(year: 2025, month: .august, day: 5, hour: 12, minute: 10, second: 0),
-                        status: "Delayed"
-                    )
+                        status: "Delayed",
+                    ),
+                    lastTrip: false,
                 ),
                 .init(
                     trip: trip2,
                     routeType: .commuterRail,
                     format: .Time(
                         predictionTime: .init(year: 2025, month: .august, day: 5, hour: 12, minute: 45, second: 0),
-                        headline: true
-                    )
+                        last: false,
+                        headline: true,
+                    ),
+                    lastTrip: false,
                 ),
             ], secondaryAlert: nil),
             destination: { Text("Needham Heights") }
         )
 
         PredictionRowView(
-            predictions: .Some(trip: .init(trip: trip1, routeType: .lightRail, format: .Boarding.shared),
-                               secondaryAlert: nil),
+            predictions: .Some(
+                trip: .init(trip: trip1, routeType: .lightRail, format: .Boarding(last: false), lastTrip: false),
+                secondaryAlert: nil
+            ),
             destination: { Text("Longer Destination than That") }
         )
 
@@ -114,7 +119,8 @@ struct PredictionRowView: View {
             predictions: .Some(trip: .init(
                 trip: trip1,
                 routeType: .lightRail,
-                format: .Overridden(text: "Stopped 10 stops away")
+                format: .Overridden(text: "Stopped 10 stops away", last: false),
+                lastTrip: false,
             ), secondaryAlert: nil),
             pillDecoration: .onRow(route: TestData.getRoute(id: "Green-B")),
             destination: { Text("Destination") }
@@ -124,15 +130,21 @@ struct PredictionRowView: View {
             predictions: .Some(trip: .init(
                 trip: trip1,
                 routeType: .lightRail,
-                format: .Overridden(text: "Stopped 10 stops away")
+                format: .Overridden(text: "Stopped 10 stops away", last: false),
+                lastTrip: false,
             ), secondaryAlert: nil),
             destination: { Text("Destination") }
         )
 
         PredictionRowView(
             predictions: .Some(trips: [
-                .init(trip: trip1, routeType: .bus, format: .ScheduleMinutes(minutes: 6)),
-                .init(trip: trip2, routeType: .bus, format: .ScheduleMinutes(minutes: 15)),
+                .init(trip: trip1, routeType: .bus, format: .ScheduleMinutes(minutes: 6, last: false), lastTrip: false),
+                .init(
+                    trip: trip2,
+                    routeType: .bus,
+                    format: .ScheduleMinutes(minutes: 15, last: false),
+                    lastTrip: false
+                ),
             ], secondaryAlert: nil),
             destination: { Text("Destination") }
         )
