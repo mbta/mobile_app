@@ -570,8 +570,8 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip2,
                             route.type,
-                            TripInstantDisplay.Minutes(5, true),
-                            lastTrip = true,
+                            TripInstantDisplay.Minutes(5, !route.type.isSubway()),
+                            lastTrip = !route.type.isSubway(),
                         )
                     ),
                     null,
@@ -629,8 +629,8 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             upcomingTrip2,
                             subwayRoute.type,
-                            TripInstantDisplay.Minutes(5, true),
-                            lastTrip = true,
+                            TripInstantDisplay.Minutes(5, false),
+                            lastTrip = false,
                         )
                     ),
                     null,
@@ -1072,8 +1072,8 @@ class RouteCardDataLeafTest {
                         UpcomingFormat.Some.FormattedTrip(
                             objects.upcomingTrip(prediction3),
                             RouteType.HEAVY_RAIL,
-                            TripInstantDisplay.Minutes(9, true),
-                            lastTrip = true,
+                            TripInstantDisplay.Minutes(9, false),
+                            lastTrip = false,
                         ),
                         null,
                     ),
@@ -1167,8 +1167,8 @@ class RouteCardDataLeafTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     objects.upcomingTrip(prediction2),
                                     RouteType.HEAVY_RAIL,
-                                    TripInstantDisplay.Minutes(12, true),
-                                    lastTrip = true,
+                                    TripInstantDisplay.Minutes(12, false),
+                                    lastTrip = false,
                                 ),
                                 null,
                             ),
@@ -2303,8 +2303,8 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction2),
                                 RouteType.HEAVY_RAIL,
-                                TripInstantDisplay.Minutes(2, true),
-                                lastTrip = true,
+                                TripInstantDisplay.Minutes(2, false),
+                                lastTrip = false,
                             ),
                             null,
                         ),
@@ -2418,8 +2418,8 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 objects.upcomingTrip(prediction3),
                                 RouteType.LIGHT_RAIL,
-                                TripInstantDisplay.Minutes(10, true),
-                                lastTrip = true,
+                                TripInstantDisplay.Minutes(10, false),
+                                lastTrip = false,
                             ),
                             null,
                         ),
