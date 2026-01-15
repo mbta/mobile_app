@@ -176,7 +176,8 @@ struct AlertCard: View {
                 location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 timeframe: .some(AlertSummary.TimeframeTime(
                     time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                ))
+                )),
+                recurrence: nil
             ),
             spec: .major,
             color: Color.pink,

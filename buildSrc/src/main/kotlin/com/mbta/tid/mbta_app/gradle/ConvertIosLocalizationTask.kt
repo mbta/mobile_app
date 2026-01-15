@@ -340,8 +340,7 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
     companion object {
         private fun escapeXML(text: String) = text.replace("&", "&amp;").replace("<", "&lt;")
 
-        private fun escapeLeadingSpace(text: String) =
-            if (text.startsWith(" ")) text.replaceRange(0, 1, "\\u0020") else text
+        private val boundarySpace = Regex("^ | $")
 
         private val template = Regex("""%(?:(?<index>\d+)\$)?l?(?<format>[\w@])""")
 
@@ -353,7 +352,8 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
 
         private fun convertIosTemplate(iosTemplate: String): String {
             var unspecifiedIndex = 1
-            return escapeLeadingSpace(iosTemplate)
+            return iosTemplate
+                .replace(boundarySpace, "\\\\u0020")
                 .replace(template) {
                     replaceTemplate(it) { unspecifiedIndex.also { unspecifiedIndex += 1 } }
                 }

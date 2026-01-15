@@ -8,8 +8,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.atTime
@@ -32,12 +34,25 @@ class AlertSummaryTest {
                 put("stop_name", "Lechmere")
             }
             putJsonObject("timeframe") { put("type", "tomorrow") }
+            putJsonObject("recurrence") {
+                put("type", "some_days")
+                putJsonObject("ending") {
+                    put("type", "later_date")
+                    put("time", "2026-01-16T10:31:00-05:00")
+                }
+            }
         }
         val summary =
             AlertSummary(
                 Alert.Effect.StationClosure,
                 AlertSummary.Location.SingleStop("Lechmere"),
                 AlertSummary.Timeframe.Tomorrow,
+                AlertSummary.Recurrence.SomeDays(
+                    ending =
+                        AlertSummary.Timeframe.LaterDate(
+                            EasternTimeInstant(2026, Month.JANUARY, 16, 10, 31)
+                        )
+                ),
             )
         assertEquals(jsonObject, json.encodeToJsonElement(summary))
         assertEquals(summary, json.decodeFromJsonElement(jsonObject))
@@ -136,20 +151,70 @@ class AlertSummaryTest {
             put("type", "starting_later_today")
             put("time", "2026-01-15T13:03:00-05:00")
         }
+
+        performCheck(
+            AlertSummary.Timeframe.TimeRange(
+                AlertSummary.Timeframe.TimeRange.Time(
+                    EasternTimeInstant(2026, Month.JANUARY, 23, 15, 35)
+                ),
+                AlertSummary.Timeframe.TimeRange.EndOfService,
+            )
+        ) {
+            put("type", "time_range")
+            putJsonObject("start_time") {
+                put("type", "time")
+                put("time", "2026-01-23T15:35:00-05:00")
+            }
+            putJsonObject("end_time") { put("type", "end_of_service") }
+        }
     }
 
     @Test
-    fun `ignores unknown location and timeframe when deserializing`() {
+    fun `can deserialize all recurrences`() {
+        fun performCheck(
+            recurrence: AlertSummary.Recurrence,
+            jsonBuilder: JsonObjectBuilder.() -> Unit,
+        ) {
+            val jsonObject = buildJsonObject(jsonBuilder)
+            assertEquals(jsonObject, json.encodeToJsonElement(recurrence))
+            assertEquals(recurrence, json.decodeFromJsonElement(jsonObject))
+        }
+
+        performCheck(AlertSummary.Recurrence.Daily(ending = AlertSummary.Timeframe.Tomorrow)) {
+            put("type", "daily")
+            putJsonObject("ending") { put("type", "tomorrow") }
+        }
+
+        performCheck(
+            AlertSummary.Recurrence.SomeDays(
+                ending =
+                    AlertSummary.Timeframe.ThisWeek(
+                        EasternTimeInstant(2026, Month.JANUARY, 16, 10, 46)
+                    )
+            )
+        ) {
+            put("type", "some_days")
+            putJsonObject("ending") {
+                put("type", "this_week")
+                put("time", "2026-01-16T10:46:00-05:00")
+            }
+        }
+    }
+
+    @Test
+    fun `ignores unknown location timeframe and recurrence when deserializing`() {
         val jsonObject = buildJsonObject {
             put("effect", "station_closure")
             putJsonObject("location") { put("type", "omnipresent") }
             putJsonObject("timeframe") { put("type", "omnitemporal") }
+            putJsonObject("recurrence") { put("type", "fortnightly") }
         }
         assertEquals(
             AlertSummary(
                 Alert.Effect.StationClosure,
                 location = AlertSummary.Location.Unknown,
                 timeframe = AlertSummary.Timeframe.Unknown,
+                recurrence = AlertSummary.Recurrence.Unknown,
             ),
             json.decodeFromJsonElement(jsonObject),
         )
@@ -909,6 +974,112 @@ class AlertSummaryTest {
                 null,
             ),
             alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with daily recurrence ending on a later date`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                for (daysForward in 0..30) {
+                    activePeriod(now + daysForward.days, now + daysForward.days + 1.seconds)
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = null,
+                timeframe =
+                    AlertSummary.Timeframe.TimeRange(
+                        AlertSummary.Timeframe.TimeRange.Time(now),
+                        AlertSummary.Timeframe.TimeRange.Time(now + 1.seconds),
+                    ),
+                recurrence =
+                    AlertSummary.Recurrence.Daily(
+                        ending = AlertSummary.Timeframe.LaterDate(now + 30.days + 1.seconds)
+                    ),
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with MWF recurrence ending later this week`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val monday = LocalDate(2026, Month.JANUARY, 12)
+        val tuesday = LocalDate(2026, Month.JANUARY, 13)
+        val wednesday = LocalDate(2026, Month.JANUARY, 14)
+        val thursday = LocalDate(2026, Month.JANUARY, 15)
+        val friday = LocalDate(2026, Month.JANUARY, 16)
+        val saturday = LocalDate(2026, Month.JANUARY, 17)
+        val serviceBoundary = LocalTime(3, 0)
+        val noon = LocalTime(12, 0)
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(
+                    EasternTimeInstant(monday, serviceBoundary),
+                    EasternTimeInstant(tuesday, serviceBoundary),
+                )
+                activePeriod(
+                    EasternTimeInstant(wednesday, serviceBoundary),
+                    EasternTimeInstant(thursday, serviceBoundary),
+                )
+                activePeriod(
+                    EasternTimeInstant(friday, serviceBoundary),
+                    EasternTimeInstant(saturday, serviceBoundary),
+                )
+            }
+
+        val expectedRecurrence =
+            AlertSummary.Recurrence.SomeDays(
+                ending =
+                    AlertSummary.Timeframe.ThisWeek(EasternTimeInstant(saturday, serviceBoundary))
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = null,
+                timeframe =
+                    AlertSummary.Timeframe.TimeRange(
+                        AlertSummary.Timeframe.TimeRange.StartOfService,
+                        AlertSummary.Timeframe.TimeRange.EndOfService,
+                    ),
+                recurrence = expectedRecurrence,
+            ),
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                emptyList(),
+                EasternTimeInstant(monday, noon),
+                GlobalResponse(objects),
+            ),
+        )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = null,
+                timeframe = AlertSummary.Timeframe.StartingTomorrow,
+                recurrence = expectedRecurrence,
+            ),
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                emptyList(),
+                EasternTimeInstant(tuesday, noon),
+                GlobalResponse(objects),
+            ),
         )
     }
 }

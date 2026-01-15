@@ -42,7 +42,6 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.Month
 import org.junit.Before
 import org.junit.Rule
@@ -911,8 +910,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val now = EasternTimeInstant.now()
         val nextSchedule =
             objects.schedule {
-                departureTime =
-                    EasternTimeInstant(LocalDateTime(now.local.year + 1, Month.DECEMBER, 8, 8, 0))
+                departureTime = EasternTimeInstant(now.local.year + 1, Month.DECEMBER, 8, 8, 0)
             }
 
         val viewModel = MockStopDetailsViewModel()

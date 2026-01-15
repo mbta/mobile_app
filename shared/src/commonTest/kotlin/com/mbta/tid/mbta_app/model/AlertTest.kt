@@ -7,6 +7,10 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.plus
 
 class AlertTest {
     @Test
@@ -117,6 +121,65 @@ class AlertTest {
         assertEquals(singleTrackingDelayInfo.significance(null), AlertSignificance.Minor)
         assertEquals(subwayDelayNotSevere.significance(null), AlertSignificance.None)
         assertEquals(busDelaySevere.significance(null), AlertSignificance.None)
+    }
+
+    @Test
+    fun `recurrenceRange daily on all days`() {
+        val today = EasternTimeInstant.now().serviceDate
+        val ninePM = LocalTime(21, 0)
+        val endOfService = LocalTime(3, 0)
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                for (daysForward in 0..5) {
+                    activePeriod(
+                        EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
+                        EasternTimeInstant(
+                            today.plus(DatePeriod(days = daysForward + 1)),
+                            endOfService,
+                        ),
+                    )
+                }
+            }
+
+        assertEquals(
+            Alert.RecurrenceInfo(
+                EasternTimeInstant(today, ninePM),
+                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
+                DayOfWeek.entries.toSet(),
+            ),
+            alert.recurrenceRange(),
+        )
+    }
+
+    @Test
+    fun `recurrenceRange selects specific days`() {
+        val selectedDays = setOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY)
+        val today = EasternTimeInstant.now().serviceDate
+        val ninePM = LocalTime(21, 0)
+        val endOfService = LocalTime(3, 0)
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                for (daysForward in 0..14) {
+                    val serviceDate = today.plus(DatePeriod(days = daysForward))
+                    if (serviceDate.dayOfWeek !in selectedDays) continue
+                    activePeriod(
+                        EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
+                        EasternTimeInstant(
+                            today.plus(DatePeriod(days = daysForward + 1)),
+                            endOfService,
+                        ),
+                    )
+                }
+            }
+
+        assertEquals(
+            Alert.RecurrenceInfo(
+                alert.activePeriod.first().start,
+                alert.activePeriod.last().end!!,
+                selectedDays,
+            ),
+            alert.recurrenceRange(),
+        )
     }
 
     @Test

@@ -25,6 +25,12 @@ private val formatWeekdayAndDate by lazy {
     DateFormat.getInstanceForSkeleton(DateFormat.WEEKDAY + DateFormat.ABBR_MONTH + DateFormat.DAY)
         .inEasternTime()
 }
+private val formatShortWeekdayAndDate by lazy {
+    DateFormat.getInstanceForSkeleton(
+            DateFormat.ABBR_WEEKDAY + DateFormat.ABBR_MONTH + DateFormat.DAY
+        )
+        .inEasternTime()
+}
 
 private fun EasternTimeInstant.formatWith(format: DateFormat): String {
     val calendar =
@@ -57,6 +63,12 @@ fun EasternTimeInstant.formattedServiceDay(): String =
  */
 fun EasternTimeInstant.formattedServiceDayAndDate(): String =
     this.coerceInServiceDay().formatWith(formatWeekdayAndDate)
+
+/**
+ * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Mon, Jan 1"
+ */
+fun EasternTimeInstant.formattedShortServiceDayAndDate(): String =
+    this.coerceInServiceDay().formatWith(formatShortWeekdayAndDate)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "January 1"

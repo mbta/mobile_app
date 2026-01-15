@@ -17,6 +17,18 @@ public val json: Json = Json {
         polymorphic(AlertSummary.Timeframe::class) {
             defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
         }
+        polymorphic(AlertSummary.Timeframe.TimeRange.StartTime::class) {
+            defaultDeserializer { AlertSummary.Timeframe.TimeRange.Unknown.serializer() }
+        }
+        polymorphic(AlertSummary.Timeframe.TimeRange.EndTime::class) {
+            defaultDeserializer { AlertSummary.Timeframe.TimeRange.Unknown.serializer() }
+        }
+        polymorphic(AlertSummary.Recurrence::class) {
+            defaultDeserializer { AlertSummary.Recurrence.Unknown.serializer() }
+        }
+        polymorphic(AlertSummary.Recurrence.EndDay::class) {
+            defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
+        }
     }
 }
 

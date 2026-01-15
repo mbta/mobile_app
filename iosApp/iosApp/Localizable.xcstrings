@@ -54,6 +54,53 @@
         }
       }
     },
+    " daily%@" : {
+      "comment" : "Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The leading space must be retained.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " a diario%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " tous les jours%@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " chak jou%@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " diário%@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hằng ngày%@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 日常的%@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 日常的%@"
+          }
+        }
+      }
+    },
     " from **%1$@** stops to **%2$@**" : {
       "comment" : "Alert summary location for branching routes in the format of \" from [direction] stops to [Stop name]\" ex. \" from [Westbound] stops to [Kenmore]\" or \" from [Eastbound] stops to [Government Center]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
       "localizations" : {
@@ -203,6 +250,106 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : " 從**%1$@**到**%2$@**站"
+          }
+        }
+      }
+    },
+    " from %@ to %@" : {
+      "comment" : "Alert summary timeframe with a range today that will recur in the future, e.g. “from 9:00 PM to end of service”. The leading space should be retained.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : " from %1$@ to %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de %1$@ a %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de %1$@ à %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " soti nan %1$@ rive nan %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de %1$@ para %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " từ %1$@ đến %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 从 %1$@ 到 %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 從 %1$@ 到 %2$@"
+          }
+        }
+      }
+    },
+    " some days%@" : {
+      "comment" : "Alert summary recurrence on only certain days until the indicated date, e.g. “some days until Jan 16”. The leading space must be retained.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " algunos días%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " certains jours%@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " kèk jou%@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " alguns dias%@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " một số ngày%@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@有些日子"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@有些日子"
           }
         }
       }
@@ -395,6 +542,100 @@
         }
       }
     },
+    " until tomorrow" : {
+      "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à demain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska demen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até amanhã"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " cho đến ngày mai"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到明天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到明天"
+          }
+        }
+      }
+    },
+    ", " : {
+      "comment" : "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ", "
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ", "
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ", "
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ", "
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : ", "
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "、"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "、"
+          }
+        }
+      }
+    },
     "**%@** ahead" : {
       "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
       "localizations" : {
@@ -583,55 +824,49 @@
         }
       }
     },
-    "**%1$@**%2$@%3$@" : {
-      "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe]\", ex \"[Stop closed][ at Haymarket][ through this Friday]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service]\"",
+    "**%1$@**%2$@%3$@%4$@" : {
+      "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe][until recurrence]\", ex \"[Stop closed][ at Haymarket][ through this Friday][]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
-          }
-        },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "fr" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "ht" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "vi" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
-            "state" : "translated",
-            "value" : "**%1$@**%2$@%3$@"
+            "state" : "needs_review",
+            "value" : "**%1$@**%2$@%3$@%4$@"
           }
         }
       }
@@ -1081,6 +1316,58 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "因 **%@** 造成延誤"
+          }
+        }
+      }
+    },
+    "%@ – %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ – %2$@"
           }
         }
       }
@@ -7121,6 +7408,53 @@
         }
       }
     },
+    "Daily" : {
+      "comment" : "Label for the days of a recurring alert",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "A diario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tous les jours"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chak jou"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Diário"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hằng ngày"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "日常的"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "日常的"
+          }
+        }
+      }
+    },
     "Debug Mode" : {
       "comment" : "A setting on the More page to display debug information (only visible for developers)",
       "localizations" : {
@@ -10427,7 +10761,7 @@
       }
     },
     "From" : {
-      "comment" : "Start time of a notification window",
+      "comment" : "Label for the times of a recurring alert",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -11548,6 +11882,112 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "保持關閉定位服務"
+          }
+        }
+      }
+    },
+    "key/alert_summary_recurrence_end_day_later_date" : {
+      "comment" : "Alert summary recurrence ending on a specific date in the future. ex. \" until May 11\". The date component is localized by the OS. The leading space should be retained.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " until %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " cho đến khi %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到 %@"
+          }
+        }
+      }
+    },
+    "key/alert_summary_recurrence_end_day_this_week" : {
+      "comment" : "Alert summary recurrence ending on a specific day later this week. ex. \" until Thursday\". The weekday component is localized by the OS. The leading space should be retained.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " until %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiska %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " cho đến khi %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 直到 %@"
           }
         }
       }

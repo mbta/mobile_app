@@ -352,4 +352,69 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText(alert.description!!).assertIsDisplayed()
         composeTestRule.onNodeWithText("1 affected stop").assertDoesNotExist()
     }
+
+    @Test
+    fun testRecurringDaily() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant(2026, Month.JANUARY, 23, 10, 41)
+
+        val route = objects.route()
+        val stop = objects.stop { name = "Park Street" }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 1.hours, now + 1.hours)
+                activePeriod(now + 23.hours, now + 25.hours)
+                activePeriod(now + 47.hours, now + 49.hours)
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = listOf(route),
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Daily").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Fri, Jan 23 – Sun, Jan 25").assertIsDisplayed()
+        composeTestRule.onNodeWithText("From").assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+    }
+
+    @Test
+    fun testRecurringSomeDays() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant(2026, Month.JANUARY, 23, 10, 41)
+
+        val route = objects.route()
+        val stop = objects.stop { name = "Park Street" }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 1.hours, now + 1.hours)
+                activePeriod(now + 47.hours, now + 49.hours)
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = listOf(route),
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("January 23 – January 25").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Sunday, Friday").assertIsDisplayed()
+        composeTestRule.onNodeWithText("From").assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+    }
 }
