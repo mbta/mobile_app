@@ -54,12 +54,14 @@ struct DirectionRowView_Previews: PreviewProvider {
                         .init(
                             trip: .init(trip: trip1, prediction: prediction1),
                             routeType: RouteType.heavyRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                         .init(
                             trip: .init(trip: trip2, prediction: prediction2),
                             routeType: RouteType.heavyRail,
-                            now: now, context: .nearbyTransit
+                            now: now, context: .nearbyTransit,
+                            lastTrip: false,
                         ),
                     ], secondaryAlert: nil)
                 )

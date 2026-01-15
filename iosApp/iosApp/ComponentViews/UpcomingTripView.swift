@@ -28,6 +28,9 @@ struct UpcomingTripView: View {
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 16
 
+    var baseOpacity: Double { min(1.0, maxTextAlpha) }
+    var dimmedOpacity: Double { min(0.6, maxTextAlpha) }
+
     enum State: Equatable {
         case loading
         case noTrips(UpcomingFormat.NoTripsFormat)
@@ -47,51 +50,68 @@ struct UpcomingTripView: View {
             isFirst: isFirst,
             vehicleType: routeType?.typeText(isOnly: isOnly) ?? ""
         )
+
         switch onEnum(of: prediction) {
-        case let .overridden(overridden):
-            Text(overridden.textWithLocale()).realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+        case let .overridden(format):
+            Text(format.textWithLocale())
+                .font(.footnoteSemibold)
+                .opacity(dimmedOpacity)
+                .lastTripPrefix(last: format.last)
+                .realtime(hideIndicator: hideRealtimeIndicators)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(label)
         case .hidden, .skipped:
             // should have been filtered out already
             Text(verbatim: "")
-        case .now:
+        case let .now(format):
             Text("Now", comment: "Label for a trip that's arriving right now")
                 .font(Typography.headlineBold)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
-        case .boarding:
+        case let .boarding(format):
             Text("BRD", comment: "Shorthand for boarding")
                 .font(Typography.headlineBold)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
-        case .arriving:
+        case let .arriving(format):
             Text("ARR", comment: "Shorthand for arriving")
                 .font(Typography.headlineBold)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
-        case .approaching:
+        case let .approaching(format):
             PredictionText(minutes: 1)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
         case let .time(format):
             Text(format.predictionTime, style: .time)
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
         case let .timeWithStatus(format):
             VStack(alignment: .trailing, spacing: 0) {
                 Text(format.predictionTime, style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .lastTripPrefix(last: format.last)
                     .realtime(hideIndicator: hideRealtimeIndicators)
-                    .opacity(min(1.0, maxTextAlpha))
+                    .opacity(baseOpacity)
                 Text(format.status)
                     .font(Typography.footnoteSemibold)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .ignore)
@@ -100,11 +120,12 @@ struct UpcomingTripView: View {
             VStack(alignment: .trailing, spacing: 0) {
                 Text(format.predictionTime, style: .time)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                    .lastTripPrefix(last: format.last)
                     .realtime(hideIndicator: hideRealtimeIndicators)
-                    .opacity(min(1.0, maxTextAlpha))
+                    .opacity(baseOpacity)
                 Text(format.scheduledTime, style: .time)
                     .font(Typography.footnoteSemibold)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                     .strikethrough()
                     .multilineTextAlignment(.trailing)
             }
@@ -112,22 +133,27 @@ struct UpcomingTripView: View {
             .accessibilityLabel(label)
         case let .minutes(format):
             PredictionText(minutes: format.minutes)
+                .lastTripPrefix(last: format.last)
                 .realtime(hideIndicator: hideRealtimeIndicators)
-                .opacity(min(1.0, maxTextAlpha))
+                .opacity(baseOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
         case let .scheduleTime(format):
             Text(format.scheduledTime, style: .time)
-                .opacity(min(0.6, maxTextAlpha))
                 .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
+                .lastTripPrefix(last: format.last, scheduleClock: true)
+                .opacity(dimmedOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
         case let .scheduleTimeWithStatusColumn(format):
             VStack(alignment: .trailing, spacing: 0) {
                 Text(format.scheduledTime, style: .time)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .lastTripPrefix(last: format.last, scheduleClock: true)
+                    .opacity(dimmedOpacity)
                     .font(format.headline ? Typography.headlineSemibold : Typography.footnoteSemibold)
                 Text(format.status)
                     .font(Typography.footnoteSemibold)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                     .multilineTextAlignment(.trailing)
             }
             .accessibilityElement(children: .ignore)
@@ -136,27 +162,29 @@ struct UpcomingTripView: View {
             HStack(alignment: .center, spacing: 4) {
                 Text(format.status)
                     .font(Typography.footnoteSemibold)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                     .multilineTextAlignment(.trailing)
                 Text(format.scheduledTime, style: .time)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                     .font(Typography.footnoteSemibold)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(label)
         case let .scheduleMinutes(format):
             PredictionText(minutes: format.minutes)
-                .opacity(min(0.6, maxTextAlpha))
+                .lastTripPrefix(last: format.last, scheduleClock: true)
+                .opacity(dimmedOpacity)
+                .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
         case let .cancelled(format):
             HStack(spacing: Self.subjectSpacing) {
                 Text("Cancelled", comment: "The status label for a cancelled trip")
                     .font(Typography.footnote)
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
                 Text(format.scheduledTime, style: .time)
                     .font(Typography.footnoteSemibold)
                     .strikethrough()
-                    .opacity(min(0.6, maxTextAlpha))
+                    .opacity(dimmedOpacity)
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(label)
@@ -182,7 +210,7 @@ struct UpcomingTripView: View {
                         format.scheduledTime.formatted(date: .omitted, time: .shortened)
                     )))
                 }
-                .opacity(min(0.6, maxTextAlpha))
+                .opacity(dimmedOpacity)
             case .predictionsUnavailable:
                 Text(
                     "Predictions unavailable",
@@ -211,6 +239,7 @@ struct DisruptionView: View {
     let maxTextAlpha: Double
 
     @ScaledMetric private var iconSize: CGFloat = 20
+    var dimmedOpacity: Double { min(0.6, maxTextAlpha) }
 
     var body: some View {
         ViewThatFits(in: .horizontal) {
@@ -242,7 +271,7 @@ struct DisruptionView: View {
     var fullText: some View {
         rawText
             .font(Typography.footnoteSemibold)
-            .opacity(min(0.6, maxTextAlpha))
+            .opacity(dimmedOpacity)
     }
 
     var fullImage: some View {
@@ -277,5 +306,57 @@ struct UpcomingTripView_Previews: PreviewProvider {
         .frame(maxWidth: 150)
         .background(Color.fill3)
         .previewDisplayName("No Service")
+    }
+}
+
+struct UpcomingTripViewLastTrip_Previews: PreviewProvider {
+    static var previews: some View {
+        VStack(alignment: .trailing) {
+            UpcomingTripView(prediction: .some(.Now(last: true)))
+            UpcomingTripView(prediction: .some(.Minutes(minutes: 5, last: true)))
+            UpcomingTripView(prediction: .some(
+                .TimeWithStatus(
+                    predictionTime: .now().plus(minutes: 7),
+                    status: "Now boarding",
+                    last: true, headline: false
+                )
+            ))
+            UpcomingTripView(prediction: .some(
+                .TimeWithSchedule(
+                    predictionTime: .now().plus(minutes: 7),
+                    scheduledTime: .now().plus(minutes: 10),
+                    last: true, headline: true
+                )
+            ))
+            UpcomingTripView(prediction: .some(
+                .Overridden(text: "Stopped 10 stops away", last: true)
+            ))
+            UpcomingTripView(prediction: .some(
+                .ScheduleTime(
+                    scheduledTime: .now().plus(minutes: 10),
+                    last: true, headline: true,
+                )
+            ))
+            UpcomingTripView(prediction: .some(
+                .ScheduleTime(
+                    scheduledTime: .now().plus(minutes: 10),
+                    last: true, headline: false,
+                )
+            ))
+            UpcomingTripView(prediction: .some(
+                .ScheduleTimeWithStatusColumn(
+                    scheduledTime: .now().plus(minutes: 10),
+                    status: "All aboard",
+                    last: true, headline: false,
+                )
+            ))
+            UpcomingTripView(prediction: .some(
+                .ScheduleMinutes(minutes: 18, last: true)
+            ))
+        }
+        .padding(8)
+        .frame(maxWidth: 200)
+        .background(Color.fill3)
+        .previewDisplayName("Last Trip")
     }
 }

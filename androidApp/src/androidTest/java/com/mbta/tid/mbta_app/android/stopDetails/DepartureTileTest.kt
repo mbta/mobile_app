@@ -40,7 +40,8 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5),
+                                    TripInstantDisplay.Minutes(5, false),
+                                    false,
                                 )
                             ),
                         secondaryAlert = null,
@@ -78,7 +79,8 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5),
+                                    TripInstantDisplay.Minutes(5, false),
+                                    false,
                                 )
                             ),
                         secondaryAlert = null,
@@ -112,7 +114,8 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5),
+                                    TripInstantDisplay.Minutes(5, false),
+                                    false,
                                 )
                             ),
                         secondaryAlert = null,
@@ -148,7 +151,8 @@ class DepartureTileTest {
                                 UpcomingFormat.Some.FormattedTrip(
                                     upcoming,
                                     route.type,
-                                    TripInstantDisplay.Minutes(5),
+                                    TripInstantDisplay.Minutes(5, false),
+                                    false,
                                 )
                             ),
                         secondaryAlert = null,

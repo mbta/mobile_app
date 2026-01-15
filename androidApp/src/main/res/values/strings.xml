@@ -194,6 +194,8 @@
     <string name="ice_in_harbor_lowercase">ice in harbor</string>
     <string name="inbound">Inbound</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
+    <string name="last">Last</string>
+    <string name="last_trip">Last trip</string>
     <string name="later_today">later today</string>
     <string name="less_common_stop">Less common stop</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>

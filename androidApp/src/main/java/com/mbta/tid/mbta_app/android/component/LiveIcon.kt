@@ -17,8 +17,8 @@ fun LiveIcon(modifier: Modifier = Modifier, size: Dp = 16.dp, alpha: Float = 1f)
     Image(
         painterResource(R.drawable.live_data),
         null,
-        Modifier.Companion.placeholderIfLoading().size(size).then(modifier),
+        Modifier.placeholderIfLoading().size(size).then(modifier),
         alpha = alpha,
-        colorFilter = ColorFilter.Companion.tint(LocalContentColor.current),
+        colorFilter = ColorFilter.tint(LocalContentColor.current),
     )
 }

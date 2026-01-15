@@ -124,8 +124,10 @@ struct DepartureTile: View {
                             format: .TimeWithStatus(
                                 predictionTime: EasternTimeInstant.now(),
                                 status: "Delay",
-                                headline: true
-                            )
+                                last: false,
+                                headline: true,
+                            ),
+                            lastTrip: false,
                         ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip
@@ -138,7 +140,12 @@ struct DepartureTile: View {
                     route: route1,
                     headsign: "Harvard",
                     formatted: UpcomingFormat.Some(trips: [
-                        .init(trip: upcomingTrip, routeType: .bus, format: .Minutes(minutes: 9)),
+                        .init(
+                            trip: upcomingTrip,
+                            routeType: .bus,
+                            format: .Minutes(minutes: 9, last: false),
+                            lastTrip: false
+                        ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip
                 ),
@@ -157,8 +164,10 @@ struct DepartureTile: View {
                                 format: .ScheduleTimeWithStatusColumn(
                                     scheduledTime: .now().minus(minutes: 15),
                                     status: "Delay",
+                                    last: false,
                                     headline: true
-                                )
+                                ),
+                                lastTrip: false,
                             ),
                         ],
                         secondaryAlert: nil
@@ -172,7 +181,12 @@ struct DepartureTile: View {
                     route: routeB,
                     headsign: "Government Center",
                     formatted: UpcomingFormat.Some(trips: [
-                        .init(trip: upcomingTrip, routeType: .lightRail, format: .Minutes(minutes: 12)),
+                        .init(
+                            trip: upcomingTrip,
+                            routeType: .lightRail,
+                            format: .Minutes(minutes: 12, last: false),
+                            lastTrip: false
+                        ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip
                 ),

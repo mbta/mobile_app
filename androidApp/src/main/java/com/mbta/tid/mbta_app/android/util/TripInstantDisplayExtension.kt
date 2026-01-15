@@ -13,52 +13,33 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
         is TripInstantDisplay.Approaching,
         is TripInstantDisplay.Minutes -> predictedMinutesDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.Arriving,
-        is TripInstantDisplay.Now ->
-            if (isFirst) stringResource(R.string.vehicle_arriving_first, vehicleType)
-            else stringResource(R.string.vehicle_arriving_other)
-        is TripInstantDisplay.Boarding ->
-            if (isFirst) stringResource(R.string.vehicle_boarding_first, vehicleType)
-            else stringResource(R.string.vehicle_boarding_other)
+        is TripInstantDisplay.Now -> {
+            val lastTrip =
+                when (this) {
+                    is TripInstantDisplay.Arriving -> this.last
+                    is TripInstantDisplay.Now -> this.last
+                    else -> false
+                }
+            val description =
+                if (isFirst) stringResource(R.string.vehicle_arriving_first, vehicleType)
+                else stringResource(R.string.vehicle_arriving_other)
+            withLastTripSuffix(description, lastTrip)
+        }
+        is TripInstantDisplay.Boarding -> {
+            val description =
+                if (isFirst) stringResource(R.string.vehicle_boarding_first, vehicleType)
+                else stringResource(R.string.vehicle_boarding_other)
+            withLastTripSuffix(description, this.last)
+        }
         is TripInstantDisplay.Cancelled -> {
             val time = this.scheduledTime.formattedTime()
-            if (isFirst) stringResource(R.string.vehicle_cancelled_first, vehicleType, time)
-            else stringResource(R.string.vehicle_cancelled_other, time)
+            val description =
+                if (isFirst) stringResource(R.string.vehicle_cancelled_first, vehicleType, time)
+                else stringResource(R.string.vehicle_cancelled_other, time)
+            description
         }
-        is TripInstantDisplay.ScheduleMinutes -> {
-            val format = MinutesFormat.from(this.minutes)
-            when (format) {
-                is MinutesFormat.Hour ->
-                    if (isFirst)
-                        stringResource(
-                            R.string.vehicle_schedule_hours_first,
-                            vehicleType,
-                            format.hours,
-                        )
-                    else stringResource(R.string.vehicle_schedule_hours_other, format.hours)
-                is MinutesFormat.HourMinute ->
-                    if (isFirst)
-                        stringResource(
-                            R.string.vehicle_schedule_hours_minutes_first,
-                            vehicleType,
-                            format.hours,
-                            format.minutes,
-                        )
-                    else
-                        stringResource(
-                            R.string.vehicle_schedule_hours_minutes_other,
-                            format.hours,
-                            format.minutes,
-                        )
-                is MinutesFormat.Minute ->
-                    if (isFirst)
-                        stringResource(
-                            R.string.vehicle_schedule_minutes_first,
-                            vehicleType,
-                            format.minutes,
-                        )
-                    else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
-            }
-        }
+        is TripInstantDisplay.ScheduleMinutes ->
+            scheduledMinutesDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.ScheduleTime -> scheduledTimeDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.Time,
         is TripInstantDisplay.TimeWithStatus -> predictedTimeDescription(this, isFirst, vehicleType)
@@ -67,7 +48,7 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
         is TripInstantDisplay.ScheduleTimeWithStatusColumn,
         is TripInstantDisplay.ScheduleTimeWithStatusRow ->
             scheduledTimeDescription(this, isFirst, vehicleType)
-        is TripInstantDisplay.Overridden -> this.text
+        is TripInstantDisplay.Overridden -> withLastTripSuffix(this.text, this.last)
         TripInstantDisplay.Hidden,
         is TripInstantDisplay.Skipped -> ""
     }
@@ -107,37 +88,49 @@ private fun predictedMinutesDescription(
                 else -> return ""
             }
         )
-    return if (isFirst)
-        when (format) {
-            is MinutesFormat.Hour ->
-                stringResource(R.string.vehicle_prediction_hours_first, vehicleType, format.hours)
-            is MinutesFormat.HourMinute ->
-                stringResource(
-                    R.string.vehicle_prediction_hours_minutes_first,
-                    vehicleType,
-                    format.hours,
-                    format.minutes,
-                )
-            is MinutesFormat.Minute ->
-                stringResource(
-                    R.string.vehicle_prediction_minutes_first,
-                    vehicleType,
-                    format.minutes,
-                )
+    val lastTrip =
+        when (trip) {
+            is TripInstantDisplay.Approaching -> trip.last
+            is TripInstantDisplay.Minutes -> trip.last
+            else -> false
         }
-    else
-        when (format) {
-            is MinutesFormat.Hour ->
-                stringResource(R.string.vehicle_prediction_hours_other, format.hours)
-            is MinutesFormat.HourMinute ->
-                stringResource(
-                    R.string.vehicle_prediction_hours_minutes_other,
-                    format.hours,
-                    format.minutes,
-                )
-            is MinutesFormat.Minute ->
-                stringResource(R.string.vehicle_prediction_minutes_other, format.minutes)
-        }
+    val description =
+        if (isFirst)
+            when (format) {
+                is MinutesFormat.Hour ->
+                    stringResource(
+                        R.string.vehicle_prediction_hours_first,
+                        vehicleType,
+                        format.hours,
+                    )
+                is MinutesFormat.HourMinute ->
+                    stringResource(
+                        R.string.vehicle_prediction_hours_minutes_first,
+                        vehicleType,
+                        format.hours,
+                        format.minutes,
+                    )
+                is MinutesFormat.Minute ->
+                    stringResource(
+                        R.string.vehicle_prediction_minutes_first,
+                        vehicleType,
+                        format.minutes,
+                    )
+            }
+        else
+            when (format) {
+                is MinutesFormat.Hour ->
+                    stringResource(R.string.vehicle_prediction_hours_other, format.hours)
+                is MinutesFormat.HourMinute ->
+                    stringResource(
+                        R.string.vehicle_prediction_hours_minutes_other,
+                        format.hours,
+                        format.minutes,
+                    )
+                is MinutesFormat.Minute ->
+                    stringResource(R.string.vehicle_prediction_minutes_other, format.minutes)
+            }
+    return withLastTripSuffix(description, lastTrip)
 }
 
 @Composable
@@ -146,10 +139,19 @@ private fun predictedTimeDescription(
     isFirst: Boolean,
     vehicleType: String,
 ): String {
+    val lastTrip =
+        when (trip) {
+            is TripInstantDisplay.Time -> trip.last
+            is TripInstantDisplay.TimeWithStatus -> trip.last
+            else -> false
+        }
     if (
         trip is TripInstantDisplay.TimeWithStatus && trip.status in TripInstantDisplay.delayStatuses
     )
-        return delayDescription(trip.predictionTime, isFirst, vehicleType)
+        return withLastTripSuffix(
+            delayDescription(trip.predictionTime, isFirst, vehicleType),
+            lastTrip,
+        )
 
     val predictionTime =
         when (trip) {
@@ -161,8 +163,9 @@ private fun predictedTimeDescription(
         if (isFirst)
             stringResource(R.string.vehicle_prediction_time_first, vehicleType, predictionTime)
         else stringResource(R.string.vehicle_prediction_time_other, predictionTime)
-    return if (trip is TripInstantDisplay.TimeWithStatus) "$timeString, ${trip.status}"
-    else timeString
+    val description =
+        if (trip is TripInstantDisplay.TimeWithStatus) "$timeString, ${trip.status}" else timeString
+    return withLastTripSuffix(description, lastTrip)
 }
 
 @Composable
@@ -191,7 +194,45 @@ private fun predictedWithScheduleDescription(
         }
     val predictionTime = trip.predictionTime.formattedTime()
     val actualArrival = stringResource(R.string.vehicle_prediction_actual_arrival, predictionTime)
-    return "$scheduleStatus, $actualArrival"
+    return withLastTripSuffix("$scheduleStatus, $actualArrival", trip.last)
+}
+
+@Composable
+private fun scheduledMinutesDescription(
+    trip: TripInstantDisplay.ScheduleMinutes,
+    isFirst: Boolean,
+    vehicleType: String,
+): String {
+    val description =
+        when (val format = MinutesFormat.from(trip.minutes)) {
+            is MinutesFormat.Hour ->
+                if (isFirst)
+                    stringResource(R.string.vehicle_schedule_hours_first, vehicleType, format.hours)
+                else stringResource(R.string.vehicle_schedule_hours_other, format.hours)
+            is MinutesFormat.HourMinute ->
+                if (isFirst)
+                    stringResource(
+                        R.string.vehicle_schedule_hours_minutes_first,
+                        vehicleType,
+                        format.hours,
+                        format.minutes,
+                    )
+                else
+                    stringResource(
+                        R.string.vehicle_schedule_hours_minutes_other,
+                        format.hours,
+                        format.minutes,
+                    )
+            is MinutesFormat.Minute ->
+                if (isFirst)
+                    stringResource(
+                        R.string.vehicle_schedule_minutes_first,
+                        vehicleType,
+                        format.minutes,
+                    )
+                else stringResource(R.string.vehicle_schedule_minutes_other, format.minutes)
+        }
+    return withLastTripSuffix(description, trip.last)
 }
 
 @Composable
@@ -213,8 +254,14 @@ private fun scheduledTimeDescription(
             is TripInstantDisplay.ScheduleTimeWithStatusRow -> trip.status
             else -> null
         }
+    val lastTrip =
+        when (trip) {
+            is TripInstantDisplay.ScheduleTime -> trip.last
+            is TripInstantDisplay.ScheduleTimeWithStatusColumn -> trip.last
+            else -> false
+        }
     if (status in TripInstantDisplay.delayStatuses)
-        return delayDescription(scheduledTime, isFirst, vehicleType)
+        return withLastTripSuffix(delayDescription(scheduledTime, isFirst, vehicleType), lastTrip)
 
     val timeString =
         if (isFirst)
@@ -224,5 +271,11 @@ private fun scheduledTimeDescription(
                 scheduledTime.formattedTime(),
             )
         else stringResource(R.string.vehicle_schedule_time_other, scheduledTime.formattedTime())
-    return if (status != null) "$timeString, $status" else timeString
+    val description = if (status != null) "$timeString, $status" else timeString
+    return withLastTripSuffix(description, lastTrip)
+}
+
+@Composable
+private fun withLastTripSuffix(description: String, last: Boolean): String {
+    return if (last) "$description, ${stringResource(R.string.last_trip)}" else description
 }

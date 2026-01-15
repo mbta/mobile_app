@@ -18,60 +18,130 @@ final class UpcomingTripViewTests: XCTestCase {
         NSTimeZone.default = TimeZone(identifier: "America/New_York")!
     }
 
-    func testFirstBoardingAccessibilityLabel() throws {
+    func testFirstBoarding() throws {
         let sut = UpcomingTripView(
-            prediction: .some(.Boarding()),
+            prediction: .some(.Boarding(last: false)),
             routeType: .heavyRail,
             isFirst: true
         )
+        XCTAssertNotNil(try sut.inspect().find(text: "BRD"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train boarding now"))
     }
 
-    func testBoardingAccessibilityLabel() throws {
+    func testFirstBoardingLast() throws {
         let sut = UpcomingTripView(
-            prediction: .some(.Boarding()),
-            routeType: .heavyRail,
-            isFirst: false
-        )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and boarding now"))
-    }
-
-    func testFirstArrivingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(
-            prediction: .some(.Arriving()),
+            prediction: .some(.Boarding(last: true)),
             routeType: .heavyRail,
             isFirst: true
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving now"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "BRD"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train boarding now, Last trip"))
     }
 
-    func testArrivingAccessibilityLabel() throws {
+    func testBoarding() throws {
         let sut = UpcomingTripView(
-            prediction: .some(.Arriving()),
+            prediction: .some(.Boarding(last: false)),
             routeType: .heavyRail,
             isFirst: false
         )
+        XCTAssertNotNil(try sut.inspect().find(text: "BRD"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and boarding now"))
+    }
+
+    func testBoardingLast() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Boarding(last: true)),
+            routeType: .heavyRail,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "BRD"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and boarding now, Last trip"))
+    }
+
+    func testFirstArriving() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Arriving(last: false)),
+            routeType: .heavyRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving now"))
+    }
+
+    func testFirstArrivingLast() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Arriving(last: true)),
+            routeType: .heavyRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "train arriving now, Last trip"))
+    }
+
+    func testArriving() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Arriving(last: false)),
+            routeType: .heavyRail,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and arriving now"))
     }
 
-    func testFirstPredictionTimeAccessibilityLabel() throws {
+    func testArrivingLast() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Arriving(last: true)),
+            routeType: .heavyRail,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "ARR"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and arriving now, Last trip"))
+    }
+
+    func testFirstPredictionTime() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.Time(predictionTime: date, headline: true)),
+            prediction: .some(.Time(predictionTime: date, last: false, headline: true)),
             routeType: .commuterRail,
             isFirst: true
         )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/train arriving at 4:00\sPM/#))
     }
 
-    func testPredictionTimeAccessibilityLabel() throws {
+    func testFirstPredictionTimeLast() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.Time(predictionTime: date, headline: true)),
+            prediction: .some(.Time(predictionTime: date, last: true, headline: true)),
+            routeType: .commuterRail,
+            isFirst: true
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(viewWithAccessibilityLabelMatching: #/train arriving at 4:00\sPM, Last trip/#))
+    }
+
+    func testPredictionTime() throws {
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.Time(predictionTime: date, last: false, headline: true)),
             routeType: .commuterRail,
             isFirst: false
         )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM/#))
+    }
+
+    func testPredictionTimeLast() throws {
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.Time(predictionTime: date, last: true, headline: true)),
+            routeType: .commuterRail,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM, Last trip/#))
     }
 
     func testTimeWithStatus() throws {
@@ -80,6 +150,7 @@ final class UpcomingTripViewTests: XCTestCase {
             prediction: .some(.TimeWithStatus(
                 predictionTime: date,
                 status: "All aboard",
+                last: false,
                 headline: true
             )),
             routeType: .commuterRail
@@ -90,14 +161,50 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "All aboard"))
     }
 
+    func testTimeWithStatusLast() throws {
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.TimeWithStatus(
+                predictionTime: date,
+                status: "All aboard",
+                last: true,
+                headline: true
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabelMatching: #/train arriving at 4:00\sPM, All aboard, Last trip/#
+        ))
+    }
+
     func testScheduleWithStatusColumn() throws {
         let date = EasternTimeInstant(year: 2025, month: .august, day: 5, hour: 14, minute: 26, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.ScheduleTimeWithStatusColumn(scheduledTime: date, status: "Delayed", headline: true)),
+            prediction: .some(.ScheduleTimeWithStatusColumn(
+                scheduledTime: date,
+                status: "Delayed",
+                last: false, headline: true,
+            )),
             routeType: .commuterRail
         )
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/2:26\sPM train delayed/#))
         XCTAssertNotNil(try sut.inspect().find(text: "Delayed"))
+    }
+
+    func testScheduleWithStatusColumnLast() throws {
+        let date = EasternTimeInstant(year: 2025, month: .august, day: 5, hour: 14, minute: 26, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTimeWithStatusColumn(
+                scheduledTime: date,
+                status: "Delayed",
+                last: true, headline: true,
+            )),
+            routeType: .commuterRail
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(viewWithAccessibilityLabelMatching: #/2:26\sPM train delayed, Last trip/#))
     }
 
     func testScheduleWithStatusRow() throws {
@@ -117,6 +224,7 @@ final class UpcomingTripViewTests: XCTestCase {
             prediction: .some(.TimeWithStatus(
                 predictionTime: date,
                 status: "Late",
+                last: false,
                 headline: true
             )),
             routeType: .commuterRail
@@ -130,6 +238,7 @@ final class UpcomingTripViewTests: XCTestCase {
             prediction: .some(.TimeWithStatus(
                 predictionTime: date,
                 status: "Delay",
+                last: false,
                 headline: true
             )),
             routeType: .commuterRail
@@ -144,6 +253,7 @@ final class UpcomingTripViewTests: XCTestCase {
             prediction: .some(.TimeWithSchedule(
                 predictionTime: predictionDate,
                 scheduledTime: scheduleDate,
+                last: false,
                 headline: true
             )),
             routeType: .commuterRail
@@ -160,6 +270,7 @@ final class UpcomingTripViewTests: XCTestCase {
             prediction: .some(.TimeWithSchedule(
                 predictionTime: predictionDate,
                 scheduledTime: scheduleDate,
+                last: false,
                 headline: true
             )),
             routeType: .commuterRail
@@ -169,10 +280,10 @@ final class UpcomingTripViewTests: XCTestCase {
         ))
     }
 
-    func testFirstScheduledAccessibilityLabel() throws {
+    func testFirstScheduled() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.ScheduleTime(scheduledTime: date, headline: true)),
+            prediction: .some(.ScheduleTime(scheduledTime: date, last: false, headline: true)),
             routeType: .bus,
             isFirst: true,
             isOnly: false
@@ -181,34 +292,83 @@ final class UpcomingTripViewTests: XCTestCase {
             .find(viewWithAccessibilityLabelMatching: #/buses arriving at 4:00\sPM scheduled/#))
     }
 
-    func testScheduledAccessibilityLabel() throws {
+    func testFirstScheduledLast() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.ScheduleTime(scheduledTime: date, headline: true)),
+            prediction: .some(.ScheduleTime(scheduledTime: date, last: true, headline: true)),
+            routeType: .bus,
+            isFirst: true,
+            isOnly: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(viewWithAccessibilityLabelMatching: #/buses arriving at 4:00\sPM scheduled, Last trip/#))
+    }
+
+    func testScheduled() throws {
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
+        let sut = UpcomingTripView(
+            prediction: .some(.ScheduleTime(scheduledTime: date, last: false, headline: true)),
             routeType: .bus,
             isFirst: false
         )
-        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabelMatching: #/and at 4:00\sPM scheduled/#))
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabelMatching: #/and at 4:00\sPM scheduled/#
+        ))
     }
 
-    func testFirstApproachingAccessibilityLabel() throws {
+    func testScheduledLast() throws {
+        let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(
-            prediction: .some(.Approaching()),
+            prediction: .some(.ScheduleTime(scheduledTime: date, last: true, headline: true)),
+            routeType: .bus,
+            isFirst: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(
+            viewWithAccessibilityLabelMatching: #/and at 4:00\sPM scheduled, Last trip/#
+        ))
+    }
+
+    func testFirstApproaching() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Approaching(last: false)),
             routeType: .heavyRail,
             isFirst: true,
             isOnly: false
         )
+        XCTAssertNotNil(try sut.inspect().find(text: "1 min"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 1 min"))
     }
 
-    func testApproachingAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(.Approaching()), isFirst: false)
+    func testFirstApproachingLast() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Approaching(last: true)),
+            routeType: .heavyRail,
+            isFirst: true,
+            isOnly: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1 min"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 1 min, Last trip"))
+    }
+
+    func testApproaching() throws {
+        let sut = UpcomingTripView(prediction: .some(.Approaching(last: false)), isFirst: false)
+        XCTAssertNotNil(try sut.inspect().find(text: "1 min"))
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 1 min"))
     }
 
-    func testFirstPredictedAccessibilityLabel() throws {
+    func testApproachingLast() throws {
+        let sut = UpcomingTripView(prediction: .some(.Approaching(last: true)), isFirst: false)
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1 min"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 1 min, Last trip"))
+    }
+
+    func testFirstPredicted() throws {
         let sut = UpcomingTripView(
-            prediction: .some(.Minutes(minutes: 5)),
+            prediction: .some(.Minutes(minutes: 5, last: false)),
             routeType: .heavyRail,
             isFirst: true,
             isOnly: false
@@ -216,17 +376,33 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 5 min"))
     }
 
-    func testPredictedAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5)), isFirst: false)
+    func testFirstPredictedLast() throws {
+        let sut = UpcomingTripView(
+            prediction: .some(.Minutes(minutes: 5, last: true)),
+            routeType: .heavyRail,
+            isFirst: true,
+            isOnly: false
+        )
+        XCTAssertNotNil(try sut.inspect().find(text: "Last"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "trains arriving in 5 min, Last trip"))
+    }
+
+    func testPredicted() throws {
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5, last: false)), isFirst: false)
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 5 min"))
     }
 
-    func testPredictedHourAccessibilityLabel() throws {
-        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 67)), isFirst: false)
+    func testPredictedLast() throws {
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 5, last: true)), isFirst: false)
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 5 min, Last trip"))
+    }
+
+    func testPredictedHour() throws {
+        let sut = UpcomingTripView(prediction: .some(.Minutes(minutes: 67, last: false)), isFirst: false)
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "and in 1 hr 7 min"))
     }
 
-    func testCancelledAccessibilityLabel() throws {
+    func testCancelled() throws {
         let date = EasternTimeInstant(year: 2024, month: .may, day: 1, hour: 16, minute: 0, second: 0)
         let sut = UpcomingTripView(prediction: .some(.Cancelled(scheduledTime: date)),
                                    routeType: .heavyRail,
@@ -243,7 +419,7 @@ final class UpcomingTripViewTests: XCTestCase {
         }))
     }
 
-    func testShuttleAccessibilityLabel() throws {
+    func testShuttle() throws {
         let sut = UpcomingTripView(
             prediction: .disruption(
                 .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .shuttle }),
@@ -255,7 +431,7 @@ final class UpcomingTripViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Shuttle buses replace service"))
     }
 
-    func testSuspensionAccessibilityLabel() throws {
+    func testSuspension() throws {
         let sut = UpcomingTripView(
             prediction: .disruption(
                 .init(alert: ObjectCollectionBuilder.Single.shared.alert { $0.effect = .suspension }),
