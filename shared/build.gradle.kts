@@ -232,14 +232,16 @@ task<CycloneDxBomTransformTask>("bomIos") {
     outputPath = layout.buildDirectory.file("boms/bom-ios.xml")
     transform = {
         components =
-            components.filterNot {
-                setOf(
-                        "pkg:maven/MBTA_App/shared@unspecified?type=jar",
-                        "pkg:swift/iosApp.xcworkspace@latest",
-                        "pkg:swift/iosApp@latest",
-                    )
-                    .contains(it.purl)
-            }
+            components
+                .filterNot {
+                    setOf(
+                            "pkg:maven/MBTA_App/shared@unspecified?type=jar",
+                            "pkg:swift/iosApp.xcworkspace@latest",
+                            "pkg:swift/iosApp@latest",
+                        )
+                        .contains(it.purl)
+                }
+                .distinctBy { "${it.group}/${it.name}" }
         // the hardcoded stdlib bom doesn't handle this
         components
             .single { it.group == "org.jetbrains.kotlin" && it.name == "kotlin-stdlib" }
@@ -461,11 +463,6 @@ task<CachedExecTask>("bomIosSwiftPMRaw") {
 }
 
 tasks.cyclonedxDirectBom {
-    includeConfigs =
-        listOf(
-            "commonMainImplementationDependenciesMetadata",
-            "iosMainImplementationDependenciesMetadata",
-        )
     xmlOutput = layout.buildDirectory.file("boms/bom-ios-kotlin-deps.xml")
     includeLicenseText = true
 }
