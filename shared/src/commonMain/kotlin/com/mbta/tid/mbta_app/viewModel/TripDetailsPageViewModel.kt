@@ -99,7 +99,8 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
                 if (alerts != null && filter != null) {
                     val activeRelevantAlerts =
                         alerts.alerts.values.filter {
-                            it.isActive(time = now) && it.significance >= AlertSignificance.Minor
+                            (it.isActive(time = now) || it.willBeActiveSoon(time = now)) &&
+                                it.significance(now) >= AlertSignificance.Minor
                         }
                     val isCRCore = stop?.isCRCore ?: false
                     Alert.applicableAlerts(

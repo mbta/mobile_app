@@ -10,6 +10,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.atTime
 
@@ -28,7 +29,11 @@ class RouteCardDataLeafTest {
                 type = anyNonScheduleBasedRouteType()
             }
 
-        val alert = objects.alert { effect = Alert.Effect.Suspension }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            }
 
         assertEquals(
             LeafFormat.Single(
@@ -74,7 +79,11 @@ class RouteCardDataLeafTest {
                 objects.route { type = RouteType.HEAVY_RAIL } to "alert-borderless-issue",
             )
 
-        val alert = objects.alert { effect = Alert.Effect.ServiceChange }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            }
 
         val context: RouteCardData.Context = anyEnumValue()
         for ((route, icon) in cases) {
@@ -125,7 +134,11 @@ class RouteCardDataLeafTest {
             }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert = objects.alert { effect = Alert.Effect.Suspension }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            }
 
         assertEquals(
             LeafFormat.Single(
@@ -282,7 +295,11 @@ class RouteCardDataLeafTest {
             }
         val upcomingTrip = objects.upcomingTrip(prediction)
 
-        val alert = objects.alert { effect = Alert.Effect.ServiceChange }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+            }
 
         assertEquals(
             LeafFormat.Single(
@@ -1127,6 +1144,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Suspension
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         RedLine.stopsBraintreeBranchSouth
                             .map {
@@ -2525,6 +2543,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Shuttle
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         mutableListOf(
                             Alert.InformedEntity(
@@ -2621,6 +2640,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Shuttle
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         mutableListOf(
                             Alert.InformedEntity(
@@ -2703,6 +2723,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Shuttle
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         mutableListOf(
                             Alert.InformedEntity(
@@ -2809,6 +2830,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Shuttle
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         mutableListOf(
                             Alert.InformedEntity(
@@ -2921,6 +2943,7 @@ class RouteCardDataLeafTest {
             val alert =
                 objects.alert {
                     effect = Alert.Effect.Suspension
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                     informedEntity =
                         mutableListOf(
                             Alert.InformedEntity(

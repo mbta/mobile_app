@@ -2,8 +2,10 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.stop
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Instant
 
 class RouteSegmentTest {
 
@@ -53,6 +55,7 @@ class RouteSegmentTest {
                         }
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
+                now = EasternTimeInstant.now(),
             )
 
         assertEquals(mapOf(), segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)))
@@ -76,6 +79,7 @@ class RouteSegmentTest {
                     listOf(
                         alert {
                             effect = Alert.Effect.Shuttle
+                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
@@ -89,6 +93,7 @@ class RouteSegmentTest {
                         },
                         alert {
                             effect = Alert.Effect.Delay
+                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
@@ -102,6 +107,7 @@ class RouteSegmentTest {
                         },
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
+                now = EasternTimeInstant.now(),
             )
 
         assertEquals(
@@ -138,6 +144,7 @@ class RouteSegmentTest {
                             listOf(
                                 alert {
                                     effect = Alert.Effect.Shuttle
+                                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
                                         listOf(
                                             Alert.InformedEntity.Activity.Board,
@@ -151,6 +158,7 @@ class RouteSegmentTest {
                                 },
                                 alert {
                                     effect = Alert.Effect.Suspension
+                                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
                                         listOf(
                                             Alert.InformedEntity.Activity.Board,
@@ -164,6 +172,7 @@ class RouteSegmentTest {
                                 },
                             ),
                         stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Issue)),
+                        now = EasternTimeInstant.now(),
                     ),
             )
 
@@ -210,6 +219,7 @@ class RouteSegmentTest {
                         }
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
+                now = EasternTimeInstant.now(),
             )
 
         assertEquals(mapOf(), segment.alertStateByStopId(mapOf("place-davis" to alertsForStop)))
@@ -237,6 +247,7 @@ class RouteSegmentTest {
                     listOf(
                         alert {
                             effect = Alert.Effect.Shuttle
+                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
                                 listOf(
                                     Alert.InformedEntity.Activity.Board,
@@ -250,6 +261,7 @@ class RouteSegmentTest {
                         }
                     ),
                 stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
+                now = EasternTimeInstant.now(),
             )
 
         assertEquals(
@@ -273,6 +285,7 @@ class RouteSegmentTest {
 
         val alert = alert {
             effect = Alert.Effect.Shuttle
+            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
             informedEntity(
                 listOf(
                     Alert.InformedEntity.Activity.Board,
@@ -305,6 +318,7 @@ class RouteSegmentTest {
                                 relevantAlerts = listOf(alert),
                                 stateByRoute =
                                     mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle),
+                                now = EasternTimeInstant.now(),
                             ),
                         child2.id to
                             AlertAssociatedStop(
@@ -312,9 +326,11 @@ class RouteSegmentTest {
                                 relevantAlerts = listOf(alert),
                                 stateByRoute =
                                     mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle),
+                                now = EasternTimeInstant.now(),
                             ),
                     ),
                 stateByRoute = mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle),
+                now = EasternTimeInstant.now(),
             )
 
         assertEquals(
@@ -619,6 +635,7 @@ class RouteSegmentTest {
                 listOf(
                     alert {
                         this.effect = effect
+                        activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                         informedEntity(
                             listOf(
                                 Alert.InformedEntity.Activity.Board,
@@ -632,6 +649,7 @@ class RouteSegmentTest {
                     }
                 ),
             stateByRoute = mapOf(Pair(MapStopRoute.RED, StopAlertState.Normal)),
+            now = EasternTimeInstant.now(),
         )
     }
 }

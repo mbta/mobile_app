@@ -107,7 +107,7 @@ fun TripStops(
                                 .lastOrNull()
                                 ?.disruption
                                 ?.alert
-                                ?.significance == AlertSignificance.Major
+                                ?.significance(now) == AlertSignificance.Major
                         )
                             4.dp
                         else 0.dp

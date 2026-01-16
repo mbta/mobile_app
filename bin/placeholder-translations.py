@@ -50,7 +50,7 @@ if garbage != "":
             break
 
 paste = subprocess.run("pbpaste", capture_output=True, text=True)
-sheet_in = [line.strip().split("\t") for line in paste.stdout.split("\n") if line.strip() != ""]
+sheet_in = [line.split("\t") for line in paste.stdout.split("\n") if line.strip() != ""]
 
 sheet_in_header = sheet_in[0]
 

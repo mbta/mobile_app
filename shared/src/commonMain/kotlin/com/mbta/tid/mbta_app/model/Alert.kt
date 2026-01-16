@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -46,33 +47,47 @@ internal constructor(
 
     val hasStopsSpecified: Boolean = informedEntity.all { it.stop != null }
 
-    val significance: AlertSignificance =
-        when (effect) {
-            // suspensions or shuttles can reasonably apply to an entire route
-            in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
-            // detours and closures are only major if they specify stops
-            in setOf(
-                Effect.StationClosure,
-                Effect.StopClosure,
-                Effect.DockClosure,
-                Effect.Detour,
-                Effect.SnowRoute,
-            ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
-            // service changes are always secondary
-            Effect.ServiceChange -> AlertSignificance.Secondary
-            Effect.ElevatorClosure -> AlertSignificance.Accessibility
-            Effect.TrackChange -> AlertSignificance.Minor
-            Effect.Delay ->
-                if (
-                    (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
-                        cause == Cause.SingleTracking
-                ) {
-                    AlertSignificance.Minor
-                } else {
-                    AlertSignificance.None
-                }
-            else -> AlertSignificance.None
-        }
+    public fun significance(atTime: EasternTimeInstant?): AlertSignificance {
+        val intrinsicSignificance =
+            when (effect) {
+                // suspensions or shuttles can reasonably apply to an entire route
+                in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
+                // detours and closures are only major if they specify stops
+                in setOf(
+                    Effect.StationClosure,
+                    Effect.StopClosure,
+                    Effect.DockClosure,
+                    Effect.Detour,
+                    Effect.SnowRoute,
+                ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
+                // service changes are always secondary
+                Effect.ServiceChange -> AlertSignificance.Secondary
+                Effect.ElevatorClosure -> AlertSignificance.Accessibility
+                Effect.TrackChange -> AlertSignificance.Minor
+                Effect.Delay ->
+                    if (
+                        (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
+                            cause == Cause.SingleTracking
+                    ) {
+                        AlertSignificance.Minor
+                    } else {
+                        AlertSignificance.None
+                    }
+                else -> AlertSignificance.None
+            }
+        val maxSignificance =
+            when {
+                // active now or checking intrinsic significance, use intrinsic
+                atTime == null || isActive(atTime) -> AlertSignificance.Major
+                // upcoming, show as secondary if will be major later
+                willBeActiveSoon(atTime) -> AlertSignificance.Secondary
+                // all clear, hide completely until we have implemented the summary template
+                activePeriod.all { it.end != null && it.end < atTime } -> AlertSignificance.None
+                // will be active later but not soon enough to show yet, hide completely
+                else -> AlertSignificance.None
+            }
+        return minOf(intrinsicSignificance, maxSignificance)
+    }
 
     val hasNoThroughService: Boolean = effect in setOf(Effect.Shuttle, Effect.Suspension)
 
@@ -354,7 +369,16 @@ internal constructor(
     public fun currentPeriod(time: EasternTimeInstant): ActivePeriod? =
         activePeriod.firstOrNull { it.activeAt(time) }
 
+    /**
+     * Gets an active period which is not currently active but which will start in the next 24
+     * hours.
+     */
+    public fun nextPeriod(time: EasternTimeInstant): ActivePeriod? =
+        activePeriod.firstOrNull { it.start > time && it.start <= time + 24.hours }
+
     internal fun isActive(time: EasternTimeInstant) = currentPeriod(time) != null
+
+    internal fun willBeActiveSoon(time: EasternTimeInstant) = nextPeriod(time) != null
 
     internal fun anyInformedEntity(predicate: (InformedEntity) -> Boolean) =
         informedEntity.any(predicate)
@@ -437,7 +461,7 @@ internal constructor(
 
             val alerts =
                 alerts.filter {
-                    it.hasStopsSpecified && it.significance >= AlertSignificance.Accessibility
+                    it.hasStopsSpecified && it.significance(null) >= AlertSignificance.Accessibility
                 }
 
             val targetStopAlertIds =

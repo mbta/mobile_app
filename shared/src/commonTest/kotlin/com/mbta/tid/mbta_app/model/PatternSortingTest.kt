@@ -6,6 +6,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import org.maplibre.spatialk.geojson.Position
 
 class PatternSortingTest {
@@ -59,7 +60,13 @@ class PatternSortingTest {
             stopIds = emptySet(),
             upcomingTrips = (1..trips).map { trip(pattern) },
             alertsHere =
-                if (alertHere) listOf(objects.alert { effect = Alert.Effect.Suspension })
+                if (alertHere)
+                    listOf(
+                        objects.alert {
+                            effect = Alert.Effect.Suspension
+                            activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                        }
+                    )
                 else emptyList(),
             allDataLoaded = allDataLoaded,
             hasSchedulesToday = hasSchedulesToday,

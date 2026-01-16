@@ -345,11 +345,12 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @ViewBuilder
     func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
+        let significance = alert.significance(atTime: now)
         let spec: AlertCardSpec = if let spec {
             spec
-        } else if alert.significance == .major, isAllServiceDisrupted {
+        } else if significance == .major, isAllServiceDisrupted {
             .major
-        } else if alert.significance == .minor, alert.effect == .delay {
+        } else if significance == .minor, alert.effect == .delay {
             .delay
         } else {
             .secondary

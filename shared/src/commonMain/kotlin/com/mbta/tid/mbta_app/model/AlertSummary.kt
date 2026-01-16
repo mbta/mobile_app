@@ -67,6 +67,14 @@ public data class AlertSummary(
         @SerialName("time")
         public data class Time(val time: EasternTimeInstant) : Timeframe()
 
+        @Serializable
+        @SerialName("starting_tomorrow")
+        public data object StartingTomorrow : Timeframe()
+
+        @Serializable
+        @SerialName("starting_later_today")
+        public data class StartingLaterToday(val time: EasternTimeInstant) : Timeframe()
+
         @Serializable public data object Unknown : Timeframe()
     }
 
@@ -80,7 +88,8 @@ public data class AlertSummary(
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
-                if (alert.significance < AlertSignificance.Secondary) return@withContext null
+                if (alert.significance(atTime) < AlertSignificance.Secondary)
+                    return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
                 val timeframe = alertTimeframe(alert, atTime)
@@ -91,12 +100,19 @@ public data class AlertSummary(
         }
 
         private fun alertTimeframe(alert: Alert, atTime: EasternTimeInstant): Timeframe? {
-            val currentPeriod = alert.currentPeriod(atTime) ?: return null
+            val serviceDate = atTime.serviceDate
+            val currentPeriod = alert.currentPeriod(atTime)
+            if (currentPeriod == null) {
+                val nextPeriod = alert.nextPeriod(atTime) ?: return null
+                if (nextPeriod.startServiceDate == serviceDate) {
+                    return Timeframe.StartingLaterToday(nextPeriod.start)
+                }
+                return Timeframe.StartingTomorrow
+            }
             if (currentPeriod.endingLaterToday) return null
             val endTime = currentPeriod.end ?: return null
             val endDate = currentPeriod.endServiceDate ?: return null
 
-            val serviceDate = atTime.serviceDate
             if (serviceDate == endDate && currentPeriod.toEndOfService) {
                 return Timeframe.EndOfService
             } else if (serviceDate == endDate) {

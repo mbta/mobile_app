@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DatePeriod
@@ -123,6 +124,17 @@ class AlertSummaryTest {
         ) {
             put("type", "time")
             put("time", "2025-12-30T16:12:00-05:00")
+        }
+
+        performCheck(AlertSummary.Timeframe.StartingTomorrow) { put("type", "starting_tomorrow") }
+
+        performCheck(
+            AlertSummary.Timeframe.StartingLaterToday(
+                EasternTimeInstant(2026, Month.JANUARY, 15, 13, 3)
+            )
+        ) {
+            put("type", "starting_later_today")
+            put("time", "2026-01-15T13:03:00-05:00")
         }
     }
 
@@ -313,6 +325,47 @@ class AlertSummaryTest {
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with starting tomorrow timeframe`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now + 1.days, null)
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingTomorrow),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with starting later today timeframe`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val laterToday = now + 1.hours
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(laterToday, null)
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingLaterToday(laterToday)),
             alertSummary,
         )
     }

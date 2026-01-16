@@ -365,6 +365,8 @@
     <string name="star_route_hint">tache wout la nan tèt lis la</string>
     <string name="start">Kòmanse</string>
     <string name="start_of_service">kòmansman sèvis</string>
+    <string name="starting_later_today">\u0020kòmanse &lt;b>%1$s&lt;/b> jodi a</string>
+    <string name="starting_tomorrow">\u0020kòmanse demen</string>
     <string name="station_closed">Estasyon Fèmen</string>
     <string name="station_closed_sentence_case">Estasyon fèmen</string>
     <string name="station_closure">Estasyon Fèmen</string>

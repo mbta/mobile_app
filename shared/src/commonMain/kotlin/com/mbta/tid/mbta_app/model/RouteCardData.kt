@@ -168,18 +168,16 @@ public data class RouteCardData(
 
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
-        internal val hasMajorAlerts: Boolean
-            get() = run {
-                this.alertsHere.any { alert -> alert.significance == AlertSignificance.Major }
-            }
+        internal fun hasMajorAlerts(atTime: EasternTimeInstant): Boolean =
+            this.alertsHere.any { alert -> alert.significance(atTime) == AlertSignificance.Major }
 
-        private val majorAlert =
-            alertsHere.firstOrNull { it.significance >= AlertSignificance.Major }
+        private fun majorAlert(atTime: EasternTimeInstant) =
+            alertsHere.firstOrNull { it.significance(atTime) >= AlertSignificance.Major }
 
-        private val secondaryAlertToDisplay =
+        private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
-                it.significance < AlertSignificance.Major &&
-                    it.significance >= AlertSignificance.Secondary
+                it.significance(atTime) < AlertSignificance.Major &&
+                    it.significance(atTime) >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
 
         public fun alertsHere(tripId: String? = null): List<Alert> =
@@ -282,6 +280,7 @@ public data class RouteCardData(
         private fun dataByHeadsign(
             potentialService: Set<PotentialService>,
             globalData: GlobalResponse?,
+            atTime: EasternTimeInstant,
         ): Map<String, ByHeadsignData> {
             return potentialService.associate { (_, headsign, patternIds) ->
                 val routePatterns =
@@ -295,7 +294,7 @@ public data class RouteCardData(
                         .orEmpty()
                 val majorAlert =
                     Alert.applicableAlerts(
-                        alertsHere.filter { it.significance >= AlertSignificance.Major },
+                        alertsHere.filter { it.significance(atTime) >= AlertSignificance.Major },
                         directionId,
                         routePatterns.map { it.routeId },
                         stopIds,
@@ -340,7 +339,7 @@ public data class RouteCardData(
             // UpcomingTripFormat
             val shouldIncludeRoute = this.lineOrRoute is LineOrRoute.Line
 
-            val dataByHeadsign = dataByHeadsign(potentialService, globalData)
+            val dataByHeadsign = dataByHeadsign(potentialService, globalData, now)
             val (nonDisruptedHeadsigns, disruptedHeadsigns) =
                 dataByHeadsign.entries.partition { it.value.majorAlert == null }
 
@@ -462,7 +461,9 @@ public data class RouteCardData(
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            now: EasternTimeInstant,
         ): LeafFormat.Single {
+            val majorAlert = majorAlert(now)
             val format =
                 if (majorAlert != null) {
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
@@ -503,11 +504,11 @@ public data class RouteCardData(
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 
             val secondaryAlert =
-                secondaryAlertToDisplay?.let {
+                secondaryAlertToDisplay(now)?.let {
                     UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
                 }
 
-            if (majorAlert == null && tripsToShow.isEmpty()) {
+            if (majorAlert(now) == null && tripsToShow.isEmpty()) {
                 // base case is the same for branched & non-branched routes:
                 // if there is no alert & no trips to show, use the single format
                 val service = if (isBranching) null else potentialService.firstOrNull()
@@ -550,6 +551,7 @@ public data class RouteCardData(
                     tripsToShow,
                     mapStopRoute,
                     secondaryAlert,
+                    now,
                 )
             }
         }
@@ -916,8 +918,8 @@ public data class RouteCardData(
             filterAtTime: EasternTimeInstant,
         ): List<Alert> =
             alerts?.alerts?.values?.filter {
-                it.isActive(filterAtTime) &&
-                    it.significance >=
+                (it.isActive(filterAtTime) || it.willBeActiveSoon(filterAtTime)) &&
+                    it.significance(filterAtTime) >=
                         if (includeMinorAlerts) AlertSignificance.Minor
                         else AlertSignificance.Accessibility
             } ?: emptyList()

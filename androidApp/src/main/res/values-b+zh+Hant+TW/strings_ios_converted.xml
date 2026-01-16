@@ -350,6 +350,8 @@
     <string name="star_route_hint">將線路固定到清單頂部</string>
     <string name="start">開始日期</string>
     <string name="start_of_service">服務開始</string>
+    <string name="starting_later_today">\u0020從今天&lt;b>%1$s&lt;/b>開始</string>
+    <string name="starting_tomorrow">\u0020從明天開始</string>
     <string name="station_closed">車站已關閉</string>
     <string name="station_closed_sentence_case">車站已關閉</string>
     <string name="station_closure">車站關閉</string>

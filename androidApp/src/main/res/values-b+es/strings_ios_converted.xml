@@ -356,6 +356,8 @@
     <string name="star_route_hint">anclar la ruta en la parte superior de la lista</string>
     <string name="start">Inicio</string>
     <string name="start_of_service">inicio del servicio</string>
+    <string name="starting_later_today">\u0020comenzando &lt;b>%1$s&lt;/b> hoy</string>
+    <string name="starting_tomorrow">\u0020a partir de mañana</string>
     <string name="station_closed">Estación cerrada</string>
     <string name="station_closed_sentence_case">Estación cerrada</string>
     <string name="station_closure">Cierre de estación</string>

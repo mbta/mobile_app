@@ -175,6 +175,23 @@ struct FormattedAlert: Equatable {
                                       "**%1$@**%2$@%3$@" alert summary template which may or may not include a \
                                       timeframe fragment.
                                       """), timeframe.time.formatted(date: .omitted, time: .shortened))
+            case .startingTomorrow:
+                NSLocalizedString(" starting tomorrow",
+                                  comment: """
+                                  Alert summary timeframe starting tomorrow. The leading space should be retained, \
+                                  because this will be added in the %3 position of the "**%1$@**%2$@%3$@" alert \
+                                  summary template which may or may not include a timeframe fragment.
+                                  """)
+            case let .startingLaterToday(timeframe):
+                String(format:
+                    NSLocalizedString(" starting **%@** today",
+                                      comment: """
+                                      Alert summary timeframe starting on a specific time later today. \
+                                      ex. " starting 10:00 PM today". The time component is localized by the OS. \
+                                      The leading space should be retained, because this will be added in the %3 \
+                                      position of the "**%1$@**%2$@%3$@" alert summary template which may or may not \
+                                      include a timeframe fragment.
+                                      """), timeframe.time.formatted(date: .omitted, time: .shortened))
             case .unknown: ""
             }
         } else {

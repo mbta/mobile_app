@@ -354,6 +354,8 @@
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
     <string name="start_of_service">start of service</string>
+    <string name="starting_later_today">\u0020starting &lt;b>%1$s&lt;/b> today</string>
+    <string name="starting_tomorrow">\u0020starting tomorrow</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
     <string name="station_closure">Station Closure</string>

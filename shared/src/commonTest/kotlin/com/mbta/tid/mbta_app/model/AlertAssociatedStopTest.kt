@@ -42,6 +42,7 @@ class AlertAssociatedStopTest {
                 stop,
                 mapOf(platform1!!.id to setOf(alert), stop.id to setOf(alert)),
                 setOf(),
+                now = EasternTimeInstant.now(),
                 GlobalResponse(
                     objects,
                     mapOf(
@@ -80,6 +81,7 @@ class AlertAssociatedStopTest {
         val alert =
             objects.alert {
                 effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                 informedEntity(
                     listOf(
                         Alert.InformedEntity.Activity.Board,
@@ -91,7 +93,14 @@ class AlertAssociatedStopTest {
                 )
             }
 
-        val result = AlertAssociatedStop(stop, emptyMap(), setOf(alert), GlobalResponse(objects))
+        val result =
+            AlertAssociatedStop(
+                stop,
+                emptyMap(),
+                setOf(alert),
+                now = EasternTimeInstant.now(),
+                GlobalResponse(objects),
+            )
 
         assertEquals(mapOf(MapStopRoute.MATTAPAN to StopAlertState.Shuttle), result.stateByRoute)
         assertEquals(listOf(alert), result.childAlerts[child1.id]!!.serviceAlerts)
