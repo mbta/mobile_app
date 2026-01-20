@@ -143,11 +143,7 @@ dependencies {
     androidTestImplementation(libs.ktor.client.mock)
 }
 
-tasks.cyclonedxDirectBom {
-    includeConfigs =
-        listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
-    includeLicenseText = true
-}
+tasks.cyclonedxDirectBom { includeLicenseText = true }
 
 spotless {
     kotlin {
