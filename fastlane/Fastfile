@@ -214,7 +214,7 @@ platform :ios do
     run_tests(
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
-      device: 'iPhone 16 (18.5)',
+      device: 'iPhone 16 (26.2)',
       testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
       include_simulator_logs: true,

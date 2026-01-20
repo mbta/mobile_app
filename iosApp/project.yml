@@ -97,7 +97,7 @@ packages:
     from: 1.5.1
   ViewInspector:
     url: https://github.com/nalexn/ViewInspector
-    from: 0.10.2
+    from: 0.10.3
 targets:
   iosApp:
     type: application

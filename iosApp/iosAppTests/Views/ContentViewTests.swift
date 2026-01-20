@@ -35,7 +35,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 5)
     }
@@ -54,10 +54,10 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [disconnectedExpectation], timeout: 1)
-        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.active)
         wait(for: [connectedExpectation], timeout: 1)
     }
@@ -80,7 +80,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.active)
         wait(for: [joinAlertsExp], timeout: 5)
     }
@@ -99,7 +99,7 @@ final class ContentViewTests: XCTestCase {
 
         ViewHosting.host(view: sut)
 
-        try sut.inspect().find(ContentView.self).find(ViewType.GeometryReader.self)
+        try sut.inspect().find(ContentView.self).find(ViewType.VStack.self)
             .callOnChange(newValue: ScenePhase.background)
         wait(for: [leavesAlertsExp], timeout: 5)
     }
