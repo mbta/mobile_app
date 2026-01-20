@@ -63,6 +63,10 @@ struct AnnotatedMap: View {
         self.viewportProvider = viewportProvider
     }
 
+    var bottomSheetInsetPadding: CGFloat {
+        if #available(iOS 26, *) { 4.0 } else { 0.0 }
+    }
+
     var body: some View {
         map
             .gestureOptions(.init(
@@ -89,8 +93,7 @@ struct AnnotatedMap: View {
                     handleStyleLoaded()
                 }
             }
-
-            .additionalSafeAreaInsets(.bottom, sheetHeight)
+            .additionalSafeAreaInsets(.bottom, sheetHeight + bottomSheetInsetPadding)
             .additionalSafeAreaInsets(.top, 20)
             .ignoresSafeArea(.all)
             .onChange(of: showPuck) { _ in handleStyleLoaded() }

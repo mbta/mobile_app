@@ -52,12 +52,13 @@ struct ContentView: View {
     }
 
     var body: some View {
-        GeometryReader { proxy in
-            VStack {
-                contents
-            }
-            .onAppear { contentHeight = proxy.size.height }
-            .onChange(of: proxy.size.height) { contentHeight = $0 }
+        VStack {
+            contents
+        }
+        .onGeometryChange(for: CGFloat.self) { proxy in
+            proxy.frame(in: .global).height
+        } action: { height in
+            contentHeight = height
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
@@ -336,8 +337,8 @@ struct ContentView: View {
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
-                    // Set id per trip so that transitioning from one trip to another is handled by removing
-                    // the existing trip view & creating a new one
+                    // Set id per trip so that transitioning from one trip to another is handled
+                    // by removing the existing trip view & creating a new one
                     .id(filter.tripId)
                     .transition(transition)
                     .animation(.easeOut, value: filter.tripId)
@@ -519,37 +520,38 @@ struct ContentView: View {
                         && contentVM.onboardingScreensPending != nil
                 ),
                 content: {
-                    GeometryReader { proxy in
-                        VStack {
-                            navSheetContents
-                                .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
-                                .interactiveDismissDisabled()
-                                .modifier(AllowsBackgroundInteraction())
-                        }
-                        // within the sheet to prevent issues on iOS 16 with two modal views open at once
-                        .fullScreenCover(
-                            item: .constant(nav.coverItemIdentifiable()),
-                            onDismiss: {
-                                // Don't navigate back if hideMaps has been changed and the cover is being switched over
-                                if hideMaps { return }
-                                switch nearbyVM.navigationStack.last {
-                                case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
-                                default: break
-                                }
-                            },
-                            content: coverContents
-                        )
-                        .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-                            if let oldSheetRoute,
-                               let newSheetRoute,
-                               SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
-                                                                            second: newSheetRoute) {
-                                selectedDetent = .medium
+                    VStack {
+                        navSheetContents
+                            .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
+                            .interactiveDismissDisabled()
+                            .modifier(AllowsBackgroundInteraction())
+                    }
+                    // within the sheet to prevent issues on iOS 16 with two modal views open at once
+                    .fullScreenCover(
+                        item: .constant(nav.coverItemIdentifiable()),
+                        onDismiss: {
+                            // Don't navigate back if hideMaps has been changed and the cover is being switched over
+                            if hideMaps { return }
+                            switch nearbyVM.navigationStack.last {
+                            case .alertDetails, .more, .saveFavorite: nearbyVM.goBack()
+                            default: break
                             }
-                            errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
+                        },
+                        content: coverContents
+                    )
+                    .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
+                        if let oldSheetRoute,
+                           let newSheetRoute,
+                           SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
+                                                                        second: newSheetRoute) {
+                            selectedDetent = .medium
                         }
-                        .onAppear { recordSheetHeight(proxy.size.height) }
-                        .onChange(of: proxy.size.height) { newValue in recordSheetHeight(newValue) }
+                        errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
+                    }
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.frame(in: .global).height
+                    } action: { height in
+                        recordSheetHeight(height)
                     }
                 }
             )
@@ -682,7 +684,13 @@ struct ContentView: View {
          Only update this if we're less than half way up the users screen. Otherwise,
          the entire map is blocked by the sheet anyway, so it doesn't need to respond to height changes
          */
-        guard newSheetHeight < ((contentHeight - 8) * PresentationDetent.mediumDetentFraction) else { return }
+
+        let mediumSheetHeight = if #available(iOS 26, *) {
+            (contentHeight * PresentationDetent.mediumDetentFraction) - 17
+        } else {
+            (contentHeight * PresentationDetent.mediumDetentFraction) - 5
+        }
+        guard newSheetHeight < mediumSheetHeight else { return }
         sheetHeight = newSheetHeight
     }
 
