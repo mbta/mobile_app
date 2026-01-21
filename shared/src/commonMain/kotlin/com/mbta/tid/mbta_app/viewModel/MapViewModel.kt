@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
+import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
@@ -90,6 +91,7 @@ public class MapViewModel(
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
     private val stopRepository: IStopRepository,
+    private val tripRepository: ITripRepository,
     private val clock: Clock,
     private val defaultCoroutineDispatcher: CoroutineDispatcher,
     private val iOCoroutineDispatcher: CoroutineDispatcher,
@@ -193,6 +195,8 @@ public class MapViewModel(
         var state by remember { mutableStateOf(State(layerState, layersInitialized)) }
         val (stopId: String?, stopFilter: StopDetailsFilter?) =
             layerState.stop?.id to layerState.stopFilter
+        val tripId = (layerState as? LayerState.TripSelected)?.tripFilter?.tripId
+        val followingTrip = (layerState as? LayerState.TripSelected)?.following ?: false
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
@@ -314,12 +318,32 @@ public class MapViewModel(
         LaunchedEffect(
             stopId,
             stopFilter,
+            tripId,
             allRailRouteShapes,
             globalData,
             globalMapData,
             routeCardData.data,
         ) {
-            if (stopId != null) {
+            if (tripId != null && followingTrip) {
+                val tripShapes =
+                    withContext(iOCoroutineDispatcher) {
+                        when (val data = tripRepository.getTripShape(tripId)) {
+                            is ApiResult.Ok -> data.data.routesWithSegmentedShapes
+                            is ApiResult.Error -> null
+                        }
+                    }
+                val resolvedGlobal = globalData
+                if (tripShapes != null && resolvedGlobal != null) {
+                    routeSourceData =
+                        RouteFeaturesBuilder.generateRouteSources(
+                            tripShapes,
+                            resolvedGlobal,
+                            globalMapData,
+                        )
+                    routeShapes = tripShapes
+                    stopLayerGeneratorState = StopLayerGenerator.State(stopId, stopFilter)
+                }
+            } else if (stopId != null) {
                 val featuresToDisplayForStop =
                     featuresToDisplayForStop(
                         globalResponse = globalData,
