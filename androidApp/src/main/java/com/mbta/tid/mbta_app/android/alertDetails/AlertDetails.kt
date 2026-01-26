@@ -54,7 +54,12 @@ import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.formattedFull
+import com.mbta.tid.mbta_app.android.util.formattedServiceDate
 import com.mbta.tid.mbta_app.android.util.formattedShortDateShortTime
+import com.mbta.tid.mbta_app.android.util.formattedShortServiceDayAndDate
+import com.mbta.tid.mbta_app.android.util.formattedTime
+import com.mbta.tid.mbta_app.android.util.numberSundayFirst
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -63,6 +68,9 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.plus
 import org.koin.compose.koinInject
 
 @Composable
@@ -95,7 +103,7 @@ fun AlertDetails(
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)
         if (!isElevatorAlert) {
-            AlertPeriod(currentPeriod ?: nextPeriod)
+            AlertPeriod(alert, currentPeriod ?: nextPeriod)
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 AffectedStopCollapsible(
@@ -113,7 +121,7 @@ fun AlertDetails(
         }
         AlertDescription(alert, affectedStopsKnown = affectedStops.isNotEmpty())
         if (isElevatorAlert) {
-            AlertPeriod(currentPeriod ?: nextPeriod)
+            AlertPeriod(alert, currentPeriod ?: nextPeriod)
         }
         AlertFooter(alert.updatedAt)
     }
@@ -159,18 +167,21 @@ private fun AlertTitle(
 }
 
 @Composable
-private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
-    var startWidth by remember { mutableStateOf<Int?>(null) }
-    var endWidth by remember { mutableStateOf<Int?>(null) }
-
+private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
     // This is all because Jetpack Compose has no built in table layout, we need the "Start" and
     // "End" label texts to take up the same column width, but they can be variable widths in
     // different languages, so we can't use a fixed size, but we also need the label and formatted
     // period to be in rows together in case the period needs to break onto multiple lines.
     val density = LocalDensity.current
-    val style = Typography.callout
+    val style = Typography.body
     val textMeasurer = rememberTextMeasurer()
-    val columnTexts = listOf(stringResource(R.string.start), stringResource(R.string.end))
+    val columnTexts =
+        listOf(
+            stringResource(R.string.start),
+            stringResource(R.string.end),
+            stringResource(R.string.daily),
+            stringResource(R.string.from),
+        )
 
     val columnWidth = remember {
         columnTexts.maxOf { text ->
@@ -180,7 +191,62 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
         }
     }
 
-    if (currentPeriod != null) {
+    val recurrence = alert.recurrenceRange()
+
+    if (recurrence != null) {
+        val dateFormat =
+            if (recurrence.daily) EasternTimeInstant::formattedShortServiceDayAndDate
+            else EasternTimeInstant::formattedServiceDate
+        val startDay = recurrence.start.dateFormat()
+        val endDay =
+            recurrence.end
+                .coerceInServiceDay(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
+                .dateFormat()
+        val startTime =
+            if (recurrence.fromStartOfService) stringResource(R.string.start_of_service)
+            else recurrence.start.formattedTime()
+        val endTime =
+            if (recurrence.toEndOfService) stringResource(R.string.end_of_service)
+            else recurrence.end.formattedTime()
+        Column(
+            Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            if (recurrence.daily) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    Text(columnTexts[2], Modifier.width(columnWidth), style = style)
+                    Text(
+                        stringResource(R.string.en_dash_range, startDay, endDay),
+                        style = Typography.bodySemibold,
+                    )
+                }
+            } else {
+                Text(
+                    stringResource(R.string.en_dash_range, startDay, endDay),
+                    style = Typography.bodySemibold,
+                )
+                Text(
+                    recurrence.days
+                        .sortedBy { it.numberSundayFirst }
+                        .joinToString(separator = stringResource(R.string.list_join)) {
+                            it.formattedFull()
+                        },
+                    style = Typography.bodySemibold,
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Text(columnTexts[3], Modifier.width(columnWidth), style = style)
+                Text(stringResource(R.string.en_dash_range, startTime, endTime), style = style)
+            }
+        }
+    } else if (currentPeriod != null) {
         Column(
             Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -190,24 +256,14 @@ private fun AlertPeriod(currentPeriod: Alert.ActivePeriod?) {
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top,
             ) {
-                Text(
-                    columnTexts[0],
-                    Modifier.width(columnWidth),
-                    style = style,
-                    onTextLayout = { startWidth = it.size.width },
-                )
+                Text(columnTexts[0], Modifier.width(columnWidth), style = style)
                 Text(currentPeriod.formatStart(LocalResources.current), style = style)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top,
             ) {
-                Text(
-                    columnTexts[1],
-                    Modifier.width(columnWidth),
-                    style = style,
-                    onTextLayout = { endWidth = it.size.width },
-                )
+                Text(columnTexts[1], Modifier.width(columnWidth), style = style)
                 Text(currentPeriod.formatEnd(LocalResources.current), style = style)
             }
         }
@@ -379,6 +435,47 @@ private fun AlertDetailsPreview() {
                 effect = Alert.Effect.Suspension
                 cause = Alert.Cause.Maintenance
                 activePeriod(now - 3.days, now + 3.days)
+                description =
+                    "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
+                updatedAt = now - 10.minutes
+            }
+        Column(Modifier.background(colorResource(R.color.fill2)).padding(16.dp)) {
+            AlertDetails(alert, null, listOf(route), stop, listOf(stop), now, MockAnalytics())
+        }
+    }
+}
+
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_NO or Configuration.UI_MODE_TYPE_NORMAL,
+    backgroundColor = 0xFFFFFFFF,
+)
+@Composable
+private fun AlertDetailsRecurringPreview() {
+    MyApplicationTheme {
+        val objects = ObjectCollectionBuilder("AlertDetailsPreview")
+        val route =
+            objects.route {
+                color = "ED8B00"
+                textColor = "FFFFFF"
+                longName = "Orange Line"
+            }
+        val now = EasternTimeInstant.now()
+        val today = now.serviceDate
+        val stop = objects.stop { name = "Here @ There" }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                cause = Alert.Cause.Maintenance
+                val nineAM = LocalTime(9, 0)
+                val endOfService = LocalTime(3, 0)
+                activePeriod(
+                    EasternTimeInstant(today, nineAM),
+                    EasternTimeInstant(today.plus(DatePeriod(days = 1)), endOfService),
+                )
+                activePeriod(
+                    EasternTimeInstant(today.plus(DatePeriod(days = 2)), nineAM),
+                    EasternTimeInstant(today.plus(DatePeriod(days = 3)), endOfService),
+                )
                 description =
                     "Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through Friday, May 31.\n\nAn accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for assistance.\n\nThe Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station during this work."
                 updatedAt = now - 10.minutes

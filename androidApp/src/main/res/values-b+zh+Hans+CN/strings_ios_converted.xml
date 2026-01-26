@@ -20,11 +20,13 @@
     <string name="alert_details">警报详情</string>
     <string name="alert_elevator_header">电梯关停(%1$s)</string>
     <string name="alert_ended">警报已失效</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020从&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020在&lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b>站</string>
     <string name="alert_summary_location_successive">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_recurrence_end_day_later_date">\u0020直到 %1$s</string>
+    <string name="alert_summary_recurrence_end_day_this_week">\u0020直到 %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020直至服务结束</string>
     <string name="alert_summary_timeframe_later_date">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020至%1$s</string>
@@ -76,6 +78,7 @@
     <string name="crowding_crowded">挤</string>
     <string name="crowding_not_crowded">不拥挤。</string>
     <string name="crowding_some_crowding">有些拥挤</string>
+    <string name="daily">日常的</string>
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
     <string name="delays_unknown_reason">&lt;b>延误&lt;/b></string>
@@ -118,6 +121,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">此站点有%1$d电梯关闭</item>
     </plurals>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">结束日期</string>
     <string name="end_of_service">服务结束</string>
     <string name="error_loading_data">加载数据时出错</string>
@@ -167,6 +171,7 @@
     <string name="freight_train_interference">货运列车干扰</string>
     <string name="freight_train_interference_lowercase">货运列车干扰</string>
     <string name="from">出发地</string>
+    <string name="from_to_time">\u0020从 %1$s 到 %2$s</string>
     <string name="full_description">完整说明</string>
     <string name="get_disruption_notifications">接收运营变动通知</string>
     <string name="good_morning">早上好！</string>
@@ -193,6 +198,7 @@
     <string name="later_today">今天晚些时候</string>
     <string name="less_common_stop">较少停靠的站点</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b>较少停靠的站点</string>
+    <string name="list_join">、</string>
     <string name="live">实时</string>
     <string name="loading">正在加载……</string>
     <string name="location_not_available_yet">定位服务暂不可用</string>
@@ -417,6 +423,7 @@
     <string name="unruly_passenger_lowercase">乘客干扰</string>
     <string name="unstar_route_hint">在列表中取消置顶路线</string>
     <string name="until_further_notice">等待进一步通知</string>
+    <string name="until_tomorrow">\u0020直到明天</string>
     <string name="updated_at">最后更新：%1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">%1$d 分钟前更新</item>

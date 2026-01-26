@@ -22,8 +22,11 @@ for key, string_info in xcstrings["strings"].items():
         missing_keys[key] = key
     else:
         localizations = string_info["localizations"]
-        if len(localizations) == 1 and "variations" in localizations["en"].keys():
-            print(f"Cannot create placeholders for plural translation with key {repr(key)}; plurals are complicated.")
+        if len(localizations) == 1:
+            if "variations" in localizations["en"].keys():
+                print(f"Cannot create placeholders for plural translation with key {repr(key)}; plurals are complicated.")
+            else:
+                missing_keys[key] = localizations["en"]["stringUnit"]["value"]
 
 if len(missing_keys) == 0:
     print("Couldn’t find any strings that need placeholder translations.")
@@ -59,7 +62,10 @@ fullwidth_placeholder = re.compile("[%\uFF05][@\uFF20]")
 
 for body_row in sheet_in[1:]:
     key = body_row[0]
-    localizations = dict()
+    if "localizations" in xcstrings["strings"][key]:
+        localizations = xcstrings["strings"][key]["localizations"]
+    else:
+        localizations = dict()
     for col in range(2, len(body_row)):
         value = body_row[col]
         if "fr" in sheet_in_header[col]:

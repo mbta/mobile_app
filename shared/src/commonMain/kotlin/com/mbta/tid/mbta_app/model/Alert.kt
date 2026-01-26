@@ -3,7 +3,11 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.hours
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.minus
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -389,6 +393,48 @@ internal constructor(
 
     internal fun matchingEntities(predicate: (InformedEntity) -> Boolean) =
         informedEntity.filter(predicate)
+
+    public data class RecurrenceInfo(
+        val start: EasternTimeInstant,
+        val end: EasternTimeInstant,
+        val days: Set<DayOfWeek>,
+    ) {
+        public val daily: Boolean = days.size == 7
+
+        public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
+        public val toEndOfService: Boolean =
+            end.local.time == LocalTime(2, 59) || end.local.time == LocalTime(3, 0)
+    }
+
+    public fun recurrenceRange(): RecurrenceInfo? {
+        if (activePeriod.size <= 1) return null
+        val firstPeriod = activePeriod.minBy { it.start }
+        val lastPeriod = activePeriod.maxBy { it.end ?: return@recurrenceRange null }
+        val lastPeriodEnd = lastPeriod.end ?: return null
+        val alertDays =
+            activePeriod.map {
+                if (
+                    it.startServiceDate == it.endServiceDate &&
+                        it.start.local.time == firstPeriod.start.local.time &&
+                        it.end?.local?.time == lastPeriodEnd.local.time
+                ) {
+                    it.startServiceDate
+                } else {
+                    return@recurrenceRange null
+                }
+            }
+        val allAlertDaysContiguous =
+            alertDays
+                .windowed(size = 2, step = 1) { (a, b) -> (b - a) == DatePeriod(days = 1) }
+                .all { it }
+        val days =
+            if (allAlertDaysContiguous) {
+                DayOfWeek.entries.toSet()
+            } else {
+                alertDays.map { it.dayOfWeek }.toSet()
+            }
+        return RecurrenceInfo(firstPeriod.start, lastPeriodEnd, days)
+    }
 
     internal companion object {
         /**

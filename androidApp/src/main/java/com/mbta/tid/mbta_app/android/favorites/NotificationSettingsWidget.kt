@@ -1,8 +1,5 @@
 package com.mbta.tid.mbta_app.android.favorites
 
-import android.icu.text.DateFormat
-import android.icu.util.Calendar
-import android.icu.util.GregorianCalendar
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -52,15 +49,15 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
 import com.mbta.tid.mbta_app.android.util.Typography
+import com.mbta.tid.mbta_app.android.util.formattedAbbr
+import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.isoDayNumber
 
 @OptIn(ExperimentalUuidApi::class)
 @Composable
@@ -261,8 +258,7 @@ private fun LabeledTimeInput(
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
         ) {
             Text(
-                EasternTimeInstant(LocalDateTime(EasternTimeInstant.now().local.date, time))
-                    .formattedTime(),
+                EasternTimeInstant(EasternTimeInstant.now().local.date, time).formattedTime(),
                 style = Typography.footnoteSemibold,
             )
         }
@@ -295,9 +291,6 @@ private fun LabeledTimeInput(
     }
 }
 
-private val formatWeekdayAbbr by lazy { DateFormat.getInstanceForSkeleton(DateFormat.ABBR_WEEKDAY) }
-private val formatWeekday by lazy { DateFormat.getInstanceForSkeleton(DateFormat.WEEKDAY) }
-
 @Composable
 private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayOfWeek>) -> Unit) {
     Row(
@@ -315,10 +308,6 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                 DayOfWeek.FRIDAY,
                 DayOfWeek.SATURDAY,
             )) {
-            val calendarOnDay = GregorianCalendar()
-            // unfortunately, Calendar.DAY_OF_WEEK uses Sun-Sat instead of the ISO Mon-Sun
-            // fortunately, converting 7 to 1, 1 to 2, etc is the easiest operation available
-            calendarOnDay.set(Calendar.DAY_OF_WEEK, day.isoDayNumber % 7 + 1)
             val isIncluded = day in daysOfWeek
             Surface(
                 checked = isIncluded,
@@ -338,10 +327,8 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Text(
-                        formatWeekdayAbbr.format(calendarOnDay),
-                        Modifier.semantics {
-                            text = AnnotatedString(formatWeekday.format(calendarOnDay))
-                        },
+                        day.formattedAbbr(),
+                        Modifier.semantics { text = AnnotatedString(day.formattedFull()) },
                         style = Typography.footnoteSemibold,
                     )
                     if (isIncluded) {

@@ -72,12 +72,65 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? {
-        alert.currentPeriod(time: now)
+        alert.currentPeriod(time: now) ?? alert.nextPeriod(time: now)
+    }
+
+    static var calendar: Calendar {
+        var result = Calendar(identifier: .iso8601)
+        result.locale = .autoupdatingCurrent
+        return result
     }
 
     @ViewBuilder
     private var alertPeriod: some View {
-        if let currentPeriod {
+        if let recurrence = alert.recurrenceRange() {
+            let dateFormat: EasternTimeInstant.FormatStyle = recurrence.daily ? .init().weekday(.abbreviated)
+                .month(.abbreviated).day() : .init().month(.wide).day()
+            let startDay = recurrence.start.formatted(dateFormat)
+            let endDay = recurrence.end.coerceInServiceDay(rounding: .backwards).formatted(dateFormat)
+            let startTime = recurrence
+                .fromStartOfService ? NSLocalizedString("start of service", comment: "") : recurrence.start
+                .formatted(
+                    date: .omitted,
+                    time: .shortened
+                )
+            let endTime = recurrence.toEndOfService ? NSLocalizedString("end of service", comment: "") : recurrence.end
+                .formatted(
+                    date: .omitted,
+                    time: .shortened
+                )
+            if recurrence.daily {
+                Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
+                    GridRow {
+                        Text("Daily", comment: "Label for the days of a recurring alert")
+                            .frame(minWidth: 48, alignment: .leading)
+                        Text("\(startDay) – \(endDay)")
+                            .font(Typography.bodySemibold)
+                    }
+                    GridRow {
+                        Text("From", comment: "Label for the times of a recurring alert")
+                        Text("\(startTime) – \(endTime)")
+                    }
+                }
+            } else {
+                VStack(alignment: .leading, spacing: 14) {
+                    Text("\(startDay) – \(endDay)")
+                        .font(Typography.bodySemibold)
+                    let calendar = Self.calendar
+                    Text(recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
+                        .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }
+                        .joined(separator: NSLocalizedString(
+                            ", ",
+                            comment: "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday"
+                        )))
+                        .font(Typography.bodySemibold)
+                    HStack(spacing: 8) {
+                        Text("From", comment: "Label for the times of a recurring alert")
+                        Text("\(startTime) – \(endTime)")
+                    }
+                }
+            }
+        } else if let currentPeriod {
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
                 GridRow {
                     Text("Start", comment: "Label for the start date of a disruption")
@@ -270,6 +323,51 @@ struct AlertDetails: View {
         alert.updatedAt = now.minus(minutes: 10)
     }
     return AlertDetails(
+        alert: alert,
+        routes: [route],
+        affectedStops: [stop],
+        stopId: stop.id,
+        now: now
+    )
+}
+
+#Preview("Recurring") {
+    let now = EasternTimeInstant.now()
+    let today = now.serviceDate
+    let objects = ObjectCollectionBuilder()
+    let route = objects.route { route in
+        route.color = "ED8B00"
+        route.textColor = "FFFFFF"
+        route.longName = "Orange Line"
+    }
+    let stop = objects.stop { _ in }
+    let alert = objects.alert { alert in
+        alert.effect = .suspension
+        alert.cause = .maintenance
+        let nineAM = Kotlinx_datetimeLocalTime(hour: 9, minute: 0, second: 0, nanosecond: 0)
+        let endOfService = Kotlinx_datetimeLocalTime(hour: 3, minute: 0, second: 0, nanosecond: 0)
+        alert.activePeriod(
+            start: .init(date: today, time: nineAM),
+            end: .init(date: today.plus(days: 1), time: endOfService)
+        )
+        alert.activePeriod(
+            start: .init(date: today.plus(days: 2), time: nineAM),
+            end: .init(date: today.plus(days: 3), time: endOfService)
+        )
+        alert.description_ =
+            """
+            Orange Line service between Ruggles and Jackson Square will be suspended from Thursday, May 23 through \
+            Friday, May 31.
+
+            An accessible van will be available for riders. Please see Station Personnel or Transit Ambassadors for \
+            assistance.
+
+            The Haverhill Commuter Rail Line will be Fare Free between Oak Grove, Malden Center, and North Station \
+            during this work.
+            """
+        alert.updatedAt = now.minus(minutes: 10)
+    }
+    AlertDetails(
         alert: alert,
         routes: [route],
         affectedStops: [stop],
