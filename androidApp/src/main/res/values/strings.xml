@@ -290,6 +290,10 @@
     <string name="predictions_unavailable_details_hide_maps">Service is running, but predicted arrival times aren’t available.</string>
     <string name="promo_favorites_body">Now save your frequently used stops to &lt;b>one easy place&lt;/b>.</string>
     <string name="promo_favorites_header">Add your favorites</string>
+    <string name="promo_notifications_body">We’ll tell you about any problems before you go!</string>
+    <string name="promo_notifications_header">Now get disruption notifications</string>
+    <string name="promo_notifications_step1">Add a Favorite stop</string>
+    <string name="promo_notifications_step2">Set your own schedule</string>
     <string name="rail_defect">Rail Defect</string>
     <string name="rail_defect_lowercase">rail defect</string>
     <string name="real_time_arrivals_updating_live">Real-time arrivals updating live</string>

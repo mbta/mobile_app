@@ -290,6 +290,10 @@
     <string name="predictions_unavailable_details_hide_maps">El servicio está funcionando, pero los horarios de llegada previstos no están disponibles.</string>
     <string name="promo_favorites_body">Ahora guarde las paradas que utiliza con frecuencia en &lt;b>un lugar fácil de acceder&lt;/b>.</string>
     <string name="promo_favorites_header">Agregar sus favoritos</string>
+    <string name="promo_notifications_body">¡Te informaremos de cualquier problema antes de irte!</string>
+    <string name="promo_notifications_header">Ahora recibe notificaciones de interrupciones</string>
+    <string name="promo_notifications_step1">Añadir una parada favorita</string>
+    <string name="promo_notifications_step2">Establece tu propio horario</string>
     <string name="rail_defect">Defecto del riel</string>
     <string name="rail_defect_lowercase">defecto del riel</string>
     <string name="real_time_arrivals_updating_live">Llegadas en tiempo real actualizadas en vivo</string>

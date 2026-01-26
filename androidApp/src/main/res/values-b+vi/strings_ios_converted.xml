@@ -284,6 +284,10 @@
     <string name="predictions_unavailable_details_hide_maps">Dịch vụ đang hoạt động nhưng không có thời gian đến dự kiến.</string>
     <string name="promo_favorites_body">Bây giờ hãy lưu các điểm dừng thường xuyên sử dụng vào &lt;b>một nơi dễ dàng&lt;/b>.</string>
     <string name="promo_favorites_header">Thêm mục yêu thích</string>
+    <string name="promo_notifications_body">Chúng tôi sẽ thông báo cho bạn về bất kỳ vấn đề nào trước khi bạn khởi hành!</string>
+    <string name="promo_notifications_header">Giờ đây bạn có thể nhận thông báo về sự gián đoạn.</string>
+    <string name="promo_notifications_step1">Thêm điểm dừng yêu thích</string>
+    <string name="promo_notifications_step2">Tự sắp xếp lịch trình của riêng bạn</string>
     <string name="rail_defect">Lỗi đường sắt</string>
     <string name="rail_defect_lowercase">lỗi đường sắt</string>
     <string name="real_time_arrivals_updating_live">Cập nhật giờ đến theo thời gian thực</string>

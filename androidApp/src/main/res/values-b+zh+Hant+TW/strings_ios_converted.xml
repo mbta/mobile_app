@@ -284,6 +284,10 @@
     <string name="predictions_unavailable_details_hide_maps">服務正在運行，但無法提供預計到達時間。</string>
     <string name="promo_favorites_body">現在將您常用的網站儲存到&lt;b>一個便捷位置&lt;/b>。</string>
     <string name="promo_favorites_header">新增您的我的最愛</string>
+    <string name="promo_notifications_body">我們會在您出發前告知您所有可能出現的問題！</string>
+    <string name="promo_notifications_header">現在即可接收中斷通知</string>
+    <string name="promo_notifications_step1">新增收藏站點</string>
+    <string name="promo_notifications_step2">自行安排時間</string>
     <string name="rail_defect">軌道缺陷</string>
     <string name="rail_defect_lowercase">軌道缺陷</string>
     <string name="real_time_arrivals_updating_live">即時到達即時更新</string>

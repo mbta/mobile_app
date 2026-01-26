@@ -290,6 +290,10 @@
     <string name="predictions_unavailable_details_hide_maps">Le service fonctionne, mais les heures d’arrivée prévues ne sont pas disponibles.</string>
     <string name="promo_favorites_body">Enregistrez vos arrêts fréquents dans &lt;b>un seul endroit pratique&lt;/b>.</string>
     <string name="promo_favorites_header">Ajouter à vos favoris</string>
+    <string name="promo_notifications_body">Nous vous informerons de tout problème avant votre départ !</string>
+    <string name="promo_notifications_header">Recevez désormais des notifications de perturbation</string>
+    <string name="promo_notifications_step1">Ajouter un arrêt favori</string>
+    <string name="promo_notifications_step2">Définissez votre propre horaire</string>
     <string name="rail_defect">Défaut sur les rails</string>
     <string name="rail_defect_lowercase">défaut sur les rails</string>
     <string name="real_time_arrivals_updating_live">Arrivées en temps réel et mises à jour en direct</string>

@@ -7,6 +7,7 @@
 //
 
 import CoreLocation
+import Lottie
 import Shared
 import SwiftUI
 
@@ -20,8 +21,10 @@ struct OnboardingScreenView: View {
     @State private var locationFetcher: LocationFetcher?
     @State private var locationPermissionHandler: LocationPermissionHandler?
     @State private var localHideMaps = true
+    @State private var notificationsScreenState: NotificationsScreenState = .initial
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
+    @Environment(\.colorScheme) var colorScheme
     @Environment(\.dynamicTypeSize) var typeSize
 
     private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
@@ -153,6 +156,9 @@ struct OnboardingScreenView: View {
                 })
                 .dynamicTypeSize(...DynamicTypeSize.accessibility4)
 
+            case .notificationsBeta:
+                notificationsBeta
+
             case .stationAccessibility:
                 OnboardingPieces.PageColumn(content: {
                     Spacer()
@@ -209,6 +215,127 @@ struct OnboardingScreenView: View {
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
     }
 
+    private enum NotificationsScreenState: Comparable {
+        case initial
+        case afterFavorite
+        case afterSchedule
+        case final
+    }
+
+    @ViewBuilder private var notificationsBeta: some View {
+        VStack {
+            HStack(spacing: 10) {
+                Image(.appIcon).resizable().scaledToFit().frame(width: 38, height: 38)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 0) {
+                        Text(verbatim: "Orange Line")
+                            .font(.system(size: 16, weight: .semibold))
+                        Spacer()
+                        Text("now")
+                            .font(.system(size: 16))
+                    }
+                    let alert = FormattedAlert(alert: nil, alertSummary: .init(
+                        effect: .suspension,
+                        location: AlertSummary.LocationSuccessiveStops(
+                            startStopName: "Back Bay",
+                            endStopName: "Wellington"
+                        ),
+                        timeframe: AlertSummary.TimeframeThisWeek(time: .init(
+                            year: 2026,
+                            month: .january,
+                            day: 25,
+                            hour: 12,
+                            minute: 0,
+                            second: 0
+                        ))
+                    ))
+                    Text(String(alert.alertCardMajorBody.characters[...]))
+                        .font(.system(size: 16))
+                        .frame(minHeight: 40) // TODO: fix
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 14)
+            .background(colorScheme == .dark ? Color.black.opacity(0.5) : Color.white.opacity(0.75))
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .padding(16)
+            .padding(.top, 100)
+            .padding(.bottom, 32)
+        }
+        .background(Color.key)
+        .withRoundedBorder(radius: 24, color: .black, width: 12)
+        .ignoresSafeArea()
+        .scaleEffect(0.75, anchor: .top)
+        .frame(height: 160, alignment: .bottom)
+        OnboardingPieces.PageColumn(content: {
+            VStack(alignment: .leading, spacing: 32) {
+                let header = NSLocalizedString("Now get disruption notifications", comment: "")
+                Text(header)
+                    .font(Typography.title1Bold)
+                    .accessibilityLabel(Text("New feature. \(header)"))
+                    .accessibilityHeading(.h1)
+                    .accessibilityAddTraits(.isHeader)
+                    .accessibilityFocused($focusHeader, equals: .notificationsBeta)
+
+                HStack(spacing: 12) {
+                    StarIcon(starred: notificationsScreenState >= .afterFavorite, color: .key, size: 36).frame(
+                        width: 52,
+                        alignment: .center
+                    )
+                    Text("Add a Favorite stop")
+                        .font(Typography.title3)
+                        .opacity(notificationsScreenState >= .afterFavorite ? 1 : 0.4)
+                        .animation(.default, value: notificationsScreenState)
+                }
+
+                HStack(spacing: 12) {
+                    Toggle(isOn: .constant(notificationsScreenState >= .afterSchedule), label: {}).scaleEffect(
+                        0.75,
+                        anchor: .center
+                    ).frame(width: 52, alignment: .center).tint(.key)
+                    Text("Set your own schedule")
+                        .font(Typography.title3)
+                        .opacity(notificationsScreenState >= .afterSchedule ? 1 : 0.4)
+                    Spacer()
+                }
+
+                Text("We’ll tell you about any problems before you go!")
+                    .font(Typography.title3)
+                    .opacity(notificationsScreenState >= .final ? 1 : 0.4)
+
+                ZStack(alignment: .bottom) {
+                    LottieView {
+                        try await DotLottieFile
+                            .named(colorScheme == .dark ? "Notification pop-dark" : "Notification pop-light")
+                    }
+                    .playbackMode(notificationsScreenState >= .final ? .playing(.toProgress(
+                        1,
+                        loopMode: .playOnce
+                    )) : .paused(at: .time(0)))
+
+                    OnboardingPieces.KeyButton(
+                        text: Text(
+                            "Got it",
+                            comment: "The continue button text on a page displaying new features since last update"
+                        ),
+                        action: advance
+                    )
+                }
+            }
+        }, background: {})
+            .foregroundStyle(Color.text)
+            .frame(maxHeight: .infinity)
+            .task {
+                try? await Task.sleep(for: .seconds(2))
+                notificationsScreenState = .afterFavorite
+                try? await Task.sleep(for: .seconds(2))
+                notificationsScreenState = .afterSchedule
+                try? await Task.sleep(for: .seconds(2))
+                notificationsScreenState = .final
+            }
+    }
+
     func shareLocation() {
         // short circuit for OnboardingPageView integration testing
         if skipLocationDialogue {
@@ -258,6 +385,11 @@ struct OnboardingScreenView: View {
 
 #Preview("Location") {
     OnboardingScreenView(screen: .location, advance: {})
+        .withFixedSettings([:])
+}
+
+#Preview("Notifications Beta") {
+    OnboardingScreenView(screen: .notificationsBeta, advance: {})
         .withFixedSettings([:])
 }
 

@@ -38,7 +38,6 @@ struct PromoScreenView: View {
             switch screen {
             case .combinedStopAndTrip: combinedStopAndTrip
             case .enhancedFavorites: enhancedFavorites
-            default: EmptyView()
             }
         }
         .onChange(of: screen) { nextScreen in
@@ -150,7 +149,10 @@ struct PromoScreenView: View {
     }
 }
 
-#Preview {
+#Preview("Combined Stop and Trip") {
     PromoScreenView(screen: .combinedStopAndTrip, advance: {})
+}
+
+#Preview("Enhanced Favorites") {
     PromoScreenView(screen: .enhancedFavorites, advance: {})
 }

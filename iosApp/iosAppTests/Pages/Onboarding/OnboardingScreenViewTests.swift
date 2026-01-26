@@ -90,6 +90,20 @@ final class OnboardingScreenViewTests: XCTestCase {
         wait(for: [exp, saveSettingExp, advanceExp], timeout: 2)
     }
 
+    func testNotificationsBetaFlow() throws {
+        let advanceExp = expectation(description: "calls advance()")
+        let sut = OnboardingScreenView(
+            screen: .notificationsBeta,
+            advance: { advanceExp.fulfill() }
+        ).withFixedSettings([:])
+        XCTAssertNotNil(try sut.inspect().find(text: "Now get disruption notifications"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Add a Favorite stop"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Set your own schedule"))
+        XCTAssertNotNil(try sut.inspect().find(text: "We’ll tell you about any problems before you go!"))
+        try sut.inspect().find(button: "Got it").tap()
+        wait(for: [advanceExp], timeout: 1)
+    }
+
     func testFeedbackFlow() throws {
         let advanceExp = expectation(description: "calls advance()")
         let sut = OnboardingScreenView(

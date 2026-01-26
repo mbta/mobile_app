@@ -299,6 +299,10 @@
     <string name="predictions_unavailable_details_hide_maps">Sèvis la ap fonksyone, men prediksyon lè arive yo pa disponib.</string>
     <string name="promo_favorites_body">Kounye a tout wout ou fè souvan yo sere &lt;b>fasil nan yon sèl kote&lt;/b>.</string>
     <string name="promo_favorites_header">Ajoute nan Preferans ou yo</string>
+    <string name="promo_notifications_body">N ap di w nenpòt pwoblèm anvan w ale!</string>
+    <string name="promo_notifications_header">Kounye a resevwa notifikasyon pou entèripsyon</string>
+    <string name="promo_notifications_step1">Ajoute yon arè pi renmen</string>
+    <string name="promo_notifications_step2">Fikse pwòp orè ou</string>
     <string name="rail_defect">Defo nan ray tren yo</string>
     <string name="rail_defect_lowercase">defo nan ray</string>
     <string name="real_time_arrivals_updating_live">Arive an tan reyèl yo mete ajou an dirèk</string>
