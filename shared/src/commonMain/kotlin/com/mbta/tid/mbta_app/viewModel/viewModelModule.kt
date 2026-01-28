@@ -33,6 +33,7 @@ public fun viewModelModule(): Module = module {
                 get(),
                 get(),
                 get(),
+                get(),
                 get(named("coroutineDispatcherDefault")),
                 get(named("coroutineDispatcherIO")),
             )
