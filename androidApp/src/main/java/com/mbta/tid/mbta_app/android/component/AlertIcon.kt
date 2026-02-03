@@ -18,6 +18,7 @@ fun AlertIcon(alertState: StopAlertState, color: Color?, modifier: Modifier = Mo
             StopAlertState.Issue -> R.drawable.alert_borderless_issue
             StopAlertState.Shuttle -> R.drawable.alert_borderless_shuttle
             StopAlertState.Suspension -> R.drawable.alert_borderless_suspension
+            StopAlertState.AllClear -> R.drawable.alert_borderless_allclear
             else -> return
         }
 

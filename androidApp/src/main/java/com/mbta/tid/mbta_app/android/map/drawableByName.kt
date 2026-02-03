@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.android.R
 
 fun drawableByName(name: String): Int =
     when (name) {
+        "alert-borderless-allclear" -> R.drawable.alert_borderless_allclear
         "alert-borderless-issue" -> R.drawable.alert_borderless_issue
         "alert-borderless-shuttle" -> R.drawable.alert_borderless_shuttle
         "alert-borderless-suspension" -> R.drawable.alert_borderless_suspension

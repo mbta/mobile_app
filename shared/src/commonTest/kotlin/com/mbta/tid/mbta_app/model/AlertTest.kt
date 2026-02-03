@@ -4,6 +4,8 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -232,7 +234,7 @@ class AlertTest {
             alert.significance(atTime = alertStart - 12.hours),
         )
         assertEquals(AlertSignificance.Major, alert.significance(atTime = alertStart))
-        assertEquals(AlertSignificance.None, alert.significance(atTime = alertEnd + 1.minutes))
+        assertEquals(AlertSignificance.Major, alert.significance(atTime = alertEnd + 1.minutes))
     }
 
     @Test
@@ -810,5 +812,21 @@ class AlertTest {
                 tripsById = global.trips,
             )
         assertEquals(listOf(alewifeShuttleAlert), northboundDownstreamAlerts)
+    }
+
+    @Test
+    fun `allClear correct for active period`() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val active =
+            objects.alert {
+                activePeriod = mutableListOf(Alert.ActivePeriod(now - 5.minutes, now + 5.minutes))
+            }
+        val allClear =
+            objects.alert {
+                activePeriod = mutableListOf(Alert.ActivePeriod(now - 10.minutes, now - 5.minutes))
+            }
+        assertFalse { active.allClear(now) }
+        assertTrue { allClear.allClear(now) }
     }
 }

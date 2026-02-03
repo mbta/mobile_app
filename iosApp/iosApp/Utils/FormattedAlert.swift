@@ -287,14 +287,39 @@ struct FormattedAlert: Equatable {
 
     var summary: AttributedString? {
         if alertSummary != nil {
-            AttributedString.tryMarkdown(String(format:
-                NSLocalizedString("**%1$@**%2$@%3$@%4$@",
-                                  comment: """
-                                  Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
-                                  ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
-                                  "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
-                                  """), sentenceCaseEffect, summaryLocation, summaryTimeframe, summaryRecurrence))
-        } else { nil }
+            let args = [sentenceCaseEffect, summaryLocation, summaryTimeframe, summaryRecurrence]
+            if let update = alertSummary?.update {
+                switch onEnum(of: update) {
+                case .active:
+                    return AttributedString.tryMarkdown(String(format:
+                        NSLocalizedString("**Update:** %1$@%2$@%3$@%4$@",
+                                          comment: """
+                                          Alert summary in the format of "Update: [Alert effect][at location][through timeframe][until recurrence]", \
+                                          ex "[Update][Stop closed][ at Haymarket][ through this Friday][]" or \
+                                          "[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                                          """), args.map { $0 as CVarArg }))
+                case .allClear:
+                    return AttributedString.tryMarkdown(String(
+                        format: NSLocalizedString(
+                            "**All clear:** Regular service%1$@",
+                            comment: """
+                            Alert summary in the format of "All clear: Regular service[at location]", \
+                            ex "[All clear][Regular service][ from Alewife to Harvard]"
+                            """
+                        ), summaryLocation
+                    ))
+                case .unknown: return nil
+                }
+            } else {
+                return AttributedString.tryMarkdown(String(format:
+                    NSLocalizedString("**%1$@**%2$@%3$@%4$@",
+                                      comment: """
+                                      Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
+                                      ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
+                                      "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                                      """), args.map { $0 as CVarArg }))
+            }
+        } else { return nil }
     }
 
     var delayHeader: AttributedString {

@@ -51,6 +51,9 @@ internal constructor(
 
     val hasStopsSpecified: Boolean = informedEntity.all { it.stop != null }
 
+    public fun allClear(atTime: EasternTimeInstant): Boolean =
+        activePeriod.all { it.end != null && it.end < atTime }
+
     public fun significance(atTime: EasternTimeInstant?): AlertSignificance {
         val intrinsicSignificance =
             when (effect) {
@@ -85,8 +88,8 @@ internal constructor(
                 atTime == null || isActive(atTime) -> AlertSignificance.Major
                 // upcoming, show as secondary if will be major later
                 willBeActiveSoon(atTime) -> AlertSignificance.Secondary
-                // all clear, hide completely until we have implemented the summary template
-                activePeriod.all { it.end != null && it.end < atTime } -> AlertSignificance.None
+                // all clear
+                allClear(atTime) -> AlertSignificance.Major
                 // will be active later but not soon enough to show yet, hide completely
                 else -> AlertSignificance.None
             }

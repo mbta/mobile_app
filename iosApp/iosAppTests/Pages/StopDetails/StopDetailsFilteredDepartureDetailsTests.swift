@@ -761,7 +761,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 effect: .shuttle,
                 location: AlertSummary.LocationSingleStop(stopName: stop.name),
                 timeframe: nil,
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,

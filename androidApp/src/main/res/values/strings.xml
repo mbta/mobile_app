@@ -22,6 +22,7 @@
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary_all_clear">&lt;b>All clear:&lt;/b> Regular service%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020from &lt;b>%1$s&lt;/b> stops to &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020at &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b> stops</string>
@@ -34,6 +35,7 @@
     <string name="alert_summary_timeframe_time">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020through tomorrow</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020until further notice</string>
+    <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
     <string name="alternative_path">Alternative path</string>
     <string name="amber_alert">Amber Alert</string>

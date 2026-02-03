@@ -6,8 +6,10 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DatePeriod
@@ -199,6 +201,18 @@ class AlertSummaryTest {
                 put("time", "2026-01-16T10:46:00-05:00")
             }
         }
+    }
+
+    @Test
+    fun `can deserialize all updates`() {
+        fun performCheck(update: AlertSummary.Update, jsonBuilder: JsonObjectBuilder.() -> Unit) {
+            val jsonObject = buildJsonObject(jsonBuilder)
+            assertEquals(jsonObject, json.encodeToJsonElement(update))
+            assertEquals(update, json.decodeFromJsonElement(jsonObject))
+        }
+
+        performCheck(AlertSummary.Update.Active) { put("type", "active") }
+        performCheck(AlertSummary.Update.AllClear) { put("type", "all_clear") }
     }
 
     @Test
@@ -1150,6 +1164,107 @@ class AlertSummaryTest {
                 EasternTimeInstant(tuesday, noon),
                 GlobalResponse(objects),
             ),
+        )
+    }
+
+    @Test
+    fun `summary with active update`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+
+        val firstStop = objects.stop { name = "First Stop" }
+        val successiveStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
+        val lastStop = objects.stop { name = "Last Stop" }
+
+        val stops = listOf(firstStop) + successiveStops + listOf(lastStop)
+
+        val route = objects.route {}
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = stops.map { it.id } }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                updatedAt = now.minus(1.minutes)
+                for (stop in stops) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        route = route.id.idText,
+                        stop = stop.id,
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
+                null,
+                null,
+                AlertSummary.Update.Active,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with all clear update`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+
+        val firstStop = objects.stop { name = "First Stop" }
+        val successiveStops = (1..4).map { objects.stop { name = "Successive Stop $it" } }
+        val lastStop = objects.stop { name = "Last Stop" }
+
+        val stops = listOf(firstStop) + successiveStops + listOf(lastStop)
+
+        val route = objects.route {}
+        val pattern =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip { stopIds = stops.map { it.id } }
+            }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now.minus(1.hours), now.minus(5.minutes))
+                for (stop in stops) {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        route = route.id.idText,
+                        stop = stop.id,
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+
+        assertTrue { alert.allClear(now) }
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
+                null,
+                null,
+                AlertSummary.Update.AllClear,
+            ),
+            alertSummary,
         )
     }
 }

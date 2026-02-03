@@ -32,6 +32,8 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 enum class AlertCardSpec {
     Major,
@@ -79,8 +81,12 @@ fun AlertCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val alertState =
+                if (alert.allClear(EasternTimeInstant.now())) StopAlertState.AllClear
+                else alert.alertState
+            val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
             AlertIcon(
-                alertState = alert.alertState,
+                alertState = alertState,
                 color = color,
                 modifier =
                     Modifier.clearAndSetSemantics {}

@@ -29,6 +29,9 @@ public val json: Json = Json {
         polymorphic(AlertSummary.Recurrence.EndDay::class) {
             defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
         }
+        polymorphic(AlertSummary.Update::class) {
+            defaultDeserializer { AlertSummary.Update.Unknown.serializer() }
+        }
     }
 }
 

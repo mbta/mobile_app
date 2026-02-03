@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
@@ -19,6 +20,7 @@ public data class AlertSummary(
     val location: Location? = null,
     val timeframe: Timeframe? = null,
     val recurrence: Recurrence? = null,
+    val update: Update? = null,
 ) {
     @Serializable
     public sealed class Location {
@@ -128,6 +130,17 @@ public data class AlertSummary(
         @Serializable public sealed interface EndDay
     }
 
+    @Serializable
+    public sealed class Update {
+
+        // Alert is still active and has been updated
+        @Serializable @SerialName("active") public data object Active : Update()
+
+        @Serializable @SerialName("all_clear") public data object AllClear : Update()
+
+        @Serializable public data object Unknown : Update()
+    }
+
     public companion object {
         internal suspend fun summarizing(
             alert: Alert,
@@ -142,11 +155,18 @@ public data class AlertSummary(
                     return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
+                val update = alertUpdated(alert, atTime)
                 val recurrence = alertRecurrence(alert, atTime)
                 val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
 
                 if (location == null && timeframe == null) return@withContext null
-                return@withContext AlertSummary(alert.effect, location, timeframe, recurrence)
+                return@withContext AlertSummary(
+                    alert.effect,
+                    location,
+                    timeframe,
+                    recurrence,
+                    update,
+                )
             }
         }
 
@@ -352,6 +372,19 @@ public data class AlertSummary(
                 Recurrence.Daily(ending)
             } else {
                 Recurrence.SomeDays(ending)
+            }
+        }
+
+        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Update? {
+            val updatedAt = alert.updatedAt
+            val started = alert.currentPeriod(atTime)?.start
+            val updatedAfterActive = started?.let { updatedAt > it } ?: false
+            val fiveMinutesAgo = atTime.minus(5.minutes)
+            val updatedWithinFiveMinutes = updatedAt in fiveMinutesAgo..atTime
+            return when {
+                updatedAfterActive && updatedWithinFiveMinutes -> Update.Active
+                alert.allClear(atTime) -> Update.AllClear
+                else -> null
             }
         }
 
