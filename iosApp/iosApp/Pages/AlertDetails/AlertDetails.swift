@@ -99,12 +99,17 @@ struct AlertDetails: View {
                     date: .omitted,
                     time: .shortened
                 )
+            let dateRange = if recurrence.endDayKnown {
+                Text("\(startDay) – \(endDay)")
+            } else {
+                Text("Until further notice")
+            }
             if recurrence.daily {
                 Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
                     GridRow {
                         Text("Daily", comment: "Label for the days of a recurring alert")
                             .frame(minWidth: 48, alignment: .leading)
-                        Text("\(startDay) – \(endDay)")
+                        dateRange
                             .font(Typography.bodySemibold)
                     }
                     GridRow {
@@ -114,8 +119,7 @@ struct AlertDetails: View {
                 }
             } else {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("\(startDay) – \(endDay)")
-                        .font(Typography.bodySemibold)
+                    dateRange
                     let calendar = Self.calendar
                     Text(recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
                         .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }

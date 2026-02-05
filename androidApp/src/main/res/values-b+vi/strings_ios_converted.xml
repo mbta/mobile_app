@@ -32,6 +32,7 @@
     <string name="alert_summary_timeframe_this_week">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_time">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020đến ngày mai</string>
+    <string name="alert_summary_timeframe_until_further_notice">\u0020cho đến khi có thông báo mới</string>
     <string name="alternative_path">Đường đi thay thế</string>
     <string name="amber_alert">Cảnh báo Amber</string>
     <string name="amber_alert_sentence_case">Cảnh báo Amber</string>

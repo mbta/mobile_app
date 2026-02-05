@@ -317,6 +317,38 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "9:41\u{202F}AM – 11:41\u{202F}AM"))
     }
 
+    func testRecurringUntilFurtherNotice() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = EasternTimeInstant(year: 2026, month: .january, day: 23, hour: 10, minute: 41, second: 0)
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.durationCertainty = .unknown
+            alert.activePeriod(
+                start: now.minus(hours: 1),
+                end: now.plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 23),
+                end: now.plus(hours: 25)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 47),
+                end: now.plus(hours: 49)
+            )
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Daily"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Until further notice"))
+        XCTAssertNotNil(try sut.inspect().find(text: "From"))
+        XCTAssertNotNil(try sut.inspect().find(text: "9:41\u{202F}AM – 11:41\u{202F}AM"))
+    }
+
     func testRecurringSomeDays() throws {
         let objects = ObjectCollectionBuilder()
 

@@ -34,6 +34,7 @@
     <string name="alert_summary_timeframe_this_week">\u0020hasta el día %1$s</string>
     <string name="alert_summary_timeframe_time">\u0020hasta las %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020hasta mañana</string>
+    <string name="alert_summary_timeframe_until_further_notice">\u0020hasta nuevo aviso</string>
     <string name="alternative_path">Camino alternativo</string>
     <string name="amber_alert">Alerta Amber</string>
     <string name="amber_alert_sentence_case">Alerta Amber</string>

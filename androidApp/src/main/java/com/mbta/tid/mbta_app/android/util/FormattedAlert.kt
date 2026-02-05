@@ -145,6 +145,8 @@ data class FormattedAlert(
     private fun summaryTimeframe(resources: Resources) =
         alertSummary?.timeframe?.let {
             when (it) {
+                AlertSummary.Timeframe.UntilFurtherNotice ->
+                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
                 AlertSummary.Timeframe.EndOfService ->
                     resources.getString(R.string.alert_summary_timeframe_end_of_service)
                 AlertSummary.Timeframe.Tomorrow ->
@@ -432,6 +434,8 @@ data class FormattedAlert(
 
         private fun recurrenceEndDay(resources: Resources, endDay: AlertSummary.Recurrence.EndDay) =
             when (endDay) {
+                AlertSummary.Timeframe.UntilFurtherNotice ->
+                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
                 AlertSummary.Timeframe.Tomorrow -> resources.getString(R.string.until_tomorrow)
                 is AlertSummary.Timeframe.ThisWeek ->
                     resources.getString(

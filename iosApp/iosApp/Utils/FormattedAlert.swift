@@ -129,6 +129,11 @@ struct FormattedAlert: Equatable {
     var summaryTimeframe: String {
         if let alertSummary, let timeframe = alertSummary.timeframe {
             switch onEnum(of: timeframe) {
+            case .untilFurtherNotice:
+                NSLocalizedString(" until further notice",
+                                  comment: """
+                                  Alert summary timeframe with no known end. The leading space should be retained.
+                                  """)
             case .endOfService:
                 NSLocalizedString(" through end of service",
                                   comment: """
@@ -226,6 +231,11 @@ struct FormattedAlert: Equatable {
 
     private static func summaryRecurrenceEndDay(_ endDay: AlertSummaryRecurrenceEndDay) -> String? {
         switch onEnum(of: endDay) {
+        case .untilFurtherNotice:
+            NSLocalizedString(" until further notice",
+                              comment: """
+                              Alert summary timeframe with no known end. The leading space should be retained.
+                              """)
         case .tomorrow:
             NSLocalizedString(" until tomorrow",
                               comment: """

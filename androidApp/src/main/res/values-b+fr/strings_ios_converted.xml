@@ -34,6 +34,7 @@
     <string name="alert_summary_timeframe_this_week">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_timeframe_time">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jusqu’à demain</string>
+    <string name="alert_summary_timeframe_until_further_notice">\u0020jusqu’à nouvel ordre</string>
     <string name="alternative_path">Trajet alternatif</string>
     <string name="amber_alert">Alerte Amber</string>
     <string name="amber_alert_sentence_case">Alerte Amber</string>

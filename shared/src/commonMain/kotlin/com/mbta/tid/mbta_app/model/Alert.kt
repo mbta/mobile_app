@@ -398,6 +398,7 @@ internal constructor(
         val start: EasternTimeInstant,
         val end: EasternTimeInstant,
         val days: Set<DayOfWeek>,
+        val endDayKnown: Boolean,
     ) {
         public val daily: Boolean = days.size == 7
 
@@ -433,7 +434,12 @@ internal constructor(
             } else {
                 alertDays.map { it.dayOfWeek }.toSet()
             }
-        return RecurrenceInfo(firstPeriod.start, lastPeriodEnd, days)
+        return RecurrenceInfo(
+            firstPeriod.start,
+            lastPeriodEnd,
+            days,
+            endDayKnown = durationCertainty == DurationCertainty.Known,
+        )
     }
 
     internal companion object {
