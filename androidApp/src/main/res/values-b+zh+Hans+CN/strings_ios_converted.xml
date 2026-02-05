@@ -290,6 +290,10 @@
     <string name="predictions_unavailable_details_hide_maps">服务运行中，暂无预计到达时间。</string>
     <string name="promo_favorites_body">现在将您常用的站点保存到&lt;b>一个便捷位置&lt;/b>。</string>
     <string name="promo_favorites_header">添加您的收藏夹</string>
+    <string name="promo_notifications_body">我们会在您出发前告知您所有可能出现的问题！</string>
+    <string name="promo_notifications_header">现在即可接收中断通知</string>
+    <string name="promo_notifications_step1">添加收藏站点</string>
+    <string name="promo_notifications_step2">自行安排时间</string>
     <string name="rail_defect">轨道缺陷</string>
     <string name="rail_defect_lowercase">轨道缺陷</string>
     <string name="real_time_arrivals_updating_live">实时到达实时更新</string>

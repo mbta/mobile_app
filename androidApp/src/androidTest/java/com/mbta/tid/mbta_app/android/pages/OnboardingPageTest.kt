@@ -47,8 +47,12 @@ class OnboardingPageTest {
         composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 3 }
         assertEquals(3, completedScreens.size)
 
-        composeTestRule.onNodeWithText("Get started").performClick()
+        composeTestRule.onNodeWithText("Got it").performClick()
         composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 4 }
+        assertEquals(4, completedScreens.size)
+
+        composeTestRule.onNodeWithText("Get started").performClick()
+        composeTestRule.waitUntilDefaultTimeout { completedScreens.size == 5 }
         assertEquals(OnboardingScreen.entries.toSet(), completedScreens)
         assertTrue(finished)
     }

@@ -36,6 +36,7 @@ kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.9.0"
 ktor = "3.3.3"
+lottieCompose = "6.7.1"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
 mapbox = "11.15.1"
 mapboxTurf = "7.4.0"
@@ -100,6 +101,7 @@ ktor-client-mock = { module = "io.ktor:ktor-client-mock", version.ref = "ktor" }
 ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
 ktor-client-websockets = { module = "io.ktor:ktor-client-websockets", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottieCompose" }
 mapbox-android = { module = "com.mapbox.maps:android-ndk27", version.ref = "mapbox" }
 mapbox-compose = { module = "com.mapbox.extension:maps-compose-ndk27", version.ref = "mapbox" }
 mapbox-turf = { module = "com.mapbox.mapboxsdk:mapbox-sdk-turf", version.ref = "mapboxTurf" }

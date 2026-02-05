@@ -80,6 +80,9 @@ packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     from: 12.1.0
+  Lottie:
+    url: https://github.com/airbnb/lottie-spm.git
+    from: 4.6.0
   MapboxMaps:
     url: https://github.com/mapbox/mapbox-maps-ios.git
     from: 11.14.2
@@ -110,6 +113,7 @@ targets:
         product: FirebaseAnalyticsCore
       - package: Firebase
         product: FirebaseMessaging
+      - package: Lottie
       - package: MapboxMaps
       - package: Reachability
       - package: swift-collections

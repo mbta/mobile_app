@@ -124,6 +124,7 @@ dependencies {
     implementation(libs.koin.androidxCompose)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.lottie.compose)
     implementation(libs.mapbox.android)
     implementation(libs.mapbox.compose)
     implementation(libs.mapbox.turf)

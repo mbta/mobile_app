@@ -140,6 +140,28 @@ class OnboardingScreenViewTest {
     }
 
     @Test
+    fun testNotificationsBetaFlow() {
+        var advanced = false
+        composeTestRule.setContent {
+            OnboardingScreenView(
+                screen = OnboardingScreen.NotificationsBeta,
+                advance = { advanced = true },
+                locationDataManager = MockLocationDataManager(),
+            )
+        }
+        composeTestRule.onNodeWithText("Now get disruption notifications").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Add a Favorite stop").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Set your own schedule").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithText("We’ll tell you about any problems before you go!")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithText("Got it").performClick()
+
+        composeTestRule.waitForIdle()
+        assertTrue(advanced)
+    }
+
+    @Test
     fun testFeedbackFlow() {
         var advanced = false
         composeTestRule.setContent {

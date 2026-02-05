@@ -53,15 +53,16 @@ class FeaturePromoUsecaseTest {
     @Test
     fun `skips promos when too many`() = runBlocking {
         // instead of an @Ignore we may forget, skip the test if there aren't enough features
-        if (FeaturePromo.entries.size <= FeaturePromoUseCase.MAX_PROMOS) return@runBlocking
+        if (
+            FeaturePromo.entries.filter { it.addedInVersion > AppVersion(0u, 0u, 0u) }.size <=
+                FeaturePromoUseCase.MAX_PROMOS
+        )
+            return@runBlocking
         val useCase =
             FeaturePromoUseCase(
                 MockCurrentAppVersionRepository(AppVersion(999u, 999u, 999u)),
                 MockLastLaunchedAppVersionRepository(AppVersion(0u, 0u, 0u)),
             )
-        assertEquals(
-            listOf(FeaturePromo.CombinedStopAndTrip, FeaturePromo.EnhancedFavorites),
-            useCase.getFeaturePromos(),
-        )
+        assertEquals(emptyList(), useCase.getFeaturePromos())
     }
 }

@@ -19,20 +19,28 @@ public interface IOnboardingRepository {
 
 internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
     private val accessibilityStatus: IAccessibilityStatusRepository by inject()
+    private val settings: ISettingsRepository by inject()
     private val dataStore: DataStore<Preferences> by inject()
 
     private val onboardingCompletedKey = stringSetPreferencesKey("onboardingScreensCompleted")
 
     override suspend fun getPendingOnboarding(): List<OnboardingScreen> {
+        val settings = settings.getSettings()
         val onboardingCompleted =
             dataStore.data
                 .map { it[onboardingCompletedKey] }
                 .first()
                 .orEmpty()
-                .map(OnboardingScreen::valueOf)
+                .mapNotNull {
+                    try {
+                        OnboardingScreen.valueOf(it)
+                    } catch (_: IllegalArgumentException) {
+                        null
+                    }
+                }
                 .toSet()
         val onboardingPending =
-            OnboardingScreen.entries.filter { it.applies(accessibilityStatus) } -
+            OnboardingScreen.entries.filter { it.applies(accessibilityStatus, settings) } -
                 onboardingCompleted
         return onboardingPending
     }

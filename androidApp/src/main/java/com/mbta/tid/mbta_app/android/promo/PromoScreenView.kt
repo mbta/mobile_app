@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -26,7 +28,6 @@ fun PromoScreenView(screen: FeaturePromo, onAdvance: () -> Unit) {
     Column {
         when (screen) {
             FeaturePromo.CombinedStopAndTrip -> Column { LaunchedEffect(Unit) { onAdvance() } }
-
             FeaturePromo.EnhancedFavorites -> EnhancedFavorites(textScale, onAdvance)
         }
     }
