@@ -187,9 +187,11 @@ public data class AlertSummary(
             return Timeframe.LaterDate(endTime)
         }
 
-        private fun laterThisWeek(onDate: LocalDate, endDate: LocalDate): Boolean =
-            onDate.dayOfWeek.isoDayNumber < endDate.dayOfWeek.isoDayNumber &&
-                endDate.minus(onDate).days < 7
+        private fun laterThisWeek(onDate: LocalDate, endDate: LocalDate): Boolean {
+            if (onDate.dayOfWeek.isoDayNumber >= endDate.dayOfWeek.isoDayNumber) return false
+            val difference = endDate.minus(onDate)
+            return difference.years == 0 && difference.months == 0 && difference.days < 7
+        }
 
         private fun alertLocation(
             alert: Alert,
