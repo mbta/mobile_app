@@ -56,7 +56,8 @@ final class AlertCardTests: XCTestCase {
                                            startStopName: "Start Stop",
                                            endStopName: "End Stop"
                                        )),
-                                       timeframe: .some(AlertSummary.TimeframeTomorrow())),
+                                       timeframe: .some(AlertSummary.TimeframeTomorrow()),
+                                       recurrence: nil),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -76,7 +77,8 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: AlertSummary(effect: .stopClosure,
                                        location: .some(AlertSummary.LocationSingleStop(stopName: "Single Stop")),
-                                       timeframe: .some(AlertSummary.TimeframeEndOfService())),
+                                       timeframe: .some(AlertSummary.TimeframeEndOfService()),
+                                       recurrence: nil),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -103,7 +105,8 @@ final class AlertCardTests: XCTestCase {
                 )),
                 timeframe: .some(AlertSummary.TimeframeLaterDate(
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                ))
+                )),
+                recurrence: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -131,7 +134,8 @@ final class AlertCardTests: XCTestCase {
                 )),
                 timeframe: .some(AlertSummary.TimeframeThisWeek(
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                ))
+                )),
+                recurrence: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -159,7 +163,8 @@ final class AlertCardTests: XCTestCase {
                     startStopName: "Start Stop",
                     endStopName: "End Stop"
                 )),
-                timeframe: .some(AlertSummary.TimeframeTime(time: time))
+                timeframe: .some(AlertSummary.TimeframeTime(time: time)),
+                recurrence: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -206,7 +211,8 @@ final class AlertCardTests: XCTestCase {
             alertSummary: AlertSummary(
                 effect: alert.effect,
                 location: nil,
-                timeframe: AlertSummary.TimeframeTomorrow()
+                timeframe: AlertSummary.TimeframeTomorrow(),
+                recurrence: nil
             ),
             spec: .secondary,
             color: Color.pink,

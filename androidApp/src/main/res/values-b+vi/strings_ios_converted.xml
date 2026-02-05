@@ -20,11 +20,13 @@
     <string name="alert_details">Chi tiết cảnh báo</string>
     <string name="alert_elevator_header">Thang máy đóng (%1$s)</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020tại &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020từ &lt;b>%1$s&lt;/b> đến các điểm dừng &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_successive">\u0020từ &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_recurrence_end_day_later_date">\u0020cho đến khi %1$s</string>
+    <string name="alert_summary_recurrence_end_day_this_week">\u0020cho đến khi %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020đến cuối dịch vụ</string>
     <string name="alert_summary_timeframe_later_date">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020đến %1$s</string>
@@ -76,6 +78,7 @@
     <string name="crowding_crowded">Đông đúc</string>
     <string name="crowding_not_crowded">Không đông đúc</string>
     <string name="crowding_some_crowding">Một số chỗ chật chội</string>
+    <string name="daily">Hằng ngày</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Sự chậm trễ&lt;/b></string>
@@ -118,6 +121,7 @@
     <plurals name="elevator_closure_count_accessibility_description">
         <item quantity="other">Điểm dừng này có %1$d thang máy đóng</item>
     </plurals>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Kết thúc</string>
     <string name="end_of_service">kết thúc dịch vụ</string>
     <string name="error_loading_data">Lỗi khi tải dữ liệu</string>
@@ -167,6 +171,7 @@
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
     <string name="freight_train_interference_lowercase">ảnh hưởng của tàu hàng</string>
     <string name="from">Từ</string>
+    <string name="from_to_time">\u0020từ %1$s đến %2$s</string>
     <string name="full_description">Mô tả đầy đủ</string>
     <string name="get_disruption_notifications">Nhận thông báo gián đoạn</string>
     <string name="good_morning">Chào buổi sáng!</string>
@@ -193,6 +198,7 @@
     <string name="later_today">trong ngày hôm nay</string>
     <string name="less_common_stop">Ít điểm dừng phổ biến hơn</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b> ít điểm dừng phổ biến hơn</string>
+    <string name="list_join">,\u0020</string>
     <string name="live">Trực tiếp</string>
     <string name="loading">Đang tải...</string>
     <string name="location_not_available_yet">Vị trí chưa có sẵn</string>
@@ -421,6 +427,7 @@
     <string name="unruly_passenger_lowercase">hành khách ngỗ ngược</string>
     <string name="unstar_route_hint">bỏ ghim tuyến đường khỏi đầu danh sách</string>
     <string name="until_further_notice">Cho đến khi có thông báo mới</string>
+    <string name="until_tomorrow">\u0020cho đến ngày mai</string>
     <string name="updated_at">Cập nhật: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="other">Đã cập nhật %1$d phút trước</item>

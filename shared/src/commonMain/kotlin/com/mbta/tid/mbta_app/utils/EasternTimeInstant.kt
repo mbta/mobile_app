@@ -8,6 +8,7 @@ import kotlin.time.Instant
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
@@ -32,6 +33,8 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
 
     public constructor(local: LocalDateTime) : this(local.toInstant(timeZone), local)
 
+    public constructor(date: LocalDate, time: LocalTime) : this(LocalDateTime(date, time))
+
     public constructor(
         year: Int,
         month: Month,
@@ -42,8 +45,10 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
     ) : this(LocalDateTime(year, month, day, hour, minute, second))
 
     /** The time component becomes irrelevant after this coercion and should be ignored */
-    public fun coerceInServiceDay(): EasternTimeInstant {
-        if (local.date == serviceDate) return this
+    public fun coerceInServiceDay(
+        rounding: ServiceDateRounding = ServiceDateRounding.FORWARDS
+    ): EasternTimeInstant {
+        if (local.date == serviceDate(rounding = rounding)) return this
         val instant = this.instant - 24.hours
         return EasternTimeInstant(instant)
     }
@@ -95,7 +100,7 @@ private constructor(private val instant: Instant, public val local: LocalDateTim
 
     override fun toString(): String = local.toString() + timeZone.offsetAt(instant).toString()
 
-    internal enum class ServiceDateRounding {
+    public enum class ServiceDateRounding {
         FORWARDS,
         BACKWARDS,
     }

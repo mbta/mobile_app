@@ -212,7 +212,7 @@ struct NotificationSettingsWidget: View {
                 ForEach(Self.days, id: \.ordinal) { day in
                     let isIncluded = daysOfWeek.contains(day)
                     VStack(spacing: 0) {
-                        Text(calendar.shortStandaloneWeekdaySymbols[Int(day.ordinal + 1) % 7])
+                        Text(calendar.shortStandaloneWeekdaySymbols[day.indexSundayFirst])
                             .lineLimit(1)
                             .font(Typography.footnoteSemibold)
                         if isIncluded {
@@ -238,7 +238,7 @@ struct NotificationSettingsWidget: View {
                                 daysOfWeek.formSymmetricDifference([day])
                             }),
                             label: {
-                                Text(calendar.standaloneWeekdaySymbols[Int(day.ordinal + 1) % 7])
+                                Text(calendar.standaloneWeekdaySymbols[day.indexSundayFirst])
                             }
                         )
                     }

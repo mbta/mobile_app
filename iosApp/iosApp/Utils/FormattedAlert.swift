@@ -153,7 +153,8 @@ struct FormattedAlert: Equatable {
                                                  the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
                                                  which may or may not include a timeframe fragment.
                                                  """),
-                       timeframe.time.coerceInServiceDay().formatted(.init().month(.abbreviated).day()))
+                       timeframe.time.coerceInServiceDay(rounding: .backwards)
+                           .formatted(.init().month(.abbreviated).day()))
             case let .thisWeek(timeframe):
                 String(format: NSLocalizedString("key/alert_summary_timeframe_this_week",
                                                  comment: """
@@ -162,7 +163,7 @@ struct FormattedAlert: Equatable {
                                                  OS. The leading space should be retained, because this will be added \
                                                  in the %3 position of the "**%1$@**%2$@%3$@" alert summary template \
                                                  which may or may not include a timeframe fragment.
-                                                 """), timeframe.time.coerceInServiceDay().formatted(
+                                                 """), timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(
                         .init().weekday(.wide)
                     ))
             case let .time(timeframe):
@@ -192,6 +193,14 @@ struct FormattedAlert: Equatable {
                                       position of the "**%1$@**%2$@%3$@" alert summary template which may or may not \
                                       include a timeframe fragment.
                                       """), timeframe.time.formatted(date: .omitted, time: .shortened))
+            case let .timeRange(timeframe):
+                String(format:
+                    NSLocalizedString(" from %@ to %@",
+                                      comment: """
+                                      Alert summary timeframe with a range today that will recur in the future, \
+                                      e.g. “from 9:00 PM to end of service”. The leading space should be retained.
+                                      """), Self.timeRangeBoundary(timeframe.startTime),
+                    Self.timeRangeBoundary(timeframe.endTime))
             case .unknown: ""
             }
         } else {
@@ -199,15 +208,82 @@ struct FormattedAlert: Equatable {
         }
     }
 
+    private static func timeRangeBoundary(_ boundary: AlertSummaryTimeframeTimeRangeStartTime) -> String {
+        switch onEnum(of: boundary) {
+        case .startOfService: NSLocalizedString("start of service", comment: "")
+        case let .time(boundary): boundary.time.formatted(date: .omitted, time: .shortened)
+        case .unknown: ""
+        }
+    }
+
+    private static func timeRangeBoundary(_ boundary: AlertSummaryTimeframeTimeRangeEndTime) -> String {
+        switch onEnum(of: boundary) {
+        case .endOfService: NSLocalizedString("end of service", comment: "")
+        case let .time(boundary): boundary.time.formatted(date: .omitted, time: .shortened)
+        case .unknown: ""
+        }
+    }
+
+    private static func summaryRecurrenceEndDay(_ endDay: AlertSummaryRecurrenceEndDay) -> String? {
+        switch onEnum(of: endDay) {
+        case .tomorrow:
+            NSLocalizedString(" until tomorrow",
+                              comment: """
+                              Alert summary recurrence ending tomorrow. The leading space should be retained.
+                              """)
+        case let .laterDate(timeframe):
+            String(format: NSLocalizedString("key/alert_summary_recurrence_end_day_later_date",
+                                             comment: """
+                                             Alert summary recurrence ending on a specific date in the future. \
+                                             ex. " until May 11". The date component is localized by the OS. \
+                                             The leading space should be retained.
+                                             """),
+                   timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(.init().month(.abbreviated).day()))
+        case let .thisWeek(timeframe):
+            String(format: NSLocalizedString("key/alert_summary_recurrence_end_day_this_week",
+                                             comment: """
+                                             Alert summary recurrence ending on a specific day later this week. \
+                                             ex. " until Thursday". The weekday component is localized by the \
+                                             OS. The leading space should be retained.
+                                             """), timeframe.time.coerceInServiceDay(rounding: .backwards).formatted(
+                    .init().weekday(.wide)
+                ))
+        case .unknown: nil
+        }
+    }
+
+    var summaryRecurrence: String {
+        switch onEnum(of: alertSummary?.recurrence) {
+        case let .daily(recurrence):
+            if let end = Self.summaryRecurrenceEndDay(recurrence.ending) {
+                String(format:
+                    NSLocalizedString(" daily%@",
+                                      comment: """
+                                      Alert summary recurrence every day until the indicated date, e.g. “ daily until Friday”. The \
+                                      leading space must be retained.
+                                      """), end)
+            } else { "" }
+        case let .someDays(recurrence):
+            if let end = Self.summaryRecurrenceEndDay(recurrence.ending) {
+                String(format:
+                    NSLocalizedString(" some days%@", comment: """
+                    Alert summary recurrence on only certain days until the indicated date, e.g. \
+                    “some days until Jan 16”. The leading space must be retained.
+                    """), end)
+            } else { "" }
+        case .unknown, nil: ""
+        }
+    }
+
     var summary: AttributedString? {
         if alertSummary != nil {
             AttributedString.tryMarkdown(String(format:
-                NSLocalizedString("**%1$@**%2$@%3$@",
+                NSLocalizedString("**%1$@**%2$@%3$@%4$@",
                                   comment: """
-                                  Alert summary in the format of "[Alert effect][at location][through timeframe]", \
-                                  ex "[Stop closed][ at Haymarket][ through this Friday]" or \
-                                  "[Service suspended][ from Alewife to Harvard][ through end of service]"
-                                  """), sentenceCaseEffect, summaryLocation, summaryTimeframe))
+                                  Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
+                                  ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
+                                  "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                                  """), sentenceCaseEffect, summaryLocation, summaryTimeframe, summaryRecurrence))
         } else { nil }
     }
 

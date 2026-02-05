@@ -18,6 +18,7 @@ public data class AlertSummary(
     val effect: Alert.Effect,
     val location: Location? = null,
     val timeframe: Timeframe? = null,
+    val recurrence: Recurrence? = null,
 ) {
     @Serializable
     public sealed class Location {
@@ -53,15 +54,17 @@ public data class AlertSummary(
     public sealed class Timeframe {
         @Serializable @SerialName("end_of_service") public data object EndOfService : Timeframe()
 
-        @Serializable @SerialName("tomorrow") public data object Tomorrow : Timeframe()
+        @Serializable
+        @SerialName("tomorrow")
+        public data object Tomorrow : Timeframe(), Recurrence.EndDay
 
         @Serializable
         @SerialName("later_date")
-        public data class LaterDate(val time: EasternTimeInstant) : Timeframe()
+        public data class LaterDate(val time: EasternTimeInstant) : Timeframe(), Recurrence.EndDay
 
         @Serializable
         @SerialName("this_week")
-        public data class ThisWeek(val time: EasternTimeInstant) : Timeframe()
+        public data class ThisWeek(val time: EasternTimeInstant) : Timeframe(), Recurrence.EndDay
 
         @Serializable
         @SerialName("time")
@@ -75,7 +78,50 @@ public data class AlertSummary(
         @SerialName("starting_later_today")
         public data class StartingLaterToday(val time: EasternTimeInstant) : Timeframe()
 
-        @Serializable public data object Unknown : Timeframe()
+        /*
+        this should cover “from start of service to 10AM” and “from 10AM to 9PM” and “from 9PM to end of service” and “from start of service to end of service”
+         */
+        @Serializable
+        @SerialName("time_range")
+        public data class TimeRange(
+            @SerialName("start_time") val startTime: StartTime,
+            @SerialName("end_time") val endTime: EndTime,
+        ) : Timeframe() {
+            public sealed interface Boundary
+
+            @Serializable public sealed interface StartTime : Boundary
+
+            @Serializable public sealed interface EndTime : Boundary
+
+            @Serializable
+            @SerialName("start_of_service")
+            public data object StartOfService : StartTime
+
+            @Serializable @SerialName("end_of_service") public data object EndOfService : EndTime
+
+            @Serializable
+            @SerialName("time")
+            public data class Time(val time: EasternTimeInstant) : StartTime, EndTime
+
+            @Serializable public data object Unknown : StartTime, EndTime
+        }
+
+        @Serializable public data object Unknown : Timeframe(), Recurrence.EndDay
+    }
+
+    @Serializable
+    public sealed class Recurrence {
+        @Serializable
+        @SerialName("daily")
+        public data class Daily(val ending: EndDay) : Recurrence()
+
+        @Serializable
+        @SerialName("some_days")
+        public data class SomeDays(val ending: EndDay) : Recurrence()
+
+        @Serializable public data object Unknown : Recurrence()
+
+        @Serializable public sealed interface EndDay
     }
 
     public companion object {
@@ -92,14 +138,19 @@ public data class AlertSummary(
                     return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
-                val timeframe = alertTimeframe(alert, atTime)
+                val recurrence = alertRecurrence(alert, atTime)
+                val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
 
                 if (location == null && timeframe == null) return@withContext null
-                return@withContext AlertSummary(alert.effect, location, timeframe)
+                return@withContext AlertSummary(alert.effect, location, timeframe, recurrence)
             }
         }
 
-        private fun alertTimeframe(alert: Alert, atTime: EasternTimeInstant): Timeframe? {
+        private fun alertTimeframe(
+            alert: Alert,
+            atTime: EasternTimeInstant,
+            hasRecurrence: Boolean,
+        ): Timeframe? {
             val serviceDate = atTime.serviceDate
             val currentPeriod = alert.currentPeriod(atTime)
             if (currentPeriod == null) {
@@ -112,6 +163,16 @@ public data class AlertSummary(
             if (currentPeriod.endingLaterToday) return null
             val endTime = currentPeriod.end ?: return null
             val endDate = currentPeriod.endServiceDate ?: return null
+
+            if (hasRecurrence) {
+                val start =
+                    if (currentPeriod.fromStartOfService) Timeframe.TimeRange.StartOfService
+                    else Timeframe.TimeRange.Time(currentPeriod.start)
+                val end =
+                    if (currentPeriod.toEndOfService) Timeframe.TimeRange.EndOfService
+                    else Timeframe.TimeRange.Time(endTime)
+                return Timeframe.TimeRange(start, end)
+            }
 
             if (serviceDate == endDate && currentPeriod.toEndOfService) {
                 return Timeframe.EndOfService
@@ -126,9 +187,11 @@ public data class AlertSummary(
             return Timeframe.LaterDate(endTime)
         }
 
-        private fun laterThisWeek(onDate: LocalDate, endDate: LocalDate): Boolean =
-            onDate.dayOfWeek.isoDayNumber < endDate.dayOfWeek.isoDayNumber &&
-                endDate.minus(onDate).days < 7
+        private fun laterThisWeek(onDate: LocalDate, endDate: LocalDate): Boolean {
+            if (onDate.dayOfWeek.isoDayNumber >= endDate.dayOfWeek.isoDayNumber) return false
+            val difference = endDate.minus(onDate)
+            return difference.years == 0 && difference.months == 0 && difference.days < 7
+        }
 
         private fun alertLocation(
             alert: Alert,
@@ -263,6 +326,28 @@ public data class AlertSummary(
                     }
                 }
             else patternStops
+        }
+
+        private fun alertRecurrence(alert: Alert, atTime: EasternTimeInstant): Recurrence? {
+            val range = alert.recurrenceRange() ?: return null
+            val serviceDate = atTime.serviceDate
+            val lastPeriodEnd = range.end
+            val lastServiceDate =
+                lastPeriodEnd.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
+            if (lastServiceDate == serviceDate) {
+                return null
+            }
+            val ending: Recurrence.EndDay =
+                when {
+                    serviceDate.plus(DatePeriod(days = 1)) == lastServiceDate -> Timeframe.Tomorrow
+                    laterThisWeek(serviceDate, lastServiceDate) -> Timeframe.ThisWeek(lastPeriodEnd)
+                    else -> Timeframe.LaterDate(lastPeriodEnd)
+                }
+            return if (range.daily) {
+                Recurrence.Daily(ending)
+            } else {
+                Recurrence.SomeDays(ending)
+            }
         }
 
         // The first value in these pairs is the list of trunk stops for each route, including a few

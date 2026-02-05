@@ -57,10 +57,10 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     func testServiceEnded() throws {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
-        let schedule = objects.schedule { $0.departureTime = .init(local: .init(
+        let schedule = objects.schedule { $0.departureTime = .init(
             date: now.local.date.plus(days: 1),
             time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
-        )) }
+        ) }
         let sut = StopDetailsNoTripCard(
             status: UpcomingFormat.NoTripsFormatServiceEndedToday(),
             accentColor: Color.text,
@@ -79,10 +79,10 @@ final class StopDetailsNoTripCardTests: XCTestCase {
     func testNoSchedulesToday() throws {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
-        let schedule = objects.schedule { $0.departureTime = .init(local: .init(
+        let schedule = objects.schedule { $0.departureTime = .init(
             date: now.local.date,
             time: .init(hour: 9, minute: 15, second: 0, nanosecond: 0)
-        )) }
+        ) }
         let sut = StopDetailsNoTripCard(
             status: UpcomingFormat.NoTripsFormatNoSchedulesToday(),
             accentColor: Color.text,

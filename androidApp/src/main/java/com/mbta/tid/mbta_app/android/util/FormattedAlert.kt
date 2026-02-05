@@ -90,6 +90,7 @@ data class FormattedAlert(
                     resources.getString(sentenceEffectRes),
                     summaryLocation(resources),
                     summaryTimeframe(resources),
+                    summaryRecurrence(resources),
                 )
             )
         }
@@ -167,7 +168,24 @@ data class FormattedAlert(
                     resources.getString(R.string.starting_tomorrow)
                 is AlertSummary.Timeframe.StartingLaterToday ->
                     resources.getString(R.string.starting_later_today, it.time.formattedTime())
+                is AlertSummary.Timeframe.TimeRange ->
+                    resources.getString(
+                        R.string.from_to_time,
+                        timeRangeBoundary(resources, it.startTime),
+                        timeRangeBoundary(resources, it.endTime),
+                    )
                 AlertSummary.Timeframe.Unknown -> null
+            }
+        } ?: ""
+
+    private fun summaryRecurrence(resources: Resources) =
+        alertSummary?.recurrence?.let { recurrence ->
+            when (recurrence) {
+                is AlertSummary.Recurrence.Daily ->
+                    " daily${recurrenceEndDay(resources, recurrence.ending)}"
+                is AlertSummary.Recurrence.SomeDays ->
+                    " some days${recurrenceEndDay(resources, recurrence.ending)}"
+                AlertSummary.Recurrence.Unknown -> null
             }
         } ?: ""
 
@@ -397,6 +415,35 @@ data class FormattedAlert(
                 Alert.Effect.Suspension ->
                     PredictionReplacement(R.string.suspension, R.string.service_suspended)
                 else -> PredictionReplacement(effectRes(effect))
+            }
+
+        private fun timeRangeBoundary(
+            resources: Resources,
+            boundary: AlertSummary.Timeframe.TimeRange.Boundary,
+        ) =
+            when (boundary) {
+                AlertSummary.Timeframe.TimeRange.StartOfService ->
+                    resources.getString(R.string.start_of_service)
+                AlertSummary.Timeframe.TimeRange.EndOfService ->
+                    resources.getString(R.string.end_of_service)
+                is AlertSummary.Timeframe.TimeRange.Time -> boundary.time.formattedTime()
+                AlertSummary.Timeframe.TimeRange.Unknown -> ""
+            }
+
+        private fun recurrenceEndDay(resources: Resources, endDay: AlertSummary.Recurrence.EndDay) =
+            when (endDay) {
+                AlertSummary.Timeframe.Tomorrow -> resources.getString(R.string.until_tomorrow)
+                is AlertSummary.Timeframe.ThisWeek ->
+                    resources.getString(
+                        R.string.alert_summary_recurrence_end_day_this_week,
+                        endDay.time.formattedServiceDay(),
+                    )
+                is AlertSummary.Timeframe.LaterDate ->
+                    resources.getString(
+                        R.string.alert_summary_recurrence_end_day_later_date,
+                        endDay.time.formattedServiceDate(),
+                    )
+                AlertSummary.Timeframe.Unknown -> ""
             }
     }
 }

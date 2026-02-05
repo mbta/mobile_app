@@ -21,11 +21,13 @@
     <string name="alert_details">Alert Details</string>
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020from &lt;b>%1$s&lt;/b> stops to &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020at &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b> stops</string>
     <string name="alert_summary_location_successive">\u0020from &lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_recurrence_end_day_later_date">\u0020until %1$s</string>
+    <string name="alert_summary_recurrence_end_day_this_week">\u0020until %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020through end of service</string>
     <string name="alert_summary_timeframe_later_date">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020through %1$s</string>
@@ -78,6 +80,7 @@
     <string name="crowding_crowded">Crowded</string>
     <string name="crowding_not_crowded">Not crowded</string>
     <string name="crowding_some_crowding">Some crowding</string>
+    <string name="daily">Daily</string>
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
     <string name="delays_unknown_reason">&lt;b&gt;Delays&lt;/b&gt;</string>
@@ -123,6 +126,7 @@
         <item quantity="one">This stop has %1$d elevator closed</item>
         <item quantity="other">This stop has %1$d elevators closed</item>
     </plurals>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">End</string>
     <string name="end_of_service">end of service</string>
     <string name="error_loading_data">Error loading data</string>
@@ -172,6 +176,7 @@
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="freight_train_interference_lowercase">freight train interference</string>
     <string name="from">From</string>
+    <string name="from_to_time">\u0020from %1$s to %2$s</string>
     <string name="full_description">Full Description</string>
     <string name="get_disruption_notifications">Get disruption notifications</string>
     <string name="good_morning">Good morning!</string>
@@ -199,6 +204,7 @@
     <string name="later_today">later today</string>
     <string name="less_common_stop">Less common stop</string>
     <string name="less_common_stops">&lt;b&gt;%1$d&lt;/b&gt; less common stops</string>
+    <string name="list_join">,\u0020</string>
     <string name="live">Live</string>
     <string name="loading" tools:ignore="TypographyEllipsis">Loading...</string>
     <string name="location_not_available_yet">Location not available yet</string>
@@ -428,6 +434,7 @@
     <string name="unruly_passenger_lowercase">unruly passenger</string>
     <string name="unstar_route_hint">unpin route from the top of the list</string>
     <string name="until_further_notice">Until further notice</string>
+    <string name="until_tomorrow">\u0020until tomorrow</string>
     <string name="updated_at">Updated: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Updated %1$d minute ago</item>

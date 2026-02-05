@@ -25,11 +25,13 @@
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_elevator_header">Fèmti Asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
     <string name="alert_summary_location_successive">\u0020soti nan &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_recurrence_end_day_later_date">\u0020jiska %1$s</string>
+    <string name="alert_summary_recurrence_end_day_this_week">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jiska fen sèvis la</string>
     <string name="alert_summary_timeframe_later_date">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020jiska %1$s</string>
@@ -81,6 +83,7 @@
     <string name="crowding_crowded">Anpil moun</string>
     <string name="crowding_not_crowded">Pa gen moun</string>
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
+    <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Reta&lt;/b></string>
@@ -133,6 +136,7 @@
         <item quantity="many">Asansè yo fèmen %1$d nan arè sa a</item>
         <item quantity="other">Asansè yo fèmen %1$d nan arè sa a</item>
     </plurals>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fen</string>
     <string name="end_of_service">fen sèvis</string>
     <string name="error_loading_data">Erè nan chajman done</string>
@@ -182,6 +186,7 @@
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
     <string name="freight_train_interference_lowercase">entèferans tren machandiz</string>
     <string name="from">Soti nan</string>
+    <string name="from_to_time">\u0020soti nan %1$s rive nan %2$s</string>
     <string name="full_description">Deskripsyon Konplè</string>
     <string name="get_disruption_notifications">Jwenn notifikasyon anka pwoblèm</string>
     <string name="good_morning">Bonjou!</string>
@@ -208,6 +213,7 @@
     <string name="later_today">pita jodi a</string>
     <string name="less_common_stop">\u0020Arè ki mwen komen</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b> arè ki mwen komen</string>
+    <string name="list_join">,\u0020</string>
     <string name="live">An dirèk</string>
     <string name="loading">Chajman...</string>
     <string name="location_not_available_yet">Pozisyon poko disponib</string>
@@ -441,6 +447,7 @@
     <string name="unruly_passenger_lowercase">pasaje ap fè dezòd</string>
     <string name="unstar_route_hint">detache wout la soti nan tèt lis la</string>
     <string name="until_further_notice">Jiskaske yo bay lòt avi</string>
+    <string name="until_tomorrow">\u0020jiska demen</string>
     <string name="updated_at">Mizajou: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="zero">Mizajou %1$d minit de sa</item>

@@ -22,11 +22,13 @@
     <string name="alert_details">Detalles de la alerta</string>
     <string name="alert_elevator_header">Cierre del elevador (%1$s)</string>
     <string name="alert_ended">La alerta ya no está vigente</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020desde paradas en &lt;b>%1$s&lt;/b> hasta &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020en &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020desde &lt;b>%1$s&lt;/b> hasta paradas en &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_successive">\u0020de &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_recurrence_end_day_later_date">\u0020hasta %1$s</string>
+    <string name="alert_summary_recurrence_end_day_this_week">\u0020hasta %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020hasta el final del servicio</string>
     <string name="alert_summary_timeframe_later_date">\u0020hasta el %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020hasta el día %1$s</string>
@@ -78,6 +80,7 @@
     <string name="crowding_crowded">Atestado</string>
     <string name="crowding_not_crowded">No hay mucha gente</string>
     <string name="crowding_some_crowding">Algunas aglomeraciones</string>
+    <string name="daily">A diario</string>
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
     <string name="delays_unknown_reason">&lt;b>Retrasos&lt;/b></string>
@@ -124,6 +127,7 @@
         <item quantity="many">Esta parada tiene los ascensores %1$d cerrados</item>
         <item quantity="other">Esta parada tiene los ascensores %1$d cerrados</item>
     </plurals>
+    <string name="en_dash_range">%1$s – %2$s</string>
     <string name="end">Fin</string>
     <string name="end_of_service">fin del servicio</string>
     <string name="error_loading_data">Error al cargar datos</string>
@@ -173,6 +177,7 @@
     <string name="freight_train_interference">Interferencia con trenes de carga</string>
     <string name="freight_train_interference_lowercase">interferencia del tren de mercancías</string>
     <string name="from">De</string>
+    <string name="from_to_time">\u0020de %1$s a %2$s</string>
     <string name="full_description">Descripción completa</string>
     <string name="get_disruption_notifications">Recibir notificaciones de interrupciones</string>
     <string name="good_morning">¡Buen día!</string>
@@ -199,6 +204,7 @@
     <string name="later_today">más tarde hoy</string>
     <string name="less_common_stop">Parada menos frecuente</string>
     <string name="less_common_stops">&lt;b>%1$d&lt;/b> paradas menos frecuentes</string>
+    <string name="list_join">,\u0020</string>
     <string name="live">En vivo</string>
     <string name="loading">Cargando…</string>
     <string name="location_not_available_yet">Ubicación no disponible aún</string>
@@ -429,6 +435,7 @@
     <string name="unruly_passenger_lowercase">pasajero rebelde</string>
     <string name="unstar_route_hint">desanclar la ruta de la parte superior de la lista</string>
     <string name="until_further_notice">Hasta nuevo aviso</string>
+    <string name="until_tomorrow">\u0020hasta mañana</string>
     <string name="updated_at">Actualizado: %1$s</string>
     <plurals name="updated_mins_ago">
         <item quantity="one">Actualizado hace %1$d minuto</item>

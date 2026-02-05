@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
 import kotlinx.datetime.plus
@@ -111,10 +110,8 @@ class StopDetailsNoTripCardTests {
             objects.schedule {
                 departureTime =
                     EasternTimeInstant(
-                        LocalDateTime(
-                            now.local.date.plus(DatePeriod(days = 1)),
-                            time = LocalTime(hour = 9, minute = 15),
-                        )
+                        now.local.date.plus(DatePeriod(days = 1)),
+                        time = LocalTime(hour = 9, minute = 15),
                     )
             }
         loadKoinMocks()
@@ -142,9 +139,7 @@ class StopDetailsNoTripCardTests {
         val schedule =
             objects.schedule {
                 departureTime =
-                    EasternTimeInstant(
-                        LocalDateTime(now.local.date, time = LocalTime(hour = 9, minute = 15))
-                    )
+                    EasternTimeInstant(now.local.date, time = LocalTime(hour = 9, minute = 15))
             }
         loadKoinMocks()
         composeTestRule.setContent {
