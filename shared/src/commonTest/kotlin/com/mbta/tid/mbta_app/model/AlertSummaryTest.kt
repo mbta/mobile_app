@@ -981,11 +981,18 @@ class AlertSummaryTest {
     fun `summary with daily recurrence ending on a later date`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
+        val today = now.local.date
+        val timeStart = now.local.time
+        val timeEnd = (now + 1.seconds).local.time
         val alert =
             objects.alert {
                 effect = Alert.Effect.Suspension
                 for (daysForward in 0..30) {
-                    activePeriod(now + daysForward.days, now + daysForward.days + 1.seconds)
+                    val thisDay = today.plus(DatePeriod(days = daysForward))
+                    activePeriod(
+                        EasternTimeInstant(thisDay, timeStart),
+                        EasternTimeInstant(thisDay, timeEnd),
+                    )
                 }
             }
 
@@ -1003,7 +1010,10 @@ class AlertSummaryTest {
                     ),
                 recurrence =
                     AlertSummary.Recurrence.Daily(
-                        ending = AlertSummary.Timeframe.LaterDate(now + 30.days + 1.seconds)
+                        ending =
+                            AlertSummary.Timeframe.LaterDate(
+                                EasternTimeInstant(today.plus(DatePeriod(days = 30)), timeEnd)
+                            )
                     ),
             ),
             alertSummary,
