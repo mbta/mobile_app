@@ -67,7 +67,10 @@ struct AlertCard: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 HStack(alignment: .center, spacing: 16) {
-                    AlertIcon(alertState: alert.alertState, color: color)
+                    // Override alert state and icon size in the case of all clear
+                    let alertState = alert.allClear(atTime: EasternTimeInstant.now()) ? .allClear : alert.alertState
+                    let iconSize = alertState == .allClear ? elevatorIconSize : iconSize
+                    AlertIcon(alertState: alertState, color: color)
                         .scaledToFit()
                         .frame(width: iconSize, height: iconSize, alignment: .center)
                     Text(formattedAlert.alertCardHeader(spec: spec))
@@ -127,62 +130,98 @@ struct AlertCard: View {
 }
 
 #Preview {
-    VStack {
-        AlertCard(
-            alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                alert.header = "Orange Line suspended from point A to point B"
-                alert.effect = .suspension
-            },
-            alertSummary: nil,
-            spec: .major,
-            color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
-        )
-        .padding(32)
-        .background(Color.fill2)
+    ScrollView {
+        VStack {
+            AlertCard(
+                alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                    alert.header = "Orange Line suspended from point A to point B"
+                    alert.effect = .suspension
+                },
+                alertSummary: nil,
+                spec: .major,
+                color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+            )
+            .padding(32)
 
-        AlertCard(
-            alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                alert.effect = .serviceChange
-            },
-            alertSummary: nil,
-            spec: .secondary,
-            color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
-        )
-        .padding(32)
-        .background(Color.fill2)
+            AlertCard(
+                alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                    alert.effect = .serviceChange
+                },
+                alertSummary: nil,
+                spec: .secondary,
+                color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+            )
+            .padding(32)
 
-        AlertCard(
-            alert: ObjectCollectionBuilder.Single.shared.alert { alert in
-                alert.effect = .elevatorClosure
-                alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
-            },
-            alertSummary: nil,
-            spec: .elevator,
-            color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
-        )
-        .padding(32)
-        .background(Color.fill2)
+            AlertCard(
+                alert: ObjectCollectionBuilder.Single.shared.alert { alert in
+                    alert.effect = .elevatorClosure
+                    alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
+                },
+                alertSummary: nil,
+                spec: .elevator,
+                color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+            )
+            .padding(32)
 
-        let objects = ObjectCollectionBuilder()
-        let alert = objects.alert { alert in
-            alert.effect = .shuttle
-            alert.header = "Test header"
+            let objects = ObjectCollectionBuilder()
+            let alert = objects.alert { alert in
+                alert.effect = .shuttle
+                alert.header = "Test header"
+            }
+
+            AlertCard(
+                alert: alert,
+                alertSummary: AlertSummary(
+                    effect: .shuttle,
+                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                    timeframe: .some(AlertSummary.TimeframeTime(
+                        time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+                    )),
+                    recurrence: nil,
+                    update: nil
+                ),
+                spec: .major,
+                color: Color.pink,
+                textColor: Color.orange,
+                onViewDetails: {}
+            )
+            .padding(32)
+
+            AlertCard(
+                alert: alert,
+                alertSummary: AlertSummary(
+                    effect: .shuttle,
+                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                    timeframe: .some(AlertSummary.TimeframeTime(
+                        time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+                    )),
+                    recurrence: nil,
+                    update: .some(AlertSummary.UpdateActive())
+                ),
+                spec: .secondary,
+                color: Color(hex: "ED8B00"),
+                textColor: Color(hex: "FFFFFF"),
+                onViewDetails: {}
+            )
+            .padding(32)
+
+            AlertCard(
+                alert: alert,
+                alertSummary: AlertSummary(
+                    effect: .shuttle,
+                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                    timeframe: nil,
+                    recurrence: nil,
+                    update: .some(AlertSummary.UpdateAllClear())
+                ),
+                spec: .secondary,
+                color: Color(hex: "ED8B00"),
+                textColor: Color(hex: "FFFFFF"),
+                onViewDetails: {}
+            )
+            .padding(32)
         }
-
-        AlertCard(
-            alert: alert,
-            alertSummary: AlertSummary(
-                effect: .shuttle,
-                location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
-                timeframe: .some(AlertSummary.TimeframeTime(
-                    time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                )),
-                recurrence: nil
-            ),
-            spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
-            onViewDetails: {}
-        )
     }
+    .background(Color.fill2)
 }

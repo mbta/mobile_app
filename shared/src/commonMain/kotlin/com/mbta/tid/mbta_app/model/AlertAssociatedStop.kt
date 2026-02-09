@@ -82,6 +82,7 @@ public enum class StopAlertState {
     Normal,
     Shuttle,
     Suspension,
+    AllClear,
 }
 
 private fun entityMatcher(

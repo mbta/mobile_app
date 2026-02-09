@@ -329,7 +329,8 @@ final class TripStopRowTests: XCTestCase {
             location: AlertSummary
                 .LocationSuccessiveStops(startStopName: "Roxbury Crossing", endStopName: "Green Street"),
             timeframe: AlertSummary.TimeframeTomorrow.shared,
-            recurrence: nil
+            recurrence: nil,
+            update: nil
         )
 
         let entry = TripDetailsStopList.Entry(

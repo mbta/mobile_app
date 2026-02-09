@@ -18,10 +18,15 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testMajorAlertCard() throws {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .stationClosure
             alert.header = "Test header"
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         let exp = XCTestExpectation(description: "Detail button pressed")
@@ -57,7 +62,8 @@ final class AlertCardTests: XCTestCase {
                                            endStopName: "End Stop"
                                        )),
                                        timeframe: .some(AlertSummary.TimeframeTomorrow()),
-                                       recurrence: nil),
+                                       recurrence: nil,
+                                       update: nil),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -78,7 +84,8 @@ final class AlertCardTests: XCTestCase {
             alertSummary: AlertSummary(effect: .stopClosure,
                                        location: .some(AlertSummary.LocationSingleStop(stopName: "Single Stop")),
                                        timeframe: .some(AlertSummary.TimeframeEndOfService()),
-                                       recurrence: nil),
+                                       recurrence: nil,
+                                       update: nil),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -106,7 +113,8 @@ final class AlertCardTests: XCTestCase {
                 timeframe: .some(AlertSummary.TimeframeLaterDate(
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                 )),
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -135,7 +143,8 @@ final class AlertCardTests: XCTestCase {
                 timeframe: .some(AlertSummary.TimeframeThisWeek(
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                 )),
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -164,7 +173,8 @@ final class AlertCardTests: XCTestCase {
                     endStopName: "End Stop"
                 )),
                 timeframe: .some(AlertSummary.TimeframeTime(time: time)),
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             ),
             spec: .major,
             color: Color.pink,
@@ -177,9 +187,14 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testSecondaryAlertCard() throws {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .detour
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -212,7 +227,8 @@ final class AlertCardTests: XCTestCase {
                 effect: alert.effect,
                 location: nil,
                 timeframe: AlertSummary.TimeframeTomorrow(),
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             ),
             spec: .secondary,
             color: Color.pink,
@@ -223,9 +239,14 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testDownstreamAlertCard() throws {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .serviceChange
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -247,10 +268,15 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testElevatorAlertCard() throws {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .elevatorClosure
             alert.header = "Elevator header"
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -272,6 +298,7 @@ final class AlertCardTests: XCTestCase {
     }
 
     func testElevatorAlertWithFacilityCard() throws {
+        let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let facility = objects.facility { facility in
             facility.type = .elevator
@@ -282,6 +309,10 @@ final class AlertCardTests: XCTestCase {
             alert.header = "Elevator header"
             alert.informedEntity(activities: [.usingWheelchair], facility: facility.id)
             alert.facilities = [facility.id: facility]
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
         }
 
         let exp = XCTestExpectation(description: "Card pressed")
@@ -364,5 +395,77 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Single Tracking"))
 
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+    }
+
+    func testAllClearAlertCard() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.minus(hours: 1 * 24)
+            )
+        }
+        let exp = XCTestExpectation(description: "Card pressed")
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(
+                effect: .suspension,
+                location: .some(AlertSummary.LocationSuccessiveStops(
+                    startStopName: "Start Stop",
+                    endStopName: "End Stop"
+                )),
+                timeframe: nil,
+                recurrence: nil,
+                update: .some(AlertSummary.UpdateAllClear())
+            ),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {
+                exp.fulfill()
+            }
+        )
+
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "All clear: Regular service from Start Stop to End Stop"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-allclear"))
+    }
+
+    func testUpdateAlertCard() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+            alert.activePeriod(
+                start: now.minus(hours: 3 * 24),
+                end: now.plus(hours: 3 * 24)
+            )
+        }
+        let exp = XCTestExpectation(description: "Card pressed")
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(
+                effect: .shuttle,
+                location: .some(AlertSummary.LocationSuccessiveStops(
+                    startStopName: "Start Stop",
+                    endStopName: "End Stop"
+                )),
+                timeframe: AlertSummary.TimeframeTomorrow(),
+                recurrence: nil,
+                update: .some(AlertSummary.UpdateActive())
+            ),
+            spec: .major,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {
+                exp.fulfill()
+            }
+        )
+
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Update: Shuttle buses from Start Stop to End Stop through tomorrow"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
     }
 }

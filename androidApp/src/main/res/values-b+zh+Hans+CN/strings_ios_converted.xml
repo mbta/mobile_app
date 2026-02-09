@@ -21,6 +21,7 @@
     <string name="alert_elevator_header">电梯关停(%1$s)</string>
     <string name="alert_ended">警报已失效</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary_all_clear">一切正常：服务正常%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020从&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020在&lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b>站</string>
@@ -33,6 +34,7 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待进一步通知</string>
+    <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">备选路线</string>
     <string name="amber_alert">安珀警报</string>
     <string name="amber_alert_sentence_case">安珀警报</string>

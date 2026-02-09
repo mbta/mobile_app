@@ -23,6 +23,7 @@
     <string name="alert_elevator_header">Fechamento dos elevadores (%1$s)</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary_all_clear">&lt;b>Tudo certo:&lt;/b> Serviço regular%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020de &lt;b>%1$s&lt;/b> paradas a &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020em &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020de &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b> paradas</string>
@@ -35,6 +36,7 @@
     <string name="alert_summary_timeframe_time">\u0020até %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020até amanhã</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020até novo aviso</string>
+    <string name="alert_summary_with_update">&lt;b>Atualização:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Caminho alternativo</string>
     <string name="amber_alert">Alerta amarelo</string>
     <string name="amber_alert_sentence_case">Alerta amarelo</string>

@@ -83,16 +83,40 @@ data class FormattedAlert(
         )
 
     private fun summary(resources: Resources) =
-        alertSummary?.let {
-            AnnotatedString.fromHtml(
-                resources.getString(
-                    R.string.alert_summary,
-                    resources.getString(sentenceEffectRes),
-                    summaryLocation(resources),
-                    summaryTimeframe(resources),
-                    summaryRecurrence(resources),
+        alertSummary?.let { summary ->
+            alertSummary.update?.let { update ->
+                when (update) {
+                    AlertSummary.Update.Active ->
+                        AnnotatedString.fromHtml(
+                            resources.getString(
+                                R.string.alert_summary_with_update,
+                                resources.getString(sentenceEffectRes),
+                                summaryLocation(resources),
+                                summaryTimeframe(resources),
+                                summaryRecurrence(resources),
+                            )
+                        )
+
+                    AlertSummary.Update.AllClear ->
+                        AnnotatedString.fromHtml(
+                            resources.getString(
+                                R.string.alert_summary_all_clear,
+                                summaryLocation(resources),
+                            )
+                        )
+
+                    AlertSummary.Update.Unknown -> null
+                }
+            }
+                ?: AnnotatedString.fromHtml(
+                    resources.getString(
+                        R.string.alert_summary,
+                        resources.getString(sentenceEffectRes),
+                        summaryLocation(resources),
+                        summaryTimeframe(resources),
+                        summaryRecurrence(resources),
+                    )
                 )
-            )
         }
 
     fun alertCardHeader(spec: AlertCardSpec, resources: Resources) =

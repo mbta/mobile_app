@@ -26,6 +26,7 @@ struct AlertIcon: View {
         case .issue: "alert-borderless-issue"
         case .shuttle: "alert-borderless-shuttle"
         case .suspension: "alert-borderless-suspension"
+        case .allClear: "alert-borderless-allclear"
         case .normal: nil
         }
     }

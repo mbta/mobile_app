@@ -26,6 +26,7 @@
     <string name="alert_elevator_header">Fèmti Asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
     <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary_all_clear">&lt;b>Tout bagay klè:&lt;/b> Sèvis regilye %1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
@@ -38,6 +39,7 @@
     <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jiskaske yo bay lòt avi</string>
+    <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>

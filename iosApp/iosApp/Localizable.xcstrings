@@ -1273,6 +1273,53 @@
         }
       }
     },
+    "**All clear:** Regular service%1$@" : {
+      "comment" : "Alert summary in the format of \"All clear: Regular service[at location]\", ex \"[All clear][Regular service][ from Alewife to Harvard]\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Todo despejado:** Servicio regular%1$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Tout est clair :** Service normal %1$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Tout bagay klè:** Sèvis regilye %1$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Tudo certo:** Serviço regular%1$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Đã thông thoáng:** Dịch vụ thường lệ%1$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "一切正常：服务正常%1$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "一切正常：服務正常%1$@"
+          }
+        }
+      }
+    },
     "**Delays**" : {
       "comment" : "Generic delay alert label when cause is unknown",
       "localizations" : {
@@ -1363,6 +1410,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "因 **%@** 造成延誤"
+          }
+        }
+      }
+    },
+    "**Update:** %1$@%2$@%3$@%4$@" : {
+      "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence]\", ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Actualización:** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Atualização:** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**更新：** %1$@%2$@%3$@%4$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**更新：** %1$@%2$@%3$@%4$@"
           }
         }
       }

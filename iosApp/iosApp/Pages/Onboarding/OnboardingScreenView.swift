@@ -249,7 +249,8 @@ struct OnboardingScreenView: View {
                             minute: 0,
                             second: 0
                         )),
-                        recurrence: nil
+                        recurrence: nil,
+                        update: nil
                     ))
                     Text(String(alert.alertCardMajorBody.characters[...]))
                         .font(.system(size: 16))

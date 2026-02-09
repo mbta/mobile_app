@@ -439,7 +439,8 @@ final class TripStopsTests: XCTestCase {
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop3.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -536,7 +537,8 @@ final class TripStopsTests: XCTestCase {
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop3.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -633,7 +635,8 @@ final class TripStopsTests: XCTestCase {
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop1.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
-                recurrence: nil
+                recurrence: nil,
+                update: nil
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
