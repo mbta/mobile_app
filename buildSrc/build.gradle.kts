@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    implementation("org.cyclonedx:cyclonedx-core-java:12.0.1")
+    implementation("org.cyclonedx:cyclonedx-core-java:12.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }
 
