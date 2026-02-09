@@ -32,6 +32,7 @@
     <string name="alert_summary_timeframe_this_week">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
+    <string name="alert_summary_timeframe_until_further_notice">\u0020等待進一步通知</string>
     <string name="alternative_path">替代路徑</string>
     <string name="amber_alert">安珀警報</string>
     <string name="amber_alert_sentence_case">安珀警報</string>

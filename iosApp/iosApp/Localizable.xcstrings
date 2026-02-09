@@ -542,6 +542,53 @@
         }
       }
     },
+    " until further notice" : {
+      "comment" : "Alert summary timeframe with no known end. The leading space should be retained.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " hasta nuevo aviso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jusqu’à nouvel ordre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " jiskaske yo bay lòt avi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " até novo aviso"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " cho đến khi có thông báo mới"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 等待进一步通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 等待進一步通知"
+          }
+        }
+      }
+    },
     " until tomorrow" : {
       "comment" : "Alert summary recurrence ending tomorrow. The leading space should be retained.",
       "localizations" : {

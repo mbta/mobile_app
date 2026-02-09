@@ -195,7 +195,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                                 AlertSummary(
                                     effect = Alert.Effect.Suspension,
                                     location = AlertSummary.Location.SingleStop(alertStop.name),
-                                    timeframe = null,
+                                    timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
                                 )
                         ),
                     trip = null,

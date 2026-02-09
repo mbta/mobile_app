@@ -97,7 +97,7 @@ private constructor(
         public var activePeriod: MutableList<Alert.ActivePeriod> = mutableListOf()
         public var cause: Alert.Cause = Alert.Cause.UnknownCause
         public var description: String? = null
-        public var durationCertainty: Alert.DurationCertainty = Alert.DurationCertainty.Unknown
+        public var durationCertainty: Alert.DurationCertainty = Alert.DurationCertainty.Known
         public var effect: Alert.Effect = Alert.Effect.UnknownEffect
         public var effectName: String? = null
         public var informedEntity: MutableList<Alert.InformedEntity> = mutableListOf()

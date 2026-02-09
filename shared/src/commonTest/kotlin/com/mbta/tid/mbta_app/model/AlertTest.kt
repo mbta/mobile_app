@@ -146,6 +146,37 @@ class AlertTest {
                 EasternTimeInstant(today, ninePM),
                 EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
                 DayOfWeek.entries.toSet(),
+                endDayKnown = true,
+            ),
+            alert.recurrenceRange(),
+        )
+    }
+
+    @Test
+    fun `recurrenceRange end unknown`() {
+        val today = EasternTimeInstant.now().serviceDate
+        val ninePM = LocalTime(21, 0)
+        val endOfService = LocalTime(3, 0)
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                durationCertainty = Alert.DurationCertainty.Unknown
+                for (daysForward in 0..5) {
+                    activePeriod(
+                        EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
+                        EasternTimeInstant(
+                            today.plus(DatePeriod(days = daysForward + 1)),
+                            endOfService,
+                        ),
+                    )
+                }
+            }
+
+        assertEquals(
+            Alert.RecurrenceInfo(
+                EasternTimeInstant(today, ninePM),
+                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
+                DayOfWeek.entries.toSet(),
+                endDayKnown = false,
             ),
             alert.recurrenceRange(),
         )
@@ -177,6 +208,7 @@ class AlertTest {
                 alert.activePeriod.first().start,
                 alert.activePeriod.last().end!!,
                 selectedDays,
+                endDayKnown = true,
             ),
             alert.recurrenceRange(),
         )

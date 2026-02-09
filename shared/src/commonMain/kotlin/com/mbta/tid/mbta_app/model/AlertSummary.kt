@@ -52,6 +52,10 @@ public data class AlertSummary(
 
     @Serializable
     public sealed class Timeframe {
+        @Serializable
+        @SerialName("until_further_notice")
+        public data object UntilFurtherNotice : Timeframe(), Recurrence.EndDay
+
         @Serializable @SerialName("end_of_service") public data object EndOfService : Timeframe()
 
         @Serializable
@@ -161,7 +165,7 @@ public data class AlertSummary(
                 return Timeframe.StartingTomorrow
             }
             if (currentPeriod.endingLaterToday) return null
-            val endTime = currentPeriod.end ?: return null
+            val endTime = currentPeriod.end ?: return Timeframe.UntilFurtherNotice
             val endDate = currentPeriod.endServiceDate ?: return null
 
             if (hasRecurrence) {
@@ -339,6 +343,7 @@ public data class AlertSummary(
             }
             val ending: Recurrence.EndDay =
                 when {
+                    !range.endDayKnown -> Timeframe.UntilFurtherNotice
                     serviceDate.plus(DatePeriod(days = 1)) == lastServiceDate -> Timeframe.Tomorrow
                     laterThisWeek(serviceDate, lastServiceDate) -> Timeframe.ThisWeek(lastPeriodEnd)
                     else -> Timeframe.LaterDate(lastPeriodEnd)

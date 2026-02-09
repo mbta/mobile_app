@@ -252,6 +252,25 @@ class AlertSummaryTest {
     }
 
     @Test
+    fun `summary with until further notice timeframe`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                activePeriod(now.minus(1.hours), null)
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(alert.effect, null, AlertSummary.Timeframe.UntilFurtherNotice),
+            alertSummary,
+        )
+    }
+
+    @Test
     fun `summary with later today timeframe`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
@@ -1014,6 +1033,47 @@ class AlertSummaryTest {
                             AlertSummary.Timeframe.LaterDate(
                                 EasternTimeInstant(today.plus(DatePeriod(days = 30)), timeEnd)
                             )
+                    ),
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with daily recurrence until further notice`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val today = now.local.date
+        val timeStart = now.local.time
+        val timeEnd = (now + 1.seconds).local.time
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                durationCertainty = Alert.DurationCertainty.Unknown
+                for (daysForward in 0..30) {
+                    val thisDay = today.plus(DatePeriod(days = daysForward))
+                    activePeriod(
+                        EasternTimeInstant(thisDay, timeStart),
+                        EasternTimeInstant(thisDay, timeEnd),
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = null,
+                timeframe =
+                    AlertSummary.Timeframe.TimeRange(
+                        AlertSummary.Timeframe.TimeRange.Time(now),
+                        AlertSummary.Timeframe.TimeRange.Time(now + 1.seconds),
+                    ),
+                recurrence =
+                    AlertSummary.Recurrence.Daily(
+                        ending = AlertSummary.Timeframe.UntilFurtherNotice
                     ),
             ),
             alertSummary,

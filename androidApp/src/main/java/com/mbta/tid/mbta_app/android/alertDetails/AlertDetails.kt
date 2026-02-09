@@ -208,6 +208,9 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
         val endTime =
             if (recurrence.toEndOfService) stringResource(R.string.end_of_service)
             else recurrence.end.formattedTime()
+        val dateRange =
+            if (recurrence.endDayKnown) stringResource(R.string.en_dash_range, startDay, endDay)
+            else stringResource(R.string.until_further_notice)
         Column(
             Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -219,16 +222,10 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
                     verticalAlignment = Alignment.Top,
                 ) {
                     Text(columnTexts[2], Modifier.width(columnWidth), style = style)
-                    Text(
-                        stringResource(R.string.en_dash_range, startDay, endDay),
-                        style = Typography.bodySemibold,
-                    )
+                    Text(dateRange, style = Typography.bodySemibold)
                 }
             } else {
-                Text(
-                    stringResource(R.string.en_dash_range, startDay, endDay),
-                    style = Typography.bodySemibold,
-                )
+                Text(dateRange, style = Typography.bodySemibold)
                 Text(
                     recurrence.days
                         .sortedBy { it.numberSundayFirst }
