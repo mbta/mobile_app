@@ -19,7 +19,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
-import org.gradle.process.internal.ExecException
+import org.gradle.process.ProcessExecutionException
 
 abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: ExecOperations) :
     DefaultTask() {
@@ -114,7 +114,7 @@ abstract class ConvertIosMapIconsTask @Inject constructor(private val exec: Exec
     private fun checkRsvgConvert() {
         try {
             exec.exec { commandLine("rsvg-convert", "--version") }
-        } catch (ex: ExecException) {
+        } catch (ex: ProcessExecutionException) {
             throw IllegalStateException(
                 "rsvg-convert not found, ${when {
                     Os.isFamily(Os.FAMILY_MAC) -> "`brew install librsvg`"

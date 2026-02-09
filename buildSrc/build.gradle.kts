@@ -1,12 +1,12 @@
 plugins {
     `kotlin-dsl`
-    kotlin("plugin.serialization") version "2.0.20"
-    id("com.diffplug.spotless").version("7.2.1")
+    kotlin("plugin.serialization") version "2.2.21"
+    alias(libs.plugins.spotless)
 }
 
 dependencies {
-    implementation("org.cyclonedx:cyclonedx-core-java:12.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation(libs.cyclonedx.core.java)
+    implementation(libs.kotlinx.serialization.json.compatibleWithGradleEmbeddedKotlin)
 }
 
 spotless {

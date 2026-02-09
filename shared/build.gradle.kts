@@ -10,7 +10,7 @@ import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-import org.gradle.process.internal.ExecException
+import org.gradle.process.ProcessExecutionException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
@@ -166,7 +166,7 @@ spotless {
     }
 }
 
-task("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
+tasks.register("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }
 
 if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
     tasks.getByName("compileKotlinIosX64").dependsOn("bomCodegenIos")
@@ -192,7 +192,7 @@ tasks.withType<JavaExec> {
     }
 }
 
-task<DependencyCodegenTask>("bomCodegenAndroid") {
+tasks.register<DependencyCodegenTask>("bomCodegenAndroid") {
     dependsOn("bomAndroid")
     mustRunAfter("spotlessKotlin", "cyclonedxDirectBom")
     inputPath = layout.buildDirectory.file("boms/bom-android.json")
@@ -202,7 +202,7 @@ task<DependencyCodegenTask>("bomCodegenAndroid") {
         )
 }
 
-task<DependencyCodegenTask>("bomCodegenIos") {
+tasks.register<DependencyCodegenTask>("bomCodegenIos") {
     dependsOn("bomIos")
     inputPath = layout.buildDirectory.file("boms/bom-ios.xml")
     outputPath =
@@ -211,7 +211,7 @@ task<DependencyCodegenTask>("bomCodegenIos") {
         )
 }
 
-task<CycloneDxBomTransformTask>("bomAndroid") {
+tasks.register<CycloneDxBomTransformTask>("bomAndroid") {
     dependsOn(":androidApp:cyclonedxDirectBom")
     inputPath =
         project
@@ -226,7 +226,7 @@ task<CycloneDxBomTransformTask>("bomAndroid") {
     }
 }
 
-task<CycloneDxBomTransformTask>("bomIos") {
+tasks.register<CycloneDxBomTransformTask>("bomIos") {
     dependsOn("bomIosMerged")
     inputPath = layout.buildDirectory.file("boms/bom-ios-merged.xml")
     outputPath = layout.buildDirectory.file("boms/bom-ios.xml")
@@ -276,7 +276,7 @@ apply
     }
 }
 
-task<CachedExecTask>("bomIosMerged") {
+tasks.register<CachedExecTask>("bomIosMerged") {
     dependsOn(
         "bomIosKotlinDeps",
         "bomIosKotlinStdlib",
@@ -306,7 +306,7 @@ task<CachedExecTask>("bomIosMerged") {
     )
 }
 
-task<Download>("bomCycloneDxCliDownload") {
+tasks.register<Download>("bomCycloneDxCliDownload") {
     val os =
         DefaultNativePlatform.getCurrentOperatingSystem().let {
             when {
@@ -329,18 +329,18 @@ task<Download>("bomCycloneDxCliDownload") {
     doLast { layout.buildDirectory.file("boms/cyclonedx-cli").get().asFile.setExecutable(true) }
 }
 
-task("bomIosKotlinDeps") {
+tasks.register("bomIosKotlinDeps") {
     dependsOn(tasks.cyclonedxDirectBom)
     mustRunAfter("bomCodegenAndroid")
 }
 
-task<Copy>("bomIosKotlinStdlib") {
+tasks.register<Copy>("bomIosKotlinStdlib") {
     mustRunAfter("bomCodegenAndroid")
     from(layout.projectDirectory.file("src/iosMain/xml/bom-ios-kotlin-stdlib.xml"))
     into(layout.buildDirectory.dir("boms"))
 }
 
-task<CycloneDxBomTransformTask>("bomIosCocoapods") {
+tasks.register<CycloneDxBomTransformTask>("bomIosCocoapods") {
     dependsOn("bomIosCocoapodsRaw")
     mustRunAfter("bomIosKotlinDeps", "bomIosKotlinStdlib")
     inputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
@@ -367,7 +367,7 @@ task<CycloneDxBomTransformTask>("bomIosCocoapods") {
     }
 }
 
-task<CachedExecTask>("bomIosCocoapodsRaw") {
+tasks.register<CachedExecTask>("bomIosCocoapodsRaw") {
     inputFiles = layout.projectDirectory.files("../iosApp/Podfile.lock")
     outputFile = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
     workingDir = provider { layout.projectDirectory.dir("../iosApp") }
@@ -377,7 +377,7 @@ task<CachedExecTask>("bomIosCocoapodsRaw") {
     }
 }
 
-task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
+tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
     dependsOn("bomIosSwiftPMRaw")
     mustRunAfter("bomIosKotlinDeps", "bomIosKotlinStdlib")
     inputPath = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
@@ -410,7 +410,7 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                 try {
                     val gh = providers.exec { commandLine("gh", "api", licenseApiPath) }
                     gh.standardOutput.asText.get()
-                } catch (e: ExecException) {
+                } catch (e: ProcessExecutionException) {
                     throw IllegalStateException(
                         "\nerror: `gh api $licenseApiPath` failed, ${when {
                             DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
@@ -442,7 +442,7 @@ task<CycloneDxBomTransformTask>("bomIosSwiftPM") {
     }
 }
 
-task<CachedExecTask>("bomIosSwiftPMRaw") {
+tasks.register<CachedExecTask>("bomIosSwiftPMRaw") {
     inputFiles =
         layout.projectDirectory.files(
             "../iosApp/iosApp.xcworkspace/xcshareddata/swiftpm/Package.resolved"

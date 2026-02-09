@@ -188,12 +188,12 @@ spotless {
     }
 }
 
-task<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
+tasks.register<ConvertIosMapIconsTask>("convertIosIconsToAssets") {
     assetsToRender = listOf("alert-large-*", "alert-small-*", "map-stop-*")
     assetsToReturnByName = listOf("alert-borderless-*")
 }
 
-task<ConvertIosLocalizationTask>("convertIosLocalization") {
+tasks.register<ConvertIosLocalizationTask>("convertIosLocalization") {
     androidEnglishStrings = layout.projectDirectory.file("src/main/res/values/strings.xml")
     xcstrings = layout.projectDirectory.file("../iosApp/iosApp/Localizable.xcstrings")
     resources = layout.projectDirectory.dir("src/main/res")
@@ -202,7 +202,7 @@ task<ConvertIosLocalizationTask>("convertIosLocalization") {
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle
 // set a temporary token so that the map can still load with cached tiles if for some reason
 // dynamically fetching a real token fails.
-task("mapboxTempToken") {
+tasks.register("mapboxTempToken") {
     val tokenFile = File("${projectDir}/src/main/res/values/secrets.xml")
     if (!tokenFile.exists()) {
         val tokenFileContents =
@@ -214,7 +214,8 @@ task("mapboxTempToken") {
     }
 }
 
-task("envVars") {
+// we want to load environment variables while first declaring settings
+run {
     val envFile = File(".envrc")
     val props = Properties()
 
