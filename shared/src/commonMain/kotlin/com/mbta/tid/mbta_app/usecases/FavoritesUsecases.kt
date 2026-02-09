@@ -8,10 +8,14 @@ import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.ShouldRefineInSwift
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 public class FavoritesUsecases(
@@ -60,7 +64,9 @@ public class FavoritesUsecases(
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
         fcmToken?.let {
             val subs = SubscriptionRequest.fromFavorites(currentFavorites, includeAccessibility)
-            subscriptionsRepository.updateSubscriptions(it, subs)
+            CoroutineScope(Dispatchers.IO).launch {
+                subscriptionsRepository.updateSubscriptions(it, subs)
+            }
         }
         getRouteStopDirectionFavorites()
     }

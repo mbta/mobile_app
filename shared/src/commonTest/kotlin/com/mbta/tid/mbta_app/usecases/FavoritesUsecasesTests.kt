@@ -11,6 +11,8 @@ import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.milliseconds
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -152,6 +154,8 @@ class FavoritesUsecasesTests : KoinTest {
             "fake_token",
             false,
         )
+
+        delay(250.milliseconds)
 
         assertEquals("fake_token", token)
         assertEquals(expectedSubs, subs)

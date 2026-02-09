@@ -9,13 +9,14 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Favorites
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
@@ -23,20 +24,27 @@ import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import dev.mokkery.MockMode
+import dev.mokkery.answering.calls
 import dev.mokkery.answering.repeat
 import dev.mokkery.answering.returns
 import dev.mokkery.answering.sequentially
+import dev.mokkery.every
 import dev.mokkery.everySuspend
+import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.test.fail
 import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -1027,6 +1035,108 @@ internal class FavoritesViewModelTest : KoinTest {
             awaitItemSatisfying { it.favorites == favoritesBefore.routeStopDirection }
             viewModel.clearStaleFavorites("")
             awaitItemSatisfying { it.favorites == favoritesAfter.routeStopDirection }
+        }
+    }
+
+    @Test
+    fun `does not time out updating favorites if network times out`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val favoritesBefore = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
+        val favoritesAfter = Favorites(emptyMap())
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+
+        everySuspend { favoritesRepo.getFavorites() } sequentially
+            {
+                returns(favoritesBefore)
+                repeat { returns(favoritesAfter) }
+            }
+
+        val subscriptionsRepository = mock<ISubscriptionsRepository>(MockMode.autofill)
+        everySuspend { subscriptionsRepository.updateSubscriptions(any(), any()) } calls
+            {
+                delay(20.days)
+            }
+
+        val sentryRepository = mock<ISentryRepository>(MockMode.autofill)
+        every { sentryRepository.captureException(any()) } calls
+            {
+                fail("Should not have captured Sentry exception $it")
+            }
+
+        val globalData = GlobalResponse(objects)
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) {
+            favorites = favoritesRepo
+            subscriptions = subscriptionsRepository
+            sentry = sentryRepository
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setActive(true, false)
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        val expectedStaticDataBefore =
+            listOf(
+                RouteCardData(
+                    LineOrRoute.Route(route1),
+                    listOf(
+                        RouteCardData.RouteStopData(
+                            route1,
+                            stop1,
+                            listOf(
+                                RouteCardData.Leaf(
+                                    LineOrRoute.Route(route1),
+                                    stop1,
+                                    0,
+                                    listOf(patterns.getValue(route1).getValue(0)),
+                                    setOf(stop1.id),
+                                    upcomingTrips = emptyList(),
+                                    alertsHere = emptyList(),
+                                    allDataLoaded = true,
+                                    hasSchedulesToday = false,
+                                    subwayServiceStartTime = null,
+                                    alertsDownstream = emptyList(),
+                                    RouteCardData.Context.Favorites,
+                                )
+                            ),
+                            globalData,
+                        )
+                    ),
+                    now,
+                )
+            )
+        val expectedStaticDataAfter: List<RouteCardData> = listOf()
+
+        testViewModelFlow(viewModel).test(timeout = 10.seconds) {
+            assertEquals(
+                FavoritesViewModel.State(
+                    awaitingPredictionsAfterBackground = false,
+                    favorites = favoritesBefore.routeStopDirection,
+                    routeCardData = emptyList(),
+                    staticRouteCardData = expectedStaticDataBefore,
+                    loadedLocation = stop1.position,
+                ),
+                awaitItemSatisfying {
+                    it.routeCardData != null && it.staticRouteCardData == expectedStaticDataBefore
+                },
+            )
+            viewModel.updateFavorites(
+                mapOf(RouteStopDirection(route1.id, stop1.id, 0) to null),
+                EditFavoritesContext.Favorites,
+                0,
+                "fcmToken",
+                false,
+            )
+            awaitItemSatisfying {
+                it.routeCardData != null &&
+                    it.staticRouteCardData == expectedStaticDataAfter &&
+                    (it.favorites == favoritesAfter.routeStopDirection)
+            }
         }
     }
 }
