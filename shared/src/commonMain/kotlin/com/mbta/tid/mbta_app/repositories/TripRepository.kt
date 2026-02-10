@@ -100,6 +100,7 @@ constructor(
     internal var tripShape: MapFriendlyRouteResponse = MapFriendlyRouteResponse(emptyList()),
     internal val onGetTrip: (String) -> Unit = {},
     internal val onGetTripSchedules: (String) -> Unit = {},
+    internal val onGetTripShape: (String) -> Unit = {},
 ) : ITripRepository {
     override suspend fun getTripSchedules(tripId: String): ApiResult<TripSchedulesResponse> {
         onGetTripSchedules(tripId)
@@ -112,6 +113,7 @@ constructor(
     }
 
     override suspend fun getTripShape(tripId: String): ApiResult<MapFriendlyRouteResponse> {
+        onGetTripShape(tripId)
         return ApiResult.Ok(tripShape)
     }
 }
