@@ -2,10 +2,12 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RoutePatternKey
+import com.mbta.tid.mbta_app.model.RouteSegment
+import com.mbta.tid.mbta_app.model.SegmentedRouteShape
 import com.mbta.tid.mbta_app.model.Shape
-import com.mbta.tid.mbta_app.model.TripShape
 import com.mbta.tid.mbta_app.model.response.ApiResult
-import com.mbta.tid.mbta_app.model.response.ShapeWithStops
+import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import io.ktor.client.engine.mock.MockEngine
@@ -55,14 +57,42 @@ class TripRepositoryTest : KoinTest {
             respond(
                 """
                 {
-                    "shape_with_stops": {
-                        "shape": {"id": "shape_id", "polyline": "shape_polyline"},
-                        "stop_ids": ["1", "2", "3"],
-                        "route_id": "66",
-                        "route_pattern_id": "66_rp",
-                        "direction_id": 1
+                    "map_friendly_route_shapes": [
+                        {
+                          "route_id": "66",
+                          "route_shapes": [
+                            {
+                              "direction_id": 1,
+                              "shape": {
+                                "id": "shape_id",
+                                "polyline": "shape_polyline"
+                              },
+                              "source_route_pattern_id": "66_rp",
+                              "source_route_id": "66",
+                              "route_segments": [
+                                {
+                                  "id": "1-3",
+                                  "stop_ids": ["1","2","3"],
+                                  "source_route_pattern_id": "66_rp",
+                                  "source_route_id": "66",
+                                  "other_patterns_by_stop_id": {
+                                    "1": [
+                                      { "route_id": "66", "route_pattern_id": "66_rp_2" }
+                                    ],
+                                    "2": [
+                                      { "route_id": "66", "route_pattern_id": "66_rp_2" }
+                                    ],
+                                    "3": [
+                                      { "route_id": "66", "route_pattern_id": "66_rp_2" }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
                     }
-                  }
                 """
                     .trimIndent(),
                 headers = headersOf(HttpHeaders.ContentType, "application/json"),
@@ -75,17 +105,62 @@ class TripRepositoryTest : KoinTest {
 
         runBlocking {
             val response = TripRepository().getTripShape(tripId = "12345")
+            val routeId = Route.Id("66")
 
             assertEquals(
                 ApiResult.Ok(
-                    TripShape(
-                        shapeWithStops =
-                            ShapeWithStops(
-                                directionId = 1,
-                                routeId = Route.Id("66"),
-                                routePatternId = "66_rp",
-                                shape = Shape(id = "shape_id", polyline = "shape_polyline"),
-                                stopIds = listOf("1", "2", "3"),
+                    MapFriendlyRouteResponse(
+                        routesWithSegmentedShapes =
+                            listOf(
+                                MapFriendlyRouteResponse.RouteWithSegmentedShapes(
+                                    routeId = routeId,
+                                    segmentedShapes =
+                                        listOf(
+                                            SegmentedRouteShape(
+                                                sourceRoutePatternId = "66_rp",
+                                                sourceRouteId = routeId,
+                                                directionId = 1,
+                                                routeSegments =
+                                                    listOf(
+                                                        RouteSegment(
+                                                            id = "1-3",
+                                                            sourceRoutePatternId = "66_rp",
+                                                            sourceRouteId = routeId,
+                                                            stopIds = listOf("1", "2", "3"),
+                                                            otherPatternsByStopId =
+                                                                mapOf(
+                                                                    "1" to
+                                                                        listOf(
+                                                                            RoutePatternKey(
+                                                                                routeId,
+                                                                                "66_rp_2",
+                                                                            )
+                                                                        ),
+                                                                    "2" to
+                                                                        listOf(
+                                                                            RoutePatternKey(
+                                                                                routeId,
+                                                                                "66_rp_2",
+                                                                            )
+                                                                        ),
+                                                                    "3" to
+                                                                        listOf(
+                                                                            RoutePatternKey(
+                                                                                routeId,
+                                                                                "66_rp_2",
+                                                                            )
+                                                                        ),
+                                                                ),
+                                                        )
+                                                    ),
+                                                shape =
+                                                    Shape(
+                                                        id = "shape_id",
+                                                        polyline = "shape_polyline",
+                                                    ),
+                                            )
+                                        ),
+                                )
                             )
                     )
                 ),
@@ -147,7 +222,10 @@ class TripRepositoryTest : KoinTest {
             val apiResult = TripRepository().getTripShape(tripId = "12345")
             assertIs<ApiResult.Error<*>>(apiResult)
 
-            assertContains(apiResult.message, "Field 'shape_with_stops' is required for type")
+            assertContains(
+                apiResult.message,
+                "Field 'map_friendly_route_shapes' is required for type",
+            )
         }
 
         stopKoin()

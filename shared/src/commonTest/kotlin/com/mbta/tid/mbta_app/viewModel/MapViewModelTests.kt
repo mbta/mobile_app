@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.IMapLayerManager
@@ -35,6 +36,7 @@ import kotlin.test.AfterTest
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
@@ -295,6 +297,41 @@ internal class MapViewModelTests : KoinTest {
                 ),
                 awaitItem(),
             )
+        }
+    }
+
+    @Test
+    fun followingVehicleLoadsShape() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        var loadedTripShapeId: String? = null
+        val tripRepository = MockTripRepository(onGetTripShape = { loadedTripShapeId = it })
+        setUpKoin(dispatcher) { trip = tripRepository }
+        val viewportProvider = MockViewportManager()
+        val viewModel: MapViewModel = get()
+        val vehicle = TestData.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
+        val tripDetailsFilter = TripDetailsFilter("trip", vehicle.id, null, false)
+        testViewModelFlow(viewModel).test {
+            assertNull(loadedTripShapeId)
+            viewModel.setViewportManager(viewportProvider)
+            viewModel.densityChanged(1f)
+            assertEquals(MapViewModel.State(MapViewModel.LayerState.Overview, false), awaitItem())
+            val stop = TestData.stops["70113"]!!
+            viewModel.selectedTrip(null, stop, tripDetailsFilter, vehicle, true)
+            assertEquals(
+                MapViewModel.State(
+                    MapViewModel.LayerState.TripSelected(
+                        stop,
+                        null,
+                        tripDetailsFilter,
+                        vehicle,
+                        true,
+                    ),
+                    false,
+                ),
+                awaitItem(),
+            )
+            advanceUntilIdle()
+            assertEquals(tripDetailsFilter.tripId, loadedTripShapeId)
         }
     }
 
