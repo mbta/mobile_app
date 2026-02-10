@@ -11,20 +11,27 @@ import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.MainActivity
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.json
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
+import com.mbta.tid.mbta_app.model.response.fromWorkData
 import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
     override suspend fun doWork(): Result {
-        val rawSummary = inputData.getString("summary") ?: return Result.failure()
-        val summary: AlertSummary = json.decodeFromString(rawSummary)
+        val payload = PushNotificationPayload.fromWorkData(inputData) ?: return Result.failure()
+
+        val analytics: Analytics = get()
+        analytics.notificationReceived(payload)
+
         val requestCode = 0
         val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.putExtra(PushNotificationPayload.launchKey, json.encodeToString(payload))
         val pendingIntent =
             PendingIntent.getActivity(
                 applicationContext,
@@ -33,7 +40,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                 PendingIntent.FLAG_IMMUTABLE,
             )
 
-        val content = NotificationContent.build(applicationContext.resources, summary)
+        val content = NotificationContent.build(applicationContext.resources, payload.summary)
         val title = content.title
         val body = content.body
 

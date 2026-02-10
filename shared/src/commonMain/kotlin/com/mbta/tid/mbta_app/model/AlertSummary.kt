@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -559,7 +558,5 @@ public data class AlertSummary(
                     listOf("70503"), // Union Square
                 ),
             )
-
-        public fun deserialize(rawData: String): AlertSummary = json.decodeFromString(rawData)
     }
 }

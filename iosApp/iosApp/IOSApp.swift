@@ -7,6 +7,12 @@ import SwiftPhoenixClient
 import SwiftUI
 
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+    class NotificationDeepLinkOwner: ObservableObject {
+        var notificationDeepLink: DeepLinkState?
+    }
+
+    static let notificationDeepLinkOwner: NotificationDeepLinkOwner = .init()
+
     func application(
         _ app: UIApplication,
         didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]? = nil
@@ -50,14 +56,19 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        let summaryRaw: String? = userInfo["summary"] as? String
-        if let summaryRaw {
-            let summary = AlertSummary.companion.deserialize(rawData: summaryRaw)
+        if let payload = PushNotificationPayload.companion.fromUserInfo(userInfo: userInfo) {
+            AnalyticsProvider.shared.notificationReceived(payload: payload)
+
+            let summary = payload.summary
             let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
             let content = UNMutableNotificationContent()
             // https://forums.swift.org/t/attributedstring-to-string/61667/2
             content.title = String(formattedAlert.alertCardHeader(spec: .major).characters[...])
             content.body = String(formattedAlert.alertCardMajorBody.characters[...])
+            content.userInfo = [
+                PushNotificationPayload.companion.launchKey:
+                    PushNotificationPayload.companion.serialize(payload: payload),
+            ]
             let uuidString = UUID().uuidString
             let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: nil)
             let notificationCenter = UNUserNotificationCenter.current()
@@ -88,6 +99,12 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
     func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
         let userInfo = response.notification.request.content.userInfo
         Messaging.messaging().appDidReceiveMessage(userInfo)
+        if let rawPayload = userInfo[PushNotificationPayload.companion.launchKey] as? String {
+            let payload = PushNotificationPayload.companion.deserialize(rawPayload: rawPayload)
+            let stillActive = payload.isStillActive()
+            AnalyticsProvider.shared.notificationClicked(payload: payload, stillActive: stillActive)
+            Self.notificationDeepLinkOwner.notificationDeepLink = payload.getDeepLinkState()
+        }
     }
 }
 
