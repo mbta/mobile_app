@@ -197,40 +197,42 @@ struct FavoriteConfirmationDialog: View {
                     .map { ($0, proposedFavorites[$0.id] ?? nil) })
                 showDialog = true
             }
-            .customAlert(
-                isPresented: $showDialog,
-                content: {
-                    FavoriteConfirmationDialogContents(
-                        lineOrRoute: lineOrRoute,
-                        stop: stop, directions: directions,
-                        selectedDirection: selectedDirection,
-                        context: context,
-                        favoritesToSave: favoritesToSave,
-                        updateLocalFavorite: { direction, isFavorite in
-                            favoritesToSave[direction] = isFavorite
-                        }
-                    )
-                },
-                actions: {
-                    if directions.isEmpty {
+            .customAlert(isPresented: $showDialog) {
+                FavoriteConfirmationDialogContents(
+                    lineOrRoute: lineOrRoute,
+                    stop: stop, directions: directions,
+                    selectedDirection: selectedDirection,
+                    context: context,
+                    favoritesToSave: favoritesToSave,
+                    updateLocalFavorite: { direction, isFavorite in
+                        favoritesToSave[direction] = isFavorite
+                    }
+                )
+            } actions: {
+                if directions.isEmpty {
+                    Button { onClose() } label: { Text("Okay") }
+                } else {
+                    MultiButton {
+                        Button { onClose() } label: { Text("Cancel") }
+
                         Button {
+                            updateFavorites(favoritesToSave
+                                .reduce(
+                                    into: [RouteStopDirection: FavoriteSettings?]()
+                                ) { partialResult, entry in
+                                    partialResult[RouteStopDirection(
+                                        route: lineOrRoute.id,
+                                        stop: stop.id,
+                                        direction: entry.key.id
+                                    )] = entry.value
+                                })
                             onClose()
                         } label: {
-                            Text("Okay")
-                        }
-                    } else {
-                        MultiButton {
-                            FavoriteConfirmationDialogActions(
-                                lineOrRoute: lineOrRoute,
-                                stop: stop,
-                                favoritesToSave: favoritesToSave,
-                                updateFavorites: updateFavorites,
-                                onClose: onClose
-                            )
-                        }
+                            Text("Add")
+                        }.disabled(favoritesToSave.values.allSatisfy { $0 == nil })
                     }
                 }
-            )
+            }
     }
 }
 
@@ -262,11 +264,13 @@ struct FavoriteConfirmationDialogContents: View {
         VStack {
             Text(AttributedString.tryMarkdown(headerText))
                 .font(Typography.body)
+                .foregroundStyle(Color.text)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h1)
             if directions.count == 1, directions.first!.id != selectedDirection {
                 Text("\(DirectionLabel.directionNameFormatted(directions.first!)) service only")
                     .font(Typography.footnoteSemibold)
+                    .foregroundStyle(Color.text)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
             }
@@ -274,6 +278,7 @@ struct FavoriteConfirmationDialogContents: View {
             if directions.isEmpty {
                 Text("This stop is drop-off only")
                     .font(Typography.footnoteSemibold)
+                    .foregroundStyle(Color.text)
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
             } else {
@@ -321,6 +326,7 @@ struct DirectionButtons: View {
                     VStack(spacing: 0) {
                         HStack(spacing: 0) {
                             DirectionLabel(direction: directionValue.direction)
+                                .foregroundStyle(Color.text)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
                             Spacer()
                             StarIcon(
@@ -343,35 +349,5 @@ struct DirectionButtons: View {
         }.withRoundedBorder()
             .padding(.horizontal, 12)
             .padding(.top, 8)
-    }
-}
-
-struct FavoriteConfirmationDialogActions: View {
-    let lineOrRoute: LineOrRoute
-    let stop: Stop
-    let favoritesToSave: [Direction: FavoriteSettings?]
-    let updateFavorites: ([RouteStopDirection: FavoriteSettings?]) -> Void
-    let onClose: () -> Void
-
-    var body: some View {
-        Button {
-            onClose()
-        } label: {
-            Text("Cancel")
-        }
-
-        Button {
-            updateFavorites(favoritesToSave
-                .reduce(into: [RouteStopDirection: FavoriteSettings?]()) { partialResult, entry in
-                    partialResult[RouteStopDirection(
-                        route: lineOrRoute.id,
-                        stop: stop.id,
-                        direction: entry.key.id
-                    )] = entry.value
-                })
-            onClose()
-        } label: {
-            Text("Add")
-        }.disabled(favoritesToSave.values.allSatisfy { $0 == nil })
     }
 }

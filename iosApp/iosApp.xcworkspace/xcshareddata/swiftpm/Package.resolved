@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/divadretlaw/CustomAlert.git",
       "state" : {
-        "revision" : "a76ce9ffaca03ff2ee21bc51cf4f8da95eeadf18",
-        "version" : "4.1.1"
+        "revision" : "5353504ada673a613c3c85e6e75595cc06842d61",
+        "version" : "6.0.1"
       }
     },
     {
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/divadretlaw/WindowKit",
       "state" : {
-        "revision" : "2e689d5ebf019ed3e7abffa4e6ddb06287f231e9",
-        "version" : "2.6.1"
+        "revision" : "77ca257a2e4534361cd70078032ccf259a4aee04",
+        "version" : "3.0.2"
       }
     },
     {
