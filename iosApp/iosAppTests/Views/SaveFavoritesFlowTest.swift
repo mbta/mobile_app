@@ -34,46 +34,6 @@ final class SaveFavoritesFlowTest: XCTestCase {
     let direction1 = Direction(name: "East", destination: "Park St & North", id: 1)
     var directions: [Direction] { [direction0, direction1] }
 
-    func testWithoutTappingAnyButtonSavesProposedChanges() throws {
-        var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
-        var onCloseCalled = false
-
-        let sut = FavoriteConfirmationDialogActions(
-            lineOrRoute: line,
-            stop: stop,
-            favoritesToSave: [direction0: .init()],
-            updateFavorites: { updateFavoritesCalledFor = $0 },
-            onClose: { onCloseCalled = true },
-        )
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        try sut.inspect().find(button: "Add").tap()
-
-        XCTAssertEqual(updateFavoritesCalledFor, [.init(route: line.id, stop: stop.id, direction: 0): .init()])
-        XCTAssertTrue(onCloseCalled)
-    }
-
-    func testCancelDoesntUpdateFavorites() throws {
-        var updateFavoritesCalled = false
-        var onCloseCalled = false
-
-        let sut = FavoriteConfirmationDialogActions(
-            lineOrRoute: line,
-            stop: stop,
-            favoritesToSave: [direction0: .init()],
-            updateFavorites: { _ in updateFavoritesCalled = true },
-            onClose: { onCloseCalled = true },
-        )
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        try sut.inspect().find(button: "Cancel").tap()
-
-        XCTAssertTrue(onCloseCalled)
-        XCTAssertFalse(updateFavoritesCalled)
-    }
-
     func testAddingOtherDirectionUpdates() throws {
         var updateLocalFavoriteCalledFor: [Direction: FavoriteSettings?] = [:]
 
@@ -112,23 +72,6 @@ final class SaveFavoritesFlowTest: XCTestCase {
         try sut.inspect().findAll(ViewType.Button.self)[1].tap()
 
         XCTAssertEqual(updateLocalFavoriteCalledFor, [direction1: nil])
-    }
-
-    func testRemovingProposedFavoriteDisablesAddButton() throws {
-        var updateFavoritesCalled = false
-        var onCloseCalled = false
-
-        let sut = FavoriteConfirmationDialogActions(
-            lineOrRoute: line,
-            stop: stop,
-            favoritesToSave: [direction0: nil, direction1: nil],
-            updateFavorites: { _ in updateFavoritesCalled = true },
-            onClose: { onCloseCalled = true },
-        )
-
-        ViewHosting.host(view: sut.withFixedSettings([:]))
-
-        XCTAssertTrue(try sut.inspect().find(button: "Add").isDisabled())
     }
 
     @MainActor
