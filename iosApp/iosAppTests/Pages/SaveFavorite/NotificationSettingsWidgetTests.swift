@@ -13,13 +13,19 @@ import ViewInspector
 import XCTest
 
 final class NotificationSettingsWidgetTests: XCTestCase {
-    func testAddTimePeriod() throws {
+    @MainActor func testAddTimePeriod() async throws {
         let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
-        let sut = NotificationSettingsWidget(settings: settings)
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
 
         try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
         XCTAssertEqual(settings, .init(enabled: true, windows: []))
+
         try sut.inspect().findAndCallOnChange(newValue: true)
+        try await Task.sleep(for: .seconds(1))
+
         XCTAssertEqual(
             settings,
             .init(
@@ -40,7 +46,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
             daysOfWeek: [.thursday]
         )
         let settings = MutableFavoriteSettings.Notifications(enabled: true, windows: [firstWindow])
-        let sut = NotificationSettingsWidget(settings: settings)
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
 
         // unfortunately, ViewInspector does not appear to surface the selected value of a DatePicker
         XCTAssertNotNil(try sut.inspect().find(
@@ -78,7 +87,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
-        let sut = NotificationSettingsWidget(settings: settings)
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
 
         try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "From" })
             .select(date: Calendar(identifier: .iso8601).nextDate(
@@ -105,7 +117,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
-        let sut = NotificationSettingsWidget(settings: settings)
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
 
         try sut.inspect().find(text: "Sun").find(ViewType.VStack.self, relation: .parent).callOnTapGesture()
         XCTAssertEqual(settings.windows[0].daysOfWeek, [.sunday, .monday, .tuesday, .wednesday, .thursday, .friday])
@@ -122,7 +137,10 @@ final class NotificationSettingsWidgetTests: XCTestCase {
                 daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
             )]
         )
-        let sut = NotificationSettingsWidget(settings: settings)
+        let sut = NotificationSettingsWidget(
+            settings: settings,
+            notificationPermissionManager: MockNotificationPermissionManager()
+        )
 
         let calendar = Calendar(identifier: .iso8601)
         let dayStart = calendar.startOfDay(for: .now)
@@ -136,5 +154,58 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         try sut.inspect().findAndCallOnChange(newValue: settings.windows[0].startTime)
         XCTAssertEqual(settings.windows[0].endTime, .init(hour: 11, minute: 45, second: 0))
         // ViewInspector appears not to expose or enforce valid ranges, so can’t test minimum end time
+    }
+
+    func testRequestsPermission() throws {
+        let permissionExp = expectation(description: "permission was requested")
+
+        let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
+        let permissionManager = MockNotificationPermissionManager(
+            initialAuthorizationStatus: .notDetermined,
+            requestPermissionResponse: true,
+            onRequestPermission: { permissionExp.fulfill() }
+        )
+        let sut = NotificationSettingsWidget(settings: settings, notificationPermissionManager: permissionManager)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        wait(for: [permissionExp])
+
+        XCTAssertEqual(.init(enabled: true, windows: [.init(
+            startTime: .init(hour: 8, minute: 0, second: 0),
+            endTime: .init(hour: 9, minute: 0, second: 0),
+            daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
+        )]), settings)
+        XCTAssertEqual(.authorized, permissionManager.authorizationStatus)
+    }
+
+    func testPermissionDenied() throws {
+        let permissionExp = expectation(description: "permission was requested")
+        let settingsLinkExp = expectation(description: "settings link was tapped")
+
+        let settings: MutableFavoriteSettings.Notifications = .init(.companion.disabled)
+        let permissionManager = MockNotificationPermissionManager(
+            initialAuthorizationStatus: .notDetermined,
+            requestPermissionResponse: false,
+            onRequestPermission: { permissionExp.fulfill() },
+            onOpenSettings: { settingsLinkExp.fulfill() }
+        )
+        let sut = NotificationSettingsWidget(settings: settings, notificationPermissionManager: permissionManager)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        try sut.inspect().find(text: "Get disruption notifications").find(ViewType.Toggle.self, relation: .parent).tap()
+        wait(for: [permissionExp])
+
+        XCTAssertEqual(.init(.companion.disabled), settings)
+        XCTAssertEqual(.denied, permissionManager.authorizationStatus)
+        XCTAssert(try sut.inspect().find(text: "Get disruption notifications")
+            .find(ViewType.Toggle.self, relation: .parent).isDisabled())
+        try sut.inspect().find(button: "Allow Notifications in Settings").tap()
+        wait(for: [settingsLinkExp])
+
+        permissionManager.updateAuthorizationStatus(nextStatus: .authorized)
+        XCTAssertFalse(try sut.inspect().find(text: "Get disruption notifications")
+            .find(ViewType.Toggle.self, relation: .parent).isDisabled())
+        XCTAssertThrowsError(try sut.inspect().find(button: "Allow Notifications in Settings"))
     }
 }
