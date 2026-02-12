@@ -1,7 +1,9 @@
 package com.mbta.tid.mbta_app.android.favorites
 
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -35,7 +37,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,12 +55,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.shouldShowRationale
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
+import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.formattedAbbr
 import com.mbta.tid.mbta_app.android.util.formattedFull
@@ -78,9 +81,9 @@ import kotlinx.datetime.LocalTime
 fun NotificationSettingsWidget(
     settings: FavoriteSettings.Notifications,
     setSettings: (FavoriteSettings.Notifications) -> Unit,
+    notificationPermissionState: PermissionState,
+    hasRequestedPermission: Boolean,
 ) {
-    var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
-    val notificationPermissionState = notificationPermissionState { hasRequestedPermission = true }
     val permissionStatus = notificationPermissionState.status
     val permissionDenied = !permissionStatus.isGranted
     val showPermissionSettingsLink =
@@ -438,6 +441,8 @@ private fun PermissionSettingsLink() {
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 private fun NotificationSettingsWidgetPreview() {
@@ -455,7 +460,25 @@ private fun NotificationSettingsWidgetPreview() {
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            NotificationSettingsWidget(settings, { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                { settings = it },
+                ConstantPermissionState(
+                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    PermissionStatus.Granted,
+                ),
+                true,
+            )
+            HaloSeparator()
+            NotificationSettingsWidget(
+                FavoriteSettings.Notifications.disabled,
+                {},
+                ConstantPermissionState(
+                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    PermissionStatus.Denied(false),
+                ),
+                true,
+            )
         }
     }
 }
