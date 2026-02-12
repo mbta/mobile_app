@@ -33,6 +33,7 @@ struct NotificationSettingsWidget: View {
     var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
 
     var body: some View {
+        let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 8) {
             VStack(spacing: 16) {
                 Toggle(isOn: $settings.enabled) {
@@ -52,9 +53,10 @@ struct NotificationSettingsWidget: View {
                         Text("Get disruption notifications")
                     }
                 }
-                .disabled(authorizationStatus == .denied)
+                .disabled(permissionDenied)
+                .opacity(permissionDenied ? 0.6 : 1.0)
                 .tint(Color.key)
-                if authorizationStatus == .denied {
+                if permissionDenied {
                     Button {
                         notificationPermissionManager.openNotificationSettings()
                     } label: {
@@ -78,6 +80,9 @@ struct NotificationSettingsWidget: View {
             .padding(.vertical, 8)
             .background(Color.fill3)
             .withRoundedBorder()
+            .onTapGesture {
+                if permissionDenied { notificationPermissionManager.openNotificationSettings() }
+            }
             .onChange(of: settings.enabled) { enabled in
                 Task {
                     if enabled {
