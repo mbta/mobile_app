@@ -56,7 +56,7 @@ final class SaveFavoritePageTests: XCTestCase {
             nearbyVM: .init(),
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.inspection.inspect(after: 0.1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
