@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.semantics.Role
 import com.mbta.tid.mbta_app.android.util.Typography
 
@@ -18,12 +19,14 @@ fun LabeledSwitch(
     modifier: Modifier = Modifier,
     label: String,
     value: Boolean,
+    enabled: Boolean = true,
     onValueChange: (Boolean) -> Unit,
 ) {
     LabeledSwitch(
         modifier,
         { Text(text = label, style = Typography.body, modifier = Modifier.weight(1f)) },
         value,
+        enabled,
         onValueChange,
     )
 }
@@ -34,11 +37,21 @@ fun LabeledSwitch(
     modifier: Modifier = Modifier,
     label: @Composable RowScope.() -> Unit,
     value: Boolean,
+    enabled: Boolean = true,
     onValueChange: ((Boolean) -> Unit),
 ) {
     Row(
         modifier =
-            Modifier.toggleable(value = value, role = Role.Switch, onValueChange = onValueChange)
+            Modifier.then(
+                    if (enabled)
+                        Modifier.toggleable(
+                            value = value,
+                            role = Role.Switch,
+                            onValueChange = onValueChange,
+                        )
+                    else Modifier
+                )
+                .alpha(if (enabled) 1.0f else 0.6f)
                 .fillMaxWidth()
                 .then(modifier),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -46,6 +59,6 @@ fun LabeledSwitch(
     ) {
         label()
 
-        Switch(checked = value, onCheckedChange = null)
+        Switch(checked = value, onCheckedChange = null, enabled = enabled)
     }
 }

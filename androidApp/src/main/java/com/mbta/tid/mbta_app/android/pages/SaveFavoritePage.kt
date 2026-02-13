@@ -123,7 +123,8 @@ fun SaveFavoritePage(
         rememberSaveable(saver = stateJsonSaver()) { mutableStateOf<FavoriteSettings?>(null) }
     val settings = updatedSettings ?: existingSettings
 
-    val notificationPermissionState = notificationPermissionState()
+    var hasRequestedPermission by rememberSaveable { mutableStateOf(false) }
+    val notificationPermissionState = notificationPermissionState { hasRequestedPermission = true }
 
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
@@ -142,7 +143,6 @@ fun SaveFavoritePage(
     val updateToastFallbackText = stringResource(R.string.favorites_toast_add_fallback)
 
     fun updateCloseAndToast(update: Map<RouteStopDirection, FavoriteSettings?>) {
-        notificationPermissionState.launchPermissionRequest()
         updateFavorites(update)
         val favorited = update.filter { it.value != null }
         val firstFavorite = favorited.entries.firstOrNull()
@@ -261,6 +261,8 @@ fun SaveFavoritePage(
             NotificationSettingsWidget(
                 settings = settings.notifications,
                 setSettings = { updatedSettings = settings.copy(notifications = it) },
+                notificationPermissionState = notificationPermissionState,
+                hasRequestedPermission = hasRequestedPermission,
             )
             if (isFavorite) {
                 HaloSeparator()

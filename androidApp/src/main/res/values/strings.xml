@@ -260,6 +260,7 @@
     <string name="not_accessible">Not accessible</string>
     <string name="not_accessible_stop_card">This stop is not accessible</string>
     <string name="notifications_enabled">notifications enabled</string>
+    <string name="notifications_settings_link">Allow Notifications in Settings</string>
     <string name="now">Now</string>
     <string name="now_at">Now at</string>
     <string name="okay">Okay</string>

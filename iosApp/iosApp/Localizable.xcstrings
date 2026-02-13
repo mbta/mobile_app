@@ -4466,6 +4466,53 @@
         }
       }
     },
+    "Allow Notifications in Settings" : {
+      "comment" : "Label for a link to the app's notification permission settings",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Permitir notificaciones en la configuración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Autoriser les notifications dans les paramètres"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pèmèt Notifikasyon nan Anviwònman yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Permitir notificações nas configurações"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cho phép thông báo trong Cài đặt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在设置中允许通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "在設定中允許通知"
+          }
+        }
+      }
+    },
     "Alternative path" : {
       "comment" : "Header for the details of an elevator closure",
       "localizations" : {

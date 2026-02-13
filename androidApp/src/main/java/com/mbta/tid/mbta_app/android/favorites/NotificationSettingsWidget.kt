@@ -1,8 +1,13 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import android.content.Intent
+import android.os.Build
+import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -27,13 +33,16 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,56 +53,73 @@ import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.PermissionStatus
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.shouldShowRationale
 import com.mbta.tid.mbta_app.android.MyApplicationTheme
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.HaloSeparator
 import com.mbta.tid.mbta_app.android.component.LabeledSwitch
+import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.formattedAbbr
 import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
+import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.collections.ifEmpty
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
 
-@OptIn(ExperimentalUuidApi::class)
+@OptIn(ExperimentalUuidApi::class, ExperimentalPermissionsApi::class)
 @Composable
 fun NotificationSettingsWidget(
     settings: FavoriteSettings.Notifications,
     setSettings: (FavoriteSettings.Notifications) -> Unit,
+    notificationPermissionState: PermissionState,
+    hasRequestedPermission: Boolean,
 ) {
+    val permissionStatus = notificationPermissionState.status
+    val permissionDenied = !permissionStatus.isGranted
+    val showPermissionSettingsLink =
+        (hasRequestedPermission || permissionStatus.shouldShowRationale) && permissionDenied
+
+    val context = LocalContext.current
+
+    LaunchedEffect(permissionStatus, hasRequestedPermission) {
+        if (permissionDenied) {
+            setSettings(FavoriteSettings.Notifications.disabled)
+        }
+    }
+
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        LabeledSwitch(
-            Modifier.haloContainer(borderWidth = 1.dp).padding(horizontal = 12.dp, vertical = 8.dp),
-            label = {
-                if (settings.enabled) {
-                    Icon(
-                        painterResource(R.drawable.fa_bell_filled),
-                        null,
-                        tint = colorResource(R.color.key),
-                    )
-                } else {
-                    Icon(painterResource(R.drawable.fa_bell), null)
-                }
-                Text(
-                    stringResource(R.string.get_disruption_notifications),
-                    Modifier.padding(start = 12.dp).weight(1f),
-                )
+        Column(
+            Modifier.haloContainer(borderWidth = 1.dp).clickable(
+                enabled = showPermissionSettingsLink
+            ) {
+                val openNotificationSettings =
+                    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                    }
+
+                context.startActivity(openNotificationSettings)
             },
-            value = settings.enabled,
-            onValueChange = {
-                setSettings(
-                    settings.copy(
-                        enabled = it,
-                        windows = settings.windows.ifEmpty { listOf(defaultWindow()) },
-                    )
-                )
-            },
-        )
-        AnimatedVisibility(settings.enabled) {
+            verticalArrangement = Arrangement.spacedBy(0.dp),
+        ) {
+            NotificationSwitch(
+                settings = settings,
+                setSettings = setSettings,
+                notificationPermissionState = notificationPermissionState,
+                enabled = !showPermissionSettingsLink,
+            )
+            AnimatedVisibility(showPermissionSettingsLink) { PermissionSettingsLink() }
+        }
+        AnimatedVisibility(settings.enabled && !permissionDenied) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 for (window in settings.windows.ifEmpty { setOf(defaultWindow()) }) {
                     WindowWidget(
@@ -340,6 +366,83 @@ private fun DaysOfWeekInput(daysOfWeek: Set<DayOfWeek>, setDaysOfWeek: (Set<DayO
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun NotificationSwitch(
+    settings: FavoriteSettings.Notifications,
+    setSettings: (FavoriteSettings.Notifications) -> Unit,
+    notificationPermissionState: PermissionState,
+    enabled: Boolean,
+) {
+    LabeledSwitch(
+        Modifier.haloContainer(
+                outlineColor = Color.Transparent,
+                backgroundColor = Color.Transparent,
+                borderWidth = 1.dp,
+            )
+            .padding(horizontal = 12.dp, vertical = 8.dp),
+        label = {
+            if (settings.enabled) {
+                Icon(
+                    painterResource(R.drawable.fa_bell_filled),
+                    null,
+                    tint = colorResource(R.color.key),
+                )
+            } else {
+                Icon(painterResource(R.drawable.fa_bell), null)
+            }
+            Text(
+                stringResource(R.string.get_disruption_notifications),
+                Modifier.padding(start = 12.dp).weight(1f),
+            )
+        },
+        value = settings.enabled,
+        onValueChange = {
+            notificationPermissionState.launchPermissionRequest()
+            setSettings(
+                settings.copy(
+                    enabled = it,
+                    windows = settings.windows.ifEmpty { listOf(defaultWindow()) },
+                )
+            )
+        },
+        enabled = enabled,
+    )
+}
+
+@Composable
+private fun PermissionSettingsLink() {
+    Row(
+        modifier =
+            Modifier.padding(horizontal = 12.dp, vertical = 10.dp).semantics(
+                mergeDescendants = true
+            ) {}
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    stringResource(R.string.notifications_settings_link),
+                    style = Typography.body,
+                    color = colorResource(R.color.key),
+                )
+            }
+
+            Icon(
+                painterResource(R.drawable.arrow_up_right),
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = colorResource(R.color.key),
+            )
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 private fun NotificationSettingsWidgetPreview() {
@@ -357,7 +460,25 @@ private fun NotificationSettingsWidgetPreview() {
                 .padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
-            NotificationSettingsWidget(settings, { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                { settings = it },
+                ConstantPermissionState(
+                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    PermissionStatus.Granted,
+                ),
+                true,
+            )
+            HaloSeparator()
+            NotificationSettingsWidget(
+                FavoriteSettings.Notifications.disabled,
+                {},
+                ConstantPermissionState(
+                    android.Manifest.permission.POST_NOTIFICATIONS,
+                    PermissionStatus.Denied(false),
+                ),
+                true,
+            )
         }
     }
 }

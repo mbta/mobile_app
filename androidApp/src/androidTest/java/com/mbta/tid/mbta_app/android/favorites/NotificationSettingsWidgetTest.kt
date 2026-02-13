@@ -1,11 +1,14 @@
 package com.mbta.tid.mbta_app.android.favorites
 
+import android.Manifest
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsOn
@@ -17,7 +20,10 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextReplacement
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionStatus
 import com.mbta.tid.mbta_app.android.hasTextMatching
+import com.mbta.tid.mbta_app.android.util.ConstantPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import kotlin.test.assertEquals
 import kotlinx.datetime.DayOfWeek
@@ -25,8 +31,15 @@ import kotlinx.datetime.LocalTime
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalPermissionsApi::class)
 class NotificationSettingsWidgetTest {
     @get:Rule val composeTestRule = createComposeRule()
+
+    private val permissionGranted =
+        ConstantPermissionState(
+            android.Manifest.permission.POST_NOTIFICATIONS,
+            PermissionStatus.Granted,
+        )
 
     @Test
     fun testAddTimePeriod() {
@@ -34,7 +47,12 @@ class NotificationSettingsWidgetTest {
         composeTestRule.setContent {
             settings = remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
             var settings by settings
-            NotificationSettingsWidget(settings, setSettings = { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                setSettings = { settings = it },
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
@@ -69,7 +87,12 @@ class NotificationSettingsWidgetTest {
         composeTestRule.setContent {
             settings = remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
             var settings by settings
-            NotificationSettingsWidget(settings, setSettings = { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                setSettings = { settings = it },
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
@@ -91,7 +114,12 @@ class NotificationSettingsWidgetTest {
         composeTestRule.setContent {
             settings = remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
             var settings by settings
-            NotificationSettingsWidget(settings, setSettings = { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                setSettings = { settings = it },
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
@@ -110,7 +138,12 @@ class NotificationSettingsWidgetTest {
         composeTestRule.setContent {
             settings = remember { mutableStateOf(FavoriteSettings.Notifications.disabled) }
             var settings by settings
-            NotificationSettingsWidget(settings, setSettings = { settings = it })
+            NotificationSettingsWidget(
+                settings,
+                setSettings = { settings = it },
+                notificationPermissionState = permissionGranted,
+                hasRequestedPermission = true,
+            )
         }
 
         composeTestRule.onNodeWithText("Get disruption notifications").performClick()
@@ -124,5 +157,30 @@ class NotificationSettingsWidgetTest {
         composeTestRule.onNodeWithContentDescription("for hour").performTextReplacement("10")
         composeTestRule.onNodeWithContentDescription("for minutes").performTextReplacement("40")
         composeTestRule.onNodeWithText("Okay").assertIsNotEnabled()
+    }
+
+    @Test
+    fun testPermissionDenied() {
+        lateinit var hasRequestedPermission: MutableState<Boolean>
+
+        composeTestRule.setContent {
+            hasRequestedPermission = remember { mutableStateOf(false) }
+            var hasRequestedPermission by hasRequestedPermission
+            NotificationSettingsWidget(
+                FavoriteSettings.Notifications.disabled,
+                setSettings = {},
+                notificationPermissionState =
+                    ConstantPermissionState(
+                        Manifest.permission.POST_NOTIFICATIONS,
+                        PermissionStatus.Denied(false),
+                    ),
+                hasRequestedPermission = hasRequestedPermission,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertIsNotDisplayed()
+        hasRequestedPermission.value = true
+
+        composeTestRule.onNodeWithText("Allow Notifications in Settings").assertIsDisplayed()
     }
 }

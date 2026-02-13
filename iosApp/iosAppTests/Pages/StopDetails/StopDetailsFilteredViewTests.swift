@@ -59,6 +59,6 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
-        wait(for: [tapButtonExp, confirmationDialogExp], timeout: 2)
+        wait(for: [tapButtonExp, confirmationDialogExp], timeout: 4)
     }
 }

@@ -29,35 +29,75 @@ private extension DateComponents {
 struct NotificationSettingsWidget: View {
     @ObservedObject var settings: MutableFavoriteSettings.Notifications
 
+    var notificationPermissionManager: INotificationPermissionManager
+    var authorizationStatus: UNAuthorizationStatus? { notificationPermissionManager.authorizationStatus }
+
     var body: some View {
+        let permissionDenied = authorizationStatus == .denied
         VStack(spacing: 8) {
-            Toggle(isOn: $settings.enabled) {
-                HStack {
-                    if settings.enabled {
-                        Image(.faBellFilled)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .foregroundStyle(Color.key)
-                    } else {
-                        Image(.faBell)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
+            VStack(spacing: 16) {
+                Toggle(isOn: $settings.enabled) {
+                    HStack {
+                        if settings.enabled {
+                            Image(.faBellFilled)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(Color.key)
+                        } else {
+                            Image(.faBell)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                        }
+                        Text("Get disruption notifications")
                     }
-                    Text("Get disruption notifications")
+                }
+                .disabled(permissionDenied)
+                .opacity(permissionDenied ? 0.6 : 1.0)
+                .tint(Color.key)
+                if permissionDenied {
+                    Button {
+                        notificationPermissionManager.openNotificationSettings()
+                    } label: {
+                        HStack {
+                            Text(
+                                "Allow Notifications in Settings",
+                                comment: "Label for a link to the app's notification permission settings"
+                            ).font(.body)
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .resizable()
+                                .frame(width: 10.5, height: 10.5, alignment: .center)
+                                .fontWeight(.bold)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 2)
                 }
             }
-            .tint(Color.key)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(Color.fill3)
             .withRoundedBorder()
-            .onChange(of: settings.enabled) {
-                if $0, settings.windows.count == 0 {
-                    settings.windows = [Self.defaultWindow()]
+            .onTapGesture {
+                if permissionDenied { notificationPermissionManager.openNotificationSettings() }
+            }
+            .onChange(of: settings.enabled) { enabled in
+                Task {
+                    if enabled {
+                        let notificationPermission = await notificationPermissionManager.requestPermission()
+                        guard notificationPermission else {
+                            settings.enabled = false
+                            return
+                        }
+                        if settings.windows.count == 0 {
+                            settings.windows = [Self.defaultWindow()]
+                        }
+                    }
                 }
             }
+
             if settings.enabled {
                 ForEach(settings.windows) { window in
                     WindowWidget(
@@ -261,7 +301,10 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
         )
 
         var body: some View {
-            NotificationSettingsWidget(settings: settings)
+            NotificationSettingsWidget(
+                settings: settings,
+                notificationPermissionManager: MockNotificationPermissionManager()
+            )
         }
     }
 

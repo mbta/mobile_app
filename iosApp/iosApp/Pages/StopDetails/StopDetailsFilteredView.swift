@@ -176,14 +176,7 @@ struct StopDetailsFilteredView: View {
                             includeAccessibility: settingsCache.get(.stationAccessibility),
                         )
                     },
-                    onClose: {
-                        inSaveFavoritesFlow = false
-                        if settingsCache.get(.notifications) {
-                            Task {
-                                await NotificationPermissionUtil.requestPermission()
-                            }
-                        }
-                    },
+                    onClose: { inSaveFavoritesFlow = false },
                     pushNavEntry: { nearbyVM.pushNavEntry($0) },
                 )
             }

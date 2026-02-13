@@ -19,6 +19,7 @@ struct SaveFavoritePage: View {
     var navCallbacks: NavigationCallbacks
     var nearbyVM: NearbyViewModel
     var toastVM: IToastViewModel
+    var notificationPermissionManager: INotificationPermissionManager
 
     @State var globalResponse: GlobalResponse?
     @State var favorites: Favorites = .init(routeStopDirection: [:])
@@ -35,7 +36,8 @@ struct SaveFavoritePage: View {
         updateFavorites: @escaping ([RouteStopDirection: FavoriteSettings?]) -> Void,
         navCallbacks: NavigationCallbacks,
         nearbyVM: NearbyViewModel,
-        toastVM: IToastViewModel = ViewModelDI().toast
+        toastVM: IToastViewModel = ViewModelDI().toast,
+        notificationPermissionManager: INotificationPermissionManager = NotificationPermissionManager(),
     ) {
         self.routeId = routeId
         self.stopId = stopId
@@ -45,6 +47,7 @@ struct SaveFavoritePage: View {
         self.navCallbacks = navCallbacks
         self.nearbyVM = nearbyVM
         self.toastVM = toastVM
+        self.notificationPermissionManager = notificationPermissionManager
         pendingSettings = .init(.init())
 
         selectedDirection = initialSelectedDirection
@@ -176,6 +179,7 @@ struct SaveFavoritePage: View {
                         )
                         NotificationSettingsWidget(
                             settings: pendingSettings.notifications,
+                            notificationPermissionManager: notificationPermissionManager,
                         )
                         if isFavorite {
                             HaloSeparator(height: 2)

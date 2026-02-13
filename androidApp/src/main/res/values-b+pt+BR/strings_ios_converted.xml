@@ -260,6 +260,7 @@
     <string name="not_accessible">Não acessível</string>
     <string name="not_accessible_stop_card">Esta parada não é acessível</string>
     <string name="notifications_enabled">notificações ativadas</string>
+    <string name="notifications_settings_link">Permitir notificações nas configurações</string>
     <string name="now">Agora</string>
     <string name="now_at">Agora em</string>
     <string name="okay">Ok</string>

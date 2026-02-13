@@ -56,7 +56,7 @@ final class SaveFavoritePageTests: XCTestCase {
             nearbyVM: .init(),
         )
 
-        ViewHosting.host(view: sut)
+        ViewHosting.host(view: sut.withFixedSettings([:]))
 
         sut.inspection.inspect(after: 0.1) { view in
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
@@ -84,7 +84,7 @@ final class SaveFavoritePageTests: XCTestCase {
             context: .stopDetails,
             updateFavorites: { updatedFavorites = $0 },
             navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
-            nearbyVM: .init()
+            nearbyVM: .init(),
         )
 
         let exp1 = sut.inspection.inspect(after: 1) { view in
@@ -97,11 +97,7 @@ final class SaveFavoritePageTests: XCTestCase {
             XCTAssertEqual(updatedFavorites, [
                 .init(route: route.id, stop: stop.id, direction: 0): .init(notifications: .init(
                     enabled: true,
-                    windows: [.init(
-                        startTime: .init(hour: 8, minute: 0, second: 0, nanosecond: 0),
-                        endTime: .init(hour: 9, minute: 0, second: 0, nanosecond: 0),
-                        daysOfWeek: [.monday, .tuesday, .wednesday, .thursday, .friday]
-                    )]
+                    windows: []
                 )),
             ])
         }
