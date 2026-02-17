@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.repositories
 
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
 import dev.mokkery.matcher.any
@@ -29,7 +30,7 @@ class ErrorBannerStateRepositoryTest {
     @Test
     fun `initial state is null`() = runBlocking {
         val repo = ErrorBannerStateRepository()
-        assertEquals(repo.state.value, null)
+        assertNull(repo.state.value)
     }
 
     @Test
@@ -39,16 +40,40 @@ class ErrorBannerStateRepositoryTest {
         val lastUpdated = EasternTimeInstant.now() - 3.minutes
         val action = {}
 
-        repo.checkPredictionsStale(lastUpdated, 1, action)
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+        repo.checkPredictionsStale(lastUpdated, 1, SheetRoutes.NearbyTransit, action)
 
         assertEquals(ErrorBannerState.StalePredictions(lastUpdated, action), repo.state.value)
+    }
+
+    @Test
+    fun `stale prediction banner is not set when sheet route doesn't match`() = runBlocking {
+        val repo = ErrorBannerStateRepository()
+
+        val lastUpdated = EasternTimeInstant.now() - 3.minutes
+        val action = {}
+
+        repo.setSheetRoute(null)
+        repo.checkPredictionsStale(lastUpdated, 1, null, action)
+
+        assertNull(repo.state.value)
+
+        repo.setSheetRoute(SheetRoutes.Favorites)
+        repo.checkPredictionsStale(lastUpdated, 1, SheetRoutes.NearbyTransit, action)
+
+        assertNull(repo.state.value)
     }
 
     @Test
     fun `data errors override stale predictions`() {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(EasternTimeInstant.now() - 3.minutes, 1) {}
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+        repo.checkPredictionsStale(
+            EasternTimeInstant.now() - 3.minutes,
+            1,
+            SheetRoutes.NearbyTransit,
+        ) {}
 
         repo.setDataError("global", "") {}
 
@@ -78,11 +103,17 @@ class ErrorBannerStateRepositoryTest {
     fun `clears if predictions stop being stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 
-        repo.checkPredictionsStale(EasternTimeInstant.now() - 3.minutes, 1) {}
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+
+        repo.checkPredictionsStale(
+            EasternTimeInstant.now() - 3.minutes,
+            1,
+            SheetRoutes.NearbyTransit,
+        ) {}
 
         assertNotNull(repo.state.value)
 
-        repo.checkPredictionsStale(EasternTimeInstant.now(), 1) {}
+        repo.checkPredictionsStale(EasternTimeInstant.now(), 1, SheetRoutes.NearbyTransit) {}
 
         assertNull(repo.state.value)
     }
@@ -93,11 +124,13 @@ class ErrorBannerStateRepositoryTest {
 
         val lastUpdated = EasternTimeInstant.now() - 2.days
 
-        repo.checkPredictionsStale(lastUpdated, 1) {}
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+
+        repo.checkPredictionsStale(lastUpdated, 1, SheetRoutes.NearbyTransit) {}
 
         assertNotNull(repo.state.value)
 
-        repo.checkPredictionsStale(lastUpdated, 0) {}
+        repo.checkPredictionsStale(lastUpdated, 0, SheetRoutes.NearbyTransit) {}
 
         assertNull(repo.state.value)
     }
@@ -105,6 +138,8 @@ class ErrorBannerStateRepositoryTest {
     @Test
     fun `streams in flow`() = runBlocking {
         val repo = ErrorBannerStateRepository()
+
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
 
         // pass events from the flow back into this channel so we can assert as we update
         val channel = Channel<ErrorBannerState?>(capacity = Channel.RENDEZVOUS)
@@ -115,11 +150,11 @@ class ErrorBannerStateRepositoryTest {
 
         val lastUpdated = EasternTimeInstant.now() - 3.minutes
         val action = {}
-        repo.checkPredictionsStale(lastUpdated, 1, action)
+        repo.checkPredictionsStale(lastUpdated, 1, SheetRoutes.NearbyTransit, action)
 
         assertEquals(ErrorBannerState.StalePredictions(lastUpdated, action), channel.receive())
 
-        repo.checkPredictionsStale(EasternTimeInstant.now(), 1) {}
+        repo.checkPredictionsStale(EasternTimeInstant.now(), 1, SheetRoutes.NearbyTransit) {}
 
         assertNull(channel.receive())
     }

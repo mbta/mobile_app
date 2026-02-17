@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.orEmpty
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.timer
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
@@ -22,6 +23,7 @@ import org.koin.compose.koinInject
 @Composable
 internal fun subscribeToPredictions(
     stopIds: List<String>?,
+    sheetRoute: SheetRoutes?,
     active: Boolean,
     errorKey: String,
     onAnyMessageReceived: () -> Unit = {},
@@ -82,6 +84,7 @@ internal fun subscribeToPredictions(
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated = lastUpdated,
                 predictionQuantity = predictions?.predictionQuantity() ?: 0,
+                sheetRoute,
                 action = { connect(stopIds, active, ::onJoin, ::onMessage) },
             )
         }

@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
@@ -126,6 +127,7 @@ public class StopDetailsViewModel(
         val predictions =
             subscribeToPredictions(
                 stopIds,
+                filters?.let { SheetRoutes.StopDetails(it.stopId, it.stopFilter, it.tripFilter) },
                 active,
                 errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },

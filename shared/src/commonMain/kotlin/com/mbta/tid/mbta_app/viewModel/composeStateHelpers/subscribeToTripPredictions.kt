@@ -7,10 +7,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.time.Duration
@@ -23,7 +25,7 @@ internal fun tripPredictionsErrorKey(prefix: String) = "$prefix.subscribeToTripP
 @OptIn(ExperimentalTime::class)
 @Composable
 internal fun subscribeToTripPredictions(
-    tripId: String?,
+    tripFilter: TripDetailsPageFilter?,
     errorKey: String,
     active: Boolean,
     context: TripDetailsViewModel.Context?,
@@ -34,6 +36,7 @@ internal fun subscribeToTripPredictions(
 ): PredictionsStreamDataResponse? {
     val errorKey = tripPredictionsErrorKey(errorKey)
     val staleTimer by timer(checkPredictionsStaleInterval)
+    val tripId = tripFilter?.tripId
 
     var predictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
 
@@ -73,6 +76,7 @@ internal fun subscribeToTripPredictions(
             errorBannerRepository.checkPredictionsStale(
                 predictionsLastUpdated = lastUpdated,
                 predictionQuantity = predictions?.predictionQuantity() ?: 0,
+                tripFilter?.let { SheetRoutes.TripDetails(it) },
                 action = { connect(tripId, active, ::onReceive) },
             )
         }

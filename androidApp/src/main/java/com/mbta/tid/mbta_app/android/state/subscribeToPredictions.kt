@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import kotlin.time.Duration
@@ -30,6 +31,7 @@ import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 
 class StopPredictionsFetcher(
+    private val sheetRoute: SheetRoutes,
     private val predictionsRepository: IPredictionsRepository,
     private val onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
     private val onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
@@ -37,30 +39,34 @@ class StopPredictionsFetcher(
 ) {
 
     constructor(
+        sheetRoute: SheetRoutes,
         predictionsRepository: IPredictionsRepository,
         errorRepository: IErrorBannerStateRepository,
         onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
         onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
     ) : this(
+        sheetRoute,
         predictionsRepository,
         onJoinResponse,
         onPushMessage,
         { lastUpdatedTime, quantity, action ->
-            errorRepository.checkPredictionsStale(lastUpdatedTime, quantity, action)
+            errorRepository.checkPredictionsStale(lastUpdatedTime, quantity, sheetRoute, action)
         },
     )
 
     constructor(
+        sheetRoute: SheetRoutes,
         predictionsRepository: IPredictionsRepository,
         errorBannerVM: IErrorBannerViewModel,
         onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
         onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
     ) : this(
+        sheetRoute,
         predictionsRepository,
         onJoinResponse,
         onPushMessage,
         { lastUpdatedTime, quantity, action ->
-            errorBannerVM.checkPredictionsStale(lastUpdatedTime, quantity, action)
+            errorBannerVM.checkPredictionsStale(lastUpdatedTime, quantity, sheetRoute, action)
         },
     )
 
@@ -124,6 +130,7 @@ class StopPredictionsFetcher(
 }
 
 class PredictionsViewModel(
+    private val sheetRoute: SheetRoutes,
     private val predictionsRepository: IPredictionsRepository,
     private val errorBannerViewModel: IErrorBannerViewModel,
 ) : KoinComponent, ViewModel() {
@@ -134,6 +141,7 @@ class PredictionsViewModel(
 
     private val stopPredictionsFetcher =
         StopPredictionsFetcher(
+            sheetRoute,
             predictionsRepository,
             errorBannerViewModel,
             ::onJoinResponse,
@@ -178,11 +186,13 @@ class PredictionsViewModel(
     }
 
     class Factory(
+        private val sheetRoute: SheetRoutes,
         private val predictionsRepository: IPredictionsRepository,
         private val errorBannerViewModel: IErrorBannerViewModel,
     ) : ViewModelProvider.Factory {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return PredictionsViewModel(predictionsRepository, errorBannerViewModel) as T
+            return PredictionsViewModel(sheetRoute, predictionsRepository, errorBannerViewModel)
+                as T
         }
     }
 }
@@ -190,13 +200,19 @@ class PredictionsViewModel(
 @Composable
 fun subscribeToPredictions(
     stopIds: List<String>?,
+    sheetRoute: SheetRoutes,
     predictionsRepository: IPredictionsRepository = koinInject(),
     errorBannerViewModel: IErrorBannerViewModel,
     checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsViewModel {
     val viewModel: PredictionsViewModel =
         viewModel(
-            factory = PredictionsViewModel.Factory(predictionsRepository, errorBannerViewModel)
+            factory =
+                PredictionsViewModel.Factory(
+                    sheetRoute,
+                    predictionsRepository,
+                    errorBannerViewModel,
+                )
         )
 
     val timer by timer(checkPredictionsStaleInterval)

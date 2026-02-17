@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import kotlin.test.assertNotNull
@@ -61,7 +62,12 @@ class SubscribeToPredictionsTest {
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
             val predictionsVM =
-                subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
+                subscribeToPredictions(
+                    stopIds,
+                    SheetRoutes.NearbyTransit,
+                    predictionsRepo,
+                    errorBannerViewModel,
+                )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -108,7 +114,12 @@ class SubscribeToPredictionsTest {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var stopIds by remember { stopIds }
                 val predictionsVM =
-                    subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel)
+                    subscribeToPredictions(
+                        stopIds,
+                        SheetRoutes.NearbyTransit,
+                        predictionsRepo,
+                        errorBannerViewModel,
+                    )
                 predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
             }
         }
@@ -150,7 +161,12 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.setContent {
             val predictionsVM =
-                subscribeToPredictions(emptyList(), predictionsRepo, errorBannerViewModel)
+                subscribeToPredictions(
+                    emptyList(),
+                    SheetRoutes.NearbyTransit,
+                    predictionsRepo,
+                    errorBannerViewModel,
+                )
             predictions = predictionsVM.predictionsFlow.collectAsState(initial = null).value
         }
 
@@ -180,7 +196,13 @@ class SubscribeToPredictionsTest {
 
         composeTestRule.setContent {
             var stopIds by remember { stopIds }
-            subscribeToPredictions(stopIds, predictionsRepo, errorBannerViewModel, 1.seconds)
+            subscribeToPredictions(
+                stopIds,
+                SheetRoutes.NearbyTransit,
+                predictionsRepo,
+                errorBannerViewModel,
+                1.seconds,
+            )
         }
 
         composeTestRule.waitUntilDefaultTimeout { checkPredictionsStaleCount >= 2 }
