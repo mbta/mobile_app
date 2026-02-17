@@ -77,7 +77,7 @@ public data class RoutePillSpec(
         height,
         when {
             type == Type.Fixed -> Width.Fixed
-            route?.longName?.startsWith("Green Line ") ?: false -> Width.Circle
+            route?.id?.idText?.startsWith("Green-") ?: false -> Width.Circle
             else -> Width.Flex
         },
         when {
@@ -90,20 +90,20 @@ public data class RoutePillSpec(
     internal companion object {
 
         private fun linePillContent(line: Line): Content =
-            if (line.longName == "Green Line") {
+            if (line.id.idText == "line-Green") {
                 Content.Text("GL")
             } else {
                 Content.Text(line.longName)
             }
 
         private fun lightRailPillContent(route: Route, type: Type): Content =
-            if (route.longName.startsWith("Green Line ")) {
+            if (route.id.idText.startsWith("Green-")) {
                 when (type) {
                     Type.Fixed -> Content.Text(route.longName.replace("Green Line ", "GL "))
                     Type.Flex,
                     Type.FlexCompact -> Content.Text(route.shortName)
                 }
-            } else if (route.longName == "Mattapan Trolley") {
+            } else if (route.id.idText == "Mattapan") {
                 Content.Text("M")
             } else {
                 Content.Text(route.longName)

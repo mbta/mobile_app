@@ -62,6 +62,7 @@ class DepartureTileTest {
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
+                id = "Green-B"
                 longName = "Green Line B"
                 shortName = "B"
                 type = RouteType.LIGHT_RAIL

@@ -164,7 +164,7 @@ final class RoutePickerViewTests: XCTestCase {
             route.type = RouteType.bus
         }
         objects.route { route in
-            route.longName = "Mattapan Trolley"
+            route.longName = "Mattapan Line"
             route.type = RouteType.lightRail
         }
 
@@ -191,7 +191,7 @@ final class RoutePickerViewTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: "Harvard Square - Nubian Station"))
             XCTAssertNotNil(try view.find(text: "Watertown Square - Harvard Station"))
             XCTAssertNotNil(try view.find(text: "Logan Airport Terminals - South Station"))
-            XCTAssertThrowsError(try view.find(text: "Mattapan Trolley"))
+            XCTAssertThrowsError(try view.find(text: "Mattapan Line"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
@@ -311,7 +311,7 @@ final class RoutePickerViewTests: XCTestCase {
             route.type = RouteType.heavyRail
         }
         objects.route { route in
-            route.longName = "Mattapan Trolley"
+            route.longName = "Mattapan Line"
             route.type = RouteType.lightRail
         }
 
@@ -337,7 +337,7 @@ final class RoutePickerViewTests: XCTestCase {
 
         let exp = sut.inspection.inspect(onReceive: gotGlobalData, after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Red Line"))
-            XCTAssertNotNil(try view.find(text: "Mattapan Trolley"))
+            XCTAssertNotNil(try view.find(text: "Mattapan Line"))
         }
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)

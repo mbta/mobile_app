@@ -251,7 +251,7 @@ private fun RoutePillPreviews() {
                     directionNames = listOf("Outbound", "Inbound"),
                     directionDestinations = listOf("Mattapan", "Ashmont"),
                     isListedRoute = true,
-                    longName = "Mattapan Trolley",
+                    longName = "Mattapan Line",
                     shortName = "",
                     sortOrder = 10011,
                     textColor = "FFFFFF",
