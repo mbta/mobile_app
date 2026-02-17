@@ -22,7 +22,7 @@ compose-material-icons = "1.7.8"
 compose-placeholder-material3= "1.0.12"
 compose-shimmer= "1.3.3"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
-cyclonedx = "3.1.0"
+cyclonedx = "3.2.0"
 # changelog: https://developer.android.com/jetpack/androidx/releases/datastore
 cyclonedxCoreJava = "12.1.0"
 datastorePreferencesCore = "1.2.0"
