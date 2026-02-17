@@ -16,7 +16,7 @@ class RouteTest {
         val light = route {
             type = RouteType.LIGHT_RAIL
             shortName = "M"
-            longName = "Mattapan Trolley"
+            longName = "Mattapan Line"
         }
 
         val commuter = route {
@@ -36,7 +36,7 @@ class RouteTest {
         }
 
         assertEquals("Red Line", heavy.label)
-        assertEquals("Mattapan Trolley", light.label)
+        assertEquals("Mattapan Line", light.label)
         assertEquals("Framingham / Worcester Line", commuter.label)
         assertEquals("1", bus.label)
         assertEquals("Charlestown Ferry", ferry.label)

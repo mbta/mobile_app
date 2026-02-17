@@ -106,6 +106,7 @@ class RoutePillSpecTest {
     @Test
     fun `test light rail`() = parametricTest {
         val greenLineC = route {
+            id = "Green-C"
             type = RouteType.LIGHT_RAIL
             color = "00843D"
             longName = "Green Line C"
@@ -113,9 +114,10 @@ class RoutePillSpecTest {
             textColor = "FFFFFF"
         }
         val mattapan = route {
+            id = "Mattapan"
             type = RouteType.LIGHT_RAIL
             color = "DA291C"
-            longName = "Mattapan Trolley"
+            longName = "Mattapan Line"
             textColor = "FFFFFF"
         }
 
@@ -263,11 +265,13 @@ class RoutePillSpecTest {
     @Test
     fun `test lines`() = parametricTest {
         val redLine = line {
+            id = "line-Red"
             color = "DA291C"
             longName = "Red Line"
             textColor = "FFFFFF"
         }
         val greenLine = line {
+            id = "line-Green"
             color = "00843D"
             longName = "Green Line"
             textColor = "FFFFFF"

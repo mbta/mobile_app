@@ -262,7 +262,7 @@ struct RoutePill_Previews: PreviewProvider {
                 directionNames: ["Outbound", "Inbound"],
                 directionDestinations: ["Mattapan", "Ashmont"],
                 isListedRoute: true,
-                longName: "Mattapan Trolley",
+                longName: "Mattapan Line",
                 shortName: "",
                 sortOrder: 10011,
                 textColor: "FFFFFF",

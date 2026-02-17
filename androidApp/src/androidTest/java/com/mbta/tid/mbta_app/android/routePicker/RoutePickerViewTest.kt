@@ -147,7 +147,7 @@ class RoutePickerViewTest {
             type = RouteType.HEAVY_RAIL
         }
         objects.route {
-            longName = "Mattapan Trolley"
+            longName = "Mattapan Line"
             type = RouteType.LIGHT_RAIL
         }
 
@@ -167,7 +167,7 @@ class RoutePickerViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Red Line").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Mattapan Trolley").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Mattapan Line").assertIsDisplayed()
     }
 
     @Test
@@ -190,7 +190,7 @@ class RoutePickerViewTest {
             type = RouteType.BUS
         }
         objects.route {
-            longName = "Mattapan Trolley"
+            longName = "Mattapan Line"
             type = RouteType.LIGHT_RAIL
         }
 
@@ -214,7 +214,7 @@ class RoutePickerViewTest {
         composeTestRule
             .onNodeWithText("Logan Airport Terminals - South Station")
             .assertIsDisplayed()
-        composeTestRule.onNodeWithText("Mattapan Trolley").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Mattapan Line").assertIsNotDisplayed()
     }
 
     @Test

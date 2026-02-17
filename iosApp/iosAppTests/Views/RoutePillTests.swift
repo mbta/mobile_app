@@ -128,7 +128,7 @@ final class RoutePillTests: XCTestCase {
                 "Ashmont",
             ],
             isListedRoute: true,
-            longName: "Mattapan Trolley",
+            longName: "Mattapan Line",
             shortName: "",
             sortOrder: 10011,
             textColor: "FFFFFF",

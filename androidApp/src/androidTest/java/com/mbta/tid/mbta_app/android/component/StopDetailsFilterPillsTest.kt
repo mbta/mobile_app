@@ -40,10 +40,11 @@ class StopDetailsFilterPillsTest {
             }
         val route2 =
             objects.route {
+                id = "Mattapan"
                 color = "000000"
                 textColor = "ffffff"
                 type = RouteType.LIGHT_RAIL
-                longName = "Mattapan Trolley"
+                longName = "Mattapan Line"
             }
         val route3 =
             objects.route {

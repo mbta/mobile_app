@@ -100,7 +100,7 @@ class NearbyTransitViewTest : KoinTest {
 
     val greenLineRoute =
         builder.route {
-            id = "route_2"
+            id = "Green-E"
             type = RouteType.LIGHT_RAIL
             color = "008000"
             directionNames = listOf("Inbound", "Outbound")
@@ -116,7 +116,7 @@ class NearbyTransitViewTest : KoinTest {
             id = "pattern_3"
             directionId = 0
             name = "Green Line Pattern"
-            routeId = "route_2"
+            routeId = "Green-E"
             representativeTripId = "trip_2"
             sortOrder = 0
         }
@@ -139,7 +139,7 @@ class NearbyTransitViewTest : KoinTest {
     val greenLineTrip =
         builder.trip {
             id = "trip_2"
-            routeId = "route_2"
+            routeId = "Green-E"
             directionId = 0
             headsign = "Green Line Head Sign"
             routePatternId = "pattern_3"
@@ -151,7 +151,7 @@ class NearbyTransitViewTest : KoinTest {
             revenue = true
             stopId = "stop_2"
             tripId = "trip_2"
-            routeId = "route_2"
+            routeId = "Green-E"
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(5.minutes)
