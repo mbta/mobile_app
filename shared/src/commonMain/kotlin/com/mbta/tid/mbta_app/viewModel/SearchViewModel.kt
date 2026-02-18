@@ -116,6 +116,7 @@ public class SearchViewModel(
                 val isStation = stop.locationType == LocationType.STATION
                 var routes = globalData.getTypicalRoutesFor(stopId)
                 if (routes.isEmpty()) routes = globalData.getAllRoutesFor(stopId)
+                routes = routes.filter { !it.isShuttle }
                 if (routes.isEmpty()) return null
                 val routePills =
                     routes.sorted().map { route ->
