@@ -174,11 +174,10 @@ struct AlertDetails: View {
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: iconSize)
                                 .rotationEffect(.degrees(areStopsExpanded ? 90 : 0))
-                        }.padding(.leading, 16).padding(.trailing, -2).padding(.vertical, 12)
+                        }.padding(.horizontal, 16).padding(.vertical, 16)
                     }
                 )
-                .tint(.clear) // Hide default chevron
-                .foregroundStyle(Color.text, .clear)
+                .disclosureGroupStyle(PlainDisclosureGroupStyle())
                 .onChange(of: areStopsExpanded) { expanded in
                     if expanded {
                         analytics.tappedAffectedStops(
