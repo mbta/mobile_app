@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.repositories
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +39,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     private var networkStatus: NetworkStatus? = null
 
+    private var sheetRoute: SheetRoutes? = null
     private var predictionsStale: ErrorBannerState.StalePredictions? = null
     private val dataErrors = mutableMapOf<String, ErrorBannerState.DataError>()
 
@@ -60,8 +62,12 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
     public open fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
+        checkingSheetRoute: SheetRoutes?,
         action: () -> Unit,
     ) {
+        if (checkingSheetRoute != sheetRoute || checkingSheetRoute == null) {
+            return
+        }
         predictionsStale =
             if (
                 predictionQuantity > 0 &&
@@ -72,6 +78,10 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
                 null
             }
         updateState()
+    }
+
+    public fun setSheetRoute(sheetRoute: SheetRoutes?) {
+        this.sheetRoute = sheetRoute
     }
 
     private fun setNetworkStatus(newStatus: NetworkStatus) {
@@ -122,6 +132,7 @@ constructor(
     override fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
+        checkingSheetRoute: SheetRoutes?,
         action: () -> Unit,
     ) {
         onCheckPredictionsStale?.invoke()

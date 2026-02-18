@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import kotlin.time.Duration.Companion.seconds
@@ -50,7 +51,12 @@ fun NearbyTransitView(
     val now by timer(updateInterval = 5.seconds)
     val stopIds = nearbyVM.nearbyStopIds
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
-    val predictionsVM = subscribeToPredictions(stopIds, errorBannerViewModel = errorBannerViewModel)
+    val predictionsVM =
+        subscribeToPredictions(
+            stopIds,
+            SheetRoutes.NearbyTransit,
+            errorBannerViewModel = errorBannerViewModel,
+        )
     val predictions by predictionsVM.predictionsFlow.collectAsState(initial = null)
 
     val analytics: Analytics = koinInject()

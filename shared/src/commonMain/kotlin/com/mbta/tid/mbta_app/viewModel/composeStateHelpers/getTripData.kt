@@ -139,7 +139,7 @@ internal fun getTripData(
     tripPredictions =
         if (shouldTryLoadingTrip)
             subscribeToTripPredictions(
-                tripFilter?.tripId,
+                tripFilter,
                 errorKey,
                 active,
                 context,

@@ -14,6 +14,7 @@ import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.sentry.kotlin.multiplatform.SentryLevel
 import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
+import kotlin.jvm.JvmName
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -30,6 +31,7 @@ public interface IErrorBannerViewModel {
     public fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
+        checkingSheetRoute: SheetRoutes,
         action: () -> Unit,
     )
 
@@ -65,10 +67,10 @@ public class ErrorBannerViewModel(
 
     private var awaitingPredictionsAfterBackground: Boolean by mutableStateOf(false)
 
+    @set:JvmName("setSheetRouteState") private var sheetRoute: SheetRoutes? by mutableStateOf(null)
+
     @Composable
     override fun runLogic(): State {
-        var sheetRoute: SheetRoutes? by remember { mutableStateOf(null) }
-
         var errorState: ErrorBannerState? by remember { mutableStateOf(null) }
 
         var clearedError: ClearedDataError? by remember { mutableStateOf(null) }
@@ -133,6 +135,7 @@ public class ErrorBannerViewModel(
                     if (SheetRoutes.pageChanged(sheetRoute, event.sheetRoute)) {
                         errorRepository.clearState()
                     }
+                    errorRepository.setSheetRoute(event.sheetRoute)
                     sheetRoute = event.sheetRoute
                 }
             }
@@ -155,9 +158,15 @@ public class ErrorBannerViewModel(
     override fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
+        checkingSheetRoute: SheetRoutes,
         action: () -> Unit,
     ) {
-        errorRepository.checkPredictionsStale(predictionsLastUpdated, predictionQuantity, action)
+        errorRepository.checkPredictionsStale(
+            predictionsLastUpdated,
+            predictionQuantity,
+            checkingSheetRoute,
+            action,
+        )
     }
 
     override fun setSheetRoute(sheetRoute: SheetRoutes?) {
@@ -179,8 +188,9 @@ constructor(initialState: ErrorBannerViewModel.State = ErrorBannerViewModel.Stat
     override fun checkPredictionsStale(
         predictionsLastUpdated: EasternTimeInstant,
         predictionQuantity: Int,
+        checkingSheetRoute: SheetRoutes,
         action: () -> Unit,
     ) {}
 
-    override fun setSheetRoute(sheetRoutes: SheetRoutes?) {}
+    override fun setSheetRoute(sheetRoute: SheetRoutes?) {}
 }

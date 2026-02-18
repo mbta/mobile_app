@@ -194,14 +194,44 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            viewModel.checkPredictionsStale(lastUpdated, 2, action)
-            assertEquals(
-                ErrorBannerViewModel.State(
-                    false,
-                    ErrorBannerState.StalePredictions(lastUpdated, action),
-                ),
-                awaitItem(),
+            viewModel.setSheetRoute(SheetRoutes.NearbyTransit)
+            advanceUntilIdle()
+            viewModel.checkPredictionsStale(lastUpdated, 2, SheetRoutes.NearbyTransit, action)
+            awaitItemSatisfying {
+                it ==
+                    ErrorBannerViewModel.State(
+                        false,
+                        ErrorBannerState.StalePredictions(lastUpdated, action),
+                    )
+            }
+        }
+    }
+
+    @Test
+    fun testSkipsPredictionsStaleBannerWhenRouteMismatches() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        val errorRepo = ErrorBannerStateRepository()
+
+        setUpKoin(dispatcher) { errorBanner = errorRepo }
+
+        val viewModel: ErrorBannerViewModel = get()
+
+        val action = {}
+        val lastUpdated = EasternTimeInstant.now().minus(10.hours)
+
+        testViewModelFlow(viewModel).test {
+            assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
+            viewModel.setSheetRoute(SheetRoutes.StopDetails("stop1", null, null))
+            advanceUntilIdle()
+            viewModel.checkPredictionsStale(
+                lastUpdated,
+                2,
+                SheetRoutes.StopDetails("stop2", null, null),
+                action,
             )
+            advanceUntilIdle()
+            expectNoEvents()
         }
     }
 

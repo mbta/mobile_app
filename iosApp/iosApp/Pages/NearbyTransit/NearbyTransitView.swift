@@ -250,6 +250,7 @@ struct NearbyTransitView: View {
                     predictionsByStop?.predictionQuantity() ??
                         0
                 ),
+                checkingSheetRoute: .NearbyTransit(),
                 action: {
                     leavePredictions()
                     joinPredictions(nearbyVM.nearbyState.stopIds)
