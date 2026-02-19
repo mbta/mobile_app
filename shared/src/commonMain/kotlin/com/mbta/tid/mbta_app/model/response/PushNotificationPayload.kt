@@ -4,6 +4,7 @@ import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Instant
@@ -15,12 +16,26 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class PushNotificationPayload(
+    val title: Title,
     val summary: AlertSummary,
     val alertId: String,
     val subscriptions: List<RouteStopDirection>,
     val notificationType: NotificationType,
     val sentAt: Instant,
 ) {
+    @Serializable
+    public sealed class Title {
+        @Serializable
+        @SerialName("bare_label")
+        public data class BareLabel(val label: String) : Title()
+
+        @Serializable
+        @SerialName("mode_label")
+        public data class ModeLabel(val label: String, val mode: RouteType) : Title()
+
+        @Serializable @SerialName("multiple_routes") public data object MultipleRoutes : Title()
+    }
+
     @Serializable
     public enum class NotificationType {
         @SerialName("notification") Notification,

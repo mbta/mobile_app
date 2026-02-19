@@ -232,6 +232,7 @@
     <string name="more_section_support_note_accessibility">TTY呼叫者請致電711；ASL呼叫者請使用VRS</string>
     <string name="more_section_support_note_hours">週一至週五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
+    <string name="multiple_routes">多條路線</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>

@@ -13,6 +13,7 @@ public fun PushNotificationPayload.Companion.messageToWorkData(
     messageData: Map<String, String>
 ): Data =
     workDataOf(
+        "title" to messageData["title"],
         "summary" to messageData["summary"],
         "alert_id" to messageData["alert_id"],
         "subscriptions" to messageData["subscriptions"],
@@ -23,6 +24,8 @@ public fun PushNotificationPayload.Companion.messageToWorkData(
 public fun PushNotificationPayload.Companion.fromWorkData(
     workData: Data
 ): PushNotificationPayload? {
+    val rawTitle = workData.getString("title") ?: return null
+    val title: PushNotificationPayload.Title = json.decodeFromString(rawTitle)
     val rawSummary = workData.getString("summary") ?: return null
     val summary: AlertSummary = json.decodeFromString(rawSummary)
     val alertId = workData.getString("alert_id") ?: return null
@@ -33,5 +36,5 @@ public fun PushNotificationPayload.Companion.fromWorkData(
         json.decodeFromJsonElement(JsonPrimitive(rawNotificationType))
     val rawSentAt = workData.getString("sent_at") ?: return null
     val sentAt = Instant.parse(rawSentAt)
-    return PushNotificationPayload(summary, alertId, subscriptions, notificationType, sentAt)
+    return PushNotificationPayload(title, summary, alertId, subscriptions, notificationType, sentAt)
 }

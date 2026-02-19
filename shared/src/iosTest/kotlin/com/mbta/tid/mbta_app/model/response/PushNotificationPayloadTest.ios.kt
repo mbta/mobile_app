@@ -12,6 +12,8 @@ import kotlin.time.Clock
 class PushNotificationPayloadTestIos {
     @Test
     fun `fromUserInfo works`() {
+        val title: PushNotificationPayload.Title =
+            PushNotificationPayload.Title.BareLabel("Red Line")
         val summary =
             AlertSummary(
                 Alert.Effect.StationClosure,
@@ -23,6 +25,7 @@ class PushNotificationPayloadTestIos {
         val sentAt = Clock.System.now()
         val userInfo =
             mapOf<Any, Any?>(
+                "title" to json.encodeToString(title),
                 "summary" to json.encodeToString(summary),
                 "alert_id" to alertId,
                 "subscriptions" to json.encodeToString(subscriptions),
@@ -32,6 +35,7 @@ class PushNotificationPayloadTestIos {
         val payload = PushNotificationPayload.fromUserInfo(userInfo)
         assertEquals(
             PushNotificationPayload(
+                title,
                 summary,
                 alertId,
                 subscriptions,

@@ -2,16 +2,28 @@ package com.mbta.tid.mbta_app.android.notification
 
 import android.content.res.Resources
 import androidx.compose.ui.text.AnnotatedString
-import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
-import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.android.util.typeText
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 
-data class NotificationContent(val title: AnnotatedString, val body: AnnotatedString) {
+data class NotificationContent(val title: String, val body: AnnotatedString) {
     companion object {
-        fun build(resources: Resources, alertSummary: AlertSummary): NotificationContent {
-            val formattedAlert = FormattedAlert(alert = null, alertSummary)
+        fun build(resources: Resources, payload: PushNotificationPayload): NotificationContent {
+            val formattedAlert = FormattedAlert(alert = null, payload.summary)
 
-            val title = formattedAlert.alertCardHeader(AlertCardSpec.Major, resources)
+            val title =
+                when (val title = payload.title) {
+                    is PushNotificationPayload.Title.BareLabel -> title.label
+                    is PushNotificationPayload.Title.ModeLabel ->
+                        resources.getString(
+                            R.string.route_mode_label,
+                            title.label,
+                            title.mode.typeText(resources, isOnly = true),
+                        )
+                    PushNotificationPayload.Title.MultipleRoutes ->
+                        resources.getString(R.string.multiple_routes)
+                }
             val body = formattedAlert.alertCardMajorBody(resources)
 
             return NotificationContent(title, body)
