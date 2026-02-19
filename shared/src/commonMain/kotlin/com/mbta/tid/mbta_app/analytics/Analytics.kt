@@ -1,14 +1,17 @@
 package com.mbta.tid.mbta_app.analytics
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
+import kotlin.time.Clock
 
 public abstract class Analytics {
     protected abstract fun logEvent(name: String, parameters: Map<String, String>)
@@ -47,6 +50,54 @@ public abstract class Analytics {
             }
     }
 
+    public fun notificationsPermissionDenied() {
+        logEvent("notifications_permission_denied")
+    }
+
+    public fun notificationsPermissionGranted() {
+        logEvent("notifications_permission_granted")
+    }
+
+    public fun notificationsWindowSet(window: FavoriteSettings.Notifications.Window, index: Int) {
+        logEvent(
+            "notifications_window_set",
+            "index" to index.toString(),
+            "start" to window.startTime.toString(),
+            "end" to window.endTime.toString(),
+            "days" to window.daysOfWeek.sorted().joinToString(),
+        )
+    }
+
+    public fun notificationReceived(payload: PushNotificationPayload) {
+        logEvent(
+            "notification_received",
+            "route_id" to payload.subscriptions.joinToString { it.route.idText },
+            "stop_id" to payload.subscriptions.joinToString { it.stop },
+            "direction_id" to payload.subscriptions.joinToString { it.direction.toString() },
+            "alert_effect" to payload.summary.effect.toString(),
+            "alert_id" to payload.alertId,
+            "notification_type" to payload.notificationType.name,
+            "latency_seconds" to (Clock.System.now() - payload.sentAt).inWholeSeconds.toString(),
+        )
+    }
+
+    public fun notificationClicked(
+        payload: PushNotificationPayload,
+        stillActive: PushNotificationPayload.StillActive,
+    ) {
+        logEvent(
+            "notification_clicked",
+            "route_id" to payload.subscriptions.joinToString { it.route.idText },
+            "stop_id" to payload.subscriptions.joinToString { it.stop },
+            "direction_id" to payload.subscriptions.joinToString { it.direction.toString() },
+            "alert_effect" to payload.summary.effect.toString(),
+            "alert_id" to payload.alertId,
+            "notification_type" to payload.notificationType.name,
+            "latency_seconds" to (Clock.System.now() - payload.sentAt).inWholeSeconds.toString(),
+            "still_active" to stillActive.name,
+        )
+    }
+
     public fun performedSearch(query: String) {
         logEvent("search", "query" to query)
     }
@@ -65,6 +116,12 @@ public abstract class Analytics {
 
     public fun recordSession(favoritesCount: Int) {
         setUserProperty("favorites_count", "$favoritesCount")
+    }
+
+    @OptIn(ExperimentalObjCName::class)
+    @ObjCName(swiftName = "recordSession")
+    public fun recordSessionStationAccessibility(stationAccessibility: Boolean) {
+        setUserProperty("station_accessibility_on", stationAccessibility.toString())
     }
 
     @OptIn(ExperimentalObjCName::class)

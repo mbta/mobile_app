@@ -9,15 +9,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.initializeSentry
+import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.routes.DeepLinkState
-import kotlin.toString
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -26,9 +29,19 @@ class MainActivity : ComponentActivity() {
     val deepLinkStateFlow: MutableStateFlow<DeepLinkState?> = MutableStateFlow(null)
 
     fun handleIntent(intent: Intent?) {
-        val deepLinkUri: Uri? = intent?.data?.takeIf { intent.action == Intent.ACTION_VIEW }
-        deepLinkStateFlow.value =
-            deepLinkUri?.let { DeepLinkState.from(it.toString()) } ?: DeepLinkState.None
+        val rawPushNotificationPayload = intent?.getStringExtra(PushNotificationPayload.launchKey)
+        if (rawPushNotificationPayload != null) {
+            val pushNotificationPayload: PushNotificationPayload =
+                json.decodeFromString(rawPushNotificationPayload)
+            val stillActive = pushNotificationPayload.isStillActive()
+            AnalyticsProvider(Firebase.analytics)
+                .notificationClicked(pushNotificationPayload, stillActive)
+            deepLinkStateFlow.value = pushNotificationPayload.getDeepLinkState()
+        } else {
+            val deepLinkUri: Uri? = intent?.data?.takeIf { intent.action == Intent.ACTION_VIEW }
+            deepLinkStateFlow.value =
+                deepLinkUri?.let { DeepLinkState.from(it.toString()) } ?: DeepLinkState.None
+        }
     }
 
     fun clearDeepLink() {

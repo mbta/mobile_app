@@ -199,6 +199,14 @@ public class FavoritesViewModel(
                     }
                 }
                 is Event.UpdateFavorites -> {
+                    for (favoriteSettings in event.updatedFavorites.values) {
+                        if (favoriteSettings?.notifications?.enabled == true) {
+                            favoriteSettings.notifications.windows.forEachIndexed { index, window ->
+                                analytics.notificationsWindowSet(window, index)
+                            }
+                        }
+                    }
+
                     favoritesUsecases.updateRouteStopDirections(
                         event.updatedFavorites,
                         event.context,

@@ -2,10 +2,11 @@ package com.mbta.tid.mbta_app.android.notification
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
+import com.mbta.tid.mbta_app.model.response.messageToWorkData
 
 class MBTAGoMessagingService : FirebaseMessagingService() {
 
@@ -24,7 +25,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         val workRequest =
             OneTimeWorkRequestBuilder<NotificationWorker>()
-                .setInputData(workDataOf("summary" to message.data["summary"]))
+                .setInputData(PushNotificationPayload.messageToWorkData(message.data))
                 .build()
         WorkManager.Companion.getInstance(this).enqueue(workRequest)
     }

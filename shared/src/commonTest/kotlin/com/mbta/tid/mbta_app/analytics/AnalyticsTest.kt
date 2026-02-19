@@ -1,11 +1,15 @@
 package com.mbta.tid.mbta_app.analytics
 
+import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Clock
 
 class AnalyticsTest {
 
@@ -119,6 +123,68 @@ class AnalyticsTest {
                     "context" to "FavoritesPage",
                 ),
             ),
+        )
+    }
+
+    @Test
+    fun `logs notification received`() {
+        var loggedEvent: Pair<String, Map<String, String>>? = null
+        val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
+        analytics.notificationReceived(
+            PushNotificationPayload(
+                AlertSummary(Alert.Effect.Suspension),
+                "alert",
+                listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
+                PushNotificationPayload.NotificationType.Notification,
+                Clock.System.now(),
+            )
+        )
+        assertEquals(
+            Pair(
+                "notification_received",
+                mapOf(
+                    "route_id" to "route",
+                    "stop_id" to "stop",
+                    "direction_id" to "0",
+                    "alert_effect" to "Suspension",
+                    "alert_id" to "alert",
+                    "notification_type" to "Notification",
+                    "latency_seconds" to "0",
+                ),
+            ),
+            loggedEvent,
+        )
+    }
+
+    @Test
+    fun `logs notification clicked`() {
+        var loggedEvent: Pair<String, Map<String, String>>? = null
+        val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
+        analytics.notificationClicked(
+            PushNotificationPayload(
+                AlertSummary(Alert.Effect.Suspension),
+                "alert",
+                listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
+                PushNotificationPayload.NotificationType.Notification,
+                Clock.System.now(),
+            ),
+            PushNotificationPayload.StillActive.Yes,
+        )
+        assertEquals(
+            Pair(
+                "notification_clicked",
+                mapOf(
+                    "route_id" to "route",
+                    "stop_id" to "stop",
+                    "direction_id" to "0",
+                    "alert_effect" to "Suspension",
+                    "alert_id" to "alert",
+                    "notification_type" to "Notification",
+                    "latency_seconds" to "0",
+                    "still_active" to "Yes",
+                ),
+            ),
+            loggedEvent,
         )
     }
 }

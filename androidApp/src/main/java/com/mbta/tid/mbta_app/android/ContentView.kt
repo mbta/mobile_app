@@ -142,6 +142,9 @@ fun ContentView(
         if (isSystemInDarkTheme()) AnalyticsColorScheme.Dark else AnalyticsColorScheme.Light
     LaunchedEffect(colorScheme) { analytics.recordSession(colorScheme) }
     LaunchedEffect(hideMaps) { analytics.recordSessionHideMaps(hideMaps) }
+    LaunchedEffect(includeAccessibility) {
+        analytics.recordSessionStationAccessibility(includeAccessibility)
+    }
     val screenReaderEnabled = accessibilityStatusRepository.isScreenReaderEnabled()
     LaunchedEffect(screenReaderEnabled) { analytics.recordSessionVoiceOver(screenReaderEnabled) }
 
