@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
+import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -12,6 +13,7 @@ import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.model.response.TripResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.CachedSchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ConfigRepository
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.FavoritesRepository
@@ -105,6 +107,7 @@ public interface IRepositories {
     public val predictions: IPredictionsRepository?
     public val railRouteShapes: IRailRouteShapeRepository
     public val routeStops: IRouteStopsRepository
+    public val scheduleCache: ScheduleCache
     public val schedules: ISchedulesRepository
     public val searchResults: ISearchResultRepository
     public val sentry: ISentryRepository
@@ -134,6 +137,7 @@ public class RepositoryDI : IRepositories, KoinComponent {
     override val predictions: IPredictionsRepository by inject()
     override val railRouteShapes: IRailRouteShapeRepository by inject()
     override val routeStops: IRouteStopsRepository by inject()
+    override val scheduleCache: ScheduleCache by inject()
     override val schedules: ISchedulesRepository by inject()
     override val searchResults: ISearchResultRepository by inject()
     override val sentry: ISentryRepository by inject()
@@ -166,7 +170,8 @@ internal class RealRepositories : IRepositories {
     override val predictions = null
     override val railRouteShapes = RailRouteShapeRepository()
     override val routeStops = RouteStopsRepository()
-    override val schedules = SchedulesRepository()
+    override val scheduleCache = ScheduleCache()
+    override val schedules = CachedSchedulesRepository(SchedulesRepository())
     override val searchResults = SearchResultRepository()
     override val sentry = SentryRepository()
     override val settings = SettingsRepository()
@@ -198,6 +203,7 @@ public class MockRepositories : IRepositories {
     override var predictions: IPredictionsRepository = MockPredictionsRepository()
     override var railRouteShapes: IRailRouteShapeRepository = IdleRailRouteShapeRepository()
     override var routeStops: IRouteStopsRepository = MockRouteStopsRepository(emptyList())
+    override val scheduleCache: ScheduleCache = ScheduleCache()
     override var schedules: ISchedulesRepository = IdleScheduleRepository()
     override var searchResults: ISearchResultRepository = IdleSearchResultRepository()
     override var sentry: ISentryRepository = MockSentryRepository()

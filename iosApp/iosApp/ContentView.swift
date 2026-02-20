@@ -27,6 +27,8 @@ struct ContentView: View {
     @State var stopDetailsVM = ViewModelDI().stopDetails
     @State var toastVM = ViewModelDI().toast
 
+    @State var scheduleCache = RepositoryDI().scheduleCache
+
     @StateObject var nearbyVM = NearbyViewModel()
     @State var mapVM = ViewModelDI().map
 
@@ -73,6 +75,7 @@ struct ContentView: View {
                     notificationDeepLinkOwner.notificationDeepLink = nil
                 }
             }
+            Task { try? await scheduleCache.deleteStaleSchedules(serviceDate: EasternTimeInstant.now().serviceDate) }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: hideMaps)
