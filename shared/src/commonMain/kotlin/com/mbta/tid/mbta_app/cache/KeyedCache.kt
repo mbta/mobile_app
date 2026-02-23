@@ -89,3 +89,23 @@ internal class KeyedCache<T : Any>(
         }
     }
 }
+
+internal class MockKeyedCache<T : Any>(val cacheMap: MutableMap<String, T> = mutableMapOf()) :
+    IKeyedCache<T>, KoinComponent {
+    override suspend fun getEntry(key: String, isStale: (T) -> Boolean): T? {
+        val entry = cacheMap.getOrElse(key) { null }
+        if (entry?.let { isStale(it) } ?: false) {
+            cacheMap.remove(key)
+            return null
+        }
+        return entry
+    }
+
+    override suspend fun putEntry(key: String, entry: T) {
+        cacheMap[key] = entry
+    }
+
+    override suspend fun deleteStaleEntries(isStale: (T) -> Boolean) {
+        cacheMap.forEach { if (isStale(it.value)) cacheMap.remove(it.key) }
+    }
+}

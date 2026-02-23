@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
+import com.mbta.tid.mbta_app.cache.MockKeyedCache
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.AppVersion
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -203,7 +204,7 @@ public class MockRepositories : IRepositories {
     override var predictions: IPredictionsRepository = MockPredictionsRepository()
     override var railRouteShapes: IRailRouteShapeRepository = IdleRailRouteShapeRepository()
     override var routeStops: IRouteStopsRepository = MockRouteStopsRepository(emptyList())
-    override val scheduleCache: ScheduleCache = ScheduleCache()
+    override val scheduleCache: ScheduleCache = ScheduleCache(MockKeyedCache())
     override var schedules: ISchedulesRepository = IdleScheduleRepository()
     override var searchResults: ISearchResultRepository = IdleSearchResultRepository()
     override var sentry: ISentryRepository = MockSentryRepository()
