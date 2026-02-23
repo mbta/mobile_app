@@ -16,6 +16,7 @@ struct ContentView: View {
 
     @ObservedObject var contentVM: ContentViewModel
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @ObservedObject var notificationDeepLinkOwner = AppDelegate.notificationDeepLinkOwner
 
     @State private var contentHeight: CGFloat = UIScreen.current?.bounds.height ?? 0
     @State private var sheetHeight: CGFloat =
@@ -65,13 +66,27 @@ struct ContentView: View {
             mapVM.setViewportManager(viewportManager: viewportProvider)
             Task { await contentVM.loadPendingFeaturePromosAndTabPreferences() }
             Task { await contentVM.loadOnboardingScreens() }
+            Task {
+                try? await Task.sleep(for: .milliseconds(100))
+                if let notificationDeepLink = notificationDeepLinkOwner.notificationDeepLink {
+                    handleDeepLink(deepLinkState: notificationDeepLink)
+                    notificationDeepLinkOwner.notificationDeepLink = nil
+                }
+            }
             analytics.recordSession(colorScheme: colorScheme)
             analytics.recordSession(voiceOver: voiceOver)
             analytics.recordSession(hideMaps: hideMaps)
+            analytics.recordSession(stationAccessibility: includeAccessibility)
             updateTabBarVisibility()
 
             if let screen = nearbyVM.navigationStack.lastSafe().analyticsScreen {
                 analytics.track(screen: screen)
+            }
+        }
+        .onChange(of: notificationDeepLinkOwner.notificationDeepLink) { notificationDeepLink in
+            if let notificationDeepLink {
+                handleDeepLink(deepLinkState: notificationDeepLink)
+                notificationDeepLinkOwner.notificationDeepLink = nil
             }
         }
         .global($globalData, errorKey: "ContentView")
@@ -110,14 +125,17 @@ struct ContentView: View {
             analytics.track(screen: screen)
         }
         .onChange(of: searchObserver.isSearching) { _ in updateTabBarVisibility() }
-        .onChange(of: colorScheme) { _ in
+        .onChange(of: colorScheme) { colorScheme in
             analytics.recordSession(colorScheme: colorScheme)
         }
-        .onChange(of: voiceOver) { _ in
+        .onChange(of: voiceOver) { voiceOver in
             analytics.recordSession(voiceOver: voiceOver)
         }
-        .onChange(of: hideMaps) { _ in
+        .onChange(of: hideMaps) { hideMaps in
             analytics.recordSession(hideMaps: hideMaps)
+        }
+        .onChange(of: includeAccessibility) { includeAccessibility in
+            analytics.recordSession(stationAccessibility: includeAccessibility)
         }
         .onChange(of: contentVM.featurePromosPending) { promos in
             if let promos, promos.contains(where: { $0 == .enhancedFavorites }) {
@@ -629,11 +647,14 @@ struct ContentView: View {
     }
 
     private func handleDeepLink(url: URL?) {
-        guard let url else { return }
-        let deepLink = DeepLinkState.companion.from(url: url.absoluteString)
+        guard let url, let deepLinkState = DeepLinkState.companion.from(url: url.absoluteString) else { return }
+        handleDeepLink(deepLinkState: deepLinkState)
+    }
+
+    private func handleDeepLink(deepLinkState: DeepLinkState) {
         nearbyVM.popToEntrypoint()
 
-        switch onEnum(of: deepLink) {
+        switch onEnum(of: deepLinkState) {
         case let .stop(stop):
             let nav = stop.sheetRoute
             nearbyVM.pushNavEntry(.stopDetails(

@@ -10,7 +10,6 @@ import org.cyclonedx.model.AttachmentText
 import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
-import org.gradle.process.ProcessExecutionException
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
@@ -108,6 +107,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(libs.androidx.lifecycle.viewmodel.android)
+                implementation(libs.androidx.work)
                 implementation(libs.koin.androidxCompose)
                 implementation(libs.ktor.client.okhttp)
             }

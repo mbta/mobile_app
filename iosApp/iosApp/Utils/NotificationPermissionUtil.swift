@@ -34,7 +34,13 @@ class NotificationPermissionManager: INotificationPermissionManager {
     @MainActor
     func requestPermission() async -> Bool {
         do {
-            return try await center.requestAuthorization(options: [.alert, .sound, .badge]) == true
+            let result = try await center.requestAuthorization(options: [.alert, .sound, .badge])
+            if result {
+                AnalyticsProvider.shared.notificationsPermissionGranted()
+            } else {
+                AnalyticsProvider.shared.notificationsPermissionDenied()
+            }
+            return result
         } catch {
             Logger().error("Failed to request notification permissions: \(error)")
         }
