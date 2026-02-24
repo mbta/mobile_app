@@ -88,15 +88,35 @@ data class FormattedAlert(
             alertSummary.update?.let { update ->
                 when (update) {
                     AlertSummary.Update.Active ->
-                        AnnotatedString.fromHtml(
-                            resources.getString(
-                                R.string.alert_summary_with_update,
-                                resources.getString(sentenceEffectRes),
-                                summaryLocation(resources),
-                                summaryTimeframe(resources),
-                                summaryRecurrence(resources),
+                        if (summary.effect == Alert.Effect.Cancellation)
+                            AnnotatedString.fromHtml(
+                                resources.getString(
+                                    R.string.alert_summary_with_update,
+                                    summaryTimeframe(resources),
+                                    summaryLocation(resources),
+                                    if (summary.timeframe == AlertSummary.Timeframe.MultipleTrips)
+                                        resources.getString(R.string.are_cancelled_today)
+                                    else resources.getString(R.string.is_cancelled_today),
+                                    dueToCauseRes?.let {
+                                        resources.getString(
+                                            R.string.due_to_cause,
+                                            resources.getString(it)
+                                        ) }
+                                        ?: "",
+                                    summaryRecurrence(resources),
+                                )
                             )
-                        )
+                        else
+                            AnnotatedString.fromHtml(
+                                resources.getString(
+                                    R.string.alert_summary_with_update,
+                                    resources.getString(sentenceEffectRes),
+                                    summaryLocation(resources),
+                                    summaryTimeframe(resources),
+                                    summaryRecurrence(resources),
+                                    "",
+                                )
+                            )
 
                     AlertSummary.Update.AllClear ->
                         AnnotatedString.fromHtml(
@@ -109,15 +129,30 @@ data class FormattedAlert(
                     AlertSummary.Update.Unknown -> null
                 }
             }
-                ?: AnnotatedString.fromHtml(
-                    resources.getString(
-                        R.string.alert_summary,
-                        resources.getString(sentenceEffectRes),
-                        summaryLocation(resources),
-                        summaryTimeframe(resources),
-                        summaryRecurrence(resources),
+                ?: if (summary.effect == Alert.Effect.Cancellation)
+                    AnnotatedString.fromHtml(
+                        resources.getString(
+                            R.string.alert_summary,
+                            summaryTimeframe(resources),
+                            summaryLocation(resources),
+                            if (summary.timeframe == AlertSummary.Timeframe.MultipleTrips)
+                                " are cancelled today"
+                            else " is cancelled today",
+                            dueToCauseRes?.let { " due to ${resources.getString(it)}" } ?: "",
+                            summaryRecurrence(resources),
+                        )
                     )
-                )
+                else
+                    AnnotatedString.fromHtml(
+                        resources.getString(
+                            R.string.alert_summary,
+                            resources.getString(sentenceEffectRes),
+                            summaryLocation(resources),
+                            summaryTimeframe(resources),
+                            summaryRecurrence(resources),
+                            "",
+                        )
+                    )
         }
 
     fun alertCardHeader(spec: AlertCardSpec, resources: Resources) =
@@ -128,7 +163,10 @@ data class FormattedAlert(
             AlertCardSpec.Delay -> delayHeader(resources)
             AlertCardSpec.Secondary ->
                 summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
-            else -> AnnotatedString.fromHtml(effect(resources))
+            else ->
+                if ((alert?.effect ?: alertSummary?.effect) == Alert.Effect.Cancellation)
+                    AnnotatedString(resources.getString(R.string.trip_cancelled))
+                else AnnotatedString.fromHtml(effect(resources))
         }
 
     @Composable
@@ -172,6 +210,10 @@ data class FormattedAlert(
                             resources.getString(R.string.bus_label, it.routeLabel)
                         else it.routeLabel,
                     )
+                is AlertSummary.Location.FromCurrentStop -> resources.getString(
+                    R.string.from_current_stop,
+                    it.stopName
+                )
                 AlertSummary.Location.Unknown -> null
             }
         } ?: ""
@@ -210,6 +252,8 @@ data class FormattedAlert(
                         timeRangeBoundary(resources, it.startTime),
                         timeRangeBoundary(resources, it.endTime),
                     )
+                is AlertSummary.Timeframe.TripTime -> "<b>${it.time.formattedTime()}</b>"
+                AlertSummary.Timeframe.MultipleTrips -> resources.getString(R.string.multiple_trips)
                 AlertSummary.Timeframe.Unknown -> null
             }
         } ?: ""
@@ -376,7 +420,7 @@ data class FormattedAlert(
             }
 
         @StringRes
-        private fun dueToCauseRes(cause: Alert.Cause?) =
+        fun dueToCauseRes(cause: Alert.Cause?) =
             when (cause) {
                 Alert.Cause.Accident -> R.string.accident_lowercase
                 Alert.Cause.Amtrak -> R.string.amtrak

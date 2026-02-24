@@ -22,7 +22,7 @@
     <string name="alert_details">Détails de l’alerte</string>
     <string name="alert_elevator_header">Fermeture de l’ascenseur (%1$s)</string>
     <string name="alert_ended">L’alerte n’est plus en vigueur</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>Tout est clair :&lt;/b> Service normal %1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020depuis les arrêts en direction de &lt;b>%1$s&lt;/b> jusqu’à &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020à &lt;b>%1$s&lt;/b></string>
@@ -38,7 +38,7 @@
     <string name="alert_summary_timeframe_time">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jusqu’à demain</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jusqu’à nouvel ordre</string>
-    <string name="alert_summary_with_update">&lt;b>Mise à jour :&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Mise à jour :&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">Trajet alternatif</string>
     <string name="amber_alert">Alerte Amber</string>
     <string name="amber_alert_sentence_case">Alerte Amber</string>
@@ -52,6 +52,7 @@
     <string name="app_version_and_build">version %1$s (%2$s)</string>
     <string name="app_version_number">version %1$s</string>
     <string name="approaching">Proche</string>
+    <string name="are_cancelled_today">\u0020sont annulées aujourd’hui</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Véhicules obstruant le service</string>
     <string name="autos_impeding_service_lowercase">des automobiles gênent le service</string>
@@ -113,10 +114,12 @@
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="drawbridge_being_raised">Élévation du pont</string>
     <string name="drawbridge_being_raised_lowercase">le pont est relevé</string>
+    <string name="due_to_cause">\u0020en raison de %1$s</string>
     <string name="eastbound">En direction de l’est</string>
     <string name="edit">Modifier</string>
     <string name="edit_favorite_title">Modifier les Favoris</string>
     <string name="edit_favorites">Modifier les Favoris</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à venir</string>
     <string name="electrical_work">Travaux électriques</string>
     <string name="electrical_work_lowercase">travaux électriques</string>
@@ -182,6 +185,7 @@
     <string name="freight_train_interference">Interférence avec un train de marchandises</string>
     <string name="freight_train_interference_lowercase">interférence des trains de marchandises</string>
     <string name="from">À partir de</string>
+    <string name="from_current_stop">\u0020depuis &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020de %1$s à %2$s</string>
     <string name="full_description">Description complète</string>
     <string name="get_disruption_notifications">Recevoir des notifications en cas de perturbation</string>
@@ -203,6 +207,7 @@
     <string name="ice_in_harbor">Glace dans le port</string>
     <string name="ice_in_harbor_lowercase">glace dans le port</string>
     <string name="inbound">En direction du centre</string>
+    <string name="is_cancelled_today">\u0020est annulé aujourd’hui</string>
     <string name="is_stops_away_from">%1$s est à %2$d arrêts de %3$s</string>
     <string name="last">Dernier</string>
     <string name="last_trip">Dernier voyage</string>
@@ -241,6 +246,7 @@
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Plusieurs itinéraires</string>
+    <string name="multiple_trips">Plusieurs voyages</string>
     <string name="nearby_transit">Transports à proximité</string>
     <string name="nearby_transit_link">Proche</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvelle fonctionnalité. %1$s</string>

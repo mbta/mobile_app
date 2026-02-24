@@ -56,6 +56,11 @@ public data class AlertSummary(
             @SerialName("route_type") val routeType: RouteType,
         ) : Location()
 
+        @Serializable
+        @SerialName("from_current_stop")
+        public data class FromCurrentStop(@SerialName("stop_name") val stopName: String) :
+            Location()
+
         @Serializable public data object Unknown : Location()
     }
 
@@ -119,6 +124,12 @@ public data class AlertSummary(
             @Serializable public data object Unknown : StartTime, EndTime
         }
 
+        @Serializable
+        @SerialName("trip_time")
+        public data class TripTime(val time: EasternTimeInstant) : Timeframe()
+
+        @Serializable @SerialName("multiple_trips") public data object MultipleTrips : Timeframe()
+
         @Serializable public data object Unknown : Timeframe(), Recurrence.EndDay
     }
 
@@ -162,8 +173,7 @@ public data class AlertSummary(
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
-                if (alert.significance(atTime) < AlertSignificance.Secondary)
-                    return@withContext null
+                if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
                 val update = alertUpdated(alert, atTime)
@@ -188,6 +198,18 @@ public data class AlertSummary(
             upcomingTrips: List<UpcomingTrip>?,
             hasRecurrence: Boolean,
         ): Timeframe? {
+            if (alert.effect == Alert.Effect.Cancellation) {
+                val trips =
+                    upcomingTrips?.filter {
+                        alert.anyInformedEntitySatisfies { checkTrip(it.trip.id) }
+                    }
+                if (trips.isNullOrEmpty()) return null
+                val trip = trips.singleOrNull() ?: return Timeframe.MultipleTrips
+                val tripTime =
+                    trip.schedule?.departureTime ?: trip.schedule?.arrivalTime ?: return null
+                return Timeframe.TripTime(tripTime)
+            }
+
             val serviceDate = atTime.serviceDate
             val currentPeriod = alert.currentPeriod(atTime)
             if (currentPeriod == null) {
@@ -237,6 +259,9 @@ public data class AlertSummary(
             patterns: List<RoutePattern>,
             global: GlobalResponse,
         ): Location? {
+            if (alert.effect == Alert.Effect.Cancellation)
+                return Location.FromCurrentStop(global.getStop(stopId)?.name ?: return null)
+
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
 
             val typicalRoutes =

@@ -124,8 +124,11 @@ fun StopDetailsUnfilteredRoutesView(
                                         it,
                                         null,
                                         AlertCardSpec.Elevator,
-                                        Color.Unspecified,
-                                        colorResource(R.color.text),
+                                        TripRouteAccents(
+                                            Color.Unspecified,
+                                            colorResource(R.color.text),
+                                            RouteType.BUS,
+                                        ),
                                         {
                                             openModal(
                                                 ModalRoutes.AlertDetails(it.id, null, null, stop.id)

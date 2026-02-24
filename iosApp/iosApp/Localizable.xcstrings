@@ -1,6 +1,52 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    " are cancelled today" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " se cancelan hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " sont annulées aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " yo anile jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " estão cancelados hoje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " các sự kiện bị hủy hôm nay"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 今天取消"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 今天取消"
+          }
+        }
+      }
+    },
     " at **%1$@**" : {
       "comment" : "Alert summary location for a single stop in the format of \" at [Stop name]\" ex. \" at [Haymarket]\" or \" at [Green St @ Magazine St]\". The leading space should be retained, because this will be added in the %2 position of the \"**%1$@**%2$@%3$@\" alert summary template which may or may not include a location fragment.",
       "localizations" : {
@@ -97,6 +143,98 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : " 日常的%@"
+          }
+        }
+      }
+    },
+    " due to %@" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " debido a %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " en raison de %@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " akòz %@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " devido a %@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " bởi vì %@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 由于 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 由於 %@"
+          }
+        }
+      }
+    },
+    " from **%@**" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " depuis **%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " soti nan **%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " de **%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " từ **%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 从 **%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 從 **%@**"
           }
         }
       }
@@ -303,6 +441,52 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : " 從 %1$@ 到 %2$@"
+          }
+        }
+      }
+    },
+    " is cancelled today" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " se cancela hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " est annulé aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " anile jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " está cancelado hoje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " bị hủy hôm nay"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 今天取消"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : " 今天取消"
           }
         }
       }
@@ -777,6 +961,53 @@
         }
       }
     },
+    "**%@**" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%@**"
+          }
+        }
+      }
+    },
     "**%@** ahead" : {
       "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
       "localizations" : {
@@ -965,49 +1196,49 @@
         }
       }
     },
-    "**%1$@**%2$@%3$@%4$@" : {
+    "**%1$@**%2$@%3$@%4$@%5$@" : {
       "comment" : "Alert summary in the format of \"[Alert effect][at location][through timeframe][until recurrence]\", ex \"[Stop closed][ at Haymarket][ through this Friday][]\" or \"[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**%1$@**%2$@%3$@%4$@"
+            "value" : "**%1$@**%2$@%3$@%4$@%5$@"
           }
         }
       }
@@ -1508,49 +1739,49 @@
         }
       }
     },
-    "**Update:** %1$@%2$@%3$@%4$@" : {
+    "**Update:** %1$@%2$@%3$@%4$@%5$@" : {
       "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence]\", ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**Actualización:** %1$@%2$@%3$@%4$@"
+            "value" : "**Actualización:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@"
+            "value" : "**Mise à jour :** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@"
+            "value" : "**Mizajou:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**Atualização:** %1$@%2$@%3$@%4$@"
+            "value" : "**Atualização:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@"
+            "value" : "**Cập nhật:** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**更新：** %1$@%2$@%3$@%4$@"
+            "value" : "**更新：** %1$@%2$@%3$@%4$@%5$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "**更新：** %1$@%2$@%3$@%4$@"
+            "value" : "**更新：** %1$@%2$@%3$@%4$@%5$@"
           }
         }
       }
@@ -13937,6 +14168,52 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "多條路線"
+          }
+        }
+      }
+    },
+    "Multiple trips" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Múltiples viajes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Plusieurs voyages"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Plizyè vwayaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Várias viagens"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhiều chuyến đi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多次旅行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多次旅行"
           }
         }
       }

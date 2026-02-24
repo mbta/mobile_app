@@ -20,7 +20,7 @@
     <string name="alert_details">警报详情</string>
     <string name="alert_elevator_header">电梯关停(%1$s)</string>
     <string name="alert_ended">警报已失效</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">一切正常：服务正常%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020从&lt;b>%1$s&lt;/b>站到&lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020在&lt;b>%1$s&lt;/b></string>
@@ -36,7 +36,7 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待进一步通知</string>
-    <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">备选路线</string>
     <string name="amber_alert">安珀警报</string>
     <string name="amber_alert_sentence_case">安珀警报</string>
@@ -50,6 +50,7 @@
     <string name="app_version_and_build">版本%1$s(%2$s)</string>
     <string name="app_version_number">版本%1$s</string>
     <string name="approaching">正在接近</string>
+    <string name="are_cancelled_today">\u0020今天取消</string>
     <string name="arriving_abbr">到站</string>
     <string name="autos_impeding_service">交通事故</string>
     <string name="autos_impeding_service_lowercase">交通事故</string>
@@ -111,10 +112,12 @@
     <string name="drag_handle">拖动手柄</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="drawbridge_being_raised_lowercase">吊桥升起</string>
+    <string name="due_to_cause">\u0020由于 %1$s</string>
     <string name="eastbound">东行</string>
     <string name="edit">编辑</string>
     <string name="edit_favorite_title">编辑收藏</string>
     <string name="edit_favorites">编辑收藏夹</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b>提前到站</string>
     <string name="electrical_work">电力作业</string>
     <string name="electrical_work_lowercase">电力作业</string>
@@ -176,6 +179,7 @@
     <string name="freight_train_interference">货运列车干扰</string>
     <string name="freight_train_interference_lowercase">货运列车干扰</string>
     <string name="from">出发地</string>
+    <string name="from_current_stop">\u0020从 &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020从 %1$s 到 %2$s</string>
     <string name="full_description">完整说明</string>
     <string name="get_disruption_notifications">接收运营变动通知</string>
@@ -197,6 +201,7 @@
     <string name="ice_in_harbor">港口结冰</string>
     <string name="ice_in_harbor_lowercase">港口结冰</string>
     <string name="inbound">进站</string>
+    <string name="is_cancelled_today">\u0020今天取消</string>
     <string name="is_stops_away_from">%1$s距离%3$s还有%2$d站</string>
     <string name="last">最后的</string>
     <string name="last_trip">最后一次旅行</string>
@@ -235,6 +240,7 @@
     <string name="more_section_support_note_hours">周一至周五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">多条路线</string>
+    <string name="multiple_trips">多次旅行</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>

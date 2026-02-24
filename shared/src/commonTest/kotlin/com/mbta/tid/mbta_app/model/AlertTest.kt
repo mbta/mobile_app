@@ -61,6 +61,7 @@ class AlertTest {
                         Alert.Effect.StationClosure -> AlertSignificance.Major
                         Alert.Effect.StopClosure -> AlertSignificance.Major
                         Alert.Effect.Suspension -> AlertSignificance.Major
+                        Alert.Effect.Cancellation -> AlertSignificance.Minor
                         Alert.Effect.TrackChange -> AlertSignificance.Minor
                         else -> AlertSignificance.None
                     }

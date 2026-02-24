@@ -22,7 +22,7 @@
     <string name="alert_details">Detalles de la alerta</string>
     <string name="alert_elevator_header">Cierre del elevador (%1$s)</string>
     <string name="alert_ended">La alerta ya no está vigente</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>Todo despejado:&lt;/b> Servicio regular%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020desde paradas en &lt;b>%1$s&lt;/b> hasta &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020en &lt;b>%1$s&lt;/b></string>
@@ -38,7 +38,7 @@
     <string name="alert_summary_timeframe_time">\u0020hasta las %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020hasta mañana</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020hasta nuevo aviso</string>
-    <string name="alert_summary_with_update">&lt;b>Actualización:&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Actualización:&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">Camino alternativo</string>
     <string name="amber_alert">Alerta Amber</string>
     <string name="amber_alert_sentence_case">Alerta Amber</string>
@@ -52,6 +52,7 @@
     <string name="app_version_and_build">versión %1$s (%2$s)</string>
     <string name="app_version_number">versión %1$s</string>
     <string name="approaching">Acercándose</string>
+    <string name="are_cancelled_today">\u0020se cancelan hoy</string>
     <string name="arriving_abbr">LLEGAN.</string>
     <string name="autos_impeding_service">Automóviles que obstaculizan el servicio</string>
     <string name="autos_impeding_service_lowercase">autos que impiden el servicio</string>
@@ -113,10 +114,12 @@
     <string name="drag_handle">Palanca de arrastre</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="drawbridge_being_raised_lowercase">puente levadizo levantado</string>
+    <string name="due_to_cause">\u0020debido a %1$s</string>
     <string name="eastbound">En dirección este</string>
     <string name="edit">Editar</string>
     <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> adelantado</string>
     <string name="electrical_work">Trabajo eléctrico</string>
     <string name="electrical_work_lowercase">trabajo eléctrico</string>
@@ -182,6 +185,7 @@
     <string name="freight_train_interference">Interferencia con trenes de carga</string>
     <string name="freight_train_interference_lowercase">interferencia del tren de mercancías</string>
     <string name="from">De</string>
+    <string name="from_current_stop">\u0020de &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020de %1$s a %2$s</string>
     <string name="full_description">Descripción completa</string>
     <string name="get_disruption_notifications">Recibir notificaciones de interrupciones</string>
@@ -203,6 +207,7 @@
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="ice_in_harbor_lowercase">hielo en el puerto</string>
     <string name="inbound">Entrante</string>
+    <string name="is_cancelled_today">\u0020se cancela hoy</string>
     <string name="is_stops_away_from">%1$s está a %2$d parada(s) antes de %3$s</string>
     <string name="last">Último</string>
     <string name="last_trip">Último viaje</string>
@@ -241,6 +246,7 @@
     <string name="more_section_support_note_hours">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Múltiples rutas</string>
+    <string name="multiple_trips">Múltiples viajes</string>
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
     <string name="new_feature_screen_reader_header_prefix">Nueva función. %1$s</string>

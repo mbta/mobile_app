@@ -22,7 +22,7 @@
     <string name="alert_details">Detalhes do alerta</string>
     <string name="alert_elevator_header">Fechamento dos elevadores (%1$s)</string>
     <string name="alert_ended">O alerta não está mais em efeito</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>Tudo certo:&lt;/b> Serviço regular%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020de &lt;b>%1$s&lt;/b> paradas a &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020em &lt;b>%1$s&lt;/b></string>
@@ -38,7 +38,7 @@
     <string name="alert_summary_timeframe_time">\u0020até %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020até amanhã</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020até novo aviso</string>
-    <string name="alert_summary_with_update">&lt;b>Atualização:&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Atualização:&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">Caminho alternativo</string>
     <string name="amber_alert">Alerta amarelo</string>
     <string name="amber_alert_sentence_case">Alerta amarelo</string>
@@ -52,6 +52,7 @@
     <string name="app_version_and_build">versão %1$s (%2$s)</string>
     <string name="app_version_number">versão %1$s</string>
     <string name="approaching">Chegando</string>
+    <string name="are_cancelled_today">\u0020estão cancelados hoje</string>
     <string name="arriving_abbr">CHE</string>
     <string name="autos_impeding_service">Carros impedindo serviço</string>
     <string name="autos_impeding_service_lowercase">veículos impedindo o serviço</string>
@@ -113,10 +114,12 @@
     <string name="drag_handle">Alça para arrastar</string>
     <string name="drawbridge_being_raised">Ponte móvel em elevação</string>
     <string name="drawbridge_being_raised_lowercase">ponte levadiça sendo levantada</string>
+    <string name="due_to_cause">\u0020devido a %1$s</string>
     <string name="eastbound">Sentido leste</string>
     <string name="edit">Editar</string>
     <string name="edit_favorite_title">Editar favorito</string>
     <string name="edit_favorites">Editar Favoritos</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> à frente</string>
     <string name="electrical_work">Obra elétrica</string>
     <string name="electrical_work_lowercase">serviço elétrico</string>
@@ -182,6 +185,7 @@
     <string name="freight_train_interference">Interferência de trem de carga</string>
     <string name="freight_train_interference_lowercase">interferência de trem de carga</string>
     <string name="from">De</string>
+    <string name="from_current_stop">\u0020de &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020de %1$s para %2$s</string>
     <string name="full_description">Descrição completa</string>
     <string name="get_disruption_notifications">Receba notificações sobre interrupções no serviço</string>
@@ -203,6 +207,7 @@
     <string name="ice_in_harbor">Gelo no porto</string>
     <string name="ice_in_harbor_lowercase">gelo no porto</string>
     <string name="inbound">Entrada</string>
+    <string name="is_cancelled_today">\u0020está cancelado hoje</string>
     <string name="is_stops_away_from">%1$s está a %2$d paradas de %3$s</string>
     <string name="last">Durar</string>
     <string name="last_trip">Última viagem</string>
@@ -241,6 +246,7 @@
     <string name="more_section_support_note_hours">De segunda a sexta: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Rotas múltiplas</string>
+    <string name="multiple_trips">Várias viagens</string>
     <string name="nearby_transit">Trânsito próximo</string>
     <string name="nearby_transit_link">Próximo</string>
     <string name="new_feature_screen_reader_header_prefix">Novo recurso. %1$s</string>

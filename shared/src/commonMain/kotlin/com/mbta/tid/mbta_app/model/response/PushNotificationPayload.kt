@@ -147,6 +147,9 @@ public data class PushNotificationPayload(
                     }
                 if (now >= startTime && now < endTime) return StillActive.Yes
             }
+            is AlertSummary.Timeframe.TripTime ->
+                if (now < summary.timeframe.time) return StillActive.Yes
+            AlertSummary.Timeframe.MultipleTrips -> return StillActive.Unknown
         }
         return if (summary.recurrence != null) {
             // recurrence existed but didn’t determine result, current timeframe ended but next one

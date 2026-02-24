@@ -207,6 +207,8 @@ fun StopDetailsFilteredDeparturesView(
                             alert.effect == Alert.Effect.Delay
                     ) {
                         AlertCardSpec.Delay
+                    } else if (alert.effect == Alert.Effect.Cancellation) {
+                        AlertCardSpec.Major
                     } else {
                         AlertCardSpec.Secondary
                     }
@@ -214,8 +216,7 @@ fun StopDetailsFilteredDeparturesView(
                 alert,
                 summary,
                 spec,
-                color = routeAccents.color,
-                textColor = routeAccents.textColor,
+                routeAccents,
                 onViewDetails = { openAlertDetails(alert, spec) },
             )
         }
@@ -290,21 +291,25 @@ fun StopDetailsFilteredDeparturesView(
                 )
             }
         } else if (selectedTripIsCancelled) {
-            Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
-                StopDetailsIconCard(
-                    routeAccents.color,
-                    details = { Text(stringResource(R.string.trip_cancelled_details)) },
-                    header = { modifier ->
-                        Text(stringResource(R.string.trip_cancelled), modifier = modifier)
-                    },
-                    icon = { modifier ->
-                        Icon(
-                            painter = routeSlashIcon(routeType = routeAccents.type),
-                            contentDescription = null,
-                            modifier = modifier.testTag("route_slash_icon"),
-                        )
-                    },
-                )
+            if (alertsHere.any { it.effect == Alert.Effect.Cancellation }) {
+                // don’t show a card here since the alert gets a card higher up
+            } else {
+                Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
+                    StopDetailsIconCard(
+                        routeAccents.color,
+                        details = { Text(stringResource(R.string.trip_cancelled_details)) },
+                        header = { modifier ->
+                            Text(stringResource(R.string.trip_cancelled), modifier = modifier)
+                        },
+                        icon = { modifier ->
+                            Icon(
+                                painter = routeSlashIcon(routeType = routeAccents.type),
+                                contentDescription = null,
+                                modifier = modifier.testTag("route_slash_icon"),
+                            )
+                        },
+                    )
+                }
             }
         } else {
             val tripDetailsPageFilter =

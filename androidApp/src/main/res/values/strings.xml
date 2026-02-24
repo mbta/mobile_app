@@ -21,7 +21,7 @@
     <string name="alert_details">Alert Details</string>
     <string name="alert_elevator_header">Elevator closure (%1$s)</string>
     <string name="alert_ended">Alert is no longer in effect</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>All clear:&lt;/b> Regular service%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020from &lt;b>%1$s&lt;/b> stops to &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020at &lt;b>%1$s&lt;/b></string>
@@ -37,7 +37,7 @@
     <string name="alert_summary_timeframe_time">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020through tomorrow</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020until further notice</string>
-    <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
     <string name="alternative_path">Alternative path</string>
     <string name="amber_alert">Amber Alert</string>
@@ -52,6 +52,7 @@
     <string name="app_version_and_build">version %1$s (%2$s)</string>
     <string name="app_version_number">version %1$s</string>
     <string name="approaching">Approaching</string>
+    <string name="are_cancelled_today">\u0020are cancelled today</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Autos Impeding Service</string>
     <string name="autos_impeding_service_lowercase">autos impeding service</string>
@@ -113,6 +114,7 @@
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
+    <string name="due_to_cause">\u0020due to %1$s</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
     <string name="edit_favorite_title">Edit Favorite</string>
@@ -181,6 +183,7 @@
     <string name="freight_train_interference">Freight Train Interference</string>
     <string name="freight_train_interference_lowercase">freight train interference</string>
     <string name="from">From</string>
+    <string name="from_current_stop">\u0020from &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020from %1$s to %2$s</string>
     <string name="full_description">Full Description</string>
     <string name="get_disruption_notifications">Get disruption notifications</string>
@@ -203,6 +206,7 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="ice_in_harbor_lowercase">ice in harbor</string>
     <string name="inbound">Inbound</string>
+    <string name="is_cancelled_today">\u0020is cancelled today</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
     <string name="last">Last</string>
     <string name="last_trip">Last trip</string>
@@ -241,6 +245,7 @@
     <string name="more_section_support_note_hours">Monday through Friday: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Multiple routes</string>
+    <string name="multiple_trips">Multiple trips</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>

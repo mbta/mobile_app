@@ -20,7 +20,7 @@
     <string name="alert_details">Chi tiết cảnh báo</string>
     <string name="alert_elevator_header">Thang máy đóng (%1$s)</string>
     <string name="alert_ended">Cảnh báo không còn hiệu lực</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>Đã thông thoáng:&lt;/b> Dịch vụ thường lệ%1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020từ các điểm dừng &lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020tại &lt;b>%1$s&lt;/b></string>
@@ -36,7 +36,7 @@
     <string name="alert_summary_timeframe_time">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020đến ngày mai</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020cho đến khi có thông báo mới</string>
-    <string name="alert_summary_with_update">&lt;b>Cập nhật:&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Cập nhật:&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">Đường đi thay thế</string>
     <string name="amber_alert">Cảnh báo Amber</string>
     <string name="amber_alert_sentence_case">Cảnh báo Amber</string>
@@ -50,6 +50,7 @@
     <string name="app_version_and_build">phiên bản %1$s (%2$s)</string>
     <string name="app_version_number">phiên bản %1$s</string>
     <string name="approaching">Đang đến gần</string>
+    <string name="are_cancelled_today">\u0020các sự kiện bị hủy hôm nay</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Xe hơi cản trở dịch vụ</string>
     <string name="autos_impeding_service_lowercase">xe hơi cản trở dịch vụ</string>
@@ -111,10 +112,12 @@
     <string name="drag_handle">Tay kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
+    <string name="due_to_cause">\u0020bởi vì %1$s</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="edit">Chỉnh sửa</string>
     <string name="edit_favorite_title">Chỉnh sửa mục yêu thích</string>
     <string name="edit_favorites">Chỉnh sửa mục Yêu thích</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> phía trước</string>
     <string name="electrical_work">Thi công điện</string>
     <string name="electrical_work_lowercase">công việc về điện</string>
@@ -176,6 +179,7 @@
     <string name="freight_train_interference">Bị tàu chở hàng chặn</string>
     <string name="freight_train_interference_lowercase">ảnh hưởng của tàu hàng</string>
     <string name="from">Từ</string>
+    <string name="from_current_stop">\u0020từ &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020từ %1$s đến %2$s</string>
     <string name="full_description">Mô tả đầy đủ</string>
     <string name="get_disruption_notifications">Nhận thông báo gián đoạn</string>
@@ -197,6 +201,7 @@
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="ice_in_harbor_lowercase">băng ở bến cảng</string>
     <string name="inbound">Đến</string>
+    <string name="is_cancelled_today">\u0020bị hủy hôm nay</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
     <string name="last">Cuối cùng</string>
     <string name="last_trip">Chuyến đi cuối cùng</string>
@@ -235,6 +240,7 @@
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Nhiều tuyến đường</string>
+    <string name="multiple_trips">Nhiều chuyến đi</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>

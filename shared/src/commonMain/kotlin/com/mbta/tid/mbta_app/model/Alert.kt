@@ -71,6 +71,9 @@ internal constructor(
                 Effect.ServiceChange -> AlertSignificance.Secondary
                 Effect.ElevatorClosure -> AlertSignificance.Accessibility
                 Effect.TrackChange -> AlertSignificance.Minor
+                // cancellation is major for the specific trip but minor for the
+                // route/stop/direction
+                Effect.Cancellation -> AlertSignificance.Minor
                 Effect.Delay ->
                     if (
                         (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||

@@ -25,7 +25,7 @@
     <string name="alert_details">Detay Avètisman</string>
     <string name="alert_elevator_header">Fèmti Asansè (%1$s)</string>
     <string name="alert_ended">Avètisman an pa aplikab ankò</string>
-    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s</string>
+    <string name="alert_summary">&lt;b>%1$s&lt;/b>%2$s%3$s%4$s%5$s</string>
     <string name="alert_summary_all_clear">&lt;b>Tout bagay klè:&lt;/b> Sèvis regilye %1$s</string>
     <string name="alert_summary_location_direction_to_stop">\u0020soti nan &lt;b>%1$s&lt;/b> sispann rive nan &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
@@ -41,7 +41,7 @@
     <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jiskaske yo bay lòt avi</string>
-    <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s</string>
+    <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s%5$s</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
     <string name="amber_alert_sentence_case">Avètisman amber</string>
@@ -55,6 +55,7 @@
     <string name="app_version_and_build">vèsyon %1$s (%2$s)</string>
     <string name="app_version_number">vèsyon %1$s</string>
     <string name="approaching">Ap apwoche</string>
+    <string name="are_cancelled_today">\u0020yo anile jodi a</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Machin Ki Bloke Sèvis la</string>
     <string name="autos_impeding_service_lowercase">oto ap anpeche sèvis la</string>
@@ -116,10 +117,12 @@
     <string name="drag_handle">Kontwolè deplasman</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
+    <string name="due_to_cause">\u0020akòz %1$s</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
     <string name="edit_favorite_title">Modifye Favorite yo</string>
     <string name="edit_favorites">Modifye Preferans yo</string>
+    <string name="effect">&lt;b>%1$s&lt;/b></string>
     <string name="effect_ahead">&lt;b>%1$s&lt;/b> devan</string>
     <string name="electrical_work">Travay Elektrik</string>
     <string name="electrical_work_lowercase">travay elektrik</string>
@@ -191,6 +194,7 @@
     <string name="freight_train_interference">Blokaj Nan Tren Machandiz</string>
     <string name="freight_train_interference_lowercase">entèferans tren machandiz</string>
     <string name="from">Soti nan</string>
+    <string name="from_current_stop">\u0020soti nan &lt;b>%1$s&lt;/b></string>
     <string name="from_to_time">\u0020soti nan %1$s rive nan %2$s</string>
     <string name="full_description">Deskripsyon Konplè</string>
     <string name="get_disruption_notifications">Jwenn notifikasyon anka pwoblèm</string>
@@ -212,6 +216,7 @@
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="ice_in_harbor_lowercase">glas nan pò</string>
     <string name="inbound">Antran</string>
+    <string name="is_cancelled_today">\u0020anile jodi a</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
     <string name="last">Dènye</string>
     <string name="last_trip">Dènye vwayaj la</string>
@@ -250,6 +255,7 @@
     <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Plizyè wout</string>
+    <string name="multiple_trips">Plizyè vwayaj</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>

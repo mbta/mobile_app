@@ -127,6 +127,9 @@ struct FormattedAlert: Equatable {
                     ),
                     location.startStopName,
                     location.endStopName)
+                
+            case let .fromCurrentStop(location):
+                String(format: NSLocalizedString(" from **%@**", comment: ""), location.stopName)
 
             case let .wholeRoute(location):
                 alertSummary.effect == .shuttle ?
@@ -257,6 +260,10 @@ struct FormattedAlert: Equatable {
                         """
                     ), Self.timeRangeBoundary(timeframe.startTime),
                     Self.timeRangeBoundary(timeframe.endTime))
+                
+            case let .tripTime(timeframe):
+                String(format: "**%@**", timeframe.time.formatted(date: .omitted, time: .shortened))
+            case .multipleTrips: NSLocalizedString("Multiple trips", comment: "")
             case .unknown: ""
             }
         } else {
@@ -349,20 +356,25 @@ struct FormattedAlert: Equatable {
     }
 
     var summary: AttributedString? {
-        if alertSummary != nil {
-            let args = [sentenceCaseEffect, summaryLocation, summaryTimeframe, summaryRecurrence]
-            if let update = alertSummary?.update {
+        if let alertSummary {
+            let args = [sentenceCaseEffect, summaryLocation, summaryTimeframe, summaryRecurrence, ""]
+            let cancellationArgs = [summaryLocation, summaryTimeframe, alertSummary.timeframe == AlertSummary.TimeframeMultipleTrips.shared ? NSLocalizedString(" are cancelled today", comment: "") : NSLocalizedString(" is cancelled today", comment: ""), dueToCause != nil ? String(format: NSLocalizedString(" due to %@", comment: ""), dueToCause ?? "") : "", summaryRecurrence]
+            if let update = alertSummary.update {
                 switch onEnum(of: update) {
                 case .active:
-                    return AttributedString.tryMarkdown(String(format:
-                        NSLocalizedString(
-                            "**Update:** %1$@%2$@%3$@%4$@",
-                            comment: """
-                            Alert summary in the format of "Update: [Alert effect][at location][through timeframe][until recurrence]", \
-                            ex "[Update][Stop closed][ at Haymarket][ through this Friday][]" or \
-                            "[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
-                            """
-                        ), args.map { $0 as CVarArg }))
+                    if alertSummary.effect == .cancellation {
+                        return AttributedString.tryMarkdown(String(format: NSLocalizedString("**Update:** %1$@%2$@%3$@%4$@%5$@", comment: ""), cancellationArgs.map { $0 as CVarArg }))
+                    } else {
+                        return AttributedString.tryMarkdown(String(format:
+                            NSLocalizedString(
+                                "**Update:** %1$@%2$@%3$@%4$@",
+                                comment: """
+                                Alert summary in the format of "Update: [Alert effect][at location][through timeframe][until recurrence]", \
+                                ex "[Update][Stop closed][ at Haymarket][ through this Friday][]" or \
+                                "[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                                """
+                            ), args.map { $0 as CVarArg }))
+                    }
                 case .allClear:
                     return AttributedString.tryMarkdown(String(
                         format: NSLocalizedString(
@@ -376,15 +388,21 @@ struct FormattedAlert: Equatable {
                 case .unknown: return nil
                 }
             } else {
-                return AttributedString.tryMarkdown(String(format:
-                    NSLocalizedString(
-                        "**%1$@**%2$@%3$@%4$@",
-                        comment: """
-                        Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
-                        ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
-                        "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
-                        """
-                    ), args.map { $0 as CVarArg }))
+                if alertSummary.effect == .cancellation {
+                    return AttributedString.tryMarkdown(String(format:
+                                                                NSLocalizedString("**%1$@**%2$@%3$@%4$@%5$@",
+                                                                                  comment: ""), cancellationArgs.map { $0 as CVarArg }))
+                } else {
+                    return AttributedString.tryMarkdown(String(format:
+                        NSLocalizedString(
+                            "**%1$@**%2$@%3$@%4$@",
+                            comment: """
+                            Alert summary in the format of "[Alert effect][at location][through timeframe][until recurrence]", \
+                            ex "[Stop closed][ at Haymarket][ through this Friday][]" or \
+                            "[Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]"
+                            """
+                        ), args.map { $0 as CVarArg }))
+                }
             }
         } else { return nil }
     }
