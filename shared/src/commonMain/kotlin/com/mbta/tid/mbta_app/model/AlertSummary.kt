@@ -147,6 +147,7 @@ public data class AlertSummary(
             directionId: Int,
             patterns: List<RoutePattern>,
             atTime: EasternTimeInstant,
+            upcomingTrips: List<UpcomingTrip>?,
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
@@ -156,7 +157,8 @@ public data class AlertSummary(
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
                 val update = alertUpdated(alert, atTime)
                 val recurrence = alertRecurrence(alert, atTime)
-                val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
+                val timeframe =
+                    alertTimeframe(alert, atTime, upcomingTrips, hasRecurrence = recurrence != null)
 
                 if (location == null && timeframe == null) return@withContext null
                 return@withContext AlertSummary(
@@ -172,6 +174,7 @@ public data class AlertSummary(
         private fun alertTimeframe(
             alert: Alert,
             atTime: EasternTimeInstant,
+            upcomingTrips: List<UpcomingTrip>?,
             hasRecurrence: Boolean,
         ): Timeframe? {
             val serviceDate = atTime.serviceDate

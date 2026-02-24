@@ -302,6 +302,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     directionId: alertSummaryParams.directionId,
                     patterns: patternsHere,
                     atTime: alertSummaryParams.now,
+                    upcomingTrips: leaf.upcomingTrips,
                     global: global
                 )
                 alertMap[alert.id] = summary

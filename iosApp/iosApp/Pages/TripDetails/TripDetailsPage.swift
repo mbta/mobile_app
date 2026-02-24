@@ -25,6 +25,7 @@ struct TripDetailsPage: View {
     @State var global: GlobalResponse?
     @State var now = Date.now.toEasternInstant()
     @State var tripDetailsPageState: TripDetailsPageViewModel.State?
+    @State var tripDetailsState: TripDetailsViewModel.State?
 
     var alertSummaries: [String: AlertSummary?] {
         tripDetailsPageState?.alertSummaries as? [String: AlertSummary?] ?? [:]
@@ -86,6 +87,17 @@ struct TripDetailsPage: View {
             context: .tripDetails,
             filters: filter,
         )
+        .task {
+            for await state in tripDetailsVM.models {
+                tripDetailsState = state
+            }
+        }
+        .onChange(of: tripDetailsState) { tripDetailsState in
+            tripDetailsPageVM.setContextualTrip(upcomingTrip: tripDetailsState?.stopList?.contextualTrip(
+                filter: filter,
+                global: global
+            ))
+        }
         .global($global, errorKey: "TripDetailsPage")
         .task {
             while !Task.isCancelled {

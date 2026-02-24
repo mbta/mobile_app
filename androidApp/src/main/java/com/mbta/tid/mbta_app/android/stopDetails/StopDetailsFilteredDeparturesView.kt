@@ -144,7 +144,15 @@ fun StopDetailsFilteredDeparturesView(
 
         viewModel.setAlertSummaries(
             (alertsHere + downstreamAlerts).associate {
-                it.id to it.summary(stopId, stopFilter.directionId, patternsHere, now, global)
+                it.id to
+                    it.summary(
+                        stopId,
+                        stopFilter.directionId,
+                        patternsHere,
+                        now,
+                        leaf.upcomingTrips,
+                        global,
+                    )
             }
         )
     }

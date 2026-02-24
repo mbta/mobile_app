@@ -439,6 +439,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         0,
                         listOf(routePatternOne, routePatternTwo),
                         now,
+                        null,
                         globalResponse,
                     )
             )
@@ -570,7 +571,7 @@ class StopDetailsFilteredDeparturesViewTest {
         val routeStopData = routeCardData.single().stopData.single()
         val leaf = routeStopData.data.first { it.directionId == 0 }
         val alertSummaries =
-            mapOf(alert.id to alert.summary(stop.id, 0, listOf(alertPattern), now, global))
+            mapOf(alert.id to alert.summary(stop.id, 0, listOf(alertPattern), now, null, global))
 
         val routeData =
             StopDetailsViewModel.RouteData.Filtered(
@@ -653,6 +654,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         0,
                         listOf(routePatternOne, routePatternTwo),
                         now,
+                        null,
                         globalResponse,
                     )
             )
@@ -782,6 +784,7 @@ class StopDetailsFilteredDeparturesViewTest {
                         0,
                         listOf(routePatternOne, routePatternTwo),
                         now,
+                        null,
                         globalResponse,
                     )
             )

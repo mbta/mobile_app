@@ -103,8 +103,10 @@ internal constructor(
         directionId: Int,
         patterns: List<RoutePattern>,
         atTime: EasternTimeInstant,
+        upcomingTrips: List<UpcomingTrip>?,
         global: GlobalResponse,
-    ): AlertSummary? = AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, global)
+    ): AlertSummary? =
+        AlertSummary.summarizing(this, stopId, directionId, patterns, atTime, upcomingTrips, global)
 
     @Serializable
     public data class ActivePeriod

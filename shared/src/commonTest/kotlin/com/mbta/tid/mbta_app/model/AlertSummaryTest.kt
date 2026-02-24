@@ -260,7 +260,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertNull(alertSummary)
     }
@@ -276,7 +276,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.UntilFurtherNotice),
@@ -296,7 +296,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
@@ -320,7 +320,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
@@ -344,7 +344,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
@@ -369,7 +369,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.Tomorrow),
@@ -394,7 +394,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
@@ -419,7 +419,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
@@ -439,7 +439,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingTomorrow),
@@ -460,7 +460,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingLaterToday(laterToday)),
@@ -500,7 +500,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertEquals(
             AlertSummary(alert.effect, AlertSummary.Location.SingleStop(stop.name), null),
@@ -545,7 +553,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertEquals(
             AlertSummary(
@@ -595,7 +611,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertNull(alertSummary)
     }
@@ -663,6 +687,7 @@ class AlertSummaryTest {
                 0,
                 listOf(branch1, branch2),
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -742,6 +767,7 @@ class AlertSummaryTest {
                 0,
                 listOf(branch1, branch2),
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -821,6 +847,7 @@ class AlertSummaryTest {
                 0,
                 listOf(bBranch, cBranch),
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -896,6 +923,7 @@ class AlertSummaryTest {
                 1,
                 listOf(cBranch),
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -994,6 +1022,7 @@ class AlertSummaryTest {
                 0,
                 listOf(eBranch),
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -1030,7 +1059,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(
@@ -1074,7 +1103,7 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, emptyList(), now, GlobalResponse(objects))
+            AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
             AlertSummary(
@@ -1145,6 +1174,7 @@ class AlertSummaryTest {
                 0,
                 emptyList(),
                 EasternTimeInstant(monday, noon),
+                null,
                 GlobalResponse(objects),
             ),
         )
@@ -1162,6 +1192,7 @@ class AlertSummaryTest {
                 0,
                 emptyList(),
                 EasternTimeInstant(tuesday, noon),
+                null,
                 GlobalResponse(objects),
             ),
         )
@@ -1204,7 +1235,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertEquals(
             AlertSummary(
@@ -1253,7 +1292,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertTrue { alert.allClear(now) }
         assertEquals(

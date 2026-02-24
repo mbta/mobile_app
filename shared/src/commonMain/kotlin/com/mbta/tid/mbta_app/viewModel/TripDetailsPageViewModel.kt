@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.discardTrackChangesAtCRCore
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -30,6 +31,8 @@ public interface ITripDetailsPageViewModel {
     public var koinScope: Scope?
 
     public fun setAlerts(alerts: AlertsStreamDataResponse?)
+
+    public fun setContextualTrip(upcomingTrip: UpcomingTrip?)
 
     public fun setFilter(filter: TripDetailsPageFilter?)
 
@@ -49,6 +52,8 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 
     @set:JvmName("setAlertsState")
     private var alerts by mutableStateOf<AlertsStreamDataResponse?>(null)
+    @set:JvmName("setContextualTripState")
+    private var contextualTrip by mutableStateOf<UpcomingTrip?>(null)
     @set:JvmName("setFilterState")
     private var filter by mutableStateOf<TripDetailsPageFilter?>(null)
     @set:JvmName("setNowState") private var now by mutableStateOf(EasternTimeInstant.now())
@@ -122,14 +127,24 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 
             alertSummaries =
                 alertsToSummarize.associate {
-                    it.id to it.summary(filter.stopId, filter.directionId, patterns, now, global)
+                    it.id to
+                        it.summary(
+                            filter.stopId,
+                            filter.directionId,
+                            patterns,
+                            now,
+                            listOfNotNull(contextualTrip),
+                            global,
+                        )
                 }
         }
 
         LaunchedEffect(filter?.stopId, filter?.directionId) {
             updateAlertSummaries(clearExisting = true)
         }
-        LaunchedEffect(global, alertsToSummarize, patterns, now) { updateAlertSummaries() }
+        LaunchedEffect(global, alertsToSummarize, patterns, now, contextualTrip) {
+            updateAlertSummaries()
+        }
 
         return State(direction, alertSummaries, trip)
     }
@@ -141,6 +156,10 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) {
         this.alerts = alerts
+    }
+
+    override fun setContextualTrip(upcomingTrip: UpcomingTrip?) {
+        this.contextualTrip = upcomingTrip
     }
 
     override fun setFilter(filter: TripDetailsPageFilter?) {
@@ -157,6 +176,7 @@ public class MockTripDetailsPageViewModel(
         TripDetailsPageViewModel.State(null, emptyMap(), null)
 ) : ITripDetailsPageViewModel {
     public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
+    public var onSetContextualTrip: (UpcomingTrip?) -> Unit = {}
     public var onSetFilter: (TripDetailsPageFilter?) -> Unit = {}
     public var onSetNow: (EasternTimeInstant?) -> Unit = {}
 
@@ -166,6 +186,10 @@ public class MockTripDetailsPageViewModel(
 
     override fun setAlerts(alerts: AlertsStreamDataResponse?) {
         onSetAlerts(alerts)
+    }
+
+    override fun setContextualTrip(upcomingTrip: UpcomingTrip?) {
+        onSetContextualTrip(upcomingTrip)
     }
 
     override fun setFilter(filter: TripDetailsPageFilter?) {
