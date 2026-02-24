@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
 import com.mbta.tid.mbta_app.AppVariant
+import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.fs.JsonPersistence
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
@@ -72,6 +73,7 @@ public fun repositoriesModule(repositories: IRepositories): Module {
         single<IPinnedRoutesRepository> { repositories.pinnedRoutes }
         single<IRailRouteShapeRepository> { repositories.railRouteShapes }
         single<IRouteStopsRepository> { repositories.routeStops }
+        single<ScheduleCache> { repositories.scheduleCache }
         single<ISchedulesRepository> { repositories.schedules }
         single<ISearchResultRepository> { repositories.searchResults }
         single<ISentryRepository> { repositories.sentry }

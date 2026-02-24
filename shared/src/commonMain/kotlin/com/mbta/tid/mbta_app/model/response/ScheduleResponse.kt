@@ -26,4 +26,13 @@ public data class ScheduleResponse(
     }
 
     override fun toString(): String = "[ScheduleResponse]"
+
+    public companion object {
+        public fun merge(schedules: List<ScheduleResponse>): ScheduleResponse {
+            return ScheduleResponse(
+                schedules.fold(emptyList()) { joined, next -> joined + next.schedules },
+                schedules.fold(emptyMap()) { joined, next -> joined + next.trips },
+            )
+        }
+    }
 }

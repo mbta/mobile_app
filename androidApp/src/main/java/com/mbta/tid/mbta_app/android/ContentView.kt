@@ -38,6 +38,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmToken
+import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -49,9 +50,11 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.datetime.plus
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.maplibre.spatialk.geojson.Position
@@ -65,6 +68,7 @@ fun ContentView(
     viewModel: ContentViewModel = koinViewModel(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     favoritesUsecases: FavoritesUsecases = koinInject(),
+    scheduleCache: ScheduleCache = koinInject(),
     subscriptionsRepository: ISubscriptionsRepository = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
@@ -120,7 +124,10 @@ fun ContentView(
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
 
-    LaunchedEffect(Unit) { mapViewModel.setViewportManager(viewportProvider) }
+    LaunchedEffect(Unit) {
+        mapViewModel.setViewportManager(viewportProvider)
+        scheduleCache.deleteStaleSchedules(EasternTimeInstant.now().serviceDate)
+    }
 
     LifecycleResumeEffect(null) {
         socket.attach()
