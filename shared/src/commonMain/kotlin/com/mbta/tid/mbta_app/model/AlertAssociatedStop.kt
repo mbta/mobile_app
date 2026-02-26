@@ -37,6 +37,8 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
 
             for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
                 val pattern = global.routePatterns[patternId] ?: continue
+                // If pattern is on the GL, ignore atypical routes
+                if (greenRoutes.contains(pattern.routeId) && !pattern.isTypical()) continue
                 relevantAlerts =
                     nullStopAlerts.filter { alert ->
                         alert.anyInformedEntity { entityMatcher(it, null, pattern) }
@@ -111,6 +113,8 @@ private fun getAlertStateByRoute(
     val patternsByMapRoute = mutableMapOf<MapStopRoute, List<RoutePattern>>()
     for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
         val pattern = global.routePatterns[patternId] ?: continue
+        // If pattern is on the GL, ignore atypical routes
+        if (greenRoutes.contains(pattern.routeId) && !pattern.isTypical()) continue
         val route = global.routes[pattern.routeId] ?: continue
         val mapRoute = MapStopRoute.matching(route) ?: continue
 
