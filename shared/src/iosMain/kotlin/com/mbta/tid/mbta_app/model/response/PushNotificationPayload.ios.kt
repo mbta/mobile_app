@@ -10,6 +10,8 @@ import kotlinx.serialization.json.decodeFromJsonElement
 public fun PushNotificationPayload.Companion.fromUserInfo(
     userInfo: Map<Any, Any?>
 ): PushNotificationPayload? {
+    val rawTitle = userInfo["title"] as? String ?: return null
+    val title: PushNotificationPayload.Title = json.decodeFromString(rawTitle)
     val rawSummary = userInfo["summary"] as? String ?: return null
     val summary: AlertSummary = json.decodeFromString(rawSummary)
     val alertId = userInfo["alert_id"] as? String ?: return null
@@ -20,5 +22,5 @@ public fun PushNotificationPayload.Companion.fromUserInfo(
         json.decodeFromJsonElement(JsonPrimitive(rawNotificationType))
     val rawSentAt = userInfo["sent_at"] as? String ?: return null
     val sentAt = Instant.parse(rawSentAt)
-    return PushNotificationPayload(summary, alertId, subscriptions, notificationType, sentAt)
+    return PushNotificationPayload(title, summary, alertId, subscriptions, notificationType, sentAt)
 }

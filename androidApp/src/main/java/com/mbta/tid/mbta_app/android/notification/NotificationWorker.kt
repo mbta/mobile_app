@@ -40,7 +40,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                 PendingIntent.FLAG_IMMUTABLE,
             )
 
-        val content = NotificationContent.build(applicationContext.resources, payload.summary)
+        val content = NotificationContent.build(applicationContext.resources, payload)
         val title = content.title
         val body = content.body
 
@@ -48,7 +48,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder =
             NotificationCompat.Builder(applicationContext, channelId)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.app_icon_monochrome)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)

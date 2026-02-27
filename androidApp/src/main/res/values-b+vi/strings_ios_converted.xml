@@ -232,6 +232,7 @@
     <string name="more_section_support_note_accessibility">711 với người gọi TTY; VRS với người gọi ASL</string>
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
+    <string name="multiple_routes">Nhiều tuyến đường</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>

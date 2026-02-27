@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.android.notification
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.junit4.createComposeRule
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -11,7 +10,9 @@ import androidx.compose.ui.text.withStyle
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
+import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import kotlin.test.assertEquals
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 
@@ -27,13 +28,20 @@ class NotificationContentTest {
                 result =
                     NotificationContent.build(
                         resources,
-                        AlertSummary(
-                            Alert.Effect.Shuttle,
-                            AlertSummary.Location.SuccessiveStops(
-                                startStopName = "Kenmore",
-                                endStopName = "Riverside",
+                        PushNotificationPayload(
+                            PushNotificationPayload.Title.BareLabel("Green Line D"),
+                            AlertSummary(
+                                Alert.Effect.Shuttle,
+                                AlertSummary.Location.SuccessiveStops(
+                                    startStopName = "Kenmore",
+                                    endStopName = "Riverside",
+                                ),
+                                AlertSummary.Timeframe.Tomorrow,
                             ),
-                            AlertSummary.Timeframe.Tomorrow,
+                            "alert",
+                            emptyList(),
+                            PushNotificationPayload.NotificationType.Notification,
+                            Instant.DISTANT_PAST,
                         ),
                     )
             }
@@ -43,7 +51,7 @@ class NotificationContentTest {
         val bold = SpanStyle(fontWeight = FontWeight.Bold)
         assertEquals(
             NotificationContent(
-                AnnotatedString("Shuttle", bold),
+                "Green Line D",
                 buildAnnotatedString {
                     withStyle(bold) { append("Shuttle buses") }
                     append(" from ")

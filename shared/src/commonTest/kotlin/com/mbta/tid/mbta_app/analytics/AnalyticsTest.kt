@@ -132,6 +132,7 @@ class AnalyticsTest {
         val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
         analytics.notificationReceived(
             PushNotificationPayload(
+                PushNotificationPayload.Title.BareLabel("Some Line"),
                 AlertSummary(Alert.Effect.Suspension),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
@@ -162,6 +163,7 @@ class AnalyticsTest {
         val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
         analytics.notificationClicked(
             PushNotificationPayload(
+                PushNotificationPayload.Title.BareLabel("Some Line"),
                 AlertSummary(Alert.Effect.Suspension),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),

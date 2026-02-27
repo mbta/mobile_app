@@ -18,6 +18,13 @@ import kotlinx.serialization.json.putJsonObject
 class PushNotificationPayloadTestAndroid {
     @Test
     fun `messageToWorkData works`() {
+        val title =
+            json.encodeToString(
+                buildJsonObject {
+                    put("type", "bare_label")
+                    put("label", "Red Line")
+                }
+            )
         val summary =
             json.encodeToString(
                 buildJsonObject {
@@ -41,6 +48,7 @@ class PushNotificationPayloadTestAndroid {
             )
         val messageData =
             mapOf(
+                Pair("title", title),
                 Pair("summary", summary),
                 Pair("alert_id", "alert"),
                 Pair("subscriptions", subscriptions),
@@ -50,6 +58,7 @@ class PushNotificationPayloadTestAndroid {
         val workData = PushNotificationPayload.messageToWorkData(messageData)
         assertEquals(
             workDataOf(
+                "title" to title,
                 "summary" to summary,
                 "alert_id" to "alert",
                 "subscriptions" to subscriptions,
@@ -62,6 +71,8 @@ class PushNotificationPayloadTestAndroid {
 
     @Test
     fun `fromWorkData works`() {
+        val title: PushNotificationPayload.Title =
+            PushNotificationPayload.Title.BareLabel("Red Line")
         val summary =
             AlertSummary(
                 Alert.Effect.StationClosure,
@@ -73,6 +84,7 @@ class PushNotificationPayloadTestAndroid {
         val sentAt = Clock.System.now()
         val workData =
             workDataOf(
+                "title" to json.encodeToString(title),
                 "summary" to json.encodeToString(summary),
                 "alert_id" to alertId,
                 "subscriptions" to json.encodeToString(subscriptions),
@@ -82,6 +94,7 @@ class PushNotificationPayloadTestAndroid {
         val payload = PushNotificationPayload.fromWorkData(workData)
         assertEquals(
             PushNotificationPayload(
+                title,
                 summary,
                 alertId,
                 subscriptions,
