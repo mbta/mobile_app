@@ -34,6 +34,8 @@ public data class PushNotificationPayload(
         public data class ModeLabel(val label: String, val mode: RouteType) : Title()
 
         @Serializable @SerialName("multiple_routes") public data object MultipleRoutes : Title()
+
+        @Serializable public data class Unknown(val fallback: Title) : Title()
     }
 
     @Serializable

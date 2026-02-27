@@ -50,6 +50,22 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         print("Failed to register remote notifications: \(error)")
     }
 
+    private static func getTitle(_ title: PushNotificationPayload.Title) -> String {
+        switch onEnum(of: title) {
+        case let .bareLabel(title): title.label
+        case let .modeLabel(title): String(
+                format: NSLocalizedString("%@ %@", comment: ""),
+                title.label,
+                title.mode.typeText(isOnly: true)
+            )
+        case .multipleRoutes: NSLocalizedString(
+                "Multiple routes",
+                comment: "Title displayed in notification for alert that applies to multiple subscribed routes"
+            )
+        case let .unknown(title): getTitle(title.fallback)
+        }
+    }
+
     func application(
         _: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -62,18 +78,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
             let summary = payload.summary
             let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
             let content = UNMutableNotificationContent()
-            content.title = switch onEnum(of: payload.title) {
-            case let .bareLabel(title): title.label
-            case let .modeLabel(title): String(
-                    format: NSLocalizedString("%@ %@", comment: ""),
-                    title.label,
-                    title.mode.typeText(isOnly: true)
-                )
-            case .multipleRoutes: NSLocalizedString(
-                    "Multiple routes",
-                    comment: "Title displayed in notification for alert that applies to multiple subscribed routes"
-                )
-            }
+            content.title = Self.getTitle(payload.title)
             // https://forums.swift.org/t/attributedstring-to-string/61667/2
             content.body = String(formattedAlert.alertCardMajorBody.characters[...])
             content.userInfo = [
