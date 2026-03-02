@@ -531,7 +531,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.StopClosure
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in stops) {
+                for (stop in successiveStops) {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -550,7 +550,10 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
+                AlertSummary.Location.SuccessiveStops(
+                    successiveStops.first().name,
+                    successiveStops.last().name,
+                ),
                 null,
             ),
             alertSummary,
@@ -580,8 +583,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.StopClosure
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in stops) {
-
+                for (stop in successiveStops) {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -858,9 +860,15 @@ class AlertSummaryTest {
                 name = "Saint Mary's Street"
                 childStop { id = "70212" }
             }
+        val cBranchTerminal =
+            objects.stop {
+                name = "Cleveland Circle"
+                childStop { id = "70237" }
+            }
 
         val route =
             objects.route {
+                id = "Green-C"
                 lineId = "line-Green"
                 directionNames = listOf("Westbound", "Eastbound")
                 directionDestinations = listOf("", "Park St & North")
@@ -869,14 +877,14 @@ class AlertSummaryTest {
         val cBranch =
             objects.routePattern(route) {
                 directionId = 1
-                representativeTrip { stopIds = listOf("70212", "70150") }
+                representativeTrip { stopIds = listOf("70237", "70212", "70150") }
             }
         val alert =
             objects.alert {
                 effect = Alert.Effect.StopClosure
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
-                for (stop in objects.stops.values) {
+                for (stopId in listOf("70150", "70148", "70212")) {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -884,7 +892,7 @@ class AlertSummaryTest {
                             Alert.InformedEntity.Activity.Ride,
                         ),
                         route = route.id.idText,
-                        stop = stop.id,
+                        stop = stopId,
                     )
                 }
             }
@@ -1190,7 +1198,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 updatedAt = now.minus(1.minutes)
-                for (stop in stops) {
+                for (stop in successiveStops) {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -1209,7 +1217,10 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
+                AlertSummary.Location.SuccessiveStops(
+                    successiveStops.first().name,
+                    successiveStops.last().name,
+                ),
                 null,
                 null,
                 AlertSummary.Update.Active,
@@ -1239,7 +1250,7 @@ class AlertSummaryTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 activePeriod(now.minus(1.hours), now.minus(5.minutes))
-                for (stop in stops) {
+                for (stop in successiveStops) {
                     informedEntity(
                         listOf(
                             Alert.InformedEntity.Activity.Board,
@@ -1259,10 +1270,292 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary(
                 alert.effect,
-                AlertSummary.Location.SuccessiveStops(firstStop.name, lastStop.name),
+                AlertSummary.Location.SuccessiveStops(
+                    successiveStops.first().name,
+                    successiveStops.last().name,
+                ),
                 null,
                 null,
                 AlertSummary.Update.AllClear,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with whole route entity`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+
+        val route = objects.route { longName = "Route Label" }
+        val pattern = objects.routePattern(route) {}
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                durationCertainty = Alert.DurationCertainty.Unknown
+                activePeriod(now.minus(1.hours), null)
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    routeType = route.type,
+                )
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = AlertSummary.Location.WholeRoute(route.label, route.type),
+                timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with stop entities for every stop on a route`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+
+        val route = objects.route { longName = "Route Label" }
+        val stopIds = listOf("1", "2", "3", "4")
+        stopIds.forEach { objects.stop { id = it } }
+        val trip = objects.trip { this.stopIds = stopIds }
+        val pattern =
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTripId = trip.id
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                durationCertainty = Alert.DurationCertainty.Unknown
+                activePeriod(now.minus(1.hours), null)
+                stopIds.forEach {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        route = route.id.idText,
+                        routeType = route.type,
+                        stop = it,
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                location = AlertSummary.Location.WholeRoute(route.label, route.type),
+                timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with whole green line alert`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant.now()
+
+        val routes =
+            greenRoutes.map {
+                objects.route {
+                    id = it.toString()
+                    type = RouteType.LIGHT_RAIL
+                    lineId = "line-Green"
+                }
+            }
+        val patterns =
+            routes.map { objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical } }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), null)
+                routes.forEach {
+                    informedEntity(
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                        route = it.id.idText,
+                        routeType = it.type,
+                    )
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                "stopId",
+                0,
+                patterns.filter { it.routeId.idText == "Green-E" },
+                now,
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.WholeRoute("Green Line", RouteType.LIGHT_RAIL),
+                null,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with stop entities for every stop on the green line`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant.now()
+
+        val routes =
+            greenRoutes.map {
+                objects.route {
+                    id = it.toString()
+                    type = RouteType.LIGHT_RAIL
+                    lineId = "line-Green"
+                }
+            }
+        val stops: Map<String, List<Stop>> =
+            (greenRoutes.map { it.idText } + "trunk").associateWith { route ->
+                listOf("1", "2", "3", "4").map { objects.stop { id = "$route$it" } }
+            }
+        val patterns =
+            routes.map {
+                val stopList: List<Stop> =
+                    (stops[it.id.idText] ?: emptyList()) + (stops["trunk"] ?: emptyList())
+                objects.routePattern(it) {
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { stopIds = stopList.map { stop -> stop.id } }
+                }
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), null)
+                stops.forEach { (id, stops) ->
+                    if (id == "trunk") {
+                        routes.forEach { route ->
+                            stops.forEach { stop ->
+                                informedEntity(
+                                    listOf(
+                                        Alert.InformedEntity.Activity.Board,
+                                        Alert.InformedEntity.Activity.Exit,
+                                        Alert.InformedEntity.Activity.Ride,
+                                    ),
+                                    route = route.id.idText,
+                                    stop = stop.id,
+                                )
+                            }
+                        }
+                    } else {
+                        stops.forEach { stop ->
+                            informedEntity(
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                                route = id,
+                                stop = stop.id,
+                            )
+                        }
+                    }
+                }
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                "stopId",
+                0,
+                patterns.filter { it.routeId.idText == "Green-E" },
+                now,
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.WholeRoute("Green Line", RouteType.LIGHT_RAIL),
+                null,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `summary with stop entities for single green line branch`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant.now()
+
+        val routes =
+            greenRoutes.map {
+                objects.route {
+                    id = it.toString()
+                    longName = it.toString()
+                    type = RouteType.LIGHT_RAIL
+                    lineId = "line-Green"
+                }
+            }
+
+        val patterns =
+            routes.map { objects.routePattern(it) { typicality = RoutePattern.Typicality.Typical } }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), null)
+
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = "Green-C",
+                    routeType = RouteType.LIGHT_RAIL,
+                )
+            }
+
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                "stopId",
+                0,
+                patterns.filter { it.routeId.idText == "Green-E" },
+                now,
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary(
+                alert.effect,
+                AlertSummary.Location.WholeRoute("Green-C", RouteType.LIGHT_RAIL),
+                null,
             ),
             alertSummary,
         )

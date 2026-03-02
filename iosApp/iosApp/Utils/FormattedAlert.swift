@@ -119,6 +119,30 @@ struct FormattedAlert: Equatable {
                     location.startStopName,
                     location.endStopName)
 
+            case let .wholeRoute(location):
+                alertSummary.effect == .shuttle ?
+                    String(format:
+                        NSLocalizedString(
+                            " replacing **%1$@**",
+                            comment: """
+                            Alert summary location for an entire route with shuttle service in the format of \
+                            " replacing [RouteLabel]" ex. " replacing [Green Line C]" or " replacing \
+                            [Orangle Line]". The leading space should be retained, because this will be added \
+                            in the %2 position of the "**%1$@**%2$@%3$@" alert summary template which may or \
+                            may not include a location fragment.
+                            """
+                        ), location.modeLabel) :
+                    String(format:
+                        NSLocalizedString(
+                            " on **%1$@**",
+                            comment: """
+                            Alert summary location for an entire route in the format of " on [RouteLabel]" \
+                            ex. " on [Green Line C]" or " on [1 bus]". The leading space should be retained, \
+                            because this will be added in the %2 position of the "**%1$@**%2$@%3$@" alert \
+                            summary template which may or may not include a location fragment.
+                            """
+                        ), location.modeLabel)
+
             case .unknown: ""
             }
         } else {
@@ -380,5 +404,11 @@ struct FormattedAlert: Equatable {
             self.text = text
             self.accessibilityLabel = accessibilityLabel
         }
+    }
+}
+
+extension AlertSummary.LocationWholeRoute {
+    var modeLabel: String {
+        routeType == .bus ? String("\(routeLabel) bus") : routeLabel
     }
 }

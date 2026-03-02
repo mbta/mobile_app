@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.collections.get
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -46,6 +47,13 @@ public data class AlertSummary(
         public data class SuccessiveStops(
             @SerialName("start_stop_name") val startStopName: String,
             @SerialName("end_stop_name") val endStopName: String,
+        ) : Location()
+
+        @Serializable
+        @SerialName("whole_route")
+        public data class WholeRoute(
+            @SerialName("route_label") val routeLabel: String,
+            @SerialName("route_type") val routeType: RouteType,
         ) : Location()
 
         @Serializable public data object Unknown : Location()
@@ -141,6 +149,9 @@ public data class AlertSummary(
     }
 
     public companion object {
+        private const val GL_ID = "line-Green"
+        private const val GL_LABEL = "Green Line"
+
         internal suspend fun summarizing(
             alert: Alert,
             stopId: String,
@@ -224,20 +235,57 @@ public data class AlertSummary(
             global: GlobalResponse,
         ): Location? {
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
+
+            val typicalRoutes =
+                patterns
+                    .mapNotNull { if (it.isTypical()) global.routes[it.routeId] else null }
+                    .distinct()
+            val isGL = typicalRoutes.isNotEmpty() && typicalRoutes.all { it.id in greenRoutes }
+
+            // If the route is on the GL, check if the alert applies to the entirety of every
+            // branch or an entire single branch (not necessarily a provided branch)
+            if (isGL) {
+                val affectedBranches =
+                    greenRoutes.filter {
+                        alertAppliesToWholeGLRoute(alert, it, directionId, global)
+                    }
+                if (affectedBranches.containsAll(greenRoutes)) {
+                    return Location.WholeRoute(GL_LABEL, RouteType.LIGHT_RAIL)
+                }
+                affectedBranches.singleOrNull()?.let {
+                    val route = global.getRoute(it) ?: return@let
+                    return Location.WholeRoute(route.label, route.type)
+                }
+            }
+
+            // Check if an informed entity applies to the entire provided route
+            routes.singleOrNull()?.let {
+                if (matchesWholeRoute(alert, it.id, directionId))
+                    return Location.WholeRoute(it.label, it.type)
+            }
+
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
 
             if (affectedStops.size == 1) {
                 return Location.SingleStop(affectedStops.first().name)
             }
 
+            // Map each pattern to its list of stops affected by this alert
+            val affectedPatternStops =
+                mapPatternsToAffectedStops(alert, stopId, directionId, patterns, routes, global)
+
+            // If every affected stop on the patterns are specified in the informed entities,
+            // return the whole route location
+            if (matchesAllStopsOnPatterns(affectedPatternStops, global)) {
+                routes.singleOrNull()?.let {
+                    return Location.WholeRoute(it.label, it.type)
+                }
+            }
+
             // Never show multiple stops for bus
             if (routes.any { !it.isShuttle && it.type == RouteType.BUS }) {
                 return null
             }
-
-            // Map each pattern to its list of stops affected by this alert
-            val affectedPatternStops =
-                mapPatternsToAffectedStops(alert, stopId, directionId, patterns, routes, global)
 
             // Compare the first stop list to all the others to determine if all patterns share the
             // same disrupted stops, or if multiple branches are disrupted
@@ -290,7 +338,7 @@ public data class AlertSummary(
                     }
                     .plus(
                         // Special casing to properly show when alerts affect multiple GL branches
-                        if (routes.any { it.lineId == Line.Id("line-Green") }) {
+                        if (routes.any { it.lineId == Line.Id(GL_ID) }) {
                             val directionStops =
                                 if (directionId == 0) westboundBranches else eastboundBranches
                             // If the provided stop is on a branch, don't take any parallel
@@ -349,6 +397,57 @@ public data class AlertSummary(
                     }
                 }
             else patternStops
+        }
+
+        private fun matchesWholeRoute(alert: Alert, routeId: Route.Id, directionId: Int): Boolean =
+            alert.anyInformedEntity {
+                it.appliesTo(directionId = directionId, routeId = routeId) &&
+                    it.trip == null &&
+                    it.stop == null &&
+                    it.facility == null
+            }
+
+        private fun matchesAllStopsOnPatterns(
+            patternStops: Map<RoutePattern, List<String>>,
+            global: GlobalResponse,
+        ): Boolean =
+            patternStops.isNotEmpty() &&
+                patternStops.all { (pattern, affectedStops) ->
+                    val trip = global.trips[pattern.representativeTripId] ?: return@all false
+                    return@all trip.stopIds?.all {
+                        global.stops[it]?.resolveParent(global)?.id in affectedStops
+                    } ?: false
+                }
+
+        private fun alertAppliesToWholeGLRoute(
+            alert: Alert,
+            routeId: Route.Id,
+            directionId: Int,
+            global: GlobalResponse,
+        ): Boolean {
+            if (!routeId.idText.startsWith("Green-"))
+                throw RuntimeException(
+                    "alertAppliesToWholeGLRoute should never be called for a non-GL route"
+                )
+
+            if (matchesWholeRoute(alert, routeId, directionId)) return true
+            val glRoute = global.routes[routeId] ?: return false
+            val glPatterns =
+                global.routePatterns.values.filter {
+                    it.typicality == RoutePattern.Typicality.Typical && it.routeId == routeId
+                }
+            // The blank stop ID is fine because the ID is only used to check if the stop is on a GL
+            // branch, and here we specifically don't care about branching
+            val affectedPatternStops =
+                mapPatternsToAffectedStops(
+                    alert,
+                    "",
+                    directionId,
+                    glPatterns,
+                    listOf(glRoute),
+                    global,
+                )
+            return matchesAllStopsOnPatterns(affectedPatternStops, global)
         }
 
         private fun alertRecurrence(alert: Alert, atTime: EasternTimeInstant): Recurrence? {

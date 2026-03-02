@@ -1601,34 +1601,36 @@ class RouteCardDataTest {
                 )
                 severity = 5
             }
-        objects.alert {
-            activePeriod(now - 15.minutes, null)
-            effect = Alert.Effect.Delay
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = "Green-C",
-                routeType = RouteType.LIGHT_RAIL,
-            )
-            severity = 5
-        }
-        objects.alert {
-            activePeriod(now - 15.minutes, null)
-            effect = Alert.Effect.Delay
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = "Green-E",
-                routeType = RouteType.LIGHT_RAIL,
-            )
-            severity = 5
-        }
+        val alertC =
+            objects.alert {
+                activePeriod(now - 15.minutes, null)
+                effect = Alert.Effect.Delay
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = "Green-C",
+                    routeType = RouteType.LIGHT_RAIL,
+                )
+                severity = 5
+            }
+        val alertE =
+            objects.alert {
+                activePeriod(now - 15.minutes, null)
+                effect = Alert.Effect.Delay
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = "Green-E",
+                    routeType = RouteType.LIGHT_RAIL,
+                )
+                severity = 5
+            }
 
         val globalData = GlobalResponse(objects)
 
@@ -1673,7 +1675,7 @@ class RouteCardDataTest {
                                                 allDataLoaded = true,
                                                 hasSchedulesTodayByPattern =
                                                     mapOf(greenBWestbound.id to false),
-                                                alertsDownstream = emptyList(),
+                                                alertsDownstream = listOf(alertC, alertE),
                                                 context = context,
                                             )
                                     ),
