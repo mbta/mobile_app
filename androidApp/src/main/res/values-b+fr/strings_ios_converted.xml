@@ -479,10 +479,10 @@
     <string name="vehicle_schedule_minutes_other">et dans %1$d min est prévu</string>
     <string name="vehicle_schedule_time_first">%1$s arrivant à %2$s est prévu</string>
     <string name="vehicle_schedule_time_other">et à %1$s est prévu</string>
-    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "fr")</string>
-    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "fr")</string>
-    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "fr")</string>
-    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "fr")</string>
+    <string name="vehicle_shuttled_first">%1$s arrivant à %2$s remplacé par une navette</string>
+    <string name="vehicle_shuttled_other">et à %1$s remplacé par une navette</string>
+    <string name="vehicle_skipped_first">%1$s arrivant à %2$s ignoré</string>
+    <string name="vehicle_skipped_other">et à %1$s ignoré</string>
     <string name="view_details">Voir les détails</string>
     <string name="waiting_to_depart">En attente de départ</string>
     <string name="weather">Météo</string>

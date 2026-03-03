@@ -1778,43 +1778,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"es\")"
+            "value" : "%1$@ llegando a %2$@ reemplazado por autobús lanzadera"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"fr\")"
+            "value" : "%1$@ arrivant à %2$@ remplacé par une navette"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"ht\")"
+            "value" : "Navèt ranplase %1$@ k ap rive a %2$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"pt-BR\")"
+            "value" : "%1$@ chegando em %2$@ substituído por ônibus de traslado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"vi\")"
+            "value" : "%1$@ đến %2$@ được thay thế bằng xe buýt đưa đón"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"zh-CN\")"
+            "value" : "%1$@ 到达 %2$@ 时由接驳巴士代替"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ replaced by shuttle bus\", \"en\", \"zh-TW\")"
+            "value" : "%1$@ 到達 %2$@ 時由接駁巴士代替"
           }
         }
       }
@@ -1884,43 +1884,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"es\")"
+            "value" : "%1$@ llegando a %2$@ omitido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"fr\")"
+            "value" : "%1$@ arrivant à %2$@ ignoré"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"ht\")"
+            "value" : "%1$@ rive nan %2$@ sote"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"pt-BR\")"
+            "value" : "%1$@ chegando em %2$@ pulado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"vi\")"
+            "value" : "%1$@ đến %2$@ đã bỏ qua"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"zh-CN\")"
+            "value" : "%1$@ 到达 %2$@ 时跳过"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"%1$@ arriving at %2$@ skipped\", \"en\", \"zh-TW\")"
+            "value" : "%1$@ 到達 %2$@ 時跳過"
           }
         }
       }
@@ -5377,43 +5377,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"es\")"
+            "value" : "y en %@ reemplazado por autobús lanzadera"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"fr\")"
+            "value" : "et à %@ remplacé par une navette"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"ht\")"
+            "value" : "epi nan %@ ranplase pa yon bis navèt"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"pt-BR\")"
+            "value" : "e em %@ substituído por ônibus de transporte"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"vi\")"
+            "value" : "và tại %@ được thay thế bằng xe buýt đưa đón"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"zh-CN\")"
+            "value" : "并且 %@ 处已由接驳巴士取代"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ replaced by shuttle bus\", \"en\", \"zh-TW\")"
+            "value" : "且 %@ 處已由接駁巴士取代"
           }
         }
       }
@@ -5471,43 +5471,43 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"es\")"
+            "value" : "y en %@ se saltó"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"fr\")"
+            "value" : "et à %@ ignoré"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"ht\")"
+            "value" : "epi nan %@ sote"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"pt-BR\")"
+            "value" : "e em %@ pulado"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"vi\")"
+            "value" : "và tại %@ đã bỏ qua"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"zh-CN\")"
+            "value" : "并且跳过了 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "=GOOGLETRANSLATE(\"and at %@ skipped\", \"en\", \"zh-TW\")"
+            "value" : "並且跳過了 %@"
           }
         }
       }

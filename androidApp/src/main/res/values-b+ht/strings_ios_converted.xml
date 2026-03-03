@@ -494,10 +494,10 @@
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
     <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
-    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "ht")</string>
-    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "ht")</string>
-    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "ht")</string>
-    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "ht")</string>
+    <string name="vehicle_shuttled_first">Navèt ranplase %1$s k ap rive a %2$s</string>
+    <string name="vehicle_shuttled_other">epi nan %1$s ranplase pa yon bis navèt</string>
+    <string name="vehicle_skipped_first">%1$s rive nan %2$s sote</string>
+    <string name="vehicle_skipped_other">epi nan %1$s sote</string>
     <string name="view_details">Gade detay yo</string>
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>

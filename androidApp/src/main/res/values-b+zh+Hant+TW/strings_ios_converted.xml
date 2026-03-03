@@ -469,10 +469,10 @@
     <string name="vehicle_schedule_minutes_other">下一趟車預定將在%1$d分鐘內抵達</string>
     <string name="vehicle_schedule_time_first">%1$s預定於%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟車預定將於%1$s到站</string>
-    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "zh-TW")</string>
-    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "zh-TW")</string>
-    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "zh-TW")</string>
-    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "zh-TW")</string>
+    <string name="vehicle_shuttled_first">%1$s 到達 %2$s 時由接駁巴士代替</string>
+    <string name="vehicle_shuttled_other">且 %1$s 處已由接駁巴士取代</string>
+    <string name="vehicle_skipped_first">%1$s 到達 %2$s 時跳過</string>
+    <string name="vehicle_skipped_other">並且跳過了 %1$s</string>
     <string name="view_details">查看詳情</string>
     <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>

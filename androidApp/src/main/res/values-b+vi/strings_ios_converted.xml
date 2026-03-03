@@ -469,10 +469,10 @@
     <string name="vehicle_schedule_minutes_other">và sau %1$d phút nữa theo lịch trình</string>
     <string name="vehicle_schedule_time_first">%1$s sẽ đến lúc %2$s theo lịch trình</string>
     <string name="vehicle_schedule_time_other">và lúc %1$s theo lịch trình</string>
-    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "vi")</string>
-    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "vi")</string>
-    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "vi")</string>
-    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "vi")</string>
+    <string name="vehicle_shuttled_first">%1$s đến %2$s được thay thế bằng xe buýt đưa đón</string>
+    <string name="vehicle_shuttled_other">và tại %1$s được thay thế bằng xe buýt đưa đón</string>
+    <string name="vehicle_skipped_first">%1$s đến %2$s đã bỏ qua</string>
+    <string name="vehicle_skipped_other">và tại %1$s đã bỏ qua</string>
     <string name="view_details">Xem chi tiết</string>
     <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
