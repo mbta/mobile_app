@@ -26,6 +26,8 @@
     <string name="alert_summary_location_single">\u0020在&lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b>站</string>
     <string name="alert_summary_location_successive">\u0020从&lt;b>%1$s&lt;/b>到&lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route">\u0020在 &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route_shuttle">\u0020替换 &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020直到 %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020直到 %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020直至服务结束</string>
