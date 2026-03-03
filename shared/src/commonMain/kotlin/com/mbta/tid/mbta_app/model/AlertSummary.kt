@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.collections.get
-import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
@@ -476,18 +475,11 @@ public data class AlertSummary(
             }
         }
 
-        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Update? {
-            val updatedAt = alert.updatedAt
-            val started = alert.currentPeriod(atTime)?.start
-            val updatedAfterActive = started?.let { updatedAt > it } ?: false
-            val fiveMinutesAgo = atTime.minus(5.minutes)
-            val updatedWithinFiveMinutes = updatedAt in fiveMinutesAgo..atTime
-            return when {
-                updatedAfterActive && updatedWithinFiveMinutes -> Update.Active
+        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Update? =
+            when {
                 alert.allClear(atTime) -> Update.AllClear
                 else -> null
             }
-        }
 
         // The first value in these pairs is the list of trunk stops for each route, including a few
         // minor child stop differences at some stops, like Park and Kenmore. Stops on branches on

@@ -1207,7 +1207,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with active update`() = runBlocking {
+    fun `summary with active update does not display update message`() = runBlocking {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
 
@@ -1262,7 +1262,7 @@ class AlertSummaryTest {
                 ),
                 null,
                 null,
-                AlertSummary.Update.Active,
+                null,
             ),
             alertSummary,
         )
