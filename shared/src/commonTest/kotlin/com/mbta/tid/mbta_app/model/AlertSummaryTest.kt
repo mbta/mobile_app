@@ -1354,7 +1354,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertEquals(
             AlertSummary(
@@ -1401,7 +1409,15 @@ class AlertSummaryTest {
             }
 
         val alertSummary =
-            AlertSummary.summarizing(alert, "", 0, listOf(pattern), now, GlobalResponse(objects))
+            AlertSummary.summarizing(
+                alert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
 
         assertEquals(
             AlertSummary(
@@ -1455,6 +1471,7 @@ class AlertSummaryTest {
                 0,
                 patterns.filter { it.routeId.idText == "Green-E" },
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -1539,6 +1556,7 @@ class AlertSummaryTest {
                 0,
                 patterns.filter { it.routeId.idText == "Green-E" },
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
@@ -1595,6 +1613,7 @@ class AlertSummaryTest {
                 0,
                 patterns.filter { it.routeId.idText == "Green-E" },
                 now,
+                null,
                 GlobalResponse(objects),
             )
 
