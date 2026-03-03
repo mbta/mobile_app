@@ -63,6 +63,11 @@ fun TripDetailsPage(
     val accents = route?.let { TripRouteAccents(it) } ?: TripRouteAccents.default
 
     LaunchedEffect(allAlerts) { tripDetailsPageVM.setAlerts(allAlerts) }
+    LaunchedEffect(filter, tripDetailsState) {
+        tripDetailsPageVM.setContextualTrip(
+            tripDetailsState.stopList?.contextualTrip(filter, global)
+        )
+    }
     LaunchedEffect(filter) { tripDetailsPageVM.setFilter(filter) }
     LaunchedEffect(tripDetailsState.awaitingPredictionsAfterBackground) {
         errorBannerViewModel.setIsLoadingWhenPredictionsStale(

@@ -313,7 +313,14 @@ class StopDetailsViewTest {
                     mapOf(
                         alert.id to
                             runBlocking {
-                                alert.summary(stop.id, 0, listOf(routePatternOne), now, global)
+                                alert.summary(
+                                    stop.id,
+                                    0,
+                                    listOf(routePatternOne),
+                                    now,
+                                    null,
+                                    global,
+                                )
                             }
                     ),
                 )
@@ -383,7 +390,14 @@ class StopDetailsViewTest {
                     mapOf(
                         alert.id to
                             runBlocking {
-                                alert.summary(stop.id, 0, listOf(routePatternOne), now, global)
+                                alert.summary(
+                                    stop.id,
+                                    0,
+                                    listOf(routePatternOne),
+                                    now,
+                                    null,
+                                    global,
+                                )
                             }
                     ),
                 )

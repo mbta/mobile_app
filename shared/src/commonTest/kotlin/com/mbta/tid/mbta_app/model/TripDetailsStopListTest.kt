@@ -982,6 +982,111 @@ class TripDetailsStopListTest {
     }
 
     @Test
+    fun `contextualTrip distinguishes duplicate stop IDs by stop sequence`() = test {
+        val routeId = Route.Id("route")
+        val trip = trip { this.routeId = routeId.idText }
+        val target10 =
+            entry(
+                "A",
+                10,
+                schedule = schedule("A", 10, routeId),
+                prediction = prediction("A", 10, routeId),
+            )
+        val target40 =
+            entry(
+                "A",
+                40,
+                schedule = schedule("A", 40, routeId),
+                prediction = prediction("A", 40, routeId),
+            )
+        val list = stopListOf(target10, entry("B", 20), entry("C", 30), target40)
+
+        assertEquals(
+            UpcomingTrip(
+                trip,
+                target10.schedule,
+                target10.prediction,
+                target10.predictionStop,
+                target10.vehicle,
+            ),
+            list.contextualTrip(
+                TripDetailsPageFilter(trip.id, null, routeId, list.trip.directionId, "A", 10),
+                globalData(),
+            ),
+        )
+        assertEquals(
+            UpcomingTrip(
+                trip,
+                target40.schedule,
+                target40.prediction,
+                target40.predictionStop,
+                target40.vehicle,
+            ),
+            list.contextualTrip(
+                TripDetailsPageFilter(trip.id, null, routeId, list.trip.directionId, "A", 40),
+                globalData(),
+            ),
+        )
+    }
+
+    @Test
+    fun `contextualTrip uses last copy if stop sequence not found`() = test {
+        val routeId = Route.Id("route")
+        val trip = trip { this.routeId = routeId.idText }
+        val target =
+            entry(
+                "A",
+                998,
+                schedule = schedule("A", 998, routeId),
+                prediction = prediction("A", 998, routeId),
+            )
+        val list = stopListOf(entry("A", 996), entry("C", 997), target, entry("B", 999))
+
+        assertEquals(
+            UpcomingTrip(
+                trip,
+                target.schedule,
+                target.prediction,
+                target.predictionStop,
+                target.vehicle,
+            ),
+            list.contextualTrip(
+                TripDetailsPageFilter(trip.id, null, routeId, trip.directionId, "A", 3),
+                globalData(),
+            ),
+        )
+    }
+
+    @Test
+    fun `contextualTrip accepts siblings`() = test {
+        val routeId = Route.Id("route")
+        val trip = trip { this.routeId = routeId.idText }
+        val target =
+            entry(
+                "B1",
+                20,
+                schedule = schedule("B1", 20, routeId),
+                prediction = prediction("B1", 20, routeId),
+            )
+        val list = stopListOf(entry("A1", 10), target, entry("C1", 30))
+        stop("B2")
+
+        assertEquals(
+            UpcomingTrip(
+                trip,
+                target.schedule,
+                target.prediction,
+                target.predictionStop,
+                target.vehicle,
+            ),
+            list.contextualTrip(
+                TripDetailsPageFilter(trip.id, null, routeId, trip.directionId, "B2", 20),
+                globalData(),
+            ),
+        )
+    }
+
+    @Test
     fun `Entry format displays prediction`() = test {
         val route = objects.route { type = RouteType.HEAVY_RAIL }
         val trip = trip { routeId = route.id.idText }

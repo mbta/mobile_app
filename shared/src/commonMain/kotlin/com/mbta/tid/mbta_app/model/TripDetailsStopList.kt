@@ -136,6 +136,20 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
         val isTruncatedByLastAlert: Boolean = false,
     )
 
+    public fun contextualTrip(
+        filter: TripDetailsPageFilter,
+        global: GlobalResponse?,
+    ): UpcomingTrip? {
+        val entry = splitForTarget(filter.stopId, filter.stopSequence, global).targetStop
+        return UpcomingTrip(
+            trip,
+            entry?.schedule,
+            entry?.prediction,
+            entry?.predictionStop,
+            entry?.vehicle,
+        )
+    }
+
     private data class WorkingEntry(
         val stopId: String,
         val stopSequence: Int,
