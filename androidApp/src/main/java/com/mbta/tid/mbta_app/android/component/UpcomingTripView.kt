@@ -111,30 +111,29 @@ fun UpcomingTripView(
 
                 is TripInstantDisplay.Hidden -> {}
                 is TripInstantDisplay.Skipped ->
-                    state.trip.scheduledTime?.let {
-                        Row(
-                            modifier
-                                .alpha(dimmedAlpha)
-                                .semantics { contentDescription = tripDescription }
-                                .placeholderIfLoading(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
-                        ) {
-                            Text(
-                                stringResource(R.string.stop_skipped),
-                                color = colorResource(R.color.deemphasized),
-                                textAlign = TextAlign.End,
-                                style = Typography.footnote,
-                            )
-                            Text(
-                                it.formattedTime(),
-                                color = colorResource(R.color.deemphasized),
-                                textDecoration = TextDecoration.LineThrough,
-                                textAlign = TextAlign.End,
-                                style = Typography.footnoteSemibold,
-                            )
-                        }
+                    Row(
+                        modifier
+                            .alpha(dimmedAlpha)
+                            .semantics { contentDescription = tripDescription }
+                            .placeholderIfLoading(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                    ) {
+                        Text(
+                            stringResource(R.string.stop_skipped),
+                            color = colorResource(R.color.deemphasized),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnote,
+                        )
+                        Text(
+                            state.trip.scheduledTime.formattedTime(),
+                            color = colorResource(R.color.deemphasized),
+                            textDecoration = TextDecoration.LineThrough,
+                            textAlign = TextAlign.End,
+                            style = Typography.footnoteSemibold,
+                        )
                     }
+
                 is TripInstantDisplay.Boarding ->
                     WithStatusIndicators(
                         modifier,
