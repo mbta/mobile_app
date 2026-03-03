@@ -13,6 +13,7 @@ import kotlin.test.assertNotEquals
 import kotlin.test.assertNull
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 
 class UpcomingTripTest {
     class DisplayTest {
@@ -62,6 +63,32 @@ class UpcomingTripTest {
                         },
                     )
                     .display(EasternTimeInstant.now(), subway(), anyContext(), lastTrip),
+            )
+        }
+
+        @Test
+        fun `scheduled trip cancelled`() = parametricTest {
+            val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
+            assertEquals(
+                TripInstantDisplay.Cancelled(now + 15.minutes),
+                UpcomingTrip(
+                        trip {},
+                        schedule { departureTime = now + 15.minutes },
+                        prediction {
+                            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                        },
+                    )
+                    .display(
+                        now,
+                        anyEnumValueExcept(
+                            RouteType.LIGHT_RAIL,
+                            RouteType.HEAVY_RAIL,
+                            RouteType.BUS,
+                        ),
+                        anyContext(),
+                        lastTrip,
+                    ),
             )
         }
 
@@ -282,6 +309,52 @@ class UpcomingTripTest {
         }
 
         @Test
+        fun `scheduled trip shuttle`() = parametricTest {
+            val objects = ObjectCollectionBuilder()
+            val now = EasternTimeInstant.now()
+            val lastTrip = anyBoolean()
+            val stop = objects.stop()
+            val trip = objects.trip()
+            val route = objects.route()
+            val shuttle =
+                objects.alert {
+                    effect = Alert.Effect.Shuttle
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities =
+                                    listOf(
+                                        Alert.InformedEntity.Activity.Board,
+                                        Alert.InformedEntity.Activity.Exit,
+                                        Alert.InformedEntity.Activity.Ride,
+                                    ),
+                                directionId = 0,
+                                route = route.id,
+                                routeType = RouteType.COMMUTER_RAIL,
+                                stop = stop.id,
+                                trip = trip.id,
+                            )
+                        )
+                }
+            assertEquals(
+                TripInstantDisplay.Shuttle(now + 15.minutes),
+                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }, prediction {})
+                    .display(
+                        now,
+                        anyEnumValueExcept(
+                            RouteType.LIGHT_RAIL,
+                            RouteType.HEAVY_RAIL,
+                            RouteType.BUS,
+                        ),
+                        anyContext(),
+                        lastTrip,
+                        shuttle,
+                    ),
+            )
+        }
+
+        @Test
         fun `seconds less than 30`() = parametricTest {
             val now = EasternTimeInstant.now()
             val lastTrip = anyBoolean()
@@ -436,6 +509,7 @@ class UpcomingTripTest {
                 objects.trips,
                 objects.vehicles,
                 EasternTimeInstant.now(),
+                emptyMap(),
             )
 
         assertEquals(
@@ -488,6 +562,7 @@ class UpcomingTripTest {
                 objects.trips,
                 objects.vehicles,
                 EasternTimeInstant.now(),
+                emptyMap(),
             )
 
         assertEquals(listOf(UpcomingTrip(trip, schedule, prediction)), result)

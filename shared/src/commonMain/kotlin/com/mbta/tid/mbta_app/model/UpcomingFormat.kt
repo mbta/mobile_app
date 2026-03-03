@@ -80,6 +80,7 @@ public sealed class UpcomingFormat {
             val routeType: RouteType,
             val format: TripInstantDisplay,
             val lastTrip: Boolean,
+            val alert: Alert? = null,
         ) {
             val id: String
                 get() = trip.id
@@ -90,7 +91,14 @@ public sealed class UpcomingFormat {
                 now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
                 lastTrip: Boolean,
-            ) : this(trip, routeType, trip.display(now, routeType, context, lastTrip), lastTrip)
+                alert: Alert? = null,
+            ) : this(
+                trip,
+                routeType,
+                trip.display(now, routeType, context, lastTrip, alert),
+                lastTrip,
+                alert,
+            )
 
             override fun toString(): String = format.toString()
         }

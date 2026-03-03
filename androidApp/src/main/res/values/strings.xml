@@ -387,6 +387,7 @@
     <string name="stop_moved_sentence_case">Stop moved</string>
     <string name="stop_shoveling">Stop Shoveling</string>
     <string name="stop_shoveling_sentence_case">Stop shoveling</string>
+    <string name="stop_skipped">Stop skipped</string>
     <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
@@ -476,6 +477,10 @@
     <string name="vehicle_schedule_minutes_other">and in %1$d min scheduled</string>
     <string name="vehicle_schedule_time_first">%1$s arriving at %2$s scheduled</string>
     <string name="vehicle_schedule_time_other">and at %1$s scheduled</string>
+    <string name="vehicle_shuttled_first">%1$s arriving at %2$s replaced by shuttle bus</string>
+    <string name="vehicle_shuttled_other">and at %1$s replaced by shuttle bus</string>
+    <string name="vehicle_skipped_first">%1$s arriving at %2$s skipped</string>
+    <string name="vehicle_skipped_other">and at %1$s skipped</string>
     <string name="view_details">View details</string>
     <string name="waiting_to_depart">Waiting to depart</string>
     <string name="weather">Weather</string>

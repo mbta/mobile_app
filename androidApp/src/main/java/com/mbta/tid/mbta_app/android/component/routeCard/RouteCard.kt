@@ -157,6 +157,12 @@ class Previews() {
         CardForPreview(data.CR1())
     }
 
+    @Preview(name = "Brancing in one direction - with disruptions", group = "5. CR branching")
+    @Composable
+    fun CR2() {
+        CardForPreview(data.CR2())
+    }
+
     @Preview(
         name = "Next two trips go to the same destination",
         group = "6. Bus route single direction",

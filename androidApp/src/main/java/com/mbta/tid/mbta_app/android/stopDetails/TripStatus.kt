@@ -16,6 +16,7 @@ fun TripStatus(predictions: UpcomingFormat) {
                     UpcomingTripView(
                         UpcomingTripViewState.Some(trip.format),
                         routeType = trip.routeType,
+                        hideDisruptionIcon = true,
                     )
             }
         is UpcomingFormat.Disruption ->

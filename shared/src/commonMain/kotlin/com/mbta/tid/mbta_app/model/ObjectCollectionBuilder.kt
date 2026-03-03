@@ -510,6 +510,7 @@ private constructor(
         prediction: Prediction? = null,
         predictionStop: Stop? = null,
         vehicle: Vehicle? = null,
+        alert: Alert? = null,
     ): UpcomingTrip {
         if (prediction != null && schedule != null) {
             check(schedule.tripId == prediction.tripId)
@@ -523,6 +524,7 @@ private constructor(
             prediction,
             predictionStop ?: stops[prediction?.stopId],
             vehicle,
+            alert,
         )
     }
 

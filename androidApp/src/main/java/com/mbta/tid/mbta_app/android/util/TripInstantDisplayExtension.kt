@@ -49,8 +49,21 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
         is TripInstantDisplay.ScheduleTimeWithStatusRow ->
             scheduledTimeDescription(this, isFirst, vehicleType)
         is TripInstantDisplay.Overridden -> withLastTripSuffix(this.text, this.last)
-        TripInstantDisplay.Hidden,
-        is TripInstantDisplay.Skipped -> ""
+        is TripInstantDisplay.Hidden -> ""
+        is TripInstantDisplay.Skipped -> {
+            val time = this.scheduledTime.formattedTime()
+            val description =
+                if (isFirst) stringResource(R.string.vehicle_skipped_first, vehicleType, time)
+                else stringResource(R.string.vehicle_skipped_other, time)
+            description
+        }
+        is TripInstantDisplay.Shuttle -> {
+            val time = this.scheduledTime.formattedTime()
+            val description =
+                if (isFirst) stringResource(R.string.vehicle_shuttled_first, vehicleType, time)
+                else stringResource(R.string.vehicle_shuttled_other, time)
+            description
+        }
     }
 
 @Composable

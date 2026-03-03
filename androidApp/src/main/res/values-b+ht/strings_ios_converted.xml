@@ -398,6 +398,7 @@
     <string name="stop_moved_sentence_case">Arè Fèmen</string>
     <string name="stop_shoveling">Arè Denèjman</string>
     <string name="stop_shoveling_sentence_case">Arè denèjman</string>
+    <string name="stop_skipped">Arè sote</string>
     <string name="stops">Arè</string>
     <plurals name="stops_away">
         <item quantity="zero">%1$d kanpe lwen</item>
@@ -493,6 +494,10 @@
     <string name="vehicle_schedule_minutes_other">epi nan %1$d min pwograme</string>
     <string name="vehicle_schedule_time_first">%1$s ap rive a %2$s pwograme</string>
     <string name="vehicle_schedule_time_other">epi a %1$s pwograme</string>
+    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "ht")</string>
+    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "ht")</string>
+    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "ht")</string>
+    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "ht")</string>
     <string name="view_details">Gade detay yo</string>
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>

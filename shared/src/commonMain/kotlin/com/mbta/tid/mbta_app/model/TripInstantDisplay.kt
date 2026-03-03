@@ -66,9 +66,11 @@ public sealed class TripInstantDisplay {
 
     public data class ScheduleMinutes(val minutes: Int, val last: Boolean) : TripInstantDisplay()
 
-    public data class Skipped(val scheduledTime: EasternTimeInstant?) : TripInstantDisplay()
+    public data class Skipped(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
 
     public data class Cancelled(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
+
+    public data class Shuttle(val scheduledTime: EasternTimeInstant) : TripInstantDisplay()
 
     public enum class Context {
         NearbyTransit,
@@ -88,6 +90,7 @@ public sealed class TripInstantDisplay {
             now: EasternTimeInstant,
             context: Context,
             lastTrip: Boolean,
+            alert: Alert? = null,
         ): TripInstantDisplay {
             val allowArrivalOnly = context == Context.TripDetails
             val scheduleBasedRouteType =
@@ -96,6 +99,19 @@ public sealed class TripInstantDisplay {
             val showTimeAsHeadline = scheduleBasedRouteType && context != Context.TripDetails
             val predictionTime = prediction?.stopTimeAfter(now)
             val scheduleTime = schedule?.stopTimeAfter(now)
+            val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
+            scheduleTime
+                ?.takeIf { isScheduleUpcoming && routeType?.isSubway() == false }
+                ?.let {
+                    if (
+                        prediction?.scheduleRelationship ==
+                            Prediction.ScheduleRelationship.Cancelled
+                    ) {
+                        return Cancelled(scheduleTime)
+                    } else if (alert?.effect == Alert.Effect.Shuttle) {
+                        return Shuttle(scheduleTime)
+                    }
+                }
             if (prediction?.status != null) {
                 if (routeType == RouteType.COMMUTER_RAIL) {
                     when {
@@ -129,17 +145,6 @@ public sealed class TripInstantDisplay {
                     return Skipped(it)
                 }
                 return Hidden
-            }
-
-            val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
-            if (
-                prediction?.scheduleRelationship == Prediction.ScheduleRelationship.Cancelled &&
-                    scheduleTime != null &&
-                    isScheduleUpcoming &&
-                    routeType?.isSubway() == false &&
-                    context == Context.StopDetailsFiltered
-            ) {
-                return Cancelled(scheduleTime)
             }
 
             if (prediction == null) {

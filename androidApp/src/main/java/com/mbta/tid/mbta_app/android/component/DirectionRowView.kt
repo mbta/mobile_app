@@ -63,6 +63,7 @@ private fun DirectionRowViewPreview() {
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit,
                                     lastTrip = false,
+                                    null,
                                 ),
                                 UpcomingFormat.Some.FormattedTrip(
                                     trip = UpcomingTrip(trip = trip2, prediction = prediction2),
@@ -70,6 +71,7 @@ private fun DirectionRowViewPreview() {
                                     now = now,
                                     context = TripInstantDisplay.Context.NearbyTransit,
                                     lastTrip = false,
+                                    null,
                                 ),
                             ),
                         secondaryAlert = null,

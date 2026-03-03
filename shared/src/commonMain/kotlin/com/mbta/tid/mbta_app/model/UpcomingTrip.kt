@@ -24,13 +24,14 @@ constructor(
     // it can be a child stop with specific boarding information, like the track number
     val predictionStop: Stop? = null,
     val vehicle: Vehicle? = null,
+    val alert: Alert? = null,
 ) : Comparable<UpcomingTrip> {
 
     public constructor(
         trip: Trip,
         prediction: Prediction?,
         predictionStop: Stop? = null,
-    ) : this(trip, null, prediction, predictionStop, null)
+    ) : this(trip, null, prediction, predictionStop, null, null)
 
     val id: String = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
 
@@ -118,13 +119,25 @@ constructor(
         routeType: RouteType?,
         context: TripInstantDisplay.Context,
         lastTrip: Boolean,
-    ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context, lastTrip)
+        alert: Alert? = null,
+    ) =
+        TripInstantDisplay.from(
+            prediction,
+            schedule,
+            vehicle,
+            routeType,
+            now,
+            context,
+            lastTrip,
+            alert,
+        )
 
     internal fun format(
         now: EasternTimeInstant,
         route: Route,
         context: TripInstantDisplay.Context,
         lastTrip: Boolean,
+        alert: Alert?,
     ) =
         format(
             now,
@@ -132,6 +145,7 @@ constructor(
             context,
             route.type.isSubway() || route.id in silverRoutes,
             lastTrip,
+            alert,
         )
 
     internal fun format(
@@ -140,11 +154,11 @@ constructor(
         context: TripInstantDisplay.Context,
         hideSchedule: Boolean,
         lastTrip: Boolean,
+        alert: Alert?,
     ): UpcomingFormat.Some.FormattedTrip? {
-        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip)
+        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip, alert)
             .takeUnless {
                 it.format is TripInstantDisplay.Hidden ||
-                    it.format is TripInstantDisplay.Skipped ||
                     // API best practices call for hiding scheduled times on subway
                     (hideSchedule &&
                         (it.format is TripInstantDisplay.ScheduleTime ||
@@ -164,6 +178,7 @@ constructor(
             trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>,
             filterAtTime: EasternTimeInstant,
+            alerts: Map<String, Alert>,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
@@ -217,12 +232,17 @@ constructor(
             return keys
                 .mapNotNull { key ->
                     val prediction = predictionsMap[key]
+                    val alert =
+                        alerts.values.firstOrNull { alert ->
+                            alert.informedEntity.any { it.trip == key.tripId }
+                        }
                     UpcomingTrip(
                         trips[key.tripId] ?: return@mapNotNull null,
                         schedulesMap[key],
                         prediction,
                         stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] },
+                        alert,
                     )
                 }
                 .sorted()
@@ -239,6 +259,7 @@ constructor(
             routeType: RouteType,
             context: TripInstantDisplay.Context,
             lastTrip: Boolean,
+            alert: Alert?,
         ) =
             formatUpcomingTrip(
                 now,
@@ -247,6 +268,7 @@ constructor(
                 context,
                 routeType.isSubway(),
                 lastTrip,
+                alert,
             )
 
         fun formatUpcomingTrip(
@@ -256,6 +278,7 @@ constructor(
             context: TripInstantDisplay.Context,
             isSubway: Boolean,
             lastTrip: Boolean,
+            alert: Alert?,
         ): UpcomingFormat.Some.FormattedTrip? {
             return UpcomingFormat.Some.FormattedTrip(
                     upcomingTrip,
@@ -263,10 +286,10 @@ constructor(
                     now,
                     context,
                     lastTrip,
+                    alert,
                 )
                 .takeUnless {
                     it.format is TripInstantDisplay.Hidden ||
-                        it.format is TripInstantDisplay.Skipped ||
                         // API best practices call for hiding scheduled times on subway
                         (isSubway &&
                             (it.format is TripInstantDisplay.ScheduleTime ||
@@ -304,7 +327,7 @@ internal fun List<UpcomingTrip>.withFormat(
             val last =
                 (route.type.isSubway() && it.prediction?.lastTrip == true) ||
                     (!route.type.isSubway() && this.last() == it)
-            it.format(now, route, context, last)
+            it.format(now, route, context, last, it.alert)
         }
 
     val lastNonCancelledTrip =
@@ -318,9 +341,9 @@ internal fun List<UpcomingTrip>.withFormat(
     // trip flag on the cancelled trip to false, and set it to true on the actual last trip
     return formattedTrips.mapNotNull {
         if (it == lastNonCancelledTrip) {
-            return@mapNotNull it.trip.format(now, route, context, true)
+            return@mapNotNull it.trip.format(now, route, context, true, it.alert)
         } else if (it.lastTrip) {
-            return@mapNotNull it.trip.format(now, route, context, false)
+            return@mapNotNull it.trip.format(now, route, context, false, it.alert)
         } else {
             return@mapNotNull it
         }

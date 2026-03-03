@@ -389,6 +389,7 @@
     <string name="stop_moved_sentence_case">Parada modificada</string>
     <string name="stop_shoveling">Trabajo de paleo en la parada</string>
     <string name="stop_shoveling_sentence_case">Trabajo de paleo en la parada</string>
+    <string name="stop_skipped">Parada omitida</string>
     <string name="stops">Paradas</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d parada antes de</item>
@@ -478,6 +479,10 @@
     <string name="vehicle_schedule_minutes_other">y en %1$d min programado</string>
     <string name="vehicle_schedule_time_first">%1$s llegará a la(s) %2$s como se programó</string>
     <string name="vehicle_schedule_time_other">y a la(s) %1$s como se programó</string>
+    <string name="vehicle_shuttled_first">=GOOGLETRANSLATE("%1$s arriving at %2$s replaced by shuttle bus", "en", "es")</string>
+    <string name="vehicle_shuttled_other">=GOOGLETRANSLATE("and at %1$s replaced by shuttle bus", "en", "es")</string>
+    <string name="vehicle_skipped_first">=GOOGLETRANSLATE("%1$s arriving at %2$s skipped", "en", "es")</string>
+    <string name="vehicle_skipped_other">=GOOGLETRANSLATE("and at %1$s skipped", "en", "es")</string>
     <string name="view_details">Ver detalles</string>
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
