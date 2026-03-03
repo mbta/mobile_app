@@ -878,6 +878,8 @@ public data class RouteCardData(
                         when (path.routeOrLineId) {
                             is Line.Id ->
                                 leafBuilder.routePatterns
+                                    // If pattern is on the GL, ignore atypical routes
+                                    ?.filter { !greenRoutes.contains(it.routeId) || it.isTypical() }
                                     ?.map { it.routeId }
                                     ?.distinct()
                                     ?.takeUnless { it.isEmpty() }
@@ -896,13 +898,26 @@ public data class RouteCardData(
                                 null,
                             )
                             .discardTrackChangesAtCRCore(isCRCore)
+
+                    // If the routes here are on the GL,
+                    // include alerts on other branches as downstream alerts
+                    val isGL = leafBuilder.routePatterns?.any { it.routeId in greenRoutes } ?: false
                     val downstreamAlerts =
                         Alert.alertsDownstreamForPatterns(
                             activeRelevantAlerts,
                             leafBuilder.routePatterns.orEmpty(),
                             leafBuilder.stopIds.orEmpty(),
                             globalData.trips,
-                        )
+                        ) +
+                            if (isGL)
+                                Alert.applicableAlerts(
+                                    activeRelevantAlerts,
+                                    path.directionId,
+                                    greenRoutes.minus(routes.toSet()).toList(),
+                                    leafBuilder.stopIds,
+                                    null,
+                                )
+                            else emptyList()
                     val elevatorAlerts =
                         Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
                     leafBuilder.alertsHere = (applicableAlerts + elevatorAlerts).distinct()

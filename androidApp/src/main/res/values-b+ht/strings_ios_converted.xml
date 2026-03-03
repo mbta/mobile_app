@@ -31,6 +31,8 @@
     <string name="alert_summary_location_single">\u0020nan &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020soti nan &lt;b>%1$s&lt;/b> rive nan &lt;b>%2$s&lt;/b> sispann</string>
     <string name="alert_summary_location_successive">\u0020soti nan &lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route">\u0020sou &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route_shuttle">\u0020ranplase &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020jiska %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jiska fen sèvis la</string>

@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
+import com.mbta.tid.mbta_app.model.RouteType
 
 data class FormattedAlert(
     val alert: Alert?,
@@ -161,6 +162,15 @@ data class FormattedAlert(
                         R.string.alert_summary_location_direction_to_stop,
                         resources.getString(directionNameFormatted(it.direction)),
                         it.endStopName,
+                    )
+                is AlertSummary.Location.WholeRoute ->
+                    resources.getString(
+                        if (alertSummary.effect == Alert.Effect.Shuttle)
+                            R.string.alert_summary_location_whole_route_shuttle
+                        else R.string.alert_summary_location_whole_route,
+                        if (it.routeType == RouteType.BUS)
+                            resources.getString(R.string.bus_label, it.routeLabel)
+                        else it.routeLabel,
                     )
                 AlertSummary.Location.Unknown -> null
             }

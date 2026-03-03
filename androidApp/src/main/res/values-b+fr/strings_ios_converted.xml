@@ -28,6 +28,8 @@
     <string name="alert_summary_location_single">\u0020à &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_location_stop_to_direction">\u0020de &lt;b>%1$s&lt;/b> aux arrêts en direction de &lt;b>%2$s&lt;/b></string>
     <string name="alert_summary_location_successive">\u0020de &lt;b>%1$s&lt;/b> à &lt;b>%2$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route">\u0020sur &lt;b>%1$s&lt;/b></string>
+    <string name="alert_summary_location_whole_route_shuttle">\u0020remplacer &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jusqu’à la fin du service</string>
