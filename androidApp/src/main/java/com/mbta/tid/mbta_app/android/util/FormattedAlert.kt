@@ -60,14 +60,21 @@ data class FormattedAlert(
             resources.getString(R.string.delays_due_to_cause, resources.getString(it))
         } ?: resources.getString(R.string.delays_unknown_reason)
 
-    private fun delayHeader(resources: Resources) =
+    private fun delayHeader(resources: Resources): AnnotatedString {
+        if (alertSummary?.timeframe is AlertSummary.Timeframe.StartingLaterToday) {
+            summary(resources)?.let {
+                return it
+            }
+        }
+
         // Show "Single Tracking" if there is an informational delay alert with that cause
         // (Any other information severity delay alerts are never shown)
-        cause(resources)?.let {
+        return cause(resources)?.let {
             if (alert?.cause == Alert.Cause.SingleTracking && alert.severity < 3) {
                 AnnotatedString.fromHtml(resources.getString(R.string.effect, it))
             } else null
         } ?: AnnotatedString.fromHtml(delaysDueToCause(resources))
+    }
 
     private fun elevatorHeader(resources: Resources) =
         AnnotatedString(
