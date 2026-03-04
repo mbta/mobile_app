@@ -161,8 +161,7 @@ public data class AlertSummary(
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
-                if (alert.significance(atTime) < AlertSignificance.Secondary)
-                    return@withContext null
+                if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
                 val update = alertUpdated(alert, atTime)

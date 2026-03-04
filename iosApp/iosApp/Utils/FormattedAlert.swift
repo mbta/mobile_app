@@ -390,6 +390,9 @@ struct FormattedAlert: Equatable {
     }
 
     var delayHeader: AttributedString {
+        if case .startingLaterToday = onEnum(of: alertSummary?.timeframe), let summary {
+            return summary
+        }
         // Show "Single Tracking" if there is an informational delay alert with that cause
         // (Any other information severity delay alerts are never shown)
         guard let alert, let cause = alert.cause.causeString,
