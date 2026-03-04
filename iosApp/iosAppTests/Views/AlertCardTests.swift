@@ -354,6 +354,35 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
     }
 
+    func testUpcomingDelayAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .delay
+            alert.cause = .accident
+            alert.header = "Test header"
+        }
+
+        let time = EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 21, minute: 0, second: 0)
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary(
+                effect: .delay,
+                location: AlertSummary.LocationWholeRoute(routeLabel: "Red Line", routeType: .heavyRail),
+                timeframe: AlertSummary.TimeframeStartingLaterToday(time: time),
+                recurrence: nil,
+                update: nil
+            ),
+            spec: .delay,
+            color: Color.pink,
+            textColor: Color.orange,
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Delay on Red Line starting 9:00\u{202F}PM today"))
+    }
+
     func testDelayAlertCardUnknownCause() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in

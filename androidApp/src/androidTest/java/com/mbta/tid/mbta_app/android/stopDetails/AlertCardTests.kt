@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
 import kotlinx.datetime.Month
@@ -170,6 +171,36 @@ class AlertCardTests {
         }
 
         composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpcomingDelayAlertCard() {
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                header = "Alert header"
+                effect = Alert.Effect.Delay
+                cause = Alert.Cause.HeavyRidership
+            }
+
+        val time = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary(
+                    Alert.Effect.Delay,
+                    AlertSummary.Location.WholeRoute("Red Line", RouteType.HEAVY_RAIL),
+                    timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
+                ),
+                AlertCardSpec.Delay,
+                color,
+                textColor,
+                {},
+            )
+        }
+
+        composeTestRule
+            .onNode(hasTextMatching(Regex("Delay on Red Line starting 9:00\\sAM today")))
+            .assertIsDisplayed()
     }
 
     @Test
