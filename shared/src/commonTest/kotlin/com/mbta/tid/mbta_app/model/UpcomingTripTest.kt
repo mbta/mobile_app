@@ -339,7 +339,12 @@ class UpcomingTripTest {
                 }
             assertEquals(
                 TripInstantDisplay.Shuttle(now + 15.minutes),
-                UpcomingTrip(trip {}, schedule { departureTime = now + 15.minutes }, prediction {})
+                UpcomingTrip(
+                        trip {},
+                        schedule { departureTime = now + 15.minutes },
+                        prediction {},
+                        alert = shuttle,
+                    )
                     .display(
                         now,
                         anyEnumValueExcept(
@@ -349,7 +354,6 @@ class UpcomingTripTest {
                         ),
                         anyContext(),
                         lastTrip,
-                        shuttle,
                     ),
             )
         }

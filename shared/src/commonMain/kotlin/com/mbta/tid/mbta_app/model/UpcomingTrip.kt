@@ -119,7 +119,6 @@ constructor(
         routeType: RouteType?,
         context: TripInstantDisplay.Context,
         lastTrip: Boolean,
-        alert: Alert? = null,
     ) =
         TripInstantDisplay.from(
             prediction,
@@ -137,7 +136,6 @@ constructor(
         route: Route,
         context: TripInstantDisplay.Context,
         lastTrip: Boolean,
-        alert: Alert?,
     ) =
         format(
             now,
@@ -145,7 +143,6 @@ constructor(
             context,
             route.type.isSubway() || route.id in silverRoutes,
             lastTrip,
-            alert,
         )
 
     internal fun format(
@@ -154,9 +151,8 @@ constructor(
         context: TripInstantDisplay.Context,
         hideSchedule: Boolean,
         lastTrip: Boolean,
-        alert: Alert?,
     ): UpcomingFormat.Some.FormattedTrip? {
-        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip, alert)
+        return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip)
             .takeUnless {
                 it.format is TripInstantDisplay.Hidden ||
                     // API best practices call for hiding scheduled times on subway
@@ -234,7 +230,11 @@ constructor(
                     val prediction = predictionsMap[key]
                     val alert =
                         alerts.values.firstOrNull { alert ->
-                            alert.informedEntity.any { it.trip == key.tripId }
+                            alert.informedEntity.any {
+                                val stopId =
+                                    it.stop?.let { stopId -> stops.resolveParentId(stopId) }
+                                it.trip == key.tripId && stopId == key.rootStopId
+                            }
                         }
                     UpcomingTrip(
                         trips[key.tripId] ?: return@mapNotNull null,
@@ -286,7 +286,6 @@ constructor(
                     now,
                     context,
                     lastTrip,
-                    alert,
                 )
                 .takeUnless {
                     it.format is TripInstantDisplay.Hidden ||
@@ -327,7 +326,7 @@ internal fun List<UpcomingTrip>.withFormat(
             val last =
                 (route.type.isSubway() && it.prediction?.lastTrip == true) ||
                     (!route.type.isSubway() && this.last() == it)
-            it.format(now, route, context, last, it.alert)
+            it.format(now, route, context, last)
         }
 
     val lastNonCancelledTrip =
@@ -341,9 +340,9 @@ internal fun List<UpcomingTrip>.withFormat(
     // trip flag on the cancelled trip to false, and set it to true on the actual last trip
     return formattedTrips.mapNotNull {
         if (it == lastNonCancelledTrip) {
-            return@mapNotNull it.trip.format(now, route, context, true, it.alert)
+            return@mapNotNull it.trip.format(now, route, context, true)
         } else if (it.lastTrip) {
-            return@mapNotNull it.trip.format(now, route, context, false, it.alert)
+            return@mapNotNull it.trip.format(now, route, context, false)
         } else {
             return@mapNotNull it
         }

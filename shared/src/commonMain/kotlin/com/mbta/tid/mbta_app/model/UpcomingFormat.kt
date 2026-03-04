@@ -91,14 +91,7 @@ public sealed class UpcomingFormat {
                 now: EasternTimeInstant,
                 context: TripInstantDisplay.Context,
                 lastTrip: Boolean,
-                alert: Alert? = null,
-            ) : this(
-                trip,
-                routeType,
-                trip.display(now, routeType, context, lastTrip, alert),
-                lastTrip,
-                alert,
-            )
+            ) : this(trip, routeType, trip.display(now, routeType, context, lastTrip), lastTrip)
 
             override fun toString(): String = format.toString()
         }

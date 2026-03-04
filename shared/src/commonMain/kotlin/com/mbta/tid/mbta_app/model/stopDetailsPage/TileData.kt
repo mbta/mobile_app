@@ -29,7 +29,6 @@ public data class TileData(
                     route,
                     context = TripInstantDisplay.Context.StopDetailsFiltered,
                     lastTrip = false,
-                    upcoming.alert,
                 )
             val formatted =
                 if (formattedUpcomingTrip != null) {

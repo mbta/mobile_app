@@ -101,7 +101,12 @@ public sealed class TripInstantDisplay {
             val scheduleTime = schedule?.stopTimeAfter(now)
             val isScheduleUpcoming = scheduleTime?.let { it >= now } ?: false
             scheduleTime
-                ?.takeIf { isScheduleUpcoming && routeType?.isSubway() == false }
+                ?.takeIf {
+                    isScheduleUpcoming &&
+                        ((routeType == RouteType.BUS && context == Context.StopDetailsFiltered) ||
+                            routeType == RouteType.COMMUTER_RAIL ||
+                            routeType == RouteType.FERRY)
+                }
                 ?.let {
                     if (
                         prediction?.scheduleRelationship ==
