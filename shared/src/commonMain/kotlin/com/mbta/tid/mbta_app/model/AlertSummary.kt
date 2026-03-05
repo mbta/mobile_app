@@ -14,137 +14,165 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class AlertSummary(
-    val effect: Alert.Effect,
-    val location: Location? = null,
-    val timeframe: Timeframe? = null,
-    val recurrence: Recurrence? = null,
-    val update: Update? = null,
-) {
-    @Serializable
-    public sealed class Location {
-        @Serializable
-        @SerialName("direction_to_stop")
-        public data class DirectionToStop(
-            val direction: Direction,
-            @SerialName("end_stop_name") val endStopName: String,
-        ) : Location()
+public data class AlertSummary(val pieces: List<Piece>) {
+    @Serializable public sealed interface Piece
 
-        @Serializable
-        @SerialName("single_stop")
-        public data class SingleStop(@SerialName("stop_name") val stopName: String) : Location()
+    internal sealed interface Timeframe
 
-        @Serializable
-        @SerialName("stop_to_direction")
-        public data class StopToDirection(
-            @SerialName("start_stop_name") val startStopName: String,
-            val direction: Direction,
-        ) : Location()
-
-        @Serializable
-        @SerialName("successive_stops")
-        public data class SuccessiveStops(
-            @SerialName("start_stop_name") val startStopName: String,
-            @SerialName("end_stop_name") val endStopName: String,
-        ) : Location()
-
-        @Serializable
-        @SerialName("whole_route")
-        public data class WholeRoute(
-            @SerialName("route_label") val routeLabel: String,
-            @SerialName("route_type") val routeType: RouteType,
-        ) : Location()
-
-        @Serializable public data object Unknown : Location()
-    }
+    @Serializable @SerialName("update") public data object Update : Piece
 
     @Serializable
-    public sealed class Timeframe {
-        @Serializable
-        @SerialName("until_further_notice")
-        public data object UntilFurtherNotice : Timeframe(), Recurrence.EndDay
+    @SerialName("all_clear_regular_service")
+    public data object AllClearRegularService : Piece
 
-        @Serializable @SerialName("end_of_service") public data object EndOfService : Timeframe()
+    @Serializable
+    @SerialName("effect_noun")
+    public data class EffectNoun(val effect: Alert.Effect) : Piece
 
-        @Serializable
-        @SerialName("tomorrow")
-        public data object Tomorrow : Timeframe(), Recurrence.EndDay
+    @Serializable
+    @SerialName("trip_time_from_stop")
+    public data class TripTimeFromStop(
+        val time: EasternTimeInstant,
+        @SerialName("stop_name") val stopName: String,
+    ) : Piece
 
-        @Serializable
-        @SerialName("later_date")
-        public data class LaterDate(val time: EasternTimeInstant) : Timeframe(), Recurrence.EndDay
+    @Serializable
+    @SerialName("trip_time_to_headsign")
+    public data class TripTimeToHeadsign(val time: EasternTimeInstant, val headsign: String) : Piece
 
-        @Serializable
-        @SerialName("this_week")
-        public data class ThisWeek(val time: EasternTimeInstant) : Timeframe(), Recurrence.EndDay
+    @Serializable @SerialName("multiple_trips") public data object MultipleTrips : Piece
+
+    @Serializable
+    @SerialName("is_affected_today")
+    public data class IsAffectedToday(val effect: Alert.Effect) : Piece
+
+    @Serializable
+    @SerialName("are_affected_today")
+    public data class AreAffectedToday(val effect: Alert.Effect) : Piece
+
+    @Serializable
+    @SerialName("shuttle_buses_replace")
+    public data class ShuttleBusesReplace(
+        val time: EasternTimeInstant,
+        @SerialName("route_type") val routeType: RouteType,
+    ) : Piece
+
+    @Serializable
+    @SerialName("at_stop")
+    public data class AtStop(@SerialName("stop_name") val stopName: String) : Piece
+
+    @Serializable
+    @SerialName("from_stop")
+    public data class FromStop(@SerialName("stop_name") val stopName: String) : Piece
+
+    @Serializable
+    @SerialName("from_direction")
+    public data class FromDirection(val direction: Direction) : Piece
+
+    @Serializable
+    @SerialName("to_stop")
+    public data class ToStop(@SerialName("stop_name") val stopName: String) : Piece
+
+    @Serializable
+    @SerialName("to_direction")
+    public data class ToDirection(val direction: Direction) : Piece
+
+    @Serializable
+    @SerialName("whole_route")
+    public data class WholeRoute(
+        @SerialName("route_label") val routeLabel: String,
+        @SerialName("route_type") val routeType: RouteType,
+    ) : Piece
+
+    /** Used for both active period and recurrence */
+    @Serializable
+    @SerialName("until_further_notice")
+    public data object UntilFurtherNotice : Piece, Timeframe
+
+    @Serializable
+    @SerialName("through_end_of_service")
+    public data object ThroughEndOfService : Piece, Timeframe
+
+    /** Used for active period, not recurrence */
+    @Serializable
+    @SerialName("through_tomorrow")
+    public data object ThroughTomorrow : Piece, Timeframe
+
+    /** Used for active period, not recurrence */
+    @Serializable
+    @SerialName("through_later_date")
+    public data class ThroughLaterDate(val time: EasternTimeInstant) : Piece, Timeframe
+
+    /** Used for active period, not recurrence */
+    @Serializable
+    @SerialName("through_later_this_week")
+    public data class ThroughLaterThisWeek(val time: EasternTimeInstant) : Piece, Timeframe
+
+    @Serializable
+    @SerialName("through_later_today")
+    public data class ThroughLaterToday(val time: EasternTimeInstant) : Piece, Timeframe
+
+    @Serializable
+    @SerialName("starting_tomorrow")
+    public data object StartingTomorrow : Piece, Timeframe
+
+    @Serializable
+    @SerialName("starting_later_today")
+    public data class StartingLaterToday(val time: EasternTimeInstant) : Piece, Timeframe
+
+    @Serializable
+    @SerialName("time_range")
+    public data class TimeRange(
+        @SerialName("start_time") val startTime: StartTime,
+        @SerialName("end_time") val endTime: EndTime,
+    ) : Piece, Timeframe {
+        public sealed interface Boundary
+
+        @Serializable public sealed interface StartTime : Boundary
+
+        @Serializable public sealed interface EndTime : Boundary
+
+        @Serializable @SerialName("start_of_service") public data object StartOfService : StartTime
+
+        @Serializable @SerialName("end_of_service") public data object EndOfService : EndTime
 
         @Serializable
         @SerialName("time")
-        public data class Time(val time: EasternTimeInstant) : Timeframe()
+        public data class Time(val time: EasternTimeInstant) : StartTime, EndTime
 
-        @Serializable
-        @SerialName("starting_tomorrow")
-        public data object StartingTomorrow : Timeframe()
-
-        @Serializable
-        @SerialName("starting_later_today")
-        public data class StartingLaterToday(val time: EasternTimeInstant) : Timeframe()
-
-        /*
-        this should cover “from start of service to 10AM” and “from 10AM to 9PM” and “from 9PM to end of service” and “from start of service to end of service”
-         */
-        @Serializable
-        @SerialName("time_range")
-        public data class TimeRange(
-            @SerialName("start_time") val startTime: StartTime,
-            @SerialName("end_time") val endTime: EndTime,
-        ) : Timeframe() {
-            public sealed interface Boundary
-
-            @Serializable public sealed interface StartTime : Boundary
-
-            @Serializable public sealed interface EndTime : Boundary
-
-            @Serializable
-            @SerialName("start_of_service")
-            public data object StartOfService : StartTime
-
-            @Serializable @SerialName("end_of_service") public data object EndOfService : EndTime
-
-            @Serializable
-            @SerialName("time")
-            public data class Time(val time: EasternTimeInstant) : StartTime, EndTime
-
-            @Serializable public data object Unknown : StartTime, EndTime
-        }
-
-        @Serializable public data object Unknown : Timeframe(), Recurrence.EndDay
+        @Serializable public data object Unknown : StartTime, EndTime
     }
 
     @Serializable
-    public sealed class Recurrence {
-        @Serializable
-        @SerialName("daily")
-        public data class Daily(val ending: EndDay) : Recurrence()
+    @SerialName("due_to_cause")
+    public data class DueToCause(val cause: Alert.Cause) : Piece
 
-        @Serializable
-        @SerialName("some_days")
-        public data class SomeDays(val ending: EndDay) : Recurrence()
+    @Serializable @SerialName("daily") public data object Daily : Piece
 
-        @Serializable public data object Unknown : Recurrence()
+    @Serializable @SerialName("some_days") public data object SomeDays : Piece
 
-        @Serializable public sealed interface EndDay
-    }
+    /** Used for recurrence, not active period */
+    @Serializable @SerialName("until_tomorrow") public data object UntilTomorrow : Piece
 
+    /** Used for recurrence, not active period */
     @Serializable
-    public sealed class Update {
+    @SerialName("until_later_this_week")
+    public data class UntilLaterThisWeek(val time: EasternTimeInstant) : Piece
 
-        // Alert is still active and has been updated
-        @Serializable @SerialName("active") public data object Active : Update()
+    /** Used for recurrence, not active period */
+    @Serializable
+    @SerialName("until_later_date")
+    public data class UntilLaterDate(val time: EasternTimeInstant) : Piece
 
-        @Serializable @SerialName("all_clear") public data object AllClear : Update()
+    @Serializable public data object Unknown : Piece
 
-        @Serializable public data object Unknown : Update()
+    public val effect: Alert.Effect? by lazy {
+        pieces.firstNotNullOfOrNull { when (it) {
+            is EffectNoun -> it.effect
+            is IsAffectedToday -> it.effect
+            is AreAffectedToday -> it.effect
+            else -> null
+        } }
     }
 
     public companion object {
@@ -167,15 +195,19 @@ public data class AlertSummary(
                 val update = alertUpdated(alert, atTime)
                 val recurrence = alertRecurrence(alert, atTime)
                 val timeframe =
-                    alertTimeframe(alert, atTime, upcomingTrips, hasRecurrence = recurrence != null)
+                    alertTimeframe(
+                        alert,
+                        atTime,
+                        upcomingTrips,
+                        hasRecurrence = recurrence.isNotEmpty(),
+                    )
 
-                if (location == null && timeframe == null) return@withContext null
+                if (location.isEmpty() && timeframe == null) return@withContext null
                 return@withContext AlertSummary(
-                    alert.effect,
-                    location,
-                    timeframe,
-                    recurrence,
-                    update,
+                    listOfNotNull(update, EffectNoun(alert.effect)) +
+                        location +
+                        listOfNotNull(timeframe) +
+                        recurrence
                 )
             }
         }
@@ -185,41 +217,41 @@ public data class AlertSummary(
             atTime: EasternTimeInstant,
             upcomingTrips: List<UpcomingTrip>?,
             hasRecurrence: Boolean,
-        ): Timeframe? {
+        ): Piece? {
             val serviceDate = atTime.serviceDate
             val currentPeriod = alert.currentPeriod(atTime)
             if (currentPeriod == null) {
                 val nextPeriod = alert.nextPeriod(atTime) ?: return null
                 if (nextPeriod.startServiceDate == serviceDate) {
-                    return Timeframe.StartingLaterToday(nextPeriod.start)
+                    return StartingLaterToday(nextPeriod.start)
                 }
-                return Timeframe.StartingTomorrow
+                return StartingTomorrow
             }
             if (currentPeriod.endingLaterToday) return null
-            val endTime = currentPeriod.end ?: return Timeframe.UntilFurtherNotice
+            val endTime = currentPeriod.end ?: return UntilFurtherNotice
             val endDate = currentPeriod.endServiceDate ?: return null
 
             if (hasRecurrence) {
                 val start =
-                    if (currentPeriod.fromStartOfService) Timeframe.TimeRange.StartOfService
-                    else Timeframe.TimeRange.Time(currentPeriod.start)
+                    if (currentPeriod.fromStartOfService) TimeRange.StartOfService
+                    else TimeRange.Time(currentPeriod.start)
                 val end =
-                    if (currentPeriod.toEndOfService) Timeframe.TimeRange.EndOfService
-                    else Timeframe.TimeRange.Time(endTime)
-                return Timeframe.TimeRange(start, end)
+                    if (currentPeriod.toEndOfService) TimeRange.EndOfService
+                    else TimeRange.Time(endTime)
+                return TimeRange(start, end)
             }
 
             if (serviceDate == endDate && currentPeriod.toEndOfService) {
-                return Timeframe.EndOfService
+                return ThroughEndOfService
             } else if (serviceDate == endDate) {
-                return Timeframe.Time(endTime)
+                return ThroughLaterToday(endTime)
             } else if (serviceDate.plus(DatePeriod(days = 1)) == endDate) {
-                return Timeframe.Tomorrow
+                return ThroughTomorrow
             } else if (laterThisWeek(serviceDate, endDate)) {
-                return Timeframe.ThisWeek(endTime)
+                return ThroughLaterThisWeek(endTime)
             }
 
-            return Timeframe.LaterDate(endTime)
+            return ThroughLaterDate(endTime)
         }
 
         private fun laterThisWeek(onDate: LocalDate, endDate: LocalDate): Boolean {
@@ -234,7 +266,7 @@ public data class AlertSummary(
             directionId: Int,
             patterns: List<RoutePattern>,
             global: GlobalResponse,
-        ): Location? {
+        ): List<Piece> {
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
 
             val typicalRoutes =
@@ -251,24 +283,24 @@ public data class AlertSummary(
                         alertAppliesToWholeGLRoute(alert, it, directionId, global)
                     }
                 if (affectedBranches.containsAll(greenRoutes)) {
-                    return Location.WholeRoute(GL_LABEL, RouteType.LIGHT_RAIL)
+                    return listOf(WholeRoute(GL_LABEL, RouteType.LIGHT_RAIL))
                 }
                 affectedBranches.singleOrNull()?.let {
                     val route = global.getRoute(it) ?: return@let
-                    return Location.WholeRoute(route.label, route.type)
+                    return listOf(WholeRoute(route.label, route.type))
                 }
             }
 
             // Check if an informed entity applies to the entire provided route
             routes.singleOrNull()?.let {
                 if (matchesWholeRoute(alert, it.id, directionId))
-                    return Location.WholeRoute(it.label, it.type)
+                    return listOf(WholeRoute(it.label, it.type))
             }
 
-            val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
+            val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return emptyList()
 
             if (affectedStops.size == 1) {
-                return Location.SingleStop(affectedStops.first().name)
+                return listOf(AtStop(affectedStops.first().name))
             }
 
             // Map each pattern to its list of stops affected by this alert
@@ -279,28 +311,29 @@ public data class AlertSummary(
             // return the whole route location
             if (matchesAllStopsOnPatterns(affectedPatternStops, global)) {
                 routes.singleOrNull()?.let {
-                    return Location.WholeRoute(it.label, it.type)
+                    return listOf(WholeRoute(it.label, it.type))
                 }
             }
 
             // Never show multiple stops for bus
             if (routes.any { !it.isShuttle && it.type == RouteType.BUS }) {
-                return null
+                return emptyList()
             }
 
             // Compare the first stop list to all the others to determine if all patterns share the
             // same disrupted stops, or if multiple branches are disrupted
-            val firstStops = affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return null
+            val firstStops =
+                affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return emptyList()
             val orderedStops = firstStops.mapNotNull { global.stops[it] }
 
             if (affectedPatternStops.all { it.value.toSet() == firstStops.toSet() }) {
-                return Location.SuccessiveStops(orderedStops.first().name, orderedStops.last().name)
+                return listOf(FromStop(orderedStops.first().name), ToStop(orderedStops.last().name))
             }
 
             // Determine if every effected stop list starts or ends at the same stop, if they do,
             // the disruption starts on the trunk and ends on multiple branches (or vice versa), if
             // not, return null because we have a more complicated branch to branch disruption.
-            fun locationFrom(stop: Stop, first: Boolean = true): Location? {
+            fun locationFrom(stop: Stop, first: Boolean = true): List<Piece>? {
                 val directions =
                     Direction.getDirectionsForLine(global, stop, affectedPatternStops.keys.toList())
 
@@ -312,13 +345,15 @@ public data class AlertSummary(
                     } else return null
 
                 return if (first) {
-                    Location.StopToDirection(stopName, direction)
+                    listOf(FromStop(stopName), ToDirection(direction))
                 } else {
-                    Location.DirectionToStop(direction, stopName)
+                    listOf(FromDirection(direction), ToStop(stopName))
                 }
             }
 
-            return locationFrom(orderedStops.first()) ?: locationFrom(orderedStops.last(), false)
+            return locationFrom(orderedStops.first())
+                ?: locationFrom(orderedStops.last(), false)
+                ?: emptyList()
         }
 
         private fun mapPatternsToAffectedStops(
@@ -451,32 +486,32 @@ public data class AlertSummary(
             return matchesAllStopsOnPatterns(affectedPatternStops, global)
         }
 
-        private fun alertRecurrence(alert: Alert, atTime: EasternTimeInstant): Recurrence? {
-            val range = alert.recurrenceRange() ?: return null
+        private fun alertRecurrence(alert: Alert, atTime: EasternTimeInstant): List<Piece> {
+            val range = alert.recurrenceRange() ?: return emptyList()
             val serviceDate = atTime.serviceDate
             val lastPeriodEnd = range.end
             val lastServiceDate =
                 lastPeriodEnd.serviceDate(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
             if (lastServiceDate == serviceDate) {
-                return null
+                return emptyList()
             }
-            val ending: Recurrence.EndDay =
+            val ending: Piece =
                 when {
-                    !range.endDayKnown -> Timeframe.UntilFurtherNotice
-                    serviceDate.plus(DatePeriod(days = 1)) == lastServiceDate -> Timeframe.Tomorrow
-                    laterThisWeek(serviceDate, lastServiceDate) -> Timeframe.ThisWeek(lastPeriodEnd)
-                    else -> Timeframe.LaterDate(lastPeriodEnd)
+                    !range.endDayKnown -> UntilFurtherNotice
+                    serviceDate.plus(DatePeriod(days = 1)) == lastServiceDate -> UntilTomorrow
+                    laterThisWeek(serviceDate, lastServiceDate) -> UntilLaterThisWeek(lastPeriodEnd)
+                    else -> UntilLaterDate(lastPeriodEnd)
                 }
             return if (range.daily) {
-                Recurrence.Daily(ending)
+                listOf(Daily, ending)
             } else {
-                Recurrence.SomeDays(ending)
+                listOf(SomeDays, ending)
             }
         }
 
-        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Update? =
+        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Piece? =
             when {
-                alert.allClear(atTime) -> Update.AllClear
+                alert.allClear(atTime) -> AllClearRegularService
                 else -> null
             }
 

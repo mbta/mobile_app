@@ -133,7 +133,7 @@ class AnalyticsTest {
         analytics.notificationReceived(
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary(listOf(AlertSummary.EffectNoun(Alert.Effect.Suspension))),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
                 PushNotificationPayload.NotificationType.Notification,
@@ -164,7 +164,7 @@ class AnalyticsTest {
         analytics.notificationClicked(
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary(listOf(AlertSummary.EffectNoun(Alert.Effect.Suspension))),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
                 PushNotificationPayload.NotificationType.Notification,
