@@ -281,7 +281,8 @@ fun MapAndSheetPage(
     val deepLinkState by deepLinkStateFlow.collectAsState()
     LaunchedEffect(deepLinkState, navControllerInitialized) {
         val state = deepLinkState
-        if (!navControllerInitialized || state == null) return@LaunchedEffect
+        if (!navControllerInitialized || state == null || state == DeepLinkState.None)
+            return@LaunchedEffect
         sheetNavEntrypoint?.let { navigateToEntrypoint(it) }
         when (state) {
             is DeepLinkState.Alert -> {
