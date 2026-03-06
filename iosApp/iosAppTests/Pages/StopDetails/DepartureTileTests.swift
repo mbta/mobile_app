@@ -30,7 +30,8 @@ final class DepartureTileTests: XCTestCase {
                         trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5, last: false),
-                        lastTrip: false
+                        lastTrip: false,
+                        alert: nil
                     )],
                     secondaryAlert: nil
                 ),
@@ -57,7 +58,8 @@ final class DepartureTileTests: XCTestCase {
                         trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5, last: false),
-                        lastTrip: false
+                        lastTrip: false,
+                        alert: nil
                     )],
                     secondaryAlert: nil
                 ),
@@ -86,7 +88,8 @@ final class DepartureTileTests: XCTestCase {
                         trip: upcomingTrip,
                         routeType: .heavyRail,
                         format: .Minutes(minutes: 5, last: false),
-                        lastTrip: false
+                        lastTrip: false,
+                        alert: nil
                     )],
                     secondaryAlert: nil
                 ),
@@ -113,7 +116,8 @@ final class DepartureTileTests: XCTestCase {
                     trip: upcomingTrip,
                     routeType: .heavyRail,
                     format: .Minutes(minutes: 5, last: false),
-                    lastTrip: false
+                    lastTrip: false,
+                    alert: nil
                 )],
                 secondaryAlert: nil
             ),
