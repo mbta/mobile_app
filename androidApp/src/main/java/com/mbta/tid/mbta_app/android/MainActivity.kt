@@ -39,8 +39,7 @@ class MainActivity : ComponentActivity() {
             deepLinkStateFlow.value = pushNotificationPayload.getDeepLinkState()
         } else {
             val deepLinkUri: Uri? = intent?.data?.takeIf { intent.action == Intent.ACTION_VIEW }
-            deepLinkStateFlow.value =
-                deepLinkUri?.let { DeepLinkState.from(it.toString()) } ?: DeepLinkState.None
+            deepLinkStateFlow.value = deepLinkUri?.let { DeepLinkState.from(it.toString()) }
         }
     }
 

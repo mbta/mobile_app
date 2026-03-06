@@ -134,10 +134,7 @@ internal class JsonPersistence(
                 withContext(ioDispatcher) {
                     if (keyPrefix?.let { !path.name.startsWith(it) } ?: false) return@withContext
                     val data = read(path, deserializer)
-                    if (data?.let { isStale(it) } ?: false) {
-                        delete(path)
-                        println("~~~ STALE DEL $path")
-                    }
+                    if (data?.let { isStale(it) } ?: false) delete(path)
                 }
             }
         }
