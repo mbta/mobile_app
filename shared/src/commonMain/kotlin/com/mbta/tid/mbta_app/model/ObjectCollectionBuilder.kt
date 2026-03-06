@@ -528,8 +528,11 @@ private constructor(
         )
     }
 
-    public fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
-        upcomingTrip(null, prediction, predictionStop, null)
+    public fun upcomingTrip(
+        prediction: Prediction,
+        predictionStop: Stop? = null,
+        alert: Alert? = null,
+    ): UpcomingTrip = upcomingTrip(null, prediction, predictionStop, null, alert)
 
     private fun <Built : BackendObject<*>, Builder : ObjectBuilder<Built>> build(
         builder: Builder,
