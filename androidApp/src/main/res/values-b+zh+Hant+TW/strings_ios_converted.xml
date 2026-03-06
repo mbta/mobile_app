@@ -13,6 +13,7 @@
     <string name="add_to_favorites_title_stop_details">將&lt;b>%2$s&lt;/b>的&lt;b>%1$s&lt;/b>新增到我的最愛</string>
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
+    <string name="affected_by_today">今天受 %1$s 影響</string>
     <plurals name="affected_stops">
         <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的網站</item>
     </plurals>
@@ -36,6 +37,8 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待進一步通知</string>
+    <string name="alert_summary_trip_shuttle">從 &lt;b>%3$s&lt;/b> 到 &lt;b>%4$s&lt;/b>，接駁巴士將取代 &lt;b>%1$s&lt;/b> %2$s。</string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
     <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">替代路徑</string>
     <string name="amber_alert">安珀警報</string>
@@ -50,6 +53,8 @@
     <string name="app_version_and_build">版本%1$s(%2$s)</string>
     <string name="app_version_number">版本 %1$s</string>
     <string name="approaching">正在接近</string>
+    <string name="are_cancelled_today">今天取消</string>
+    <string name="are_suspended_today">今天暫停營業</string>
     <string name="arriving_abbr">到站</string>
     <string name="autos_impeding_service">交通事故</string>
     <string name="autos_impeding_service_lowercase">交通事故</string>
@@ -59,8 +64,10 @@
     <string name="boarding_abbr">上客</string>
     <string name="boarding_track">在軌道%1$s登車</string>
     <string name="bus">巴士</string>
+    <string name="bus_cancelled">巴士取消</string>
     <string name="bus_label">%1$s巴士</string>
     <string name="bus_lowercase">巴士</string>
+    <string name="bus_suspended">公車停駛</string>
     <string name="buses">巴士</string>
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
@@ -111,6 +118,7 @@
     <string name="drag_handle">拖曳控制柄</string>
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="drawbridge_being_raised_lowercase">吊橋升起</string>
+    <string name="due_to_cause">\u0020由於 %1$s</string>
     <string name="eastbound">東行</string>
     <string name="edit">編輯</string>
     <string name="edit_favorite_title">編輯收藏</string>
@@ -158,7 +166,9 @@
     <string name="feedback_link_form">傳送應用程式回饋</string>
     <string name="ferries">輪渡</string>
     <string name="ferry">輪渡</string>
+    <string name="ferry_cancelled">渡輪取消</string>
     <string name="ferry_lowercase">輪渡</string>
+    <string name="ferry_suspended">渡輪停運</string>
     <string name="filter_routes">篩選路線</string>
     <string name="filter_show_all">全部</string>
     <string name="find_stops_hint">要尋找網站，請先選擇路線</string>
@@ -197,7 +207,9 @@
     <string name="ice_in_harbor">港口結冰</string>
     <string name="ice_in_harbor_lowercase">港口結冰</string>
     <string name="inbound">進站</string>
+    <string name="is_cancelled_today">今天取消</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
+    <string name="is_suspended_today">今天暫停營業</string>
     <string name="last">最後的</string>
     <string name="last_trip">最後一次旅行</string>
     <string name="later_today">今天晚些時候</string>
@@ -235,6 +247,7 @@
     <string name="more_section_support_note_hours">週一至週五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">多條路線</string>
+    <string name="multiple_trips">多次旅行</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
@@ -343,6 +356,7 @@
     <string name="severe_weather_lowercase">惡劣天氣</string>
     <string name="shuttle">擺渡巴士</string>
     <string name="shuttle_bus">穿梭巴士</string>
+    <string name="shuttle_bus_sentence_case">接駁巴士</string>
     <string name="shuttle_buses">擺渡巴士</string>
     <string name="shuttle_buses_replace_service">擺渡巴士取代原服務</string>
     <string name="signal_issue">信號問題</string>
@@ -418,6 +432,8 @@
     <string name="traffic">交通</string>
     <string name="traffic_lowercase">交通</string>
     <string name="train">列車</string>
+    <string name="train_cancelled">列車取消</string>
+    <string name="train_suspended">列車停駛</string>
     <string name="train_traffic">火車交通</string>
     <string name="train_traffic_lowercase">火車交通</string>
     <string name="trains">列車</string>
@@ -425,8 +441,10 @@
     <string name="trip_cancelled_details">本行程已取消。對於造成您的不便，我們深表歉意。</string>
     <string name="trip_complete">行程結束</string>
     <string name="trip_complete_body">本%1$s已到達目的地。</string>
+    <string name="trip_from">來自 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b></string>
     <string name="trip_not_available">行程不可用</string>
     <string name="trip_not_available_body">此 %1$s 尚未分配給任何行程。</string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">嘗試不同的拼字或名稱。</string>
     <string name="try_your_search_again">再次嘗試搜尋。</string>
     <string name="unable_to_connect">無法連接</string>
@@ -478,4 +496,6 @@
     <string name="weather">天氣</string>
     <string name="weather_lowercase">天氣</string>
     <string name="westbound">西行</string>
+    <string name="will_not_stop_at_today">今天不會止步於 %1$s</string>
+    <string name="x_and_y">%1$s 和 %2$s</string>
 </resources>

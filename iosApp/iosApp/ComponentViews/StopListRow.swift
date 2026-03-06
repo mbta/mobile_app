@@ -106,8 +106,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         alert: disruption.alert,
                         alertSummary: alertSummaries[disruption.alert.id] ?? nil,
                         spec: .downstream,
-                        color: routeAccents.color,
-                        textColor: routeAccents.textColor,
+                        routeAccents: routeAccents,
                         onViewDetails: { onOpenAlertDetails(disruption.alert) },
                         internalPadding: .init(top: 0, leading: 5, bottom: 0, trailing: 0)
                     )

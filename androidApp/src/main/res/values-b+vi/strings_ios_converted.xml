@@ -13,6 +13,7 @@
     <string name="add_to_favorites_title_stop_details">Thêm &lt;b>%1$s&lt;/b> tại &lt;b>%2$s&lt;/b> vào mục Yêu thích</string>
     <string name="additional_service">Dịch vụ bổ sung</string>
     <string name="additional_service_sentence_case">Dịch vụ bổ sung</string>
+    <string name="affected_by_today">bị ảnh hưởng bởi %1$s hôm nay</string>
     <plurals name="affected_stops">
         <item quantity="other">&lt;b>%1$d&lt;/b> điểm dừng bị ảnh hưởng</item>
     </plurals>
@@ -36,6 +37,8 @@
     <string name="alert_summary_timeframe_time">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020đến ngày mai</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020cho đến khi có thông báo mới</string>
+    <string name="alert_summary_trip_shuttle">Xe buýt đưa đón thay thế tuyến &lt;b>%1$s&lt;/b> %2$s từ &lt;b>%3$s&lt;/b> đến &lt;b>%4$s&lt;/b></string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
     <string name="alert_summary_with_update">&lt;b>Cập nhật:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Đường đi thay thế</string>
     <string name="amber_alert">Cảnh báo Amber</string>
@@ -50,6 +53,8 @@
     <string name="app_version_and_build">phiên bản %1$s (%2$s)</string>
     <string name="app_version_number">phiên bản %1$s</string>
     <string name="approaching">Đang đến gần</string>
+    <string name="are_cancelled_today">các sự kiện bị hủy hôm nay</string>
+    <string name="are_suspended_today">bị đình chỉ hôm nay</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Xe hơi cản trở dịch vụ</string>
     <string name="autos_impeding_service_lowercase">xe hơi cản trở dịch vụ</string>
@@ -59,8 +64,10 @@
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Lên tàu theo đường ray %1$s</string>
     <string name="bus">Xe buýt</string>
+    <string name="bus_cancelled">Chuyến xe buýt bị hủy</string>
     <string name="bus_label">%1$s xe buýt</string>
     <string name="bus_lowercase">xe buýt</string>
+    <string name="bus_suspended">Xe buýt bị tạm dừng</string>
     <string name="buses">xe buýt</string>
     <string name="cancel">Hủy bỏ</string>
     <string name="cancellation">Hủy</string>
@@ -111,6 +118,7 @@
     <string name="drag_handle">Tay kéo</string>
     <string name="drawbridge_being_raised">Cầu rút đang nâng</string>
     <string name="drawbridge_being_raised_lowercase">cầu kéo đang được nâng lên</string>
+    <string name="due_to_cause">\u0020bởi vì %1$s</string>
     <string name="eastbound">Về hướng đông</string>
     <string name="edit">Chỉnh sửa</string>
     <string name="edit_favorite_title">Chỉnh sửa mục yêu thích</string>
@@ -158,7 +166,9 @@
     <string name="feedback_link_form">Gửi ý phản hồi về ứng dụng</string>
     <string name="ferries">phà</string>
     <string name="ferry">Phà</string>
+    <string name="ferry_cancelled">Chuyến phà bị hủy</string>
     <string name="ferry_lowercase">phà</string>
+    <string name="ferry_suspended">Dịch vụ phà tạm ngừng hoạt động</string>
     <string name="filter_routes">Lọc tuyến đường</string>
     <string name="filter_show_all">Tất cả</string>
     <string name="find_stops_hint">Để tìm điểm dừng, trước tiên hãy chọn một tuyến đường</string>
@@ -197,7 +207,9 @@
     <string name="ice_in_harbor">Băng ở cảng</string>
     <string name="ice_in_harbor_lowercase">băng ở bến cảng</string>
     <string name="inbound">Đến</string>
+    <string name="is_cancelled_today">bị hủy hôm nay</string>
     <string name="is_stops_away_from">%1$s cách %3$s %2$d điểm dừng</string>
+    <string name="is_suspended_today">bị đình chỉ hôm nay</string>
     <string name="last">Cuối cùng</string>
     <string name="last_trip">Chuyến đi cuối cùng</string>
     <string name="later_today">trong ngày hôm nay</string>
@@ -235,6 +247,7 @@
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Nhiều tuyến đường</string>
+    <string name="multiple_trips">Nhiều chuyến đi</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>
     <string name="nearby_transit_link">Ở gần</string>
     <string name="new_feature_screen_reader_header_prefix">Tính năng mới. %1$s</string>
@@ -343,6 +356,7 @@
     <string name="severe_weather_lowercase">thời tiết khắc nghiệt</string>
     <string name="shuttle">Xe đưa đón</string>
     <string name="shuttle_bus">Xe buýt đưa đón</string>
+    <string name="shuttle_bus_sentence_case">Xe buýt đưa đón</string>
     <string name="shuttle_buses">Xe buýt đưa đón</string>
     <string name="shuttle_buses_replace_service">Xe buýt đưa đón thay thế dịch vụ</string>
     <string name="signal_issue">Vấn đề đèn tín hiệu</string>
@@ -418,6 +432,8 @@
     <string name="traffic">Giao thông</string>
     <string name="traffic_lowercase">giao thông</string>
     <string name="train">tàu</string>
+    <string name="train_cancelled">Chuyến tàu bị hủy</string>
+    <string name="train_suspended">Tàu bị tạm dừng</string>
     <string name="train_traffic">Giao thông đường sắt</string>
     <string name="train_traffic_lowercase">giao thông đường sắt</string>
     <string name="trains">tàu</string>
@@ -425,8 +441,10 @@
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
     <string name="trip_complete">Chuyến đi hoàn tất</string>
     <string name="trip_complete_body">%1$s này đã đến đích.</string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> từ &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Chuyến đi không khả dụng</string>
     <string name="trip_not_available_body">Mã %1$s này chưa được chỉ định cho chuyến đi nào.</string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Thử cách viết hoặc tên khác.</string>
     <string name="try_your_search_again">Thử tìm kiếm lại.</string>
     <string name="unable_to_connect">Không thể kết nối</string>
@@ -478,4 +496,6 @@
     <string name="weather">Thời tiết</string>
     <string name="weather_lowercase">thời tiết</string>
     <string name="westbound">Về hướng tây</string>
+    <string name="will_not_stop_at_today">sẽ không dừng lại ở %1$s hôm nay</string>
+    <string name="x_and_y">%1$s và %2$s</string>
 </resources>

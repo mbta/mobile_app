@@ -13,6 +13,7 @@
     <string name="add_to_favorites_title_stop_details">Ajoute &lt;b>%1$s&lt;/b> nan &lt;b>%2$s&lt;/b> Preferans yo</string>
     <string name="additional_service">Plis Sèvis</string>
     <string name="additional_service_sentence_case">Plis sèvis</string>
+    <string name="affected_by_today">afekte pa %1$s jodi a</string>
     <plurals name="affected_stops">
         <item quantity="zero">&lt;b>%1$d&lt;/b> arè ki afekte yo</item>
         <item quantity="one">&lt;b>%1$d&lt;/b> arè ki afekte</item>
@@ -41,6 +42,8 @@
     <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jiskaske yo bay lòt avi</string>
+    <string name="alert_summary_trip_shuttle">Otobis navèt yo ranplase &lt;b>%1$s&lt;/b> %2$s soti &lt;b>%3$s&lt;/b> pou rive &lt;b>%4$s&lt;/b></string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
     <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Lòt chemen</string>
     <string name="amber_alert">Avètisman Amber</string>
@@ -55,6 +58,8 @@
     <string name="app_version_and_build">vèsyon %1$s (%2$s)</string>
     <string name="app_version_number">vèsyon %1$s</string>
     <string name="approaching">Ap apwoche</string>
+    <string name="are_cancelled_today">yo anile jodi a</string>
+    <string name="are_suspended_today">yo sispann jodi a</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Machin Ki Bloke Sèvis la</string>
     <string name="autos_impeding_service_lowercase">oto ap anpeche sèvis la</string>
@@ -64,8 +69,10 @@
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Monte sou vwa a %1$s</string>
     <string name="bus">Bis</string>
+    <string name="bus_cancelled">Bis anile</string>
     <string name="bus_label">%1$s bis</string>
     <string name="bus_lowercase">bis</string>
+    <string name="bus_suspended">Bis sispann</string>
     <string name="buses">bis yo</string>
     <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
@@ -116,6 +123,7 @@
     <string name="drag_handle">Kontwolè deplasman</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
+    <string name="due_to_cause">\u0020akòz %1$s</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
     <string name="edit_favorite_title">Modifye Favorite yo</string>
@@ -173,7 +181,9 @@
     <string name="feedback_link_form">Voye fidbak sou App la</string>
     <string name="ferries">bato yo</string>
     <string name="ferry">Bato</string>
+    <string name="ferry_cancelled">Ferry anile</string>
     <string name="ferry_lowercase">bato</string>
+    <string name="ferry_suspended">Ferry sispann</string>
     <string name="filter_routes">Filter wout</string>
     <string name="filter_show_all">Tout</string>
     <string name="find_stops_hint">Pou jwenn yon arè, chwazi wout la anvan</string>
@@ -212,7 +222,9 @@
     <string name="ice_in_harbor">Glas Nan Pò a</string>
     <string name="ice_in_harbor_lowercase">glas nan pò</string>
     <string name="inbound">Antran</string>
+    <string name="is_cancelled_today">anile jodi a</string>
     <string name="is_stops_away_from">%1$s nan %2$d arè parapò ak %3$s</string>
+    <string name="is_suspended_today">sispann jodi a</string>
     <string name="last">Dènye</string>
     <string name="last_trip">Dènye vwayaj la</string>
     <string name="later_today">pita jodi a</string>
@@ -250,6 +262,7 @@
     <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Plizyè wout</string>
+    <string name="multiple_trips">Plizyè vwayaj</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
@@ -358,6 +371,7 @@
     <string name="severe_weather_lowercase">move tan</string>
     <string name="shuttle">Navèt</string>
     <string name="shuttle_bus">Otobis Navèt</string>
+    <string name="shuttle_bus_sentence_case">Otobis navèt</string>
     <string name="shuttle_buses">Otobis k ap fè lanavèt</string>
     <string name="shuttle_buses_replace_service">Bis navèt ranplase sèvis</string>
     <string name="signal_issue">Pwoblèm Siyal</string>
@@ -438,6 +452,8 @@
     <string name="traffic">Sikilasyon</string>
     <string name="traffic_lowercase">trafik</string>
     <string name="train">tren</string>
+    <string name="train_cancelled">Tren anile</string>
+    <string name="train_suspended">Tren sispann</string>
     <string name="train_traffic">Trafik tren</string>
     <string name="train_traffic_lowercase">trafik tren</string>
     <string name="trains">tren yo</string>
@@ -445,8 +461,10 @@
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>
     <string name="trip_complete">Vwayaj konplè</string>
     <string name="trip_complete_body">%1$s sa a rive nan destinasyon li.</string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> soti nan &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Vwayaj pa disponib</string>
     <string name="trip_not_available_body">%1$s sa a poko resevwa yon vwayaj.</string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> pou rive nan &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Eseye yon diferan òtograf oswa non.</string>
     <string name="try_your_search_again">Eseye rechèch ou a ankò.</string>
     <string name="unable_to_connect">Pa ka konekte</string>
@@ -503,4 +521,6 @@
     <string name="weather">Tan</string>
     <string name="weather_lowercase">move tan</string>
     <string name="westbound">Pran direksyon lwès</string>
+    <string name="will_not_stop_at_today">p ap rete nan %1$s jodi a</string>
+    <string name="x_and_y">%1$s ak %2$s</string>
 </resources>

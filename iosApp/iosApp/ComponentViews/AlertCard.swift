@@ -21,8 +21,7 @@ struct AlertCard: View {
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let spec: AlertCardSpec
-    let color: Color
-    let textColor: Color
+    let routeAccents: TripRouteAccents
     let onViewDetails: (() -> Void)?
     let internalPadding: EdgeInsets
 
@@ -36,16 +35,14 @@ struct AlertCard: View {
         alert: Shared.Alert,
         alertSummary: AlertSummary?,
         spec: AlertCardSpec,
-        color: Color,
-        textColor: Color,
+        routeAccents: TripRouteAccents,
         onViewDetails: (() -> Void)?,
         internalPadding: EdgeInsets = .init()
     ) {
         self.alert = alert
         self.alertSummary = alertSummary
         self.spec = spec
-        self.color = color
-        self.textColor = textColor
+        self.routeAccents = routeAccents
         self.onViewDetails = onViewDetails
         self.internalPadding = internalPadding
     }
@@ -68,12 +65,16 @@ struct AlertCard: View {
             HStack {
                 HStack(alignment: .center, spacing: 16) {
                     // Override alert state and icon size in the case of all clear
-                    let alertState = alert.allClear(atTime: EasternTimeInstant.now()) ? .allClear : alert.alertState
+                    let alertState = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
                     let iconSize = alertState == .allClear ? elevatorIconSize : iconSize
-                    AlertIcon(alertState: alertState, color: color)
-                        .scaledToFit()
-                        .frame(width: iconSize, height: iconSize, alignment: .center)
-                    Text(formattedAlert.alertCardHeader(spec: spec))
+                    AlertIcon(
+                        alertState: alertState,
+                        color: routeAccents.color,
+                        overrideIcon: alert.effect == .cancellation ? routeSlashIcon(routeAccents.type) : nil
+                    )
+                    .scaledToFit()
+                    .frame(width: iconSize, height: iconSize, alignment: .center)
+                    Text(formattedAlert.alertCardHeader(spec: spec, type: routeAccents.type))
                         .font(spec == .major ? Typography.title2Bold : Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
@@ -83,7 +84,7 @@ struct AlertCard: View {
                 }
             }
             if spec == .major {
-                color.opacity(0.25).frame(height: 2)
+                routeAccents.color.opacity(0.25).frame(height: 2)
                 Text(formattedAlert.alertCardMajorBody)
                     .font(Typography.callout)
                     .fixedSize(horizontal: false, vertical: true)
@@ -96,11 +97,11 @@ struct AlertCard: View {
                                 .frame(maxWidth: .infinity)
                         }
                     )
-                    .foregroundStyle(textColor)
+                    .foregroundStyle(routeAccents.textColor)
                     .font(Typography.bodySemibold)
                     .padding(10)
                     .frame(minHeight: 44)
-                    .background(color)
+                    .background(routeAccents.color)
                     .clipShape(.rect(cornerRadius: 8.0))
                     .preventScrollTaps()
                 }
@@ -139,7 +140,8 @@ struct AlertCard: View {
                 },
                 alertSummary: nil,
                 spec: .major,
-                color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+                routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
+                onViewDetails: {}
             )
             .padding(32)
 
@@ -149,7 +151,8 @@ struct AlertCard: View {
                 },
                 alertSummary: nil,
                 spec: .secondary,
-                color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+                routeAccents: .init(color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), type: .commuterRail),
+                onViewDetails: {}
             )
             .padding(32)
 
@@ -160,7 +163,8 @@ struct AlertCard: View {
                 },
                 alertSummary: nil,
                 spec: .elevator,
-                color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), onViewDetails: {}
+                routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
+                onViewDetails: {}
             )
             .padding(32)
 
@@ -182,8 +186,7 @@ struct AlertCard: View {
                     isUpdate: false
                 ),
                 spec: .major,
-                color: Color.pink,
-                textColor: Color.orange,
+                routeAccents: .init(color: .pink, textColor: .orange, type: .ferry),
                 onViewDetails: {}
             )
             .padding(32)
@@ -200,8 +203,7 @@ struct AlertCard: View {
                     isUpdate: true
                 ),
                 spec: .secondary,
-                color: Color(hex: "ED8B00"),
-                textColor: Color(hex: "FFFFFF"),
+                routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
             .padding(32)
@@ -212,8 +214,21 @@ struct AlertCard: View {
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 ),
                 spec: .secondary,
-                color: Color(hex: "ED8B00"),
-                textColor: Color(hex: "FFFFFF"),
+                routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
+                onViewDetails: {}
+            )
+            .padding(32)
+
+            AlertCard(
+                alert: objects.alert { $0.effect = .cancellation },
+                alertSummary: AlertSummary.TripSpecific(
+                    tripIdentity: AlertSummary.TripSpecificTripFrom(
+                        tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                        stopName: "Ruggles"
+                    ), effect: .cancellation, effectStops: nil, cause: .mechanicalIssue
+                ),
+                spec: .major,
+                routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
             .padding(32)

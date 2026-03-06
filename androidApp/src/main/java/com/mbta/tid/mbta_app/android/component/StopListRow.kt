@@ -233,8 +233,7 @@ fun StopListRow(
                     disruption.alert,
                     alertSummaries[disruption.alert.id],
                     AlertCardSpec.Downstream,
-                    routeAccents.color,
-                    routeAccents.textColor,
+                    routeAccents,
                     onViewDetails = { onOpenAlertDetails(disruption.alert) },
                     interiorPadding = PaddingValues(start = 10.dp),
                 )

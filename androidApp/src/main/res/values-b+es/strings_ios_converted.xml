@@ -13,6 +13,7 @@
     <string name="add_to_favorites_title_stop_details">Agregar &lt;b>%1$s&lt;/b> a la(s) &lt;b>%2$s&lt;/b> a Favoritos</string>
     <string name="additional_service">Servicio adicional</string>
     <string name="additional_service_sentence_case">Servicio adicional</string>
+    <string name="affected_by_today">afectados por %1$s hoy</string>
     <plurals name="affected_stops">
         <item quantity="one">&lt;b>%1$d&lt;/b> parada afectada</item>
         <item quantity="many">&lt;b>%1$d&lt;/b> paradas afectadas</item>
@@ -38,6 +39,8 @@
     <string name="alert_summary_timeframe_time">\u0020hasta las %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020hasta mañana</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020hasta nuevo aviso</string>
+    <string name="alert_summary_trip_shuttle">Los autobuses lanzadera reemplazan al &lt;b>%1$s&lt;/b> %2$s de &lt;b>%3$s&lt;/b> a &lt;b>%4$s&lt;/b></string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
     <string name="alert_summary_with_update">&lt;b>Actualización:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Camino alternativo</string>
     <string name="amber_alert">Alerta Amber</string>
@@ -52,6 +55,8 @@
     <string name="app_version_and_build">versión %1$s (%2$s)</string>
     <string name="app_version_number">versión %1$s</string>
     <string name="approaching">Acercándose</string>
+    <string name="are_cancelled_today">se cancelan hoy</string>
+    <string name="are_suspended_today">están suspendidos hoy</string>
     <string name="arriving_abbr">LLEGAN.</string>
     <string name="autos_impeding_service">Automóviles que obstaculizan el servicio</string>
     <string name="autos_impeding_service_lowercase">autos que impiden el servicio</string>
@@ -61,8 +66,10 @@
     <string name="boarding_abbr">ABORD.</string>
     <string name="boarding_track">Embarque en la vía %1$s</string>
     <string name="bus">Autobús</string>
+    <string name="bus_cancelled">Autobús cancelado</string>
     <string name="bus_label">%1$s autobús</string>
     <string name="bus_lowercase">autobús</string>
+    <string name="bus_suspended">Autobús suspendido</string>
     <string name="buses">autobuses</string>
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
@@ -113,6 +120,7 @@
     <string name="drag_handle">Palanca de arrastre</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="drawbridge_being_raised_lowercase">puente levadizo levantado</string>
+    <string name="due_to_cause">\u0020debido a %1$s</string>
     <string name="eastbound">En dirección este</string>
     <string name="edit">Editar</string>
     <string name="edit_favorite_title">Editar favorito</string>
@@ -164,7 +172,9 @@
     <string name="feedback_link_form">Enviar comentarios sobre la aplicación</string>
     <string name="ferries">ferris</string>
     <string name="ferry">Ferry</string>
+    <string name="ferry_cancelled">Ferry cancelado</string>
     <string name="ferry_lowercase">ferry</string>
+    <string name="ferry_suspended">Ferry suspendido</string>
     <string name="filter_routes">Filtrar rutas</string>
     <string name="filter_show_all">Todos</string>
     <string name="find_stops_hint">Para encontrar paradas, primero seleccione una ruta</string>
@@ -203,7 +213,9 @@
     <string name="ice_in_harbor">Hielo en el puerto</string>
     <string name="ice_in_harbor_lowercase">hielo en el puerto</string>
     <string name="inbound">Entrante</string>
+    <string name="is_cancelled_today">se cancela hoy</string>
     <string name="is_stops_away_from">%1$s está a %2$d parada(s) antes de %3$s</string>
+    <string name="is_suspended_today">está suspendido hoy</string>
     <string name="last">Último</string>
     <string name="last_trip">Último viaje</string>
     <string name="later_today">más tarde hoy</string>
@@ -241,6 +253,7 @@
     <string name="more_section_support_note_hours">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Múltiples rutas</string>
+    <string name="multiple_trips">Múltiples viajes</string>
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
     <string name="new_feature_screen_reader_header_prefix">Nueva función. %1$s</string>
@@ -349,6 +362,7 @@
     <string name="severe_weather_lowercase">clima severo</string>
     <string name="shuttle">Autobús de enlace</string>
     <string name="shuttle_bus">Autobús de enlace</string>
+    <string name="shuttle_bus_sentence_case">Autobús lanzadera</string>
     <string name="shuttle_buses">Autobuses de enlace</string>
     <string name="shuttle_buses_replace_service">Los autobuses de enlace reemplazan el servicio</string>
     <string name="signal_issue">Problema de señal</string>
@@ -426,6 +440,8 @@
     <string name="traffic">Tráfico</string>
     <string name="traffic_lowercase">tráfico</string>
     <string name="train">tren</string>
+    <string name="train_cancelled">Tren cancelado</string>
+    <string name="train_suspended">Tren suspendido</string>
     <string name="train_traffic">Tráfico de trenes</string>
     <string name="train_traffic_lowercase">tráfico de trenes</string>
     <string name="trains">trenes</string>
@@ -433,8 +449,10 @@
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
     <string name="trip_complete">Viaje completado</string>
     <string name="trip_complete_body">Este %1$s ha llegado a su destino.</string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> de &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Viaje no disponible</string>
     <string name="trip_not_available_body">Este %1$s aún no está asignado a ningún viaje.</string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Pruebe con una ortografía o un nombre diferentes.</string>
     <string name="try_your_search_again">Busque de nuevo.</string>
     <string name="unable_to_connect">No se puede conectar</string>
@@ -488,4 +506,6 @@
     <string name="weather">Clima</string>
     <string name="weather_lowercase">clima</string>
     <string name="westbound">En dirección oeste</string>
+    <string name="will_not_stop_at_today">No se detendrá en %1$s hoy</string>
+    <string name="x_and_y">%1$s y %2$s</string>
 </resources>

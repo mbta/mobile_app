@@ -214,8 +214,7 @@ fun StopDetailsFilteredDeparturesView(
                 alert,
                 summary,
                 spec,
-                color = routeAccents.color,
-                textColor = routeAccents.textColor,
+                routeAccents,
                 onViewDetails = { openAlertDetails(alert, spec) },
             )
         }

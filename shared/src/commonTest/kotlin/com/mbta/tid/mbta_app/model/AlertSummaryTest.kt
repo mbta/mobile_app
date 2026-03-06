@@ -80,6 +80,70 @@ class AlertSummaryTest {
     }
 
     @Test
+    fun `can serialize and deserialize trip specific summary`() {
+        val jsonObject = buildJsonObject {
+            put("type", "trip_specific")
+            putJsonObject("trip_identity") {
+                put("type", "trip_from")
+                put("trip_time", "2026-03-06T15:19:00-05:00")
+                put("stop_name", "North Station")
+            }
+            put("effect", "suspension")
+            put("effect_stops", JsonNull)
+            put("cause", "holiday")
+        }
+        val summary: AlertSummary =
+            AlertSummary.TripSpecific(
+                AlertSummary.TripSpecific.TripFrom(
+                    EasternTimeInstant(2026, Month.MARCH, 6, 15, 19),
+                    "North Station",
+                ),
+                Alert.Effect.Suspension,
+                null,
+                Alert.Cause.Holiday,
+            )
+        assertEquals(jsonObject, json.encodeToJsonElement(summary))
+        assertEquals(summary, json.decodeFromJsonElement(jsonObject))
+    }
+
+    @Test
+    fun `can serialize and deserialize trip shuttle summary`() {
+        val jsonObject = buildJsonObject {
+            put("type", "trip_shuttle")
+            put("trip_time", "2026-03-06T15:21:00-05:00")
+            put("route_type", "commuter_rail")
+            put("current_stop_name", "Ruggles")
+            put("end_stop_name", "Forest Hills")
+        }
+        val summary: AlertSummary =
+            AlertSummary.TripShuttle(
+                EasternTimeInstant(2026, Month.MARCH, 6, 15, 21),
+                RouteType.COMMUTER_RAIL,
+                "Ruggles",
+                "Forest Hills",
+            )
+        assertEquals(jsonObject, json.encodeToJsonElement(summary))
+        assertEquals(summary, json.decodeFromJsonElement(jsonObject))
+    }
+
+    @Test
+    fun `can deserialize unknown summary`() {
+        val jsonObject = buildJsonObject {
+            put("type", "subliminal")
+            put("foo", "bar")
+            putJsonObject("fallback") {
+                put("type", "standard")
+                put("effect", "service_change")
+            }
+        }
+        val summary: AlertSummary =
+            AlertSummary.Unknown(
+                fallback = AlertSummary.Standard(effect = Alert.Effect.ServiceChange)
+            )
+        assertEquals(summary, json.decodeFromJsonElement(jsonObject))
+    }
+
+    @Test
     fun `can deserialize all locations`() {
         fun performCheck(
             location: AlertSummary.Location,
@@ -220,6 +284,42 @@ class AlertSummaryTest {
                 put("time", "2026-01-16T10:46:00-05:00")
             }
         }
+    }
+
+    @Test
+    fun `can deserialize all trip identities`() {
+        fun performCheck(
+            recurrence: AlertSummary.TripSpecific.TripIdentity,
+            jsonBuilder: JsonObjectBuilder.() -> Unit,
+        ) {
+            val jsonObject = buildJsonObject(jsonBuilder)
+            assertEquals(jsonObject, json.encodeToJsonElement(recurrence))
+            assertEquals(recurrence, json.decodeFromJsonElement(jsonObject))
+        }
+
+        performCheck(
+            AlertSummary.TripSpecific.TripFrom(
+                EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
+                "Ruggles",
+            )
+        ) {
+            put("type", "trip_from")
+            put("trip_time", "2026-03-06T15:25:00-05:00")
+            put("stop_name", "Ruggles")
+        }
+
+        performCheck(
+            AlertSummary.TripSpecific.TripTo(
+                EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
+                "South Station",
+            )
+        ) {
+            put("type", "trip_to")
+            put("trip_time", "2026-03-06T15:25:00-05:00")
+            put("headsign", "South Station")
+        }
+
+        performCheck(AlertSummary.TripSpecific.MultipleTrips) { put("type", "multiple_trips") }
     }
 
     @Test
@@ -1496,6 +1596,197 @@ class AlertSummaryTest {
                 alert.effect,
                 AlertSummary.Location.WholeRoute("Green-C", RouteType.LIGHT_RAIL),
                 null,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `trip specific suspension`() = runBlocking {
+        val today = EasternTimeInstant.now().local.date
+        val now = EasternTimeInstant(today, LocalTime(12, 0))
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Ruggles" }
+        val route = objects.route {}
+        val pattern = objects.routePattern(route) {}
+        val trip = objects.trip(pattern) {}
+        val alert =
+            objects.alert {
+                activePeriod(now - 2.hours, now + 2.hours)
+                cause = Alert.Cause.Weather
+                effect = Alert.Effect.Suspension
+                informedEntity(trip = trip.id)
+            }
+        val schedule =
+            objects.schedule {
+                this.trip = trip
+                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+            }
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                stop.id,
+                0,
+                listOf(pattern),
+                now,
+                listOf(objects.upcomingTrip(schedule)),
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.TripSpecific(
+                AlertSummary.TripSpecific.TripFrom(
+                    EasternTimeInstant(today, LocalTime(12, 13)),
+                    "Ruggles",
+                ),
+                Alert.Effect.Suspension,
+                null,
+                Alert.Cause.Weather,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `multiple trip cancellation`() = runBlocking {
+        val today = EasternTimeInstant.now().local.date
+        val now = EasternTimeInstant(today, LocalTime(12, 0))
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop { name = "Blossom Street Pier" }
+        val route = objects.route {}
+        val pattern = objects.routePattern(route) {}
+        val trip1 = objects.trip(pattern) {}
+        val trip2 = objects.trip(pattern) {}
+        val alert =
+            objects.alert {
+                activePeriod(now - 2.hours, now + 2.hours)
+                cause = Alert.Cause.IceInHarbor
+                effect = Alert.Effect.Cancellation
+                informedEntity(trip = trip1.id)
+                informedEntity(trip = trip2.id)
+            }
+        val schedule1 =
+            objects.schedule {
+                this.trip = trip1
+                departureTime = EasternTimeInstant(today, LocalTime(18, 0))
+            }
+        val schedule2 =
+            objects.schedule {
+                this.trip = trip2
+                departureTime = EasternTimeInstant(today, LocalTime(18, 30))
+            }
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                stop.id,
+                0,
+                listOf(pattern),
+                now,
+                listOf(objects.upcomingTrip(schedule1), objects.upcomingTrip(schedule2)),
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.TripSpecific(
+                AlertSummary.TripSpecific.MultipleTrips,
+                Alert.Effect.Cancellation,
+                null,
+                Alert.Cause.IceInHarbor,
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `trip specific shuttle`() = runBlocking {
+        val today = EasternTimeInstant.now().local.date
+        val now = EasternTimeInstant(today, LocalTime(12, 0))
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop { name = "Ruggles" }
+        val stop2 = objects.stop { name = "Forest Hills" }
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
+        val pattern =
+            objects.routePattern(route) {
+                representativeTrip { stopIds = listOf(objects.stop().id, stop1.id, stop2.id) }
+            }
+        val trip = objects.trip(pattern) {}
+        val alert =
+            objects.alert {
+                activePeriod(now - 2.hours, now + 2.hours)
+                effect = Alert.Effect.Shuttle
+                informedEntity(stop = stop1.id, trip = trip.id)
+                informedEntity(stop = stop2.id, trip = trip.id)
+            }
+        val schedule =
+            objects.schedule {
+                this.trip = trip
+                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+            }
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                stop1.id,
+                0,
+                listOf(pattern),
+                now,
+                listOf(objects.upcomingTrip(schedule)),
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.TripShuttle(
+                EasternTimeInstant(today, LocalTime(12, 13)),
+                RouteType.COMMUTER_RAIL,
+                "Ruggles",
+                "Forest Hills",
+            ),
+            alertSummary,
+        )
+    }
+
+    @Test
+    fun `trip specific station bypass`() = runBlocking {
+        val today = EasternTimeInstant.now().local.date
+        val now = EasternTimeInstant(today, LocalTime(12, 0))
+        val objects = ObjectCollectionBuilder()
+        val stop1 = objects.stop { name = "Ruggles" }
+        val stop2 = objects.stop { name = "Back Bay" }
+        val route = objects.route {}
+        val pattern = objects.routePattern(route) {}
+        val trip = objects.trip(pattern) { headsign = "Stoughton" }
+        val alert =
+            objects.alert {
+                activePeriod(now - 2.hours, now + 2.hours)
+                cause = Alert.Cause.UnknownCause
+                effect = Alert.Effect.StationClosure
+                informedEntity(stop = stop2.id, trip = trip.id)
+                informedEntity(stop = stop1.id, trip = trip.id)
+            }
+        val schedule =
+            objects.schedule {
+                this.trip = trip
+                departureTime = EasternTimeInstant(today, LocalTime(12, 13))
+            }
+        val alertSummary =
+            AlertSummary.summarizing(
+                alert,
+                stop1.id,
+                0,
+                listOf(pattern),
+                now,
+                listOf(objects.upcomingTrip(schedule)),
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.TripSpecific(
+                AlertSummary.TripSpecific.TripTo(
+                    EasternTimeInstant(today, LocalTime(12, 13)),
+                    trip.headsign,
+                ),
+                Alert.Effect.StationClosure,
+                listOf("Back Bay", "Ruggles"),
+                Alert.Cause.UnknownCause,
             ),
             alertSummary,
         )

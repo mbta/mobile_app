@@ -37,7 +37,7 @@ data class FormattedAlert(
         effectRes(alert?.effect ?: alertSummary?.effect),
         sentenceEffectRes(alert?.effect ?: alertSummary?.effect),
         causeRes(alert?.cause),
-        dueToCauseRes(alert?.cause),
+        dueToCauseRes(alert?.cause ?: (alertSummary as? AlertSummary.TripSpecific)?.cause),
         predictionReplacement(alert?.effect ?: alertSummary?.effect),
     )
 
@@ -126,23 +126,90 @@ data class FormattedAlert(
                         )
                     )
                 }
+            is AlertSummary.TripSpecific ->
+                AnnotatedString.fromHtml(
+                    resources.getString(
+                        R.string.alert_summary_trip_specific,
+                        summaryTripIdentity(alertSummary.tripIdentity, resources),
+                        summaryTripEffect(
+                            alertSummary.tripIdentity,
+                            alertSummary.effect,
+                            alertSummary.effectStops,
+                            resources,
+                        ),
+                        summaryDueToCause(dueToCauseRes, resources),
+                    )
+                )
+            is AlertSummary.TripShuttle ->
+                AnnotatedString.fromHtml(
+                    resources.getString(
+                        R.string.alert_summary_trip_shuttle,
+                        alertSummary.tripTime.formattedTime(),
+                        alertSummary.routeType.typeText(resources, isOnly = true),
+                        alertSummary.currentStopName,
+                        alertSummary.endStopName,
+                    )
+                )
             is AlertSummary.Unknown -> summary(alertSummary.fallback, resources)
             null -> null
         }
 
-    fun alertCardHeader(spec: AlertCardSpec, resources: Resources) =
-        when (spec) {
+    fun alertCardHeader(
+        spec: AlertCardSpec,
+        type: RouteType,
+        resources: Resources,
+    ): AnnotatedString {
+        return when (spec) {
             AlertCardSpec.Downstream ->
                 summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
             AlertCardSpec.Delay -> delayHeader(resources)
             AlertCardSpec.Secondary ->
                 summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
-            else -> AnnotatedString.fromHtml(effect(resources))
+            else -> {
+                val effect = alert?.effect ?: alertSummary?.effect
+                val isTripSpecific =
+                    alertSummary is AlertSummary.TripSpecific ||
+                        alertSummary is AlertSummary.TripShuttle
+                if (isTripSpecific) {
+                    when {
+                        effect == Alert.Effect.Cancellation && type == RouteType.BUS ->
+                            return AnnotatedString(resources.getString(R.string.bus_cancelled))
+
+                        effect == Alert.Effect.Cancellation && type == RouteType.FERRY ->
+                            return AnnotatedString(resources.getString(R.string.ferry_cancelled))
+
+                        effect == Alert.Effect.Cancellation ->
+                            return AnnotatedString(resources.getString(R.string.train_cancelled))
+
+                        effect == Alert.Effect.Shuttle ->
+                            return AnnotatedString(
+                                resources.getString(R.string.shuttle_bus_sentence_case)
+                            )
+
+                        effect == Alert.Effect.Suspension && type == RouteType.BUS ->
+                            return AnnotatedString(resources.getString(R.string.bus_suspended))
+
+                        effect == Alert.Effect.Suspension && type == RouteType.FERRY ->
+                            return AnnotatedString(resources.getString(R.string.ferry_suspended))
+
+                        effect == Alert.Effect.Suspension ->
+                            return AnnotatedString(resources.getString(R.string.train_suspended))
+
+                        effect == Alert.Effect.StationClosure ->
+                            return AnnotatedString(resources.getString(R.string.stop_skipped))
+
+                        else -> {}
+                    }
+                }
+                AnnotatedString.fromHtml(effect(resources))
+            }
         }
+    }
 
     @Composable
-    fun alertCardHeader(spec: AlertCardSpec) = alertCardHeader(spec, LocalResources.current)
+    fun alertCardHeader(spec: AlertCardSpec, type: RouteType) =
+        alertCardHeader(spec, type, LocalResources.current)
 
     fun alertCardMajorBody(resources: Resources) =
         summary(resources) ?: AnnotatedString(alert?.header ?: "")
@@ -471,6 +538,65 @@ data class FormattedAlert(
                 AlertSummary.Recurrence.Unknown,
                 null -> ""
             }
+
+        private fun summaryTripIdentity(
+            tripIdentity: AlertSummary.TripSpecific.TripIdentity,
+            resources: Resources,
+        ) =
+            when (tripIdentity) {
+                is AlertSummary.TripSpecific.TripFrom ->
+                    resources.getString(
+                        R.string.trip_from,
+                        tripIdentity.tripTime.formattedTime(),
+                        tripIdentity.stopName,
+                    )
+                is AlertSummary.TripSpecific.TripTo ->
+                    resources.getString(
+                        R.string.trip_to,
+                        tripIdentity.tripTime.formattedTime(),
+                        tripIdentity.headsign,
+                    )
+                is AlertSummary.TripSpecific.MultipleTrips ->
+                    resources.getString(R.string.multiple_trips)
+            }
+
+        private fun summaryTripEffect(
+            tripIdentity: AlertSummary.TripSpecific.TripIdentity,
+            effect: Alert.Effect,
+            effectStops: List<String>?,
+            resources: Resources,
+        ): String {
+            when (effect) {
+                Alert.Effect.Cancellation ->
+                    return if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
+                        resources.getString(R.string.are_cancelled_today)
+                    else resources.getString(R.string.is_cancelled_today)
+
+                Alert.Effect.StationClosure ->
+                    if (effectStops != null)
+                        return resources.getString(
+                            R.string.will_not_stop_at_today,
+                            effectStops
+                                .map { "<b>${it}</b>" }
+                                .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) },
+                        )
+
+                Alert.Effect.Suspension ->
+                    return if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
+                        resources.getString(R.string.are_suspended_today)
+                    else resources.getString(R.string.is_suspended_today)
+                else -> {}
+            }
+            return resources.getString(
+                R.string.affected_by_today,
+                resources.getString(sentenceEffectRes(effect)),
+            )
+        }
+
+        private fun summaryDueToCause(@StringRes dueToCauseRes: Int?, resources: Resources) =
+            dueToCauseRes?.let {
+                resources.getString(R.string.due_to_cause, resources.getString(it))
+            } ?: ""
 
         private fun timeRangeBoundary(
             resources: Resources,

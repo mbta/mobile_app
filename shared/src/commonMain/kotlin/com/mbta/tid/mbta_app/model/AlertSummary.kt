@@ -2,7 +2,9 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlin.collections.get
+import kotlin.collections.filter
+import kotlin.collections.orEmpty
+import kotlin.collections.singleOrNull
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
@@ -31,6 +33,46 @@ public sealed class AlertSummary {
     @SerialName("all_clear")
     public data class AllClear(val location: Location?) : AlertSummary() {
         override val effect: Alert.Effect? = null
+    }
+
+    // TODO figure out how some of these are going to interact with reminders or recurrence
+
+    @Serializable
+    @SerialName("trip_specific")
+    public data class TripSpecific(
+        @SerialName("trip_identity") val tripIdentity: TripIdentity,
+        override val effect: Alert.Effect,
+        @SerialName("effect_stops") val effectStops: List<String>?,
+        val cause: Alert.Cause? = null,
+    ) : AlertSummary() {
+        @Serializable public sealed interface TripIdentity
+
+        @Serializable
+        @SerialName("trip_from")
+        public data class TripFrom(
+            @SerialName("trip_time") val tripTime: EasternTimeInstant,
+            @SerialName("stop_name") val stopName: String,
+        ) : TripIdentity
+
+        @Serializable
+        @SerialName("trip_to")
+        public data class TripTo(
+            @SerialName("trip_time") val tripTime: EasternTimeInstant,
+            val headsign: String,
+        ) : TripIdentity
+
+        @Serializable @SerialName("multiple_trips") public data object MultipleTrips : TripIdentity
+    }
+
+    @Serializable
+    @SerialName("trip_shuttle")
+    public data class TripShuttle(
+        @SerialName("trip_time") val tripTime: EasternTimeInstant,
+        @SerialName("route_type") val routeType: RouteType,
+        @SerialName("current_stop_name") val currentStopName: String,
+        @SerialName("end_stop_name") val endStopName: String,
+    ) : AlertSummary() {
+        override val effect: Alert.Effect = Alert.Effect.Shuttle
     }
 
     @Serializable
@@ -169,15 +211,29 @@ public sealed class AlertSummary {
             return withContext(Dispatchers.Default) {
                 if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
-                val location = alertLocation(alert, stopId, directionId, patterns, global)
+                val location by lazy { alertLocation(alert, stopId, directionId, patterns, global) }
 
                 if (alert.allClear(atTime)) {
                     return@withContext AllClear(location)
                 }
 
+                if (alert.anyInformedEntity { it.trip != null }) {
+                    tripSpecificSummary(
+                            alert,
+                            stopId,
+                            directionId,
+                            patterns,
+                            atTime,
+                            upcomingTrips,
+                            global,
+                        )
+                        ?.let {
+                            return@withContext it
+                        }
+                }
+
                 val recurrence = alertRecurrence(alert, atTime)
-                val timeframe =
-                    alertTimeframe(alert, atTime, upcomingTrips, hasRecurrence = recurrence != null)
+                val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
 
                 if (location == null && timeframe == null) return@withContext null
                 return@withContext Standard(
@@ -190,10 +246,78 @@ public sealed class AlertSummary {
             }
         }
 
+        private fun tripSpecificSummary(
+            alert: Alert,
+            stopId: String,
+            directionId: Int,
+            patterns: List<RoutePattern>,
+            atTime: EasternTimeInstant,
+            upcomingTrips: List<UpcomingTrip>?,
+            global: GlobalResponse,
+        ): AlertSummary? {
+            val informedTrips =
+                upcomingTrips.orEmpty().filter { trip ->
+                    alert.anyInformedEntitySatisfies { checkTrip(trip.trip.id) }
+                }
+            // TODO pick selected trip somehow
+            val informedTrip = informedTrips.singleOrNull()
+            if (alert.effect == Alert.Effect.Shuttle) {
+                val tripTime = informedTrip?.time
+                val routeType = patterns.firstNotNullOfOrNull { global.getRoute(it.routeId)?.type }
+                val currentStopName = global.getStop(stopId)?.name
+                val location =
+                    alertLocation(
+                        alert,
+                        stopId,
+                        directionId,
+                        patterns.filter { it.id == informedTrip?.trip?.routePatternId },
+                        global,
+                    )
+                if (
+                    tripTime != null &&
+                        routeType != null &&
+                        currentStopName != null &&
+                        location is Location.SuccessiveStops
+                ) {
+                    return TripShuttle(tripTime, routeType, currentStopName, location.endStopName)
+                }
+            } else if (alert.effect == Alert.Effect.StationClosure) {
+                val tripIdentity =
+                    TripSpecific.TripTo(
+                        informedTrip?.schedule?.departureTime
+                            ?: informedTrip?.schedule?.arrivalTime
+                            ?: return null,
+                        informedTrip?.headsign ?: return null,
+                    )
+                val informedStops =
+                    alert.informedEntity
+                        .mapNotNull { it.stop }
+                        .distinct()
+                        .mapNotNull { global.getStop(it)?.name }
+                        .distinct()
+                return TripSpecific(tripIdentity, alert.effect, informedStops, alert.cause)
+            } else {
+                val tripIdentity =
+                    when {
+                        informedTrips.isEmpty() -> return null
+                        informedTrip == null -> TripSpecific.MultipleTrips
+                        else ->
+                            TripSpecific.TripFrom(
+                                informedTrip.schedule?.departureTime
+                                    ?: informedTrip.schedule?.arrivalTime
+                                    ?: return null,
+                                global.getStop(stopId)?.name ?: return null,
+                            )
+                    }
+                return TripSpecific(tripIdentity, alert.effect, null, alert.cause)
+            }
+
+            return null
+        }
+
         private fun alertTimeframe(
             alert: Alert,
             atTime: EasternTimeInstant,
-            upcomingTrips: List<UpcomingTrip>?,
             hasRecurrence: Boolean,
         ): Timeframe? {
             val serviceDate = atTime.serviceDate

@@ -13,6 +13,7 @@
     <string name="add_to_favorites_title_stop_details">Add &lt;b&gt;%1$s&lt;/b&gt; at &lt;b&gt;%2$s&lt;/b&gt; to Favorites</string>
     <string name="additional_service">Additional Service</string>
     <string name="additional_service_sentence_case">Additional service</string>
+    <string name="affected_by_today">affected by %1$s today</string>
     <plurals name="affected_stops">
         <item quantity="one">&lt;b&gt;%1$d&lt;/b&gt; affected stop</item>
         <item quantity="other">&lt;b&gt;%1$d&lt;/b&gt; affected stops</item>
@@ -37,6 +38,8 @@
     <string name="alert_summary_timeframe_time">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020through tomorrow</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020until further notice</string>
+    <string name="alert_summary_trip_shuttle">Shuttle buses replace the &lt;b>%1$s&lt;/b> %2$s from &lt;b>%3$s&lt;/b> to &lt;b>%4$s&lt;/b></string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
     <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
     <string name="alternative_path">Alternative path</string>
@@ -52,6 +55,8 @@
     <string name="app_version_and_build">version %1$s (%2$s)</string>
     <string name="app_version_number">version %1$s</string>
     <string name="approaching">Approaching</string>
+    <string name="are_cancelled_today">are cancelled today</string>
+    <string name="are_suspended_today">are suspended today</string>
     <string name="arriving_abbr">ARR</string>
     <string name="autos_impeding_service">Autos Impeding Service</string>
     <string name="autos_impeding_service_lowercase">autos impeding service</string>
@@ -61,8 +66,10 @@
     <string name="boarding_abbr">BRD</string>
     <string name="boarding_track">Boarding on track %1$s</string>
     <string name="bus">Bus</string>
+    <string name="bus_cancelled">Bus cancelled</string>
     <string name="bus_label">%1$s bus</string>
     <string name="bus_lowercase">bus</string>
+    <string name="bus_suspended">Bus suspended</string>
     <string name="buses">buses</string>
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
@@ -113,6 +120,7 @@
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
+    <string name="due_to_cause">\u0020due to %1$s</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
     <string name="edit_favorite_title">Edit Favorite</string>
@@ -163,7 +171,9 @@
     <string name="feedback_link_form">Send App Feedback</string>
     <string name="ferries">ferries</string>
     <string name="ferry">Ferry</string>
+    <string name="ferry_cancelled">Ferry cancelled</string>
     <string name="ferry_lowercase">ferry</string>
+    <string name="ferry_suspended">Ferry suspended</string>
     <string name="filter_routes">Filter routes</string>
     <string name="filter_show_all">All</string>
     <string name="find_stops_hint">To find stops, select a route first</string>
@@ -203,7 +213,9 @@
     <string name="ice_in_harbor">Ice In Harbor</string>
     <string name="ice_in_harbor_lowercase">ice in harbor</string>
     <string name="inbound">Inbound</string>
+    <string name="is_cancelled_today">is cancelled today</string>
     <string name="is_stops_away_from">%1$s is %2$d stops away from %3$s</string>
+    <string name="is_suspended_today">is suspended today</string>
     <string name="last">Last</string>
     <string name="last_trip">Last trip</string>
     <string name="later_today">later today</string>
@@ -241,6 +253,7 @@
     <string name="more_section_support_note_hours">Monday through Friday: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Multiple routes</string>
+    <string name="multiple_trips">Multiple trips</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
@@ -349,6 +362,7 @@
     <string name="severe_weather_lowercase">severe weather</string>
     <string name="shuttle">Shuttle</string>
     <string name="shuttle_bus">Shuttle Bus</string>
+    <string name="shuttle_bus_sentence_case">Shuttle bus</string>
     <string name="shuttle_buses">Shuttle buses</string>
     <string name="shuttle_buses_replace_service">Shuttle buses replace service</string>
     <string name="signal_issue">Signal Issue</string>
@@ -366,7 +380,9 @@
     <string name="software_licenses">Software Licenses</string>
     <string name="southbound">Southbound</string>
     <string name="special_event">Special Event</string>
+    <string name="special_event_lowercase">special event</string>
     <string name="speed_restriction">Speed Restriction</string>
+    <string name="speed_restriction_lowercase">speed restriction</string>
     <string name="star_route">Star route</string>
     <string name="star_route_hint">pin route to the top of the list</string>
     <string name="start">Start</string>
@@ -393,8 +409,6 @@
         <item quantity="one">%1$d stop away</item>
         <item quantity="other">%1$d stops away</item>
     </plurals>
-    <string name="special_event_lowercase">special event</string>
-    <string name="speed_restriction_lowercase">speed restriction</string>
     <string name="strike">Strike</string>
     <string name="strike_lowercase">strike</string>
     <string name="subway">Subway</string>
@@ -425,6 +439,8 @@
     <string name="traffic">Traffic</string>
     <string name="traffic_lowercase">traffic</string>
     <string name="train">train</string>
+    <string name="train_cancelled">Train cancelled</string>
+    <string name="train_suspended">Train suspended</string>
     <string name="train_traffic">Train Traffic</string>
     <string name="train_traffic_lowercase">train traffic</string>
     <string name="trains">trains</string>
@@ -432,8 +448,10 @@
     <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
     <string name="trip_complete">Trip complete</string>
     <string name="trip_complete_body">This %1$s has reached its destination.</string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> from &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Trip not available</string>
     <string name="trip_not_available_body">This %1$s is not assigned to a trip yet.</string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Try a different spelling or name.</string>
     <string name="try_your_search_again">Try your search again.</string>
     <string name="unable_to_connect">Unable to connect</string>
@@ -458,9 +476,9 @@
     <string name="vehicle_desc_accessibility_desc_selected_stop">Selected %1$s %2$s %3$s, selected stop</string>
     <string name="vehicle_prediction_actual_arrival">arriving at %1$s</string>
     <string name="vehicle_prediction_hours_first">%1$s arriving in %2$d hr</string>
-    <string name="vehicle_prediction_hours_other">and in %1$d hr</string>
     <string name="vehicle_prediction_hours_minutes_first">%1$s arriving in %2$d hr %3$d min</string>
     <string name="vehicle_prediction_hours_minutes_other">and in %1$d hr %2$d min</string>
+    <string name="vehicle_prediction_hours_other">and in %1$d hr</string>
     <string name="vehicle_prediction_minutes_first">%1$s arriving in %2$d min</string>
     <string name="vehicle_prediction_minutes_other">and in %1$d min</string>
     <string name="vehicle_prediction_schedule_status_delay_first">%1$s %2$s delayed</string>
@@ -486,4 +504,6 @@
     <string name="weather">Weather</string>
     <string name="weather_lowercase">weather</string>
     <string name="westbound">Westbound</string>
+    <string name="will_not_stop_at_today">will not stop at %1$s today</string>
+    <string name="x_and_y">%1$s and %2$s</string>
 </resources>

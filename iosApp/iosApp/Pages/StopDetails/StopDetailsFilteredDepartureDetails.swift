@@ -361,8 +361,7 @@ struct StopDetailsFilteredDepartureDetails: View {
             alert: alert,
             alertSummary: summary,
             spec: spec,
-            color: routeAccents.color,
-            textColor: routeAccents.textColor,
+            routeAccents: routeAccents,
             onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
         )
     }

@@ -70,6 +70,7 @@ public data class PushNotificationPayload(
         if (summary is AlertSummary.AllClear) {
             return StillActive.AllClear
         }
+        // TODO handle trip-specific
         val recurrenceEndTime =
             when (val recurrence = (summary as? AlertSummary.Standard)?.recurrence) {
                 is AlertSummary.Recurrence.Daily -> recurrence.ending
