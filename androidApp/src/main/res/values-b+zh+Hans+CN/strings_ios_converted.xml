@@ -383,6 +383,7 @@
     <string name="stop_moved_sentence_case">站点已移动</string>
     <string name="stop_shoveling">站点铲雪中</string>
     <string name="stop_shoveling_sentence_case">站点铲雪中</string>
+    <string name="stop_skipped">停止跳过</string>
     <string name="stops">站点</string>
     <plurals name="stops_away">
         <item quantity="other">还有%1$d站</item>
@@ -468,6 +469,10 @@
     <string name="vehicle_schedule_minutes_other">下一趟车预定将在%1$d分钟内抵达</string>
     <string name="vehicle_schedule_time_first">%1$s预定于%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟车预定将于%1$s到站</string>
+    <string name="vehicle_shuttled_first">%1$s 到达 %2$s 时由接驳巴士代替</string>
+    <string name="vehicle_shuttled_other">并且 %1$s 处已由接驳巴士取代</string>
+    <string name="vehicle_skipped_first">%1$s 到达 %2$s 时跳过</string>
+    <string name="vehicle_skipped_other">并且跳过了 %1$s</string>
     <string name="view_details">查看详情</string>
     <string name="waiting_to_depart">等待出发</string>
     <string name="weather">天气</string>

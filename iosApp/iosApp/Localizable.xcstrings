@@ -1766,6 +1766,59 @@
         }
       }
     },
+    "%@ arriving at %@ replaced by shuttle bus" : {
+      "comment" : "Describe the time at which a shuttle bus is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM cancelled'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving at %2$@ replaced by shuttle bus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando a %2$@ reemplazado por autobús lanzadera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrivant à %2$@ remplacé par une navette"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Navèt ranplase %1$@ k ap rive a %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ chegando em %2$@ substituído por ônibus de traslado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đến %2$@ được thay thế bằng xe buýt đưa đón"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 到达 %2$@ 时由接驳巴士代替"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 到達 %2$@ 時由接駁巴士代替"
+          }
+        }
+      }
+    },
     "%@ arriving at %@ scheduled" : {
       "comment" : "Describe the time at which a vehicle is scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM scheduled'",
       "localizations" : {
@@ -1815,6 +1868,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@預定於%2$@到站"
+          }
+        }
+      }
+    },
+    "%@ arriving at %@ skipped" : {
+      "comment" : "Describe the time at which a stop is skipped, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM skipped'",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arriving at %2$@ skipped"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ llegando a %2$@ omitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ arrivant à %2$@ ignoré"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ rive nan %2$@ sote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ chegando em %2$@ pulado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ đến %2$@ đã bỏ qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 到达 %2$@ 时跳过"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ 到達 %2$@ 時跳過"
           }
         }
       }
@@ -5265,6 +5371,53 @@
         }
       }
     },
+    "and at %@ replaced by shuttle bus" : {
+      "comment" : "The second or more arrival replaced by a shuttle bus in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM replaced by shuttle bus'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %@ reemplazado por autobús lanzadera"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et à %@ remplacé par une navette"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %@ ranplase pa yon bis navèt"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %@ substituído por ônibus de transporte"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và tại %@ được thay thế bằng xe buýt đưa đón"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "并且 %@ 处已由接驳巴士取代"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "且 %@ 處已由接駁巴士取代"
+          }
+        }
+      }
+    },
     "and at %@ scheduled" : {
       "comment" : "The second or more arrival in a list of scheduled upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM scheduled], and at 10:45 AM scheduled'",
       "localizations" : {
@@ -5308,6 +5461,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "下一趟車預定將於%@到站"
+          }
+        }
+      }
+    },
+    "and at %@ skipped" : {
+      "comment" : "The second or more skipped arrival in a list of upcoming arrivals read aloud for VoiceOver users.\nFor example, '[bus arriving at 10:30AM], and at 10:45 AM skipped'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "y en %@ se saltó"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "et à %@ ignoré"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "epi nan %@ sote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "e em %@ pulado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "và tại %@ đã bỏ qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "并且跳过了 %@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "並且跳過了 %@"
           }
         }
       }
@@ -18389,7 +18589,7 @@
       }
     },
     "Shuttle" : {
-      "comment" : "Possible alert effect",
+      "comment" : "Possible alert effect\nThe status label for a shuttled trip",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -20264,6 +20464,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "網站鏟雪中"
+          }
+        }
+      }
+    },
+    "Stop skipped" : {
+      "comment" : "The status label for a skipped stop on a trip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parada omitida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrêt ignoré"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arè sote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parar pulado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dừng lại đã bỏ qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "停止跳过"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "停止跳過"
           }
         }
       }

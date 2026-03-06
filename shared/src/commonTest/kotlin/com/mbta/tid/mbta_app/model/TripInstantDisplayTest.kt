@@ -1178,4 +1178,30 @@ class TripInstantDisplayTest {
             ),
         )
     }
+
+    @Test
+    fun `cancelled trip shown for CR and Ferry in all contexts`() = parametricTest {
+        val now = EasternTimeInstant.now()
+        val lastTrip = anyBoolean()
+        val scheduledTime = now + 15.minutes
+        assertEquals(
+            TripInstantDisplay.Cancelled(scheduledTime),
+            TripInstantDisplay.from(
+                prediction =
+                    ObjectCollectionBuilder.Single.prediction {
+                        scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                        arrivalTime = null
+                        departureTime = null
+                    },
+                schedule =
+                    ObjectCollectionBuilder.Single.schedule { departureTime = scheduledTime },
+                vehicle = null,
+                routeType =
+                    anyEnumValueExcept(RouteType.BUS, RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL),
+                now = now,
+                context = anyEnumValue(),
+                lastTrip = lastTrip,
+            ),
+        )
+    }
 }

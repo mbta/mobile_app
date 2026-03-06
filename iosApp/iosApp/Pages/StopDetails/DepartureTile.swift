@@ -128,6 +128,7 @@ struct DepartureTile: View {
                                 headline: true,
                             ),
                             lastTrip: false,
+                            alert: nil
                         ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip
@@ -144,7 +145,8 @@ struct DepartureTile: View {
                             trip: upcomingTrip,
                             routeType: .bus,
                             format: .Minutes(minutes: 9, last: false),
-                            lastTrip: false
+                            lastTrip: false,
+                            alert: nil
                         ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip
@@ -168,6 +170,7 @@ struct DepartureTile: View {
                                     headline: true
                                 ),
                                 lastTrip: false,
+                                alert: nil
                             ),
                         ],
                         secondaryAlert: nil
@@ -185,7 +188,8 @@ struct DepartureTile: View {
                             trip: upcomingTrip,
                             routeType: .lightRail,
                             format: .Minutes(minutes: 12, last: false),
-                            lastTrip: false
+                            lastTrip: false,
+                            alert: nil
                         ),
                     ], secondaryAlert: nil),
                     upcoming: upcomingTrip

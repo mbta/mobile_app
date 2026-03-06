@@ -24,6 +24,7 @@ struct UpcomingTripView: View {
     var isFirst: Bool = true
     var isOnly: Bool = true
     var maxTextAlpha: Double = 1.0
+    var hideDisruptionIcon: Bool = false
 
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 16
@@ -60,9 +61,21 @@ struct UpcomingTripView: View {
                 .realtime(hideIndicator: hideRealtimeIndicators)
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(label)
-        case .hidden, .skipped:
+        case .hidden:
             // should have been filtered out already
             Text(verbatim: "")
+        case let .skipped(format):
+            HStack(spacing: Self.subjectSpacing) {
+                Text("Stop skipped", comment: "The status label for a skipped stop on a trip")
+                    .font(Typography.footnote)
+                    .opacity(dimmedOpacity)
+                Text(format.scheduledTime, style: .time)
+                    .font(Typography.footnoteSemibold)
+                    .strikethrough()
+                    .opacity(dimmedOpacity)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
         case let .now(format):
             Text("Now", comment: "Label for a trip that's arriving right now")
                 .font(Typography.headlineBold)
@@ -179,6 +192,25 @@ struct UpcomingTripView: View {
         case let .cancelled(format):
             HStack(spacing: Self.subjectSpacing) {
                 Text("Cancelled", comment: "The status label for a cancelled trip")
+                    .font(Typography.footnote)
+                    .opacity(dimmedOpacity)
+                Text(format.scheduledTime, style: .time)
+                    .font(Typography.footnoteSemibold)
+                    .strikethrough()
+                    .opacity(dimmedOpacity)
+            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(label)
+        case let .shuttle(format):
+            HStack(spacing: Self.subjectSpacing) {
+                if !hideDisruptionIcon {
+                    Image(.modeBus)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 18, height: 18)
+                        .foregroundStyle(Color.deemphasized)
+                }
+                Text("Shuttle", comment: "The status label for a shuttled trip")
                     .font(Typography.footnote)
                     .opacity(dimmedOpacity)
                 Text(format.scheduledTime, style: .time)

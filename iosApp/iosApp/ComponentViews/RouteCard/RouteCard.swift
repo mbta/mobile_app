@@ -115,6 +115,7 @@ private func cardForPreview(_ card: RouteCardData, _ previewData: RouteCardPrevi
             Section("CR Branching") {
                 // Branching in one direction
                 cardForPreview(data.CR1(), data)
+                cardForPreview(data.CR2(), data)
             }
             Section("Bus Route Single Direction") {
                 // "Next two trips go to the same destination"

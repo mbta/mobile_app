@@ -150,6 +150,7 @@ private fun DepartureTilePreview() {
                                     headline = true,
                                 ),
                                 lastTrip = false,
+                                null,
                             )
                         ),
                         secondaryAlert = null,
@@ -171,6 +172,7 @@ private fun DepartureTilePreview() {
                                 RouteType.BUS,
                                 TripInstantDisplay.Minutes(9, false),
                                 lastTrip = false,
+                                null,
                             )
                         ),
                         secondaryAlert = null,
@@ -196,6 +198,7 @@ private fun DepartureTilePreview() {
                                     headline = true,
                                 ),
                                 lastTrip = false,
+                                null,
                             )
                         ),
                         secondaryAlert = null,
@@ -216,6 +219,7 @@ private fun DepartureTilePreview() {
                                 RouteType.LIGHT_RAIL,
                                 TripInstantDisplay.Minutes(12, false),
                                 false,
+                                null,
                             )
                         ),
                         secondaryAlert = null,

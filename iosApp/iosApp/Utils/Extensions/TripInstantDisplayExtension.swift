@@ -33,7 +33,11 @@ extension TripInstantDisplay {
                 vehicleType
             )
         case let .overridden(trip): trip.text
-        case .hidden, .skipped: ""
+        case .hidden: ""
+        case let .skipped(trip):
+            skippedLabel(trip.scheduledTime, isFirst, vehicleType)
+        case let .shuttle(trip):
+            shuttledLabel(trip.scheduledTime, isFirst, vehicleType)
         }
 
         return Text(verbatim: withLastTripSuffix(label, last: lastTrip()))
@@ -91,6 +95,46 @@ extension TripInstantDisplay {
                 comment: """
                 The second or more cancelled arrival in a list of upcoming arrivals read aloud for VoiceOver users.
                 For example, '[bus arriving at 10:30AM], and at 10:45 AM cancelled'
+                """
+            ), time)
+    }
+
+    private func skippedLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
+        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
+        return isFirst
+            ? String(format: NSLocalizedString(
+                "%@ arriving at %@ skipped",
+                comment: """
+                Describe the time at which a stop is skipped, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
+                For example, 'bus arriving at 10:30AM skipped'
+                """
+            ), vehicleType, time)
+            : String(format: NSLocalizedString(
+                "and at %@ skipped",
+                comment: """
+                The second or more skipped arrival in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving at 10:30AM], and at 10:45 AM skipped'
+                """
+            ), time)
+    }
+
+    private func shuttledLabel(_ scheduledTime: EasternTimeInstant, _ isFirst: Bool, _ vehicleType: String) -> String {
+        let time = scheduledTime.formatted(date: .omitted, time: .shortened)
+        return isFirst
+            ? String(format: NSLocalizedString(
+                "%@ arriving at %@ replaced by shuttle bus",
+                comment: """
+                Describe the time at which a shuttle bus is scheduled to arrive, as read aloud for VoiceOver users.
+                First value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.
+                For example, 'bus arriving at 10:30AM cancelled'
+                """
+            ), vehicleType, time)
+            : String(format: NSLocalizedString(
+                "and at %@ replaced by shuttle bus",
+                comment: """
+                The second or more arrival replaced by a shuttle bus in a list of upcoming arrivals read aloud for VoiceOver users.
+                For example, '[bus arriving at 10:30AM], and at 10:45 AM replaced by shuttle bus'
                 """
             ), time)
     }
@@ -395,7 +439,7 @@ extension TripInstantDisplay {
         case let .time(trip): trip.last
         case let .timeWithSchedule(trip): trip.last
         case let .timeWithStatus(trip): trip.last
-        case .cancelled, .hidden, .skipped, .scheduleTimeWithStatusRow: false
+        case .cancelled, .hidden, .skipped, .scheduleTimeWithStatusRow, .shuttle: false
         }
     }
 

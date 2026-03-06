@@ -341,7 +341,10 @@ public data class RouteCardData(
 
             val dataByHeadsign = dataByHeadsign(potentialService, globalData, now)
             val (nonDisruptedHeadsigns, disruptedHeadsigns) =
-                dataByHeadsign.entries.partition { it.value.majorAlert == null }
+                dataByHeadsign.entries.partition { entry ->
+                    val majorAlert = entry.value.majorAlert
+                    majorAlert == null || majorAlert.informedEntity.any { it.trip != null }
+                }
 
             if (disruptedHeadsigns.isEmpty()) {
                 return LeafFormat.Branched(
@@ -364,7 +367,10 @@ public data class RouteCardData(
                 nonDisruptedHeadsigns.isEmpty() &&
                     disruptedHeadsigns
                         .map { it.value.majorAlert }
-                        .all { it == disruptedHeadsigns.first().value.majorAlert }
+                        .all { alert ->
+                            alert == disruptedHeadsigns.first().value.majorAlert &&
+                                alert?.informedEntity?.any { it.trip != null } == false
+                        }
             ) {
                 return LeafFormat.Single(
                     route = null,
@@ -616,7 +622,7 @@ public data class RouteCardData(
 
                 ListBuilder(allDataLoaded, context, now)
                     .addStaticStopsData(stopIds, globalData, context, favorites)
-                    .addUpcomingTrips(schedules, predictions, now, globalData)
+                    .addUpcomingTrips(schedules, predictions, now, globalData, alerts)
                     .filterIrrelevantData(now, cutoffTime, context, globalData)
                     .addAlerts(
                         alerts,
@@ -785,6 +791,7 @@ public data class RouteCardData(
             predictions: PredictionsStreamDataResponse,
             filterAtTime: EasternTimeInstant,
             globalData: GlobalResponse,
+            alerts: AlertsStreamDataResponse,
         ): ListBuilder {
 
             val upcomingTrips =
@@ -795,6 +802,7 @@ public data class RouteCardData(
                     schedules?.trips.orEmpty() + predictions.trips,
                     predictions.vehicles,
                     filterAtTime,
+                    alerts.alerts,
                 )
 
             val upcomingTripsBySlot = mutableMapOf<HierarchyPath, MutableList<UpcomingTrip>>()
@@ -968,9 +976,7 @@ public data class RouteCardData(
                             }
                             .mapValues {
                                 val (directionId, leafBuilder) = it
-                                leafBuilder
-                                    .filterCancellations(lineOrRoute.isSubway, context)
-                                    .filterArrivalOnly()
+                                leafBuilder.filterArrivalOnly()
                             }
                 }
                 byStopId.stopData = byStopId.stopData.filterNot { it.value.data.isEmpty() }

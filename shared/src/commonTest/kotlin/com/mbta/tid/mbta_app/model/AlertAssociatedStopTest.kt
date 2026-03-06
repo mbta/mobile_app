@@ -106,4 +106,38 @@ class AlertAssociatedStopTest {
         assertEquals(listOf(alert), result.childAlerts[child1.id]!!.serviceAlerts)
         assertEquals(listOf(alert), result.childAlerts[child2.id]!!.serviceAlerts)
     }
+
+    @Test
+    fun `doesn't show alert icon if alert affects trips`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { id = "Red" }
+        val routePattern = objects.routePattern(route)
+        val stop = objects.stop()
+        val trip = objects.trip()
+        val alert =
+            objects.alert {
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                effect = Alert.Effect.Cancellation
+                informedEntity(
+                    listOf(
+                        Alert.InformedEntity.Activity.Board,
+                        Alert.InformedEntity.Activity.Exit,
+                        Alert.InformedEntity.Activity.Ride,
+                    ),
+                    route = route.id.idText,
+                    routeType = route.type,
+                    trip = trip.id,
+                )
+            }
+
+        val result =
+            AlertAssociatedStop(
+                stop,
+                mapOf(stop.id to setOf(alert)),
+                setOf(),
+                now = EasternTimeInstant.now(),
+                GlobalResponse(objects, emptyMap()),
+            )
+        assertEquals(emptyMap(), result.stateByRoute)
+    }
 }

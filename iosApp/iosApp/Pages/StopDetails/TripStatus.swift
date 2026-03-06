@@ -18,7 +18,8 @@ struct TripStatus: View {
             if let trip = trips.trips.first {
                 UpcomingTripView(
                     prediction: .some(trip.format),
-                    routeType: trip.routeType
+                    routeType: trip.routeType,
+                    hideDisruptionIcon: true
                 )
             } else {
                 EmptyView()

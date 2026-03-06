@@ -383,6 +383,7 @@
     <string name="stop_moved_sentence_case">網站已移動</string>
     <string name="stop_shoveling">網站鏟雪中</string>
     <string name="stop_shoveling_sentence_case">網站鏟雪中</string>
+    <string name="stop_skipped">停止跳過</string>
     <string name="stops">網站</string>
     <plurals name="stops_away">
         <item quantity="other">還有%1$d站</item>
@@ -468,6 +469,10 @@
     <string name="vehicle_schedule_minutes_other">下一趟車預定將在%1$d分鐘內抵達</string>
     <string name="vehicle_schedule_time_first">%1$s預定於%2$s到站</string>
     <string name="vehicle_schedule_time_other">下一趟車預定將於%1$s到站</string>
+    <string name="vehicle_shuttled_first">%1$s 到達 %2$s 時由接駁巴士代替</string>
+    <string name="vehicle_shuttled_other">且 %1$s 處已由接駁巴士取代</string>
+    <string name="vehicle_skipped_first">%1$s 到達 %2$s 時跳過</string>
+    <string name="vehicle_skipped_other">並且跳過了 %1$s</string>
     <string name="view_details">查看詳情</string>
     <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>

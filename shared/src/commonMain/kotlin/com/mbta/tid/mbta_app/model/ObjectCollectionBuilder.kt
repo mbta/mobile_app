@@ -510,6 +510,7 @@ private constructor(
         prediction: Prediction? = null,
         predictionStop: Stop? = null,
         vehicle: Vehicle? = null,
+        alert: Alert? = null,
     ): UpcomingTrip {
         if (prediction != null && schedule != null) {
             check(schedule.tripId == prediction.tripId)
@@ -523,11 +524,15 @@ private constructor(
             prediction,
             predictionStop ?: stops[prediction?.stopId],
             vehicle,
+            alert,
         )
     }
 
-    public fun upcomingTrip(prediction: Prediction, predictionStop: Stop? = null): UpcomingTrip =
-        upcomingTrip(null, prediction, predictionStop, null)
+    public fun upcomingTrip(
+        prediction: Prediction,
+        predictionStop: Stop? = null,
+        alert: Alert? = null,
+    ): UpcomingTrip = upcomingTrip(null, prediction, predictionStop, null, alert)
 
     private fun <Built : BackendObject<*>, Builder : ObjectBuilder<Built>> build(
         builder: Builder,

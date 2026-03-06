@@ -16,7 +16,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -70,6 +72,7 @@ fun UpcomingTripView(
     isFirst: Boolean = true,
     isOnly: Boolean = true,
     hideRealtimeIndicators: Boolean = false,
+    hideDisruptionIcon: Boolean = false,
     /**
      * The most opaque that text within this view is allowed to be. Useful for dimming normal times
      * without double-dimming disruptions and scheduled times.
@@ -107,7 +110,30 @@ fun UpcomingTripView(
                     }
 
                 is TripInstantDisplay.Hidden -> {}
-                is TripInstantDisplay.Skipped -> {}
+                is TripInstantDisplay.Skipped ->
+                    Row(
+                        modifier
+                            .alpha(dimmedAlpha)
+                            .semantics { contentDescription = tripDescription }
+                            .placeholderIfLoading(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                    ) {
+                        Text(
+                            stringResource(R.string.stop_skipped),
+                            color = colorResource(R.color.deemphasized),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnote,
+                        )
+                        Text(
+                            state.trip.scheduledTime.formattedTime(),
+                            color = colorResource(R.color.deemphasized),
+                            textDecoration = TextDecoration.LineThrough,
+                            textAlign = TextAlign.End,
+                            style = Typography.footnoteSemibold,
+                        )
+                    }
+
                 is TripInstantDisplay.Boarding ->
                     WithStatusIndicators(
                         modifier,
@@ -380,8 +406,42 @@ fun UpcomingTripView(
                             style = Typography.footnoteSemibold,
                         )
                     }
+
+                is TripInstantDisplay.Shuttle ->
+                    Row(
+                        modifier.alpha(min(maxTextAlpha, 0.6f)).placeholderIfLoading(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                    ) {
+                        if (!hideDisruptionIcon) {
+                            Image(
+                                painterResource(R.drawable.mode_bus),
+                                null,
+                                Modifier.placeholderIfLoading()
+                                    .size(18.dp)
+                                    .padding(top = 2.dp, end = 2.dp)
+                                    .alignBy { it.measuredHeight }
+                                    .testTag("shuttleBusIndicator"),
+                                colorFilter = ColorFilter.tint(LocalContentColor.current),
+                            )
+                        }
+                        Text(
+                            stringResource(R.string.shuttle),
+                            color = colorResource(R.color.deemphasized),
+                            textAlign = TextAlign.End,
+                            style = Typography.footnote,
+                        )
+                        Text(
+                            state.trip.scheduledTime.formattedTime(),
+                            color = colorResource(R.color.deemphasized),
+                            textDecoration = TextDecoration.LineThrough,
+                            textAlign = TextAlign.End,
+                            style = Typography.footnoteSemibold,
+                        )
+                    }
             }
         }
+
         is UpcomingTripViewState.Disruption ->
             DisruptionView(
                 state.formattedAlert.predictionReplacement,
@@ -527,6 +587,21 @@ fun UpcomingTripViewPreview() {
                 )
             )
             UpcomingTripView(UpcomingTripViewState.Loading)
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.Cancelled(EasternTimeInstant.now() + 10.minutes)
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.Skipped(EasternTimeInstant.now() + 10.minutes)
+                )
+            )
+            UpcomingTripView(
+                UpcomingTripViewState.Some(
+                    TripInstantDisplay.Shuttle(EasternTimeInstant.now() + 10.minutes)
+                )
+            )
         }
     }
 }

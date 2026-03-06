@@ -92,6 +92,7 @@ struct PredictionRowView: View {
                         status: "Delayed",
                     ),
                     lastTrip: false,
+                    alert: nil
                 ),
                 .init(
                     trip: trip2,
@@ -102,6 +103,8 @@ struct PredictionRowView: View {
                         headline: true,
                     ),
                     lastTrip: false,
+                    alert: nil
+
                 ),
             ], secondaryAlert: nil),
             destination: { Text("Needham Heights") }
@@ -109,7 +112,13 @@ struct PredictionRowView: View {
 
         PredictionRowView(
             predictions: .Some(
-                trip: .init(trip: trip1, routeType: .lightRail, format: .Boarding(last: false), lastTrip: false),
+                trip: .init(
+                    trip: trip1,
+                    routeType: .lightRail,
+                    format: .Boarding(last: false),
+                    lastTrip: false,
+                    alert: nil
+                ),
                 secondaryAlert: nil
             ),
             destination: { Text("Longer Destination than That") }
@@ -121,6 +130,7 @@ struct PredictionRowView: View {
                 routeType: .lightRail,
                 format: .Overridden(text: "Stopped 10 stops away", last: false),
                 lastTrip: false,
+                alert: nil
             ), secondaryAlert: nil),
             pillDecoration: .onRow(route: TestData.getRoute(id: "Green-B")),
             destination: { Text("Destination") }
@@ -132,18 +142,26 @@ struct PredictionRowView: View {
                 routeType: .lightRail,
                 format: .Overridden(text: "Stopped 10 stops away", last: false),
                 lastTrip: false,
+                alert: nil
             ), secondaryAlert: nil),
             destination: { Text("Destination") }
         )
 
         PredictionRowView(
             predictions: .Some(trips: [
-                .init(trip: trip1, routeType: .bus, format: .ScheduleMinutes(minutes: 6, last: false), lastTrip: false),
+                .init(
+                    trip: trip1,
+                    routeType: .bus,
+                    format: .ScheduleMinutes(minutes: 6, last: false),
+                    lastTrip: false,
+                    alert: nil
+                ),
                 .init(
                     trip: trip2,
                     routeType: .bus,
                     format: .ScheduleMinutes(minutes: 15, last: false),
-                    lastTrip: false
+                    lastTrip: false,
+                    alert: nil
                 ),
             ], secondaryAlert: nil),
             destination: { Text("Destination") }

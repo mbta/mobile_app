@@ -80,6 +80,7 @@ public sealed class UpcomingFormat {
             val routeType: RouteType,
             val format: TripInstantDisplay,
             val lastTrip: Boolean,
+            val alert: Alert? = null,
         ) {
             val id: String
                 get() = trip.id

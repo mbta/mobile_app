@@ -1414,6 +1414,7 @@ class RouteCardDataTest {
                         PredictionsStreamDataResponse(objects),
                         filterAtTime = time,
                         globalData = global,
+                        AlertsStreamDataResponse(objects),
                     )
                     .data,
             )
@@ -1559,6 +1560,7 @@ class RouteCardDataTest {
                         PredictionsStreamDataResponse(objects),
                         filterAtTime = now,
                         globalData = global,
+                        AlertsStreamDataResponse(objects),
                     )
                     .data,
             )
@@ -1696,6 +1698,7 @@ class RouteCardDataTest {
                     PredictionsStreamDataResponse(objects),
                     now,
                     globalData,
+                    AlertsStreamDataResponse(objects),
                 )
                 .filterIrrelevantData(now, cutoffTime = null, context, globalData)
                 .addAlerts(

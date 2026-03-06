@@ -24,13 +24,14 @@ constructor(
     // it can be a child stop with specific boarding information, like the track number
     val predictionStop: Stop? = null,
     val vehicle: Vehicle? = null,
+    val alert: Alert? = null,
 ) : Comparable<UpcomingTrip> {
 
     public constructor(
         trip: Trip,
         prediction: Prediction?,
         predictionStop: Stop? = null,
-    ) : this(trip, null, prediction, predictionStop, null)
+    ) : this(trip, null, prediction, predictionStop, null, null)
 
     val id: String = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
 
@@ -118,7 +119,17 @@ constructor(
         routeType: RouteType?,
         context: TripInstantDisplay.Context,
         lastTrip: Boolean,
-    ) = TripInstantDisplay.from(prediction, schedule, vehicle, routeType, now, context, lastTrip)
+    ) =
+        TripInstantDisplay.from(
+            prediction,
+            schedule,
+            vehicle,
+            routeType,
+            now,
+            context,
+            lastTrip,
+            alert,
+        )
 
     internal fun format(
         now: EasternTimeInstant,
@@ -144,7 +155,6 @@ constructor(
         return UpcomingFormat.Some.FormattedTrip(this, routeType, now, context, lastTrip)
             .takeUnless {
                 it.format is TripInstantDisplay.Hidden ||
-                    it.format is TripInstantDisplay.Skipped ||
                     // API best practices call for hiding scheduled times on subway
                     (hideSchedule &&
                         (it.format is TripInstantDisplay.ScheduleTime ||
@@ -164,6 +174,7 @@ constructor(
             trips: Map<String, Trip>,
             vehicles: Map<String, Vehicle>,
             filterAtTime: EasternTimeInstant,
+            alerts: Map<String, Alert>,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
                 val tripId: String,
@@ -217,12 +228,21 @@ constructor(
             return keys
                 .mapNotNull { key ->
                     val prediction = predictionsMap[key]
+                    val alert =
+                        alerts.values.firstOrNull { alert ->
+                            alert.informedEntity.any {
+                                val stopId =
+                                    it.stop?.let { stopId -> stops.resolveParentId(stopId) }
+                                it.trip == key.tripId && stopId == key.rootStopId
+                            }
+                        }
                     UpcomingTrip(
                         trips[key.tripId] ?: return@mapNotNull null,
                         schedulesMap[key],
                         prediction,
                         stops[prediction?.stopId],
                         predictionsMap[key]?.let { vehicles[it.vehicleId] },
+                        alert,
                     )
                 }
                 .sorted()
@@ -239,6 +259,7 @@ constructor(
             routeType: RouteType,
             context: TripInstantDisplay.Context,
             lastTrip: Boolean,
+            alert: Alert?,
         ) =
             formatUpcomingTrip(
                 now,
@@ -247,6 +268,7 @@ constructor(
                 context,
                 routeType.isSubway(),
                 lastTrip,
+                alert,
             )
 
         fun formatUpcomingTrip(
@@ -256,6 +278,7 @@ constructor(
             context: TripInstantDisplay.Context,
             isSubway: Boolean,
             lastTrip: Boolean,
+            alert: Alert?,
         ): UpcomingFormat.Some.FormattedTrip? {
             return UpcomingFormat.Some.FormattedTrip(
                     upcomingTrip,
@@ -266,7 +289,6 @@ constructor(
                 )
                 .takeUnless {
                     it.format is TripInstantDisplay.Hidden ||
-                        it.format is TripInstantDisplay.Skipped ||
                         // API best practices call for hiding scheduled times on subway
                         (isSubway &&
                             (it.format is TripInstantDisplay.ScheduleTime ||

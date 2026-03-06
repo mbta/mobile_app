@@ -46,4 +46,5 @@ fun TripInstantDisplay.containsWrappableText() =
         is TripInstantDisplay.ScheduleMinutes -> false
         is TripInstantDisplay.Skipped -> false
         is TripInstantDisplay.Cancelled -> false
+        is TripInstantDisplay.Shuttle -> false
     }

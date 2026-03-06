@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.utils
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
+import com.mbta.tid.mbta_app.model.Prediction
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -666,6 +667,89 @@ public open class RouteCardPreviewData {
                 ),
             ),
         )
+
+    public fun CR2(): RouteCardData {
+        val providenceTrip =
+            objects.trip(
+                objects.routePattern(providenceLine) {
+                    directionId = 0
+                    typicality = RoutePattern.Typicality.Typical
+                    representativeTrip { headsign = "Providence" }
+                }
+            )
+        val providenceUpcomingTrip =
+            objects.upcomingTrip(
+                objects.schedule {
+                    trip = providenceTrip
+                    departureTime = EasternTimeInstant(today.atTime(15, 28))
+                },
+                objects.prediction {
+                    scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+                    trip = providenceTrip
+                },
+            )
+        val stoughtonTrip =
+            objects.trip(
+                objects.routePattern(providenceLine) {
+                    directionId = 0
+                    typicality = RoutePattern.Typicality.CanonicalOnly
+                    representativeTrip { headsign = "Stoughton" }
+                }
+            )
+        val stoughtonUpcomingTrip =
+            objects.upcomingTrip(
+                objects.schedule {
+                    trip = stoughtonTrip
+                    departureTime = EasternTimeInstant(today.atTime(15, 28))
+                },
+                objects.prediction {
+                    scheduleRelationship = Prediction.ScheduleRelationship.Skipped
+                    trip = stoughtonTrip
+                },
+            )
+        val wickfordTrip =
+            objects.trip(
+                objects.routePattern(providenceLine) {
+                    directionId = 0
+                    typicality = RoutePattern.Typicality.CanonicalOnly
+                    representativeTrip { headsign = "Wickford Junction" }
+                }
+            )
+        val wickfordUcomingTrip =
+            objects.upcomingTrip(
+                objects.schedule {
+                    trip = wickfordTrip
+                    departureTime = EasternTimeInstant(today.atTime(16, 1))
+                }
+            )
+        val wickfordShuttle =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                            directionId = 0,
+                            route = providenceLine.id,
+                            routeType = RouteType.COMMUTER_RAIL,
+                            stop = ruggles.id,
+                            trip = wickfordTrip.id,
+                        )
+                    )
+            }
+        return card(
+            providenceLine,
+            ruggles,
+            listOf(stoughtonUpcomingTrip, providenceUpcomingTrip, wickfordUcomingTrip),
+            alertHere = mapOf(0 to wickfordShuttle),
+        )
+    }
 
     // "Next two trips go to the same destination" group = "6. Bus route single direction"
     public fun Bus1(): RouteCardData {

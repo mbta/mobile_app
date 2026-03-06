@@ -1132,7 +1132,7 @@ class TripDetailsStopListTest {
         assertEquals(
             UpcomingFormat.Some(
                 UpcomingFormat.Some.FormattedTrip(
-                    objects.upcomingTrip(pred),
+                    objects.upcomingTrip(pred, alert = shuttleAlert),
                     route.type,
                     TripInstantDisplay.Time(now, false),
                     false,
