@@ -22,7 +22,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary.Standard(Alert.Effect.Suspension),
                 "alert",
                 listOf(RouteStopDirection(route, stop, direction)),
                 PushNotificationPayload.NotificationType.Notification,
@@ -41,7 +41,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary.Standard(Alert.Effect.Suspension),
                 "alert",
                 listOf(RouteStopDirection(route, stop, 0), RouteStopDirection(route, stop, 1)),
                 PushNotificationPayload.NotificationType.Notification,
@@ -59,7 +59,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary.Standard(Alert.Effect.Suspension),
                 "alert",
                 listOf(
                     RouteStopDirection(Route.Id("route1"), stop, 0),
@@ -81,7 +81,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary.Standard(Alert.Effect.Suspension),
                 "alert",
                 listOf(
                     RouteStopDirection(route, "stop1", 0),
@@ -102,7 +102,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension),
+                AlertSummary.Standard(Alert.Effect.Suspension),
                 "alert",
                 listOf(
                     RouteStopDirection(Route.Id("route1"), "stop1", 0),
@@ -122,7 +122,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension, update = AlertSummary.Update.AllClear),
+                AlertSummary.AllClear(AlertSummary.Location.SingleStop("Some Stop")),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
                 PushNotificationPayload.NotificationType.Notification,
@@ -140,7 +140,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     recurrence =
                         AlertSummary.Recurrence.Daily(ending = AlertSummary.Timeframe.Tomorrow),
@@ -164,7 +164,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     recurrence =
                         AlertSummary.Recurrence.Daily(
@@ -192,7 +192,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     recurrence =
                         AlertSummary.Recurrence.Daily(
@@ -219,7 +219,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
                 ),
@@ -240,7 +240,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.Time(time),
                 ),
@@ -265,7 +265,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.EndOfService,
                 ),
@@ -290,7 +290,10 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(Alert.Effect.Suspension, timeframe = AlertSummary.Timeframe.Tomorrow),
+                AlertSummary.Standard(
+                    Alert.Effect.Suspension,
+                    timeframe = AlertSummary.Timeframe.Tomorrow,
+                ),
                 "alert",
                 listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
                 PushNotificationPayload.NotificationType.Notification,
@@ -310,7 +313,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.ThisWeek(time),
                 ),
@@ -335,7 +338,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.LaterDate(time),
                 ),
@@ -360,7 +363,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
                 ),
@@ -385,7 +388,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe = AlertSummary.Timeframe.StartingTomorrow,
                 ),
@@ -411,7 +414,7 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Suspension,
                     timeframe =
                         AlertSummary.Timeframe.TimeRange(

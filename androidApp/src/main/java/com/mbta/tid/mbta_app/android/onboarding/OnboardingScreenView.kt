@@ -350,7 +350,7 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
                         FormattedAlert(
                             alert = null,
                             alertSummary =
-                                AlertSummary(
+                                AlertSummary.Standard(
                                     effect = Alert.Effect.Suspension,
                                     location =
                                         AlertSummary.Location.SuccessiveStops(

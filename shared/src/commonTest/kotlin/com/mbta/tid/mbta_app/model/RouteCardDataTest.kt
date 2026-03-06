@@ -1592,45 +1592,21 @@ class RouteCardDataTest {
             objects.alert {
                 activePeriod(now - 15.minutes, null)
                 effect = Alert.Effect.Delay
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = greenB.id.idText,
-                    routeType = RouteType.LIGHT_RAIL,
-                )
+                informedEntity(route = greenB.id.idText, routeType = RouteType.LIGHT_RAIL)
                 severity = 5
             }
         val alertC =
             objects.alert {
                 activePeriod(now - 15.minutes, null)
                 effect = Alert.Effect.Delay
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = "Green-C",
-                    routeType = RouteType.LIGHT_RAIL,
-                )
+                informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
                 severity = 5
             }
         val alertE =
             objects.alert {
                 activePeriod(now - 15.minutes, null)
                 effect = Alert.Effect.Delay
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = "Green-E",
-                    routeType = RouteType.LIGHT_RAIL,
-                )
+                informedEntity(route = "Green-E", routeType = RouteType.LIGHT_RAIL)
                 severity = 5
             }
 

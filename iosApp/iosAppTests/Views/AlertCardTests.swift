@@ -56,14 +56,14 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .shuttle,
-                                       location: .some(AlertSummary.LocationSuccessiveStops(
-                                           startStopName: "Start Stop",
-                                           endStopName: "End Stop"
-                                       )),
-                                       timeframe: .some(AlertSummary.TimeframeTomorrow()),
-                                       recurrence: nil,
-                                       update: nil),
+            alertSummary: AlertSummary.Standard(effect: .shuttle,
+                                                location: .some(AlertSummary.LocationSuccessiveStops(
+                                                    startStopName: "Start Stop",
+                                                    endStopName: "End Stop"
+                                                )),
+                                                timeframe: .some(AlertSummary.TimeframeTomorrow()),
+                                                recurrence: nil,
+                                                isUpdate: false),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -81,11 +81,12 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(effect: .stopClosure,
-                                       location: .some(AlertSummary.LocationSingleStop(stopName: "Single Stop")),
-                                       timeframe: .some(AlertSummary.TimeframeEndOfService()),
-                                       recurrence: nil,
-                                       update: nil),
+            alertSummary: AlertSummary.Standard(effect: .stopClosure,
+                                                location: .some(AlertSummary
+                                                    .LocationSingleStop(stopName: "Single Stop")),
+                                                timeframe: .some(AlertSummary.TimeframeEndOfService()),
+                                                recurrence: nil,
+                                                isUpdate: false),
             spec: .major,
             color: Color.pink,
             textColor: Color.orange,
@@ -104,7 +105,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Detail button pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
                 location: .some(AlertSummary.LocationStopToDirection(
                     startStopName: "Start Stop",
@@ -114,7 +115,7 @@ final class AlertCardTests: XCTestCase {
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                 )),
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             ),
             spec: .major,
             color: Color.pink,
@@ -134,7 +135,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
                 location: .some(AlertSummary.LocationDirectionToStop(
                     direction: Direction(name: "West", destination: "Destination", id: 0),
@@ -144,7 +145,7 @@ final class AlertCardTests: XCTestCase {
                     time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                 )),
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             ),
             spec: .major,
             color: Color.pink,
@@ -166,7 +167,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
                 location: .some(AlertSummary.LocationSuccessiveStops(
                     startStopName: "Start Stop",
@@ -174,7 +175,7 @@ final class AlertCardTests: XCTestCase {
                 )),
                 timeframe: .some(AlertSummary.TimeframeTime(time: time)),
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             ),
             spec: .major,
             color: Color.pink,
@@ -223,12 +224,12 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: alert.effect,
                 location: nil,
                 timeframe: AlertSummary.TimeframeTomorrow(),
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             ),
             spec: .secondary,
             color: Color.pink,
@@ -366,12 +367,12 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: .delay,
                 location: AlertSummary.LocationWholeRoute(routeLabel: "Red Line", routeType: .heavyRail),
                 timeframe: AlertSummary.TimeframeStartingLaterToday(time: time),
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             ),
             spec: .delay,
             color: Color.pink,
@@ -439,15 +440,11 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
-                effect: .suspension,
+            alertSummary: AlertSummary.AllClear(
                 location: .some(AlertSummary.LocationSuccessiveStops(
                     startStopName: "Start Stop",
                     endStopName: "End Stop"
                 )),
-                timeframe: nil,
-                recurrence: nil,
-                update: .some(AlertSummary.UpdateAllClear())
             ),
             spec: .major,
             color: Color.pink,
@@ -475,7 +472,7 @@ final class AlertCardTests: XCTestCase {
         let exp = XCTestExpectation(description: "Card pressed")
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary(
+            alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
                 location: .some(AlertSummary.LocationSuccessiveStops(
                     startStopName: "Start Stop",
@@ -483,7 +480,7 @@ final class AlertCardTests: XCTestCase {
                 )),
                 timeframe: AlertSummary.TimeframeTomorrow(),
                 recurrence: nil,
-                update: .some(AlertSummary.UpdateActive())
+                isUpdate: true
             ),
             spec: .major,
             color: Color.pink,

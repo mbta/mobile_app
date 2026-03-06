@@ -61,58 +61,11 @@ class AlertDetailsPageTest {
                 effect = Alert.Effect.StopClosure
                 effectName = "Closure"
                 header = "Alert header"
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    route = route.id.idText,
-                    stop = stop1.id,
-                )
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 0,
-                    route = route.id.idText,
-                    stop = stop1a.id,
-                )
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 1,
-                    route = route.id.idText,
-                    stop = stop1b.id,
-                )
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    route = route.id.idText,
-                    stop = stop2a.id,
-                )
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    route = route.id.idText,
-                    stop = stop3.id,
-                )
+                informedEntity(route = route.id.idText, stop = stop1.id)
+                informedEntity(directionId = 0, route = route.id.idText, stop = stop1a.id)
+                informedEntity(directionId = 1, route = route.id.idText, stop = stop1b.id)
+                informedEntity(route = route.id.idText, stop = stop2a.id)
+                informedEntity(route = route.id.idText, stop = stop3.id)
             }
 
         loadKoinMocks(objects)
