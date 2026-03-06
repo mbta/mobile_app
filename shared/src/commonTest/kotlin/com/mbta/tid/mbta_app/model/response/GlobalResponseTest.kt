@@ -40,16 +40,7 @@ class GlobalResponseTest {
                     EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = stop.id,
-                )
+                informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
             }
 
         val globalResponse =
@@ -81,16 +72,7 @@ class GlobalResponseTest {
                 EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
             )
             effect = Alert.Effect.Suspension
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = route.id.idText,
-                routeType = route.type,
-                stop = "different stop",
-            )
+            informedEntity(route = route.id.idText, routeType = route.type, stop = "different stop")
         }
 
         val globalResponse =
@@ -130,16 +112,7 @@ class GlobalResponseTest {
                     EasternTimeInstant(2024, Month.MARCH, 22, 2, 30, 0),
                 )
                 effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = childStop.id,
-                )
+                informedEntity(route = route.id.idText, routeType = route.type, stop = childStop.id)
             }
 
         val globalResponse =
@@ -194,11 +167,6 @@ class GlobalResponseTest {
                 )
                 effect = Alert.Effect.Suspension
                 informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
                     route = route.id.idText,
                     routeType = route.type,
                     stop = childStop1.id,
@@ -308,46 +276,10 @@ class GlobalResponseTest {
                 routeType = route.type,
                 stop = child1Stop.id,
             )
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = route.id.idText,
-                routeType = route.type,
-                stop = parent1Stop.id,
-            )
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = route.id.idText,
-                routeType = route.type,
-                stop = parent2Stop.id,
-            )
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = route.id.idText,
-                routeType = route.type,
-                stop = child2Stop.id,
-            )
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                route = route.id.idText,
-                routeType = route.type,
-                stop = parent3Stop.id,
-            )
+            informedEntity(route = route.id.idText, routeType = route.type, stop = parent1Stop.id)
+            informedEntity(route = route.id.idText, routeType = route.type, stop = parent2Stop.id)
+            informedEntity(route = route.id.idText, routeType = route.type, stop = child2Stop.id)
+            informedEntity(route = route.id.idText, routeType = route.type, stop = parent3Stop.id)
             informedEntity(
                 listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                 route = route.id.idText,

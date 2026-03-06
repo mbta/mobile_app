@@ -315,16 +315,7 @@ class AlertTest {
         val validAlert =
             objects.alert {
                 effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = stop.id,
-                )
+                informedEntity(route = route.id.idText, routeType = route.type, stop = stop.id)
             }
         val invalidAlert =
             objects.alert {
@@ -385,16 +376,7 @@ class AlertTest {
         val alert =
             objects.alert {
                 effect = Alert.Effect.Suspension
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = "not matching",
-                    routeType = route.type,
-                    stop = stop.id,
-                )
+                informedEntity(route = "not matching", routeType = route.type, stop = stop.id)
             }
         assertEquals(
             Alert.applicableAlerts(
@@ -418,11 +400,6 @@ class AlertTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "not matching",

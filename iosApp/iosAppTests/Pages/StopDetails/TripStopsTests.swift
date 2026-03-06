@@ -435,12 +435,12 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .init(
+            alertSummaries: [alert.id: .Standard(
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop3.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -533,12 +533,12 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .init(
+            alertSummaries: [alert.id: .Standard(
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop3.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },
@@ -631,12 +631,12 @@ final class TripStopsTests: XCTestCase {
             stopSequence: 1,
             headerSpec: .vehicle(vehicle, stop1, nil, false),
             now: now,
-            alertSummaries: [alert.id: .init(
+            alertSummaries: [alert.id: .Standard(
                 effect: alert.effect,
                 location: AlertSummary.LocationSingleStop(stopName: stop1.name),
                 timeframe: AlertSummary.TimeframeEndOfService.shared,
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             )],
             onTapLink: { _ in },
             onOpenAlertDetails: { _ in },

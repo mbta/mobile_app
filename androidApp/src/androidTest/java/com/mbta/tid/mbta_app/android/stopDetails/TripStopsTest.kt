@@ -524,7 +524,7 @@ class TripStopsTest {
                 alertSummaries =
                     mapOf(
                         alert.id to
-                            AlertSummary(
+                            AlertSummary.Standard(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop3.name),
                                 AlertSummary.Timeframe.EndOfService,
@@ -632,7 +632,7 @@ class TripStopsTest {
                 alertSummaries =
                     mapOf(
                         alert.id to
-                            AlertSummary(
+                            AlertSummary.Standard(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop3.name),
                                 AlertSummary.Timeframe.EndOfService,
@@ -740,7 +740,7 @@ class TripStopsTest {
                 alertSummaries =
                     mapOf(
                         alert.id to
-                            AlertSummary(
+                            AlertSummary.Standard(
                                 alert.effect,
                                 AlertSummary.Location.SingleStop(stop1.name),
                                 AlertSummary.Timeframe.EndOfService,

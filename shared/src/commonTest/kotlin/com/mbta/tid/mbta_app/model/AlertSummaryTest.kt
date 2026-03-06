@@ -28,8 +28,9 @@ import kotlinx.serialization.json.putJsonObject
 
 class AlertSummaryTest {
     @Test
-    fun `can serialize and deserialize full summary`() {
+    fun `can serialize and deserialize full standard summary`() {
         val jsonObject = buildJsonObject {
+            put("type", "standard")
             put("effect", "station_closure")
             putJsonObject("location") {
                 put("type", "single_stop")
@@ -44,8 +45,8 @@ class AlertSummaryTest {
                 }
             }
         }
-        val summary =
-            AlertSummary(
+        val summary: AlertSummary =
+            AlertSummary.Standard(
                 Alert.Effect.StationClosure,
                 AlertSummary.Location.SingleStop("Lechmere"),
                 AlertSummary.Timeframe.Tomorrow,
@@ -55,6 +56,24 @@ class AlertSummaryTest {
                             EasternTimeInstant(2026, Month.JANUARY, 16, 10, 31)
                         )
                 ),
+            )
+        assertEquals(jsonObject, json.encodeToJsonElement(summary))
+        assertEquals(summary, json.decodeFromJsonElement(jsonObject))
+    }
+
+    @Test
+    fun `can serialize and deserialize all clear summary`() {
+        val jsonObject = buildJsonObject {
+            put("type", "all_clear")
+            putJsonObject("location") {
+                put("type", "successive_stops")
+                put("start_stop_name", "Lechmere")
+                put("end_stop_name", "Government Center")
+            }
+        }
+        val summary: AlertSummary =
+            AlertSummary.AllClear(
+                AlertSummary.Location.SuccessiveStops("Lechmere", "Government Center")
             )
         assertEquals(jsonObject, json.encodeToJsonElement(summary))
         assertEquals(summary, json.decodeFromJsonElement(jsonObject))
@@ -204,18 +223,6 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `can deserialize all updates`() {
-        fun performCheck(update: AlertSummary.Update, jsonBuilder: JsonObjectBuilder.() -> Unit) {
-            val jsonObject = buildJsonObject(jsonBuilder)
-            assertEquals(jsonObject, json.encodeToJsonElement(update))
-            assertEquals(update, json.decodeFromJsonElement(jsonObject))
-        }
-
-        performCheck(AlertSummary.Update.Active) { put("type", "active") }
-        performCheck(AlertSummary.Update.AllClear) { put("type", "all_clear") }
-    }
-
-    @Test
     fun `ignores unknown location timeframe and recurrence when deserializing`() {
         val jsonObject = buildJsonObject {
             put("effect", "station_closure")
@@ -224,7 +231,7 @@ class AlertSummaryTest {
             putJsonObject("recurrence") { put("type", "fortnightly") }
         }
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 Alert.Effect.StationClosure,
                 location = AlertSummary.Location.Unknown,
                 timeframe = AlertSummary.Timeframe.Unknown,
@@ -243,7 +250,7 @@ class AlertSummaryTest {
             put("hue", "octarine")
         }
         assertEquals(
-            AlertSummary(Alert.Effect.StationClosure, location = null, timeframe = null),
+            AlertSummary.Standard(Alert.Effect.StationClosure, location = null, timeframe = null),
             json.decodeFromJsonElement(jsonObject),
         )
     }
@@ -279,7 +286,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.UntilFurtherNotice),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.UntilFurtherNotice),
             alertSummary,
         )
     }
@@ -299,7 +306,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
             alertSummary,
         )
     }
@@ -323,7 +330,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.EndOfService),
             alertSummary,
         )
     }
@@ -347,7 +354,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.EndOfService),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.EndOfService),
             alertSummary,
         )
     }
@@ -372,7 +379,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.Tomorrow),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Tomorrow),
             alertSummary,
         )
     }
@@ -397,7 +404,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
             alertSummary,
         )
     }
@@ -422,7 +429,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.LaterDate(endTime)),
             alertSummary,
         )
     }
@@ -442,7 +449,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingTomorrow),
+            AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.StartingTomorrow),
             alertSummary,
         )
     }
@@ -463,7 +470,11 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(alert.effect, null, AlertSummary.Timeframe.StartingLaterToday(laterToday)),
+            AlertSummary.Standard(
+                alert.effect,
+                null,
+                AlertSummary.Timeframe.StartingLaterToday(laterToday),
+            ),
             alertSummary,
         )
     }
@@ -488,15 +499,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.StopClosure
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    stop = childStop?.id,
-                )
+                informedEntity(route = route.id.idText, stop = childStop?.id)
             }
 
         val alertSummary =
@@ -511,7 +514,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(alert.effect, AlertSummary.Location.SingleStop(stop.name), null),
+            AlertSummary.Standard(alert.effect, AlertSummary.Location.SingleStop(stop.name), null),
             alertSummary,
         )
     }
@@ -540,15 +543,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in successiveStops) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -564,7 +559,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
@@ -600,15 +595,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in successiveStops) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -670,15 +657,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in (listOf(firstStop) + trunkStops + branch1Stops + branch2Stops)) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -694,7 +673,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
@@ -750,15 +729,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in (listOf(lastStop) + trunkStops + branch1Stops + branch2Stops)) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -774,7 +745,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.DirectionToStop(
                     Direction(route.directionNames[1]!!, route.directionDestinations[1]!!, 1),
@@ -830,15 +801,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stop in objects.stops.values) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -854,7 +817,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
@@ -912,15 +875,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 for (stopId in listOf("70150", "70148", "70212")) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stopId,
-                    )
+                    informedEntity(route = route.id.idText, stop = stopId)
                 }
             }
 
@@ -936,7 +891,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops(cBranchStop.name, trunkStop.name),
                 null,
@@ -1011,15 +966,7 @@ class AlertSummaryTest {
                     listOf(trunkAlertingStop, bStop, cStop).flatMap {
                         listOf(it.id) + it.childStopIds
                     }) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stopId,
-                    )
+                    informedEntity(route = route.id.idText, stop = stopId)
                 }
             }
 
@@ -1035,7 +982,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.StopToDirection(
                     trunkAlertingStop.name,
@@ -1070,7 +1017,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = null,
                 timeframe =
@@ -1114,7 +1061,7 @@ class AlertSummaryTest {
             AlertSummary.summarizing(alert, "", 0, emptyList(), now, null, GlobalResponse(objects))
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = null,
                 timeframe =
@@ -1166,7 +1113,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = null,
                 timeframe =
@@ -1188,7 +1135,7 @@ class AlertSummaryTest {
         )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = null,
                 timeframe = AlertSummary.Timeframe.StartingTomorrow,
@@ -1230,15 +1177,7 @@ class AlertSummaryTest {
                 activePeriod(now.minus(1.hours), now.plus(1.hours))
                 updatedAt = now.minus(1.minutes)
                 for (stop in successiveStops) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -1254,7 +1193,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
@@ -1262,7 +1201,7 @@ class AlertSummaryTest {
                 ),
                 null,
                 null,
-                null,
+                isUpdate = false,
             ),
             alertSummary,
         )
@@ -1290,15 +1229,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.Suspension
                 activePeriod(now.minus(1.hours), now.minus(5.minutes))
                 for (stop in successiveStops) {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        stop = stop.id,
-                    )
+                    informedEntity(route = route.id.idText, stop = stop.id)
                 }
             }
 
@@ -1315,15 +1246,11 @@ class AlertSummaryTest {
 
         assertTrue { alert.allClear(now) }
         assertEquals(
-            AlertSummary(
-                alert.effect,
+            AlertSummary.AllClear(
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
                     successiveStops.last().name,
-                ),
-                null,
-                null,
-                AlertSummary.Update.AllClear,
+                )
             ),
             alertSummary,
         )
@@ -1342,15 +1269,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.Suspension
                 durationCertainty = Alert.DurationCertainty.Unknown
                 activePeriod(now.minus(1.hours), null)
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                )
+                informedEntity(route = route.id.idText, routeType = route.type)
             }
 
         val alertSummary =
@@ -1365,7 +1284,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = AlertSummary.Location.WholeRoute(route.label, route.type),
                 timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
@@ -1395,16 +1314,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Unknown
                 activePeriod(now.minus(1.hours), null)
                 stopIds.forEach {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = route.id.idText,
-                        routeType = route.type,
-                        stop = it,
-                    )
+                    informedEntity(route = route.id.idText, routeType = route.type, stop = it)
                 }
             }
 
@@ -1420,7 +1330,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 location = AlertSummary.Location.WholeRoute(route.label, route.type),
                 timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
@@ -1451,17 +1361,7 @@ class AlertSummaryTest {
                 effect = Alert.Effect.StopClosure
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), null)
-                routes.forEach {
-                    informedEntity(
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                        route = it.id.idText,
-                        routeType = it.type,
-                    )
-                }
+                routes.forEach { informedEntity(route = it.id.idText, routeType = it.type) }
             }
 
         val alertSummary =
@@ -1476,7 +1376,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.WholeRoute("Green Line", RouteType.LIGHT_RAIL),
                 null,
@@ -1522,29 +1422,11 @@ class AlertSummaryTest {
                     if (id == "trunk") {
                         routes.forEach { route ->
                             stops.forEach { stop ->
-                                informedEntity(
-                                    listOf(
-                                        Alert.InformedEntity.Activity.Board,
-                                        Alert.InformedEntity.Activity.Exit,
-                                        Alert.InformedEntity.Activity.Ride,
-                                    ),
-                                    route = route.id.idText,
-                                    stop = stop.id,
-                                )
+                                informedEntity(route = route.id.idText, stop = stop.id)
                             }
                         }
                     } else {
-                        stops.forEach { stop ->
-                            informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                                route = id,
-                                stop = stop.id,
-                            )
-                        }
+                        stops.forEach { stop -> informedEntity(route = id, stop = stop.id) }
                     }
                 }
             }
@@ -1561,7 +1443,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.WholeRoute("Green Line", RouteType.LIGHT_RAIL),
                 null,
@@ -1595,15 +1477,7 @@ class AlertSummaryTest {
                 durationCertainty = Alert.DurationCertainty.Estimated
                 activePeriod(now.minus(1.hours), null)
 
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = "Green-C",
-                    routeType = RouteType.LIGHT_RAIL,
-                )
+                informedEntity(route = "Green-C", routeType = RouteType.LIGHT_RAIL)
             }
 
         val alertSummary =
@@ -1618,7 +1492,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.WholeRoute("Green-C", RouteType.LIGHT_RAIL),
                 null,

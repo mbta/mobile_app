@@ -43,11 +43,6 @@ class RouteSegmentTest {
                         alert {
                             effect = Alert.Effect.Delay
                             informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
@@ -81,11 +76,6 @@ class RouteSegmentTest {
                             effect = Alert.Effect.Shuttle
                             activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
@@ -95,11 +85,6 @@ class RouteSegmentTest {
                             effect = Alert.Effect.Delay
                             activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
@@ -146,11 +131,6 @@ class RouteSegmentTest {
                                     effect = Alert.Effect.Shuttle
                                     activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
-                                        listOf(
-                                            Alert.InformedEntity.Activity.Board,
-                                            Alert.InformedEntity.Activity.Exit,
-                                            Alert.InformedEntity.Activity.Ride,
-                                        ),
                                         route = "sourceRoute",
                                         routeType = RouteType.HEAVY_RAIL,
                                         stop = "place-both",
@@ -160,11 +140,6 @@ class RouteSegmentTest {
                                     effect = Alert.Effect.Suspension
                                     activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                                     informedEntity(
-                                        listOf(
-                                            Alert.InformedEntity.Activity.Board,
-                                            Alert.InformedEntity.Activity.Exit,
-                                            Alert.InformedEntity.Activity.Ride,
-                                        ),
                                         route = "sourceRoute",
                                         routeType = RouteType.HEAVY_RAIL,
                                         stop = "place-both",
@@ -207,11 +182,6 @@ class RouteSegmentTest {
                         alert {
                             effect = Alert.Effect.Shuttle
                             informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
                                 route = "otherRoute",
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
@@ -249,11 +219,6 @@ class RouteSegmentTest {
                             effect = Alert.Effect.Shuttle
                             activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                             informedEntity(
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
                                 route = "sourceRoute",
                                 routeType = RouteType.HEAVY_RAIL,
                                 stop = "place-davis",
@@ -286,15 +251,7 @@ class RouteSegmentTest {
         val alert = alert {
             effect = Alert.Effect.Shuttle
             activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-            informedEntity(
-                listOf(
-                    Alert.InformedEntity.Activity.Board,
-                    Alert.InformedEntity.Activity.Exit,
-                    Alert.InformedEntity.Activity.Ride,
-                ),
-                routeType = RouteType.LIGHT_RAIL,
-                route = "Mattapan",
-            )
+            informedEntity(routeType = RouteType.LIGHT_RAIL, route = "Mattapan")
         }
 
         val segment =
@@ -637,11 +594,6 @@ class RouteSegmentTest {
                         this.effect = effect
                         activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
                         informedEntity(
-                            listOf(
-                                Alert.InformedEntity.Activity.Board,
-                                Alert.InformedEntity.Activity.Exit,
-                                Alert.InformedEntity.Activity.Ride,
-                            ),
                             route = routeId.idText,
                             routeType = RouteType.HEAVY_RAIL,
                             stop = stopId,

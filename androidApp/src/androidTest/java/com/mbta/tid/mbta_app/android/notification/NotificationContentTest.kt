@@ -30,7 +30,7 @@ class NotificationContentTest {
                         resources,
                         PushNotificationPayload(
                             PushNotificationPayload.Title.BareLabel("Green Line D"),
-                            AlertSummary(
+                            AlertSummary.Standard(
                                 Alert.Effect.Shuttle,
                                 AlertSummary.Location.SuccessiveStops(
                                     startStopName = "Kenmore",

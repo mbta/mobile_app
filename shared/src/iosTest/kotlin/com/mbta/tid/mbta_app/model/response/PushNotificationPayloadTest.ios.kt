@@ -14,8 +14,8 @@ class PushNotificationPayloadTestIos {
     fun `fromUserInfo works`() {
         val title: PushNotificationPayload.Title =
             PushNotificationPayload.Title.BareLabel("Red Line")
-        val summary =
-            AlertSummary(
+        val summary: AlertSummary =
+            AlertSummary.Standard(
                 Alert.Effect.StationClosure,
                 location = AlertSummary.Location.SingleStop("South Station"),
                 timeframe = AlertSummary.Timeframe.Tomorrow,

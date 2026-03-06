@@ -155,17 +155,7 @@ class TripDetailsViewTest {
             cause = Alert.Cause.Parade
             effect = Alert.Effect.StopClosure
             activePeriod(now.minus(5.minutes), now.plus(30.minutes))
-            informedEntity(
-                activities =
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                directionId = 0,
-                route = route.id.idText,
-                stop = downstreamStop.id,
-            )
+            informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
         }
 
         val alerts = AlertsStreamDataResponse(objects)

@@ -418,17 +418,7 @@ class StopDetailsFilteredDeparturesViewTest {
                 activePeriod(now - 5.seconds, now + 5.seconds)
                 effect = Alert.Effect.Suspension
                 header = "Fuchsia Line suspended from Here to There"
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 0,
-                    route = route.id.idText,
-                    stop = stop.id,
-                )
+                informedEntity(directionId = 0, route = route.id.idText, stop = stop.id)
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
         val alertSummaries =
@@ -515,28 +505,8 @@ class StopDetailsFilteredDeparturesViewTest {
                 activePeriod(now - 5.seconds, now + 20.minutes)
                 effect = Alert.Effect.Shuttle
                 header = "Green line shuttle on B and C branches"
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 0,
-                    route = routeB.id.idText,
-                    stop = "71151",
-                )
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 0,
-                    route = routeC.id.idText,
-                    stop = "70151",
-                )
+                informedEntity(directionId = 0, route = routeB.id.idText, stop = "71151")
+                informedEntity(directionId = 0, route = routeC.id.idText, stop = "70151")
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
@@ -615,17 +585,7 @@ class StopDetailsFilteredDeparturesViewTest {
             builder.alert {
                 activePeriod(now - 5.seconds, now + 5.seconds)
                 effect = Alert.Effect.Suspension
-                informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
-                    directionId = 0,
-                    route = route.id.idText,
-                    stop = downstreamStop.id,
-                )
+                informedEntity(directionId = 0, route = route.id.idText, stop = downstreamStop.id)
             }
         val alertResponse = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
@@ -763,12 +723,6 @@ class StopDetailsFilteredDeparturesViewTest {
                 cause = Alert.Cause.HeavyRidership
                 severity = 10
                 informedEntity(
-                    activities =
-                        listOf(
-                            Alert.InformedEntity.Activity.Board,
-                            Alert.InformedEntity.Activity.Exit,
-                            Alert.InformedEntity.Activity.Ride,
-                        ),
                     directionId = 0,
                     route = route.id.idText,
                     routeType = RouteType.LIGHT_RAIL,

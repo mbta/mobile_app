@@ -172,14 +172,14 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary(
+                alertSummary: AlertSummary.Standard(
                     effect: .shuttle,
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                     timeframe: .some(AlertSummary.TimeframeTime(
                         time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                     )),
                     recurrence: nil,
-                    update: nil
+                    isUpdate: false
                 ),
                 spec: .major,
                 color: Color.pink,
@@ -190,14 +190,14 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary(
+                alertSummary: AlertSummary.Standard(
                     effect: .shuttle,
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                     timeframe: .some(AlertSummary.TimeframeTime(
                         time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                     )),
                     recurrence: nil,
-                    update: .some(AlertSummary.UpdateActive())
+                    isUpdate: true
                 ),
                 spec: .secondary,
                 color: Color(hex: "ED8B00"),
@@ -208,12 +208,8 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: alert,
-                alertSummary: AlertSummary(
-                    effect: .shuttle,
+                alertSummary: AlertSummary.AllClear(
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
-                    timeframe: nil,
-                    recurrence: nil,
-                    update: .some(AlertSummary.UpdateAllClear())
                 ),
                 spec: .secondary,
                 color: Color(hex: "ED8B00"),
