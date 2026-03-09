@@ -186,7 +186,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary(
+                AlertSummary.Standard(
                     Alert.Effect.Delay,
                     AlertSummary.Location.WholeRoute("Red Line", RouteType.HEAVY_RAIL),
                     timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
@@ -247,7 +247,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
+                AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
                 AlertCardSpec.Major,
                 color,
                 textColor,
@@ -272,7 +272,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
+                AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
                 AlertCardSpec.Secondary,
                 color,
                 textColor,

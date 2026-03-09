@@ -757,12 +757,12 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             setStopFilter: { _ in },
             setTripFilter: { _ in },
             leaf: leaf,
-            alertSummaries: [alert.id: AlertSummary(
+            alertSummaries: [alert.id: AlertSummary.Standard(
                 effect: .shuttle,
                 location: AlertSummary.LocationSingleStop(stopName: stop.name),
                 timeframe: nil,
                 recurrence: nil,
-                update: nil
+                isUpdate: false
             )],
             selectedDirection: .init(name: nil, destination: nil, id: 0),
             favorite: false,

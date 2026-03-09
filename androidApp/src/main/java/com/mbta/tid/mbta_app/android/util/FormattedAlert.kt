@@ -61,7 +61,10 @@ data class FormattedAlert(
         } ?: resources.getString(R.string.delays_unknown_reason)
 
     private fun delayHeader(resources: Resources): AnnotatedString {
-        if (alertSummary?.timeframe is AlertSummary.Timeframe.StartingLaterToday) {
+        if (
+            (alertSummary as? AlertSummary.Standard)?.timeframe
+                is AlertSummary.Timeframe.StartingLaterToday
+        ) {
             summary(resources)?.let {
                 return it
             }
@@ -90,41 +93,41 @@ data class FormattedAlert(
                 } ?: alert?.header ?: effect(resources)
         )
 
-    private fun summary(resources: Resources) =
-        alertSummary?.let { summary ->
-            alertSummary.update?.let { update ->
-                when (update) {
-                    AlertSummary.Update.Active ->
-                        AnnotatedString.fromHtml(
-                            resources.getString(
-                                R.string.alert_summary_with_update,
-                                resources.getString(sentenceEffectRes),
-                                summaryLocation(resources),
-                                summaryTimeframe(resources),
-                                summaryRecurrence(resources),
-                            )
-                        )
+    private fun summary(resources: Resources) = summary(alertSummary, resources)
 
-                    AlertSummary.Update.AllClear ->
-                        AnnotatedString.fromHtml(
-                            resources.getString(
-                                R.string.alert_summary_all_clear,
-                                summaryLocation(resources),
-                            )
-                        )
-
-                    AlertSummary.Update.Unknown -> null
-                }
-            }
-                ?: AnnotatedString.fromHtml(
+    private fun summary(alertSummary: AlertSummary?, resources: Resources): AnnotatedString? =
+        when (alertSummary) {
+            is AlertSummary.AllClear ->
+                AnnotatedString.fromHtml(
                     resources.getString(
-                        R.string.alert_summary,
-                        resources.getString(sentenceEffectRes),
-                        summaryLocation(resources),
-                        summaryTimeframe(resources),
-                        summaryRecurrence(resources),
+                        R.string.alert_summary_all_clear,
+                        summaryLocation(alertSummary.effect, alertSummary.location, resources),
                     )
                 )
+            is AlertSummary.Standard ->
+                if (alertSummary.isUpdate) {
+                    AnnotatedString.fromHtml(
+                        resources.getString(
+                            R.string.alert_summary_with_update,
+                            resources.getString(sentenceEffectRes),
+                            summaryLocation(alertSummary.effect, alertSummary.location, resources),
+                            summaryTimeframe(alertSummary.timeframe, resources),
+                            summaryRecurrence(alertSummary.recurrence, resources),
+                        )
+                    )
+                } else {
+                    AnnotatedString.fromHtml(
+                        resources.getString(
+                            R.string.alert_summary,
+                            resources.getString(sentenceEffectRes),
+                            summaryLocation(alertSummary.effect, alertSummary.location, resources),
+                            summaryTimeframe(alertSummary.timeframe, resources),
+                            summaryRecurrence(alertSummary.recurrence, resources),
+                        )
+                    )
+                }
+            is AlertSummary.Unknown -> summary(alertSummary.fallback, resources)
+            null -> null
         }
 
     fun alertCardHeader(spec: AlertCardSpec, resources: Resources) =
@@ -146,91 +149,6 @@ data class FormattedAlert(
 
     val alertCardMajorBody
         @Composable get() = alertCardMajorBody(LocalResources.current)
-
-    private fun summaryLocation(resources: Resources) =
-        alertSummary?.location?.let {
-            when (it) {
-                is AlertSummary.Location.SingleStop ->
-                    resources.getString(R.string.alert_summary_location_single, it.stopName)
-                is AlertSummary.Location.SuccessiveStops ->
-                    resources.getString(
-                        R.string.alert_summary_location_successive,
-                        it.startStopName,
-                        it.endStopName,
-                    )
-                is AlertSummary.Location.StopToDirection ->
-                    resources.getString(
-                        R.string.alert_summary_location_stop_to_direction,
-                        it.startStopName,
-                        resources.getString(directionNameFormatted(it.direction)),
-                    )
-                is AlertSummary.Location.DirectionToStop ->
-                    resources.getString(
-                        R.string.alert_summary_location_direction_to_stop,
-                        resources.getString(directionNameFormatted(it.direction)),
-                        it.endStopName,
-                    )
-                is AlertSummary.Location.WholeRoute ->
-                    resources.getString(
-                        if (alertSummary.effect == Alert.Effect.Shuttle)
-                            R.string.alert_summary_location_whole_route_shuttle
-                        else R.string.alert_summary_location_whole_route,
-                        if (it.routeType == RouteType.BUS)
-                            resources.getString(R.string.bus_label, it.routeLabel)
-                        else it.routeLabel,
-                    )
-                AlertSummary.Location.Unknown -> null
-            }
-        } ?: ""
-
-    private fun summaryTimeframe(resources: Resources) =
-        alertSummary?.timeframe?.let {
-            when (it) {
-                AlertSummary.Timeframe.UntilFurtherNotice ->
-                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
-                AlertSummary.Timeframe.EndOfService ->
-                    resources.getString(R.string.alert_summary_timeframe_end_of_service)
-                AlertSummary.Timeframe.Tomorrow ->
-                    resources.getString(R.string.alert_summary_timeframe_tomorrow)
-                is AlertSummary.Timeframe.LaterDate ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_later_date,
-                        it.time.formattedServiceDate(),
-                    )
-                is AlertSummary.Timeframe.ThisWeek ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_this_week,
-                        it.time.formattedServiceDay(),
-                    )
-                is AlertSummary.Timeframe.Time ->
-                    resources.getString(
-                        R.string.alert_summary_timeframe_time,
-                        it.time.formattedTime(),
-                    )
-                AlertSummary.Timeframe.StartingTomorrow ->
-                    resources.getString(R.string.starting_tomorrow)
-                is AlertSummary.Timeframe.StartingLaterToday ->
-                    resources.getString(R.string.starting_later_today, it.time.formattedTime())
-                is AlertSummary.Timeframe.TimeRange ->
-                    resources.getString(
-                        R.string.from_to_time,
-                        timeRangeBoundary(resources, it.startTime),
-                        timeRangeBoundary(resources, it.endTime),
-                    )
-                AlertSummary.Timeframe.Unknown -> null
-            }
-        } ?: ""
-
-    private fun summaryRecurrence(resources: Resources) =
-        alertSummary?.recurrence?.let { recurrence ->
-            when (recurrence) {
-                is AlertSummary.Recurrence.Daily ->
-                    " daily${recurrenceEndDay(resources, recurrence.ending)}"
-                is AlertSummary.Recurrence.SomeDays ->
-                    " some days${recurrenceEndDay(resources, recurrence.ending)}"
-                AlertSummary.Recurrence.Unknown -> null
-            }
-        } ?: ""
 
     data class PredictionReplacement(
         @StringRes val textRes: Int,
@@ -458,6 +376,100 @@ data class FormattedAlert(
                 Alert.Effect.Suspension ->
                     PredictionReplacement(R.string.suspension, R.string.service_suspended)
                 else -> PredictionReplacement(effectRes(effect))
+            }
+
+        private fun summaryLocation(
+            effect: Alert.Effect?,
+            location: AlertSummary.Location?,
+            resources: Resources,
+        ) =
+            when (location) {
+                is AlertSummary.Location.SingleStop ->
+                    resources.getString(R.string.alert_summary_location_single, location.stopName)
+
+                is AlertSummary.Location.SuccessiveStops ->
+                    resources.getString(
+                        R.string.alert_summary_location_successive,
+                        location.startStopName,
+                        location.endStopName,
+                    )
+
+                is AlertSummary.Location.StopToDirection ->
+                    resources.getString(
+                        R.string.alert_summary_location_stop_to_direction,
+                        location.startStopName,
+                        resources.getString(directionNameFormatted(location.direction)),
+                    )
+
+                is AlertSummary.Location.DirectionToStop ->
+                    resources.getString(
+                        R.string.alert_summary_location_direction_to_stop,
+                        resources.getString(directionNameFormatted(location.direction)),
+                        location.endStopName,
+                    )
+
+                is AlertSummary.Location.WholeRoute ->
+                    resources.getString(
+                        if (effect == Alert.Effect.Shuttle)
+                            R.string.alert_summary_location_whole_route_shuttle
+                        else R.string.alert_summary_location_whole_route,
+                        if (location.routeType == RouteType.BUS)
+                            resources.getString(R.string.bus_label, location.routeLabel)
+                        else location.routeLabel,
+                    )
+
+                AlertSummary.Location.Unknown,
+                null -> ""
+            }
+
+        private fun summaryTimeframe(timeframe: AlertSummary.Timeframe?, resources: Resources) =
+            when (timeframe) {
+                AlertSummary.Timeframe.UntilFurtherNotice ->
+                    resources.getString(R.string.alert_summary_timeframe_until_further_notice)
+                AlertSummary.Timeframe.EndOfService ->
+                    resources.getString(R.string.alert_summary_timeframe_end_of_service)
+                AlertSummary.Timeframe.Tomorrow ->
+                    resources.getString(R.string.alert_summary_timeframe_tomorrow)
+                is AlertSummary.Timeframe.LaterDate ->
+                    resources.getString(
+                        R.string.alert_summary_timeframe_later_date,
+                        timeframe.time.formattedServiceDate(),
+                    )
+                is AlertSummary.Timeframe.ThisWeek ->
+                    resources.getString(
+                        R.string.alert_summary_timeframe_this_week,
+                        timeframe.time.formattedServiceDay(),
+                    )
+                is AlertSummary.Timeframe.Time ->
+                    resources.getString(
+                        R.string.alert_summary_timeframe_time,
+                        timeframe.time.formattedTime(),
+                    )
+                AlertSummary.Timeframe.StartingTomorrow ->
+                    resources.getString(R.string.starting_tomorrow)
+                is AlertSummary.Timeframe.StartingLaterToday ->
+                    resources.getString(
+                        R.string.starting_later_today,
+                        timeframe.time.formattedTime(),
+                    )
+                is AlertSummary.Timeframe.TimeRange ->
+                    resources.getString(
+                        R.string.from_to_time,
+                        timeRangeBoundary(resources, timeframe.startTime),
+                        timeRangeBoundary(resources, timeframe.endTime),
+                    )
+                AlertSummary.Timeframe.Unknown,
+                null -> ""
+            }
+
+        private fun summaryRecurrence(recurrence: AlertSummary.Recurrence?, resources: Resources) =
+            when (recurrence) {
+                is AlertSummary.Recurrence.Daily ->
+                    " daily${recurrenceEndDay(resources, recurrence.ending)}"
+                is AlertSummary.Recurrence.SomeDays ->
+                    " some days${recurrenceEndDay(resources, recurrence.ending)}"
+                AlertSummary.Recurrence.Unknown,
+                null -> ""
             }
 
         private fun timeRangeBoundary(

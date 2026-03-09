@@ -14,13 +14,30 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class AlertSummary(
-    val effect: Alert.Effect,
-    val location: Location? = null,
-    val timeframe: Timeframe? = null,
-    val recurrence: Recurrence? = null,
-    val update: Update? = null,
-) {
+public sealed class AlertSummary {
+    public abstract val effect: Alert.Effect?
+
+    @Serializable
+    @SerialName("standard")
+    public data class Standard(
+        override val effect: Alert.Effect,
+        val location: Location? = null,
+        val timeframe: Timeframe? = null,
+        val recurrence: Recurrence? = null,
+        @SerialName("is_update") val isUpdate: Boolean = false,
+    ) : AlertSummary()
+
+    @Serializable
+    @SerialName("all_clear")
+    public data class AllClear(val location: Location?) : AlertSummary() {
+        override val effect: Alert.Effect? = null
+    }
+
+    @Serializable
+    public data class Unknown(val fallback: AlertSummary) : AlertSummary() {
+        override val effect: Alert.Effect? = fallback.effect
+    }
+
     @Serializable
     public sealed class Location {
         @Serializable
@@ -136,17 +153,6 @@ public data class AlertSummary(
         @Serializable public sealed interface EndDay
     }
 
-    @Serializable
-    public sealed class Update {
-
-        // Alert is still active and has been updated
-        @Serializable @SerialName("active") public data object Active : Update()
-
-        @Serializable @SerialName("all_clear") public data object AllClear : Update()
-
-        @Serializable public data object Unknown : Update()
-    }
-
     public companion object {
         private const val GL_ID = "line-Green"
         private const val GL_LABEL = "Green Line"
@@ -164,18 +170,22 @@ public data class AlertSummary(
                 if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
                 val location = alertLocation(alert, stopId, directionId, patterns, global)
-                val update = alertUpdated(alert, atTime)
+
+                if (alert.allClear(atTime)) {
+                    return@withContext AllClear(location)
+                }
+
                 val recurrence = alertRecurrence(alert, atTime)
                 val timeframe =
                     alertTimeframe(alert, atTime, upcomingTrips, hasRecurrence = recurrence != null)
 
                 if (location == null && timeframe == null) return@withContext null
-                return@withContext AlertSummary(
+                return@withContext Standard(
                     alert.effect,
                     location,
                     timeframe,
                     recurrence,
-                    update,
+                    isUpdate = false,
                 )
             }
         }
@@ -473,12 +483,6 @@ public data class AlertSummary(
                 Recurrence.SomeDays(ending)
             }
         }
-
-        private fun alertUpdated(alert: Alert, atTime: EasternTimeInstant): Update? =
-            when {
-                alert.allClear(atTime) -> Update.AllClear
-                else -> null
-            }
 
         // The first value in these pairs is the list of trunk stops for each route, including a few
         // minor child stop differences at some stops, like Park and Kenmore. Stops on branches on

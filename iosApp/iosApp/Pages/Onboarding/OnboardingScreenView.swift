@@ -235,7 +235,7 @@ struct OnboardingScreenView: View {
                         Text("now")
                             .font(.system(size: 16))
                     }
-                    let alert = FormattedAlert(alert: nil, alertSummary: .init(
+                    let alert = FormattedAlert(alert: nil, alertSummary: .Standard(
                         effect: .suspension,
                         location: AlertSummary.LocationSuccessiveStops(
                             startStopName: "Back Bay",
@@ -250,7 +250,7 @@ struct OnboardingScreenView: View {
                             second: 0
                         )),
                         recurrence: nil,
-                        update: nil
+                        isUpdate: false
                     ))
                     Text(String(alert.alertCardMajorBody.characters[...]))
                         .font(.system(size: 16))

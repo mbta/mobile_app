@@ -12,6 +12,9 @@ public val json: Json = Json {
     ignoreUnknownKeys = true
     coerceInputValues = true
     serializersModule = SerializersModule {
+        polymorphic(AlertSummary::class) {
+            defaultDeserializer { AlertSummary.Unknown.serializer() }
+        }
         polymorphic(AlertSummary.Location::class) {
             defaultDeserializer { AlertSummary.Location.Unknown.serializer() }
         }
@@ -29,9 +32,6 @@ public val json: Json = Json {
         }
         polymorphic(AlertSummary.Recurrence.EndDay::class) {
             defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
-        }
-        polymorphic(AlertSummary.Update::class) {
-            defaultDeserializer { AlertSummary.Update.Unknown.serializer() }
         }
         polymorphic(PushNotificationPayload.Title::class) {
             defaultDeserializer { PushNotificationPayload.Title.Unknown.serializer() }

@@ -114,7 +114,12 @@ private constructor(
 
         @DefaultArgumentInterop.Enabled
         public fun informedEntity(
-            activities: List<Alert.InformedEntity.Activity>,
+            activities: List<Alert.InformedEntity.Activity> =
+                listOf(
+                    Alert.InformedEntity.Activity.Board,
+                    Alert.InformedEntity.Activity.Exit,
+                    Alert.InformedEntity.Activity.Ride,
+                ),
             directionId: Int? = null,
             facility: String? = null,
             route: String? = null,

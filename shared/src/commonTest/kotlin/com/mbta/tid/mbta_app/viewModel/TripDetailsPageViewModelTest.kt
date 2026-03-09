@@ -154,15 +154,7 @@ class TripDetailsPageViewModelTest : KoinTest {
             objects.alert {
                 effect = Alert.Effect.Suspension
                 activePeriod(EasternTimeInstant.now() - 1.hours, null)
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    stop = alertStop.id,
-                )
+                informedEntity(route = route.id.idText, stop = alertStop.id)
             }
 
         setUpKoin(objects)
@@ -192,7 +184,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                     alertSummaries =
                         mapOf(
                             alert.id to
-                                AlertSummary(
+                                AlertSummary.Standard(
                                     effect = Alert.Effect.Suspension,
                                     location = AlertSummary.Location.SingleStop(alertStop.name),
                                     timeframe = AlertSummary.Timeframe.UntilFurtherNotice,
@@ -246,12 +238,6 @@ class TripDetailsPageViewModelTest : KoinTest {
                         (EasternTimeInstant.now().serviceDate + DatePeriod(days = 1)).atTime(3, 0)
                     ),
                 )
-                val boardExitRide =
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    )
                 informedEntity(
                     listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
                     directionId = 0,
@@ -267,79 +253,63 @@ class TripDetailsPageViewModelTest : KoinTest {
                     stop = "70098",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 0,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70099",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 1,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70100",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 0,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70101",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 1,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70102",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 0,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70103",
                 )
                 informedEntity(
-                    boardExitRide,
                     directionId = 1,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "70104",
                 )
+                informedEntity(route = route.id.idText, routeType = route.type, stop = "70105")
                 informedEntity(
-                    boardExitRide,
-                    route = route.id.idText,
-                    routeType = route.type,
-                    stop = "70105",
-                )
-                informedEntity(
-                    boardExitRide,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "place-brntn",
                 )
                 informedEntity(
-                    boardExitRide,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "place-nqncy",
                 )
                 informedEntity(
-                    boardExitRide,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "place-qamnl",
                 )
                 informedEntity(
-                    boardExitRide,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "place-qnctr",
                 )
                 informedEntity(
-                    boardExitRide,
                     route = route.id.idText,
                     routeType = route.type,
                     stop = "place-wlsta",
@@ -383,7 +353,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                     alertSummaries =
                         mapOf(
                             alert.id to
-                                AlertSummary(
+                                AlertSummary.Standard(
                                     effect = Alert.Effect.Shuttle,
                                     location =
                                         AlertSummary.Location.SuccessiveStops(

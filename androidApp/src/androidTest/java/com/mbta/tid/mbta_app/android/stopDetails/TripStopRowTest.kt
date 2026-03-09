@@ -323,7 +323,7 @@ class TripStopRowTest {
         val route = objects.route()
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
         val summary =
-            AlertSummary(
+            AlertSummary.Standard(
                 alert.effect,
                 AlertSummary.Location.SuccessiveStops("Roxbury Crossing", "Green Street"),
                 AlertSummary.Timeframe.Tomorrow,

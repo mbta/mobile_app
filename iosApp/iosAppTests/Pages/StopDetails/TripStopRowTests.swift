@@ -324,13 +324,13 @@ final class TripStopRowTests: XCTestCase {
         let trip = objects.trip { _ in }
         let route = objects.route { _ in }
         let alert = objects.alert { $0.effect = .shuttle }
-        let summary = AlertSummary(
+        let summary = AlertSummary.Standard(
             effect: alert.effect,
             location: AlertSummary
                 .LocationSuccessiveStops(startStopName: "Roxbury Crossing", endStopName: "Green Street"),
             timeframe: AlertSummary.TimeframeTomorrow.shared,
             recurrence: nil,
-            update: nil
+            isUpdate: false
         )
 
         let entry = TripDetailsStopList.Entry(

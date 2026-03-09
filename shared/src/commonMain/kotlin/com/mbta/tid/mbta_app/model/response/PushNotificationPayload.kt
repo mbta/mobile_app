@@ -67,13 +67,13 @@ public data class PushNotificationPayload(
     @DefaultArgumentInterop.Enabled
     public fun isStillActive(now: EasternTimeInstant = EasternTimeInstant.now()): StillActive {
         val sentAt by lazy { EasternTimeInstant(sentAt) }
-        if (summary.update == AlertSummary.Update.AllClear) {
+        if (summary is AlertSummary.AllClear) {
             return StillActive.AllClear
         }
         val recurrenceEndTime =
-            when (summary.recurrence) {
-                is AlertSummary.Recurrence.Daily -> summary.recurrence.ending
-                is AlertSummary.Recurrence.SomeDays -> summary.recurrence.ending
+            when (val recurrence = (summary as? AlertSummary.Standard)?.recurrence) {
+                is AlertSummary.Recurrence.Daily -> recurrence.ending
+                is AlertSummary.Recurrence.SomeDays -> recurrence.ending
                 AlertSummary.Recurrence.Unknown,
                 null -> null
             }
@@ -101,12 +101,11 @@ public data class PushNotificationPayload(
         }
         // if recurrence existed but was inconclusive, timeframe ending means Unknown, not No,
         // so we fall through when the timeframe has ended
-        when (summary.timeframe) {
+        when (val timeframe = (summary as? AlertSummary.Standard)?.timeframe) {
             AlertSummary.Timeframe.UntilFurtherNotice,
             AlertSummary.Timeframe.Unknown,
             null -> return StillActive.Unknown
-            is AlertSummary.Timeframe.Time ->
-                if (now < summary.timeframe.time) return StillActive.Yes
+            is AlertSummary.Timeframe.Time -> if (now < timeframe.time) return StillActive.Yes
             AlertSummary.Timeframe.EndOfService -> {
                 val endTime =
                     EasternTimeInstant(
@@ -123,24 +122,22 @@ public data class PushNotificationPayload(
                 if (now < tomorrowStart) return StillActive.Yes
                 if (now < tomorrowEnd) return StillActive.Unknown
             }
-            is AlertSummary.Timeframe.ThisWeek ->
-                if (now < summary.timeframe.time) return StillActive.Yes
-            is AlertSummary.Timeframe.LaterDate ->
-                if (now < summary.timeframe.time) return StillActive.Yes
+            is AlertSummary.Timeframe.ThisWeek -> if (now < timeframe.time) return StillActive.Yes
+            is AlertSummary.Timeframe.LaterDate -> if (now < timeframe.time) return StillActive.Yes
             AlertSummary.Timeframe.StartingTomorrow,
             is AlertSummary.Timeframe.StartingLaterToday -> return StillActive.Reminder
             is AlertSummary.Timeframe.TimeRange -> {
                 val today = sentAt.serviceDate
                 val startTime =
-                    when (summary.timeframe.startTime) {
+                    when (timeframe.startTime) {
                         AlertSummary.Timeframe.TimeRange.StartOfService ->
                             EasternTimeInstant(today, LocalTime(3, 0))
-                        is AlertSummary.Timeframe.TimeRange.Time -> summary.timeframe.startTime.time
+                        is AlertSummary.Timeframe.TimeRange.Time -> timeframe.startTime.time
                         AlertSummary.Timeframe.TimeRange.Unknown -> return StillActive.Unknown
                     }
                 val endTime =
-                    when (summary.timeframe.endTime) {
-                        is AlertSummary.Timeframe.TimeRange.Time -> summary.timeframe.endTime.time
+                    when (timeframe.endTime) {
+                        is AlertSummary.Timeframe.TimeRange.Time -> timeframe.endTime.time
                         AlertSummary.Timeframe.TimeRange.EndOfService ->
                             EasternTimeInstant(today.plus(DatePeriod(days = 1)), LocalTime(3, 0))
                         AlertSummary.Timeframe.TimeRange.Unknown -> return StillActive.Unknown

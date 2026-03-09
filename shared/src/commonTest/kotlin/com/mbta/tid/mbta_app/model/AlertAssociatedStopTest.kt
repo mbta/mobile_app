@@ -82,15 +82,7 @@ class AlertAssociatedStopTest {
             objects.alert {
                 effect = Alert.Effect.Shuttle
                 activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
-                informedEntity(
-                    listOf(
-                        Alert.InformedEntity.Activity.Board,
-                        Alert.InformedEntity.Activity.Exit,
-                        Alert.InformedEntity.Activity.Ride,
-                    ),
-                    route = route.id.idText,
-                    routeType = route.type,
-                )
+                informedEntity(route = route.id.idText, routeType = route.type)
             }
 
         val result =
