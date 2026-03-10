@@ -350,8 +350,7 @@ class AlertCardTests {
                         "Ruggles",
                     ),
                     Alert.Effect.Cancellation,
-                    null,
-                    Alert.Cause.MechanicalIssue,
+                    cause = Alert.Cause.MechanicalIssue,
                 ),
                 AlertCardSpec.Major,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -379,8 +378,7 @@ class AlertCardTests {
                 AlertSummary.TripSpecific(
                     AlertSummary.TripSpecific.MultipleTrips,
                     Alert.Effect.Suspension,
-                    null,
-                    Alert.Cause.Holiday,
+                    cause = Alert.Cause.Holiday,
                 ),
                 AlertCardSpec.Major,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -417,7 +415,9 @@ class AlertCardTests {
         composeTestRule
             .onNode(
                 hasTextMatching(
-                    Regex("Shuttle buses replace the 12:13\\sPM train from Ruggles to Forest Hills")
+                    Regex(
+                        "Shuttle buses replace the 12:13\\sPM train today from Ruggles to Forest Hills"
+                    )
                 )
             )
             .assertIsDisplayed()
@@ -437,7 +437,7 @@ class AlertCardTests {
                     ),
                     Alert.Effect.StationClosure,
                     listOf("Back Bay", "Ruggles"),
-                    null,
+                    cause = null,
                 ),
                 AlertCardSpec.Major,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
@@ -450,6 +450,76 @@ class AlertCardTests {
             .onNode(
                 hasTextMatching(
                     Regex("12:13\\sPM to Stoughton will not stop at Back Bay and Ruggles today")
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripSpecificReminder() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Cancellation }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.TripFrom(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        "Ruggles",
+                    ),
+                    Alert.Effect.Cancellation,
+                    isToday = false,
+                    cause = Alert.Cause.MechanicalIssue,
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Train cancelled").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex("12:13\\sPM from Ruggles is cancelled tomorrow due to mechanical issue")
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripShuttleRecurrence() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripShuttle(
+                    EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                    RouteType.COMMUTER_RAIL,
+                    "Ruggles",
+                    "Forest Hills",
+                    recurrence =
+                        AlertSummary.Recurrence.Daily(
+                            ending =
+                                AlertSummary.Timeframe.ThisWeek(
+                                    EasternTimeInstant(2026, Month.MARCH, 12, 9, 18)
+                                )
+                        ),
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex(
+                        "Shuttle buses replace the 12:13\\sPM train today from Ruggles to Forest Hills daily until Thursday"
+                    )
                 )
             )
             .assertIsDisplayed()

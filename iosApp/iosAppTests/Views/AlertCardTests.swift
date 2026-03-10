@@ -490,7 +490,7 @@ final class AlertCardTests: XCTestCase {
                 tripIdentity: AlertSummary.TripSpecificTripFrom(
                     tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                     stopName: "Ruggles"
-                ), effect: .cancellation, effectStops: nil, cause: .mechanicalIssue
+                ), effect: .cancellation, cause: .mechanicalIssue
             ),
             spec: .major,
             routeAccents: .init(type: .commuterRail),
@@ -512,8 +512,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: AlertSummary.TripSpecific(
-                tripIdentity: AlertSummary.TripSpecificMultipleTrips.shared, effect: .suspension, effectStops: nil,
-                cause: .holiday
+                tripIdentity: AlertSummary.TripSpecificMultipleTrips.shared, effect: .suspension, cause: .holiday
             ),
             spec: .major,
             routeAccents: .init(type: .commuterRail),
@@ -546,7 +545,7 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
         XCTAssertNotNil(try sut.inspect()
-            .find(text: "Shuttle buses replace the 12:13\u{202F}PM train from Ruggles to Forest Hills"))
+            .find(text: "Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills"))
     }
 
     func testTripStationBypassAlertCard() throws {
@@ -561,7 +560,7 @@ final class AlertCardTests: XCTestCase {
                 tripIdentity: AlertSummary.TripSpecificTripTo(
                     tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                     headsign: "Stoughton"
-                ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"], cause: nil
+                ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"]
             ),
             spec: .major,
             routeAccents: .init(type: .commuterRail),
@@ -572,5 +571,65 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
         XCTAssertNotNil(try sut.inspect()
             .find(text: "12:13\u{202F}PM to Stoughton will not stop at Back Bay and Ruggles today"))
+    }
+
+    func testTripSpecificReminder() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .cancellation
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripSpecific(
+                tripIdentity: AlertSummary.TripSpecificTripFrom(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    stopName: "Ruggles"
+                ), effect: .cancellation, isToday: false, cause: .mechanicalIssue
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Train cancelled"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "12:13\u{202F}PM from Ruggles is cancelled tomorrow due to mechanical issue"))
+    }
+
+    func testTripShuttleRecurrence() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripShuttle(
+                tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills",
+                recurrence: AlertSummary.RecurrenceDaily(ending: AlertSummary.TimeframeThisWeek(time: .init(
+                    year: 2026,
+                    month: .march,
+                    day: 12,
+                    hour: 9,
+                    minute: 6,
+                    second: 0
+                )))
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(
+                text: """
+                Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills daily until Thursday
+                """
+            ))
     }
 }

@@ -13,7 +13,7 @@
     <string name="add_to_favorites_title_stop_details">將&lt;b>%2$s&lt;/b>的&lt;b>%1$s&lt;/b>新增到我的最愛</string>
     <string name="additional_service">附加服務</string>
     <string name="additional_service_sentence_case">附加服務</string>
-    <string name="affected_by_today">今天受 %1$s 影響</string>
+    <string name="affected_by">受 %1$s %2$s 影響</string>
     <plurals name="affected_stops">
         <item quantity="other">&lt;b>%1$d&lt;/b>個受影響的網站</item>
     </plurals>
@@ -37,8 +37,8 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待進一步通知</string>
-    <string name="alert_summary_trip_shuttle">從 &lt;b>%3$s&lt;/b> 到 &lt;b>%4$s&lt;/b>，接駁巴士將取代 &lt;b>%1$s&lt;/b> %2$s。</string>
-    <string name="alert_summary_trip_specific">%1$s %2$s%3$s</string>
+    <string name="alert_summary_trip_shuttle">接駁巴士取代了從 &lt;b>%4$s&lt;/b> 到 &lt;b>%5$s&lt;/b>%6$s 的 &lt;b>%1$s&lt;/b> %2$s %3$s</string>
+    <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">替代路徑</string>
     <string name="amber_alert">安珀警報</string>
@@ -53,8 +53,8 @@
     <string name="app_version_and_build">版本%1$s(%2$s)</string>
     <string name="app_version_number">版本 %1$s</string>
     <string name="approaching">正在接近</string>
-    <string name="are_cancelled_today">今天取消</string>
-    <string name="are_suspended_today">今天暫停營業</string>
+    <string name="are_cancelled">已取消 %1$s</string>
+    <string name="are_suspended">已暫停 %1$s</string>
     <string name="arriving_abbr">到站</string>
     <string name="autos_impeding_service">交通事故</string>
     <string name="autos_impeding_service_lowercase">交通事故</string>
@@ -207,9 +207,9 @@
     <string name="ice_in_harbor">港口結冰</string>
     <string name="ice_in_harbor_lowercase">港口結冰</string>
     <string name="inbound">進站</string>
-    <string name="is_cancelled_today">今天取消</string>
+    <string name="is_cancelled">已取消 %1$s</string>
     <string name="is_stops_away_from">%1$s距離%3$s還有%2$d站</string>
-    <string name="is_suspended_today">今天暫停營業</string>
+    <string name="is_suspended">已暫停 %1$s</string>
     <string name="last">最後的</string>
     <string name="last_trip">最後一次旅行</string>
     <string name="later_today">今天晚些時候</string>
@@ -421,7 +421,9 @@
     <string name="tie_replacement_lowercase">更換軌枕</string>
     <string name="to">目的地</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
+    <string name="today">今天</string>
     <string name="toggle_direction">切換方向</string>
+    <string name="tomorrow">明天</string>
     <string name="track_change">軌道變更</string>
     <string name="track_change_sentence_case">軌道變更</string>
     <string name="track_number">追蹤%1$s</string>
@@ -496,6 +498,6 @@
     <string name="weather">天氣</string>
     <string name="weather_lowercase">天氣</string>
     <string name="westbound">西行</string>
-    <string name="will_not_stop_at_today">今天不會止步於 %1$s</string>
+    <string name="will_not_stop_at">不會止步於 %1$s %2$s</string>
     <string name="x_and_y">%1$s 和 %2$s</string>
 </resources>

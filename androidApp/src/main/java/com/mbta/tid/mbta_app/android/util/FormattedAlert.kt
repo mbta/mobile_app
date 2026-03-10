@@ -135,9 +135,11 @@ data class FormattedAlert(
                             alertSummary.tripIdentity,
                             alertSummary.effect,
                             alertSummary.effectStops,
+                            alertSummary.isToday,
                             resources,
                         ),
                         summaryDueToCause(dueToCauseRes, resources),
+                        summaryRecurrence(alertSummary.recurrence, resources),
                     )
                 )
             is AlertSummary.TripShuttle ->
@@ -146,8 +148,11 @@ data class FormattedAlert(
                         R.string.alert_summary_trip_shuttle,
                         alertSummary.tripTime.formattedTime(),
                         alertSummary.routeType.typeText(resources, isOnly = true),
+                        if (alertSummary.isToday) resources.getString(R.string.today)
+                        else resources.getString(R.string.tomorrow),
                         alertSummary.currentStopName,
                         alertSummary.endStopName,
+                        summaryRecurrence(alertSummary.recurrence, resources),
                     )
                 )
             is AlertSummary.Unknown -> summary(alertSummary.fallback, resources)
@@ -172,34 +177,28 @@ data class FormattedAlert(
                     alertSummary is AlertSummary.TripSpecific ||
                         alertSummary is AlertSummary.TripShuttle
                 if (isTripSpecific) {
-                    when {
-                        effect == Alert.Effect.Cancellation && type == RouteType.BUS ->
-                            return AnnotatedString(resources.getString(R.string.bus_cancelled))
+                    when (effect) {
+                        Alert.Effect.Cancellation if type == RouteType.BUS -> R.string.bus_cancelled
 
-                        effect == Alert.Effect.Cancellation && type == RouteType.FERRY ->
-                            return AnnotatedString(resources.getString(R.string.ferry_cancelled))
+                        Alert.Effect.Cancellation if type == RouteType.FERRY ->
+                            R.string.ferry_cancelled
 
-                        effect == Alert.Effect.Cancellation ->
-                            return AnnotatedString(resources.getString(R.string.train_cancelled))
+                        Alert.Effect.Cancellation -> R.string.train_cancelled
 
-                        effect == Alert.Effect.Shuttle ->
-                            return AnnotatedString(
-                                resources.getString(R.string.shuttle_bus_sentence_case)
-                            )
+                        Alert.Effect.Shuttle -> R.string.shuttle_bus_sentence_case
 
-                        effect == Alert.Effect.Suspension && type == RouteType.BUS ->
-                            return AnnotatedString(resources.getString(R.string.bus_suspended))
+                        Alert.Effect.Suspension if type == RouteType.BUS -> R.string.bus_suspended
 
-                        effect == Alert.Effect.Suspension && type == RouteType.FERRY ->
-                            return AnnotatedString(resources.getString(R.string.ferry_suspended))
+                        Alert.Effect.Suspension if type == RouteType.FERRY ->
+                            R.string.ferry_suspended
 
-                        effect == Alert.Effect.Suspension ->
-                            return AnnotatedString(resources.getString(R.string.train_suspended))
+                        Alert.Effect.Suspension -> R.string.train_suspended
 
-                        effect == Alert.Effect.StationClosure ->
-                            return AnnotatedString(resources.getString(R.string.stop_skipped))
+                        Alert.Effect.StationClosure -> R.string.stop_skipped
 
-                        else -> {}
+                        else -> null
+                    }?.let {
+                        return AnnotatedString(resources.getString(it))
                     }
                 }
                 AnnotatedString.fromHtml(effect(resources))
@@ -564,33 +563,38 @@ data class FormattedAlert(
             tripIdentity: AlertSummary.TripSpecific.TripIdentity,
             effect: Alert.Effect,
             effectStops: List<String>?,
+            isToday: Boolean,
             resources: Resources,
         ): String {
-            when (effect) {
+            val day =
+                if (isToday) resources.getString(R.string.today)
+                else resources.getString(R.string.tomorrow)
+            return when (effect) {
                 Alert.Effect.Cancellation ->
-                    return if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
-                        resources.getString(R.string.are_cancelled_today)
-                    else resources.getString(R.string.is_cancelled_today)
+                    if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
+                        resources.getString(R.string.are_cancelled, day)
+                    else resources.getString(R.string.is_cancelled, day)
 
-                Alert.Effect.StationClosure ->
-                    if (effectStops != null)
-                        return resources.getString(
-                            R.string.will_not_stop_at_today,
-                            effectStops
-                                .map { "<b>${it}</b>" }
-                                .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) },
-                        )
+                Alert.Effect.StationClosure if effectStops != null ->
+                    resources.getString(
+                        R.string.will_not_stop_at,
+                        effectStops
+                            .map { "<b>${it}</b>" }
+                            .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) },
+                        day,
+                    )
 
                 Alert.Effect.Suspension ->
-                    return if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
-                        resources.getString(R.string.are_suspended_today)
-                    else resources.getString(R.string.is_suspended_today)
-                else -> {}
+                    if (tripIdentity == AlertSummary.TripSpecific.MultipleTrips)
+                        resources.getString(R.string.are_suspended, day)
+                    else resources.getString(R.string.is_suspended, day)
+                else ->
+                    resources.getString(
+                        R.string.affected_by,
+                        resources.getString(sentenceEffectRes(effect)),
+                        day,
+                    )
             }
-            return resources.getString(
-                R.string.affected_by_today,
-                resources.getString(sentenceEffectRes(effect)),
-            )
         }
 
         private fun summaryDueToCause(@StringRes dueToCauseRes: Int?, resources: Resources) =

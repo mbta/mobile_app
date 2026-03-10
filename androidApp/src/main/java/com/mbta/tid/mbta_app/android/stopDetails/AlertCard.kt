@@ -192,8 +192,7 @@ fun AlertCardPreview() {
                     "Mansfield",
                 ),
                 Alert.Effect.Cancellation,
-                null,
-                Alert.Cause.Holiday,
+                cause = Alert.Cause.Holiday,
             ),
             AlertCardSpec.Major,
             routeAccents =

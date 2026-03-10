@@ -225,7 +225,7 @@ struct AlertCard: View {
                     tripIdentity: AlertSummary.TripSpecificTripFrom(
                         tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                         stopName: "Ruggles"
-                    ), effect: .cancellation, effectStops: nil, cause: .mechanicalIssue
+                    ), effect: .cancellation, cause: .mechanicalIssue
                 ),
                 spec: .major,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),

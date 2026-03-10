@@ -2912,49 +2912,49 @@
         }
       }
     },
-    "%1$@ %2$@%3$@" : {
-      "comment" : "Alert summary in the format of “[trip identity] [is affected][due to cause]”, ex “[12:13 PM from Ruggles] [is cancelled today][ due to a mechanical issue]” or “[Multiple trips] [are suspended today][]”",
+    "%1$@ %2$@%3$@%4$@" : {
+      "comment" : "Alert summary in the format of “[trip identity] [is affected][due to cause][until recurrence]”, ex “[12:13 PM from Ruggles] [is cancelled today][ due to a mechanical issue][ some days until Wednesday]” or “[Multiple trips] [are suspended today][][]”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "%1$@ %2$@%3$@"
+            "value" : "%1$@ %2$@%3$@%4$@"
           }
         }
       }
@@ -4618,49 +4618,55 @@
         }
       }
     },
-    "affected by %@ today" : {
-      "comment" : "Trip specific alert effect fallback, ex “affected by [snow route] today”",
+    "affected by %@ %@" : {
+      "comment" : "Trip specific alert effect fallback, ex “affected by [snow route] [today]”",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "affected by %1$@ %2$@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "afectados por %@ hoy"
+            "value" : "afectado por %1$@ %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "affecté par %@ aujourd’hui"
+            "value" : "affecté par %1$@ %2$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "afekte pa %@ jodi a"
+            "value" : "afekte pa %1$@ %2$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "afetado por %@ hoje"
+            "value" : "afetado por %1$@ %2$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "bị ảnh hưởng bởi %@ hôm nay"
+            "value" : "bị ảnh hưởng bởi %1$@ %2$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天受 %@ 影响"
+            "value" : "受 %1$@ %2$@ 影响"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天受 %@ 影響"
+            "value" : "受 %1$@ %2$@ 影響"
           }
         }
       }
@@ -6275,96 +6281,96 @@
         }
       }
     },
-    "are cancelled today" : {
-      "comment" : "Multiple trip specific alert effect denoting cancellation",
+    "are cancelled %@" : {
+      "comment" : "Multiple trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "se cancelan hoy"
+            "value" : "se cancelan %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sont annulées aujourd’hui"
+            "value" : "sont annulés %@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "yo anile jodi a"
+            "value" : "yo anile %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "estão cancelados hoje"
+            "value" : "são cancelados %@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "các sự kiện bị hủy hôm nay"
+            "value" : "bị hủy bỏ %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天取消"
+            "value" : "已取消 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天取消"
+            "value" : "已取消 %@"
           }
         }
       }
     },
-    "are suspended today" : {
-      "comment" : "Multiple trip specific alert effect denoting suspension",
+    "are suspended %@" : {
+      "comment" : "Multiple trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "están suspendidos hoy"
+            "value" : "están suspendidos %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sont suspendus aujourd’hui"
+            "value" : "sont suspendus %@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "yo sispann jodi a"
+            "value" : "yo sispann %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "estão suspensas hoje"
+            "value" : "estão suspensos %@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "bị đình chỉ hôm nay"
+            "value" : "bị đình chỉ %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天暂停营业"
+            "value" : "已暂停 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天暫停營業"
+            "value" : "已暫停 %@"
           }
         }
       }
@@ -12926,96 +12932,96 @@
         }
       }
     },
-    "is cancelled today" : {
-      "comment" : "Trip specific alert effect denoting cancellation",
+    "is cancelled %@" : {
+      "comment" : "Trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "se cancela hoy"
+            "value" : "se cancela %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "est annulé aujourd’hui"
+            "value" : "est annulé %@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "anile jodi a"
+            "value" : "anile %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "está cancelado hoje"
+            "value" : "está cancelado %@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "bị hủy hôm nay"
+            "value" : "đã bị hủy %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天取消"
+            "value" : "已取消 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天取消"
+            "value" : "已取消 %@"
           }
         }
       }
     },
-    "is suspended today" : {
-      "comment" : "Trip specific alert effect denoting suspension",
+    "is suspended %@" : {
+      "comment" : "Trip specific alert effect denoting suspension, will specify “today” or “tomorrow”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "está suspendido hoy"
+            "value" : "está suspendido %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "est suspendu aujourd’hui"
+            "value" : "est suspendu %@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sispann jodi a"
+            "value" : "sispann %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "está suspenso hoje"
+            "value" : "está suspenso %@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "bị đình chỉ hôm nay"
+            "value" : "bị đình chỉ %@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天暂停营业"
+            "value" : "已暂停 %@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天暫停營業"
+            "value" : "已暫停 %@"
           }
         }
       }
@@ -19522,49 +19528,49 @@
         }
       }
     },
-    "Shuttle buses replace the **%1$@** %2$@ from **%3$@** to **%4$@**" : {
-      "comment" : "Alert summary in the format of “Shuttle buses replace the [time] [vehicle] from [stop] to [stop]”, ex “Shuttle buses replace the [12:13 PM] [train] from [Ruggles] to [Forest Hills]”",
+    "Shuttle buses replace the **%1$@** %2$@ %3$@ from **%4$@** to **%5$@**%6$@" : {
+      "comment" : "Alert summary in the format of “Shuttle buses replace the [time] [vehicle] [day] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace the [12:13 PM] [train] [today] from [Ruggles] to [Forest Hills][ some days until Friday]”",
       "localizations" : {
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Los autobuses lanzadera reemplazan al **%1$@** %2$@ de **%3$@** a **%4$@**"
+            "value" : "Los autobuses lanzadera reemplazan al **%1$@** %2$@ %3$@ de **%4$@** a **%5$@**%6$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Des navettes remplacent le **%1$@** %2$@ de **%3$@** à **%4$@**"
+            "value" : "Des navettes remplacent le **%1$@** %2$@ %3$@ de **%4$@** à **%5$@**%6$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Otobis navèt yo ranplase **%1$@** %2$@ soti **%3$@** pou rive **%4$@**"
+            "value" : "Otobis navèt yo ranplase **%1$@** %2$@ %3$@ soti **%4$@** pou rive **%5$@**%6$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Ônibus de transporte substituem o **%1$@** %2$@ de **%3$@** a **%4$@**"
+            "value" : "Ônibus de transporte substituem o **%1$@** %2$@ %3$@ de **%4$@** a **%5$@**%6$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Xe buýt đưa đón thay thế tuyến **%1$@** %2$@ từ **%3$@** đến **%4$@**"
+            "value" : "Xe buýt đưa đón thay thế các tuyến **%1$@** %2$@ %3$@ từ **%4$@** đến **%5$@**%6$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "从 **%3$@** 到 **%4$@**，接驳巴士将取代 **%1$@** %2$@。"
+            "value" : "接驳巴士取代了从 **%4$@** 到 **%5$@**%6$@ 的 **%1$@** %2$@ %3$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "從 **%3$@** 到 **%4$@**，接駁巴士將取代 **%1$@** %2$@。"
+            "value" : "接駁巴士取代了從 **%4$@** 到 **%5$@**%6$@ 的 **%1$@** %2$@ %3$@"
           }
         }
       }
@@ -22874,6 +22880,52 @@
         }
       }
     },
+    "today" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "hoje"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Hôm nay"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "今天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "今天"
+          }
+        }
+      }
+    },
     "toggle direction" : {
       "comment" : "Screen reader label for a button that swaps between southbound and northbound, eastbound and westbound, inbound and outbound",
       "extractionState" : "manual",
@@ -22918,6 +22970,52 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "切換方向"
+          }
+        }
+      }
+    },
+    "tomorrow" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "mañana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "demain"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "demen"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "amanhã"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ngày mai"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "明天"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "明天"
           }
         }
       }
@@ -25191,49 +25289,55 @@
         }
       }
     },
-    "will not stop at %@ today" : {
-      "comment" : "Trip specific alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] today”",
+    "will not stop at %@ %@" : {
+      "comment" : "Trip specific alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "will not stop at %1$@ %2$@"
+          }
+        },
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "No se detendrá en %@ hoy"
+            "value" : "no se detendrá en %1$@ %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "ne s’arrêtera pas à %@ aujourd’hui"
+            "value" : "ne s’arrêtera pas à %1$@ %2$@"
           }
         },
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "p ap rete nan %@ jodi a"
+            "value" : "p ap rete nan %1$@ %2$@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "não vai parar em %@ hoje"
+            "value" : "não vai parar em %1$@ %2$@"
           }
         },
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "sẽ không dừng lại ở %@ hôm nay"
+            "value" : "sẽ không dừng lại ở %1$@ %2$@"
           }
         },
         "zh-Hans-CN" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天不会止步于 %@"
+            "value" : "不会止步于 %1$@ %2$@"
           }
         },
         "zh-Hant-TW" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "今天不會止步於 %@"
+            "value" : "不會止步於 %1$@ %2$@"
           }
         }
       }

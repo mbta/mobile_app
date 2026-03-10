@@ -444,4 +444,29 @@ class PushNotificationPayloadTest {
             payload.isStillActive(endTime + 1.seconds),
         )
     }
+
+    @Test
+    fun `isStillActive trip specific`() {
+        val tripTime = EasternTimeInstant(2026, Month.MARCH, 10, 14, 50)
+        val payload =
+            PushNotificationPayload(
+                PushNotificationPayload.Title.BareLabel("Some Line"),
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.TripFrom(tripTime, "Here"),
+                    Alert.Effect.Cancellation,
+                ),
+                "alert",
+                listOf(RouteStopDirection(Route.Id("route"), "stop", 0)),
+                PushNotificationPayload.NotificationType.Notification,
+                Clock.System.now(),
+            )
+        assertEquals(
+            PushNotificationPayload.StillActive.Yes,
+            payload.isStillActive(tripTime - 1.seconds),
+        )
+        assertEquals(
+            PushNotificationPayload.StillActive.Unknown,
+            payload.isStillActive(tripTime + 1.seconds),
+        )
+    }
 }

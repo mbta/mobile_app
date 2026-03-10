@@ -67,10 +67,24 @@ public data class PushNotificationPayload(
     @DefaultArgumentInterop.Enabled
     public fun isStillActive(now: EasternTimeInstant = EasternTimeInstant.now()): StillActive {
         val sentAt by lazy { EasternTimeInstant(sentAt) }
-        if (summary is AlertSummary.AllClear) {
-            return StillActive.AllClear
+        var summary = this.summary
+        while (summary is AlertSummary.Unknown) {
+            summary = summary.fallback
         }
-        // TODO handle trip-specific
+        when (summary) {
+            is AlertSummary.AllClear -> return StillActive.AllClear
+            is AlertSummary.TripSpecific ->
+                when (summary.tripIdentity) {
+                    is AlertSummary.TripSpecific.TripFrom ->
+                        if (now < summary.tripIdentity.tripTime) return StillActive.Yes
+                    is AlertSummary.TripSpecific.TripTo ->
+                        if (now < summary.tripIdentity.tripTime) return StillActive.Yes
+                    AlertSummary.TripSpecific.MultipleTrips -> {}
+                }
+            is AlertSummary.TripShuttle -> if (now < summary.tripTime) return StillActive.Yes
+            is AlertSummary.Standard,
+            is AlertSummary.Unknown -> {}
+        }
         val recurrenceEndTime =
             when (val recurrence = (summary as? AlertSummary.Standard)?.recurrence) {
                 is AlertSummary.Recurrence.Daily -> recurrence.ending
