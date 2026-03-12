@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.AlertIcon
 import com.mbta.tid.mbta_app.android.component.InfoCircle
+import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
@@ -32,8 +33,10 @@ import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlinx.datetime.Month
 
 enum class AlertCardSpec {
     Major,
@@ -48,8 +51,7 @@ fun AlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
     spec: AlertCardSpec,
-    color: Color,
-    textColor: Color,
+    routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
     interiorPadding: PaddingValues = PaddingValues(0.dp),
@@ -82,19 +84,22 @@ fun AlertCard(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val alertState =
-                if (alert.allClear(EasternTimeInstant.now())) StopAlertState.AllClear
+                if (alertSummary is AlertSummary.AllClear) StopAlertState.AllClear
                 else alert.alertState
             val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
             AlertIcon(
                 alertState = alertState,
-                color = color,
+                color = routeAccents.color,
                 modifier =
                     Modifier.clearAndSetSemantics {}
                         .size(iconSize)
                         .align(Alignment.CenterVertically),
+                overrideIcon =
+                    if (alert.effect == Alert.Effect.Cancellation) routeSlashIcon(routeAccents.type)
+                    else null,
             )
             Text(
-                formattedAlert.alertCardHeader(spec),
+                formattedAlert.alertCardHeader(spec, routeAccents.type),
                 Modifier.weight(1f),
                 style =
                     if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.callout,
@@ -105,18 +110,24 @@ fun AlertCard(
         }
 
         if (spec == AlertCardSpec.Major) {
-            HorizontalDivider(color = color.copy(alpha = 0.25f), thickness = 2.dp)
+            HorizontalDivider(color = routeAccents.color.copy(alpha = 0.25f), thickness = 2.dp)
             Text(formattedAlert.alertCardMajorBody, style = Typography.callout)
             onViewDetails?.let {
                 TextButton(
                     it,
                     shape = RoundedCornerShape(8.dp),
-                    colors = ButtonColors(color, color, color, color),
+                    colors =
+                        ButtonColors(
+                            routeAccents.color,
+                            routeAccents.color,
+                            routeAccents.color,
+                            routeAccents.color,
+                        ),
                     modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth(),
                 ) {
                     Text(
                         stringResource(R.string.view_details),
-                        color = textColor,
+                        color = routeAccents.textColor,
                         modifier = Modifier.padding(4.dp),
                         style = Typography.bodySemibold,
                     )
@@ -137,16 +148,24 @@ fun AlertCardPreview() {
             }),
             null,
             AlertCardSpec.Major,
-            textColor = Color.fromHex("FFFFFF"),
-            color = Color.fromHex("ED8B00"),
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("ED8B00"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.HEAVY_RAIL,
+                ),
             onViewDetails = {},
         )
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
             AlertCardSpec.Secondary,
-            textColor = Color.fromHex("FFFFFF"),
-            color = Color.fromHex("80276C"),
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("80276C"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.COMMUTER_RAIL,
+                ),
             onViewDetails = {},
         )
         AlertCard(
@@ -157,8 +176,31 @@ fun AlertCardPreview() {
             }),
             null,
             AlertCardSpec.Elevator,
-            textColor = Color.fromHex("FFFFFF"),
-            color = Color.fromHex("ED8B00"),
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("ED8B00"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.HEAVY_RAIL,
+                ),
+            onViewDetails = {},
+        )
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Cancellation },
+            AlertSummary.TripSpecific(
+                AlertSummary.TripSpecific.TripFrom(
+                    EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),
+                    "Mansfield",
+                ),
+                Alert.Effect.Cancellation,
+                cause = Alert.Cause.Holiday,
+            ),
+            AlertCardSpec.Major,
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("80276C"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.COMMUTER_RAIL,
+                ),
             onViewDetails = {},
         )
     }

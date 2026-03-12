@@ -34,8 +34,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -65,8 +64,7 @@ final class AlertCardTests: XCTestCase {
                                                 recurrence: nil,
                                                 isUpdate: false),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to End Stop through tomorrow"))
@@ -88,8 +86,7 @@ final class AlertCardTests: XCTestCase {
                                                 recurrence: nil,
                                                 isUpdate: false),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Stop closed at Single Stop through end of service"))
@@ -118,8 +115,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
 
@@ -148,8 +144,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect()
@@ -178,8 +173,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
 
@@ -203,8 +197,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .secondary,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -232,8 +225,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .secondary,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Detour through tomorrow"))
@@ -255,8 +247,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .downstream,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -285,8 +276,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .elevator,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -321,8 +311,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .elevator,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -346,8 +335,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .delay,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
@@ -375,8 +363,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: false
             ),
             spec: .delay,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
 
@@ -396,8 +383,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .delay,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Delays"))
@@ -418,8 +404,7 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: nil,
             spec: .delay,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {}
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Single Tracking"))
@@ -447,8 +432,7 @@ final class AlertCardTests: XCTestCase {
                 )),
             ),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -483,8 +467,7 @@ final class AlertCardTests: XCTestCase {
                 isUpdate: true
             ),
             spec: .major,
-            color: Color.pink,
-            textColor: Color.orange,
+            routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
             }
@@ -493,5 +476,160 @@ final class AlertCardTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect()
             .find(text: "Update: Shuttle buses from Start Stop to End Stop through tomorrow"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
+    }
+
+    func testTripCancellationAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .cancellation
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripSpecific(
+                tripIdentity: AlertSummary.TripSpecificTripFrom(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    stopName: "Ruggles"
+                ), effect: .cancellation, cause: .mechanicalIssue
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Train cancelled"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "12:13\u{202F}PM from Ruggles is cancelled today due to mechanical issue"))
+    }
+
+    func testMultipleTripSuspensionAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripSpecific(
+                tripIdentity: AlertSummary.TripSpecificMultipleTrips.shared, effect: .suspension, cause: .holiday
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Train suspended"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Multiple trips are suspended today due to holiday"))
+    }
+
+    func testTripShuttleAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripShuttle(
+                tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills"
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills"))
+    }
+
+    func testTripStationBypassAlertCard() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .stationClosure
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripSpecific(
+                tripIdentity: AlertSummary.TripSpecificTripTo(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    headsign: "Stoughton"
+                ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"]
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Stop skipped"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "12:13\u{202F}PM to Stoughton will not stop at Back Bay and Ruggles today"))
+    }
+
+    func testTripSpecificReminder() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .cancellation
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripSpecific(
+                tripIdentity: AlertSummary.TripSpecificTripFrom(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    stopName: "Ruggles"
+                ), effect: .cancellation, isToday: false, cause: .mechanicalIssue
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Train cancelled"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(text: "12:13\u{202F}PM from Ruggles is cancelled tomorrow due to mechanical issue"))
+    }
+
+    func testTripShuttleRecurrence() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .shuttle
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.TripShuttle(
+                tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills",
+                recurrence: AlertSummary.RecurrenceDaily(ending: AlertSummary.TimeframeThisWeek(time: .init(
+                    year: 2026,
+                    month: .march,
+                    day: 12,
+                    hour: 9,
+                    minute: 6,
+                    second: 0
+                )))
+            ),
+            spec: .major,
+            routeAccents: .init(type: .commuterRail),
+            onViewDetails: {}
+        )
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
+        XCTAssertNotNil(try sut.inspect()
+            .find(
+                text: """
+                Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills daily until Thursday
+                """
+            ))
     }
 }

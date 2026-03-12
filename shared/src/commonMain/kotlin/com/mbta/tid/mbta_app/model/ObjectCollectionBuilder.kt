@@ -95,7 +95,7 @@ private constructor(
     public inner class AlertBuilder : ObjectBuilder<Alert> {
         public var id: String = objectId()
         public var activePeriod: MutableList<Alert.ActivePeriod> = mutableListOf()
-        public var cause: Alert.Cause = Alert.Cause.UnknownCause
+        public var cause: Alert.Cause? = null
         public var description: String? = null
         public var durationCertainty: Alert.DurationCertainty = Alert.DurationCertainty.Known
         public var effect: Alert.Effect = Alert.Effect.UnknownEffect

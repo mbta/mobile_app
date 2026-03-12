@@ -38,7 +38,7 @@ struct AlertDetails: View {
 
     private var effectLabel: String { alert.effect.effectString }
 
-    private var causeLabel: String? { alert.cause.causeString }
+    private var causeLabel: String? { alert.cause?.causeString }
 
     private var affectedStopsLabel: AttributedString {
         AttributedString.tryMarkdown(String(format: NSLocalizedString(

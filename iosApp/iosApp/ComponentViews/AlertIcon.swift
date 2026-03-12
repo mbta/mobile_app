@@ -10,32 +10,39 @@ import Shared
 import SwiftUI
 
 struct AlertIcon: View {
-    var alertState: StopAlertState
     var color: Color
     var accessibilityHidden: Bool = false
+    let icon: Image?
 
-    init(alertState: StopAlertState, color: Color? = nil, accessibilityHidden: Bool = false) {
-        self.alertState = alertState
+    init(
+        alertState: StopAlertState,
+        color: Color? = nil,
+        accessibilityHidden: Bool = false,
+        overrideIcon: Image? = nil
+    ) {
+        icon = overrideIcon ?? Self.icon(alertState: alertState)
         self.color = color ?? .text
         self.accessibilityHidden = accessibilityHidden
     }
 
-    private var iconName: String? {
+    private static func icon(alertState: StopAlertState) -> Image? {
         switch alertState {
-        case .elevator: "accessibility-icon-alert"
-        case .issue: "alert-borderless-issue"
-        case .shuttle: "alert-borderless-shuttle"
-        case .suspension: "alert-borderless-suspension"
-        case .allClear: "alert-borderless-allclear"
+        case .elevator: Image(.accessibilityIconAlert)
+        case .issue: Image(.alertBorderlessIssue)
+        case .shuttle: Image(.alertBorderlessShuttle)
+        case .suspension: Image(.alertBorderlessSuspension)
+        case .allClear: Image(.alertBorderlessAllclear)
         case .normal: nil
         }
     }
 
     var body: some View {
-        Image(iconName ?? "")
-            .resizable()
-            .foregroundStyle(color)
-            .accessibilityLabel(Text("Alert"))
-            .accessibilityHidden(accessibilityHidden)
+        if let icon {
+            icon
+                .resizable()
+                .foregroundStyle(color)
+                .accessibilityLabel(Text("Alert"))
+                .accessibilityHidden(accessibilityHidden)
+        }
     }
 }

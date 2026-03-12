@@ -121,8 +121,7 @@ struct StopDetailsUnfilteredView: View {
                                             alert: alert,
                                             alertSummary: nil,
                                             spec: .elevator,
-                                            color: Color.clear,
-                                            textColor: Color.text,
+                                            routeAccents: .init(),
                                             onViewDetails: {
                                                 nearbyVM.pushNavEntry(.alertDetails(
                                                     alertId: alert.id,

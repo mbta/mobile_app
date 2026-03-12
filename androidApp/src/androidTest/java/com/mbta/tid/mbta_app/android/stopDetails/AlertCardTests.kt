@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
+import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Month
 import org.junit.Rule
 import org.junit.Test
@@ -23,8 +24,8 @@ class AlertCardTests {
 
     @get:Rule val composeTestRule = createComposeRule()
 
-    private val color = Color.fromHex("ED8B00")
-    private val textColor = Color.fromHex("FFFFFF")
+    private val routeAccents =
+        TripRouteAccents(Color.fromHex("ED8B00"), Color.fromHex("FFFFFF"), RouteType.BUS)
 
     @Test
     fun testDownstreamAlertCard() {
@@ -39,8 +40,7 @@ class AlertCardTests {
                 alert,
                 null,
                 AlertCardSpec.Downstream,
-                color,
-                textColor,
+                routeAccents,
                 { onViewDetailsClicked = true },
             )
         }
@@ -63,8 +63,7 @@ class AlertCardTests {
                 alert,
                 null,
                 AlertCardSpec.Major,
-                color,
-                textColor,
+                routeAccents,
                 { onViewDetailsClicked = true },
             )
         }
@@ -88,8 +87,7 @@ class AlertCardTests {
                 alert,
                 null,
                 AlertCardSpec.Secondary,
-                color,
-                textColor,
+                routeAccents,
                 { onViewDetailsClicked = true },
             )
         }
@@ -112,8 +110,7 @@ class AlertCardTests {
                 alert,
                 null,
                 AlertCardSpec.Elevator,
-                color,
-                textColor,
+                routeAccents,
                 { onViewDetailsClicked = true },
             )
         }
@@ -145,8 +142,7 @@ class AlertCardTests {
                 alert,
                 null,
                 AlertCardSpec.Elevator,
-                color,
-                textColor,
+                routeAccents,
                 { onViewDetailsClicked = true },
             )
         }
@@ -166,9 +162,7 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.HeavyRidership
             }
-        composeTestRule.setContent {
-            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
     }
@@ -192,8 +186,7 @@ class AlertCardTests {
                     timeframe = AlertSummary.Timeframe.StartingLaterToday(time),
                 ),
                 AlertCardSpec.Delay,
-                color,
-                textColor,
+                routeAccents,
                 {},
             )
         }
@@ -211,9 +204,7 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.UnknownCause
             }
-        composeTestRule.setContent {
-            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
     }
@@ -227,9 +218,7 @@ class AlertCardTests {
                 cause = Alert.Cause.SingleTracking
                 severity = 1
             }
-        composeTestRule.setContent {
-            AlertCard(alert, null, AlertCardSpec.Delay, color, textColor, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Single Tracking").assertIsDisplayed()
     }
@@ -249,8 +238,7 @@ class AlertCardTests {
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
                 AlertCardSpec.Major,
-                color,
-                textColor,
+                routeAccents,
                 {},
             )
         }
@@ -274,8 +262,7 @@ class AlertCardTests {
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
                 AlertCardSpec.Secondary,
-                color,
-                textColor,
+                routeAccents,
                 {},
             )
         }
@@ -284,5 +271,257 @@ class AlertCardTests {
             .onNode(hasTextMatching(Regex("Detour through 9:00\\sAM")))
             .assertIsDisplayed()
         composeTestRule.onNodeWithText("Alert header").assertIsNotDisplayed()
+    }
+
+    @Test
+    fun testAllClearAlertCard() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 3.days, now - 1.days)
+            }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.AllClear(
+                    location =
+                        AlertSummary.Location.SuccessiveStops(
+                            startStopName = "Start Stop",
+                            endStopName = "End Stop",
+                        )
+                ),
+                AlertCardSpec.Major,
+                routeAccents,
+                onViewDetails = {},
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("All clear: Regular service from Start Stop to End Stop")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testUpdateAlertCard() {
+        val now = EasternTimeInstant.now()
+        val objects = ObjectCollectionBuilder()
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(now - 3.days, now + 3.days)
+            }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.Standard(
+                    effect = Alert.Effect.Shuttle,
+                    location =
+                        AlertSummary.Location.SuccessiveStops(
+                            startStopName = "Start Stop",
+                            endStopName = "End Stop",
+                        ),
+                    timeframe = AlertSummary.Timeframe.Tomorrow,
+                    recurrence = null,
+                    isUpdate = true,
+                ),
+                AlertCardSpec.Major,
+                routeAccents,
+                onViewDetails = {},
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Update: Shuttle buses from Start Stop to End Stop through tomorrow")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripCancellationAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Cancellation }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.TripFrom(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        "Ruggles",
+                    ),
+                    Alert.Effect.Cancellation,
+                    cause = Alert.Cause.MechanicalIssue,
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Train cancelled").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex("12:13\\sPM from Ruggles is cancelled today due to mechanical issue")
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testMultipleTripSuspensionAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Suspension }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.MultipleTrips,
+                    Alert.Effect.Suspension,
+                    cause = Alert.Cause.Holiday,
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Train suspended").assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Multiple trips are suspended today due to holiday")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripShuttleAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripShuttle(
+                    EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                    RouteType.COMMUTER_RAIL,
+                    "Ruggles",
+                    "Forest Hills",
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex(
+                        "Shuttle buses replace the 12:13\\sPM train today from Ruggles to Forest Hills"
+                    )
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripStationBypassAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.StationClosure }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.TripTo(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        "Stoughton",
+                    ),
+                    Alert.Effect.StationClosure,
+                    listOf("Back Bay", "Ruggles"),
+                    cause = null,
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Stop skipped").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex("12:13\\sPM to Stoughton will not stop at Back Bay and Ruggles today")
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripSpecificReminder() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Cancellation }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripSpecific(
+                    AlertSummary.TripSpecific.TripFrom(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        "Ruggles",
+                    ),
+                    Alert.Effect.Cancellation,
+                    isToday = false,
+                    cause = Alert.Cause.MechanicalIssue,
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Train cancelled").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex("12:13\\sPM from Ruggles is cancelled tomorrow due to mechanical issue")
+                )
+            )
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testTripShuttleRecurrence() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.Shuttle }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.TripShuttle(
+                    EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                    RouteType.COMMUTER_RAIL,
+                    "Ruggles",
+                    "Forest Hills",
+                    recurrence =
+                        AlertSummary.Recurrence.Daily(
+                            ending =
+                                AlertSummary.Timeframe.ThisWeek(
+                                    EasternTimeInstant(2026, Month.MARCH, 12, 9, 18)
+                                )
+                        ),
+                ),
+                AlertCardSpec.Major,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Shuttle bus").assertIsDisplayed()
+
+        composeTestRule
+            .onNode(
+                hasTextMatching(
+                    Regex(
+                        "Shuttle buses replace the 12:13\\sPM train today from Ruggles to Forest Hills daily until Thursday"
+                    )
+                )
+            )
+            .assertIsDisplayed()
     }
 }
