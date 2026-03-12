@@ -270,7 +270,7 @@ public sealed class AlertSummary {
         ): AlertSummary? {
             val informedTrips =
                 upcomingTrips.orEmpty().filter { trip ->
-                    alert.anyInformedEntitySatisfies { checkTrip(trip.trip.id) }
+                    alert.anyInformedEntity { it.trip == trip.trip.id }
                 }
             // if it was easy to pick the selected trip, that’d be nice, but it isn’t
             val informedTrip = informedTrips.singleOrNull()
