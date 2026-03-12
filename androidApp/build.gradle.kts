@@ -145,8 +145,7 @@ dependencies {
 }
 
 tasks.cyclonedxDirectBom {
-    includeConfigs =
-        listOf("implementationDependenciesMetadata", "releaseImplementationDependenciesMetadata")
+    includeConfigs = listOf("stagingReleaseRuntimeClasspath")
     includeLicenseText = true
 }
 
