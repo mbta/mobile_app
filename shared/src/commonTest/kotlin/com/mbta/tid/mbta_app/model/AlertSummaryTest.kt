@@ -99,8 +99,8 @@ class AlertSummaryTest {
             }
         }
         val summary: AlertSummary =
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.TripFrom(
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(2026, Month.MARCH, 6, 15, 19),
                     "North Station",
                 ),
@@ -130,7 +130,7 @@ class AlertSummaryTest {
             put("end_stop_name", "Forest Hills")
         }
         val summary: AlertSummary =
-            AlertSummary.TripShuttle(
+            TripShuttleAlertSummary(
                 EasternTimeInstant(2026, Month.MARCH, 6, 15, 21),
                 RouteType.COMMUTER_RAIL,
                 "Ruggles",
@@ -305,7 +305,7 @@ class AlertSummaryTest {
     @Test
     fun `can deserialize all trip identities`() {
         fun performCheck(
-            recurrence: AlertSummary.TripSpecific.TripIdentity,
+            recurrence: TripSpecificAlertSummary.TripIdentity,
             jsonBuilder: JsonObjectBuilder.() -> Unit,
         ) {
             val jsonObject = buildJsonObject(jsonBuilder)
@@ -314,7 +314,7 @@ class AlertSummaryTest {
         }
 
         performCheck(
-            AlertSummary.TripSpecific.TripFrom(
+            TripSpecificAlertSummary.TripFrom(
                 EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
                 "Ruggles",
             )
@@ -325,7 +325,7 @@ class AlertSummaryTest {
         }
 
         performCheck(
-            AlertSummary.TripSpecific.TripTo(
+            TripSpecificAlertSummary.TripTo(
                 EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
                 "South Station",
             )
@@ -335,7 +335,7 @@ class AlertSummaryTest {
             put("headsign", "South Station")
         }
 
-        performCheck(AlertSummary.TripSpecific.MultipleTrips) { put("type", "multiple_trips") }
+        performCheck(TripSpecificAlertSummary.MultipleTrips) { put("type", "multiple_trips") }
     }
 
     @Test
@@ -1650,8 +1650,8 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.TripFrom(
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(today, LocalTime(12, 13)),
                     "Ruggles",
                 ),
@@ -1702,8 +1702,8 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.MultipleTrips,
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.MultipleTrips,
                 Alert.Effect.Cancellation,
                 cause = Alert.Cause.IceInHarbor,
             ),
@@ -1748,7 +1748,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripShuttle(
+            TripShuttleAlertSummary(
                 EasternTimeInstant(today, LocalTime(12, 13)),
                 RouteType.COMMUTER_RAIL,
                 "Ruggles",
@@ -1793,8 +1793,8 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.TripTo(
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.TripTo(
                     EasternTimeInstant(today, LocalTime(12, 13)),
                     trip.headsign,
                 ),
@@ -1839,8 +1839,8 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.TripFrom(
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(today.plus(DatePeriod(days = 1)), LocalTime(12, 13)),
                     "Ruggles",
                 ),
@@ -1904,7 +1904,7 @@ class AlertSummaryTest {
             )
 
         assertEquals(
-            AlertSummary.TripShuttle(
+            TripShuttleAlertSummary(
                 EasternTimeInstant(monday, onePM),
                 RouteType.COMMUTER_RAIL,
                 "Ruggles",

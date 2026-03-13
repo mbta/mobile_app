@@ -35,6 +35,7 @@ import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.datetime.Month
 
@@ -186,8 +187,8 @@ fun AlertCardPreview() {
         )
         AlertCard(
             ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Cancellation },
-            AlertSummary.TripSpecific(
-                AlertSummary.TripSpecific.TripFrom(
+            TripSpecificAlertSummary(
+                TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),
                     "Mansfield",
                 ),
