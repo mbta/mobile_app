@@ -21,6 +21,3 @@ fastlane/test_output
 /iosApp/iosApp.xcodeproj
 /iosApp/iosApp.xcworkspace/*
 !/iosApp/iosApp.xcworkspace/xcshareddata
-
-# Editor / IDE
-.cursor/
