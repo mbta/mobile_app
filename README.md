@@ -148,8 +148,6 @@ Run from XCode by navigating to `Product > Test` or using the test navigator. We
 
 Run within Android Studio, or by running the commands `./gradlew androidApp:check` `./gradlew shared:check`
 
-### Integration Tests
-
 ## Team Conventions
 
 ### Editing Code
@@ -168,6 +166,9 @@ Some specifics for this repo:
 - New pull requests will automatically kick off testing and request a review from the [mobile-app team](https://github.com/orgs/mbta/teams/mobile-app). If you aren't yet ready for a review, create a draft PR first.
 - When adding commits after an initial review has been performed, avoid force-pushing to help reviewers follow the updated changes.
 - Once a PR has been approved and all outstanding comments acknowledged, squash merge it to the main branch.
+
+## Community Contributions
+At this time we are able to consider small bug fixes from community contributors, but we are not able to prioritize review or approval of new features. If you would like to see new features in MBTA Go, please send feedback in the app from the "More" tab to help our team prioritize upcoming work.
 
 ## CI
 
