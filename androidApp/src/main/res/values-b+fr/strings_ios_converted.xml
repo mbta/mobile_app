@@ -488,4 +488,8 @@
     <string name="weather">Météo</string>
     <string name="weather_lowercase">météo</string>
     <string name="westbound">En direction de l’ouest</string>
+    <string name="widget_from">À partir de</string>
+    <string name="widget_save">Sauvegarder</string>
+    <string name="widget_to">Jusqu’à</string>
+    <string name="widget_track_short">Voie %1$s</string>
 </resources>

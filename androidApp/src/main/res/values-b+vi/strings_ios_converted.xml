@@ -478,4 +478,8 @@
     <string name="weather">Thời tiết</string>
     <string name="weather_lowercase">thời tiết</string>
     <string name="westbound">Về hướng tây</string>
+    <string name="widget_from">Từ</string>
+    <string name="widget_save">Lưu</string>
+    <string name="widget_to">Đến</string>
+    <string name="widget_track_short">Đường ray %1$s</string>
 </resources>

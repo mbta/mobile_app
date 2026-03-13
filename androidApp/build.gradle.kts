@@ -112,6 +112,9 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.work)
+    implementation("androidx.datastore:datastore-preferences:1.2.0")
+    implementation("androidx.glance:glance-appwidget:1.1.0")
+    implementation("androidx.glance:glance-material3:1.0.0")
     implementation(libs.compose.material3)
     implementation(libs.compose.material.icons)
     implementation(libs.compose.placeholder.material3)
@@ -216,9 +219,9 @@ tasks.register("mapboxTempToken") {
 
 // we want to load environment variables while first declaring settings
 run {
-    val envFile = File(".envrc")
     val props = Properties()
 
+    val envFile = File(project.rootProject.projectDir, ".envrc")
     if (envFile.exists()) {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {
@@ -274,6 +277,13 @@ run {
     } else {
         logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
     }
+
+    val backendOverride = getPropsOrEnv("BACKEND_OVERRIDE_URL")
+    android.defaultConfig.buildConfigField(
+        "String",
+        "BACKEND_OVERRIDE_URL",
+        "\"${backendOverride ?: ""}\"",
+    )
 }
 
 gradle.projectsEvaluated {

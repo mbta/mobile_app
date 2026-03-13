@@ -120,6 +120,55 @@ internal constructor(
 
     public fun getStop(stopId: String?): Stop? = stops[stopId]
 
+    /**
+     * Returns parent stops suitable for widget config selection. Filters to top-level
+     * stations/stops and sorts by name.
+     */
+    public fun getParentStopsForSelection(): List<Stop> =
+        stops.values
+            .filter { it.parentStationId == null }
+            .filter {
+                it.locationType == LocationType.STATION || it.locationType == LocationType.STOP
+            }
+            .sortedBy { it.name }
+
+    /**
+     * Returns parent stops that are directly reachable from [fromStopId] via at least one route
+     * pattern. A destination is reachable if it appears after the from stop in a trip's stop
+     * sequence. Used to filter the "To" stop list in widget config so users only see stops they can
+     * actually travel to without transfers.
+     *
+     * Returns empty list if [fromStopId] is null or invalid.
+     */
+    public fun getReachableDestinationStopsFrom(fromStopId: String?): List<Stop> {
+        if (fromStopId == null) return emptyList()
+        if (stops[fromStopId] == null) return emptyList()
+
+        val reachableParentIds = mutableSetOf<String>()
+        for (pattern in getPatternsFor(fromStopId)) {
+            val trip = trips[pattern.representativeTripId] ?: continue
+            val stopIds = trip.stopIds ?: continue
+            val fromIndex =
+                stopIds.indexOfFirst { stopId -> Stop.equalOrFamily(stopId, fromStopId, stops) }
+            if (fromIndex < 0 || fromIndex >= stopIds.lastIndex) continue
+            for (i in (fromIndex + 1) until stopIds.size) {
+                val destStop = stops[stopIds[i]] ?: continue
+                val parent = destStop.resolveParent(stops)
+                if (
+                    parent.locationType == LocationType.STATION ||
+                        parent.locationType == LocationType.STOP
+                ) {
+                    reachableParentIds.add(parent.id)
+                }
+            }
+        }
+
+        return reachableParentIds
+            .mapNotNull { stops[it] }
+            .filter { it.parentStationId == null }
+            .sortedBy { it.name }
+    }
+
     public fun getLine(lineId: Line.Id?): Line? =
         if (lineId != null) {
             lines[lineId]

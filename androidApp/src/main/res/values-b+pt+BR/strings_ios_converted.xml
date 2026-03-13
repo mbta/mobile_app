@@ -488,4 +488,8 @@
     <string name="weather">Clima</string>
     <string name="weather_lowercase">clima</string>
     <string name="westbound">Sentido oeste</string>
+    <string name="widget_from">De</string>
+    <string name="widget_save">Salvar</string>
+    <string name="widget_to">Para</string>
+    <string name="widget_track_short">Trilho %1$s</string>
 </resources>

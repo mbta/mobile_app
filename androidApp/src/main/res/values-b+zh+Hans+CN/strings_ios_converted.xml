@@ -478,4 +478,8 @@
     <string name="weather">天气</string>
     <string name="weather_lowercase">天气</string>
     <string name="westbound">西行</string>
+    <string name="widget_from">出发地</string>
+    <string name="widget_save">保存</string>
+    <string name="widget_to">目的地</string>
+    <string name="widget_track_short">追踪%1$s</string>
 </resources>

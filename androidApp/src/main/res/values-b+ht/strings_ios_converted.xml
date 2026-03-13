@@ -503,4 +503,8 @@
     <string name="weather">Tan</string>
     <string name="weather_lowercase">move tan</string>
     <string name="westbound">Pran direksyon lwès</string>
+    <string name="widget_from">Soti nan</string>
+    <string name="widget_save">Sove</string>
+    <string name="widget_to">Pou</string>
+    <string name="widget_track_short">Suiv %1$s</string>
 </resources>

@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.usecases.ConfigUseCase
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.usecases.WidgetTripUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -14,4 +15,5 @@ public class UsecaseDI : KoinComponent {
     public val featurePromoUsecase: IFeaturePromoUseCase by inject()
     public val visitHistoryUsecase: VisitHistoryUsecase by inject()
     public val favoritesUsecases: FavoritesUsecases by inject()
+    public val widgetTripUseCase: WidgetTripUseCase by inject()
 }

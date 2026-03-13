@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
 import com.mbta.tid.mbta_app.usecases.FeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.IFeaturePromoUseCase
 import com.mbta.tid.mbta_app.usecases.VisitHistoryUsecase
+import com.mbta.tid.mbta_app.usecases.WidgetTripUseCase
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -46,9 +47,9 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /** Define the koin module with the resources to use in dependency injection */
-internal fun appModule(appVariant: AppVariant) = module {
+internal fun appModule(appVariant: AppVariant, backendOverrideUrl: String? = null) = module {
     includes(
-        module { single { MobileBackendClient(appVariant) } },
+        module { single { MobileBackendClient(appVariant, backendOverrideUrl) } },
         module {
             single { FileSystem.SYSTEM }
             single { JsonPersistence(get(), get(), get(named("coroutineDispatcherIO"))) }
@@ -103,5 +104,6 @@ public fun repositoriesModule(repositories: IRepositories): Module {
         single<IFeaturePromoUseCase> { FeaturePromoUseCase(get(), get()) }
         single { VisitHistoryUsecase(get()) }
         single { FavoritesUsecases(get(), get(), get()) }
+        single { WidgetTripUseCase(get(), get()) }
     }
 }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.Firebase
+import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.analytics
 import com.google.firebase.messaging.FirebaseMessaging
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
@@ -28,14 +29,21 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val deepLinkStateFlow: MutableStateFlow<DeepLinkState?> = MutableStateFlow(null)
 
+    private val isFirebaseConfigured by lazy {
+        val resId = resources.getIdentifier("google_app_id", "string", packageName)
+        resId != 0 && resources.getString(resId).isNotBlank()
+    }
+
     fun handleIntent(intent: Intent?) {
         val rawPushNotificationPayload = intent?.getStringExtra(PushNotificationPayload.launchKey)
         if (rawPushNotificationPayload != null) {
             val pushNotificationPayload: PushNotificationPayload =
                 json.decodeFromString(rawPushNotificationPayload)
             val stillActive = pushNotificationPayload.isStillActive()
-            AnalyticsProvider(Firebase.analytics)
-                .notificationClicked(pushNotificationPayload, stillActive)
+            if (isFirebaseConfigured) {
+                AnalyticsProvider(Firebase.analytics)
+                    .notificationClicked(pushNotificationPayload, stillActive)
+            }
             deepLinkStateFlow.value = pushNotificationPayload.getDeepLinkState()
         } else {
             val deepLinkUri: Uri? = intent?.data?.takeIf { intent.action == Intent.ACTION_VIEW }
@@ -55,7 +63,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initSentry()
-        getFCMToken()
+        if (isFirebaseConfigured) {
+            getFCMToken()
+        }
         handleIntent(intent)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         enableEdgeToEdge()
@@ -85,6 +95,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun getFCMToken() {
+        if (FirebaseApp.getApps(this).isEmpty()) return
         FirebaseMessaging.getInstance().token.addOnSuccessListener { fcmToken = it }
     }
 }
