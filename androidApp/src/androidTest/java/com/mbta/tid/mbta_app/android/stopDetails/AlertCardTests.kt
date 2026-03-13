@@ -13,6 +13,8 @@ import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
+import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.days
@@ -344,8 +346,8 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripSpecific(
-                    AlertSummary.TripSpecific.TripFrom(
+                TripSpecificAlertSummary(
+                    TripSpecificAlertSummary.TripFrom(
                         EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
                         "Ruggles",
                     ),
@@ -375,8 +377,8 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripSpecific(
-                    AlertSummary.TripSpecific.MultipleTrips,
+                TripSpecificAlertSummary(
+                    TripSpecificAlertSummary.MultipleTrips,
                     Alert.Effect.Suspension,
                     cause = Alert.Cause.Holiday,
                 ),
@@ -399,7 +401,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripShuttle(
+                TripShuttleAlertSummary(
                     EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
                     RouteType.COMMUTER_RAIL,
                     "Ruggles",
@@ -430,8 +432,8 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripSpecific(
-                    AlertSummary.TripSpecific.TripTo(
+                TripSpecificAlertSummary(
+                    TripSpecificAlertSummary.TripTo(
                         EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
                         "Stoughton",
                     ),
@@ -462,8 +464,8 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripSpecific(
-                    AlertSummary.TripSpecific.TripFrom(
+                TripSpecificAlertSummary(
+                    TripSpecificAlertSummary.TripFrom(
                         EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
                         "Ruggles",
                     ),
@@ -494,7 +496,7 @@ class AlertCardTests {
         composeTestRule.setContent {
             AlertCard(
                 alert,
-                AlertSummary.TripShuttle(
+                TripShuttleAlertSummary(
                     EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
                     RouteType.COMMUTER_RAIL,
                     "Ruggles",
