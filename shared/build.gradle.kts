@@ -461,11 +461,7 @@ tasks.register<CachedExecTask>("bomIosSwiftPMRaw") {
 }
 
 tasks.cyclonedxDirectBom {
-    includeConfigs =
-        listOf(
-            "commonMainImplementationDependenciesMetadata",
-            "iosMainImplementationDependenciesMetadata",
-        )
+    includeConfigs = listOf("iosArm64CompileKlibraries")
     xmlOutput = layout.buildDirectory.file("boms/bom-ios-kotlin-deps.xml")
     includeLicenseText = true
 }
