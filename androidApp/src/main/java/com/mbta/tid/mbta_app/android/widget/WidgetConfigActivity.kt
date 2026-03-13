@@ -342,13 +342,6 @@ private fun WidgetConfigScreen(
                                                                         config,
                                                                     )
                                                                 }
-                                                                widgetLog(
-                                                                    context,
-                                                                    "config_saved",
-                                                                    mapOf(
-                                                                        "appWidgetId" to appWidgetId
-                                                                    ),
-                                                                )
                                                                 try {
                                                                     val glanceManager =
                                                                         GlanceAppWidgetManager(
@@ -359,46 +352,13 @@ private fun WidgetConfigScreen(
                                                                         glanceManager.getGlanceIdBy(
                                                                             appWidgetId
                                                                         )
-                                                                    debugSessionLog(
-                                                                        context,
-                                                                        "WidgetConfigActivity.save",
-                                                                        "update_before",
-                                                                        mapOf(
-                                                                            "appWidgetId" to
-                                                                                appWidgetId,
-                                                                            "glanceId" to
-                                                                                glanceId.toString(),
-                                                                        ),
-                                                                    )
                                                                     MBTATripWidget()
                                                                         .update(
                                                                             context
                                                                                 .applicationContext,
                                                                             glanceId,
                                                                         )
-                                                                    debugSessionLog(
-                                                                        context,
-                                                                        "WidgetConfigActivity.save",
-                                                                        "update_success",
-                                                                        mapOf(
-                                                                            "appWidgetId" to
-                                                                                appWidgetId
-                                                                        ),
-                                                                    )
-                                                                } catch (e: Exception) {
-                                                                    debugSessionLog(
-                                                                        context,
-                                                                        "WidgetConfigActivity.save",
-                                                                        "update_failed",
-                                                                        mapOf(
-                                                                            "appWidgetId" to
-                                                                                appWidgetId,
-                                                                            "error" to
-                                                                                (e.message
-                                                                                    ?: e.toString()),
-                                                                        ),
-                                                                    )
-                                                                }
+                                                                } catch (e: Exception) {}
                                                                 delay(150)
                                                                 onComplete()
                                                                 WorkManager.getInstance(context)

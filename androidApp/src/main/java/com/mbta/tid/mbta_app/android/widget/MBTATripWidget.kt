@@ -62,43 +62,21 @@ class MBTATripWidget : GlanceAppWidget(), KoinComponent {
     private suspend fun provideGlanceInternal(context: Context, id: GlanceId) {
         val widgetPreferences = WidgetPreferences(context.applicationContext)
         val appWidgetId = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        debugSessionLog(
-            context,
-            "MBTATripWidget.provideGlanceInternal",
-            "provideGlance_start",
-            mapOf(
-                "appWidgetId" to appWidgetId,
-                "invalid" to (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID),
-            ),
-        )
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             provideContent { WidgetContent.ErrorState(context = context) }
             return
         }
 
         var config = withContext(Dispatchers.IO) { widgetPreferences.getConfigOnce(appWidgetId) }
-        var retryCount = 0
         if (config == null) {
             for (_i in 0 until 8) {
                 delay(250)
-                retryCount = _i + 1
                 config =
                     withContext(Dispatchers.IO) { widgetPreferences.getConfigOnce(appWidgetId) }
                 if (config != null) break
             }
         }
-        debugSessionLog(
-            context,
-            "MBTATripWidget.provideGlanceInternal",
-            "config_check_result",
-            mapOf(
-                "appWidgetId" to appWidgetId,
-                "configFound" to (config != null),
-                "retryCount" to retryCount,
-            ),
-        )
         if (config == null) {
-            widgetLog(context, "show_configure", mapOf("appWidgetId" to appWidgetId))
             withContext(Dispatchers.IO) {
                 WidgetPreferences(context.applicationContext).setPendingConfigWidgetId(appWidgetId)
             }
@@ -108,7 +86,6 @@ class MBTATripWidget : GlanceAppWidget(), KoinComponent {
             return
         }
 
-        widgetLog(context, "config_ok", mapOf("appWidgetId" to appWidgetId))
         val result =
             withContext(Dispatchers.IO) {
                 widgetTripUseCase.getNextTrip(config.fromStopId, config.toStopId)
@@ -116,24 +93,10 @@ class MBTATripWidget : GlanceAppWidget(), KoinComponent {
 
         when (result) {
             is ApiResult.Error -> {
-                widgetLog(
-                    context,
-                    "trip_error",
-                    mapOf(
-                        "appWidgetId" to appWidgetId,
-                        "code" to result.code,
-                        "msg" to (result.message ?: ""),
-                    ),
-                )
                 provideContent { WidgetContent.ErrorState(context = context) }
             }
             is ApiResult.Ok -> {
                 val tripData = result.data.trip
-                widgetLog(
-                    context,
-                    "trip_ok",
-                    mapOf("appWidgetId" to appWidgetId, "hasTrip" to (tripData != null)),
-                )
                 provideContent {
                     if (tripData != null) {
                         WidgetContent.TripData(

@@ -14,12 +14,6 @@ class WidgetUpdateWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         val requestedIds = inputData.getIntArray(KEY_APP_WIDGET_IDS)
-        debugSessionLog(
-            applicationContext,
-            "WidgetUpdateWorker.doWork",
-            "worker_start",
-            mapOf("requestedIds" to (requestedIds?.toList()?.toString() ?: "null")),
-        )
         val appWidgetManager = AppWidgetManager.getInstance(applicationContext)
         val componentName = ComponentName(applicationContext, MBTATripWidgetReceiver::class.java)
         val appWidgetIds =
@@ -49,29 +43,15 @@ class WidgetUpdateWorker(appContext: Context, workerParams: WorkerParameters) :
         widget: MBTATripWidget,
         appWidgetId: Int,
     ) {
-        var lastError: String? = null
         repeat(MAX_RETRIES) { attempt ->
             try {
                 val glanceId = glanceManager.getGlanceIdBy(appWidgetId)
                 widget.update(applicationContext, glanceId)
-                debugSessionLog(
-                    applicationContext,
-                    "WidgetUpdateWorker.updateWithRetry",
-                    "update_success",
-                    mapOf("appWidgetId" to appWidgetId, "attempt" to attempt),
-                )
                 return
             } catch (e: IllegalArgumentException) {
-                lastError = e.message ?: e.toString()
                 if (attempt < MAX_RETRIES - 1) delay(RETRY_DELAY_MS)
             }
         }
-        debugSessionLog(
-            applicationContext,
-            "WidgetUpdateWorker.updateWithRetry",
-            "update_failed_all_retries",
-            mapOf("appWidgetId" to appWidgetId, "lastError" to (lastError ?: "unknown")),
-        )
     }
 
     companion object {

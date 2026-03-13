@@ -221,6 +221,7 @@ tasks.register("mapboxTempToken") {
 run {
     val envFile = File(".envrc")
     val props = Properties()
+
     if (envFile.exists()) {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {
