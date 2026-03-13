@@ -16,10 +16,7 @@ internal class WidgetPreferences(private val context: Context) {
 
     private fun configKey(appWidgetId: Int) = "config_$appWidgetId"
 
-    /**
-     * Store appWidgetId when showing "Tap to configure" - config activity reads as fallback if
-     * intent lacks it
-     */
+    /** Stores appWidgetId so config activity can read it when the intent lacks it. */
     fun setPendingConfigWidgetId(appWidgetId: Int) {
         prefs.edit().putInt(KEY_PENDING_CONFIG_WIDGET_ID, appWidgetId).commit()
     }

@@ -5,7 +5,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.firebase.Firebase
-import com.google.firebase.FirebaseApp
 import com.google.firebase.analytics.analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
@@ -42,18 +41,12 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val googleAppIdResId = resources.getIdentifier("google_app_id", "string", packageName)
-        val isFirebaseConfigured =
-            googleAppIdResId != 0 && resources.getString(googleAppIdResId).isNotBlank()
-        if (isFirebaseConfigured) {
-            FirebaseApp.initializeApp(this)
-        }
-
         initKoin(
             appVariant,
             makeNativeModule(
                 AccessibilityStatusRepository(applicationContext),
-                if (isFirebaseConfigured) AnalyticsProvider(Firebase.analytics)
+                if (R.string::class.members.any { it.name == "google_app_id" })
+                    AnalyticsProvider(Firebase.analytics)
                 else MockAnalytics(),
                 CurrentAppVersionRepository(BuildConfig.VERSION_NAME),
                 NetworkConnectivityMonitor(applicationContext),

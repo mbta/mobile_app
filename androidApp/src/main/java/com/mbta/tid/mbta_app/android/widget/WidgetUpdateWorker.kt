@@ -27,8 +27,6 @@ class WidgetUpdateWorker(appContext: Context, workerParams: WorkerParameters) :
 
         if (appWidgetIds.isEmpty()) return Result.success()
 
-        // System skips APPWIDGET_UPDATE when widget uses configure - send explicit broadcast
-        // to trigger GlanceAppWidgetReceiver.onUpdate so provideGlance runs.
         val updateIntent =
             Intent(applicationContext, MBTATripWidgetReceiver::class.java).apply {
                 action = AppWidgetManager.ACTION_APPWIDGET_UPDATE

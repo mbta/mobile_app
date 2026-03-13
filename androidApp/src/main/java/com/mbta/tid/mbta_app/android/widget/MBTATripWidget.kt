@@ -279,7 +279,6 @@ private object WidgetContent {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Header: route color only (pill-shaped)
                 Box(
                     modifier =
                         GlanceModifier.fillMaxWidth()

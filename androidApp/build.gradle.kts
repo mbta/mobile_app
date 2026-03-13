@@ -219,9 +219,8 @@ tasks.register("mapboxTempToken") {
 
 // we want to load environment variables while first declaring settings
 run {
-    val props = Properties()
-
     val envFile = File(".envrc")
+    val props = Properties()
     if (envFile.exists()) {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {

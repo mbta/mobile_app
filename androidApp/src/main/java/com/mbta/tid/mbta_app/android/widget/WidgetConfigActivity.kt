@@ -132,9 +132,7 @@ private fun WidgetConfigScreen(
         val result = withContext(Dispatchers.IO) { globalRepository.getGlobalData() }
         when (result) {
             is ApiResult.Ok -> globalResponse = result.data
-            is ApiResult.Error -> {
-                /* keep null, loadingTimeout will show fallback */
-            }
+            is ApiResult.Error -> {}
         }
     }
 
@@ -400,16 +398,9 @@ private fun WidgetConfigScreen(
                                                                                     ?: e.toString()),
                                                                         ),
                                                                     )
-                                                                    /* Widget not bound yet */
                                                                 }
                                                                 delay(150)
                                                                 onComplete()
-                                                                // System skips APPWIDGET_UPDATE
-                                                                // when using configure - we must
-                                                                // trigger it ourselves.
-                                                                // Use WorkManager with delay so
-                                                                // widget is on home screen before
-                                                                // we update.
                                                                 WorkManager.getInstance(context)
                                                                     .enqueueUniqueWork(
                                                                         "WidgetConfigUpdate",
