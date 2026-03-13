@@ -221,7 +221,7 @@ tasks.register("mapboxTempToken") {
 run {
     val props = Properties()
 
-    val envFile = File(project.rootProject.projectDir, ".envrc")
+    val envFile = File(".envrc")
     if (envFile.exists()) {
         val bufferedReader: BufferedReader = envFile.bufferedReader()
         bufferedReader.use {
@@ -277,13 +277,6 @@ run {
     } else {
         logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
     }
-
-    val backendOverride = getPropsOrEnv("BACKEND_OVERRIDE_URL")
-    android.defaultConfig.buildConfigField(
-        "String",
-        "BACKEND_OVERRIDE_URL",
-        "\"${backendOverride ?: ""}\"",
-    )
 }
 
 gradle.projectsEvaluated {

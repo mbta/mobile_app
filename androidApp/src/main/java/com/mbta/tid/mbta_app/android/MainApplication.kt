@@ -49,7 +49,6 @@ class MainApplication : Application() {
             FirebaseApp.initializeApp(this)
         }
 
-        val backendOverride = BuildConfig.BACKEND_OVERRIDE_URL.takeIf { it.isNotBlank() }
         initKoin(
             appVariant,
             makeNativeModule(
@@ -61,7 +60,6 @@ class MainApplication : Application() {
                 socket.wrapped(),
             ) + koinViewModelModule(),
             this,
-            backendOverrideUrl = backendOverride,
         )
         scheduleWidgetUpdates()
         prewarmGlobalData()

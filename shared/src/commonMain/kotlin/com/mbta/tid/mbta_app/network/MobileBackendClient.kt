@@ -24,17 +24,10 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 
-internal class MobileBackendClient(
-    engine: HttpClientEngine,
-    val appVariant: AppVariant,
-    backendOverrideUrl: String? = null,
-) {
-    constructor(
-        appVariant: AppVariant,
-        backendOverrideUrl: String? = null,
-    ) : this(getPlatform().httpClientEngine, appVariant, backendOverrideUrl)
+internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
+    constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
 
-    private val baseUrl = backendOverrideUrl ?: appVariant.backendRoot
+    private val baseUrl = appVariant.backendRoot
 
     private val httpClient =
         HttpClient(engine) {

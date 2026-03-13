@@ -1,0 +1,42 @@
+---
+description: MBTA Go app KMM architecture, setup, and contribution guidelines
+alwaysApply: true
+---
+
+# MBTA Go App Development Context
+
+## Architecture
+
+- **Kotlin Multiplatform Mobile (KMM)**: Shared logic in `/shared`, native UI in `/iosApp` and `/androidApp`
+- **Repos**: Frontend `mbta/mobile_app` (KMM, Swift, Kotlin); Backend `mbta/mobile_app_backend` (Elixir, Phoenix) aggregates MBTA V3 API
+
+## Backend Setup
+
+```bash
+cp .envrc.template .envrc  # Populate API_KEY (MBTA V3 API) and DATABASE_* for local Postgres
+direnv allow
+mix setup                  # Installs hex/rebar, creates/migrates database
+mix phx.server            # Starts at http://localhost:4000 (binds 0.0.0.0 for emulator)
+```
+
+Run `mix test` to verify CI parity.
+
+**Local backend for Android emulator:** Backend binds to `0.0.0.0:4000` so emulator can reach it via `http://10.0.2.2:4000`. In `mobile_app`, set `export BACKEND_OVERRIDE_URL=http://10.0.2.2:4000` in `.envrc` and rebuild the app.
+
+## Frontend Setup
+
+- **Tooling**: Use `asdf` for versions in `.tool-versions`
+- **iOS**: Uses XcodeGen. Do NOT edit `.xcodeproj` directly. Run `bin/generate-xcodeproj.sh`, then `bundle install && bundle exec pod install`
+- **Android**: `./gradlew :shared:generateDummyFramework` when working on iOS logic first. Use `:androidApp` target in Android Studio
+- **iOS project**: Open `iosApp/MBTA.xcworkspace` in Xcode
+
+## Widget Development
+
+- **iOS (WidgetKit)**: Add Widget Extension target via `project.yml` (XcodeGen). Use shared Repository classes. SwiftUI for UI.
+- **Android (AppWidget)**: `RemoteViewsService`, `AppWidgetProvider`. Use WorkManager or `runBlocking` to fetch from shared Kotlin repository.
+
+## Contribution Guidelines
+
+- **Branch naming**: `[initials]-[description]` (e.g., `xy-arrival-widget`)
+- **Commits**: Conventional Commits (e.g., `feat: add homescreen arrival widget`)
+- **Formatting**: Run `ktlint` for Kotlin and `swiftformat` for Swift before committing

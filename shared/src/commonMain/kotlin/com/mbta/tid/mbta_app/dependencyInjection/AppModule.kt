@@ -47,9 +47,9 @@ import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 /** Define the koin module with the resources to use in dependency injection */
-internal fun appModule(appVariant: AppVariant, backendOverrideUrl: String? = null) = module {
+internal fun appModule(appVariant: AppVariant) = module {
     includes(
-        module { single { MobileBackendClient(appVariant, backendOverrideUrl) } },
+        module { single { MobileBackendClient(appVariant) } },
         module {
             single { FileSystem.SYSTEM }
             single { JsonPersistence(get(), get(), get(named("coroutineDispatcherIO"))) }
