@@ -402,8 +402,10 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 TripShuttleAlertSummary(
-                    EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                    RouteType.COMMUTER_RAIL,
+                    TripShuttleAlertSummary.SingleTrip(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        RouteType.COMMUTER_RAIL,
+                    ),
                     "Ruggles",
                     "Forest Hills",
                 ),
@@ -497,8 +499,10 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 TripShuttleAlertSummary(
-                    EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
-                    RouteType.COMMUTER_RAIL,
+                    TripShuttleAlertSummary.SingleTrip(
+                        EasternTimeInstant(2026, Month.MARCH, 9, 12, 13),
+                        RouteType.COMMUTER_RAIL,
+                    ),
                     "Ruggles",
                     "Forest Hills",
                     recurrence =

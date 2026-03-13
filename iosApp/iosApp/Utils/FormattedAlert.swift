@@ -434,6 +434,23 @@ struct FormattedAlert: Equatable {
         }
     }
 
+    static func summaryTripShuttleIdentity(tripIdentity: TripShuttleAlertSummaryTripIdentity) -> String {
+        switch onEnum(of: tripIdentity) {
+        case let .singleTrip(tripIdentity): String(
+                format: NSLocalizedString(
+                    "the **%@** %@",
+                    comment: "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]"
+                ),
+                tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
+                tripIdentity.routeType.typeText(isOnly: true)
+            )
+        case .multipleTrips: NSLocalizedString(
+                "multiple trips",
+                comment: "Trip identity referring to more than one specific trip"
+            )
+        }
+    }
+
     var summary: AttributedString? {
         summary(alertSummary: alertSummary)
     }
@@ -498,15 +515,14 @@ struct FormattedAlert: Equatable {
             ))
         case let .tripShuttleAlertSummary(alertSummary): return AttributedString.tryMarkdown(String(
                 format: NSLocalizedString(
-                    "Shuttle buses replace the **%1$@** %2$@ %3$@ from **%4$@** to **%5$@**%6$@",
+                    "Shuttle buses replace %1$@ %2$@ from **%3$@** to **%4$@**%5$@",
                     comment: """
-                    Alert summary in the format of “Shuttle buses replace the [time] [vehicle] [day] \
-                    from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace the [12:13 PM] [train] \
+                    Alert summary in the format of “Shuttle buses replace [trip identity] [day] \
+                    from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] \
                     [today] from [Ruggles] to [Forest Hills][ some days until Friday]”
                     """
                 ),
-                alertSummary.tripTime.formatted(date: .omitted, time: .shortened),
-                alertSummary.routeType.typeText(isOnly: true),
+                Self.summaryTripShuttleIdentity(tripIdentity: alertSummary.tripIdentity),
                 alertSummary.isToday ? NSLocalizedString("today", comment: "") : NSLocalizedString(
                     "tomorrow",
                     comment: ""

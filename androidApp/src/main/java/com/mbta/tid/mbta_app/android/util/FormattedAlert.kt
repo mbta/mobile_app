@@ -148,8 +148,7 @@ data class FormattedAlert(
                 AnnotatedString.fromHtml(
                     resources.getString(
                         R.string.alert_summary_trip_shuttle,
-                        alertSummary.tripTime.formattedTime(),
-                        alertSummary.routeType.typeText(resources, isOnly = true),
+                        summaryTripShuttleIdentity(alertSummary.tripIdentity, resources),
                         if (alertSummary.isToday) resources.getString(R.string.today)
                         else resources.getString(R.string.tomorrow),
                         alertSummary.currentStopName,
@@ -603,6 +602,21 @@ data class FormattedAlert(
             dueToCauseRes?.let {
                 resources.getString(R.string.due_to_cause, resources.getString(it))
             } ?: ""
+
+        private fun summaryTripShuttleIdentity(
+            tripIdentity: TripShuttleAlertSummary.TripIdentity,
+            resources: Resources,
+        ) =
+            when (tripIdentity) {
+                is TripShuttleAlertSummary.SingleTrip ->
+                    resources.getString(
+                        R.string.the_time_mode,
+                        tripIdentity.tripTime.formattedTime(),
+                        tripIdentity.routeType.typeText(resources, isOnly = true),
+                    )
+                TripShuttleAlertSummary.MultipleTrips ->
+                    resources.getString(R.string.multiple_trips_lowercase)
+            }
 
         private fun timeRangeBoundary(
             resources: Resources,

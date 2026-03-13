@@ -42,7 +42,7 @@
     <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jiskaske yo bay lòt avi</string>
-    <string name="alert_summary_trip_shuttle">Otobis navèt yo ranplase &lt;b>%1$s&lt;/b> %2$s %3$s soti &lt;b>%4$s&lt;/b> pou rive &lt;b>%5$s&lt;/b>%6$s</string>
+    <string name="alert_summary_trip_shuttle">Otobis navèt yo ranplase %1$s %2$s soti &lt;b>%3$s&lt;/b> pou rive &lt;b>%4$s&lt;/b>%5$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Lòt chemen</string>
@@ -263,6 +263,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Plizyè wout</string>
     <string name="multiple_trips">Plizyè vwayaj</string>
+    <string name="multiple_trips_lowercase">plizyè vwayaj</string>
     <string name="nearby_transit">Transpò piblik ki toupre</string>
     <string name="nearby_transit_link">Toupre</string>
     <string name="new_feature_screen_reader_header_prefix">Nouvo karakteristik. %1$s</string>
@@ -436,6 +437,7 @@
     <string name="tap_favorites_hint">Tape sou arè yo pou ajoute yo nan Favorites</string>
     <string name="technical_problem">Pwoblèm Teknik</string>
     <string name="technical_problem_lowercase">pwoblèm teknik</string>
+    <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s la</string>
     <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>

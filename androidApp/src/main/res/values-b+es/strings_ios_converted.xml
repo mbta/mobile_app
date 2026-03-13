@@ -39,7 +39,7 @@
     <string name="alert_summary_timeframe_time">\u0020hasta las %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020hasta mañana</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020hasta nuevo aviso</string>
-    <string name="alert_summary_trip_shuttle">Los autobuses lanzadera reemplazan al &lt;b>%1$s&lt;/b> %2$s %3$s de &lt;b>%4$s&lt;/b> a &lt;b>%5$s&lt;/b>%6$s</string>
+    <string name="alert_summary_trip_shuttle">Los autobuses lanzadera reemplazan a %1$s %2$s desde &lt;b>%3$s&lt;/b> hasta &lt;b>%4$s&lt;/b>%5$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Actualización:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Camino alternativo</string>
@@ -254,6 +254,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Múltiples rutas</string>
     <string name="multiple_trips">Múltiples viajes</string>
+    <string name="multiple_trips_lowercase">múltiples viajes</string>
     <string name="nearby_transit">Tránsito cercano</string>
     <string name="nearby_transit_link">Cerca</string>
     <string name="new_feature_screen_reader_header_prefix">Nueva función. %1$s</string>
@@ -424,6 +425,7 @@
     <string name="tap_favorites_hint">Toque las paradas para agregarlas a favoritos</string>
     <string name="technical_problem">Problema técnico</string>
     <string name="technical_problem_lowercase">problema técnico</string>
+    <string name="the_time_mode">el &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
