@@ -534,8 +534,10 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: TripShuttleAlertSummary(
-                tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
-                routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills"
+                tripIdentity: TripShuttleAlertSummary.SingleTrip(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    routeType: .commuterRail
+                ), currentStopName: "Ruggles", endStopName: "Forest Hills"
             ),
             spec: .major,
             routeAccents: .init(type: .commuterRail),
@@ -607,8 +609,10 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: TripShuttleAlertSummary(
-                tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
-                routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills",
+                tripIdentity: TripShuttleAlertSummary.SingleTrip(
+                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    routeType: .commuterRail
+                ), currentStopName: "Ruggles", endStopName: "Forest Hills",
                 recurrence: AlertSummary.RecurrenceDaily(ending: AlertSummary.TimeframeThisWeek(time: .init(
                     year: 2026,
                     month: .march,

@@ -124,15 +124,20 @@ class AlertSummaryTest {
     fun `can serialize and deserialize trip shuttle summary`() {
         val jsonObject = buildJsonObject {
             put("type", "trip_shuttle")
-            put("trip_time", "2026-03-06T15:21:00-05:00")
-            put("route_type", "commuter_rail")
+            putJsonObject("trip_identity") {
+                put("type", "single_trip")
+                put("trip_time", "2026-03-06T15:21:00-05:00")
+                put("route_type", "commuter_rail")
+            }
             put("current_stop_name", "Ruggles")
             put("end_stop_name", "Forest Hills")
         }
         val summary: AlertSummary =
             TripShuttleAlertSummary(
-                EasternTimeInstant(2026, Month.MARCH, 6, 15, 21),
-                RouteType.COMMUTER_RAIL,
+                TripShuttleAlertSummary.SingleTrip(
+                    EasternTimeInstant(2026, Month.MARCH, 6, 15, 21),
+                    RouteType.COMMUTER_RAIL,
+                ),
                 "Ruggles",
                 "Forest Hills",
                 isToday = true,
@@ -1749,8 +1754,10 @@ class AlertSummaryTest {
 
         assertEquals(
             TripShuttleAlertSummary(
-                EasternTimeInstant(today, LocalTime(12, 13)),
-                RouteType.COMMUTER_RAIL,
+                TripShuttleAlertSummary.SingleTrip(
+                    EasternTimeInstant(today, LocalTime(12, 13)),
+                    RouteType.COMMUTER_RAIL,
+                ),
                 "Ruggles",
                 "Forest Hills",
             ),
@@ -1905,8 +1912,10 @@ class AlertSummaryTest {
 
         assertEquals(
             TripShuttleAlertSummary(
-                EasternTimeInstant(monday, onePM),
-                RouteType.COMMUTER_RAIL,
+                TripShuttleAlertSummary.SingleTrip(
+                    EasternTimeInstant(monday, onePM),
+                    RouteType.COMMUTER_RAIL,
+                ),
                 "Ruggles",
                 "Forest Hills",
                 recurrence =

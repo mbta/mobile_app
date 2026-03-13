@@ -61,19 +61,23 @@ constructor(
                         directionId,
                         patterns,
                         atTime,
-                        informedTrip,
+                        informedTrips,
                         global,
                         recurrence,
                     )
                 }
                 Alert.Effect.StationClosure -> {
+                    val (rawTripIdentity, isToday) =
+                        tripIdentityIsToday(stopId, atTime, informedTrips, global) ?: return null
                     val tripIdentity =
-                        TripTo(
-                            informedTrip?.schedule?.departureTime
-                                ?: informedTrip?.schedule?.arrivalTime
-                                ?: return null,
-                            informedTrip?.headsign ?: return null,
-                        )
+                        when (rawTripIdentity) {
+                            is TripFrom ->
+                                TripTo(
+                                    rawTripIdentity.tripTime,
+                                    informedTrip?.headsign ?: return null,
+                                )
+                            else -> rawTripIdentity
+                        }
                     val informedStops =
                         alert.informedEntity
                             .mapNotNull { it.stop }
@@ -84,35 +88,14 @@ constructor(
                         tripIdentity,
                         alert.effect,
                         informedStops,
-                        isToday = tripIdentity.tripTime.serviceDate == atTime.serviceDate,
+                        isToday,
                         alert.cause,
                         recurrence,
                     )
                 }
                 else -> {
                     val (tripIdentity, isToday) =
-                        when {
-                            informedTrips.isEmpty() -> return null
-                            informedTrip == null ->
-                                Pair(
-                                    MultipleTrips,
-                                    informedTrips.any {
-                                        (it.schedule?.departureTime ?: it.schedule?.arrivalTime)
-                                            ?.serviceDate == atTime.serviceDate
-                                    },
-                                )
-
-                            else -> {
-                                val tripTime =
-                                    informedTrip.schedule?.departureTime
-                                        ?: informedTrip.schedule?.arrivalTime
-                                        ?: return null
-                                Pair(
-                                    TripFrom(tripTime, global.getStop(stopId)?.name ?: return null),
-                                    tripTime.serviceDate == atTime.serviceDate,
-                                )
-                            }
-                        }
+                        tripIdentityIsToday(stopId, atTime, informedTrips, global) ?: return null
                     TripSpecificAlertSummary(
                         tripIdentity,
                         alert.effect,
@@ -120,6 +103,36 @@ constructor(
                         isToday,
                         alert.cause,
                         recurrence,
+                    )
+                }
+            }
+        }
+
+        private fun tripIdentityIsToday(
+            stopId: String,
+            atTime: EasternTimeInstant,
+            informedTrips: List<UpcomingTrip>,
+            global: GlobalResponse,
+        ): Pair<TripIdentity, Boolean>? {
+            return when (val informedTrip = informedTrips.singleOrNull()) {
+                null if informedTrips.isEmpty() -> null
+                null ->
+                    Pair(
+                        MultipleTrips,
+                        informedTrips.any {
+                            (it.schedule?.departureTime ?: it.schedule?.arrivalTime)?.serviceDate ==
+                                atTime.serviceDate
+                        },
+                    )
+
+                else -> {
+                    val tripTime =
+                        informedTrip.schedule?.departureTime
+                            ?: informedTrip.schedule?.arrivalTime
+                            ?: return null
+                    Pair(
+                        TripFrom(tripTime, global.getStop(stopId)?.name ?: return null),
+                        tripTime.serviceDate == atTime.serviceDate,
                     )
                 }
             }

@@ -14800,6 +14800,53 @@
         }
       }
     },
+    "multiple trips" : {
+      "comment" : "Trip identity referring to more than one specific trip",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "múltiples viajes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "plusieurs voyages"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "plizyè vwayaj"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "múltiplas viagens"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nhiều chuyến đi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多次旅行"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多次旅行"
+          }
+        }
+      }
+    },
     "Multiple trips" : {
       "comment" : "Trip identity referring to more than one specific trip",
       "localizations" : {
@@ -19481,6 +19528,53 @@
         }
       }
     },
+    "Shuttle buses replace %1$@ %2$@ from **%3$@** to **%4$@**%5$@" : {
+      "comment" : "Alert summary in the format of “Shuttle buses replace [trip identity] [day] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] [today] from [Ruggles] to [Forest Hills][ some days until Friday]”",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Los autobuses lanzadera reemplazan a %1$@ %2$@ desde **%3$@** hasta **%4$@**%5$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Des navettes remplacent %1$@ %2$@ de **%3$@** à **%4$@**%5$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Otobis navèt yo ranplase %1$@ %2$@ soti **%3$@** pou rive **%4$@**%5$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ônibus de transporte substituem %1$@ %2$@ de **%3$@** a **%4$@**%5$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xe buýt đưa đón thay thế %1$@ %2$@ từ **%3$@** đến **%4$@**%5$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "接驳巴士取代了从**%3$@**到**%4$@**%5$@之间的%1$@ %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "接駁巴士取代了從**%3$@**到**%4$@**%5$@之間的%1$@ %2$@"
+          }
+        }
+      }
+    },
     "Shuttle buses replace service" : {
       "comment" : "Shuttle alert VoiceOver text",
       "localizations" : {
@@ -19524,53 +19618,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "擺渡巴士取代原服務"
-          }
-        }
-      }
-    },
-    "Shuttle buses replace the **%1$@** %2$@ %3$@ from **%4$@** to **%5$@**%6$@" : {
-      "comment" : "Alert summary in the format of “Shuttle buses replace the [time] [vehicle] [day] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace the [12:13 PM] [train] [today] from [Ruggles] to [Forest Hills][ some days until Friday]”",
-      "localizations" : {
-        "es" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Los autobuses lanzadera reemplazan al **%1$@** %2$@ %3$@ de **%4$@** a **%5$@**%6$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Des navettes remplacent le **%1$@** %2$@ %3$@ de **%4$@** à **%5$@**%6$@"
-          }
-        },
-        "ht" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Otobis navèt yo ranplase **%1$@** %2$@ %3$@ soti **%4$@** pou rive **%5$@**%6$@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Ônibus de transporte substituem o **%1$@** %2$@ %3$@ de **%4$@** a **%5$@**%6$@"
-          }
-        },
-        "vi" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "Xe buýt đưa đón thay thế các tuyến **%1$@** %2$@ %3$@ từ **%4$@** đến **%5$@**%6$@"
-          }
-        },
-        "zh-Hans-CN" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "接驳巴士取代了从 **%4$@** 到 **%5$@**%6$@ 的 **%1$@** %2$@ %3$@"
-          }
-        },
-        "zh-Hant-TW" : {
-          "stringUnit" : {
-            "state" : "needs_review",
-            "value" : "接駁巴士取代了從 **%4$@** 到 **%5$@**%6$@ 的 **%1$@** %2$@ %3$@"
           }
         }
       }
@@ -22110,6 +22157,59 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "使用條款"
+          }
+        }
+      }
+    },
+    "the **%@** %@" : {
+      "comment" : "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "the **%1$@** %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "el **%1$@** %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "le **%1$@** %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** %2$@ la"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "o **%1$@** %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "cái **%1$@** %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**%1$@** %2$@"
           }
         }
       }
