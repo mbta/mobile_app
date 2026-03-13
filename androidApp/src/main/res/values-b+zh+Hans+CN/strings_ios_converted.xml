@@ -37,7 +37,7 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待进一步通知</string>
-    <string name="alert_summary_trip_shuttle">接驳巴士取代了从 &lt;b>%4$s&lt;/b> 到 &lt;b>%5$s&lt;/b>%6$s 的 &lt;b>%1$s&lt;/b> %2$s %3$s</string>
+    <string name="alert_summary_trip_shuttle">接驳巴士取代了从&lt;b>%3$s&lt;/b>到&lt;b>%4$s&lt;/b>%5$s之间的%1$s %2$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">备选路线</string>
@@ -248,6 +248,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">多条路线</string>
     <string name="multiple_trips">多次旅行</string>
+    <string name="multiple_trips_lowercase">多次旅行</string>
     <string name="nearby_transit">附近的交通</string>
     <string name="nearby_transit_link">附近</string>
     <string name="new_feature_screen_reader_header_prefix">新增功能。%1$s</string>
@@ -416,6 +417,7 @@
     <string name="tap_favorites_hint">点击站点可添加至收藏夹</string>
     <string name="technical_problem">技术故障</string>
     <string name="technical_problem_lowercase">技术故障</string>
+    <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">此站点仅供下客</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>

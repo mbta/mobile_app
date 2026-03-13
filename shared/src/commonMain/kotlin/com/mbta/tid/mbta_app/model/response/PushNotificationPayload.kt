@@ -83,7 +83,12 @@ public data class PushNotificationPayload(
                         if (now < summary.tripIdentity.tripTime) return StillActive.Yes
                     TripSpecificAlertSummary.MultipleTrips -> {}
                 }
-            is TripShuttleAlertSummary -> if (now < summary.tripTime) return StillActive.Yes
+            is TripShuttleAlertSummary ->
+                when (summary.tripIdentity) {
+                    is TripShuttleAlertSummary.SingleTrip ->
+                        if (now < summary.tripIdentity.tripTime) return StillActive.Yes
+                    TripShuttleAlertSummary.MultipleTrips -> {}
+                }
             is AlertSummary.Standard,
             is AlertSummary.Unknown -> {}
         }
