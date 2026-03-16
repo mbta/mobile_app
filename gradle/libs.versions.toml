@@ -36,7 +36,7 @@ kotlinpoet = "2.2.0"
 kotlinxCoroutinesCore = "1.10.2"
 kotlinxDatetime = "0.7.1"
 kotlinxSerialization = "1.9.0"
-kotlinxSerializationCompatibleWithGradleEmbeddedKotlin = "1.7.3"
+kotlinxSerializationCompatibleWithGradleEmbeddedKotlin = "1.10.0"
 ktor = "3.3.3"
 lottieCompose = "6.7.1"
 # changelog: https://github.com/mapbox/mapbox-maps-android/blob/main/CHANGELOG.md
