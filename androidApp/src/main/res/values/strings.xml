@@ -38,7 +38,7 @@
     <string name="alert_summary_timeframe_time">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020through tomorrow</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020until further notice</string>
-    <string name="alert_summary_trip_shuttle">Shuttle buses replace the &lt;b>%1$s&lt;/b> %2$s %3$s from &lt;b>%4$s&lt;/b> to &lt;b>%5$s&lt;/b>%6$s</string>
+    <string name="alert_summary_trip_shuttle">Shuttle buses replace %1$s %2$s from &lt;b>%3$s&lt;/b> to &lt;b>%4$s&lt;/b>%5$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
@@ -254,6 +254,7 @@
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Multiple routes</string>
     <string name="multiple_trips">Multiple trips</string>
+    <string name="multiple_trips_lowercase">multiple trips</string>
     <string name="nearby_transit">Nearby Transit</string>
     <string name="nearby_transit_link">Nearby</string>
     <string name="new_feature_screen_reader_header_prefix">New feature. %1$s</string>
@@ -423,6 +424,7 @@
     <string name="tap_favorites_hint">Tap stops to add to Favorites</string>
     <string name="technical_problem">Technical Problem</string>
     <string name="technical_problem_lowercase">technical problem</string>
+    <string name="the_time_mode">the &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
