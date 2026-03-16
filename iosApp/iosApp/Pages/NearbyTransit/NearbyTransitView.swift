@@ -196,7 +196,10 @@ struct NearbyTransitView: View {
 
     func getSchedule() {
         Task {
-            guard let stopIds = nearbyVM.nearbyState.stopIds else { return }
+            guard let stopIds = nearbyVM.nearbyState.stopIds else {
+                scheduleResponse = nil
+                return
+            }
             await fetchApi(
                 errorKey: "NearbyTransitView.getSchedule",
                 getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },

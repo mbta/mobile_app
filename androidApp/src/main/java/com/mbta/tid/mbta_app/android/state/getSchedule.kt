@@ -24,11 +24,15 @@ class ScheduleFetcher(
 ) {
 
     fun getSchedule(
-        stopIds: List<String>,
+        stopIds: List<String>?,
         errorKey: String,
-        onSuccess: (ScheduleResponse) -> Unit,
+        onSuccess: (ScheduleResponse?) -> Unit,
     ) {
-        if (stopIds.isNotEmpty()) {
+        if (stopIds == null) {
+            onSuccess(null)
+        } else if (stopIds.isEmpty()) {
+            onSuccess(ScheduleResponse(emptyList(), emptyMap()))
+        } else {
             CoroutineScope(Dispatchers.IO).launch {
                 fetchApi(
                     errorBannerRepo = errorBannerRepository,
@@ -40,8 +44,6 @@ class ScheduleFetcher(
                     onRefreshAfterError = { getSchedule(stopIds, errorKey, onSuccess) },
                 )
             }
-        } else {
-            onSuccess(ScheduleResponse(emptyList(), emptyMap()))
         }
     }
 }
@@ -55,7 +57,7 @@ class ScheduleViewModel(
     private val _schedule = MutableStateFlow<ScheduleResponse?>(null)
     val schedule: StateFlow<ScheduleResponse?> = _schedule
 
-    fun getSchedule(stopIds: List<String>, errorKey: String) {
+    fun getSchedule(stopIds: List<String>?, errorKey: String) {
         scheduleFetcher.getSchedule(stopIds, errorKey) { _schedule.value = it }
     }
 
@@ -79,7 +81,7 @@ fun getSchedule(
     val viewModel: ScheduleViewModel =
         viewModel(factory = ScheduleViewModel.Factory(schedulesRepository, errorBannerRepository))
 
-    LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds ?: emptyList(), errorKey) }
+    LaunchedEffect(key1 = stopIds) { viewModel.getSchedule(stopIds, errorKey) }
 
     return viewModel.schedule.collectAsState(initial = null).value
 }
