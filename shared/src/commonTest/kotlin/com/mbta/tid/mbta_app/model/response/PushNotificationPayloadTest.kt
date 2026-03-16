@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
@@ -451,8 +452,8 @@ class PushNotificationPayloadTest {
         val payload =
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
-                AlertSummary.TripSpecific(
-                    AlertSummary.TripSpecific.TripFrom(tripTime, "Here"),
+                TripSpecificAlertSummary(
+                    TripSpecificAlertSummary.TripFrom(tripTime, "Here"),
                     Alert.Effect.Cancellation,
                 ),
                 "alert",

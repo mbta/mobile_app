@@ -486,8 +486,8 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripSpecific(
-                tripIdentity: AlertSummary.TripSpecificTripFrom(
+            alertSummary: TripSpecificAlertSummary(
+                tripIdentity: TripSpecificAlertSummary.TripFrom(
                     tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                     stopName: "Ruggles"
                 ), effect: .cancellation, cause: .mechanicalIssue
@@ -511,8 +511,8 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripSpecific(
-                tripIdentity: AlertSummary.TripSpecificMultipleTrips.shared, effect: .suspension, cause: .holiday
+            alertSummary: TripSpecificAlertSummary(
+                tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared, effect: .suspension, cause: .holiday
             ),
             spec: .major,
             routeAccents: .init(type: .commuterRail),
@@ -533,7 +533,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripShuttle(
+            alertSummary: TripShuttleAlertSummary(
                 tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                 routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills"
             ),
@@ -556,8 +556,8 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripSpecific(
-                tripIdentity: AlertSummary.TripSpecificTripTo(
+            alertSummary: TripSpecificAlertSummary(
+                tripIdentity: TripSpecificAlertSummary.TripTo(
                     tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                     headsign: "Stoughton"
                 ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"]
@@ -581,8 +581,8 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripSpecific(
-                tripIdentity: AlertSummary.TripSpecificTripFrom(
+            alertSummary: TripSpecificAlertSummary(
+                tripIdentity: TripSpecificAlertSummary.TripFrom(
                     tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                     stopName: "Ruggles"
                 ), effect: .cancellation, isToday: false, cause: .mechanicalIssue
@@ -606,7 +606,7 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.TripShuttle(
+            alertSummary: TripShuttleAlertSummary(
                 tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                 routeType: .commuterRail, currentStopName: "Ruggles", endStopName: "Forest Hills",
                 recurrence: AlertSummary.RecurrenceDaily(ending: AlertSummary.TimeframeThisWeek(time: .init(

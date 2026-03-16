@@ -221,8 +221,8 @@ struct AlertCard: View {
 
             AlertCard(
                 alert: objects.alert { $0.effect = .cancellation },
-                alertSummary: AlertSummary.TripSpecific(
-                    tripIdentity: AlertSummary.TripSpecificTripFrom(
+                alertSummary: TripSpecificAlertSummary(
+                    tripIdentity: TripSpecificAlertSummary.TripFrom(
                         tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue

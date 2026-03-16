@@ -5,6 +5,8 @@ import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
+import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Instant
@@ -73,15 +75,15 @@ public data class PushNotificationPayload(
         }
         when (summary) {
             is AlertSummary.AllClear -> return StillActive.AllClear
-            is AlertSummary.TripSpecific ->
+            is TripSpecificAlertSummary ->
                 when (summary.tripIdentity) {
-                    is AlertSummary.TripSpecific.TripFrom ->
+                    is TripSpecificAlertSummary.TripFrom ->
                         if (now < summary.tripIdentity.tripTime) return StillActive.Yes
-                    is AlertSummary.TripSpecific.TripTo ->
+                    is TripSpecificAlertSummary.TripTo ->
                         if (now < summary.tripIdentity.tripTime) return StillActive.Yes
-                    AlertSummary.TripSpecific.MultipleTrips -> {}
+                    TripSpecificAlertSummary.MultipleTrips -> {}
                 }
-            is AlertSummary.TripShuttle -> if (now < summary.tripTime) return StillActive.Yes
+            is TripShuttleAlertSummary -> if (now < summary.tripTime) return StillActive.Yes
             is AlertSummary.Standard,
             is AlertSummary.Unknown -> {}
         }
