@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockScheduleRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -110,5 +111,26 @@ class GetScheduleTest {
                 else -> false
             }
         }
+    }
+
+    @Test
+    fun testStopsBecomingNull() {
+        val schedulesRepo =
+            MockScheduleRepository(
+                callback = { stopIds -> assertEquals(emptyList<String>(), stopIds) }
+            )
+        var stopIds: List<String>? by mutableStateOf(emptyList())
+        var actualSchedules: ScheduleResponse? = null
+
+        composeTestRule.setContent {
+            actualSchedules = getSchedule(stopIds, "errorKey", schedulesRepo)
+        }
+
+        composeTestRule.waitUntilDefaultTimeout { actualSchedules != null }
+        assertNotNull(actualSchedules)
+
+        stopIds = null
+        composeTestRule.waitUntilDefaultTimeout { actualSchedules == null }
+        assertNull(actualSchedules)
     }
 }
