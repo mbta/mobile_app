@@ -83,6 +83,8 @@ public interface IMapViewModel {
     public fun setViewportManager(viewportManager: ViewportManager)
 
     public fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean)
+
+    public fun tripStopsUpdated(tripStops: List<String>?)
 }
 
 public class MapViewModel(
@@ -130,6 +132,8 @@ public class MapViewModel(
         public data class LocationPermissionsChanged(val hasPermission: Boolean) : Event
 
         public data class SelectedVehicleUpdated(val vehicle: Vehicle?, val follow: Boolean) : Event
+
+        public data class TripStopsUpdated(val tripStops: List<String>?) : Event
     }
 
     public data class State(
@@ -158,6 +162,7 @@ public class MapViewModel(
             override val stopFilter: StopDetailsFilter?,
             internal val tripFilter: TripDetailsFilter,
             val vehicle: Vehicle?,
+            val tripStops: List<String>?,
             val following: Boolean,
         ) : LayerState()
     }
@@ -184,8 +189,8 @@ public class MapViewModel(
         var routeShapes by remember {
             mutableStateOf<List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>?>(null)
         }
-        var stopLayerGeneratorState by remember {
-            mutableStateOf(StopLayerGenerator.State(null, null))
+        var stopLayerGeneratorState: StopLayerGenerator.State by remember {
+            mutableStateOf(StopLayerGenerator.State.Default)
         }
 
         var previousNavEntry by remember { mutableStateOf<SheetRoutes?>(null) }
@@ -196,7 +201,7 @@ public class MapViewModel(
         val (stopId: String?, stopFilter: StopDetailsFilter?) =
             layerState.stop?.id to layerState.stopFilter
         val tripId = (layerState as? LayerState.TripSelected)?.tripFilter?.tripId
-        val followingTrip = (layerState as? LayerState.TripSelected)?.following ?: false
+        val tripStops = (layerState as? LayerState.TripSelected)?.tripStops
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
@@ -216,7 +221,7 @@ public class MapViewModel(
             if (layerState is LayerState.Overview) {
                 routeSourceData = allRailRouteSourceData
                 routeShapes = allRailRouteShapes?.routesWithSegmentedShapes
-                stopLayerGeneratorState = StopLayerGenerator.State(null, null)
+                stopLayerGeneratorState = StopLayerGenerator.State.Default
             }
         }
 
@@ -264,6 +269,7 @@ public class MapViewModel(
                             event.stopFilter,
                             event.tripFilter,
                             event.vehicle,
+                            null,
                             event.follow,
                         )
                     if (currentState?.vehicle?.id != newState.vehicle?.id || event.follow) {
@@ -304,11 +310,27 @@ public class MapViewModel(
                                 it.stopFilter,
                                 it.tripFilter,
                                 event.vehicle,
+                                it.tripStops,
                                 event.follow,
                             )
                         if (it.vehicle?.id != newState.vehicle?.id || event.follow) {
                             handleViewportCentering(newState, density)
                         }
+                        layerState = newState
+                    }
+                }
+                is Event.TripStopsUpdated -> {
+                    val currentState = (layerState as? LayerState.TripSelected)
+                    currentState?.let {
+                        val newState =
+                            LayerState.TripSelected(
+                                it.stop,
+                                it.stopFilter,
+                                it.tripFilter,
+                                it.vehicle,
+                                event.tripStops,
+                                it.following,
+                            )
                         layerState = newState
                     }
                 }
@@ -324,7 +346,7 @@ public class MapViewModel(
             globalMapData,
             routeCardData.data,
         ) {
-            if (tripId != null && followingTrip) {
+            if (tripId != null) {
                 val tripShapes =
                     withContext(iOCoroutineDispatcher) {
                         when (val data = tripRepository.getTripShape(tripId)) {
@@ -341,7 +363,8 @@ public class MapViewModel(
                             globalMapData,
                         )
                     routeShapes = tripShapes
-                    stopLayerGeneratorState = StopLayerGenerator.State(stopId, stopFilter)
+                    stopLayerGeneratorState =
+                        StopLayerGenerator.State.TripDetails(stopId, stopFilter, tripStops)
                 }
             } else if (stopId != null) {
                 val featuresToDisplayForStop =
@@ -437,6 +460,10 @@ public class MapViewModel(
         fireEvent(Event.SelectedVehicleUpdated(vehicle, follow))
     }
 
+    override fun tripStopsUpdated(tripStops: List<String>?) {
+        fireEvent(Event.TripStopsUpdated(tripStops))
+    }
+
     private fun handleNavChange(
         currentState: LayerState,
         newNavEntry: SheetRoutes?,
@@ -471,6 +498,7 @@ public class MapViewModel(
                     currentNavEntryTripDetails.filter.stopFilter,
                     currentNavEntryTripDetails.filter.tripDetailsFilter,
                     vehicle,
+                    tripStops = null,
                     true,
                 )
             } else if (currentNavEntryStopDetails == null) {
@@ -489,6 +517,7 @@ public class MapViewModel(
                             currentNavEntryStopDetails.stopFilter,
                             currentNavEntryStopDetails.tripFilter,
                             vehicle,
+                            tripStops = null,
                             false,
                         )
                     } else {
@@ -611,12 +640,11 @@ public class MapViewModel(
                 globalResponse,
                 globalMapData,
             )
+        val mapDisplayState =
+            if (stopFilter != null) StopLayerGenerator.State.TripDetails(stopId, stopFilter, null)
+            else StopLayerGenerator.State.StopDetails(stopId)
 
-        return Triple(
-            filteredRouteSourceData,
-            filteredRouteShapes,
-            StopLayerGenerator.State(stopId, stopFilter),
-        )
+        return Triple(filteredRouteSourceData, filteredRouteShapes, mapDisplayState)
     }
 
     /** Set the map's sources and layers based on the given data */
@@ -711,6 +739,7 @@ constructor(
     public var onLocationPermissionsChanged: (Boolean) -> Unit = {}
     public var onSetViewportManager: (ViewportManager) -> Unit = {}
     public var onSelectedVehicleUpdated: (Vehicle?, Boolean) -> Unit = { _, _ -> }
+    public var onTripStopsUpdated: (List<String>?) -> Unit = {}
 
     override val models: MutableStateFlow<MapViewModel.State> = MutableStateFlow(initialState)
 
@@ -750,5 +779,9 @@ constructor(
 
     override fun selectedVehicleUpdated(vehicle: Vehicle?, follow: Boolean) {
         onSelectedVehicleUpdated(vehicle, follow)
+    }
+
+    override fun tripStopsUpdated(tripStops: List<String>?) {
+        onTripStopsUpdated(tripStops)
     }
 }

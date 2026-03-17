@@ -48,9 +48,14 @@ internal object MapExp {
 
     // Returns true if you're currently on the stop page for this stop
     fun selectedExp(state: StopLayerGenerator.State) =
-        if (state.selectedStopId != null)
-            Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))
-        else Exp(false)
+        when (state) {
+            StopLayerGenerator.State.Default -> Exp(false)
+            is StopLayerGenerator.State.StopDetails ->
+                Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))
+            is StopLayerGenerator.State.TripDetails if state.selectedStopId != null ->
+                Exp.eq(Exp.get(StopFeaturesBuilder.propIdKey), Exp(state.selectedStopId))
+            is StopLayerGenerator.State.TripDetails -> Exp(false)
+        }
 
     // Returns the iconSize of the stop icon, interpolated by zoom level, and sized differently
     // depending on the route served by the stop.

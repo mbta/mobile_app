@@ -25,12 +25,15 @@ import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 
 public interface ITripDetailsViewModel {
     public val models: StateFlow<TripDetailsViewModel.State>
-    public val selectedVehicleUpdates: StateFlow<Vehicle?>
+    public val mapUpdates: SharedFlow<TripDetailsViewModel.MapUpdate>
 
     public fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
 
@@ -65,6 +68,12 @@ public class TripDetailsViewModel(
     public enum class Context {
         StopDetails,
         TripDetails,
+    }
+
+    public sealed class MapUpdate {
+        public data class SelectedVehicle(val vehicle: Vehicle?) : MapUpdate()
+
+        public data class TripStops(val tripStops: List<String>?) : MapUpdate()
     }
 
     @set:JvmName("setAlertsState")
@@ -108,11 +117,16 @@ public class TripDetailsViewModel(
             }
         }
 
+        val parentStopIds =
+            remember(stopList) { stopList?.stops?.map { it.stop.parentStationId ?: it.stop.id } }
+
         LaunchedEffect(filters, tripData?.vehicle) {
-            _selectedVehicleUpdates.tryEmit(
-                tripData?.vehicle?.takeIf { it.id == filters?.vehicleId }
+            _mapUpdates.tryEmit(
+                MapUpdate.SelectedVehicle(tripData?.vehicle?.takeIf { it.id == filters?.vehicleId })
             )
         }
+
+        LaunchedEffect(parentStopIds) { _mapUpdates.tryEmit(MapUpdate.TripStops(parentStopIds)) }
 
         val state =
             remember(context, tripData, stopList, awaitingPredictionsAfterBackground) {
@@ -130,8 +144,8 @@ public class TripDetailsViewModel(
     override val models: StateFlow<State>
         get() = internalModels
 
-    private val _selectedVehicleUpdates = MutableStateFlow<Vehicle?>(null)
-    public override val selectedVehicleUpdates: StateFlow<Vehicle?> = _selectedVehicleUpdates
+    private val _mapUpdates = MutableSharedFlow<MapUpdate>(extraBufferCapacity = 1)
+    public override val mapUpdates: SharedFlow<MapUpdate> = _mapUpdates.asSharedFlow()
 
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         fireEvent(Event.SetActive(active, wasSentToBackground))
@@ -160,7 +174,7 @@ constructor(initialState: TripDetailsViewModel.State = TripDetailsViewModel.Stat
 
     override val models: MutableStateFlow<TripDetailsViewModel.State> =
         MutableStateFlow(initialState)
-    override val selectedVehicleUpdates: MutableStateFlow<Vehicle?> = MutableStateFlow(null)
+    override val mapUpdates: MutableSharedFlow<TripDetailsViewModel.MapUpdate> = MutableSharedFlow()
 
     override fun setActive(active: Boolean, wasSentToBackground: Boolean): Unit =
         onSetActive(active, wasSentToBackground)

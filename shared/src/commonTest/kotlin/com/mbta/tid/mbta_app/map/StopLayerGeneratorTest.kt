@@ -22,7 +22,10 @@ class StopLayerGeneratorTest {
     @Test
     fun `stop layers are created`() = runBlocking {
         val stopLayers =
-            StopLayerGenerator.createStopLayers(ColorPalette.light, StopLayerGenerator.State())
+            StopLayerGenerator.createStopLayers(
+                ColorPalette.light,
+                StopLayerGenerator.State.Default,
+            )
 
         assertEquals(11, stopLayers.size)
         assertEquals(StopLayerGenerator.stopTouchTargetLayerId, stopLayers[0].id)
@@ -88,7 +91,10 @@ class StopLayerGeneratorTest {
         val feature = StopFeaturesBuilder.buildCollection(mapStops, emptyList()).features.single()
 
         val stopLayers =
-            StopLayerGenerator.createStopLayers(ColorPalette.light, StopLayerGenerator.State())
+            StopLayerGenerator.createStopLayers(
+                ColorPalette.light,
+                StopLayerGenerator.State.Default,
+            )
 
         val busLayer = stopLayers[1]
         val busAlertLayer = stopLayers[2]
@@ -154,7 +160,9 @@ class StopLayerGeneratorTest {
         val stopLayers =
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
-                StopLayerGenerator.State(selectedStopId = alewifeFeature.id),
+                StopLayerGenerator.State.StopDetails(
+                    selectedStopId = checkNotNull(alewifeFeature.id)
+                ),
             )
 
         val stopLayer = stopLayers[3]
@@ -186,7 +194,8 @@ class StopLayerGeneratorTest {
         val busAndSubwayStop = objects.stop()
         val wrongRouteBusStop = objects.stop()
         val wrongDirectionBusStop = objects.stop()
-        val rightBusStop = objects.stop()
+        val typicalBusStop = objects.stop()
+        val atypicalBusStop = objects.stop()
 
         objects.routePattern(subwayRoute) {
             typicality = RoutePattern.Typicality.Typical
@@ -195,7 +204,12 @@ class StopLayerGeneratorTest {
         objects.routePattern(selectedBusRoute) {
             typicality = RoutePattern.Typicality.Typical
             directionId = 0
-            representativeTrip { stopIds = listOf(rightBusStop.id) }
+            representativeTrip { stopIds = listOf(typicalBusStop.id) }
+        }
+        objects.routePattern(selectedBusRoute) {
+            typicality = RoutePattern.Typicality.Atypical
+            directionId = 0
+            representativeTrip { stopIds = listOf(atypicalBusStop.id) }
         }
         objects.routePattern(selectedBusRoute) {
             typicality = RoutePattern.Typicality.Typical
@@ -212,13 +226,16 @@ class StopLayerGeneratorTest {
         val busAndSubwayStopFeature = features.first { it.id == busAndSubwayStop.id }
         val wrongRouteBusStopFeature = features.first { it.id == wrongRouteBusStop.id }
         val wrongDirectionBusStopFeature = features.first { it.id == wrongDirectionBusStop.id }
-        val rightBusStopFeature = features.first { it.id == rightBusStop.id }
+        val typicalBusStopFeature = features.first { it.id == typicalBusStop.id }
+        val atypicalBusStopFeature = features.first { it.id == atypicalBusStop.id }
 
         val stopLayers =
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
-                StopLayerGenerator.State(
-                    stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0)
+                StopLayerGenerator.State.TripDetails(
+                    selectedStopId = null,
+                    stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
+                    tripStops = null,
                 ),
             )
         val stopLayer = stopLayers.first { it.id == StopLayerGenerator.stopLayerId }
@@ -243,6 +260,106 @@ class StopLayerGeneratorTest {
             true,
             stopLayer.filter!!.evaluate(wrongDirectionBusStopFeature.properties, zoom = 16.0),
         )
-        assertEquals(true, stopLayer.filter!!.evaluate(rightBusStopFeature.properties, zoom = 13.0))
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(typicalBusStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            false,
+            stopLayer.filter!!.evaluate(atypicalBusStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(atypicalBusStopFeature.properties, zoom = 16.0),
+        )
+    }
+
+    @Test
+    fun `state trip details filter applies correctly`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val subwayRoute =
+            objects.route {
+                id = "Orange"
+                type = RouteType.HEAVY_RAIL
+            }
+        val selectedBusRoute = objects.route { type = RouteType.BUS }
+        val otherBusRoute = objects.route { type = RouteType.BUS }
+        val busAndSubwayStop = objects.stop()
+        val wrongRouteBusStop = objects.stop()
+        val wrongDirectionBusStop = objects.stop()
+        val typicalBusStop = objects.stop()
+        val atypicalBusStop = objects.stop()
+
+        objects.routePattern(subwayRoute) {
+            typicality = RoutePattern.Typicality.Typical
+            representativeTrip { stopIds = listOf(busAndSubwayStop.id) }
+        }
+        objects.routePattern(selectedBusRoute) {
+            typicality = RoutePattern.Typicality.Typical
+            directionId = 0
+            representativeTrip { stopIds = listOf(typicalBusStop.id) }
+        }
+        objects.routePattern(selectedBusRoute) {
+            typicality = RoutePattern.Typicality.Atypical
+            directionId = 0
+            representativeTrip { stopIds = listOf(atypicalBusStop.id) }
+        }
+        objects.routePattern(selectedBusRoute) {
+            typicality = RoutePattern.Typicality.Typical
+            directionId = 1
+            representativeTrip { stopIds = listOf(wrongDirectionBusStop.id) }
+        }
+        objects.routePattern(otherBusRoute) {
+            typicality = RoutePattern.Typicality.Typical
+            representativeTrip { stopIds = listOf(busAndSubwayStop.id, wrongRouteBusStop.id) }
+        }
+
+        val globalMapData = GlobalMapData(GlobalResponse(objects), emptyMap())
+        val features = StopFeaturesBuilder.buildCollection(globalMapData, emptyList()).features
+        val busAndSubwayStopFeature = features.first { it.id == busAndSubwayStop.id }
+        val wrongRouteBusStopFeature = features.first { it.id == wrongRouteBusStop.id }
+        val wrongDirectionBusStopFeature = features.first { it.id == wrongDirectionBusStop.id }
+        val typicalBusStopFeature = features.first { it.id == typicalBusStop.id }
+        val atypicalBusStopFeature = features.first { it.id == atypicalBusStop.id }
+
+        val stopLayers =
+            StopLayerGenerator.createStopLayers(
+                ColorPalette.light,
+                StopLayerGenerator.State.TripDetails(
+                    selectedStopId = null,
+                    stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
+                    tripStops = listOf(typicalBusStop.id, atypicalBusStop.id),
+                ),
+            )
+        val stopLayer = stopLayers.first { it.id == StopLayerGenerator.stopLayerId }
+
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(busAndSubwayStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            false,
+            stopLayer.filter!!.evaluate(wrongRouteBusStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(wrongRouteBusStopFeature.properties, zoom = 16.0),
+        )
+        assertEquals(
+            false,
+            stopLayer.filter!!.evaluate(wrongDirectionBusStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(wrongDirectionBusStopFeature.properties, zoom = 16.0),
+        )
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(typicalBusStopFeature.properties, zoom = 13.0),
+        )
+        assertEquals(
+            true,
+            stopLayer.filter!!.evaluate(atypicalBusStopFeature.properties, zoom = 13.0),
+        )
     }
 }

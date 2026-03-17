@@ -28,6 +28,7 @@ import kotlin.test.assertTrue
 import kotlin.time.Clock
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -232,8 +233,9 @@ class TripDetailsViewModelTest : KoinTest {
     }
 
     @Test
-    fun testEmitsSelectedVehicle() = runTest {
+    fun testEmitsSelectedVehicleAndTripStops() = runTest {
         val objects = TestData.clone()
+        val stopIds = (1..5).map { objects.stop().id }
         val trip = objects.trip {}
         val vehicle =
             objects.vehicle {
@@ -244,7 +246,15 @@ class TripDetailsViewModelTest : KoinTest {
         val tripRepo =
             MockTripRepository(
                 tripSchedulesResponse =
-                    TripSchedulesResponse.Schedules(listOf(objects.schedule { this.trip = trip })),
+                    TripSchedulesResponse.Schedules(
+                        stopIds.mapIndexed { index, stopId ->
+                            objects.schedule {
+                                this.trip = trip
+                                this.stopId = stopId
+                                this.stopSequence = index
+                            }
+                        }
+                    ),
                 tripResponse = TripResponse(trip),
             )
         val vehicleRepo =
@@ -273,9 +283,14 @@ class TripDetailsViewModelTest : KoinTest {
         }
 
         launch {
-            viewModel.selectedVehicleUpdates.test {
-                awaitItem()
-                awaitItemSatisfying { it == vehicle }
+            viewModel.mapUpdates
+                .filterIsInstance<TripDetailsViewModel.MapUpdate.SelectedVehicle>()
+                .test { awaitItemSatisfying { it.vehicle == vehicle } }
+        }
+
+        launch {
+            viewModel.mapUpdates.filterIsInstance<TripDetailsViewModel.MapUpdate.TripStops>().test {
+                awaitItemSatisfying { it.tripStops == stopIds }
             }
         }
 

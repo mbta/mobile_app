@@ -86,7 +86,6 @@ struct TripDetailsView: View {
             .global($global, errorKey: "TripDetailsView")
             .onAppear {
                 tripDetailsVMState = tripDetailsVM.models.value
-                setVehicle(tripDetailsVM.selectedVehicleUpdates.value)
             }
             .task {
                 for await models in tripDetailsVM.models {
@@ -94,8 +93,13 @@ struct TripDetailsView: View {
                 }
             }
             .task(id: global) {
-                for await vehicleUpdate in tripDetailsVM.selectedVehicleUpdates {
-                    setVehicle(vehicleUpdate)
+                for await mapUpdate in tripDetailsVM.mapUpdates {
+                    switch onEnum(of: mapUpdate) {
+                    case let .selectedVehicle(mapUpdate):
+                        setVehicle(mapUpdate.vehicle)
+                    case let .tripStops(mapUpdate):
+                        mapVM.tripStopsUpdated(tripStops: mapUpdate.tripStops)
+                    }
                 }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }

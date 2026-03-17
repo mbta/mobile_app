@@ -110,6 +110,7 @@ import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.TripDetailsViewModel
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.seconds
@@ -264,13 +265,21 @@ fun MapAndSheetPage(
             else -> null
         })
 
-    val selectedVehicleUpdate by tripDetailsViewModel.selectedVehicleUpdates.collectAsState()
-    LaunchedEffect(selectedVehicleUpdate) {
-        val follow =
-            currentNavEntry is SheetRoutes.TripDetails &&
-                nearbyTransit.viewportProvider.isVehicleOverview
-        filters?.tripFilter?.let {
-            mapViewModel.selectedVehicleUpdated(selectedVehicleUpdate, follow)
+    val mapUpdates = tripDetailsViewModel.mapUpdates
+    LaunchedEffect(mapUpdates) {
+        mapUpdates.collect { mapUpdate ->
+            when (mapUpdate) {
+                is TripDetailsViewModel.MapUpdate.SelectedVehicle -> {
+                    val follow =
+                        currentNavEntry is SheetRoutes.TripDetails &&
+                            nearbyTransit.viewportProvider.isVehicleOverview
+                    filters?.tripFilter?.let {
+                        mapViewModel.selectedVehicleUpdated(mapUpdate.vehicle, follow)
+                    }
+                }
+                is TripDetailsViewModel.MapUpdate.TripStops ->
+                    mapViewModel.tripStopsUpdated(mapUpdate.tripStops)
+            }
         }
     }
 
