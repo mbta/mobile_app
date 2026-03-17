@@ -31,7 +31,7 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
         HttpClient(engine) {
             install(ContentNegotiation) { json(json) }
             install(WebSockets) { contentConverter = KotlinxWebsocketSerializationConverter(json) }
-            install(ContentEncoding) { gzip(0.9F) }
+            install(ContentEncoding) { gzip() }
             install(HttpRequestRetry) {
                 retryOnException(retryOnTimeout = true)
                 retryOnServerErrors()
