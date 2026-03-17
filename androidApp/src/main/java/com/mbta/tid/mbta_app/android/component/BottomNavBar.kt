@@ -76,7 +76,7 @@ fun BottomNavBar(
             )
 
             BottomNavTab(
-                selected = currentDestination == Routes.More,
+                selected = currentDestination is Routes.More,
                 onClick = { navigateToMore() },
                 icon = painterResource(R.drawable.more),
                 text = stringResource(R.string.more_link),

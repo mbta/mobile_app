@@ -18,7 +18,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
     case alertDetails(alertId: String, line: Line?, routes: [Route]?, stop: Stop?)
     case editFavorites
     case favorites
-    case more
+    case more(highlight: MoreSection.Category?)
     case nearby
     case routeDetails(SheetRoutes.RouteDetails)
     case routePicker(SheetRoutes.RoutePicker)

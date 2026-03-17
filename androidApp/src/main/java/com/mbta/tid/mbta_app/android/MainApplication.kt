@@ -9,6 +9,7 @@ import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
+import com.mbta.tid.mbta_app.android.util.InstanceIdCache
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.decodeMessage
 import com.mbta.tid.mbta_app.dependencyInjection.makeNativeModule
@@ -48,6 +49,7 @@ class MainApplication : Application() {
         fun koinViewModelModule() = module {
             single<IMapboxConfigManager> { MapboxConfigManager(get()) }
             single { SettingsCache(get()) }
+            single { InstanceIdCache() }
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
         }

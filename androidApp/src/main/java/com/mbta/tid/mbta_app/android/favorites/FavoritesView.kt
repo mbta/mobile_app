@@ -22,12 +22,14 @@ import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
+import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
 import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.FavoritesViewModel
@@ -52,6 +54,8 @@ fun FavoritesView(
 ) {
     val now by timer(updateInterval = 5.seconds)
     val state by favoritesViewModel.models.collectAsState()
+
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
 
     fun onAddFavorites() {
         favoritesViewModel.setIsFirstExposureToNewFavorites(false)
@@ -87,6 +91,11 @@ fun FavoritesView(
         setIsTargeting(false)
     }
 
+    LaunchedEffect(state.favorites, notificationsEnabled) {
+        if (notificationsEnabled && state.favorites?.isEmpty() == true)
+            favoritesViewModel.dismissNotificationsHint()
+    }
+
     val toastText = stringResource(R.string.favorite_stops_first_time_toast_message)
     LaunchedEffect(state.shouldShowFirstTimeToast) {
         if (state.shouldShowFirstTimeToast) {
@@ -107,7 +116,7 @@ fun FavoritesView(
 
     val routeCardData = state.routeCardData
 
-    Column() {
+    Column {
         SheetHeader(
             title = stringResource(R.string.favorites_link),
             navCallbacks =
@@ -131,6 +140,16 @@ fun FavoritesView(
                 }
             },
         )
+
+        if (notificationsEnabled && state.shouldShowNotificationsHint) {
+            NotificationsHint(
+                onHintTap = {
+                    openSheetRoute(SheetRoutes.EditFavorites)
+                    favoritesViewModel.dismissNotificationsHint()
+                },
+                onHintDismiss = { favoritesViewModel.dismissNotificationsHint() },
+            )
+        }
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
         RouteCardList(

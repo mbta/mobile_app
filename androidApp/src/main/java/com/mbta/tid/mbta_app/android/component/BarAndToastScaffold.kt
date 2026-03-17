@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.component
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -25,6 +26,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.dismiss
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
@@ -55,6 +57,7 @@ fun BarAndToastScaffold(
                 },
             withDismissAction =
                 when (toast.action) {
+                    is ToastViewModel.ToastAction.BodyWithClose,
                     is ToastViewModel.ToastAction.Close -> true
                     else -> false
                 },
@@ -91,14 +94,26 @@ fun BarAndToastScaffold(
                     .text
         }
 
+    val bodyAction: (() -> Unit)? =
+        when (val state = toastState) {
+            is ToastViewModel.State.Hidden -> null
+            is ToastViewModel.State.Visible ->
+                when (val buttonSpec = state.toast.action) {
+                    is ToastViewModel.ToastAction.Body -> buttonSpec.onAction
+                    is ToastViewModel.ToastAction.BodyWithClose -> buttonSpec.onAction
+                    else -> null
+                }
+        }
+
     val clickLabel =
         when (val state = toastState) {
             is ToastViewModel.State.Hidden -> ""
             is ToastViewModel.State.Visible ->
                 when (val buttonSpec = state.toast.action) {
-                    is ToastViewModel.ToastAction.Close -> closeHintText
+                    is ToastViewModel.ToastAction.Body,
+                    is ToastViewModel.ToastAction.BodyWithClose -> state.toast.message
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.actionLabel
-                    null -> ""
+                    else -> ""
                 }
         }
     val clickAction: (() -> Unit)? =
@@ -106,9 +121,21 @@ fun BarAndToastScaffold(
             is ToastViewModel.State.Hidden -> null
             is ToastViewModel.State.Visible ->
                 when (val buttonSpec = state.toast.action) {
-                    is ToastViewModel.ToastAction.Close -> buttonSpec.onClose
+                    is ToastViewModel.ToastAction.Body -> buttonSpec.onAction
+                    is ToastViewModel.ToastAction.BodyWithClose -> buttonSpec.onAction
                     is ToastViewModel.ToastAction.Custom -> buttonSpec.onAction
-                    null -> null
+                    else -> null
+                }
+        }
+
+    val closeAction =
+        when (val state = toastState) {
+            is ToastViewModel.State.Hidden -> null
+            is ToastViewModel.State.Visible ->
+                when (val buttonSpec = state.toast.action) {
+                    is ToastViewModel.ToastAction.BodyWithClose -> buttonSpec.onClose
+                    is ToastViewModel.ToastAction.Close -> buttonSpec.onClose
+                    else -> null
                 }
         }
 
@@ -120,11 +147,26 @@ fun BarAndToastScaffold(
                     modifier =
                         Modifier.padding(start = 8.dp, bottom = 16.dp, end = 8.dp)
                             .navigationBarsPadding()
+                            .then(
+                                bodyAction?.let { action -> Modifier.clickable(onClick = action) }
+                                    ?: Modifier
+                            )
                             .clearAndSetSemantics {
                                 contentDescription = overriddenContentDescription
-                                onClick(clickLabel) {
-                                    clickAction?.invoke()
-                                    true
+                                if (clickAction != null) {
+                                    onClick(clickLabel) {
+                                        clickAction.invoke()
+                                        true
+                                    }
+                                }
+                                if (closeAction != null) {
+                                    dismiss(
+                                        closeHintText,
+                                        {
+                                            closeAction()
+                                            true
+                                        },
+                                    )
                                 }
                             },
                     action = { ToastActionButton(it, toastState) },
@@ -192,6 +234,7 @@ private fun ToastCloseButton(snackbarData: SnackbarData, toastState: ToastViewMo
                 is ToastViewModel.State.Hidden -> {}
                 is ToastViewModel.State.Visible ->
                     when (val buttonSpec = toastState.toast.action) {
+                        is ToastViewModel.ToastAction.BodyWithClose -> buttonSpec.onClose()
                         is ToastViewModel.ToastAction.Close -> buttonSpec.onClose()
                         else -> {}
                     }

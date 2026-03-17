@@ -171,6 +171,9 @@ struct ContentView: View {
     var contents: some View {
         if let onboardingScreensPending = contentVM.onboardingScreensPending, !onboardingScreensPending.isEmpty {
             OnboardingPage(screens: onboardingScreensPending, onFinish: {
+                if contentVM.onboardingScreensPending?.contains(.notificationsBeta) == true {
+                    selectedTab = .favorites
+                }
                 contentVM.onboardingScreensPending = []
             })
         } else if let featurePromosPending = contentVM.featurePromosPending, !featurePromosPending.isEmpty {
@@ -258,6 +261,11 @@ struct ContentView: View {
                 }
             }
         }
+        .notificationsBeta(
+            navEntry: nearbyVM.navigationStack.lastSafe(),
+            onToastTap: { selectedTab = .more(highlight: .publicBetas) },
+            onDismissDialog: { Task { await contentVM.loadOnboardingScreens() } },
+        )
         .background(Color.sheetBackground)
     }
 
@@ -430,9 +438,9 @@ struct ContentView: View {
 
                 VStack {}
                     .toolbar(.hidden, for: .tabBar)
-                    .onAppear { selectedTab = .more }
-                    .tag(SelectedTab.more)
-                    .tabItem { TabLabel(tab: SelectedTab.more) }
+                    .onAppear { selectedTab = .more(highlight: nil) }
+                    .tag(SelectedTab.more(highlight: nil))
+                    .tabItem { TabLabel(tab: SelectedTab.more(highlight: nil)) }
             }
         }
     }
@@ -561,10 +569,11 @@ struct ContentView: View {
                         content: coverContents
                     )
                     .onChange(of: sheetRoute) { [oldSheetRoute = sheetRoute] newSheetRoute in
-                        if let oldSheetRoute,
-                           let newSheetRoute,
-                           SheetRoutes.companion.shouldResetSheetHeight(first: oldSheetRoute,
-                                                                        second: newSheetRoute) {
+                        if let oldSheetRoute, let newSheetRoute,
+                           SheetRoutes.companion.shouldResetSheetHeight(
+                               first: oldSheetRoute,
+                               second: newSheetRoute
+                           ) {
                             selectedDetent = .medium
                         }
                         errorBannerVM.setSheetRoute(sheetRoute: newSheetRoute)
@@ -587,7 +596,7 @@ struct ContentView: View {
             case let .alertDetails(alertId, line, routes, stop):
                 AlertDetailsPage(alertId: alertId, line: line, routes: routes, stop: stop, nearbyVM: nearbyVM)
 
-            case .more:
+            case let .more(category):
                 TabView(selection: $selectedTab) {
                     VStack {}
                         .onAppear { selectedTab = .favorites }
@@ -600,11 +609,11 @@ struct ContentView: View {
                         .tag(SelectedTab.nearby)
                         .tabItem { TabLabel(tab: SelectedTab.nearby) }
 
-                    MorePage()
+                    MorePage(highlight: category)
                         .toolbar(tabBarVisibility, for: .tabBar)
                         .toolbarBackground(.visible, for: .tabBar)
-                        .tag(SelectedTab.more)
-                        .tabItem { TabLabel(tab: SelectedTab.more) }
+                        .tag(SelectedTab.more(highlight: nil))
+                        .tabItem { TabLabel(tab: SelectedTab.more(highlight: nil)) }
                 }
 
             case let .saveFavorite(routeId, stopId, selectedDirection, context):

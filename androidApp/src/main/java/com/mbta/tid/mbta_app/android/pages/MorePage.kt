@@ -49,25 +49,30 @@ import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
+import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.MoreViewModel
 import org.koin.compose.koinInject
 
 @SuppressLint("LocalContextConfigurationRead")
 @Composable
-fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinInject()) {
+fun MorePage(
+    highlightSection: MoreSection.Category? = null,
+    bottomBar: @Composable () -> Unit,
+    viewModel: MoreViewModel = koinInject(),
+) {
     val context = LocalContext.current
     val locales = AppCompatDelegate.getApplicationLocales()
     val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
     val translation =
-        when {
-            primaryLocale.language == "es" -> "es"
-            primaryLocale.language == "fr" -> "fr"
-            primaryLocale.language == "ht" -> "ht"
-            primaryLocale.language == "pt" -> "pt-BR"
-            primaryLocale.language == "vi" -> "vi"
-            primaryLocale.language == "zh" && primaryLocale.script == "Hans" -> "zh-Hans-CN"
-            primaryLocale.language == "zh" && primaryLocale.script == "Hant" -> "zh-Hant-TW"
+        when (primaryLocale.language) {
+            "es" -> "es"
+            "fr" -> "fr"
+            "ht" -> "ht"
+            "pt" -> "pt-BR"
+            "vi" -> "vi"
+            "zh" if primaryLocale.script == "Hans" -> "zh-Hans-CN"
+            "zh" if primaryLocale.script == "Hant" -> "zh-Hant-TW"
             else -> "en"
         }
 
@@ -128,6 +133,7 @@ fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinI
                             sections.map { section ->
                                 MoreSectionView(
                                     section = section,
+                                    highlighted = section.id == highlightSection,
                                     updateAccessibility = { includeAccessibility ->
                                         if (notificationsEnabled) {
                                             fcmToken?.let {

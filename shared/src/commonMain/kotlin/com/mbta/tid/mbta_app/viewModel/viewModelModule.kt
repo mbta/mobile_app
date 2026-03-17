@@ -22,7 +22,14 @@ internal expect inline fun <reified T : MoleculeScopeViewModel> Module.viewModel
 public fun viewModelModule(): Module = module {
     singleOf(::ErrorBannerViewModel).bind(IErrorBannerViewModel::class)
     single {
-            FavoritesViewModel(get(), get(), get(), get(named("coroutineDispatcherDefault")), get())
+            FavoritesViewModel(
+                get(),
+                get(),
+                get(),
+                get(),
+                get(named("coroutineDispatcherDefault")),
+                get(),
+            )
         }
         .bind(IFavoritesViewModel::class)
     single {
@@ -39,6 +46,7 @@ public fun viewModelModule(): Module = module {
             )
         }
         .bind(IMapViewModel::class)
+    singleOf(::NotificationsBetaViewModel).bind(INotificationsBetaViewModel::class)
     singleOf(::RouteCardDataViewModel).bind(IRouteCardDataViewModel::class)
     singleOf(::SearchRoutesViewModel).bind(ISearchRoutesViewModel::class)
     singleOf(::SearchViewModel).bind(ISearchViewModel::class)
@@ -66,5 +74,5 @@ public fun viewModelModule(): Module = module {
             )
         }
         .bind(ITripDetailsViewModel::class)
-    single { MoreViewModel(get(named("coroutineDispatcherIO")), get()) }
+    single { MoreViewModel(get(named("coroutineDispatcherIO")), get(), get()) }
 }

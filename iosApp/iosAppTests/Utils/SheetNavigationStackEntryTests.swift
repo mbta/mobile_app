@@ -119,7 +119,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
                                                                                stopSequence: 0,
                                                                                selectionLock: false)).toSheetRoute())
 
-        XCTAssertNil(SheetNavigationStackEntry.more.toSheetRoute())
+        XCTAssertNil(SheetNavigationStackEntry.more(nil).toSheetRoute())
         XCTAssertNil(SheetNavigationStackEntry.alertDetails(alertId: "a", line: nil, routes: [], stop: nil)
             .toSheetRoute())
     }

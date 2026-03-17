@@ -11,6 +11,8 @@ import SwiftUI
 
 typealias ToastState = ToastViewModel.Toast
 
+let NOTIFICATIONS_BETA_TOAST_KEY = "notifications_beta_toast_message_key"
+
 struct ToastView: View {
     @Environment(\.colorScheme) var colorScheme
 
@@ -20,13 +22,23 @@ struct ToastView: View {
     var onDismiss: () -> Void
 
     var body: some View {
-        let attributedString = AttributedString.tryMarkdown(state.message)
+        let text = if state.message == NOTIFICATIONS_BETA_TOAST_KEY {
+            Text("\(Text("Get early access to Notifications").underline()) and provide feedback")
+        } else {
+            Text(AttributedString.tryMarkdown(state.message))
+        }
 
-        let resolvedLabel = if let accessibilityLabel { accessibilityLabel } else { Text(attributedString) }
+        let resolvedLabel = if let accessibilityLabel { accessibilityLabel } else { text }
+
+        let bodyAction: (() -> Void)? = switch onEnum(of: state.action) {
+        case let .body(action): action.onAction
+        case let .bodyWithClose(action): action.onAction
+        default: nil
+        }
 
         HStack {
             Group {
-                Text(attributedString)
+                text
                     .font(Typography.body)
                     .foregroundColor(Color.textContrast)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -38,6 +50,11 @@ struct ToastView: View {
             }
             .padding(.vertical, 16)
         }
+        .onTapGesture {
+            if let bodyAction {
+                bodyAction()
+            }
+        }
         .frame(maxWidth: .infinity)
         .background(Color.contrast)
         .cornerRadius(8)
@@ -46,31 +63,38 @@ struct ToastView: View {
     }
 
     @ViewBuilder
+    func closeButton(action: @escaping () -> Void) -> some View {
+        ActionButton(
+            kind: .dismiss,
+            circleColor: Color.contrast,
+            iconColor: Color.textContrast
+        ) {
+            action()
+            onDismiss()
+        }
+        .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
+        .padding(.trailing, 16)
+    }
+
+    @ViewBuilder
     var actionButton: some View {
         switch onEnum(of: state.action) {
-        case let .close(closeAction): ActionButton(
-                kind: .dismiss,
-                circleColor: Color.contrast,
-                iconColor: Color.textContrast
-            ) {
-                closeAction.onClose()
-                onDismiss()
-            }
-            .overlay(Circle().stroke(Color.haloContrast, lineWidth: 2).frame(width: 34, height: 34))
-            .padding(.trailing, 16)
+        case let .close(action): closeButton(action: action.onClose)
 
-        case let .custom(customAction): NavTextButton(
-                string: customAction.actionLabel,
+        case let .bodyWithClose(action): closeButton(action: action.onClose)
+
+        case let .custom(action): NavTextButton(
+                string: action.actionLabel,
                 backgroundColor: Color.contrast,
                 textColor: Color.textContrast
             ) {
-                customAction.onAction()
+                action.onAction()
                 onDismiss()
             }
             .withRoundedBorder(radius: 80, color: Color.haloContrast, width: 2)
             .padding(.trailing, 16)
 
-        case nil: EmptyView()
+        default: EmptyView()
         }
     }
 }

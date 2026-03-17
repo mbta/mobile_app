@@ -22,6 +22,7 @@ struct OnboardingScreenView: View {
     @State private var locationPermissionHandler: LocationPermissionHandler?
     @State private var localHideMaps = true
     @State private var notificationsScreenState: NotificationsScreenState = .initial
+    @State private var animationTask: Task<Void, Error>?
 
     @AccessibilityFocusState private var focusHeader: OnboardingScreen?
     @Environment(\.colorScheme) var colorScheme
@@ -222,6 +223,23 @@ struct OnboardingScreenView: View {
         case final
     }
 
+    private func animate() {
+        cancelAnimation()
+        animationTask = Task {
+            try? await Task.sleep(for: .seconds(2))
+            notificationsScreenState = .afterFavorite
+            try? await Task.sleep(for: .seconds(2))
+            notificationsScreenState = .afterSchedule
+            try? await Task.sleep(for: .seconds(2))
+            notificationsScreenState = .final
+        }
+    }
+
+    private func cancelAnimation() {
+        animationTask?.cancel()
+        notificationsScreenState = .initial
+    }
+
     @ViewBuilder private var notificationsBeta: some View {
         VStack {
             HStack(spacing: 10) {
@@ -328,14 +346,12 @@ struct OnboardingScreenView: View {
         }, background: {})
             .foregroundStyle(Color.text)
             .frame(maxHeight: .infinity)
-            .task {
-                try? await Task.sleep(for: .seconds(2))
-                notificationsScreenState = .afterFavorite
-                try? await Task.sleep(for: .seconds(2))
-                notificationsScreenState = .afterSchedule
-                try? await Task.sleep(for: .seconds(2))
-                notificationsScreenState = .final
-            }
+            .task { animate() }
+            .withScenePhaseHandlers(
+                onActive: animate,
+                onInactive: cancelAnimation,
+                onBackground: cancelAnimation,
+            )
     }
 
     func shareLocation() {
