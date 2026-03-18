@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.Alert.Effect
+import com.mbta.tid.mbta_app.model.RouteCardData.Context
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -5873,4 +5875,148 @@ class RouteCardDataTest {
                 ),
             )
         }
+
+    @Test
+    fun `Leaf alertsDisplayOrder sorts in expected order `() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val route = LineOrRoute.Route(objects.route())
+        val stop = objects.stop()
+        val now = EasternTimeInstant.now()
+
+        val hereMajorNow =
+            objects.alert {
+                id = "hereMajorNow"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            }
+        val hereMinorNow =
+            objects.alert {
+                id = "hereMinorNow"
+                effect = Effect.TrackChange
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            }
+
+        val hereElevatorNow =
+            objects.alert {
+                id = "hereElevatorNow"
+                effect = Effect.ElevatorClosure
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            }
+
+        val hereMajorLater =
+            objects.alert {
+                id = "hereMajorLater"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+            }
+        val hereMinorLater =
+            objects.alert {
+                id = "hereMinorLater"
+                effect = Effect.TrackChange
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+            }
+
+        val hereElevatorLater =
+            objects.alert {
+                id = "hereElevatorLater"
+                effect = Effect.ElevatorClosure
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+            }
+
+        val majorDownstreamNow =
+            objects.alert {
+                id = "majorDownstreamNow"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            }
+        val minorDownstreamNow =
+            objects.alert {
+                id = "minorDownstreamNow"
+                effect = Effect.TrackChange
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+            }
+
+        val majorDownstreamLater =
+            objects.alert {
+                id = "majorDownstreamLater"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+            }
+        val minorDownstreamLater =
+            objects.alert {
+                id = "minorDownstreamLater"
+                effect = Effect.TrackChange
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(10.minutes), null))
+            }
+
+        val minorDownstreamEvenLater =
+            objects.alert {
+                id = "minorDownstreamEvenLater"
+                effect = Effect.TrackChange
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(20.minutes), null))
+            }
+
+        val leaf =
+            RouteCardData.Leaf(
+                route,
+                stop,
+                0,
+                emptyList(),
+                emptySet(),
+                emptyList(),
+                alertsHere =
+                    listOf(
+                        hereMinorLater,
+                        hereMajorLater,
+                        hereElevatorLater,
+                        hereElevatorNow,
+                        hereMinorNow,
+                        hereMajorNow,
+                    ),
+                true,
+                emptyMap(),
+                null,
+                alertsDownstream =
+                    listOf(
+                        minorDownstreamEvenLater,
+                        minorDownstreamLater,
+                        majorDownstreamLater,
+                        minorDownstreamNow,
+                        majorDownstreamNow,
+                    ),
+                Context.StopDetailsFiltered,
+            )
+
+        assertEquals(
+            listOf(
+                hereMajorNow,
+                hereMinorNow,
+                majorDownstreamNow,
+                minorDownstreamNow,
+                hereMajorLater,
+                hereMinorLater,
+                majorDownstreamLater,
+                minorDownstreamLater,
+                minorDownstreamEvenLater,
+            ),
+            leaf.alertsDisplayOrder(null, false, now),
+        )
+
+        assertEquals(
+            listOf(
+                hereMajorNow,
+                hereElevatorNow,
+                hereMinorNow,
+                majorDownstreamNow,
+                minorDownstreamNow,
+                hereMajorLater,
+                hereElevatorLater,
+                hereMinorLater,
+                majorDownstreamLater,
+                minorDownstreamLater,
+                minorDownstreamEvenLater,
+            ),
+            leaf.alertsDisplayOrder(null, true, now),
+        )
+    }
 }
