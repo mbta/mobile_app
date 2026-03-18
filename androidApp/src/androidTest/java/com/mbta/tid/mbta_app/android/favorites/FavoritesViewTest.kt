@@ -37,6 +37,7 @@ class FavoritesViewTest {
                         false,
                         emptyMap(),
                         true,
+                        false,
                         emptyList(),
                         emptyList(),
                         null,

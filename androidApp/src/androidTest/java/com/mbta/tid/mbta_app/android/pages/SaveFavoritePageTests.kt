@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
+import android.Manifest
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -7,6 +8,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.rule.GrantPermissionRule
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.Favorites
@@ -23,6 +25,9 @@ import org.junit.Test
 
 class SaveFavoritePageTests {
     @get:Rule val composeTestRule = createComposeRule()
+    @get:Rule
+    val permissionRule: GrantPermissionRule? =
+        GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
 
     @Test
     fun testCloses() {

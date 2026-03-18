@@ -99,10 +99,7 @@ fun SaveFavoritePage(
     val lineOrRoute = global?.getLineOrRoute(routeId)
     val stop = global?.getStop(stopId)
 
-    if (global == null || lineOrRoute == null || stop == null) {
-        Text("Loading")
-        return
-    }
+    if (global == null || lineOrRoute == null || stop == null) return
 
     val favoritesState by favoritesViewModel.models.collectAsState()
     val favorites = favoritesState.favorites

@@ -374,6 +374,7 @@ internal class FavoritesViewModelTest : KoinTest {
                         false,
                         favorites.routeStopDirection,
                         false,
+                        false,
                         expectedRealtimeData,
                         expectedStaticData,
                         stop1.position,
