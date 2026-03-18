@@ -34,6 +34,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -122,6 +123,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -193,6 +195,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [:],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [],
             staticRouteCardData: [],
             loadedLocation: nil,
@@ -369,6 +372,7 @@ final class FavoritesViewTests: XCTestCase {
                 awaitingPredictionsAfterBackground: false,
                 favorites: [:],
                 shouldShowFirstTimeToast: true,
+                shouldShowNotificationsHint: false,
                 routeCardData: [],
                 staticRouteCardData: [],
                 loadedLocation: nil

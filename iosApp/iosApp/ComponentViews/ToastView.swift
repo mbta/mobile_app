@@ -11,7 +11,7 @@ import SwiftUI
 
 typealias ToastState = ToastViewModel.Toast
 
-let NOTIFICATIONS_BETA_TOAST_KEY = "notifications_beta_toast_message_key"
+let notificationsBetaToastKey = "notifications_beta_toast_message_key"
 
 struct ToastView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -22,7 +22,7 @@ struct ToastView: View {
     var onDismiss: () -> Void
 
     var body: some View {
-        let text = if state.message == NOTIFICATIONS_BETA_TOAST_KEY {
+        let text = if state.message == notificationsBetaToastKey {
             Text("\(Text("Get early access to Notifications").underline()) and provide feedback")
         } else {
             Text(AttributedString.tryMarkdown(state.message))

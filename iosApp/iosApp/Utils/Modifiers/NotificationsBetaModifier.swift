@@ -45,7 +45,7 @@ struct NotificationsBetaModifier: ViewModifier {
         .onChange(of: state?.showBetaToast) { showToast in
             if showToast == true {
                 toastViewModel.showToast(toast: .init(
-                    message: NOTIFICATIONS_BETA_TOAST_KEY,
+                    message: notificationsBetaToastKey,
                     duration: .indefinite,
                     isTip: false,
                     action: ToastViewModel.ToastActionBodyWithClose(
