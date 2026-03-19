@@ -104,7 +104,7 @@ internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
         getOnboardingStateBool(notificationsBetaTargetingOverride)
 
     override suspend fun notificationsFavoriteHintDismissed(): Unit =
-        setOnboardingStateBool(notificationsBetaPrompt, false)
+        setOnboardingStateBool(notificationsFavoritesHint, false)
 
     override suspend fun notificationsFavoritesHintShouldShow(): Boolean =
         getOnboardingStateBool(notificationsFavoritesHint) ?: true
@@ -120,11 +120,11 @@ internal class OnboardingRepository : IOnboardingRepository, KoinComponent {
 public class MockOnboardingRepository
 @DefaultArgumentInterop.Enabled
 constructor(
-    private val onMarkComplete: (OnboardingScreen) -> Unit = {},
-    private val onNotificationsBetaFeedbackDialogSet: (Boolean) -> Unit = {},
-    private val onNotificationsBetaPromptDismissed: () -> Unit = {},
-    private val onNotificationsBetaReset: () -> Unit = {},
-    private val onNotificationsFavoriteHintDismissed: () -> Unit = {},
+    public var onMarkComplete: (OnboardingScreen) -> Unit = {},
+    public var onNotificationsBetaFeedbackDialogSet: (Boolean) -> Unit = {},
+    public var onNotificationsBetaPromptDismissed: () -> Unit = {},
+    public var onNotificationsBetaReset: () -> Unit = {},
+    public var onNotificationsFavoriteHintDismissed: () -> Unit = {},
 ) : IOnboardingRepository, KoinComponent {
     public var pendingOnboarding: List<OnboardingScreen> = emptyList()
     public var notificationsBetaFeedbackDialogShouldShow: Boolean = false
