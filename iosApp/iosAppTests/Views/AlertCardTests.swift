@@ -196,7 +196,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
-            spec: .regular,
+            spec: .basic,
             routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
@@ -224,7 +224,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            spec: .regular,
+            spec: .basic,
             routeAccents: .init(),
             onViewDetails: {}
         )

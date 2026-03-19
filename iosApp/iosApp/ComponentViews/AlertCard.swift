@@ -142,7 +142,7 @@ struct AlertCard: View {
                     alert.effect = .serviceChange
                 },
                 alertSummary: nil,
-                spec: .regular,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), type: .commuterRail),
                 onViewDetails: {}
             )
@@ -194,7 +194,7 @@ struct AlertCard: View {
                     recurrence: nil,
                     isUpdate: true
                 ),
-                spec: .regular,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
@@ -205,7 +205,7 @@ struct AlertCard: View {
                 alertSummary: AlertSummary.AllClear(
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 ),
-                spec: .regular,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )

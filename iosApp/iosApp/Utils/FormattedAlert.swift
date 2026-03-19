@@ -581,7 +581,7 @@ struct FormattedAlert: Equatable {
         case .delay: delayHeader
         case .downstream: summary ?? AttributedString.tryMarkdown(downstreamLabel)
         case .elevator: elevatorHeader
-        case .regular: summary ?? AttributedString.tryMarkdown(effect)
+        case .basic: summary ?? AttributedString.tryMarkdown(effect)
         default: switch (type, alert?.effect ?? alertSummary?.effect) {
             case (.bus, .cancellation) where alertSummary is TripSpecificAlertSummary:
                 AttributedString(NSLocalizedString("Bus cancelled", comment: ""))
