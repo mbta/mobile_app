@@ -34,7 +34,7 @@ import org.koin.compose.koinInject
 fun NotificationsBeta(
     navigateTopRoute: (Routes) -> Unit,
     onDismissDialog: () -> Unit,
-    instanceIdCache: IInstanceIdCache = InstanceIdCache.shared,
+    instanceIdCache: IInstanceIdCache = koinInject(),
     viewModel: INotificationsBetaViewModel = koinInject(),
     toastViewModel: IToastViewModel = koinInject(),
 ) {
