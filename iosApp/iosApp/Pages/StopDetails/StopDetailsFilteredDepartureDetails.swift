@@ -140,7 +140,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
             alertCards
-
             if isAllServiceDisrupted {
                 EmptyView()
             } else if let noPredictionsStatus {
@@ -355,7 +354,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     @ViewBuilder
     var alertCards: some View {
         if !displayAlerts.allAlerts.isEmpty ||
-            (settingsCache.get(.stationAccessibility) && (stop?.isWheelchairAccessible == false)) {
+            (settingsCache.get(.stationAccessibility) && (!leaf.stop.isWheelchairAccessible)) {
             VStack(spacing: 16) {
                 ForEach(displayAlerts.firstTier, id: \.alert.id) { displayAlert in
                     let alert = displayAlert.alert
@@ -363,7 +362,8 @@ struct StopDetailsFilteredDepartureDetails: View {
                         alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
                     }
                 }
-                if settingsCache.get(.stationAccessibility), stop?.isWheelchairAccessible == false {
+
+                if settingsCache.get(.stationAccessibility), !leaf.stop.isWheelchairAccessible {
                     NotAccessibleCard()
                 }
                 ForEach(displayAlerts.secondTier, id: \.alert.id) { displayAlert in
