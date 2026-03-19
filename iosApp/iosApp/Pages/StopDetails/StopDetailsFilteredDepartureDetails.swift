@@ -50,12 +50,12 @@ struct StopDetailsFilteredDepartureDetails: View {
     var isAllServiceDisrupted: Bool { leafFormat.isAllServiceDisrupted }
 
     var patternsHere: [RoutePattern] { leaf.routePatterns }
-    var alerts: [Shared.Alert] { leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect != .elevatorClosure } }
-    var elevatorAlerts: [Shared.Alert] {
-        leaf.alertsHere(tripId: tripFilter?.tripId).filter { $0.effect == .elevatorClosure }
+    var displayAlerts: Shared.DisplayAlerts {
+        DisplayAlerts.companion.forAlertsAtStop(alertsHere: leaf.alertsHere(tripId: tripFilter?.tripId),
+                                                alertsDownstream: leaf.alertsDownstream(tripId: tripFilter?.tripId),
+                                                includeElevatorAlerts: settingsCache.get(.stationAccessibility),
+                                                now: now)
     }
-
-    var downstreamAlerts: [Shared.Alert] { leaf.alertsDownstream(tripId: tripFilter?.tripId) }
 
     var stop: Stop? { global?.getStop(stopId: stopId) }
 
@@ -71,17 +71,12 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    var hasAccessibilityWarning: Bool {
-        !elevatorAlerts.isEmpty || !leaf.stop.isWheelchairAccessible
-    }
-
     @AccessibilityFocusState private var selectedDepartureFocus: String?
     private let cardFocusId = "_card"
 
     struct AlertSummaryParams: Equatable {
         let global: GlobalResponse?
-        let alerts: [Shared.Alert]
-        let downstreamAlerts: [Shared.Alert]
+        let displayAlerts: Shared.DisplayAlerts
         let stopId: String
         let directionId: Int32
         let patternsHere: [RoutePattern]?
@@ -91,8 +86,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     var alertSummaryParams: AlertSummaryParams {
         AlertSummaryParams(
             global: global,
-            alerts: alerts,
-            downstreamAlerts: downstreamAlerts,
+            displayAlerts: displayAlerts,
             stopId: stopId,
             directionId: stopFilter.directionId,
             patternsHere: patternsHere,
@@ -264,7 +258,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                                 routeId: leaf.lineOrRoute.id,
                                 stopId: leaf.stop.id,
                                 pinned: favorite,
-                                alert: alerts.count > 0,
+                                alert: displayAlerts.allAlerts.count > 0,
                                 routeType: routeAccents.type,
                                 noTrips: nil
                             )
@@ -292,7 +286,7 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     private func alertSummaries(_ alertSummaryParams: AlertSummaryParams) async -> [String: AlertSummary?] {
-        let allAlerts = alertSummaryParams.alerts + alertSummaryParams.downstreamAlerts
+        let allAlerts = alertSummaryParams.displayAlerts.allAlerts
         var alertMap: [String: AlertSummary?] = [:]
 
         if let global = alertSummaryParams.global, let patternsHere = alertSummaryParams.patternsHere {
@@ -345,17 +339,9 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     @ViewBuilder
-    func alertCard(_ alert: Shared.Alert, _ summary: AlertSummary?, _ spec: AlertCardSpec? = nil) -> some View {
-        let significance = alert.significance(atTime: now)
-        let spec: AlertCardSpec = if let spec {
-            spec
-        } else if significance == .major, isAllServiceDisrupted {
-            .major
-        } else if significance == .minor, alert.effect == .delay {
-            .delay
-        } else {
-            .secondary
-        }
+    func alertCard(_ displayAlert: Shared.DisplayAlert, _ summary: AlertSummary?) -> some View {
+        let alert = displayAlert.alert
+        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
 
         AlertCard(
             alert: alert,
@@ -368,29 +354,25 @@ struct StopDetailsFilteredDepartureDetails: View {
 
     @ViewBuilder
     var alertCards: some View {
-        if !alerts.isEmpty ||
-            !downstreamAlerts.isEmpty ||
-            (settingsCache.get(.stationAccessibility) && hasAccessibilityWarning) {
+        if !displayAlerts.allAlerts.isEmpty ||
+            (settingsCache.get(.stationAccessibility) && (stop?.isWheelchairAccessible == false)) {
             VStack(spacing: 16) {
-                ForEach(alerts, id: \.id) { alert in
+                ForEach(displayAlerts.firstTier, id: \.alert.id) { displayAlert in
+                    let alert = displayAlert.alert
                     if alertSummaries.keys.contains(alert.id) {
-                        alertCard(alert, alertSummaries[alert.id] ?? nil)
+                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
                     }
                 }
-                ForEach(downstreamAlerts, id: \.id) { alert in
+                if settingsCache.get(.stationAccessibility), stop?.isWheelchairAccessible == false {
+                    NotAccessibleCard()
+                }
+                ForEach(displayAlerts.secondTier, id: \.alert.id) { displayAlert in
+                    let alert = displayAlert.alert
                     if alertSummaries.keys.contains(alert.id) {
-                        alertCard(alert, alertSummaries[alert.id] ?? nil, .downstream)
+                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
                     }
                 }
-                if settingsCache.get(.stationAccessibility), hasAccessibilityWarning {
-                    if !elevatorAlerts.isEmpty {
-                        ForEach(elevatorAlerts, id: \.id) { alert in
-                            alertCard(alert, nil, .elevator)
-                        }
-                    } else {
-                        NotAccessibleCard()
-                    }
-                }
+
             }.padding(.horizontal, 16)
         }
     }

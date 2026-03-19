@@ -15,17 +15,16 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
     public fun cardSpec(now: EasternTimeInstant, isAllServiceDisrupted: Boolean): AlertCardSpec {
 
         val significance = alert.significance(now)
-        if (isDownstream) {
-            return AlertCardSpec.Downstream
+        return if (isDownstream) {
+            AlertCardSpec.Downstream
         } else if (significance == AlertSignificance.Major && isAllServiceDisrupted) {
-            return AlertCardSpec.Takeover
-        }
-        if (significance == AlertSignificance.Minor && alert.effect == Alert.Effect.Delay) {
-            return AlertCardSpec.Delay
+            AlertCardSpec.Takeover
+        } else if (significance == AlertSignificance.Minor && alert.effect == Alert.Effect.Delay) {
+            AlertCardSpec.Delay
         } else if (alert.effect == Alert.Effect.ElevatorClosure) {
-            return AlertCardSpec.Elevator
+            AlertCardSpec.Elevator
         } else {
-            return AlertCardSpec.Regular
+            AlertCardSpec.Regular
         }
     }
 }
