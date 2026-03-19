@@ -222,7 +222,7 @@ fun StopDetailsFilteredDeparturesView(
                 // alert completely, so the header doesn’t flicker before the summary loads
 
                 // TODO: condense these into single container
-                displayAlerts.firstTier.forEach {
+                displayAlerts.highPriority.forEach {
                     AlertCard(
                         it,
                         if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]
@@ -234,7 +234,7 @@ fun StopDetailsFilteredDeparturesView(
                     NotAccessibleCard()
                 }
 
-                displayAlerts.secondTier.forEach {
+                displayAlerts.lowPriority.forEach {
                     AlertCard(
                         it,
                         if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]

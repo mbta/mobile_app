@@ -154,7 +154,7 @@ fun AlertCardPreview() {
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
-            AlertCardSpec.Regular,
+            AlertCardSpec.Basic,
             routeAccents =
                 TripRouteAccents(
                     color = Color.fromHex("80276C"),

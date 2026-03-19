@@ -89,7 +89,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 null,
-                AlertCardSpec.Regular,
+                AlertCardSpec.Basic,
                 routeAccents,
                 { onViewDetailsClicked = true },
             )
@@ -264,7 +264,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
-                AlertCardSpec.Regular,
+                AlertCardSpec.Basic,
                 routeAccents,
                 {},
             )

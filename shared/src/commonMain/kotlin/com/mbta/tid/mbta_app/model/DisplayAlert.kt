@@ -7,7 +7,7 @@ public enum class AlertCardSpec {
     Downstream,
     Elevator,
     Takeover,
-    Regular,
+    Basic,
 }
 
 public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = false) {
@@ -24,7 +24,7 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
         } else if (alert.effect == Alert.Effect.ElevatorClosure) {
             AlertCardSpec.Elevator
         } else {
-            AlertCardSpec.Regular
+            AlertCardSpec.Basic
         }
     }
 }

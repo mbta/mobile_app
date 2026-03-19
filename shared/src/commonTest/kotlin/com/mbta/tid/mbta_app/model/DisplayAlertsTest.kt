@@ -113,7 +113,7 @@ class DisplayAlertsTest {
 
             assertEquals(
                 listOf(hereMajorNow, hereMinorNow),
-                displayAlerts.firstTier.map { it.alert },
+                displayAlerts.highPriority.map { it.alert },
             )
             assertEquals(
                 listOf(
@@ -125,7 +125,7 @@ class DisplayAlertsTest {
                     downstreamMinorLater,
                     downstreamMinorEvenLater,
                 ),
-                displayAlerts.secondTier.map { it.alert },
+                displayAlerts.lowPriority.map { it.alert },
             )
         }
 
@@ -155,7 +155,7 @@ class DisplayAlertsTest {
 
             assertEquals(
                 listOf(hereMajorNow, hereElevatorNow, hereMinorNow),
-                displayAlerts.firstTier.map { it.alert },
+                displayAlerts.highPriority.map { it.alert },
             )
             assertEquals(
                 listOf(
@@ -168,7 +168,7 @@ class DisplayAlertsTest {
                     Pair(downstreamMinorLater, true),
                     Pair(downstreamMinorEvenLater, true),
                 ),
-                displayAlerts.secondTier.map { Pair(it.alert, it.isDownstream) },
+                displayAlerts.lowPriority.map { Pair(it.alert, it.isDownstream) },
             )
         }
 }

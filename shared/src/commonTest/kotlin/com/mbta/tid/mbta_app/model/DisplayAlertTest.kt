@@ -45,7 +45,7 @@ class DisplayAlertTest {
 
     @Test
     fun `cardSpec major with still some service is regular`() = runBlocking {
-        assertEquals(AlertCardSpec.Regular, DisplayAlert(hereMajorNow).cardSpec(now, false))
+        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorNow).cardSpec(now, false))
     }
 
     @Test
@@ -63,7 +63,7 @@ class DisplayAlertTest {
 
     @Test
     fun `cardSpec major here later is regular`() = runBlocking {
-        assertEquals(AlertCardSpec.Regular, DisplayAlert(hereMajorLater).cardSpec(now, false))
+        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorLater).cardSpec(now, false))
     }
 
     @Test

@@ -356,7 +356,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         if !displayAlerts.allAlerts.isEmpty ||
             (settingsCache.get(.stationAccessibility) && (!leaf.stop.isWheelchairAccessible)) {
             VStack(spacing: 16) {
-                ForEach(displayAlerts.firstTier, id: \.alert.id) { displayAlert in
+                ForEach(displayAlerts.highPriority, id: \.alert.id) { displayAlert in
                     let alert = displayAlert.alert
                     if alertSummaries.keys.contains(alert.id) {
                         alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
@@ -366,7 +366,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 if settingsCache.get(.stationAccessibility), !leaf.stop.isWheelchairAccessible {
                     NotAccessibleCard()
                 }
-                ForEach(displayAlerts.secondTier, id: \.alert.id) { displayAlert in
+                ForEach(displayAlerts.lowPriority, id: \.alert.id) { displayAlert in
                     let alert = displayAlert.alert
                     if alertSummaries.keys.contains(alert.id) {
                         alertCard(displayAlert, alertSummaries[alert.id] ?? nil)

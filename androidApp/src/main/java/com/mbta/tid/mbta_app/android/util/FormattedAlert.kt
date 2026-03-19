@@ -170,8 +170,7 @@ data class FormattedAlert(
                 summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
             AlertCardSpec.Delay -> delayHeader(resources)
-            AlertCardSpec.Regular ->
-                summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
+            AlertCardSpec.Basic -> summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
             else -> {
                 val effect = alert?.effect ?: alertSummary?.effect
                 val isTripSpecificAlertSummary =

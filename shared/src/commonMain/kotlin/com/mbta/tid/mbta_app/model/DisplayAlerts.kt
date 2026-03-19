@@ -3,12 +3,13 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
+/** highPriority: Alerts here & now lowPriority: Alerts later & downstream */
 public data class DisplayAlerts(
-    val firstTier: List<DisplayAlert>,
-    val secondTier: List<DisplayAlert>,
+    val highPriority: List<DisplayAlert>,
+    val lowPriority: List<DisplayAlert>,
 ) {
 
-    public val allAlerts: List<Alert> = (firstTier + secondTier).map { it.alert }
+    public val allAlerts: List<Alert> = (highPriority + lowPriority).map { it.alert }
 
     public companion object {
         /**
