@@ -11,10 +11,6 @@ interface IInstanceIdCache {
 }
 
 class InstanceIdCache : IInstanceIdCache {
-    companion object {
-        val shared = InstanceIdCache()
-    }
-
     private val _instanceId = MutableStateFlow<String?>(null)
     override val instanceId = _instanceId.asStateFlow()
 

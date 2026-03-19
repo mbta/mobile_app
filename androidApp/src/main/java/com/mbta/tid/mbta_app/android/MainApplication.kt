@@ -18,7 +18,6 @@ import com.mbta.tid.mbta_app.initKoin
 import com.mbta.tid.mbta_app.network.NetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.repositories.AccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.CurrentAppVersionRepository
-import org.koin.core.module.dsl.*
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.bind
 import org.koin.dsl.module
@@ -51,7 +50,7 @@ class MainApplication : Application() {
         fun koinViewModelModule() = module {
             single<IMapboxConfigManager> { MapboxConfigManager(get()) }
             single { SettingsCache(get()) }
-            single { InstanceIdCache.shared }.bind(IInstanceIdCache::class)
+            single { InstanceIdCache() }.bind(IInstanceIdCache::class)
             viewModelOf(::ContentViewModel)
             viewModelOf(::NearbyTransitViewModel)
         }
