@@ -9,8 +9,8 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.directionNameFormatted
-import com.mbta.tid.mbta_app.android.stopDetails.AlertCardSpec
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.RouteType
@@ -170,7 +170,7 @@ data class FormattedAlert(
                 summary(resources) ?: AnnotatedString.fromHtml(downstreamEffect(resources))
             AlertCardSpec.Elevator -> elevatorHeader(resources)
             AlertCardSpec.Delay -> delayHeader(resources)
-            AlertCardSpec.Secondary ->
+            AlertCardSpec.Regular ->
                 summary(resources) ?: AnnotatedString.fromHtml(effect(resources))
             else -> {
                 val effect = alert?.effect ?: alertSummary?.effect

@@ -191,37 +191,6 @@ public data class RouteCardData(
                 (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
             }
 
-        /**
-         * Alerts sorted into display order based on the following features.
-         *
-         * Time (now before later) Place (here before downstream) Elevator impact (optional, when
-         * includeElevatorAlerts = true) Significance (major before minor) Time (as a tiebreaker for
-         * later alerts - show earliest later first)
-         */
-        public fun alertsDisplayOrder(
-            tripId: String? = null,
-            includeElevatorAlerts: Boolean = false,
-            now: EasternTimeInstant,
-        ): List<Alert> {
-            val alertsHere = alertsHere(tripId)
-            val idsHere = alertsHere.map { it.id }.toSet()
-            val allAlerts = alertsHere + alertsDownstream(tripId)
-            return allAlerts
-                .filter {
-                    if (includeElevatorAlerts) {
-                        true
-                    } else {
-                        it.effect != Effect.ElevatorClosure
-                    }
-                }
-                .sortedWith(
-                    compareByDescending<Alert> { it.isActive(now) }
-                        .thenByDescending { idsHere.contains(it.id) }
-                        .thenByDescending { it.significance(null) }
-                        .thenBy { it.currentOrNextPeriod(now)?.start?.instant }
-                )
-        }
-
         private data class PotentialService(
             val routeId: Route.Id,
             val headsign: String,
