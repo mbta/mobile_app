@@ -34,10 +34,11 @@ import org.koin.compose.koinInject
 fun NotificationsBeta(
     navigateTopRoute: (Routes) -> Unit,
     onDismissDialog: () -> Unit,
+    instanceIdCache: IInstanceIdCache = InstanceIdCache.shared,
     viewModel: INotificationsBetaViewModel = koinInject(),
     toastViewModel: IToastViewModel = koinInject(),
 ) {
-    val instanceId by InstanceIdCache.shared.instanceId.collectAsState()
+    val instanceId by instanceIdCache.instanceId.collectAsState()
     val state by viewModel.models.collectAsState()
 
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)

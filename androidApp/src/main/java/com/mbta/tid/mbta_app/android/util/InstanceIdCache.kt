@@ -3,15 +3,20 @@ package com.mbta.tid.mbta_app.android.util
 import android.util.Log
 import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class InstanceIdCache {
+interface IInstanceIdCache {
+    val instanceId: StateFlow<String?>
+}
+
+class InstanceIdCache : IInstanceIdCache {
     companion object {
         val shared = InstanceIdCache()
     }
 
     private val _instanceId = MutableStateFlow<String?>(null)
-    val instanceId = _instanceId.asStateFlow()
+    override val instanceId = _instanceId.asStateFlow()
 
     init {
         FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
@@ -25,4 +30,8 @@ class InstanceIdCache {
             }
         }
     }
+}
+
+class MockInstanceIdCache(initialInstanceId: String? = null) : IInstanceIdCache {
+    override val instanceId = MutableStateFlow(initialInstanceId)
 }
