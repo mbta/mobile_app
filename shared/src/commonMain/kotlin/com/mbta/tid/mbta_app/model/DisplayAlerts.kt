@@ -34,13 +34,7 @@ public data class DisplayAlerts(
             val allAlerts = alertsHere + alertsDownstream
             val (tier1, tier2) =
                 allAlerts
-                    .filter {
-                        if (includeElevatorAlerts) {
-                            true
-                        } else {
-                            it.effect != Effect.ElevatorClosure
-                        }
-                    }
+                    .filter { includeElevatorAlerts || it.effect != Effect.ElevatorClosure }
                     .sortedWith(
                         compareByDescending<Alert> { it.isActive(now) }
                             .thenByDescending { idsHere.contains(it.id) }
