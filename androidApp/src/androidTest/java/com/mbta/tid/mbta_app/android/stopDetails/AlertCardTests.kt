@@ -39,7 +39,7 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 null,
                 AlertCardSpec.Downstream,
@@ -62,7 +62,7 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 null,
                 AlertCardSpec.Takeover,
@@ -86,7 +86,7 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 null,
                 AlertCardSpec.Basic,
@@ -109,7 +109,7 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 null,
                 AlertCardSpec.Elevator,
@@ -141,7 +141,7 @@ class AlertCardTests {
             }
         var onViewDetailsClicked = false
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 null,
                 AlertCardSpec.Elevator,
@@ -165,9 +165,7 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.HeavyRidership
             }
-        composeTestRule.setContent {
-            AlertRowCard(alert, null, AlertCardSpec.Delay, routeAccents, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Delays due to heavy ridership").assertIsDisplayed()
     }
@@ -183,7 +181,7 @@ class AlertCardTests {
 
         val time = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 AlertSummary.Standard(
                     Alert.Effect.Delay,
@@ -209,9 +207,7 @@ class AlertCardTests {
                 effect = Alert.Effect.Delay
                 cause = Alert.Cause.UnknownCause
             }
-        composeTestRule.setContent {
-            AlertRowCard(alert, null, AlertCardSpec.Delay, routeAccents, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Delays").assertIsDisplayed()
     }
@@ -225,9 +221,7 @@ class AlertCardTests {
                 cause = Alert.Cause.SingleTracking
                 severity = 1
             }
-        composeTestRule.setContent {
-            AlertRowCard(alert, null, AlertCardSpec.Delay, routeAccents, {})
-        }
+        composeTestRule.setContent { AlertCard(alert, null, AlertCardSpec.Delay, routeAccents, {}) }
 
         composeTestRule.onNodeWithText("Single Tracking").assertIsDisplayed()
     }
@@ -243,7 +237,7 @@ class AlertCardTests {
         // Fixed time so we can have a specific day of the week (sat)
         val endTime = EasternTimeInstant(2025, Month.APRIL, 5, 3, 0)
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
                 AlertCardSpec.Takeover,
@@ -267,7 +261,7 @@ class AlertCardTests {
             }
         val endTime = EasternTimeInstant(2025, Month.APRIL, 2, 9, 0)
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
                 AlertCardSpec.Basic,
@@ -292,7 +286,7 @@ class AlertCardTests {
                 activePeriod(now - 3.days, now - 1.days)
             }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 AlertSummary.AllClear(
                     location =
@@ -322,7 +316,7 @@ class AlertCardTests {
                 activePeriod(now - 3.days, now + 3.days)
             }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 AlertSummary.Standard(
                     effect = Alert.Effect.Shuttle,
@@ -351,7 +345,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Cancellation }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripSpecificAlertSummary(
                     TripSpecificAlertSummary.TripFrom(
@@ -382,7 +376,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Suspension }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripSpecificAlertSummary(
                     TripSpecificAlertSummary.MultipleTrips,
@@ -406,7 +400,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripShuttleAlertSummary(
                     TripShuttleAlertSummary.SingleTrip(
@@ -439,7 +433,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.StationClosure }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripSpecificAlertSummary(
                     TripSpecificAlertSummary.TripTo(
@@ -471,7 +465,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Cancellation }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripSpecificAlertSummary(
                     TripSpecificAlertSummary.TripFrom(
@@ -503,7 +497,7 @@ class AlertCardTests {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Shuttle }
         composeTestRule.setContent {
-            AlertRowCard(
+            AlertCard(
                 alert,
                 TripShuttleAlertSummary(
                     TripShuttleAlertSummary.SingleTrip(

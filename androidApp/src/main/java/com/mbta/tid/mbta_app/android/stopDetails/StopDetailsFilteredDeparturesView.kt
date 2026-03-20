@@ -172,15 +172,16 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     @Composable
-    fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?) {
+    fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
         val spec = displayAlert.cardSpec(now, isAllServiceDisrupted)
 
-        AlertRowCard(
+        AlertCard(
             displayAlert.alert,
             summary,
             spec,
             routeAccents,
             onViewDetails = { openAlertDetails(displayAlert.alert, spec) },
+            modifier,
         )
     }
 
@@ -221,26 +222,36 @@ fun StopDetailsFilteredDeparturesView(
                 // for alerts here and downstream, if the alertSummaries are still loading, skip the
                 // alert completely, so the header doesn’t flicker before the summary loads
 
-                // TODO: condense these into single container
-                displayAlerts.highPriority.forEach {
-                    AlertCard(
-                        it,
-                        if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]
-                        else return@forEach,
-                    )
-                }
-
-                if (showStationAccessibility && !stop.isWheelchairAccessible) {
-                    NotAccessibleCard()
-                }
-
-                displayAlerts.lowPriority.forEach {
-                    AlertCard(
-                        it,
-                        if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]
-                        else return@forEach,
-                    )
-                }
+                AlertListContainer(
+                    highPriority =
+                        displayAlerts.highPriority.map {
+                            { modifier ->
+                                AlertCard(
+                                    it,
+                                    if (alertSummaries.containsKey(it.alert.id))
+                                        alertSummaries[it.alert.id]
+                                    else return@map,
+                                    modifier = modifier,
+                                )
+                            }
+                        },
+                    if (showStationAccessibility && !stop.isWheelchairAccessible) {
+                        { modifier: Modifier -> NotAccessibleCard(modifier) }
+                    } else {
+                        null
+                    },
+                    displayAlerts.lowPriority.map {
+                        { modifier ->
+                            AlertCard(
+                                it,
+                                if (alertSummaries.containsKey(it.alert.id))
+                                    alertSummaries[it.alert.id]
+                                else return@map,
+                                modifier = modifier,
+                            )
+                        }
+                    },
+                )
             }
         }
 

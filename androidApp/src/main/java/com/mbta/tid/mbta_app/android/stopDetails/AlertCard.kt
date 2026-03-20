@@ -19,7 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,77 +39,6 @@ import com.mbta.tid.mbta_app.model.StopAlertState
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.datetime.Month
-
-@Composable
-fun AlertContainer(
-    highPriority: List<@Composable (modifier: Modifier) -> Unit> = listOf(),
-    middleContent: (@Composable (modifier: Modifier) -> Unit)? = null,
-    lowPriority: List<@Composable (modifier: Modifier) -> Unit> = listOf(),
-) {
-    val highPriorityCount = highPriority.size
-    val lowPriorityCount = lowPriority.size
-    val outerCornerRadius = 8.dp
-    val internalCornerRadius = 4.dp
-    Column(
-        modifier = Modifier.haloContainer(2.dp, backgroundColor = Color.Transparent),
-        verticalArrangement = Arrangement.spacedBy(1.dp),
-    ) {
-        highPriority.forEachIndexed { index, content ->
-            val topRadius = if (index == 0) outerCornerRadius else internalCornerRadius
-            val bottomRadius =
-                if (index == highPriorityCount && (middleContent == null && lowPriorityCount == 0))
-                    outerCornerRadius
-                else internalCornerRadius
-            content(
-                Modifier.background(
-                    colorResource(R.color.fill3),
-                    RoundedCornerShape(
-                        topStart = topRadius,
-                        topEnd = topRadius,
-                        bottomStart = bottomRadius,
-                        bottomEnd = bottomRadius,
-                    ),
-                )
-            )
-        }
-
-        val middleContentTopRadius =
-            if (highPriorityCount == 0) outerCornerRadius else internalCornerRadius
-        val middleContentBottomRadius =
-            if (lowPriorityCount == 0) outerCornerRadius else internalCornerRadius
-
-        middleContent?.invoke(
-            Modifier.background(
-                colorResource(R.color.fill3),
-                RoundedCornerShape(
-                    topStart = middleContentTopRadius,
-                    topEnd = middleContentTopRadius,
-                    bottomStart = middleContentBottomRadius,
-                    bottomEnd = middleContentBottomRadius,
-                ),
-            )
-        )
-
-        lowPriority.forEachIndexed { index, content ->
-            val topRadius =
-                if (index == 0 && highPriorityCount == 0 && middleContent == null) outerCornerRadius
-                else internalCornerRadius
-            val bottomRadius =
-                if (index == highPriorityCount) outerCornerRadius else internalCornerRadius
-            content(
-                Modifier.background(
-                    colorResource(R.color.fill2),
-                    RoundedCornerShape(
-                        topStart = topRadius,
-                        topEnd = topRadius,
-                        bottomStart = bottomRadius,
-                        bottomEnd = bottomRadius,
-                    ),
-                )
-            )
-        }
-    }
-}
 
 @Composable
 private fun TakeoverAlertCard(
@@ -183,7 +111,7 @@ private fun TakeoverAlertCard(
 }
 
 @Composable
-fun AlertRowCard(
+fun AlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
     cardSpec: AlertCardSpec,
@@ -260,7 +188,7 @@ fun AlertCardPreview() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.background(Color.Blue),
     ) {
-        AlertRowCard(
+        AlertCard(
             ObjectCollectionBuilder.Single.alert({
                 header = "Orange Line suspended from point A to point B"
                 effect = Alert.Effect.Suspension
@@ -276,7 +204,7 @@ fun AlertCardPreview() {
             onViewDetails = {},
         )
 
-        AlertRowCard(
+        AlertCard(
             ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Cancellation },
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(
@@ -296,46 +224,34 @@ fun AlertCardPreview() {
             onViewDetails = {},
         )
 
-        AlertContainer(
-            highPriority =
-                listOf({ modifier ->
-                    AlertRowCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ServiceChange
-                        }),
-                        null,
-                        AlertCardSpec.Basic,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("80276C"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.COMMUTER_RAIL,
-                            ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                }),
-            middleContent = { modifier -> NotAccessibleCard(modifier) },
-            lowPriority =
-                listOf({ modifier ->
-                    AlertRowCard(
-                        ObjectCollectionBuilder.Single.alert({
-                            effect = Alert.Effect.ElevatorClosure
-                            header =
-                                "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
-                        }),
-                        null,
-                        AlertCardSpec.Elevator,
-                        routeAccents =
-                            TripRouteAccents(
-                                color = Color.fromHex("ED8B00"),
-                                textColor = Color.fromHex("FFFFFF"),
-                                type = RouteType.HEAVY_RAIL,
-                            ),
-                        modifier = modifier,
-                        onViewDetails = {},
-                    )
-                }),
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
+            null,
+            AlertCardSpec.Basic,
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("80276C"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.COMMUTER_RAIL,
+                ),
+            onViewDetails = {},
+        )
+
+        AlertCard(
+            ObjectCollectionBuilder.Single.alert({
+                effect = Alert.Effect.ElevatorClosure
+                header =
+                    "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
+            }),
+            null,
+            AlertCardSpec.Elevator,
+            routeAccents =
+                TripRouteAccents(
+                    color = Color.fromHex("ED8B00"),
+                    textColor = Color.fromHex("FFFFFF"),
+                    type = RouteType.HEAVY_RAIL,
+                ),
+            onViewDetails = {},
         )
     }
 }

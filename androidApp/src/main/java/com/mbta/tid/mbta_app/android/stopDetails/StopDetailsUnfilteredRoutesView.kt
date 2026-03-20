@@ -121,23 +121,34 @@ fun StopDetailsUnfilteredRoutesView(
                     item {
                         Column(Modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             if (elevatorAlerts.isNotEmpty()) {
-                                elevatorAlerts.map {
-                                    AlertRowCard(
-                                        it,
-                                        null,
-                                        AlertCardSpec.Elevator,
-                                        TripRouteAccents(
-                                            color = Color.Unspecified,
-                                            textColor = colorResource(R.color.text),
-                                            type = RouteType.BUS,
-                                        ),
-                                        {
-                                            openModal(
-                                                ModalRoutes.AlertDetails(it.id, null, null, stop.id)
-                                            )
-                                        },
-                                    )
-                                }
+                                AlertListContainer(
+                                    highPriority =
+                                        elevatorAlerts.map {
+                                            { modifier ->
+                                                AlertCard(
+                                                    it,
+                                                    null,
+                                                    AlertCardSpec.Elevator,
+                                                    TripRouteAccents(
+                                                        color = Color.Unspecified,
+                                                        textColor = colorResource(R.color.text),
+                                                        type = RouteType.BUS,
+                                                    ),
+                                                    {
+                                                        openModal(
+                                                            ModalRoutes.AlertDetails(
+                                                                it.id,
+                                                                null,
+                                                                null,
+                                                                stop.id,
+                                                            )
+                                                        )
+                                                    },
+                                                    modifier,
+                                                )
+                                            }
+                                        }
+                                )
                             } else {
                                 NotAccessibleCard(Modifier.haloContainer(2.dp))
                             }
