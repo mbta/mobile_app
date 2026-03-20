@@ -9,14 +9,6 @@
 import Shared
 import SwiftUI
 
-enum AlertCardSpec {
-    case major
-    case downstream
-    case secondary
-    case elevator
-    case delay
-}
-
 struct AlertCard: View {
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
@@ -53,7 +45,7 @@ struct AlertCard: View {
 
     var iconSize: Double {
         switch spec {
-        case .major: majorIconSize
+        case .takeover: majorIconSize
         case .elevator: elevatorIconSize
         default: miniIconSize
         }
@@ -75,15 +67,15 @@ struct AlertCard: View {
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
                     Text(formattedAlert.alertCardHeader(spec: spec, type: routeAccents.type))
-                        .font(spec == .major ? Typography.title2Bold : Typography.callout)
+                        .font(spec == .takeover ? Typography.title2Bold : Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
-                if spec != .major {
+                if spec != .takeover {
                     Spacer()
                     InfoIcon(size: infoIconSize)
                 }
             }
-            if spec == .major {
+            if spec == .takeover {
                 routeAccents.color.opacity(0.25).frame(height: 2)
                 Text(formattedAlert.alertCardMajorBody)
                     .font(Typography.callout)
@@ -117,7 +109,7 @@ struct AlertCard: View {
     }
 
     var body: some View {
-        if spec != .major, let onViewDetails {
+        if spec != .takeover, let onViewDetails {
             Button(
                 action: onViewDetails,
                 label: { card }
@@ -139,7 +131,7 @@ struct AlertCard: View {
                     alert.effect = .suspension
                 },
                 alertSummary: nil,
-                spec: .major,
+                spec: .takeover,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
@@ -150,7 +142,7 @@ struct AlertCard: View {
                     alert.effect = .serviceChange
                 },
                 alertSummary: nil,
-                spec: .secondary,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "80276C"), textColor: Color(hex: "FFFFFF"), type: .commuterRail),
                 onViewDetails: {}
             )
@@ -185,7 +177,7 @@ struct AlertCard: View {
                     recurrence: nil,
                     isUpdate: false
                 ),
-                spec: .major,
+                spec: .takeover,
                 routeAccents: .init(color: .pink, textColor: .orange, type: .ferry),
                 onViewDetails: {}
             )
@@ -202,7 +194,7 @@ struct AlertCard: View {
                     recurrence: nil,
                     isUpdate: true
                 ),
-                spec: .secondary,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
@@ -213,7 +205,7 @@ struct AlertCard: View {
                 alertSummary: AlertSummary.AllClear(
                     location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
                 ),
-                spec: .secondary,
+                spec: .basic,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )
@@ -227,7 +219,7 @@ struct AlertCard: View {
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue
                 ),
-                spec: .major,
+                spec: .takeover,
                 routeAccents: .init(color: Color(hex: "ED8B00"), textColor: Color(hex: "FFFFFF"), type: .heavyRail),
                 onViewDetails: {}
             )

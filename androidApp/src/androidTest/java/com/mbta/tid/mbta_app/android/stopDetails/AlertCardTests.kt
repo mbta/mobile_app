@@ -9,6 +9,7 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.android.hasTextMatching
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -64,7 +65,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 null,
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents,
                 { onViewDetailsClicked = true },
             )
@@ -88,7 +89,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 null,
-                AlertCardSpec.Secondary,
+                AlertCardSpec.Basic,
                 routeAccents,
                 { onViewDetailsClicked = true },
             )
@@ -239,7 +240,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.ThisWeek(endTime)),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents,
                 {},
             )
@@ -263,7 +264,7 @@ class AlertCardTests {
             AlertCard(
                 alert,
                 AlertSummary.Standard(alert.effect, null, AlertSummary.Timeframe.Time(endTime)),
-                AlertCardSpec.Secondary,
+                AlertCardSpec.Basic,
                 routeAccents,
                 {},
             )
@@ -294,7 +295,7 @@ class AlertCardTests {
                             endStopName = "End Stop",
                         )
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents,
                 onViewDetails = {},
             )
@@ -328,7 +329,7 @@ class AlertCardTests {
                     recurrence = null,
                     isUpdate = true,
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents,
                 onViewDetails = {},
             )
@@ -354,7 +355,7 @@ class AlertCardTests {
                     Alert.Effect.Cancellation,
                     cause = Alert.Cause.MechanicalIssue,
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )
@@ -382,7 +383,7 @@ class AlertCardTests {
                     Alert.Effect.Suspension,
                     cause = Alert.Cause.Holiday,
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )
@@ -409,7 +410,7 @@ class AlertCardTests {
                     "Ruggles",
                     "Forest Hills",
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )
@@ -443,7 +444,7 @@ class AlertCardTests {
                     listOf("Back Bay", "Ruggles"),
                     cause = null,
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )
@@ -475,7 +476,7 @@ class AlertCardTests {
                     isToday = false,
                     cause = Alert.Cause.MechanicalIssue,
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )
@@ -513,7 +514,7 @@ class AlertCardTests {
                                 )
                         ),
                 ),
-                AlertCardSpec.Major,
+                AlertCardSpec.Takeover,
                 routeAccents.copy(type = RouteType.COMMUTER_RAIL),
                 onViewDetails = {},
             )

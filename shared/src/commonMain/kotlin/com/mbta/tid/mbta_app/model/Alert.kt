@@ -381,6 +381,9 @@ internal constructor(
     public fun currentPeriod(time: EasternTimeInstant): ActivePeriod? =
         activePeriod.firstOrNull { it.activeAt(time) }
 
+    public fun currentOrNextPeriod(now: EasternTimeInstant): ActivePeriod? =
+        activePeriod.firstOrNull { it.end?.instant?.let { end -> end < now.instant } ?: true }
+
     /**
      * Gets an active period which is not currently active but which will start in the next 24
      * hours.

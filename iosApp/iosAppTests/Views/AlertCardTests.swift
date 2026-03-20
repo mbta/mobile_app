@@ -33,7 +33,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
@@ -63,7 +63,7 @@ final class AlertCardTests: XCTestCase {
                                                 timeframe: .some(AlertSummary.TimeframeTomorrow()),
                                                 recurrence: nil,
                                                 isUpdate: false),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -85,7 +85,7 @@ final class AlertCardTests: XCTestCase {
                                                 timeframe: .some(AlertSummary.TimeframeEndOfService()),
                                                 recurrence: nil,
                                                 isUpdate: false),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -114,7 +114,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -143,7 +143,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -172,7 +172,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -196,7 +196,7 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: nil,
-            spec: .secondary,
+            spec: .basic,
             routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
@@ -224,7 +224,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: false
             ),
-            spec: .secondary,
+            spec: .basic,
             routeAccents: .init(),
             onViewDetails: {}
         )
@@ -431,7 +431,7 @@ final class AlertCardTests: XCTestCase {
                     endStopName: "End Stop"
                 )),
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
@@ -466,7 +466,7 @@ final class AlertCardTests: XCTestCase {
                 recurrence: nil,
                 isUpdate: true
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {
                 exp.fulfill()
@@ -492,7 +492,7 @@ final class AlertCardTests: XCTestCase {
                     stopName: "Ruggles"
                 ), effect: .cancellation, cause: .mechanicalIssue
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
@@ -514,7 +514,7 @@ final class AlertCardTests: XCTestCase {
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared, effect: .suspension, cause: .holiday
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
@@ -539,7 +539,7 @@ final class AlertCardTests: XCTestCase {
                     routeType: .commuterRail
                 ), currentStopName: "Ruggles", endStopName: "Forest Hills"
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
@@ -564,7 +564,7 @@ final class AlertCardTests: XCTestCase {
                     headsign: "Stoughton"
                 ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"]
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
@@ -589,7 +589,7 @@ final class AlertCardTests: XCTestCase {
                     stopName: "Ruggles"
                 ), effect: .cancellation, isToday: false, cause: .mechanicalIssue
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
@@ -622,7 +622,7 @@ final class AlertCardTests: XCTestCase {
                     second: 0
                 )))
             ),
-            spec: .major,
+            spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
