@@ -907,6 +907,9 @@ public data class RouteCardData(
                                 null,
                             )
                             .discardTrackChangesAtCRCore(isCRCore)
+                    val elevatorAlerts =
+                        Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
+                    val alertsHere = (applicableAlerts + elevatorAlerts).distinct()
 
                     // If the routes here are on the GL,
                     // include alerts on other branches as downstream alerts
@@ -920,16 +923,18 @@ public data class RouteCardData(
                         ) +
                             if (isGL)
                                 Alert.applicableAlerts(
-                                    activeRelevantAlerts,
-                                    path.directionId,
-                                    greenRoutes.minus(routes.toSet()).toList(),
-                                    leafBuilder.stopIds,
-                                    null,
-                                )
+                                        activeRelevantAlerts,
+                                        path.directionId,
+                                        greenRoutes.minus(routes.toSet()).toList(),
+                                        leafBuilder.stopIds,
+                                        null,
+                                    )
+                                    .filterNot { otherBranchAlert ->
+                                        alertsHere.any { it.id == otherBranchAlert.id }
+                                    }
                             else emptyList()
-                    val elevatorAlerts =
-                        Alert.elevatorAlerts(activeRelevantAlerts, leafBuilder.stopIds.orEmpty())
-                    leafBuilder.alertsHere = (applicableAlerts + elevatorAlerts).distinct()
+
+                    leafBuilder.alertsHere = alertsHere
                     leafBuilder.alertsDownstream = downstreamAlerts
                 }
             )
