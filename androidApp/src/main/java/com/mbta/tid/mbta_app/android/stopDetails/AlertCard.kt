@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android.stopDetails
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.AlertIcon
-import com.mbta.tid.mbta_app.android.component.InfoCircle
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.util.FormattedAlert
 import com.mbta.tid.mbta_app.android.util.Typography
@@ -41,33 +42,94 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.datetime.Month
 
 @Composable
-fun AlertCard(
+fun AlertContainer(
+    highPriority: List<@Composable (modifier: Modifier) -> Unit> = listOf(),
+    middleContent: (@Composable (modifier: Modifier) -> Unit)? = null,
+    lowPriority: List<@Composable (modifier: Modifier) -> Unit> = listOf(),
+) {
+    val highPriorityCount = highPriority.size
+    val lowPriorityCount = lowPriority.size
+    val outerCornerRadius = 8.dp
+    val internalCornerRadius = 4.dp
+    Column(
+        modifier = Modifier.haloContainer(2.dp, backgroundColor = Color.Transparent),
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+    ) {
+        highPriority.forEachIndexed { index, content ->
+            val topRadius = if (index == 0) outerCornerRadius else internalCornerRadius
+            val bottomRadius =
+                if (index == highPriorityCount && (middleContent == null && lowPriorityCount == 0))
+                    outerCornerRadius
+                else internalCornerRadius
+            content(
+                Modifier.background(
+                    colorResource(R.color.fill3),
+                    RoundedCornerShape(
+                        topStart = topRadius,
+                        topEnd = topRadius,
+                        bottomStart = bottomRadius,
+                        bottomEnd = bottomRadius,
+                    ),
+                )
+            )
+        }
+
+        val middleContentTopRadius =
+            if (highPriorityCount == 0) outerCornerRadius else internalCornerRadius
+        val middleContentBottomRadius =
+            if (lowPriorityCount == 0) outerCornerRadius else internalCornerRadius
+
+        middleContent?.invoke(
+            Modifier.background(
+                colorResource(R.color.fill3),
+                RoundedCornerShape(
+                    topStart = middleContentTopRadius,
+                    topEnd = middleContentTopRadius,
+                    bottomStart = middleContentBottomRadius,
+                    bottomEnd = middleContentBottomRadius,
+                ),
+            )
+        )
+
+        lowPriority.forEachIndexed { index, content ->
+            val topRadius =
+                if (index == 0 && highPriorityCount == 0 && middleContent == null) outerCornerRadius
+                else internalCornerRadius
+            val bottomRadius =
+                if (index == highPriorityCount) outerCornerRadius else internalCornerRadius
+            content(
+                Modifier.background(
+                    colorResource(R.color.fill2),
+                    RoundedCornerShape(
+                        topStart = topRadius,
+                        topEnd = topRadius,
+                        bottomStart = bottomRadius,
+                        bottomEnd = bottomRadius,
+                    ),
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun TakeoverAlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
-    cardSpec: AlertCardSpec,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
     interiorPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    val formattedAlert = FormattedAlert(alert, alertSummary)
 
-    val iconSize =
-        when (cardSpec) {
-            AlertCardSpec.Takeover -> 48.dp
-            AlertCardSpec.Elevator -> 36.dp
-            else -> 20.dp
-        }
+    val alertState = alert.alertState
+    val iconSize = 48.dp
+    val formattedAlert = FormattedAlert(alert, alertSummary)
 
     Column(
         modifier =
             modifier
-                .haloContainer(2.dp)
-                .then(
-                    if (cardSpec != AlertCardSpec.Takeover && onViewDetails != null)
-                        Modifier.clickable { onViewDetails() }
-                    else Modifier
-                )
+                .haloContainer(borderWidth = 2.dp)
                 .padding(horizontal = 12.dp, vertical = 10.dp)
                 .padding(interiorPadding),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -77,10 +139,6 @@ fun AlertCard(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val alertState =
-                if (alertSummary is AlertSummary.AllClear) StopAlertState.AllClear
-                else alert.alertState
-            val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
             AlertIcon(
                 alertState = alertState,
                 color = routeAccents.color,
@@ -93,40 +151,103 @@ fun AlertCard(
                     else null,
             )
             Text(
-                formattedAlert.alertCardHeader(cardSpec, routeAccents.type),
+                formattedAlert.alertCardHeader(AlertCardSpec.Takeover, routeAccents.type),
                 Modifier.weight(1f),
-                style =
-                    if (cardSpec == AlertCardSpec.Takeover) Typography.title2Bold
-                    else Typography.callout,
+                style = Typography.title2Bold,
             )
-            if (cardSpec != AlertCardSpec.Takeover) {
-                InfoCircle()
+        }
+        HorizontalDivider(color = routeAccents.color.copy(alpha = 0.25f), thickness = 2.dp)
+        Text(formattedAlert.alertCardMajorBody, style = Typography.callout)
+        onViewDetails?.let {
+            TextButton(
+                it,
+                shape = RoundedCornerShape(8.dp),
+                colors =
+                    ButtonColors(
+                        routeAccents.color,
+                        routeAccents.color,
+                        routeAccents.color,
+                        routeAccents.color,
+                    ),
+                modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth(),
+            ) {
+                Text(
+                    stringResource(R.string.view_details),
+                    color = routeAccents.textColor,
+                    modifier = Modifier.padding(4.dp),
+                    style = Typography.bodySemibold,
+                )
             }
         }
+    }
+}
 
-        if (cardSpec == AlertCardSpec.Takeover) {
-            HorizontalDivider(color = routeAccents.color.copy(alpha = 0.25f), thickness = 2.dp)
-            Text(formattedAlert.alertCardMajorBody, style = Typography.callout)
-            onViewDetails?.let {
-                TextButton(
-                    it,
-                    shape = RoundedCornerShape(8.dp),
-                    colors =
-                        ButtonColors(
-                            routeAccents.color,
-                            routeAccents.color,
-                            routeAccents.color,
-                            routeAccents.color,
-                        ),
-                    modifier = Modifier.heightIn(min = 44.dp).fillMaxWidth(),
-                ) {
-                    Text(
-                        stringResource(R.string.view_details),
-                        color = routeAccents.textColor,
-                        modifier = Modifier.padding(4.dp),
-                        style = Typography.bodySemibold,
+@Composable
+fun AlertRowCard(
+    alert: Alert,
+    alertSummary: AlertSummary?,
+    cardSpec: AlertCardSpec,
+    routeAccents: TripRouteAccents,
+    onViewDetails: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    interiorPadding: PaddingValues = PaddingValues(0.dp),
+) {
+
+    if (cardSpec == AlertCardSpec.Takeover) {
+        TakeoverAlertCard(
+            alert,
+            alertSummary,
+            routeAccents,
+            onViewDetails,
+            modifier,
+            interiorPadding,
+        )
+    } else {
+        val formattedAlert = FormattedAlert(alert, alertSummary)
+
+        val iconSize =
+            when (cardSpec) {
+                AlertCardSpec.Elevator -> 36.dp
+                else -> 20.dp
+            }
+
+        Column(
+            modifier =
+                modifier
+                    .then(
+                        if (onViewDetails != null) Modifier.clickable { onViewDetails() }
+                        else Modifier
                     )
-                }
+                    .padding(horizontal = 12.dp, vertical = 10.dp)
+                    .padding(interiorPadding),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = Alignment.Start,
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val alertState =
+                    if (alertSummary is AlertSummary.AllClear) StopAlertState.AllClear
+                    else alert.alertState
+                val iconSize = if (alertState == StopAlertState.AllClear) 36.dp else iconSize
+                AlertIcon(
+                    alertState = alertState,
+                    color = routeAccents.color,
+                    modifier =
+                        Modifier.clearAndSetSemantics {}
+                            .size(iconSize)
+                            .align(Alignment.CenterVertically),
+                    overrideIcon =
+                        if (alert.effect == Alert.Effect.Cancellation)
+                            routeSlashIcon(routeAccents.type)
+                        else null,
+                )
+                Text(
+                    formattedAlert.alertCardHeader(cardSpec, routeAccents.type),
+                    Modifier.weight(1f),
+                    style = Typography.callout,
+                )
             }
         }
     }
@@ -135,8 +256,11 @@ fun AlertCard(
 @Composable
 @Preview
 fun AlertCardPreview() {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        AlertCard(
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.background(Color.Blue),
+    ) {
+        AlertRowCard(
             ObjectCollectionBuilder.Single.alert({
                 header = "Orange Line suspended from point A to point B"
                 effect = Alert.Effect.Suspension
@@ -151,35 +275,8 @@ fun AlertCardPreview() {
                 ),
             onViewDetails = {},
         )
-        AlertCard(
-            ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
-            null,
-            AlertCardSpec.Basic,
-            routeAccents =
-                TripRouteAccents(
-                    color = Color.fromHex("80276C"),
-                    textColor = Color.fromHex("FFFFFF"),
-                    type = RouteType.COMMUTER_RAIL,
-                ),
-            onViewDetails = {},
-        )
-        AlertCard(
-            ObjectCollectionBuilder.Single.alert({
-                effect = Alert.Effect.ElevatorClosure
-                header =
-                    "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
-            }),
-            null,
-            AlertCardSpec.Elevator,
-            routeAccents =
-                TripRouteAccents(
-                    color = Color.fromHex("ED8B00"),
-                    textColor = Color.fromHex("FFFFFF"),
-                    type = RouteType.HEAVY_RAIL,
-                ),
-            onViewDetails = {},
-        )
-        AlertCard(
+
+        AlertRowCard(
             ObjectCollectionBuilder.Single.alert { effect = Alert.Effect.Cancellation },
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(
@@ -197,6 +294,48 @@ fun AlertCardPreview() {
                     type = RouteType.COMMUTER_RAIL,
                 ),
             onViewDetails = {},
+        )
+
+        AlertContainer(
+            highPriority =
+                listOf({ modifier ->
+                    AlertRowCard(
+                        ObjectCollectionBuilder.Single.alert({
+                            effect = Alert.Effect.ServiceChange
+                        }),
+                        null,
+                        AlertCardSpec.Basic,
+                        routeAccents =
+                            TripRouteAccents(
+                                color = Color.fromHex("80276C"),
+                                textColor = Color.fromHex("FFFFFF"),
+                                type = RouteType.COMMUTER_RAIL,
+                            ),
+                        modifier = modifier,
+                        onViewDetails = {},
+                    )
+                }),
+            middleContent = { modifier -> NotAccessibleCard(modifier) },
+            lowPriority =
+                listOf({ modifier ->
+                    AlertRowCard(
+                        ObjectCollectionBuilder.Single.alert({
+                            effect = Alert.Effect.ElevatorClosure
+                            header =
+                                "Ruggles Elevator 848 (Lobby to lower busway side platform) unavailable due to maintenance"
+                        }),
+                        null,
+                        AlertCardSpec.Elevator,
+                        routeAccents =
+                            TripRouteAccents(
+                                color = Color.fromHex("ED8B00"),
+                                textColor = Color.fromHex("FFFFFF"),
+                                type = RouteType.HEAVY_RAIL,
+                            ),
+                        modifier = modifier,
+                        onViewDetails = {},
+                    )
+                }),
         )
     }
 }

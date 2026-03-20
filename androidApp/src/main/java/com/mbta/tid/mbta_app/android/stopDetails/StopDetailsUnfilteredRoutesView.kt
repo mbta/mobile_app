@@ -36,6 +36,7 @@ import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCard
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.contrastTranslucent
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -121,7 +122,7 @@ fun StopDetailsUnfilteredRoutesView(
                         Column(Modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
                             if (elevatorAlerts.isNotEmpty()) {
                                 elevatorAlerts.map {
-                                    AlertCard(
+                                    AlertRowCard(
                                         it,
                                         null,
                                         AlertCardSpec.Elevator,
@@ -138,7 +139,7 @@ fun StopDetailsUnfilteredRoutesView(
                                     )
                                 }
                             } else {
-                                NotAccessibleCard()
+                                NotAccessibleCard(Modifier.haloContainer(2.dp))
                             }
                         }
                     }

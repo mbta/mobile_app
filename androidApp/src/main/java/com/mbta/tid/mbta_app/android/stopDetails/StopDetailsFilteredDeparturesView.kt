@@ -175,7 +175,7 @@ fun StopDetailsFilteredDeparturesView(
     fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?) {
         val spec = displayAlert.cardSpec(now, isAllServiceDisrupted)
 
-        AlertCard(
+        AlertRowCard(
             displayAlert.alert,
             summary,
             spec,

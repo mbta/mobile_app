@@ -33,7 +33,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.stopDetails.AlertCard
+import com.mbta.tid.mbta_app.android.stopDetails.AlertRowCard
 import com.mbta.tid.mbta_app.android.stopDetails.StopDot
 import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
@@ -229,7 +229,7 @@ fun StopListRow(
         }
         if (disruption != null) {
             Box(Modifier.height(IntrinsicSize.Min)) {
-                AlertCard(
+                AlertRowCard(
                     disruption.alert,
                     alertSummaries[disruption.alert.id],
                     AlertCardSpec.Downstream,
