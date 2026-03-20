@@ -50,11 +50,7 @@ struct ToastView: View {
             }
             .padding(.vertical, 16)
         }
-        .onTapGesture {
-            if let bodyAction {
-                bodyAction()
-            }
-        }
+        .onTapGesture { bodyAction?() }
         .frame(maxWidth: .infinity)
         .background(Color.contrast)
         .cornerRadius(8)
