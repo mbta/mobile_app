@@ -37,9 +37,11 @@ import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.Alert
-import com.mbta.tid.mbta_app.model.AlertSignificance
+import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.DisplayAlert
+import com.mbta.tid.mbta_app.model.DisplayAlerts
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
@@ -92,11 +94,13 @@ fun StopDetailsFilteredDeparturesView(
 
     val showStationAccessibility = SettingsCache.get(Settings.StationAccessibility)
 
-    val (elevatorAlerts, alertsHere) =
-        leaf.alertsHere(tripId = tripFilter?.tripId).partition {
-            it.effect == Alert.Effect.ElevatorClosure
-        }
-    val hasAccessibilityWarning = (elevatorAlerts.isNotEmpty() || !stop.isWheelchairAccessible)
+    val displayAlerts =
+        DisplayAlerts.forAlertsAtStop(
+            leaf.alertsHere(tripFilter?.tripId),
+            leaf.alertsDownstream(tripFilter?.tripId),
+            showStationAccessibility,
+            now,
+        )
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
 
@@ -143,7 +147,7 @@ fun StopDetailsFilteredDeparturesView(
         if (clearExisting) viewModel.setAlertSummaries(emptyMap())
 
         viewModel.setAlertSummaries(
-            (alertsHere + downstreamAlerts).associate {
+            displayAlerts.allAlerts.associate {
                 it.id to
                     it.summary(
                         stopId,
@@ -158,15 +162,26 @@ fun StopDetailsFilteredDeparturesView(
     }
 
     LaunchedEffect(stopId, stopFilter.directionId) { updateAlertSummaries(clearExisting = true) }
-    LaunchedEffect(global, alertsHere, downstreamAlerts, patternsHere, now) {
-        updateAlertSummaries()
-    }
+    LaunchedEffect(global, displayAlerts.allAlerts, patternsHere, now) { updateAlertSummaries() }
 
     LaunchedEffect(tripFilter) {
         val selectedTileId = tileData.firstOrNull { it.isSelected(tripFilter) }?.id
         if (selectedTileId != null) {
             bringIntoViewRequesters[selectedTileId]?.bringIntoView()
         }
+    }
+
+    @Composable
+    fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?) {
+        val spec = displayAlert.cardSpec(now, isAllServiceDisrupted)
+
+        AlertCard(
+            displayAlert.alert,
+            summary,
+            spec,
+            routeAccents,
+            onViewDetails = { openAlertDetails(displayAlert.alert, spec) },
+        )
     }
 
     DebugView {
@@ -195,34 +210,9 @@ fun StopDetailsFilteredDeparturesView(
             )
         }
 
-        @Composable
-        fun AlertCard(alert: Alert, summary: AlertSummary?, spec: AlertCardSpec? = null) {
-            val significance = alert.significance(now)
-            val spec =
-                spec
-                    ?: if (significance == AlertSignificance.Major && isAllServiceDisrupted) {
-                        AlertCardSpec.Major
-                    } else if (
-                        significance == AlertSignificance.Minor &&
-                            alert.effect == Alert.Effect.Delay
-                    ) {
-                        AlertCardSpec.Delay
-                    } else {
-                        AlertCardSpec.Secondary
-                    }
-            AlertCard(
-                alert,
-                summary,
-                spec,
-                routeAccents,
-                onViewDetails = { openAlertDetails(alert, spec) },
-            )
-        }
-
         if (
-            alertsHere.isNotEmpty() ||
-                downstreamAlerts.isNotEmpty() ||
-                (showStationAccessibility && hasAccessibilityWarning)
+            displayAlerts.allAlerts.isNotEmpty() ||
+                (showStationAccessibility && !stop.isWheelchairAccessible)
         ) {
             Column(
                 Modifier.padding(horizontal = 10.dp),
@@ -230,27 +220,26 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 // for alerts here and downstream, if the alertSummaries are still loading, skip the
                 // alert completely, so the header doesn’t flicker before the summary loads
-                alertsHere.forEach {
+
+                // TODO: condense these into single container
+                displayAlerts.highPriority.forEach {
                     AlertCard(
                         it,
-                        if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                        if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]
                         else return@forEach,
                     )
                 }
-                downstreamAlerts.forEach {
+
+                if (showStationAccessibility && !stop.isWheelchairAccessible) {
+                    NotAccessibleCard()
+                }
+
+                displayAlerts.lowPriority.forEach {
                     AlertCard(
                         it,
-                        if (alertSummaries.containsKey(it.id)) alertSummaries[it.id]
+                        if (alertSummaries.containsKey(it.alert.id)) alertSummaries[it.alert.id]
                         else return@forEach,
-                        AlertCardSpec.Downstream,
                     )
-                }
-                if (showStationAccessibility && hasAccessibilityWarning) {
-                    if (elevatorAlerts.isNotEmpty()) {
-                        elevatorAlerts.forEach { AlertCard(it, null, AlertCardSpec.Elevator) }
-                    } else {
-                        NotAccessibleCard()
-                    }
                 }
             }
         }

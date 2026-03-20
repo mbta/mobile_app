@@ -31,6 +31,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
@@ -39,19 +40,11 @@ import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.datetime.Month
 
-enum class AlertCardSpec {
-    Major,
-    Downstream,
-    Secondary,
-    Elevator,
-    Delay,
-}
-
 @Composable
 fun AlertCard(
     alert: Alert,
     alertSummary: AlertSummary?,
-    spec: AlertCardSpec,
+    cardSpec: AlertCardSpec,
     routeAccents: TripRouteAccents,
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
@@ -60,8 +53,8 @@ fun AlertCard(
     val formattedAlert = FormattedAlert(alert, alertSummary)
 
     val iconSize =
-        when (spec) {
-            AlertCardSpec.Major -> 48.dp
+        when (cardSpec) {
+            AlertCardSpec.Takeover -> 48.dp
             AlertCardSpec.Elevator -> 36.dp
             else -> 20.dp
         }
@@ -71,7 +64,7 @@ fun AlertCard(
             modifier
                 .haloContainer(2.dp)
                 .then(
-                    if (spec != AlertCardSpec.Major && onViewDetails != null)
+                    if (cardSpec != AlertCardSpec.Takeover && onViewDetails != null)
                         Modifier.clickable { onViewDetails() }
                     else Modifier
                 )
@@ -100,17 +93,18 @@ fun AlertCard(
                     else null,
             )
             Text(
-                formattedAlert.alertCardHeader(spec, routeAccents.type),
+                formattedAlert.alertCardHeader(cardSpec, routeAccents.type),
                 Modifier.weight(1f),
                 style =
-                    if (spec == AlertCardSpec.Major) Typography.title2Bold else Typography.callout,
+                    if (cardSpec == AlertCardSpec.Takeover) Typography.title2Bold
+                    else Typography.callout,
             )
-            if (spec != AlertCardSpec.Major) {
+            if (cardSpec != AlertCardSpec.Takeover) {
                 InfoCircle()
             }
         }
 
-        if (spec == AlertCardSpec.Major) {
+        if (cardSpec == AlertCardSpec.Takeover) {
             HorizontalDivider(color = routeAccents.color.copy(alpha = 0.25f), thickness = 2.dp)
             Text(formattedAlert.alertCardMajorBody, style = Typography.callout)
             onViewDetails?.let {
@@ -148,7 +142,7 @@ fun AlertCardPreview() {
                 effect = Alert.Effect.Suspension
             }),
             null,
-            AlertCardSpec.Major,
+            AlertCardSpec.Takeover,
             routeAccents =
                 TripRouteAccents(
                     color = Color.fromHex("ED8B00"),
@@ -160,7 +154,7 @@ fun AlertCardPreview() {
         AlertCard(
             ObjectCollectionBuilder.Single.alert({ effect = Alert.Effect.ServiceChange }),
             null,
-            AlertCardSpec.Secondary,
+            AlertCardSpec.Basic,
             routeAccents =
                 TripRouteAccents(
                     color = Color.fromHex("80276C"),
@@ -195,7 +189,7 @@ fun AlertCardPreview() {
                 Alert.Effect.Cancellation,
                 cause = Alert.Cause.Holiday,
             ),
-            AlertCardSpec.Major,
+            AlertCardSpec.Takeover,
             routeAccents =
                 TripRouteAccents(
                     color = Color.fromHex("80276C"),
