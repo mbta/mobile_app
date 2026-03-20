@@ -15,15 +15,16 @@ class InstanceIdCache : IInstanceIdCache {
     override val instanceId = _instanceId.asStateFlow()
 
     init {
-        FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                _instanceId.value = task.result
-            } else {
-                Log.e(
-                    "InstanceIdCache",
-                    "Failed to load Firebase Installation ID: ${task.exception}",
-                )
+        try {
+            FirebaseInstallations.getInstance().id.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _instanceId.value = task.result
+                } else {
+                    throw task.exception ?: RuntimeException("task failed with a missing exception")
+                }
             }
+        } catch (error: Exception) {
+            Log.e("InstanceIdCache", "Failed to load Firebase Installation ID: $error")
         }
     }
 }
