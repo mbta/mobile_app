@@ -269,7 +269,7 @@ public class MapViewModel(
                             event.stopFilter,
                             event.tripFilter,
                             event.vehicle,
-                            null,
+                            currentState?.tripStops,
                             event.follow,
                         )
                     if (currentState?.vehicle?.id != newState.vehicle?.id || event.follow) {
