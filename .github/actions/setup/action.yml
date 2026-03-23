@@ -136,6 +136,7 @@ runs:
         curl --location --output xcodegen.zip https://github.com/yonaskolb/XcodeGen/releases/download/${VERSION}/xcodegen.zip
         unzip -q xcodegen.zip
         popd
+        ./gradlew :shared:generateDummyFramework
         cd iosApp
         ${OUT}/xcodegen/bin/xcodegen generate
         rm -r ${OUT}
