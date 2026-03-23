@@ -3,6 +3,7 @@ name: iosApp
 options:
   bundleIdPrefix: com.mbta.tid
   defaultConfig: ProdRelease
+  postGenCommand: bundle exec pod install
 attributes:
   LastSwiftUpdateCheck: 1510
   LastUpgradeCheck: 1130
