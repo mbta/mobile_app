@@ -646,7 +646,7 @@ class UpcomingTripTest {
     }
 
     @Test
-    fun `time is null if prediction overrides schedule`() {
+    fun `time falls back to schedule if prediction is skipped or cancelled`() {
         val now = EasternTimeInstant.now()
         val trip = trip()
 
@@ -654,13 +654,19 @@ class UpcomingTripTest {
             arrivalTime = now + 2.minutes
             departureTime = now + 5.minutes
         }
-        val predictionDropped = prediction {
+        val predictionSkipped = prediction {
             arrivalTime = null
             departureTime = null
             scheduleRelationship = Prediction.ScheduleRelationship.Skipped
         }
+        val predictionCancelled = prediction {
+            arrivalTime = null
+            departureTime = null
+            scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+        }
 
-        assertEquals(null, UpcomingTrip(trip, schedule, predictionDropped).time)
+        assertEquals(schedule.stopTime, UpcomingTrip(trip, schedule, predictionSkipped).time)
+        assertEquals(schedule.stopTime, UpcomingTrip(trip, schedule, predictionCancelled).time)
     }
 
     @Test
