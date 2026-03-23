@@ -13,12 +13,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -119,6 +122,7 @@ fun AlertCard(
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
     interiorPadding: PaddingValues = PaddingValues(0.dp),
+    rightContent: (@Composable () -> Unit)? = null,
 ) {
 
     if (cardSpec == AlertCardSpec.Takeover) {
@@ -176,6 +180,16 @@ fun AlertCard(
                     Modifier.weight(1f),
                     style = Typography.callout,
                 )
+                if (rightContent != null) {
+                    rightContent.invoke()
+                } else {
+                    Icon(
+                        painterResource(R.drawable.fa_chevron_right),
+                        contentDescription = null,
+                        Modifier.size(16.dp),
+                        tint = colorResource(R.color.deemphasized),
+                    )
+                }
             }
         }
     }
