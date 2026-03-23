@@ -122,7 +122,6 @@ fun AlertCard(
     onViewDetails: (() -> Unit)?,
     modifier: Modifier = Modifier,
     interiorPadding: PaddingValues = PaddingValues(0.dp),
-    rightContent: (@Composable () -> Unit)? = null,
 ) {
 
     if (cardSpec == AlertCardSpec.Takeover) {
@@ -180,16 +179,12 @@ fun AlertCard(
                     Modifier.weight(1f),
                     style = Typography.callout,
                 )
-                if (rightContent != null) {
-                    rightContent.invoke()
-                } else {
-                    Icon(
-                        painterResource(R.drawable.fa_chevron_right),
-                        contentDescription = null,
-                        Modifier.size(16.dp),
-                        tint = colorResource(R.color.deemphasized),
-                    )
-                }
+                Icon(
+                    painterResource(R.drawable.fa_chevron_right),
+                    contentDescription = null,
+                    Modifier.size(16.dp),
+                    tint = colorResource(R.color.deemphasized),
+                )
             }
         }
     }

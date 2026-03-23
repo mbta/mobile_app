@@ -238,7 +238,6 @@ fun StopListRow(
                     onViewDetails = { onOpenAlertDetails(disruption.alert) },
                     interiorPadding = PaddingValues(start = 10.dp),
                     modifier = Modifier.haloContainer(2.dp),
-                    rightContent = { InfoCircle() },
                 )
             }
         }
