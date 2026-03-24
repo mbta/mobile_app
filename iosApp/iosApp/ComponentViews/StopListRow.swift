@@ -109,8 +109,8 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         routeAccents: routeAccents,
                         onViewDetails: { onOpenAlertDetails(disruption.alert) },
                         internalPadding: .init(top: 0, leading: 5, bottom: 0, trailing: 0)
-                    )
-                    .padding(.horizontal, -4)
+                    ).withRoundedBorder()
+                        .padding(.horizontal, -4)
                 }
             }
         }

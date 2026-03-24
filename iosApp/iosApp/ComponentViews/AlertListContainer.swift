@@ -81,3 +81,55 @@ struct AlertListContainer: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
+
+#Preview {
+    let serviceChange = ObjectCollectionBuilder.Single.shared.alert { alert in
+        alert.effect = .serviceChange
+    }
+
+    let elevator = ObjectCollectionBuilder.Single.shared.alert { alert in
+        alert.effect = .elevatorClosure
+        alert.header = "Ruggles elevator 321 (Orange Line Platform to lobby) unavailable due to maintenance"
+    }
+
+    let now = EasternTimeInstant.now()
+
+    ScrollView {
+        VStack {
+            AlertListContainer(
+                displayAlerts: .init(highPriority: [.init(alert: serviceChange, isDownstream: false)],
+                                     lowPriority: [.init(
+                                         alert: elevator,
+                                         isDownstream: false
+                                     )]),
+                showNotAccessibleCard: true,
+                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
+                now: now,
+                isAllServiceDisrupted: false,
+                routeAccents: .init(),
+                onRowTap: { _, _ in }
+            )
+
+            AlertListContainer(
+                displayAlerts: .init(highPriority: [.init(alert: elevator, isDownstream: false)], lowPriority: []),
+                showNotAccessibleCard: false,
+                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
+                now: now,
+                isAllServiceDisrupted: false,
+                routeAccents: .init(),
+                onRowTap: { _, _ in }
+            )
+
+            AlertListContainer(
+                displayAlerts: .init(highPriority: [], lowPriority: [.init(alert: elevator, isDownstream: false)]),
+                showNotAccessibleCard: false,
+                alertSummaries: [serviceChange.id: nil, elevator.id: nil],
+                now: now,
+                isAllServiceDisrupted: false,
+                routeAccents: .init(),
+                onRowTap: { _, _ in }
+            )
+        }
+    }
+    .background(Color.blue)
+}
