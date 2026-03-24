@@ -73,7 +73,7 @@ fun AlertListContainer(
                 if (index == 0 && highPriorityCount == 0 && middleContent == null) outerCornerRadius
                 else internalCornerRadius
             val bottomRadius =
-                if (index == highPriorityCount) outerCornerRadius else internalCornerRadius
+                if (index == lowPriorityCount) outerCornerRadius else internalCornerRadius
             content(
                 Modifier.background(
                     colorResource(R.color.fill2),
