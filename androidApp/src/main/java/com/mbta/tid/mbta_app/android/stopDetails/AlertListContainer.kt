@@ -29,7 +29,7 @@ fun AlertListContainer(
     val outerCornerRadius = 8.dp
     val internalCornerRadius = 4.dp
     Column(
-        modifier = Modifier.haloContainer(2.dp, backgroundColor = Color.Transparent),
+        modifier = Modifier.haloContainer(2.dp, backgroundColor = colorResource(R.color.halo)),
         verticalArrangement = Arrangement.spacedBy(1.dp),
     ) {
         highPriority.forEachIndexed { index, content ->
