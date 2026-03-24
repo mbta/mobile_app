@@ -52,12 +52,12 @@ struct AlertListContainer: View {
 
                 NotAccessibleCard()
                     .background(Color.fill3)
-                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius)
+                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
             }
             ForEach(Array(displayAlerts.lowPriority.enumerated()), id: \.element.id) { index, displayAlert in
                 let topRadius = index == 0 && highPriorityCount == 0 && !showNotAccessibleCard ? outerCornerRadius
                     : internalCornerRadius
-                let bottomRadius = index == lowPriorityCount ? outerCornerRadius : internalCornerRadius
+                let bottomRadius = index == lowPriorityCount - 1 ? outerCornerRadius : internalCornerRadius
 
                 if alertSummaries.keys.contains(displayAlert.id) {
                     let alert = displayAlert.alert
@@ -71,9 +71,13 @@ struct AlertListContainer: View {
                         onViewDetails: { onRowTap(alert.id, spec) }
                     )
                     .background(Color.fill2)
-                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius)
+                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
                 }
             }
         }
+
+        .padding(2)
+        .background(Color.halo)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

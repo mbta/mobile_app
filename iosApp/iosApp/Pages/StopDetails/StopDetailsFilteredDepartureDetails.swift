@@ -139,7 +139,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                         }
                 }
             }
-            //     alertCards
+            alertCards
             if isAllServiceDisrupted {
                 EmptyView()
             } else if let noPredictionsStatus {
@@ -177,7 +177,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     context: .stopDetails,
                     now: now,
                     routeAccents: routeAccents,
-                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
+                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
@@ -334,21 +334,20 @@ struct StopDetailsFilteredDepartureDetails: View {
             elevator: spec == .elevator
         )
     }
-    /*
-        @ViewBuilder
-        var alertCards: some View {
-            let showNotAccessibleCard = settingsCache.get(.stationAccessibility) && !leaf.stop.isWheelchairAccessible
-            if !displayAlerts.allAlerts.isEmpty || showNotAccessibleCard {
-                AlertListContainer(displayAlerts: displayAlerts,
-                                   showNotAccessibleCard: showNotAccessibleCard,
-                                   alertSummaries: alertSummaries,
-                                   now: now,
-                                   isAllServiceDisrupted: isAllServiceDisrupted,
-                                   routeAccents: routeAccents,
-                                   onRowTap: { id, spec in getAlertDetailsHandler(id, spec: spec) })
 
-                    .padding(.horizontal, 16)
-            }
+    @ViewBuilder
+    var alertCards: some View {
+        let showNotAccessibleCard = settingsCache.get(.stationAccessibility) && !leaf.stop.isWheelchairAccessible
+        if !displayAlerts.allAlerts.isEmpty || showNotAccessibleCard {
+            AlertListContainer(displayAlerts: displayAlerts,
+                               showNotAccessibleCard: showNotAccessibleCard,
+                               alertSummaries: alertSummaries,
+                               now: now,
+                               isAllServiceDisrupted: isAllServiceDisrupted,
+                               routeAccents: routeAccents,
+                               onRowTap: { id, spec in getAlertDetailsHandler(id, spec: spec) })
+
+                .padding(.horizontal, 16)
         }
-     */
+    }
 }
