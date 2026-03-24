@@ -120,9 +120,14 @@ struct StopDetailsUnfilteredView: View {
                                         DisplayAlert(alert: alert, isDownstream: false)
                                     },
                                     lowPriority: [])
+                                    let summaries: [String: AlertSummary?] =
+                                        Dictionary(uniqueKeysWithValues: elevatorAlerts.map { (
+                                            $0.id,
+                                            nil
+                                        ) })
                                     AlertListContainer(displayAlerts: displayAlerts,
                                                        showNotAccessibleCard: false,
-                                                       alertSummaries: [:],
+                                                       alertSummaries: summaries,
                                                        now: now,
                                                        isAllServiceDisrupted: false,
                                                        routeAccents: .init(),
@@ -140,6 +145,8 @@ struct StopDetailsUnfilteredView: View {
                                                                elevator: true
                                                            )
                                                        })
+                                                       .padding(.horizontal, 16)
+                                                       .padding(.bottom, 16)
 
                                 } else {
                                     NotAccessibleCard()
