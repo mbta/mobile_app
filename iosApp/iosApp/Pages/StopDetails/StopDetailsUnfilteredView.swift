@@ -142,6 +142,7 @@ struct StopDetailsUnfilteredView: View {
                                     }
                                 } else {
                                     NotAccessibleCard()
+                                        .standaloneStyling()
                                         .padding(.horizontal, 16)
                                         .padding(.bottom, 16)
                                 }

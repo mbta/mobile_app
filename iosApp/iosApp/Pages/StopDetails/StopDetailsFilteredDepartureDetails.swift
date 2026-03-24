@@ -338,38 +338,64 @@ struct StopDetailsFilteredDepartureDetails: View {
     }
 
     @ViewBuilder
-    func alertCard(_ displayAlert: Shared.DisplayAlert, _ summary: AlertSummary?) -> some View {
-        let alert = displayAlert.alert
-        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
-
-        AlertCard(
-            alert: alert,
-            alertSummary: summary,
-            spec: spec,
-            routeAccents: routeAccents,
-            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
-        )
-    }
-
-    @ViewBuilder
     var alertCards: some View {
         if !displayAlerts.allAlerts.isEmpty ||
             (settingsCache.get(.stationAccessibility) && (!leaf.stop.isWheelchairAccessible)) {
-            VStack(spacing: 16) {
-                ForEach(displayAlerts.highPriority, id: \.alert.id) { displayAlert in
-                    let alert = displayAlert.alert
-                    if alertSummaries.keys.contains(alert.id) {
-                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
+            VStack(spacing: 1) {
+                let highPriorityCount = displayAlerts.highPriority.count
+                let lowPriorityCount = displayAlerts.lowPriority.count
+                let outerCornerRadius: CGFloat = 8
+                let internalCornerRadius: CGFloat = 4
+                let showNotAccessibleCard = settingsCache.get(.stationAccessibility) && !leaf.stop
+                    .isWheelchairAccessible
+
+                ForEach(Array(displayAlerts.highPriority.enumerated()), id: \.element.id) { index, displayAlert in
+                    let topRadius = index == 0 ? outerCornerRadius : internalCornerRadius
+                    let bottomRadius = index == highPriorityCount - 1 && !showNotAccessibleCard && lowPriorityCount ==
+                        0 ? outerCornerRadius : internalCornerRadius
+
+                    if alertSummaries.keys.contains(displayAlert.id) {
+                        let alert = displayAlert.alert
+                        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
+
+                        AlertCard(
+                            alert: alert,
+                            alertSummary: alertSummaries[alert.id] ?? nil,
+                            spec: spec,
+                            routeAccents: routeAccents,
+                            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
+                        )
+                        .background(Color.fill3)
+                        .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius)
                     }
                 }
 
-                if settingsCache.get(.stationAccessibility), !leaf.stop.isWheelchairAccessible {
+                if showNotAccessibleCard {
+                    let topRadius = highPriorityCount == 0 ? outerCornerRadius : internalCornerRadius
+                    let bottomRadius = lowPriorityCount == 0 ? outerCornerRadius : internalCornerRadius
+
                     NotAccessibleCard()
+                        .background(Color.fill3)
+                        .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius)
                 }
-                ForEach(displayAlerts.lowPriority, id: \.alert.id) { displayAlert in
-                    let alert = displayAlert.alert
-                    if alertSummaries.keys.contains(alert.id) {
-                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
+                ForEach(Array(displayAlerts.lowPriority.enumerated()), id: \.element.id) { index, displayAlert in
+                    let topRadius = index == 0 && highPriorityCount == 0 && !showNotAccessibleCard ? outerCornerRadius
+                        : internalCornerRadius
+                    let bottomRadius = index == lowPriorityCount ? outerCornerRadius : internalCornerRadius
+
+                    if alertSummaries.keys.contains(displayAlert.id) {
+                        let alert = displayAlert.alert
+                        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
+
+                        AlertCard(
+                            alert: alert,
+                            alertSummary: alertSummaries[alert.id] ?? nil,
+                            spec: spec,
+                            routeAccents: routeAccents,
+                            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
+                        )
+                        .background(Color.fill2)
+                        .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: 8)
                     }
                 }
 
