@@ -116,32 +116,41 @@ struct StopDetailsUnfilteredView: View {
                         LazyVStack(spacing: 0) {
                             if stationAccessibility, hasAccessibilityWarning, let elevatorAlerts {
                                 if !elevatorAlerts.isEmpty {
-                                    ForEach(elevatorAlerts, id: \.id) { alert in
-                                        AlertCard(
-                                            alert: alert,
-                                            alertSummary: nil,
-                                            spec: .elevator,
-                                            routeAccents: .init(),
-                                            onViewDetails: {
-                                                nearbyVM.pushNavEntry(.alertDetails(
-                                                    alertId: alert.id,
-                                                    line: nil,
-                                                    routes: nil,
-                                                    stop: stop
-                                                ))
-                                                analytics.tappedAlertDetails(
-                                                    routeId: nil,
-                                                    stopId: stopId,
-                                                    alertId: alert.id,
-                                                    elevator: true
-                                                )
-                                            }
-                                        )
-                                        .padding(.horizontal, 16)
-                                        .padding(.bottom, 16)
-                                    }
+                                    let displayAlerts: DisplayAlerts = .init(highPriority: elevatorAlerts.map { alert in
+                                        DisplayAlert(alert: alert, isDownstream: false)
+                                    },
+                                    lowPriority: [])
+                                    let summaries: [String: AlertSummary?] =
+                                        Dictionary(uniqueKeysWithValues: elevatorAlerts.map { (
+                                            $0.id,
+                                            nil
+                                        ) })
+                                    AlertListContainer(displayAlerts: displayAlerts,
+                                                       showNotAccessibleCard: false,
+                                                       alertSummaries: summaries,
+                                                       now: now,
+                                                       isAllServiceDisrupted: false,
+                                                       routeAccents: .init(),
+                                                       onRowTap: { id, _ in
+                                                           nearbyVM.pushNavEntry(.alertDetails(
+                                                               alertId: id,
+                                                               line: nil,
+                                                               routes: nil,
+                                                               stop: stop
+                                                           ))
+                                                           analytics.tappedAlertDetails(
+                                                               routeId: nil,
+                                                               stopId: stopId,
+                                                               alertId: id,
+                                                               elevator: true
+                                                           )
+                                                       })
+                                                       .padding(.horizontal, 16)
+                                                       .padding(.bottom, 16)
+
                                 } else {
                                     NotAccessibleCard()
+                                        .standaloneStyling()
                                         .padding(.horizontal, 16)
                                         .padding(.bottom, 16)
                                 }

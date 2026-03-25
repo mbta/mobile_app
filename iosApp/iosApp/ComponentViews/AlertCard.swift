@@ -9,6 +9,65 @@
 import Shared
 import SwiftUI
 
+private struct TakeoverAlertCard: View {
+    let alert: Shared.Alert
+    let alertSummary: AlertSummary?
+    let routeAccents: TripRouteAccents
+    let onViewDetails: (() -> Void)?
+    let internalPadding: EdgeInsets
+
+    @ScaledMetric var iconSize = 48
+
+    var formattedAlert: FormattedAlert {
+        FormattedAlert(alert: alert, alertSummary: alertSummary)
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                HStack(alignment: .center, spacing: 16) {
+                    // Override alert state and icon size in the case of all clear
+                    let alertState = alertSummary is AlertSummary.AllClear ? .allClear : alert.alertState
+                    AlertIcon(
+                        alertState: alertState,
+                        color: routeAccents.color,
+                        overrideIcon: alert.effect == .cancellation ? routeSlashIcon(routeAccents.type) : nil
+                    )
+                    .scaledToFit()
+                    .frame(width: iconSize, height: iconSize, alignment: .center)
+                    Text(formattedAlert.alertCardHeader(spec: .takeover, type: routeAccents.type))
+                        .font(Typography.title2Bold)
+                        .multilineTextAlignment(.leading)
+                }
+            }
+
+            routeAccents.color.opacity(0.25).frame(height: 2)
+            Text(formattedAlert.alertCardMajorBody)
+                .font(Typography.callout)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if let onViewDetails {
+                Button(
+                    action: onViewDetails,
+                    label: {
+                        Text("View details", comment: "Button that shows more informaton about an alert")
+                            .frame(maxWidth: .infinity)
+                    }
+                )
+                .foregroundStyle(routeAccents.textColor)
+                .font(Typography.bodySemibold)
+                .padding(10)
+                .frame(minHeight: 44)
+                .background(routeAccents.color)
+                .clipShape(.rect(cornerRadius: 8.0))
+                .preventScrollTaps()
+            }
+        }
+        .padding(internalPadding)
+        .padding(16)
+    }
+}
+
 struct AlertCard: View {
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
@@ -17,11 +76,10 @@ struct AlertCard: View {
     let onViewDetails: (() -> Void)?
     let internalPadding: EdgeInsets
 
-    @ScaledMetric var majorIconSize = 48
     @ScaledMetric var elevatorIconSize = 36
 
     @ScaledMetric var miniIconSize = 20
-    @ScaledMetric var infoIconSize = 16
+    @ScaledMetric var chevronIconSize = 16
 
     init(
         alert: Shared.Alert,
@@ -45,7 +103,6 @@ struct AlertCard: View {
 
     var iconSize: Double {
         switch spec {
-        case .takeover: majorIconSize
         case .elevator: elevatorIconSize
         default: miniIconSize
         }
@@ -67,57 +124,37 @@ struct AlertCard: View {
                     .scaledToFit()
                     .frame(width: iconSize, height: iconSize, alignment: .center)
                     Text(formattedAlert.alertCardHeader(spec: spec, type: routeAccents.type))
-                        .font(spec == .takeover ? Typography.title2Bold : Typography.callout)
+                        .font(Typography.callout)
                         .multilineTextAlignment(.leading)
                 }
-                if spec != .takeover {
-                    Spacer()
-                    InfoIcon(size: infoIconSize)
-                }
-            }
-            if spec == .takeover {
-                routeAccents.color.opacity(0.25).frame(height: 2)
-                Text(formattedAlert.alertCardMajorBody)
-                    .font(Typography.callout)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if let onViewDetails {
-                    Button(
-                        action: onViewDetails,
-                        label: {
-                            Text("View details", comment: "Button that shows more informaton about an alert")
-                                .frame(maxWidth: .infinity)
-                        }
-                    )
-                    .foregroundStyle(routeAccents.textColor)
-                    .font(Typography.bodySemibold)
-                    .padding(10)
-                    .frame(minHeight: 44)
-                    .background(routeAccents.color)
-                    .clipShape(.rect(cornerRadius: 8.0))
-                    .preventScrollTaps()
-                }
+                Spacer()
+                Image(.faChevronRight)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(height: chevronIconSize)
+                    .accessibilityHidden(true)
             }
         }
         .padding(internalPadding)
         .padding(16)
-        .background(Color.fill3)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
-        .padding(1)
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
-        .padding(.top, 1)
     }
 
     var body: some View {
-        if spec != .takeover, let onViewDetails {
-            Button(
-                action: onViewDetails,
-                label: { card }
-            )
-            .foregroundStyle(Color.text)
-            .preventScrollTaps()
+        if spec == .takeover {
+            TakeoverAlertCard(alert: alert,
+                              alertSummary: alertSummary,
+                              routeAccents: routeAccents,
+                              onViewDetails: onViewDetails,
+                              internalPadding: internalPadding)
         } else {
-            card
+            if let onViewDetails {
+                Button(
+                    action: onViewDetails,
+                    label: { card }
+                )
+                .foregroundStyle(Color.text)
+                .preventScrollTaps()
+            } else { card }
         }
     }
 }
