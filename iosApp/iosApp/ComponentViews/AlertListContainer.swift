@@ -30,7 +30,7 @@ struct AlertListContainer: View {
                 let bottomRadius = index == highPriorityCount - 1 && !showNotAccessibleCard && lowPriorityCount ==
                     0 ? outerCornerRadius : internalCornerRadius
 
-                alertCard(displayAlert, alertSummaries)
+                alertCard(displayAlert)
                     .background(Color.fill3)
                     .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
             }
@@ -48,7 +48,7 @@ struct AlertListContainer: View {
                     : internalCornerRadius
                 let bottomRadius = index == lowPriorityCount - 1 ? outerCornerRadius : internalCornerRadius
 
-                alertCard(displayAlert, alertSummaries)
+                alertCard(displayAlert)
                     .background(Color.fill2)
                     .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
             }
@@ -59,7 +59,7 @@ struct AlertListContainer: View {
     }
 
     @ViewBuilder
-    func alertCard(_ displayAlert: DisplayAlert, _: [String: AlertSummary?]) -> some View {
+    func alertCard(_ displayAlert: DisplayAlert) -> some View {
         let alert = displayAlert.alert
         let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
 
