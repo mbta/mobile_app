@@ -42,7 +42,7 @@ struct AlertListContainer: View {
                         onViewDetails: { onRowTap(alert.id, spec) }
                     )
                     .background(Color.fill3)
-                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius)
+                    .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
                 }
             }
 
