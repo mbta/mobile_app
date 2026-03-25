@@ -30,20 +30,9 @@ struct AlertListContainer: View {
                 let bottomRadius = index == highPriorityCount - 1 && !showNotAccessibleCard && lowPriorityCount ==
                     0 ? outerCornerRadius : internalCornerRadius
 
-                if alertSummaries.keys.contains(displayAlert.id) {
-                    let alert = displayAlert.alert
-                    let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
-
-                    AlertCard(
-                        alert: alert,
-                        alertSummary: alertSummaries[alert.id] ?? nil,
-                        spec: spec,
-                        routeAccents: routeAccents,
-                        onViewDetails: { onRowTap(alert.id, spec) }
-                    )
+                alertCard(displayAlert, alertSummaries)
                     .background(Color.fill3)
                     .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
-                }
             }
 
             if showNotAccessibleCard {
@@ -59,25 +48,30 @@ struct AlertListContainer: View {
                     : internalCornerRadius
                 let bottomRadius = index == lowPriorityCount - 1 ? outerCornerRadius : internalCornerRadius
 
-                if alertSummaries.keys.contains(displayAlert.id) {
-                    let alert = displayAlert.alert
-                    let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
-
-                    AlertCard(
-                        alert: alert,
-                        alertSummary: alertSummaries[alert.id] ?? nil,
-                        spec: spec,
-                        routeAccents: routeAccents,
-                        onViewDetails: { onRowTap(alert.id, spec) }
-                    )
+                alertCard(displayAlert, alertSummaries)
                     .background(Color.fill2)
                     .withUnevenRoundedBorder(topRadius: topRadius, bottomRadius: bottomRadius, color: Color.clear)
-                }
             }
         }
         .padding(2)
         .background(Color.halo)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+    }
+
+    @ViewBuilder
+    func alertCard(_ displayAlert: DisplayAlert, _: [String: AlertSummary?]) -> some View {
+        let alert = displayAlert.alert
+        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
+
+        if alertSummaries.keys.contains(displayAlert.id) {
+            AlertCard(
+                alert: alert,
+                alertSummary: alertSummaries[alert.id] ?? nil,
+                spec: spec,
+                routeAccents: routeAccents,
+                onViewDetails: { onRowTap(alert.id, spec) }
+            )
+        }
     }
 }
 
