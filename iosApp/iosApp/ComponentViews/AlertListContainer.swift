@@ -75,10 +75,9 @@ struct AlertListContainer: View {
                 }
             }
         }
-
         .padding(2)
         .background(Color.halo)
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
