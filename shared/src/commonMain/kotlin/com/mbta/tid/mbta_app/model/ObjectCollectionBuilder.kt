@@ -485,6 +485,21 @@ private constructor(
         public var tripId: String = ""
         public var decoration: Vehicle.Decoration? = null
 
+        public inner class CarriageBuilder {
+            public var label: String? = null
+            public var occupancyPercentage: Int? = null
+            public var occupancyStatus: Vehicle.OccupancyStatus =
+                Vehicle.OccupancyStatus.NoDataAvailable
+
+            internal fun built(): Vehicle.Carriage =
+                Vehicle.Carriage(occupancyStatus, occupancyPercentage, label)
+        }
+
+        public fun carriage(block: CarriageBuilder.() -> Unit) {
+            val newCarriage = CarriageBuilder().apply(block).built()
+            carriages = carriages.orEmpty() + newCarriage
+        }
+
         override fun built(): Vehicle =
             Vehicle(
                 id,

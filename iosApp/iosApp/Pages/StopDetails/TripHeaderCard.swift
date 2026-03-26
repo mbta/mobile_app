@@ -28,6 +28,8 @@ struct TripHeaderCard: View {
     let now: EasternTimeInstant
     let onFollowTrip: (() -> Void)?
 
+    @Environment(\.layoutDirection) var layoutDirection
+
     var body: some View {
         ZStack(alignment: .leading) {
             VStack(spacing: 0) {
@@ -49,9 +51,18 @@ struct TripHeaderCard: View {
             }.padding(.leading, 12)
             HStack(spacing: 8) {
                 tripMarker
-                description
-                Spacer()
-                tripIndicator
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        description
+                            .accessibilityHeading(.h4)
+                            .accessibilityAddTraits([.isHeader, .updatesFrequently])
+                        Spacer()
+                        tripIndicator
+                    }
+                    if case let .vehicle(vehicle, _, _, atTerminal) = spec, vehicle.hasCarLevelCrowding, !atTerminal {
+                        carLevelCrowding
+                    }
+                }
             }
             .padding(.vertical, 16)
             .padding(.horizontal, 14)
@@ -65,20 +76,78 @@ struct TripHeaderCard: View {
         .fixedSize(horizontal: false, vertical: true)
         .dynamicTypeSize(...DynamicTypeSize.accessibility3)
         .onTapGesture { if let onTap { onTap() } }
-        .accessibilityElement(children: .combine)
+        .accessibilityElement(children: onTap != nil ? .combine : .contain)
         .accessibilityAddTraits(onTap != nil ? .isButton : [])
-        .accessibilityAddTraits([.isHeader, .updatesFrequently])
         .accessibilityHint(onTap != nil ? NSLocalizedString(
             "displays more information",
             comment: "Screen reader hint for tapping on the trip details header on the stop page"
         ) : "")
-        .accessibilityHeading(.h4)
     }
 
-    @ViewBuilder private var busCrowding: some View {
+    @ViewBuilder private var carLevelCrowding: some View {
         switch spec {
         case let .vehicle(vehicle, _, _, atTerminal):
-            if let crowding = vehicle.occupancyStatus.crowdingLevel, route.type == .bus, !atTerminal {
+            if vehicle.hasCarLevelCrowding, !atTerminal {
+                HStack(spacing: 1) {
+                    Image(.crowdingVehicleFrontIcon)
+                        .foregroundStyle(routeAccents.color)
+                        .accessibilityLabel(Text(
+                            "Train crowding diagram",
+                            comment: "Header for a diagram showing which train cars are crowded and which are not"
+                        ))
+                        .accessibilityHeading(.h5)
+                        .accessibilityAddTraits(.isHeader)
+                    ForEach(Array((vehicle.carriages ?? []).enumerated()), id: \.offset) { index, carriage in
+                        let weebleIcon: ImageResource = switch carriage.occupancyStatus.crowdingLevel {
+                        case .notCrowded: .crowdingCarNotCrowded
+                        case .someCrowding: .crowdingCarSomeCrowding
+                        case .crowded: .crowdingCarCrowded
+                        case nil: .crowdingCarUnknown
+                        }
+                        let background = carLevelBackground(
+                            crowding: carriage.occupancyStatus.crowdingLevel,
+                            routeColor: routeAccents.color
+                        )
+                        Image(weebleIcon)
+                            .foregroundStyle(routeAccents.textColor)
+                            .frame(height: 18)
+                            .frame(maxWidth: .infinity)
+                            .background { background.clipShape(RoundedRectangle(cornerRadius: 2)) }
+                            .accessibilityLabel(Text(
+                                "Car \(index + 1) of \((vehicle.carriages ?? []).count), \(crowdingText(carriage.occupancyStatus.crowdingLevel))",
+                                comment: "Screen reader text for a car within a train and its crowding level, ex. “Car 2 of 6, some crowding”"
+                            ))
+                            .accessibilityRemoveTraits(.isImage)
+                    }
+                }
+                .accessibilityElement(children: .contain)
+                .padding(.top, 16)
+                .environment(\.layoutDirection, layoutDirection == .leftToRight ? .rightToLeft : .leftToRight)
+            } else {
+                EmptyView()
+            }
+        default: EmptyView()
+        }
+    }
+
+    @ViewBuilder private func carLevelBackground(crowding: Vehicle.CrowdingLevel?, routeColor: Color) -> some View {
+        ZStack {
+            switch crowding {
+            case .notCrowded:
+                Color.white
+                routeColor.opacity(0.5)
+            case .someCrowding, nil: routeColor
+            case .crowded:
+                routeColor
+                routeColor.blendMode(.multiply)
+            }
+        }
+    }
+
+    @ViewBuilder private var vehicleCrowding: some View {
+        switch spec {
+        case let .vehicle(vehicle, _, _, atTerminal):
+            if let crowding = vehicle.occupancyStatus.crowdingLevel, !vehicle.hasCarLevelCrowding, !atTerminal {
                 HStack(alignment: .center, spacing: 8) {
                     let crowdingImage: ImageResource = switch crowding {
                     case .crowded: .crowdingBusCrowded
@@ -95,7 +164,7 @@ struct TripHeaderCard: View {
         }
     }
 
-    private func crowdingText(_ crowding: Vehicle.CrowdingLevel) -> String {
+    private func crowdingText(_ crowding: Vehicle.CrowdingLevel?) -> String {
         switch crowding {
         case .crowded: NSLocalizedString(
                 "Crowded",
@@ -108,6 +177,10 @@ struct TripHeaderCard: View {
         case .someCrowding: NSLocalizedString(
                 "Some crowding",
                 comment: "Text for a moderate crowding level, with some seats available"
+            )
+        case nil: NSLocalizedString(
+                "Crowding unknown",
+                comment: "Text for a crowding level that is not known"
             )
         }
     }
@@ -182,7 +255,7 @@ struct TripHeaderCard: View {
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilityLabel(vehicleDescriptionAccessibilityText(vehicle, stop, atTerminal))
-                busCrowding
+                vehicleCrowding
                 if let trackNumber = entry?.trackNumber {
                     Text(
                         "Track \(trackNumber)",
@@ -410,5 +483,77 @@ struct TripVehicleCard_Previews: PreviewProvider {
         }
         .withFixedSettings([:])
         .previewDisplayName("VehicleCard")
+    }
+}
+
+#Preview("Car Level Crowding") {
+    let objects = TestData.clone()
+    let ol = objects.getRoute(id: "Orange")
+    let rl = objects.getRoute(id: "Red")
+    let olTrip = objects.trip { $0.routeId = ol.id.idText }
+    let rlTrip = objects.trip { $0.routeId = rl.id.idText }
+    let backBay = objects.getStop(id: "place-bbsta")
+    let kendallMIT = objects.getStop(id: "place-knncl")
+    let olVehicle = objects.vehicle { vehicle in
+        vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .fewSeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .standingRoomOnly }
+        vehicle.carriage { $0.occupancyStatus = .fewSeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .fewSeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+        vehicle.currentStatus = .incomingAt
+        vehicle.stopId = backBay.id
+        vehicle.tripId = olTrip.id
+    }
+    let rlVehicle = objects.vehicle { vehicle in
+        vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .fewSeatsAvailable }
+        vehicle.carriage { $0.occupancyStatus = .standingRoomOnly }
+        vehicle.carriage { $0.occupancyStatus = .noDataAvailable }
+        vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+        vehicle.currentStatus = .incomingAt
+        vehicle.stopId = kendallMIT.id
+        vehicle.tripId = rlTrip.id
+    }
+    let olEntry = TripDetailsStopList.Entry(
+        stop: backBay,
+        stopSequence: 0,
+        disruption: nil,
+        schedule: nil,
+        prediction: objects.prediction { $0.departureTime = .now().plus(minutes: 3) },
+        vehicle: olVehicle,
+        routes: [ol]
+    )
+    let rlEntry = TripDetailsStopList.Entry(
+        stop: kendallMIT,
+        stopSequence: 0,
+        disruption: nil,
+        schedule: nil,
+        prediction: objects.prediction { $0.departureTime = .now().plus(minutes: 3) },
+        vehicle: rlVehicle,
+        routes: [rl]
+    )
+
+    VStack {
+        TripHeaderCard(
+            spec: .vehicle(olVehicle, backBay, olEntry, false),
+            trip: olTrip,
+            targetId: "",
+            route: ol,
+            routeAccents: .init(route: ol),
+            onTap: nil,
+            now: .now(),
+            onFollowTrip: {}
+        )
+        TripHeaderCard(
+            spec: .vehicle(rlVehicle, kendallMIT, rlEntry, false),
+            trip: rlTrip,
+            targetId: "",
+            route: rl,
+            routeAccents: .init(route: rl),
+            onTap: nil,
+            now: .now(),
+            onFollowTrip: {}
+        )
     }
 }

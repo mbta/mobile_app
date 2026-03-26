@@ -92,9 +92,12 @@
     <string name="crossing_issue_lowercase">pwoblèm nan pasaj a nivo</string>
     <string name="crossing_malfunction">Pasaj a Nivo ki p ap Fonksyone</string>
     <string name="crossing_malfunction_lowercase">malfonksyònman nan pasaj a nivo</string>
+    <string name="crowding_car_description">Machin %1$s sou %2$s, %3$s</string>
     <string name="crowding_crowded">Anpil moun</string>
+    <string name="crowding_diagram">Dyagram anbouteyaj tren yo</string>
     <string name="crowding_not_crowded">Pa gen moun</string>
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
+    <string name="crowding_unknown">Foul moun enkoni</string>
     <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>

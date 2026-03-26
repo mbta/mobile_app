@@ -89,9 +89,12 @@
     <string name="crossing_issue_lowercase">problème de passage à niveau</string>
     <string name="crossing_malfunction">Dysfonctionnement du passage à niveau</string>
     <string name="crossing_malfunction_lowercase">dysfonctionnement du passage à niveau</string>
+    <string name="crowding_car_description">Voiture %1$s de %2$s, %3$s</string>
     <string name="crowding_crowded">Bondé</string>
+    <string name="crowding_diagram">diagramme de densité des trains</string>
     <string name="crowding_not_crowded">Pas bondé</string>
     <string name="crowding_some_crowding">Quelques attroupements</string>
+    <string name="crowding_unknown">Foule inconnue</string>
     <string name="daily">Tous les jours</string>
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">Retards dus à &lt;b>%1$s&lt;/b></string>
