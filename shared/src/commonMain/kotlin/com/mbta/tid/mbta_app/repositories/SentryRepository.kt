@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import io.sentry.kotlin.multiplatform.Scope
 import io.sentry.kotlin.multiplatform.Sentry
 
@@ -26,7 +27,9 @@ internal class SentryRepository : ISentryRepository {
     }
 }
 
-public class MockSentryRepository(
+public class MockSentryRepository
+@DefaultArgumentInterop.Enabled
+constructor(
     public var onCaptureMessage: (String) -> Unit = {},
     public var onCaptureMessageWithDetails: (String) -> Unit = {},
     public var onCaptureException: (Throwable) -> Unit = {},
