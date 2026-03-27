@@ -7,7 +7,9 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.jvm.JvmName
 import kotlin.math.max
 import kotlin.time.Duration
@@ -652,6 +654,7 @@ public data class RouteCardData(
             sortByDistanceFrom: Position? = null,
             favorites: Set<RouteStopDirection>? = null,
             coroutineDispatcher: CoroutineDispatcher = Dispatchers.Default,
+            sentryRepository: ISentryRepository,
         ): List<RouteCardData>? =
             withContext(coroutineDispatcher) {
                 // if global data was still loading, there'd be no nearby data, and null handling is
@@ -669,6 +672,36 @@ public data class RouteCardData(
                     )
                     .build(sortByDistanceFrom)
                     .sort(sortByDistanceFrom, context)
+                    .map {
+                        // Send a Sentry message if data is empty for a route
+                        val emptyStops = it.stopData.filter { stop -> stop.data.isEmpty() }
+                        if (it.stopData.isEmpty() || emptyStops.isNotEmpty()) {
+                            val route = it.id.idText
+                            sentryRepository.captureMessage("Empty static RouteCardData") {
+                                addBreadcrumb(
+                                    Breadcrumb(
+                                        message =
+                                            if (emptyStops.isEmpty()) "No stops for $route"
+                                            else
+                                                "${emptyStops.size} stop(s) missing leaves for $route",
+                                        data =
+                                            mutableMapOf(
+                                                "route" to route,
+                                                "emptyStops" to
+                                                    emptyStops.map { stop ->
+                                                        mapOf(
+                                                            "stop" to stop.id,
+                                                            "directions" to stop.directions,
+                                                        )
+                                                    },
+                                            ),
+                                    )
+                                )
+                            }
+                        }
+
+                        return@map it
+                    }
             }
 
         internal fun filterStopsByPatterns(
