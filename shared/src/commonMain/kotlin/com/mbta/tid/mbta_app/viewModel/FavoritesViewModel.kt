@@ -22,6 +22,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
@@ -180,6 +181,7 @@ public class FavoritesViewModel(
 
                     val staleFavorites = getStaleFavorites(resolvedFavorites.keys, globalData)
                     if (staleFavorites.isNotEmpty()) {
+
                         updateFavorites(
                             staleFavorites.associateWith { null },
                             EditFavoritesContext.StaleCheck,
@@ -188,6 +190,24 @@ public class FavoritesViewModel(
                             fcmToken,
                             false,
                         )
+                        sentryRepository.captureMessage("Clearing stale favorites") {
+                            addBreadcrumb(
+                                Breadcrumb(
+                                    message = "Removing ${staleFavorites.size} stale favorite(s)",
+                                    data =
+                                        mutableMapOf(
+                                            "staleFavorites" to
+                                                staleFavorites.map {
+                                                    mapOf(
+                                                        "route" to it.route.idText,
+                                                        "stop" to it.stop,
+                                                        "direction" to it.direction,
+                                                    )
+                                                }
+                                        ),
+                                )
+                            )
+                        }
                     }
                 }
                 Event.ReloadFavorites ->
@@ -267,6 +287,7 @@ public class FavoritesViewModel(
                         location,
                         favorites?.keys,
                         coroutineDispatcher,
+                        sentryRepository,
                     )
             }
         }
