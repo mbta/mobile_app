@@ -122,16 +122,15 @@ fun TripHeaderCard(
                     ) {
                         if (spec != null) {
                             TripMarker(spec, targetId, routeAccents)
-                            Column {
+                            Column(
+                                Modifier.padding(vertical = 10.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                            ) {
                                 val hasCarLevelCrowding =
                                     spec is TripHeaderSpec.VehicleOnTrip &&
                                         spec.vehicle.hasCarLevelCrowding &&
                                         !spec.atTerminal
                                 Row(
-                                    Modifier.padding(
-                                        top = 10.dp,
-                                        bottom = if (!hasCarLevelCrowding) 10.dp else 0.dp,
-                                    ),
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 ) {
@@ -208,7 +207,7 @@ fun TripHeaderCard(
 private fun CarLevelCrowding(carriages: List<Vehicle.Carriage>, routeAccents: TripRouteAccents) {
     val heading = stringResource(R.string.crowding_diagram)
     ReverseRow(
-        Modifier.fillMaxWidth().padding(vertical = 16.dp).semantics(mergeDescendants = true) {
+        Modifier.fillMaxWidth().padding(vertical = 6.dp).semantics(mergeDescendants = true) {
             heading()
             contentDescription = heading
             isTraversalGroup = true
