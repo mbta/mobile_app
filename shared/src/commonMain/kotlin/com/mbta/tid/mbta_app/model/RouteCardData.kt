@@ -236,7 +236,7 @@ public data class RouteCardData(
                 val trip = formattedTrip.trip
                 if (context.isStopDetails() || trip.isUpcoming()) {
                     val existingPatterns =
-                        potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
+                        potentialService.getOrPut(Pair(trip.routeId, trip.headsign)) {
                             mutableSetOf()
                         }
                     if (trip.trip.routePatternId != null) {
@@ -366,8 +366,7 @@ public data class RouteCardData(
                     formattedTrips.map { format ->
                         val trip = format.trip
                         val route =
-                            if (shouldIncludeRoute) globalData?.getRoute(trip.trip.routeId)
-                            else null
+                            if (shouldIncludeRoute) globalData?.getRoute(trip.routeId) else null
                         LeafFormat.Branched.BranchRow(
                             route,
                             trip.headsign,
@@ -421,8 +420,7 @@ public data class RouteCardData(
                 formattedTrips.take(remainingRowsToShow).map { formatted ->
                     val upcomingTrip = formatted.trip
                     val route =
-                        if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.trip.routeId)
-                        else null
+                        if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
                     LeafFormat.Branched.BranchRow(
                         route,
                         upcomingTrip.trip.headsign,
@@ -584,7 +582,7 @@ public data class RouteCardData(
     internal fun distanceFrom(position: Position): Length =
         this.stopData.first().stop.distanceFrom(position)
 
-    override fun toString(): String = "[RouteCardData]"
+    //    override fun toString(): String = "[RouteCardData]"
 
     public companion object {
         // For regular non-branching service, we always show up to 2 departure rows for each leaf
@@ -858,7 +856,7 @@ public data class RouteCardData(
             for (upcomingTrip in upcomingTrips) {
                 val parentStopId =
                     upcomingTrip.stopId?.let { parentStop(globalData, it)?.id } ?: continue
-                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
+                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.routeId) ?: continue
                 upcomingTripsBySlot
                     .getOrPut(
                         HierarchyPath(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),

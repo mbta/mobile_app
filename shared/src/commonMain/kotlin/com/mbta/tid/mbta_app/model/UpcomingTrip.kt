@@ -35,6 +35,8 @@ constructor(
 
     val id: String = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
 
+    public val routeId: Route.Id = prediction?.routeId ?: schedule?.routeId ?: trip.routeId
+
     internal val time =
         if (
             prediction != null &&
@@ -175,6 +177,7 @@ constructor(
             alerts: Map<String, Alert>,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
+                val routeId: Route.Id,
                 val tripId: String,
                 val rootStopId: String?,
                 val stopSequence: Int?,
@@ -182,6 +185,7 @@ constructor(
                 constructor(
                     schedule: Schedule
                 ) : this(
+                    schedule.routeId,
                     schedule.tripId,
                     stops.resolveParentId(schedule.stopId),
                     schedule.stopSequence,
@@ -190,6 +194,7 @@ constructor(
                 constructor(
                     prediction: Prediction
                 ) : this(
+                    prediction.routeId,
                     prediction.tripId,
                     stops.resolveParentId(prediction.stopId),
                     prediction.stopSequence,
