@@ -583,4 +583,64 @@ final class TripHeaderCardTests: XCTestCase {
         try sut.inspect().find(button: "Follow").tap()
         wait(for: [followExp])
     }
+
+    func testCarLevelCrowding() throws {
+        let objects = TestData.clone()
+        let rl = objects.getRoute(id: "Red")
+        let rlTrip = objects.trip { $0.routeId = rl.id.idText }
+        let kendallMIT = objects.getStop(id: "place-knncl")
+        let rlVehicle = objects.vehicle { vehicle in
+            vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+            vehicle.carriage { $0.occupancyStatus = .fewSeatsAvailable }
+            vehicle.carriage { $0.occupancyStatus = .standingRoomOnly }
+            vehicle.carriage { $0.occupancyStatus = .noDataAvailable }
+            vehicle.carriage { $0.occupancyStatus = .manySeatsAvailable }
+            vehicle.currentStatus = .incomingAt
+            vehicle.stopId = kendallMIT.id
+            vehicle.tripId = rlTrip.id
+        }
+        let rlEntry = TripDetailsStopList.Entry(
+            stop: kendallMIT,
+            stopSequence: 0,
+            disruption: nil,
+            schedule: nil,
+            prediction: objects.prediction { $0.departureTime = .now().plus(minutes: 3) },
+            vehicle: rlVehicle,
+            routes: [rl]
+        )
+        let sut = TripHeaderCard(
+            spec: .vehicle(rlVehicle, kendallMIT, rlEntry, false),
+            trip: rlTrip,
+            targetId: "",
+            route: rl,
+            routeAccents: .init(route: rl),
+            onTap: nil,
+            now: .now(),
+            onFollowTrip: {}
+        )
+        XCTAssertNotNil(try sut.inspect().find(imageName: "crowding-vehicle-front-icon"))
+        XCTAssertNotNil(try sut.inspect().find(viewWithAccessibilityLabel: "Train crowding diagram"))
+        XCTAssertEqual(
+            try sut.inspect().find(viewWithAccessibilityLabel: "Car 1 of 5, Not crowded").image().actualImage().name(),
+            "crowding-car-not-crowded"
+        )
+        XCTAssertEqual(
+            try sut.inspect().find(viewWithAccessibilityLabel: "Car 2 of 5, Some crowding").image().actualImage()
+                .name(),
+            "crowding-car-some-crowding"
+        )
+        XCTAssertEqual(
+            try sut.inspect().find(viewWithAccessibilityLabel: "Car 3 of 5, Crowded").image().actualImage().name(),
+            "crowding-car-crowded"
+        )
+        XCTAssertEqual(
+            try sut.inspect().find(viewWithAccessibilityLabel: "Car 4 of 5, Crowding unknown").image().actualImage()
+                .name(),
+            "crowding-car-unknown"
+        )
+        XCTAssertEqual(
+            try sut.inspect().find(viewWithAccessibilityLabel: "Car 5 of 5, Not crowded").image().actualImage().name(),
+            "crowding-car-not-crowded"
+        )
+    }
 }

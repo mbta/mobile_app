@@ -78,5 +78,8 @@ public data class Vehicle(
         val label: String?,
     )
 
+    public val hasCarLevelCrowding: Boolean =
+        carriages.orEmpty().any { it.occupancyStatus != Vehicle.OccupancyStatus.NoDataAvailable }
+
     override fun toString(): String = "Vehicle(id=$id)"
 }

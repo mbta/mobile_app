@@ -87,9 +87,12 @@
     <string name="crossing_issue_lowercase">交通信号灯问题</string>
     <string name="crossing_malfunction">交通信号灯故障</string>
     <string name="crossing_malfunction_lowercase">交通信号灯故障</string>
+    <string name="crowding_car_description">汽车 %1$s 的 %2$s，%3$s</string>
     <string name="crowding_crowded">挤</string>
+    <string name="crowding_diagram">列车拥挤情况图</string>
     <string name="crowding_not_crowded">不拥挤。</string>
     <string name="crowding_some_crowding">有些拥挤</string>
+    <string name="crowding_unknown">拥挤程度未知</string>
     <string name="daily">日常的</string>
     <string name="delay">延误</string>
     <string name="delays_due_to_cause">由于 &lt;b>%1$s&lt;/b> 造成延误</string>
