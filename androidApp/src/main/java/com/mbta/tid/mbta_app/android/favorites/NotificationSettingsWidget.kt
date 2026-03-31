@@ -125,7 +125,9 @@ fun NotificationSettingsWidget(
                     WindowWidget(
                         window,
                         setWindow = { newWindow ->
-                            val windows = settings.windows - window + newWindow
+                            val windows = settings.windows.toMutableList()
+                            val index = windows.indexOf(window)
+                            if (index != -1) windows[index] = newWindow
                             setSettings(settings.copy(windows = windows))
                         },
                         deleteWindow =
