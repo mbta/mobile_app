@@ -140,7 +140,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
             alertCards
-            if isAllServiceDisrupted {
+            if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
+                WorldCupBlurb(leaf: leaf, routeAccents: routeAccents, offerDetails: true)
+                    .padding(16)
+                    .background(Color.fill3)
+                    .withRoundedBorder()
+                    .padding(.horizontal, 16)
+            } else if isAllServiceDisrupted {
                 EmptyView()
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(

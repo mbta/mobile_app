@@ -321,4 +321,65 @@ class PatternSortingTest {
             ),
         )
     }
+
+    @Test
+    fun `sorts World Cup correctly despite lack of schedules in data`() {
+        val stop = objects.stop()
+        val rapidTransitRoute =
+            objects.route {
+                type = RouteType.BUS
+                sortOrder = 11000
+            }
+        val worldCupRoute = WorldCupService.route
+        objects.put(worldCupRoute)
+        val commuterRailRoute =
+            objects.route {
+                type = RouteType.COMMUTER_RAIL
+                sortOrder = 20001
+            }
+
+        val rapidTransitPattern = objects.routePattern(rapidTransitRoute) { sortOrder = 110000000 }
+        val worldCupPattern = WorldCupService.routePatternOutbound
+        objects.put(worldCupPattern)
+        val commuterRailPattern = objects.routePattern(commuterRailRoute) { sortOrder = 200010000 }
+
+        val rapidTransitLeaf =
+            leaf(LineOrRoute.Route(rapidTransitRoute), pattern = rapidTransitPattern, trips = 1)
+        val worldCupLeaf =
+            leaf(
+                LineOrRoute.Route(worldCupRoute),
+                pattern = worldCupPattern,
+                trips = 0,
+                hasSchedulesToday = false,
+            )
+        val commuterRailLeaf =
+            leaf(LineOrRoute.Route(commuterRailRoute), pattern = commuterRailPattern, trips = 1)
+
+        val rapidTransitCard =
+            routeCard(
+                rapidTransitRoute,
+                stopData(stop, LineOrRoute.Route(rapidTransitRoute), rapidTransitLeaf),
+            )
+        val worldCupCard =
+            routeCard(worldCupRoute, stopData(stop, LineOrRoute.Route(worldCupRoute), worldCupLeaf))
+        val commuterRailCard =
+            routeCard(
+                commuterRailRoute,
+                stopData(stop, LineOrRoute.Route(commuterRailRoute), commuterRailLeaf),
+            )
+
+        val expected = listOf(rapidTransitCard, worldCupCard, commuterRailCard)
+
+        assertEquals(
+            expected,
+            expected
+                .reversed()
+                .sortedWith(
+                    PatternSorting.compareRouteCards(
+                        sortByDistanceFrom = null,
+                        RouteCardData.Context.NearbyTransit,
+                    )
+                ),
+        )
+    }
 }

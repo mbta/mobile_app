@@ -529,5 +529,8 @@
     <string name="weather_lowercase">move tan</string>
     <string name="westbound">Pran direksyon lwès</string>
     <string name="will_not_stop_at">p ap rete nan %1$s %2$s</string>
+    <string name="world_cup_service_inbound">Sèvis apati match &lt;b>Koup di Mond&lt;/b> jodi a pou rive nan &lt;b>Estasyon Sid&lt;/b></string>
+    <string name="world_cup_service_outbound">Sèvis soti nan &lt;b>Estasyon Sid&lt;/b> pou rive nan &lt;b>match koup di mond&lt;/b> jodi a</string>
+    <string name="world_cup_ticket_required">Tikè tren Boston Stadium obligatwa</string>
     <string name="x_and_y">%1$s ak %2$s</string>
 </resources>

@@ -970,4 +970,44 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))
     }
+
+    func testShowsWorldCupBlurb() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = WorldCupService.shared.route
+        objects.put(object: route)
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: .init(
+                lineOrRoute: .Route(route: route),
+                stop: stop,
+                directionId: 0,
+                routePatterns: [WorldCupService.shared.routePatternOutbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .stopDetailsFiltered
+            ),
+            alertSummaries: [:],
+            selectedDirection: .init(directionId: 0, route: route),
+            favorite: false,
+            now: .now(),
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        XCTAssertNotNil(try sut.inspect().find(text: "Service from South Station to today’s World Cup match"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Boston Stadium Train ticket required"))
+        XCTAssertNotNil(try sut.inspect().find(text: "View details"))
+    }
 }

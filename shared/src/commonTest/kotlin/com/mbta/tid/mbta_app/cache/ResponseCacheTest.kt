@@ -10,8 +10,11 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
 import com.mbta.tid.mbta_app.utils.MockSystemPaths
+import io.ktor.client.HttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondOk
+import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpHeaders
@@ -31,7 +34,9 @@ import kotlin.time.TimeSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import okio.fakefilesystem.FakeFileSystem
 import org.koin.core.context.startKoin
@@ -204,30 +209,30 @@ class ResponseCacheTest {
 
         startKoin { modules(module { single { mockJsonPersistence() } }) }
 
-        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(1, fetchCount)
 
         // Assert cached
-        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(1, fetchCount)
         delay(1.seconds)
 
         // Assert that the cache retains the data when it receives a NotModified response
-        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(2, fetchCount)
 
         // And that receiving NotModified resets the cache timer
-        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(2, fetchCount)
         delay(1.seconds)
 
         // Get new data on next request
-        assertEquals(ApiResult.Ok(newData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(newData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(3, fetchCount)
         delay(1.seconds)
 
         // Ensure we go back to the old data when sent etag doesn't match
-        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(::fetch))
+        assertEquals(ApiResult.Ok(oldData), cache.getOrFetch(fetch = ::fetch))
         assertEquals(4, fetchCount)
     }
 
@@ -590,5 +595,24 @@ class ResponseCacheTest {
         assertEquals(responseEtag, metadataFromDisk().etag)
         assertEquals(secondInvalidationKey, metadataFromDisk().invalidationKey)
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
+    }
+
+    @Test
+    fun `runs post-processing`() = runTest {
+        val cache = ResponseCache.create<List<Int>>(cacheKey = "cache")
+        val stateTest = launch {
+            cache.state.test {
+                assertEquals(null, awaitItem())
+                assertEquals(listOf(0, 1), awaitItem())
+            }
+        }
+        val httpClient = HttpClient(MockEngine { respondOk("[0]") })
+        startKoin { modules(module { single { mockJsonPersistence() } }) }
+        val actualData =
+            cache.getOrFetch(postprocess = { it + (it.max() + 1) }) {
+                httpClient.get("http://example.com")
+            }
+        assertEquals(listOf(0, 1), actualData.dataOrThrow())
+        stateTest.join()
     }
 }

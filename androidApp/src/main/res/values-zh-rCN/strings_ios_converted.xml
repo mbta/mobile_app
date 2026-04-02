@@ -504,5 +504,8 @@
     <string name="weather_lowercase">天气</string>
     <string name="westbound">西行</string>
     <string name="will_not_stop_at">不会止步于 %1$s %2$s</string>
+    <string name="world_cup_service_inbound">从今天的&lt;b>世界杯比赛&lt;/b>到&lt;b>南站&lt;/b>的列车服务</string>
+    <string name="world_cup_service_outbound">从&lt;b>南站&lt;/b>开往今日&lt;b>世界杯比赛&lt;/b>的列车服务</string>
+    <string name="world_cup_ticket_required">需要波士顿体育场火车票</string>
     <string name="x_and_y">%1$s 和 %2$s</string>
 </resources>
