@@ -33,8 +33,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,6 +59,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
@@ -77,7 +80,9 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Month
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
@@ -274,15 +279,36 @@ private enum class NotificationsScreenState {
 @Composable
 private fun NotificationsBetaPage(advance: () -> Unit) {
     var screenState by remember { mutableStateOf(NotificationsScreenState.Initial) }
+    var animation by remember { mutableStateOf(1) }
     val transition = updateTransition(screenState, label = "state")
-    LaunchedEffect(null) {
-        delay(2.seconds)
-        screenState = NotificationsScreenState.AfterFavorite
-        delay(2.seconds)
-        screenState = NotificationsScreenState.AfterSchedule
-        delay(2.seconds)
-        screenState = NotificationsScreenState.Final
+
+    val coroutineScope = rememberCoroutineScope()
+    var animationJob: Job? = null
+
+    fun playAnimation() {
+        animationJob?.cancel()
+        screenState = NotificationsScreenState.Initial
+        animationJob =
+            coroutineScope.launch {
+                delay(2.seconds)
+                screenState = NotificationsScreenState.AfterFavorite
+                delay(2.seconds)
+                screenState = NotificationsScreenState.AfterSchedule
+                delay(2.seconds)
+                screenState = NotificationsScreenState.Final
+            }
     }
+
+    LaunchedEffect(null) { playAnimation() }
+    LifecycleResumeEffect(null) {
+        playAnimation()
+        onPauseOrDispose {
+            animationJob?.cancel()
+            screenState = NotificationsScreenState.Initial
+            animation++
+        }
+    }
+
     OnboardingPieces.PageBox(
         colorResource(if (isSystemInDarkTheme()) R.color.fill1 else R.color.fill2)
     ) {
@@ -455,22 +481,27 @@ private fun NotificationsBetaPage(advance: () -> Unit) {
             }
             Box(Modifier.weight(1f), contentAlignment = Alignment.BottomCenter) {
                 val composition by
-                    rememberLottieComposition(
-                        LottieCompositionSpec.RawRes(
-                            if (isSystemInDarkTheme()) R.raw.notification_pop_dark
-                            else R.raw.notification_pop_light
+                    key(animation) {
+                        rememberLottieComposition(
+                            LottieCompositionSpec.RawRes(
+                                if (isSystemInDarkTheme()) R.raw.notification_pop_dark
+                                else R.raw.notification_pop_light
+                            )
                         )
-                    )
+                    }
                 val progress by
-                    animateLottieCompositionAsState(
-                        composition,
-                        isPlaying = screenState >= NotificationsScreenState.Final,
-                    )
+                    key(animation) {
+                        animateLottieCompositionAsState(
+                            composition,
+                            isPlaying = screenState >= NotificationsScreenState.Final,
+                        )
+                    }
                 LottieAnimation(
                     composition,
                     progress = { progress },
                     Modifier.align(Alignment.BottomCenter),
                 )
+
                 Column { OnboardingPieces.KeyButton(R.string.got_it, onClick = advance) }
             }
         }

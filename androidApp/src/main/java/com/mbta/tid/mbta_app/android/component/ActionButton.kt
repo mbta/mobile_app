@@ -2,16 +2,18 @@ package com.mbta.tid.mbta_app.android.component
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,12 +40,14 @@ fun ActionButton(
     modifier: Modifier = Modifier,
     size: Dp = 32.dp,
     colors: ButtonColors = ButtonDefaults.contrast(),
+    border: BorderStroke = BorderStroke(0.dp, Color.Transparent),
     action: () -> Unit,
 ) {
-    Button(
+    OutlinedButton(
         onClick = action,
         modifier = modifier.sizeIn(minWidth = size, minHeight = size),
         shape = CircleShape,
+        border = border,
         colors = colors,
         contentPadding = PaddingValues(if (kind != ActionButtonKind.Plus) 5.dp else 4.dp),
     ) {

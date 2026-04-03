@@ -243,6 +243,8 @@
     <string name="more_link_external">Liên kết ngoài</string>
     <string name="more_page_footer">Được tạo ra với ♥ bởi T</string>
     <string name="more_section_feature_flags">Cờ tính năng</string>
+    <string name="more_section_public_beta">Thử nghiệm các tính năng mới</string>
+    <string name="more_section_public_beta_note">Nhận quyền truy cập sớm để thử nghiệm các tính năng mới và cung cấp phản hồi.</string>
     <string name="more_section_resources">Nguồn</string>
     <string name="more_section_settings">Cài đặt</string>
     <string name="more_section_support">Thông tin &amp; Hỗ trợ chung của MBTA</string>
@@ -273,7 +275,14 @@
     <string name="northbound">Về hướng bắc</string>
     <string name="not_accessible">Không thể tiếp cận</string>
     <string name="not_accessible_stop_card">Điểm dừng này không có lối vào cho người khuyết tật</string>
+    <string name="notifications_beta_dialog_body">Chúng tôi có thể liên hệ với bạn để chia sẻ phản hồi về tính năng Thông báo không?</string>
+    <string name="notifications_beta_dialog_header">Chúng tôi phụ thuộc vào những người dùng như bạn để học hỏi và tìm cách cải thiện!</string>
+    <string name="notifications_beta_dialog_no">Không, cảm ơn</string>
+    <string name="notifications_beta_dialog_yes">Đúng</string>
+    <string name="notifications_beta_toast">&lt;u>Nhận thông báo sớm&lt;/u> và cung cấp phản hồi</string>
+    <string name="notifications_beta_toggle_label">Thông báo gián đoạn</string>
     <string name="notifications_enabled">thông báo đã được bật</string>
+    <string name="notifications_favorites_hint">Giờ đây, &lt;u>chỉnh sửa mục yêu thích&lt;/u> của bạn để nhận thông báo về sự cố</string>
     <string name="notifications_settings_link">Cho phép thông báo trong Cài đặt</string>
     <string name="now">Hiện nay</string>
     <string name="now_at">Hiện giờ tại</string>
@@ -315,7 +324,7 @@
     <string name="promo_favorites_body">Bây giờ hãy lưu các điểm dừng thường xuyên sử dụng vào &lt;b>một nơi dễ dàng&lt;/b>.</string>
     <string name="promo_favorites_header">Thêm mục yêu thích</string>
     <string name="promo_notifications_body">Chúng tôi sẽ thông báo cho bạn về bất kỳ vấn đề nào trước khi bạn khởi hành!</string>
-    <string name="promo_notifications_header">Giờ đây bạn có thể nhận thông báo về sự gián đoạn.</string>
+    <string name="promo_notifications_header">Giờ đây bạn có thể nhận thông báo về sự gián đoạn</string>
     <string name="promo_notifications_step1">Thêm điểm dừng yêu thích</string>
     <string name="promo_notifications_step2">Tự sắp xếp lịch trình của riêng bạn</string>
     <string name="rail_defect">Lỗi đường sắt</string>

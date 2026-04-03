@@ -249,6 +249,8 @@
     <string name="more_link_external">Enlace externo</string>
     <string name="more_page_footer">Hecho con ♥ por T</string>
     <string name="more_section_feature_flags">Banderas de características</string>
+    <string name="more_section_public_beta">Prueba las nuevas funciones</string>
+    <string name="more_section_public_beta_note">Obtén acceso anticipado para probar nuevas funciones y proporcionar comentarios</string>
     <string name="more_section_resources">Recursos</string>
     <string name="more_section_settings">Configuración</string>
     <string name="more_section_support">Información general y soporte de MBTA</string>
@@ -279,7 +281,14 @@
     <string name="northbound">En dirección norte</string>
     <string name="not_accessible">No accesible</string>
     <string name="not_accessible_stop_card">Esta parada no es accesible</string>
+    <string name="notifications_beta_dialog_body">¿Podemos ponernos en contacto con usted para que nos dé su opinión sobre las notificaciones?</string>
+    <string name="notifications_beta_dialog_header">¡Dependemos de ciclistas como tú para aprender cómo podemos mejorar!</string>
+    <string name="notifications_beta_dialog_no">No, gracias</string>
+    <string name="notifications_beta_dialog_yes">Sí</string>
+    <string name="notifications_beta_toast">&lt;u>Obtén acceso anticipado a las notificaciones&lt;/u> y proporciona comentarios</string>
+    <string name="notifications_beta_toggle_label">Notificaciones de interrupción</string>
     <string name="notifications_enabled">notificaciones habilitadas</string>
+    <string name="notifications_favorites_hint">Ahora &lt;u>edita tus favoritos&lt;/u> para recibir notificaciones de interrupciones</string>
     <string name="notifications_settings_link">Permitir notificaciones en la configuración</string>
     <string name="now">Ahora</string>
     <string name="now_at">Ahora en</string>

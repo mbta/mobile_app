@@ -273,6 +273,7 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     favorites,
                     false,
+                    false,
                     routeCardData,
                     routeCardData,
                     null,
@@ -302,7 +303,15 @@ class EditFavoritesPageTest : KoinTest {
     fun testShowsEmptyView() {
         val viewModel =
             MockFavoritesViewModel(
-                FavoritesViewModel.State(false, emptyMap(), false, emptyList(), emptyList(), null)
+                FavoritesViewModel.State(
+                    false,
+                    emptyMap(),
+                    false,
+                    false,
+                    emptyList(),
+                    emptyList(),
+                    null,
+                )
             )
 
         composeTestRule.setContent {
@@ -335,6 +344,7 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     favorites,
                     false,
+                    false,
                     combinedRouteCardData,
                     combinedRouteCardData,
                     null,
@@ -348,6 +358,7 @@ class EditFavoritesPageTest : KoinTest {
                     mapOf(
                         RouteStopDirection(greenLine.id, greenLineStop.id, 0) to FavoriteSettings()
                     ),
+                    false,
                     false,
                     greenLineRouteCardData,
                     greenLineRouteCardData,
@@ -408,6 +419,7 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     favorites,
                     false,
+                    false,
                     combinedRouteCardData,
                     combinedRouteCardData,
                     null,
@@ -421,6 +433,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     updatedFavorites,
+                    false,
                     false,
                     if (updatedFavorites.size == 1) greenLineRouteCardData
                     else combinedRouteCardData,
@@ -498,6 +511,7 @@ class EditFavoritesPageTest : KoinTest {
                     false,
                     favorites,
                     false,
+                    false,
                     combinedRouteCardData,
                     combinedRouteCardData,
                     null,
@@ -561,6 +575,7 @@ class EditFavoritesPageTest : KoinTest {
                 FavoritesViewModel.State(
                     false,
                     favorites,
+                    false,
                     false,
                     combinedRouteCardData,
                     combinedRouteCardData,

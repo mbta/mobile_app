@@ -9,14 +9,18 @@ val SharedString.value: String
     @Composable
     get() =
         when (this) {
+            SharedString.BetaEarlyAccessNote ->
+                stringResource(R.string.more_section_public_beta_note)
+            SharedString.BetaSection -> stringResource(R.string.more_section_public_beta)
             SharedString.CommuterRailAndFerryTickets ->
                 stringResource(R.string.resources_link_mticket)
             SharedString.DebugMode -> stringResource(R.string.feature_flag_debug_mode)
             SharedString.FareInformation -> stringResource(R.string.resources_link_fare_info)
             SharedString.FeatureFlagsSection -> stringResource(R.string.more_section_feature_flags)
+            SharedString.ForceNotificationsBeta -> "Reset and force notifications beta"
             SharedString.MapDisplay -> stringResource(R.string.setting_toggle_map_display)
             SharedString.MTicketApp -> stringResource(R.string.resources_link_mticket_note)
-            SharedString.Notifications -> "Notifications" // Temp feature flag
+            SharedString.Notifications -> stringResource(R.string.notifications_beta_toggle_label)
             SharedString.PrivacyPolicy -> stringResource(R.string.other_link_privacy_policy)
             SharedString.ResourcesSection -> stringResource(R.string.more_section_resources)
             SharedString.RouteSearch -> stringResource(R.string.feature_flag_route_search)

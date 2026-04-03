@@ -243,6 +243,8 @@
     <string name="more_link_external">外部链接</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">功能标记</string>
+    <string name="more_section_public_beta">测试新功能</string>
+    <string name="more_section_public_beta_note">抢先体验新功能并提供反馈</string>
     <string name="more_section_resources">资源</string>
     <string name="more_section_settings">设置</string>
     <string name="more_section_support">MBTA通用信息与支持</string>
@@ -273,7 +275,14 @@
     <string name="northbound">北行</string>
     <string name="not_accessible">不适合轮椅通行</string>
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
+    <string name="notifications_beta_dialog_body">我们能否联系您，了解您对通知功能的反馈意见？</string>
+    <string name="notifications_beta_dialog_header">我们依靠像您这样的骑手来了解如何改进！</string>
+    <string name="notifications_beta_dialog_no">不，谢谢</string>
+    <string name="notifications_beta_dialog_yes">是的</string>
+    <string name="notifications_beta_toast">&lt;u>提前获取通知&lt;/u>并提供反馈</string>
+    <string name="notifications_beta_toggle_label">中断通知</string>
     <string name="notifications_enabled">通知已开启</string>
+    <string name="notifications_favorites_hint">现在&lt;u>编辑您的收藏&lt;/u>以接收中断通知</string>
     <string name="notifications_settings_link">在设置中允许通知</string>
     <string name="now">现在</string>
     <string name="now_at">现在停靠</string>

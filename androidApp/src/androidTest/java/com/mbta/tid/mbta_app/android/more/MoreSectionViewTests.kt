@@ -29,6 +29,7 @@ class MoreSectionViewTests {
                         SharedString.FeatureFlagsSection,
                         listOf(MoreItem.Toggle(SharedString.MapDisplay, Settings.HideMaps)),
                     ),
+                highlighted = false,
                 settingsCache =
                     SettingsCache(
                         MockSettingsRepository(onSaveSettings = { toggleCallbackCalled = true })

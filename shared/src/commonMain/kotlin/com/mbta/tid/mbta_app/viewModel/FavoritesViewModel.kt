@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -45,6 +46,8 @@ public interface IFavoritesViewModel {
 
     public fun clearStaleFavorites(fcmToken: String?)
 
+    public fun dismissNotificationsHint()
+
     public fun reloadFavorites()
 
     public fun setActive(active: Boolean, wasSentToBackground: Boolean = false)
@@ -71,6 +74,7 @@ public interface IFavoritesViewModel {
 
 public class FavoritesViewModel(
     private val favoritesUsecases: FavoritesUsecases,
+    private val onboardingRepository: IOnboardingRepository,
     private val pinnedRoutesRepository: IPinnedRoutesRepository,
     private val sentryRepository: ISentryRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
@@ -85,6 +89,8 @@ public class FavoritesViewModel(
 
     public sealed interface Event {
         public data class ClearStaleFavorites(val fcmToken: String?) : Event
+
+        public data object DismissNotificationsHint : Event
 
         public data object ReloadFavorites : Event
 
@@ -103,11 +109,12 @@ public class FavoritesViewModel(
         val awaitingPredictionsAfterBackground: Boolean,
         val favorites: Map<RouteStopDirection, FavoriteSettings>?,
         val shouldShowFirstTimeToast: Boolean = false,
+        val shouldShowNotificationsHint: Boolean = false,
         val routeCardData: List<RouteCardData>?,
         val staticRouteCardData: List<RouteCardData>?,
         val loadedLocation: Position?,
     ) {
-        public constructor() : this(false, null, false, null, null, null)
+        public constructor() : this(false, null, false, false, null, null, null)
     }
 
     @set:JvmName("setAlertsState")
@@ -127,6 +134,7 @@ public class FavoritesViewModel(
 
         var hadOldPinnedRoutes: Boolean by remember { mutableStateOf(false) }
         var shouldShowFirstTimeToast: Boolean by remember { mutableStateOf(false) }
+        var shouldShowNotificationsHint: Boolean by remember { mutableStateOf(false) }
 
         var routeCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
         var staticRouteCardData: List<RouteCardData>? by remember { mutableStateOf(null) }
@@ -185,6 +193,9 @@ public class FavoritesViewModel(
             hadOldPinnedRoutes = pinnedRoutesRepository.getPinnedRoutes().isNotEmpty()
             favorites = fetchedFavorites
             analytics.recordSession(fetchedFavorites.count())
+
+            shouldShowNotificationsHint =
+                onboardingRepository.notificationsFavoritesHintShouldShow()
         }
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
@@ -232,6 +243,10 @@ public class FavoritesViewModel(
                             )
                         }
                     }
+                }
+                Event.DismissNotificationsHint -> {
+                    shouldShowNotificationsHint = false
+                    onboardingRepository.notificationsFavoriteHintDismissed()
                 }
                 Event.ReloadFavorites ->
                     favorites = favoritesUsecases.getRouteStopDirectionFavorites()
@@ -323,6 +338,7 @@ public class FavoritesViewModel(
             awaitingPredictionsAfterBackground,
             favorites,
             shouldShowFirstTimeToast,
+            shouldShowNotificationsHint && favorites?.isNotEmpty() == true,
             routeCardData,
             staticRouteCardData,
             loadedLocation,
@@ -334,6 +350,8 @@ public class FavoritesViewModel(
 
     override fun clearStaleFavorites(fcmToken: String?): Unit =
         fireEvent(Event.ClearStaleFavorites(fcmToken))
+
+    override fun dismissNotificationsHint(): Unit = fireEvent(Event.DismissNotificationsHint)
 
     override fun reloadFavorites(): Unit = fireEvent(Event.ReloadFavorites)
 
@@ -385,6 +403,7 @@ public class MockFavoritesViewModel
 constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State()) :
     IFavoritesViewModel {
     public var onClearStaleFavorites: (String?) -> Unit = { _ -> }
+    public var onDismissNotificationsHint: () -> Unit = {}
     public var onReloadFavorites: () -> Unit = {}
     public var onSetActive: (Boolean, Boolean) -> Unit = { _, _ -> }
     public var onSetAlerts: (AlertsStreamDataResponse?) -> Unit = {}
@@ -399,6 +418,10 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
 
     override fun clearStaleFavorites(fcmToken: String?) {
         onClearStaleFavorites(fcmToken)
+    }
+
+    override fun dismissNotificationsHint() {
+        onDismissNotificationsHint()
     }
 
     override fun reloadFavorites() {

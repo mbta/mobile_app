@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.MockPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -375,6 +376,7 @@ internal class FavoritesViewModelTest : KoinTest {
                     FavoritesViewModel.State(
                         false,
                         favorites.routeStopDirection,
+                        false,
                         false,
                         expectedRealtimeData,
                         expectedStaticData,
@@ -1149,6 +1151,82 @@ internal class FavoritesViewModelTest : KoinTest {
                     it.staticRouteCardData == expectedStaticDataAfter &&
                     (it.favorites == favoritesAfter.routeStopDirection)
             }
+        }
+    }
+
+    @Test
+    fun `notifications edit hint`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val stop = objects.stop()
+        objects.routePattern(route) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(stop.id) }
+        }
+
+        val favoritesResponse = buildFavorites {
+            routeStopDirection(route.id, stop.id, 0)
+            routeStopDirection(route.id, stop.id, 1)
+        }
+
+        var hintDismissed = false
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+        val onboardingRepository = MockOnboardingRepository()
+        onboardingRepository.notificationsFavoritesHintShouldShow = true
+        onboardingRepository.onNotificationsFavoriteHintDismissed = { hintDismissed = true }
+
+        everySuspend { favoritesRepo.getFavorites() } returns (favoritesResponse)
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) {
+            favorites = favoritesRepo
+            onboarding = onboardingRepository
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { it.shouldShowNotificationsHint }
+            viewModel.dismissNotificationsHint()
+            awaitItemSatisfying { !it.shouldShowNotificationsHint }
+            assertTrue(hintDismissed)
+        }
+    }
+
+    @Test
+    fun `notifications edit hint false if favorites are empty`() = runTest {
+        val now = EasternTimeInstant.now()
+
+        val objects = ObjectCollectionBuilder()
+
+        val favoritesResponse = buildFavorites {}
+
+        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
+        val onboardingRepository = MockOnboardingRepository()
+        onboardingRepository.notificationsFavoritesHintShouldShow = true
+
+        everySuspend { favoritesRepo.getFavorites() } returns (favoritesResponse)
+
+        val dispatcher = StandardTestDispatcher(testScheduler)
+
+        setUpKoin(objects, dispatcher) {
+            favorites = favoritesRepo
+            onboarding = onboardingRepository
+        }
+
+        val viewModel: FavoritesViewModel = get()
+        viewModel.setAlerts(AlertsStreamDataResponse(emptyMap()))
+        viewModel.setNow(now)
+        viewModel.setLocation(stop1.position)
+
+        testViewModelFlow(viewModel).test {
+            awaitItemSatisfying { !it.shouldShowNotificationsHint }
         }
     }
 }

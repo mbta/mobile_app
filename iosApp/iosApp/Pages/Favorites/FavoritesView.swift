@@ -18,12 +18,22 @@ struct FavoritesView: View {
     var toastVM: IToastViewModel
     @Binding var location: CLLocationCoordinate2D?
 
+    @EnvironmentObject var settingsCache: SettingsCache
+    var notificationsEnabled: Bool { settingsCache.get(.notifications) }
+
     @State var globalData: GlobalResponse?
     var globalRepository = RepositoryDI().global
+    var onboardingRepository = RepositoryDI().onboarding
     let inspection = Inspection<Self>()
     @State var now = Date.now
 
     @ScaledMetric private var editButtonHeight: CGFloat = 32
+
+    func emptyFavoritesNotificationsHintCheck() {
+        if notificationsEnabled, favoritesVMState.favorites?.isEmpty == true {
+            favoritesVM.dismissNotificationsHint()
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -45,6 +55,13 @@ struct FavoritesView: View {
                     }
                 }
             ).padding(.bottom, 16)
+
+            if notificationsEnabled, favoritesVMState.shouldShowNotificationsHint {
+                NotificationsHint(onTap: {
+                    nearbyVM.pushNavEntry(.editFavorites)
+                    favoritesVM.dismissNotificationsHint()
+                }, onDismiss: { favoritesVM.dismissNotificationsHint() })
+            }
 
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
             RouteCardList(
@@ -72,6 +89,7 @@ struct FavoritesView: View {
             favoritesVM.setLocation(location: location?.positionKt)
             favoritesVM.setNow(now: now.toEasternInstant())
             favoritesVM.reloadFavorites()
+            emptyFavoritesNotificationsHintCheck()
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .task {
@@ -92,6 +110,8 @@ struct FavoritesView: View {
             nearbyVM.lastLoadedLocation = $0?.coordinate
             nearbyVM.isTargeting = false
         }
+        .onChange(of: favoritesVMState.favorites) { _ in emptyFavoritesNotificationsHintCheck() }
+        .onChange(of: notificationsEnabled) { _ in emptyFavoritesNotificationsHintCheck() }
         .onAppear {
             if favoritesVMState.shouldShowFirstTimeToast {
                 showFirstTimeToast()

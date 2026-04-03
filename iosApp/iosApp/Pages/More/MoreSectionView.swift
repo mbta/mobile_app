@@ -11,6 +11,7 @@ import SwiftUI
 
 struct MoreSectionView: View {
     var section: MoreSection
+    var highlight: Bool
     var updateAccessibility: (Bool) -> Void = { _ in }
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -83,8 +84,8 @@ struct MoreSectionView: View {
                         MorePhone(label: phone.label, phoneNumber: phone.phoneNumber)
                     case let .navLink(navLink):
                         MoreNavLink(label: navLink.label.value, callback: navLink.callback)
-                    default:
-                        EmptyView()
+                    case let .action(action):
+                        MoreAction(label: action.label.value, callback: action.action)
                     }
                     if index < section.items.count - 1 {
                         HaloSeparator().frame(maxWidth: .infinity)
@@ -93,7 +94,7 @@ struct MoreSectionView: View {
             }
         }
         .background(section.id == .feedback ? Color.key : Color.fill3)
-        .withRoundedBorder()
+        .withRoundedBorder(color: highlight ? .key : .halo, width: highlight ? 2 : 1)
     }
 
     @ViewBuilder
