@@ -28,7 +28,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         val analytics: Analytics = get()
         analytics.notificationReceived(payload)
 
-        val requestCode = 0
+        val requestCode = payload.hashCode()
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra(PushNotificationPayload.launchKey, json.encodeToString(payload))
