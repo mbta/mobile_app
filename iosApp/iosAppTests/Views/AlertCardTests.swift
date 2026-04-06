@@ -41,7 +41,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Station Closure"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
-        XCTAssertThrowsError(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertThrowsError(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().find(button: "View details").tap()
         wait(for: [exp], timeout: 1)
     }
@@ -204,7 +204,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Detour"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-issue"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
@@ -254,7 +254,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Service change ahead"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-issue"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
@@ -283,7 +283,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
         XCTAssertNotNil(try sut.inspect().find(imageName: "accessibility-icon-alert"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
@@ -318,7 +318,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Elevator closure (Elevator name)"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "accessibility-icon-alert"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
     }
@@ -340,7 +340,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
 
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
     }
 
     func testUpcomingDelayAlertCard() throws {
@@ -388,7 +388,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Delays"))
 
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
     }
 
     func testSingleTrackingInfoDelay() throws {
@@ -409,7 +409,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Single Tracking"))
 
-        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-circle-info"))
+        XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
     }
 
     func testAllClearAlertCard() throws {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
@@ -898,5 +899,192 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule
             .onNode(hasTextMatching(Regex("^Next trip on \\w+, Dec 8$")))
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsEarlyMorningCard() {
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                id = "route_1"
+                type = RouteType.LIGHT_RAIL
+                color = "DA291C"
+                routePatternIds = mutableListOf("pattern_1")
+            }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "pattern_1"
+                directionId = 0
+                representativeTripId = "trip_1"
+            }
+
+        val stop = objects.stop { id = "stop_1" }
+        val trip =
+            objects.trip {
+                id = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                routePatternId = "pattern_1"
+            }
+
+        val schedule =
+            objects.schedule {
+                tripId = "trip_1"
+                stopId = "stop_1"
+                departureTime = now.plus(10.minutes)
+            }
+        val now = EasternTimeInstant(2025, Month.NOVEMBER, 17, 3, 30)
+        val subwayStartTime = EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44)
+        val globalResponse =
+            GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val leaf =
+            RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
+                trip.directionId,
+                listOf(routePattern),
+                setOf(stop.id),
+                listOf(UpcomingTrip(trip, schedule, null)),
+                alertsHere = emptyList(),
+                allDataLoaded = true,
+                hasSchedulesToday = true,
+                subwayServiceStartTime = subwayStartTime,
+                alertsDownstream = emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+
+        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val tripFilter = TripDetailsFilter(trip.id, null, null, false)
+
+        val routeData =
+            StopDetailsViewModel.RouteData.Filtered(
+                StopDetailsPageFilters(stop.id, stopFilter, tripFilter),
+                routeStopData,
+            )
+
+        val viewModel = MockStopDetailsViewModel(StopDetailsViewModel.State(routeData))
+
+        loadKoinMocks(objects) { settings = settingsRepository }
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = stopFilter,
+                tripFilter = tripFilter,
+                leaf = leaf,
+                selectedDirection = routeStopData.directions.first(),
+                allAlerts = null,
+                now = now,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+                viewModel = viewModel,
+            )
+        }
+
+        composeTestRule.onNodeWithTag("sunrise").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Good morning!").assertIsDisplayed()
+    }
+
+    @Test
+    fun testHidesEarlyMorningCardWhenPredictionsExist() {
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                id = "route_1"
+                type = RouteType.LIGHT_RAIL
+                color = "DA291C"
+                routePatternIds = mutableListOf("pattern_1")
+            }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "pattern_1"
+                directionId = 0
+                representativeTripId = "trip_1"
+            }
+
+        val stop = objects.stop { id = "stop_1" }
+        val trip =
+            objects.trip {
+                id = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                routePatternId = "pattern_1"
+            }
+
+        val schedule =
+            objects.schedule {
+                tripId = "trip_1"
+                stopId = "stop_1"
+                departureTime = now.plus(10.minutes)
+            }
+        val prediction =
+            objects.prediction {
+                id = "prediction_1"
+                stopId = "stop_1"
+                tripId = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                departureTime = now.plus(10.minutes)
+            }
+        val now = EasternTimeInstant(2025, Month.NOVEMBER, 17, 3, 30)
+        val subwayStartTime = EasternTimeInstant(2025, Month.NOVEMBER, 17, 9, 44)
+        val globalResponse =
+            GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val leaf =
+            RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
+                trip.directionId,
+                listOf(routePattern),
+                setOf(stop.id),
+                listOf(UpcomingTrip(trip, schedule, prediction)),
+                alertsHere = emptyList(),
+                allDataLoaded = true,
+                hasSchedulesToday = true,
+                subwayServiceStartTime = subwayStartTime,
+                alertsDownstream = emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+
+        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val tripFilter = TripDetailsFilter(trip.id, null, null, false)
+
+        val routeData =
+            StopDetailsViewModel.RouteData.Filtered(
+                StopDetailsPageFilters(stop.id, stopFilter, tripFilter),
+                routeStopData,
+            )
+
+        val viewModel = MockStopDetailsViewModel(StopDetailsViewModel.State(routeData))
+
+        loadKoinMocks(objects) { settings = settingsRepository }
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = stopFilter,
+                tripFilter = tripFilter,
+                leaf = leaf,
+                selectedDirection = routeStopData.directions.first(),
+                allAlerts = null,
+                now = now,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+                viewModel = viewModel,
+            )
+        }
+
+        composeTestRule.onNodeWithTag("sunrise").assertIsNotDisplayed()
+        composeTestRule.onNodeWithText("Good morning!").assertIsNotDisplayed()
     }
 }

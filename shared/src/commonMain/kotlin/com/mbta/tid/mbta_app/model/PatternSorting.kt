@@ -38,7 +38,11 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.stopData.first().data.first(), it.at) },
+            {
+                it.stopData.firstOrNull()?.data?.firstOrNull()?.let { firstLeaf ->
+                    patternServiceBucket(firstLeaf, it.at)
+                } ?: 0
+            },
             if (context != RouteCardData.Context.Favorites) {
                 { subwayBucket(it.lineOrRoute.sortRoute) }
             } else {
@@ -61,7 +65,11 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.data.first(), EasternTimeInstant.now()) },
+            {
+                it.data.firstOrNull()?.let { firstLeaf ->
+                    patternServiceBucket(firstLeaf, EasternTimeInstant.now())
+                } ?: 0
+            },
             if (sortByDistanceFrom != null) {
                 { it.stop.distanceFrom(sortByDistanceFrom) }
             } else {

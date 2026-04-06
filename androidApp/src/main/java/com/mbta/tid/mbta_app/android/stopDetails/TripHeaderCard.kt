@@ -20,7 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,7 +28,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
@@ -39,8 +41,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -55,6 +59,7 @@ import com.mbta.tid.mbta_app.android.component.UpcomingTripViewState
 import com.mbta.tid.mbta_app.android.component.routeIcon
 import com.mbta.tid.mbta_app.android.map.VehiclePuck
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
+import com.mbta.tid.mbta_app.android.util.ReverseRow
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
@@ -73,6 +78,7 @@ import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
@@ -116,23 +122,40 @@ fun TripHeaderCard(
                     ) {
                         if (spec != null) {
                             TripMarker(spec, targetId, routeAccents)
-                            Description(
-                                spec,
-                                trip.id,
-                                targetId,
-                                routeAccents,
-                                clickable,
-                                DestinationPredictionBalance.destinationWidth(),
-                            )
-                            TripIndicator(
-                                spec,
-                                route,
-                                routeAccents,
-                                trip,
-                                now,
-                                clickable,
-                                onFollowTrip,
-                            )
+                            Column(
+                                Modifier.padding(vertical = 10.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                            ) {
+                                val hasCarLevelCrowding =
+                                    spec is TripHeaderSpec.VehicleOnTrip &&
+                                        spec.vehicle.hasCarLevelCrowding &&
+                                        !spec.atTerminal
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                ) {
+                                    Description(
+                                        spec,
+                                        trip.id,
+                                        targetId,
+                                        routeAccents,
+                                        clickable,
+                                        DestinationPredictionBalance.destinationWidth(),
+                                    )
+                                    TripIndicator(
+                                        spec,
+                                        route,
+                                        routeAccents,
+                                        trip,
+                                        now,
+                                        clickable,
+                                        onFollowTrip,
+                                    )
+                                }
+                                if (hasCarLevelCrowding) {
+                                    CarLevelCrowding(spec.vehicle.carriages.orEmpty(), routeAccents)
+                                }
+                            }
                         }
                     }
                     when (spec) {
@@ -181,39 +204,102 @@ fun TripHeaderCard(
 }
 
 @Composable
-private fun BusCrowding(crowding: Vehicle.CrowdingLevel?, modifier: Modifier = Modifier) {
-    if (crowding != null) {
-        val crowdingImage =
-            painterResource(
-                when (crowding) {
-                    Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_bus_crowded
-                    Vehicle.CrowdingLevel.NotCrowded -> R.drawable.crowding_bus_not_crowded
-                    Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_bus_some_crowding
+private fun CarLevelCrowding(carriages: List<Vehicle.Carriage>, routeAccents: TripRouteAccents) {
+    val heading = stringResource(R.string.crowding_diagram)
+    ReverseRow(
+        Modifier.fillMaxWidth().padding(vertical = 6.dp).semantics(mergeDescendants = true) {
+            heading()
+            contentDescription = heading
+            isTraversalGroup = true
+        },
+        horizontalArrangement = Arrangement.spacedBy(1.dp),
+    ) {
+        Image(
+            painterResource(R.drawable.crowding_vehicle_front_icon),
+            contentDescription = null,
+            Modifier.height(18.dp).width(9.dp),
+            colorFilter = ColorFilter.tint(routeAccents.color),
+        )
+        for ((index, carriage) in carriages.withIndex()) {
+            val weebleIcon =
+                painterResource(
+                    when (carriage.occupancyStatus.crowdingLevel) {
+                        Vehicle.CrowdingLevel.NotCrowded -> R.drawable.crowding_car_not_crowded
+                        Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_car_some_crowding
+                        Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_car_crowded
+                        null -> R.drawable.crowding_car_unknown
+                    }
+                )
+            val color =
+                when (carriage.occupancyStatus.crowdingLevel) {
+                    Vehicle.CrowdingLevel.NotCrowded -> lerp(routeAccents.color, Color.White, 0.5f)
+                    Vehicle.CrowdingLevel.SomeCrowding,
+                    null -> routeAccents.color
+                    Vehicle.CrowdingLevel.Crowded ->
+                        routeAccents.color.run {
+                            copy(red = red * red, green = green * green, blue = blue * blue)
+                        }
                 }
-            )
-
-        Row(
-            modifier.sizeIn(minHeight = 18.dp),
-            Arrangement.spacedBy(8.dp),
-            Alignment.CenterVertically,
-        ) {
-            Image(crowdingImage, null, Modifier.size(16.dp, 12.dp))
-            Text(
-                crowdingText(crowding),
-                color = colorResource(R.color.text).copy(0.6f),
-                style = Typography.footnote,
-            )
+            val contentDescription =
+                stringResource(
+                    R.string.crowding_car_description,
+                    index + 1,
+                    carriages.size,
+                    crowdingText(carriage.occupancyStatus.crowdingLevel),
+                )
+            Box(
+                Modifier.weight(1f)
+                    .height(18.dp)
+                    .background(color, RoundedCornerShape(2.dp))
+                    .semantics(mergeDescendants = true) {
+                        this.contentDescription = contentDescription
+                        traversalIndex = index.toFloat()
+                    },
+                Alignment.Center,
+            ) {
+                Image(
+                    weebleIcon,
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(routeAccents.textColor),
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun crowdingText(crowding: Vehicle.CrowdingLevel) =
+private fun VehicleCrowding(crowding: Vehicle.CrowdingLevel, modifier: Modifier = Modifier) {
+    val crowdingImage =
+        painterResource(
+            when (crowding) {
+                Vehicle.CrowdingLevel.Crowded -> R.drawable.crowding_bus_crowded
+                Vehicle.CrowdingLevel.NotCrowded -> R.drawable.crowding_bus_not_crowded
+                Vehicle.CrowdingLevel.SomeCrowding -> R.drawable.crowding_bus_some_crowding
+            }
+        )
+
+    Row(
+        modifier.sizeIn(minHeight = 18.dp),
+        Arrangement.spacedBy(8.dp),
+        Alignment.CenterVertically,
+    ) {
+        Image(crowdingImage, null, Modifier.size(16.dp, 12.dp))
+        Text(
+            crowdingText(crowding),
+            color = colorResource(R.color.text).copy(0.6f),
+            style = Typography.footnote,
+        )
+    }
+}
+
+@Composable
+private fun crowdingText(crowding: Vehicle.CrowdingLevel?) =
     stringResource(
         when (crowding) {
             Vehicle.CrowdingLevel.Crowded -> R.string.crowding_crowded
             Vehicle.CrowdingLevel.NotCrowded -> R.string.crowding_not_crowded
             Vehicle.CrowdingLevel.SomeCrowding -> R.string.crowding_some_crowding
+            null -> R.string.crowding_unknown
         }
     )
 
@@ -226,7 +312,7 @@ private fun Description(
     clickable: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.padding(vertical = 16.dp)) {
+    Box(modifier) {
         when (spec) {
             TripHeaderSpec.FinishingAnotherTrip -> FinishingAnotherTripDescription()
             TripHeaderSpec.NoVehicle -> NoVehicleDescription()
@@ -332,8 +418,9 @@ private fun VehicleDescription(
                     modifier = Modifier.placeholderIfLoading(),
                 )
             }
-            if (routeAccents.type == RouteType.BUS && !spec.atTerminal) {
-                BusCrowding(spec.vehicle.occupancyStatus.crowdingLevel)
+            if (!spec.atTerminal && !spec.vehicle.hasCarLevelCrowding) {
+                val vehicleCrowdingLevel = spec.vehicle.occupancyStatus.crowdingLevel
+                if (vehicleCrowdingLevel != null) VehicleCrowding(vehicleCrowdingLevel)
             }
             spec.entry?.trackNumber?.let {
                 Text(
@@ -696,6 +783,86 @@ private fun TripHeaderCardPreview() {
                     )
                 }
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun CarLevelCrowdingPreview() {
+    val objects = TestData.clone("CarLevelCrowdingPreview")
+    val ol = objects.getRoute("Orange")
+    val rl = objects.getRoute("Red")
+    val olTrip = objects.trip { routeId = ol.id.idText }
+    val rlTrip = objects.trip { routeId = rl.id.idText }
+    val backBay = objects.getStop("place-bbsta")
+    val kendallMIT = objects.getStop("place-knncl")
+    val olVehicle =
+        objects.vehicle {
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            stopId = backBay.id
+            tripId = olTrip.id
+        }
+    val rlVehicle =
+        objects.vehicle {
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
+            carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+            currentStatus = Vehicle.CurrentStatus.IncomingAt
+            stopId = kendallMIT.id
+            tripId = rlTrip.id
+        }
+
+    val olEntry =
+        TripDetailsStopList.Entry(
+            backBay,
+            0,
+            null,
+            null,
+            objects.prediction { departureTime = EasternTimeInstant.now().plus(3.minutes) },
+            vehicle = olVehicle,
+            routes = listOf(ol),
+        )
+    val rlEntry =
+        TripDetailsStopList.Entry(
+            kendallMIT,
+            0,
+            null,
+            null,
+            objects.prediction { departureTime = EasternTimeInstant.now().plus(3.minutes) },
+            vehicle = rlVehicle,
+            routes = listOf(rl),
+        )
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        MyApplicationTheme {
+            TripHeaderCard(
+                trip = olTrip,
+                spec = TripHeaderSpec.VehicleOnTrip(olVehicle, backBay, olEntry, false),
+                targetId = "",
+                route = ol,
+                routeAccents = TripRouteAccents(ol),
+                now = EasternTimeInstant.now(),
+                onFollowTrip = {},
+            )
+
+            TripHeaderCard(
+                trip = rlTrip,
+                spec = TripHeaderSpec.VehicleOnTrip(rlVehicle, kendallMIT, rlEntry, false),
+                targetId = "",
+                route = rl,
+                routeAccents = TripRouteAccents(rl),
+                now = EasternTimeInstant.now(),
+                onFollowTrip = {},
+            )
         }
     }
 }

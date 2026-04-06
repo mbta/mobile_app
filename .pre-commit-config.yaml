@@ -20,11 +20,13 @@ repos:
       - id: gradle-spotless
         stages: [pre-commit]
         entry: gradle-spotless -w
+        files: \.(kt|kts)$
       - id: gradle-task
         stages: [pre-commit]
         alias: gradle-spotless-buildSrc
         name: "gradle spotless buildSrc"
         entry: gradle-task :buildSrc:spotlessCheck :buildSrc:spotlessApply -w
+        files: ^buildSrc/.*\.(kt|kts)$
   - repo: https://github.com/nicklockwood/SwiftFormat
     rev: 0.57.2
     hooks:
@@ -45,7 +47,7 @@ repos:
         name: diff xcodeproj
         entry: ./bin/diff-xcodeproj.sh
         language: script
-        always_run: true
+        files: ^iosApp/
         pass_filenames: false
       - id: cache-xcodeproj
         stages: [pre-commit]

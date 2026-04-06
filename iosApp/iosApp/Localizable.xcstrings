@@ -7361,6 +7361,59 @@
         }
       }
     },
+    "Car %@ of %@, %@" : {
+      "comment" : "Screen reader text for a car within a train and its crowding level, ex. “Car 2 of 6, some crowding”",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Car %1$@ of %2$@, %3$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Coche %1$@ de %2$@, %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Voiture %1$@ de %2$@, %3$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Machin %1$@ sou %2$@, %3$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Carro %1$@ de %2$@, %3$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xe %1$@ của %2$@, %3$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "汽车 %1$@ 的 %2$@，%3$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "汽車 %1$@ 的 %2$@，%3$@"
+          }
+        }
+      }
+    },
     "Check out the new stop view" : {
       "comment" : "Promo text header that displays when users first open the app after a redesign of the stop page",
       "localizations" : {
@@ -8405,6 +8458,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "擠"
+          }
+        }
+      }
+    },
+    "Crowding unknown" : {
+      "comment" : "Text for a crowding level that is not known",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aglomeración desconocida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Foule inconnue"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Foul moun enkoni"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aglomeração desconhecida"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tình trạng đông đúc chưa rõ"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "拥挤程度未知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "擁擠程度未知"
           }
         }
       }
@@ -23632,6 +23732,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "列車取消"
+          }
+        }
+      }
+    },
+    "Train crowding diagram" : {
+      "comment" : "Header for a diagram showing which train cars are crowded and which are not",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Diagrama de hacinamiento en los trenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "diagramme de densité des trains"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dyagram anbouteyaj tren yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "diagrama de superlotação em trens"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sơ đồ tình trạng đông đúc trên tàu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "列车拥挤情况图"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "列車擁擠狀況圖"
           }
         }
       }

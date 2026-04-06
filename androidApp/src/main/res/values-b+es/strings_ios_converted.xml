@@ -89,9 +89,12 @@
     <string name="crossing_issue_lowercase">problema en el cruce</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="crossing_malfunction_lowercase">mal funcionamiento del cruce</string>
+    <string name="crowding_car_description">Coche %1$s de %2$s, %3$s</string>
     <string name="crowding_crowded">Atestado</string>
+    <string name="crowding_diagram">Diagrama de hacinamiento en los trenes</string>
     <string name="crowding_not_crowded">No hay mucha gente</string>
     <string name="crowding_some_crowding">Algunas aglomeraciones</string>
+    <string name="crowding_unknown">Aglomeración desconocida</string>
     <string name="daily">A diario</string>
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
