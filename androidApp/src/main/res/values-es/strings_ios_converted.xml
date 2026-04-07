@@ -514,5 +514,8 @@
     <string name="weather_lowercase">clima</string>
     <string name="westbound">En dirección oeste</string>
     <string name="will_not_stop_at">no se detendrá en %1$s %2$s</string>
+    <string name="world_cup_service_inbound">Servicio desde el &lt;b>partido del Mundial&lt;/b> de hoy hasta la &lt;b>Estación Sur&lt;/b>.</string>
+    <string name="world_cup_service_outbound">Servicio desde la &lt;b>Estación Sur&lt;/b> hasta el &lt;b>partido del Mundial&lt;/b> de hoy.</string>
+    <string name="world_cup_ticket_required">Se requiere billete de tren para el estadio de Boston</string>
     <string name="x_and_y">%1$s y %2$s</string>
 </resources>

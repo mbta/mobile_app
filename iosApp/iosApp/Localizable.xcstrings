@@ -6846,6 +6846,52 @@
         }
       }
     },
+    "Boston Stadium Train ticket required" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se requiere billete de tren para el estadio de Boston"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Billet de train pour le stade de Boston requis"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tikè tren Boston Stadium obligatwa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "É necessário um bilhete de trem para o Estádio de Boston."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cần có vé tàu đến Sân vận động Boston."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "需要波士顿体育场火车票"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "需要波士頓球場火車票"
+          }
+        }
+      }
+    },
     "BRD" : {
       "comment" : "Shorthand for boarding",
       "localizations" : {
@@ -19016,6 +19062,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服務已結束"
+          }
+        }
+      }
+    },
+    "Service from **South Station** to today’s **World Cup match**" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicio desde la **Estación Sur** hasta el **partido del Mundial** de hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Service de **gare du Sud** pour le match de la **Coupe du Monde** d’aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sèvis soti nan **Estasyon Sid** pou rive nan **match koup di mond** jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Serviço da **Estação Sul** para o jogo da **Copa do Mundo** de hoje."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tuyến xe buýt từ **Ga Nam** đến **trận đấu World Cup hôm nay**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从**南站**开往今日**世界杯比赛**的列车服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從**南站**開往今日**世界盃比賽**的列車服務"
+          }
+        }
+      }
+    },
+    "Service from today’s **World Cup match** to **South Station**" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicio desde el **partido del Mundial** de hoy hasta la **Estación Sur**."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Service depuis le match de la **Coupe du Monde** d’aujourd’hui jusqu’à **South Station**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sèvis apati match **Koup di Mond** jodi a pou rive nan **Estasyon Sid**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Serviço de hoje para a **Estação Sul**, partindo da **partida da Copa do Mundo**."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tuyến xe buýt từ **trận đấu World Cup** hôm nay đến **Ga phía Nam**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从今天的**世界杯比赛**到**南站**的列车服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從今天的**世界盃比賽**到**南站**的列車服務"
           }
         }
       }

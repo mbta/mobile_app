@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultT
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import kotlin.test.assertTrue
@@ -95,5 +96,26 @@ class StopDetailsFilteredSheetHeaderTest {
         assertTrue(closeCalled)
         composeTestRule.onNodeWithContentDescription("Star route").assertExists().performClick()
         assertTrue(pinCalled)
+    }
+
+    @Test
+    fun noFavoriteWorldCup() {
+        composeTestRule.setContent {
+            StopDetailsFilteredHeader(
+                route = WorldCupService.route,
+                line = null,
+                stop = stop,
+                isFavorite = false,
+                onFavorite = {},
+                navCallbacks =
+                    NavigationCallbacks(
+                        onBack = null,
+                        onClose = null,
+                        backButtonPresentation = NavigationCallbacks.BackButtonPresentation.Floating,
+                    ),
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Star route").assertDoesNotExist()
     }
 }
