@@ -291,8 +291,20 @@ abstract class ConvertIosLocalizationTask : DefaultTask() {
         return result
     }
 
+    private fun androidLanguageTag(languageTag: String): String {
+        // developer.android.com/guide/topics/resources/providing-resources#AlternativeResources
+        // [2 letter language code]-r[2 letter region code]
+        return when (languageTag) {
+            "zh-Hans-CN" -> "zh-rCN"
+            "zh-Hant-TW" -> "zh-rTW"
+            "pt-BR" -> "pt-rBR"
+            else -> languageTag
+        }
+    }
+
     private fun writeAndroidStrings(languageTag: String, stringsById: Map<String, Resource>) {
-        val outputDir = resources.dir("values-b+${languageTag.replace("-", "+")}")
+        val androidLanguageTag = androidLanguageTag(languageTag)
+        val outputDir = resources.dir("values-$androidLanguageTag")
         outputDir.asFile.mkdirs()
         val overrideFile = outputDir.file("strings.xml")
         val overrideStrings = parseAndroidStrings(overrideFile)
