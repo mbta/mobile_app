@@ -570,7 +570,7 @@ public data class RouteCardData(
     internal fun distanceFrom(position: Position): Length =
         this.stopData.first().stop.distanceFrom(position)
 
-    //    override fun toString(): String = "[RouteCardData]"
+    override fun toString(): String = "[RouteCardData]"
 
     public companion object {
         // For regular non-branching service, we always show up to 2 departure rows for each leaf
