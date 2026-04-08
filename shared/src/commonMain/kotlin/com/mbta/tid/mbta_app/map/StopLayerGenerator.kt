@@ -165,7 +165,7 @@ public object StopLayerGenerator {
                             Exp.get(StopFeaturesBuilder.propMapRoutesKey),
                             listOf(Exp(MapStopRoute.BUS.name)),
                         ),
-                        if (state.tripStops != null)
+                        if (!state.tripStops.isNullOrEmpty())
                             Exp.`in`(
                                 Exp.get(StopFeaturesBuilder.propIdKey),
                                 Exp.array(
