@@ -165,20 +165,14 @@ struct NotificationSettingsWidget: View {
                         minimumTime: nil
                     )
                     .onChange(of: window.startTime) { startTime in
-                        if startTime.hour! > window.endTime.hour! ||
-                            (startTime.hour! == window.endTime.hour! && startTime.minute! > window.endTime.minute!) {
-                            if startTime.hour! < 23 {
-                                window.endTime = .init(hour: startTime.hour! + 1, minute: startTime.minute!, second: 0)
-                            } else {
-                                window.endTime = .init(hour: 23, minute: 59, second: 0)
-                            }
-                        }
+                        window.setSafeEndTime(startTime: startTime)
+                        print("SAFE END TIME \(window.endTime)")
                     }
                     HaloSeparator()
                     LabeledTimeInput(
                         label: Text("To"),
                         time: $window.endTime,
-                        minimumTime: window.startTime
+                        minimumTime: .init(hour: window.startTime.hour, minute: (window.startTime.minute ?? 0) + 1)
                     )
                     DaysOfWeekInput(daysOfWeek: $window.daysOfWeek)
                 }

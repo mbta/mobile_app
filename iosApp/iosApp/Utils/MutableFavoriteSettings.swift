@@ -101,6 +101,17 @@ class MutableFavoriteSettings: ObservableObject, Equatable, CustomDebugStringCon
                 )
             }
 
+            func setSafeEndTime(startTime: DateComponents) {
+                if startTime.hour! > endTime.hour! ||
+                    (startTime.hour! == endTime.hour! && startTime.minute! >= endTime.minute!) {
+                    if startTime.hour! < 23 {
+                        endTime = .init(hour: startTime.hour! + 1, minute: startTime.minute!, second: 0)
+                    } else {
+                        endTime = .init(hour: 23, minute: 59, second: 0)
+                    }
+                }
+            }
+
             var debugDescription: String {
                 "Window(startTime: \(startTime), endTime: \(endTime), daysOfWeek: \(daysOfWeek))"
             }
