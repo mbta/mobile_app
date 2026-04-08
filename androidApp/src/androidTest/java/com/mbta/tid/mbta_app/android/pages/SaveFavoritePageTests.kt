@@ -223,6 +223,7 @@ class SaveFavoritePageTests {
             )
         }
 
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Edit Favorite").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("toggle direction").assertDoesNotExist()
         composeTestRule
