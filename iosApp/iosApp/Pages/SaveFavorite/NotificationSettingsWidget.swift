@@ -166,7 +166,6 @@ struct NotificationSettingsWidget: View {
                     )
                     .onChange(of: window.startTime) { startTime in
                         window.setSafeEndTime(startTime: startTime)
-                        print("SAFE END TIME \(window.endTime)")
                     }
                     HaloSeparator()
                     LabeledTimeInput(
