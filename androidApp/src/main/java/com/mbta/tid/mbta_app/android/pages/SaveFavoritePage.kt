@@ -99,10 +99,7 @@ fun SaveFavoritePage(
     val lineOrRoute = global?.getLineOrRoute(routeId)
     val stop = global?.getStop(stopId)
 
-    if (global == null || lineOrRoute == null || stop == null) {
-        Text("Loading")
-        return
-    }
+    if (global == null || lineOrRoute == null || stop == null) return
 
     val favoritesState by favoritesViewModel.models.collectAsState()
     val favorites = favoritesState.favorites
@@ -121,6 +118,13 @@ fun SaveFavoritePage(
     val selectedRouteStopDirection = RouteStopDirection(routeId, stopId, selectedDirection)
 
     val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
+    var wasAdding by rememberSaveable { mutableStateOf(!isFavorite) }
+    val showDirectionToggle by
+        rememberSaveable(stopDirections, wasAdding) {
+            mutableStateOf(stopDirections.size > 1 && wasAdding)
+        }
+
+    LaunchedEffect(isFavorite) { if (!isFavorite) wasAdding = true }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
@@ -267,9 +271,7 @@ fun SaveFavoritePage(
                 lineOrRoute,
                 stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
                 toggleDirection =
-                    { selectedDirection = 1 - selectedDirection }.takeUnless {
-                        stopDirections.size == 1 || isFavorite
-                    },
+                    { selectedDirection = 1 - selectedDirection }.takeIf { showDirectionToggle },
                 onlyServingOppositeDirection =
                     stopDirections.singleOrNull()?.id == 1 - initialDirection,
             )
