@@ -53,7 +53,13 @@ fun EasternTimeInstant.formattedTime(): String = this.formatWith(formatHourMinut
 fun EasternTimeInstant.formattedShortDateShortTime(): String =
     this.formatWith(formatShortDateShortTime)
 
-/** Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday" */
+/**
+ * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
+ */
 fun EasternTimeInstant.formattedServiceDay(
     rounding: EasternTimeInstant.ServiceDateRounding =
         EasternTimeInstant.ServiceDateRounding.FORWARDS
@@ -62,6 +68,10 @@ fun EasternTimeInstant.formattedServiceDay(
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday, Jan
  * 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
 fun EasternTimeInstant.formattedServiceDayAndDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
@@ -70,6 +80,10 @@ fun EasternTimeInstant.formattedServiceDayAndDate(
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Mon, Jan 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
 fun EasternTimeInstant.formattedShortServiceDayAndDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
@@ -78,6 +92,10 @@ fun EasternTimeInstant.formattedShortServiceDayAndDate(
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "January 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
 fun EasternTimeInstant.formattedServiceDate(
     rounding: EasternTimeInstant.ServiceDateRounding =
