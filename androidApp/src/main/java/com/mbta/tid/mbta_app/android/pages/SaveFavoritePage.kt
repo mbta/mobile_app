@@ -119,10 +119,7 @@ fun SaveFavoritePage(
 
     val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
     var wasAdding by rememberSaveable { mutableStateOf(favorites != null && !isFavorite) }
-    val showDirectionToggle by
-        rememberSaveable(stopDirections, wasAdding) {
-            mutableStateOf(stopDirections.size > 1 && wasAdding)
-        }
+    val showDirectionToggle = stopDirections.size > 1 && wasAdding
 
     LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
 
