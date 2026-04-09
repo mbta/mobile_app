@@ -123,6 +123,8 @@
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
+    <string name="drawbridge_issue">Drawbridge Issue</string>
+    <string name="drawbridge_issue_lowercase">drawbridge issue</string>
     <string name="due_to_cause">\u0020due to %1$s</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
@@ -279,6 +281,7 @@
     <string name="northbound">Northbound</string>
     <string name="not_accessible">Not accessible</string>
     <string name="not_accessible_stop_card">This stop is not accessible</string>
+    <string name="notice">Notice</string>
     <string name="notifications_enabled">notifications enabled</string>
     <string name="notifications_settings_link">Allow Notifications in Settings</string>
     <string name="now">Now</string>
