@@ -38,13 +38,11 @@ constructor(
     internal val time =
         if (
             prediction != null &&
-                prediction.scheduleRelationship != Prediction.ScheduleRelationship.Cancelled &&
+                prediction.stoppingHere &&
                 !(prediction.stopTime == null && prediction.status != null)
-        ) {
+        )
             prediction.stopTime
-        } else {
-            schedule?.stopTime
-        }
+        else schedule?.stopTime
 
     internal val stopId: String? = run {
         // don't check that they match since prediction may be physical stop ID and schedule logical
@@ -247,7 +245,8 @@ constructor(
                 }
                 .sorted()
                 .filter { upcomingTrip ->
-                    if (upcomingTrip.prediction != null) return@filter true
+                    if (upcomingTrip.prediction != null && upcomingTrip.prediction.stoppingHere)
+                        return@filter true
                     val scheduleTime = upcomingTrip.schedule?.stopTime ?: return@filter true
                     scheduleTime >= filterAtTime
                 }

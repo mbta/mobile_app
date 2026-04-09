@@ -23,6 +23,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getSchedules
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.subscribeToPredictions
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.jvm.JvmName
 import kotlin.native.ShouldRefineInSwift
@@ -31,6 +32,13 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import org.maplibre.spatialk.geojson.Position
+
+// Purely for logging
+internal enum class RemovalReason {
+    MissingRoute,
+    MissingStop,
+    MissingDirection,
+}
 
 @OptIn(ExperimentalObjCRefinement::class)
 public interface IFavoritesViewModel {
@@ -157,19 +165,28 @@ public class FavoritesViewModel(
         fun getStaleFavorites(
             favorites: Set<RouteStopDirection>,
             global: GlobalResponse,
-        ): List<RouteStopDirection> =
-            favorites.filter { rsd ->
-                val lineOrRoute = global.getLineOrRoute(rsd.route)
-                val missingRoute = lineOrRoute == null
-                val missingStop = global.getStop(rsd.stop) == null
-                val missingDirection =
-                    lineOrRoute?.let {
-                        global.getPatternsFor(rsd.stop, it).any { pattern ->
-                            pattern.directionId == rsd.direction
+        ): Map<RouteStopDirection, RemovalReason> =
+            favorites
+                .mapNotNull { rsd ->
+                    val lineOrRoute = global.getLineOrRoute(rsd.route)
+                    val missingRoute = lineOrRoute == null
+                    val missingStop = global.getStop(rsd.stop) == null
+                    val missingDirection =
+                        lineOrRoute?.let {
+                            global.getPatternsFor(rsd.stop, it).any { pattern ->
+                                pattern.directionId == rsd.direction
+                            }
+                        } ?: false
+                    val removalReason =
+                        when {
+                            missingRoute -> RemovalReason.MissingRoute
+                            missingStop -> RemovalReason.MissingStop
+                            missingDirection -> RemovalReason.MissingDirection
+                            else -> null
                         }
-                    } ?: false
-                return@filter missingRoute || missingStop || missingDirection
-            }
+                    return@mapNotNull removalReason?.let { rsd to removalReason }
+                }
+                .toMap()
 
         LaunchedEffect(Unit) {
             val fetchedFavorites = favoritesUsecases.getRouteStopDirectionFavorites()
@@ -191,14 +208,40 @@ public class FavoritesViewModel(
 
                     val staleFavorites = getStaleFavorites(resolvedFavorites.keys, globalData)
                     if (staleFavorites.isNotEmpty()) {
-                        updateFavorites(
-                            staleFavorites.associateWith { null },
-                            EditFavoritesContext.StaleCheck,
-                            // There's no real default direction, but it's only used for analytics
-                            0,
-                            fcmToken,
-                            false,
-                        )
+
+                        /**
+                         * This was erroneously clearing favorites and the reason for that isn't
+                         * clear. For now, we've added more logging to try and determine why this is
+                         * happening.
+                         */
+                        //                        updateFavorites(
+                        //                            staleFavorites.associateWith { null },
+                        //                            EditFavoritesContext.StaleCheck,
+                        //                            // There's no real default direction, but it's
+                        // only used for analytics
+                        //                            0,
+                        //                            fcmToken,
+                        //                            false,
+                        //                        )
+                        sentryRepository.captureMessage("Clearing stale favorites") {
+                            addBreadcrumb(
+                                Breadcrumb(
+                                    message = "Removing ${staleFavorites.size} stale favorite(s)",
+                                    data =
+                                        mutableMapOf(
+                                            "staleFavorites" to
+                                                staleFavorites.map { (rsd, removalReason) ->
+                                                    mapOf(
+                                                        "route" to rsd.route.idText,
+                                                        "stop" to rsd.stop,
+                                                        "direction" to rsd.direction,
+                                                        "removalReason" to removalReason,
+                                                    )
+                                                }
+                                        ),
+                                )
+                            )
+                        }
                     }
                 }
                 Event.DismissNotificationsHint -> {
@@ -282,6 +325,7 @@ public class FavoritesViewModel(
                         location,
                         favorites?.keys,
                         coroutineDispatcher,
+                        sentryRepository,
                     )
             }
         }

@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
+import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.routeModeLabel
 import com.mbta.tid.mbta_app.model.Alert
@@ -236,6 +237,7 @@ fun StopListRow(
                     routeAccents,
                     onViewDetails = { onOpenAlertDetails(disruption.alert) },
                     interiorPadding = PaddingValues(start = 10.dp),
+                    modifier = Modifier.haloContainer(2.dp),
                 )
             }
         }

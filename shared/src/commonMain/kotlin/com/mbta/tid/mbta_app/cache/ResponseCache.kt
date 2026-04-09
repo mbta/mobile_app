@@ -62,14 +62,14 @@ internal class ResponseCache<T : Any>(
 
     private val lock = Mutex()
 
-    private suspend fun getPossiblyStaleData(): Response<T>? {
-        return this.data ?: readData()
+    private suspend fun getPossiblyStaleData(postprocess: (T) -> T): Response<T>? {
+        return this.data ?: readData(postprocess)
     }
 
-    private suspend fun getData(): Response<T>? {
-        val data = getPossiblyStaleData()
+    private suspend fun getData(postprocess: (T) -> T): Response<T>? {
+        val data = getPossiblyStaleData(postprocess)
         if (data != null) {
-            flow.value = data.body
+            flow.value = postprocess(data.body)
         }
         return if (data != null && data.metadata.fetchTime.elapsedNow() < maxAge) {
             data
@@ -78,12 +78,12 @@ internal class ResponseCache<T : Any>(
         }
     }
 
-    private suspend fun putData(response: HttpResponse) {
+    private suspend fun putData(response: HttpResponse, postprocess: (T) -> T) {
         val responseBody = response.bodyAsText()
         val nextData =
             Response(
                 ResponseMetadata(response.etag(), TimeSource.Monotonic.markNow(), invalidationKey),
-                json.decodeFromString(serializer, responseBody),
+                postprocess(json.decodeFromString(serializer, responseBody)),
             )
         this.data = nextData
         this.flow.value = nextData.body
@@ -91,7 +91,7 @@ internal class ResponseCache<T : Any>(
         this.writeData(nextData.metadata, responseBody)
     }
 
-    private suspend fun readData(): Response<T>? {
+    private suspend fun readData(postprocess: (T) -> T): Response<T>? {
         val diskMetadata: ResponseMetadata =
             jsonPersistence.read(SystemPaths.Category.Cache, CACHE_SUBDIRECTORY, cacheMetadataKey)
                 ?: return null
@@ -99,12 +99,9 @@ internal class ResponseCache<T : Any>(
             return null
         }
         val diskData =
-            jsonPersistence.read(
-                SystemPaths.Category.Cache,
-                CACHE_SUBDIRECTORY,
-                cacheKey,
-                serializer,
-            ) ?: return null
+            jsonPersistence
+                .read(SystemPaths.Category.Cache, CACHE_SUBDIRECTORY, cacheKey, serializer)
+                ?.let(postprocess) ?: return null
         this.data = Response(diskMetadata, diskData)
         return this.data
     }
@@ -128,9 +125,12 @@ internal class ResponseCache<T : Any>(
         )
     }
 
-    suspend fun getOrFetch(fetch: suspend (String?) -> HttpResponse): ApiResult<T> {
+    suspend fun getOrFetch(
+        postprocess: (T) -> T = { it },
+        fetch: suspend (String?) -> HttpResponse,
+    ): ApiResult<T> {
         lock.withLock {
-            val cachedData = this.getData()
+            val cachedData = this.getData(postprocess)
             if (cachedData != null) {
                 return ApiResult.Ok(cachedData.body)
             }
@@ -147,9 +147,9 @@ internal class ResponseCache<T : Any>(
                         ApiResult.Ok(data.body)
                     }
                     HttpStatusCode.OK -> {
-                        this.putData(httpResponse)
+                        this.putData(httpResponse, postprocess)
                         ApiResult.Ok(
-                            this.getData()?.body
+                            this.getData(postprocess)?.body
                                 ?: throw RuntimeException("Failed to set cached data")
                         )
                     }

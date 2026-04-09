@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import io.sentry.kotlin.multiplatform.Scope
 import io.sentry.kotlin.multiplatform.Sentry
 
@@ -26,16 +27,17 @@ internal class SentryRepository : ISentryRepository {
     }
 }
 
-public class MockSentryRepository : ISentryRepository {
-    override fun captureMessage(msg: String) {
-        TODO("Not yet implemented")
-    }
+public class MockSentryRepository
+@DefaultArgumentInterop.Enabled
+constructor(
+    public var onCaptureMessage: (String) -> Unit = {},
+    public var onCaptureMessageWithDetails: (String) -> Unit = {},
+    public var onCaptureException: (Throwable) -> Unit = {},
+) : ISentryRepository {
+    override fun captureMessage(msg: String): Unit = onCaptureMessage(msg)
 
-    override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit) {
-        TODO("Not yet implemented")
-    }
+    override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit): Unit =
+        onCaptureMessageWithDetails(msg)
 
-    override fun captureException(throwable: Throwable) {
-        TODO("Not yet implemented")
-    }
+    override fun captureException(throwable: Throwable): Unit = onCaptureException(throwable)
 }

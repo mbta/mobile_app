@@ -15,6 +15,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.TestData
 import kotlin.test.assertTrue
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.Month
@@ -673,5 +674,58 @@ class TripHeaderCardTest {
                 useUnmergedTree = true,
             )
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun testCarLevelCrowding() {
+        val objects = TestData.clone()
+        val rl = objects.getRoute("Red")
+        val rlTrip = objects.trip { routeId = rl.id.idText }
+        val kendallMIT = objects.getStop("place-knncl")
+        val rlVehicle =
+            objects.vehicle {
+                carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+                carriage { occupancyStatus = Vehicle.OccupancyStatus.FewSeatsAvailable }
+                carriage { occupancyStatus = Vehicle.OccupancyStatus.StandingRoomOnly }
+                carriage { occupancyStatus = Vehicle.OccupancyStatus.NoDataAvailable }
+                carriage { occupancyStatus = Vehicle.OccupancyStatus.ManySeatsAvailable }
+                currentStatus = Vehicle.CurrentStatus.IncomingAt
+                stopId = kendallMIT.id
+                tripId = rlTrip.id
+            }
+
+        val rlEntry =
+            TripDetailsStopList.Entry(
+                kendallMIT,
+                0,
+                null,
+                null,
+                objects.prediction { departureTime = EasternTimeInstant.now().plus(3.minutes) },
+                vehicle = rlVehicle,
+                routes = listOf(rl),
+            )
+
+        composeTestRule.setContent {
+            TripHeaderCard(
+                trip = rlTrip,
+                spec = TripHeaderSpec.VehicleOnTrip(rlVehicle, kendallMIT, rlEntry, false),
+                targetId = "",
+                route = rl,
+                routeAccents = TripRouteAccents(rl),
+                now = EasternTimeInstant.now(),
+                onFollowTrip = {},
+            )
+        }
+
+        composeTestRule.onNodeWithContentDescription("Train crowding diagram").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Car 1 of 5, Not crowded").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Car 2 of 5, Some crowding")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Car 3 of 5, Crowded").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("Car 4 of 5, Crowding unknown")
+            .assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("Car 5 of 5, Not crowded").assertIsDisplayed()
     }
 }

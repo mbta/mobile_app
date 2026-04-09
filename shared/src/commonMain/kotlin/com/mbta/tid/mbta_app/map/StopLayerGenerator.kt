@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.map
 
-import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.SymbolLayer
 import com.mbta.tid.mbta_app.map.style.TextAnchor
@@ -10,6 +9,9 @@ import com.mbta.tid.mbta_app.model.MapStopRoute
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.addAll
+import kotlinx.serialization.json.buildJsonArray
 
 public object StopLayerGenerator {
     internal val maxTransferLayers = 3
@@ -27,9 +29,17 @@ public object StopLayerGenerator {
 
     internal fun getTransferLayerId(index: Int) = "${stopLayerId}-transfer-${index}"
 
-    public data class State
-    @DefaultArgumentInterop.Enabled
-    constructor(val selectedStopId: String? = null, val stopFilter: StopDetailsFilter? = null)
+    public sealed class State {
+        public data object Default : State()
+
+        public data class StopDetails(val selectedStopId: String) : State()
+
+        public data class TripDetails(
+            val selectedStopId: String?,
+            val stopFilter: StopDetailsFilter?,
+            val tripStops: List<String>?,
+        ) : State()
+    }
 
     public suspend fun createStopLayers(
         colorPalette: ColorPalette,
@@ -138,32 +148,40 @@ public object StopLayerGenerator {
         layer.textOffset = MapExp.labelOffsetExp
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     internal fun includeSharedProps(layer: SymbolLayer, forBus: Boolean, state: State) {
         layer.iconSize = MapExp.selectedSizeExp(state)
 
         layer.iconAllowOverlap = true
         layer.symbolSortKey = Exp.get(StopFeaturesBuilder.propSortOrderKey)
         layer.filter =
-            if (state.stopFilter != null) {
+            if (state is State.TripDetails)
                 Exp.all(
                     selectedOrBeyondThresholdExp(state, forBus),
-                    // we hide bus stops on unselected routes at zoom levels < 15, so we show
-                    // non-bus stops, selected routes, or zoom > 15
+                    // we hide bus stops off this trip/route at zoom levels < 15, so we show
+                    // non-bus stops, trip/route stops, or zoom > 15
                     Exp.any(
                         MapExp.listNotEq(
                             Exp.get(StopFeaturesBuilder.propMapRoutesKey),
                             listOf(Exp(MapStopRoute.BUS.name)),
                         ),
-                        Exp.`in`(
-                            Exp("${state.stopFilter.routeId}/${state.stopFilter.directionId}"),
-                            Exp.get(StopFeaturesBuilder.propAllRouteDirectionsKey),
-                        ),
+                        if (!state.tripStops.isNullOrEmpty())
+                            Exp.`in`(
+                                Exp.get(StopFeaturesBuilder.propIdKey),
+                                Exp.array(
+                                    value = Exp.Bare(buildJsonArray { addAll(state.tripStops) })
+                                ),
+                            )
+                        else if (state.stopFilter != null)
+                            Exp.`in`(
+                                Exp("${state.stopFilter.routeId}/${state.stopFilter.directionId}"),
+                                Exp.get(StopFeaturesBuilder.propAllRouteDirectionsKey),
+                            )
+                        else Exp(false),
                         Exp.ge(Exp.zoom(), Exp(MapDefaults.closeZoomThreshold)),
                     ),
                 )
-            } else {
-                selectedOrBeyondThresholdExp(state, forBus)
-            }
+            else selectedOrBeyondThresholdExp(state, forBus)
     }
 
     private fun selectedOrBeyondThresholdExp(state: State, forBus: Boolean) =

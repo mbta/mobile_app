@@ -13,7 +13,7 @@ struct SheetNavigationLink<Label>: View where Label: View {
     let value: SheetNavigationStackEntry
     let action: (SheetNavigationStackEntry) -> Void
     let showChevron: Bool
-    let label: () -> Label
+    @ViewBuilder let label: () -> Label
 
     @ScaledMetric private var chevronHeight: CGFloat = 14
     @ScaledMetric private var chevronWidth: CGFloat = 8

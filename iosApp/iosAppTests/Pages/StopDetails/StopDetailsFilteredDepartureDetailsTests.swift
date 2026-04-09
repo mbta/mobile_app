@@ -24,12 +24,18 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
-        objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
+        objects: ObjectCollectionBuilder = ObjectCollectionBuilder(),
+        subwayServiceStartTime: EasternTimeInstant? = nil
     ) -> RouteCardData.Leaf {
         makeLeaf(
             lineOrRoute: .route(route),
-            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
-            alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
+            stop: stop,
+            patterns: patterns,
+            upcomingTrips: upcomingTrips,
+            alerts: alerts,
+            alertsDownstream: alertsDownstream,
+            objects: objects,
+            subwayServiceStartTime: subwayServiceStartTime
         )
     }
 
@@ -41,13 +47,19 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
-        objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
+        objects: ObjectCollectionBuilder = ObjectCollectionBuilder(),
+        subwayServiceStartTime: EasternTimeInstant? = nil
     ) -> RouteCardData.Leaf {
         let routes = routes ?? Set([objects.route { $0.lineId = line.id.idText }])
         return makeLeaf(
             lineOrRoute: .line(line, routes),
-            stop: stop, patterns: patterns, upcomingTrips: upcomingTrips,
-            alerts: alerts, alertsDownstream: alertsDownstream, objects: objects
+            stop: stop,
+            patterns: patterns,
+            upcomingTrips: upcomingTrips,
+            alerts: alerts,
+            alertsDownstream: alertsDownstream,
+            objects: objects,
+            subwayServiceStartTime: subwayServiceStartTime
         )
     }
 
@@ -58,7 +70,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         upcomingTrips: [UpcomingTrip]? = nil,
         alerts: [Shared.Alert] = [],
         alertsDownstream: [Shared.Alert] = [],
-        objects: ObjectCollectionBuilder = ObjectCollectionBuilder()
+        objects: ObjectCollectionBuilder = ObjectCollectionBuilder(),
+        subwayServiceStartTime: EasternTimeInstant? = nil
     ) -> RouteCardData.Leaf {
         let route = lineOrRoute.sortRoute
         let stop = stop ?? objects.stop { _ in }
@@ -72,7 +85,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             routePatterns: patterns,
             stopIds: Set([stop.id]).union(Set(stop.childStopIds)),
             upcomingTrips: upcomingTrips,
-            alertsHere: alerts, allDataLoaded: true, hasSchedulesToday: true, subwayServiceStartTime: nil,
+            alertsHere: alerts,
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: subwayServiceStartTime,
             alertsDownstream: alertsDownstream,
             context: .stopDetailsFiltered
         )
@@ -833,5 +849,165 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
 
         wait(for: [exp], timeout: 2)
+    }
+
+    func testHidesEarlyMorningCardWhenPredictionExists() throws {
+        let now = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 3, minute: 30, second: 0)
+        let subwayStartTime = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 9, minute: 44, second: 0)
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "stop_1" }
+        let route = objects.route { route in
+            route.id = "route_1"
+            route.type = .lightRail
+            route.routePatternIds = ["pattern_1"]
+        }
+        let pattern = objects.routePattern(route: route) { pattern in
+            pattern.id = "pattern_1"
+            pattern.directionId = 0
+            pattern.representativeTripId = "trip_1"
+        }
+        let trip1 = objects.trip { trip in
+            trip.id = "trip_1"
+            trip.routeId = "route_1"
+            trip.directionId = 0
+            trip.routePatternId = "pattern_1"
+        }
+        let schedule1 = objects.schedule { schedule in
+            schedule.tripId = "trip_1"
+            schedule.stopId = "stop_1"
+            schedule.departureTime = now.plus(minutes: 10)
+        }
+        let prediction1 = objects.prediction(schedule: schedule1) { prediction in
+            prediction.id = "prediction_1"
+            prediction.stopId = "stop_1"
+            prediction.tripId = "trip_1"
+            prediction.routeId = "route_1"
+            prediction.directionId = 0
+            prediction.departureTime = now.plus(minutes: 10)
+        }
+        let upcoming1 = UpcomingTrip(trip: trip1, schedule: schedule1, prediction: prediction1)
+
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            patterns: [pattern],
+            upcomingTrips: [upcoming1],
+            objects: objects,
+            subwayServiceStartTime: subwayStartTime
+        )
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: trip1.directionId),
+            tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            alertSummaries: [:],
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        XCTAssertNil(try? sut.inspect().find(text: "Good morning!"))
+    }
+
+    func testShowsEarlyMorningCard() throws {
+        let now = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 3, minute: 30, second: 0)
+        let subwayStartTime = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 9, minute: 44, second: 0)
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { stop in stop.id = "stop_1" }
+        let route = objects.route { route in
+            route.id = "route_1"
+            route.type = .lightRail
+            route.routePatternIds = ["pattern_1"]
+        }
+        let pattern = objects.routePattern(route: route) { pattern in
+            pattern.id = "pattern_1"
+            pattern.directionId = 0
+            pattern.representativeTripId = "trip_1"
+        }
+        let trip1 = objects.trip { trip in
+            trip.id = "trip_1"
+            trip.routeId = "route_1"
+            trip.directionId = 0
+            trip.routePatternId = "pattern_1"
+        }
+        let schedule1 = objects.schedule { schedule in
+            schedule.tripId = "trip_1"
+            schedule.stopId = "stop_1"
+            schedule.departureTime = now.plus(minutes: 10)
+        }
+        let upcoming1 = UpcomingTrip(trip: trip1, schedule: schedule1, prediction: nil)
+
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            patterns: [pattern],
+            upcomingTrips: [upcoming1],
+            objects: objects,
+            subwayServiceStartTime: subwayStartTime
+        )
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: trip1.directionId),
+            tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            alertSummaries: [:],
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))
+    }
+
+    func testShowsWorldCupBlurb() {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = WorldCupService.shared.route
+        objects.put(object: route)
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: nil,
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: .init(
+                lineOrRoute: .Route(route: route),
+                stop: stop,
+                directionId: 0,
+                routePatterns: [WorldCupService.shared.routePatternOutbound],
+                stopIds: [],
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: false,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .stopDetailsFiltered
+            ),
+            alertSummaries: [:],
+            selectedDirection: .init(directionId: 0, route: route),
+            favorite: false,
+            now: .now(),
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+        XCTAssertNotNil(try sut.inspect().find(text: "Service from South Station to today’s World Cup match"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Boston Stadium Train ticket required"))
+        XCTAssertNotNil(try sut.inspect().find(text: "View details"))
     }
 }

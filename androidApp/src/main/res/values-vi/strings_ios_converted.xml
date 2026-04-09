@@ -87,9 +87,12 @@
     <string name="crossing_issue_lowercase">vấn đề tại điểm giao cắt</string>
     <string name="crossing_malfunction">Sự cố giao cắt</string>
     <string name="crossing_malfunction_lowercase">sự cố tại điểm giao cắt</string>
+    <string name="crowding_car_description">Xe %1$s của %2$s, %3$s</string>
     <string name="crowding_crowded">Đông đúc</string>
+    <string name="crowding_diagram">Sơ đồ tình trạng đông đúc trên tàu</string>
     <string name="crowding_not_crowded">Không đông đúc</string>
     <string name="crowding_some_crowding">Một số chỗ chật chội</string>
+    <string name="crowding_unknown">Tình trạng đông đúc chưa rõ</string>
     <string name="daily">Hằng ngày</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
@@ -510,5 +513,8 @@
     <string name="weather_lowercase">thời tiết</string>
     <string name="westbound">Về hướng tây</string>
     <string name="will_not_stop_at">sẽ không dừng lại ở %1$s %2$s</string>
+    <string name="world_cup_service_inbound">Tuyến xe buýt từ &lt;b>trận đấu World Cup&lt;/b> hôm nay đến &lt;b>Ga phía Nam&lt;/b></string>
+    <string name="world_cup_service_outbound">Tuyến xe buýt từ &lt;b>Ga Nam&lt;/b> đến &lt;b>trận đấu World Cup hôm nay&lt;/b></string>
+    <string name="world_cup_ticket_required">Cần có vé tàu đến Sân vận động Boston.</string>
     <string name="x_and_y">%1$s và %2$s</string>
 </resources>

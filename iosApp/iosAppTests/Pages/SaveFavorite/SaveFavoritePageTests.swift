@@ -69,6 +69,50 @@ final class SaveFavoritePageTests: XCTestCase {
         }
     }
 
+    @MainActor func testTogglesSelectedDirectionWithSavedDirection() {
+        let objects = TestData.clone()
+        let route = objects.getRoute(id: "Red")
+        let stop = objects.getStop(id: "place-pktrm")
+
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.favorites = MockFavoritesRepository(
+            favorites: Favorites(routeStopDirection:
+                [RouteStopDirection(route: route.id, stop: stop.id, direction: 1): FavoriteSettings()])
+        )
+
+        loadKoinMocks(repositories: repositories)
+
+        let sut = SaveFavoritePage(
+            routeId: route.id,
+            stopId: stop.id,
+            initialSelectedDirection: 1,
+            context: .favorites,
+            updateFavorites: { _ in },
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating),
+            nearbyVM: .init(),
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        sut.inspection.inspect(after: 0.1) { view in
+            XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
+            XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
+
+            try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+
+            XCTAssertNotNil(try view.find(text: "Ashmont/Braintree"))
+            XCTAssertNotNil(try view.find(text: "Southbound to"))
+
+            XCTAssertNotNil(try view.find(text: "Remove from Favorites"))
+
+            try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+
+            XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
+            XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
+        }
+    }
+
     @MainActor func testNotifications() {
         let objects = TestData.clone()
         let route = objects.getRoute(id: "Orange")

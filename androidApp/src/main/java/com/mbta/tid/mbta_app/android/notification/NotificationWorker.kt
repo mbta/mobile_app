@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
+import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import androidx.core.app.NotificationCompat
@@ -28,7 +29,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         val analytics: Analytics = get()
         analytics.notificationReceived(payload)
 
-        val requestCode = 0
+        val requestCode = payload.hashCode()
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.putExtra(PushNotificationPayload.launchKey, json.encodeToString(payload))
@@ -40,7 +41,14 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
                 PendingIntent.FLAG_IMMUTABLE,
             )
 
-        val content = NotificationContent.build(applicationContext.resources, payload)
+        // The applicationContext is not always guaranteed to be set to use the current system
+        // locale and can sometimes use a different but lower priority selected locale, even
+        // when the applicationContext has the correct locales set in its config.
+        val localeConfig = Configuration(applicationContext.resources.configuration)
+        val localeContext = applicationContext.createConfigurationContext(localeConfig)
+
+        val content = NotificationContent.build(localeContext.resources, payload)
+
         val title = content.title
         val body = content.body
 

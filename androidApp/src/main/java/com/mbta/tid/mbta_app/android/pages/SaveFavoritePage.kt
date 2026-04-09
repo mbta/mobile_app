@@ -118,6 +118,10 @@ fun SaveFavoritePage(
     val selectedRouteStopDirection = RouteStopDirection(routeId, stopId, selectedDirection)
 
     val isFavorite = favorites?.containsKey(selectedRouteStopDirection) ?: false
+    var wasAdding by rememberSaveable { mutableStateOf(favorites != null && !isFavorite) }
+    val showDirectionToggle = stopDirections.size > 1 && wasAdding
+
+    LaunchedEffect(isFavorite, favorites) { if (favorites != null && !isFavorite) wasAdding = true }
 
     val existingSettings = favorites?.get(selectedRouteStopDirection) ?: FavoriteSettings()
     var updatedSettings by
@@ -264,9 +268,7 @@ fun SaveFavoritePage(
                 lineOrRoute,
                 stopDirections.find { it.id == selectedDirection } ?: stopDirections.first(),
                 toggleDirection =
-                    { selectedDirection = 1 - selectedDirection }.takeUnless {
-                        stopDirections.size == 1 || isFavorite
-                    },
+                    { selectedDirection = 1 - selectedDirection }.takeIf { showDirectionToggle },
                 onlyServingOppositeDirection =
                     stopDirections.singleOrNull()?.id == 1 - initialDirection,
             )

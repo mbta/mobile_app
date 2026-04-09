@@ -12,6 +12,8 @@ public enum class AlertCardSpec {
 
 public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = false) {
 
+    val id: String = alert.id
+
     public fun cardSpec(now: EasternTimeInstant, isAllServiceDisrupted: Boolean): AlertCardSpec {
 
         val significance = alert.significance(now)

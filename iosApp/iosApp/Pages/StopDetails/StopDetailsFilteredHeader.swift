@@ -63,11 +63,13 @@ struct StopDetailsFilteredHeader: View {
             buttonTextColor: .fill2,
             navCallbacks: navCallbacks,
             rightActionContents: {
-                StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
-                    .id(direction) // don’t play animation when switching between favorited direction and unfavorited
-                    // direction
-                    .fixedSize(horizontal: false, vertical: true)
-                    .frame(maxWidth: 44, maxHeight: 44)
+                if route?.id != WorldCupService.shared.route.id {
+                    StarButton(starred: isFavorite, color: Color.text, action: onFavorite)
+                        .id(direction) // don’t play animation when switching between favorited direction and
+                        // unfavorited direction
+                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(maxWidth: 44, maxHeight: 44)
+                }
             }
         )
         .padding(.bottom, 16)

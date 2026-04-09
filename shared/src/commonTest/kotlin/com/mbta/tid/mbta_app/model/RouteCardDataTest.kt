@@ -6,10 +6,14 @@ import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.parametric.parametricTest
+import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.MockSentryRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
+import io.sentry.kotlin.multiplatform.Scope
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.fail
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -5873,4 +5877,316 @@ class RouteCardDataTest {
                 ),
             )
         }
+
+    @Test
+    fun `routeCardsForStaticStopList sorts by distance`(): Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val closeBusStop = objects.stop()
+        val midBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.2
+                longitude = closeBusStop.longitude + 0.2
+            }
+        val farBusStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.4
+                longitude = closeBusStop.longitude + 0.4
+            }
+        val closeSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.1
+                longitude = closeBusStop.longitude + 0.1
+            }
+        val midSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.3
+                longitude = closeBusStop.longitude + 0.3
+            }
+        val farSubwayStop =
+            objects.stop {
+                latitude = closeBusStop.latitude + 0.5
+                longitude = closeBusStop.longitude + 0.5
+            }
+
+        // no schedules
+        val closeBusRoute =
+            objects.route {
+                id = "close-bus"
+                type = RouteType.BUS
+            }
+        // with schedules
+        val midBusRoute =
+            objects.route {
+                id = "mid-bus"
+                type = RouteType.BUS
+            }
+        // no schedules
+        val farBusRoute =
+            objects.route {
+                id = "far-bus"
+                type = RouteType.BUS
+            }
+        // no schedules
+        val closeSubwayRoute =
+            objects.route {
+                id = "close-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+        // no schedules
+        val midSubwayRoute =
+            objects.route {
+                id = "mid-subway"
+                type = RouteType.LIGHT_RAIL
+            }
+        // with schedules
+        val farSubwayRoute =
+            objects.route {
+                id = "far-subway"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val closeBusPattern =
+            objects.routePattern(closeBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Lincoln Lab" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern1 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midBusPattern2 =
+            objects.routePattern(midBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Nubian" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern1 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farBusPattern2 =
+            objects.routePattern(farBusRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Malden Center" }
+                typicality = RoutePattern.Typicality.Atypical
+            }
+        val closeSubwayPattern =
+            objects.routePattern(closeSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Alewife" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val midSubwayPattern =
+            objects.routePattern(midSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Medford/Tufts" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val farSubwayPattern =
+            objects.routePattern(farSubwayRoute) {
+                sortOrder = 1
+                representativeTrip { headsign = "Oak Grove" }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
+        objects.prediction {
+            arrivalTime = time
+            departureTime = time
+            routeId = midBusRoute.id.idText
+            stopId = midBusStop.id
+            tripId = midBusPattern1.representativeTripId
+        }
+
+        objects.schedule {
+            arrivalTime = time
+            departureTime = time
+            routeId = midBusRoute.id.idText
+            stopId = midBusStop.id
+            tripId = midBusPattern1.representativeTripId
+        }
+
+        objects.schedule {
+            arrivalTime = time
+            departureTime = time
+            routeId = farSubwayRoute.id.idText
+            stopId = farSubwayStop.id
+            tripId = farSubwayPattern.representativeTripId
+        }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        farBusStop.id to listOf(farBusPattern1.id, farBusPattern2.id),
+                        midBusStop.id to listOf(midBusPattern1.id, midBusPattern2.id),
+                        closeBusStop.id to listOf(closeBusPattern.id),
+                        farSubwayStop.id to listOf(farSubwayPattern.id),
+                        midSubwayStop.id to listOf(midSubwayPattern.id),
+                        closeSubwayStop.id to listOf(closeSubwayPattern.id),
+                    ),
+            )
+
+        val staticRouteCardsSorted =
+            RouteCardData.routeCardsForStaticStopList(
+                listOf(
+                    farBusStop.id,
+                    farSubwayStop.id,
+                    midSubwayStop.id,
+                    closeBusStop.id,
+                    midBusStop.id,
+                    closeSubwayStop.id,
+                ),
+                global,
+                context = RouteCardData.Context.Favorites,
+                now = time,
+                sortByDistanceFrom = closeBusStop.position,
+                favorites =
+                    setOf(
+                        RouteStopDirection(
+                            closeBusRoute.id,
+                            closeBusStop.id,
+                            closeBusPattern.directionId,
+                        ),
+                        RouteStopDirection(
+                            farBusRoute.id,
+                            farBusStop.id,
+                            farBusPattern1.directionId,
+                        ),
+                        RouteStopDirection(
+                            midBusRoute.id,
+                            midBusStop.id,
+                            midBusPattern1.directionId,
+                        ),
+                        RouteStopDirection(
+                            farSubwayRoute.id,
+                            farSubwayStop.id,
+                            farSubwayPattern.directionId,
+                        ),
+                        RouteStopDirection(
+                            midSubwayRoute.id,
+                            midSubwayStop.id,
+                            midSubwayPattern.directionId,
+                        ),
+                        RouteStopDirection(
+                            closeSubwayRoute.id,
+                            closeSubwayStop.id,
+                            closeSubwayPattern.directionId,
+                        ),
+                    ),
+                sentryRepository = MockSentryRepository(),
+            )
+
+        // Routes are sorted only by distance, no realtime or static information is referenced
+        assertEquals(
+            listOf(
+                closeBusRoute,
+                closeSubwayRoute,
+                midBusRoute,
+                midSubwayRoute,
+                farBusRoute,
+                farSubwayRoute,
+            ),
+            checkNotNull(staticRouteCardsSorted).flatMap { it.lineOrRoute.allRoutes },
+        )
+    }
+
+    @Test
+    fun `routeCardsForStaticStopList sends sentry message for missing dir`(): Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val busStop = objects.stop()
+        val subwayStop =
+            objects.stop {
+                latitude = busStop.latitude + 0.1
+                longitude = busStop.longitude + 0.1
+            }
+
+        val busRoute =
+            objects.route {
+                id = "bus"
+                type = RouteType.BUS
+            }
+        val subwayRoute =
+            objects.route {
+                id = "subway"
+                type = RouteType.HEAVY_RAIL
+            }
+
+        val busPattern =
+            objects.routePattern(busRoute) {
+                sortOrder = 1
+                directionId = 1
+                representativeTrip {
+                    headsign = "Lincoln Lab"
+                    stopIds = listOf(busStop.id)
+                }
+                typicality = RoutePattern.Typicality.Typical
+            }
+        val subwayPattern =
+            objects.routePattern(subwayRoute) {
+                sortOrder = 1
+                directionId = 0
+                representativeTrip {
+                    headsign = "Alewife"
+                    stopIds = listOf(subwayStop.id)
+                }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop =
+                    mapOf(
+                        busStop.id to listOf(busPattern.id),
+                        subwayStop.id to listOf(subwayPattern.id),
+                    ),
+            )
+
+        var sentryMessage: String? = null
+        class TestSentryRepo : ISentryRepository {
+            override fun captureMessage(msg: String) {
+                fail("Should be called with a detail scope")
+            }
+
+            override fun captureMessage(msg: String, additionalDetails: Scope.() -> Unit) {
+                sentryMessage = msg
+            }
+
+            override fun captureException(throwable: Throwable) {
+                fail("Should be called with a message")
+            }
+        }
+
+        val staticRouteCardsSorted =
+            RouteCardData.routeCardsForStaticStopList(
+                listOf(busStop.id, subwayStop.id),
+                global,
+                context = RouteCardData.Context.Favorites,
+                now = time,
+                sortByDistanceFrom = busStop.position,
+                favorites =
+                    setOf(
+                        RouteStopDirection(busRoute.id, busStop.id, 0),
+                        RouteStopDirection(subwayRoute.id, subwayStop.id, subwayPattern.directionId),
+                    ),
+                sentryRepository = TestSentryRepo(),
+            )
+
+        // Routes are sorted only by distance, no realtime or static information is referenced
+        assertEquals(
+            listOf(busRoute, subwayRoute),
+            checkNotNull(staticRouteCardsSorted).flatMap { it.lineOrRoute.allRoutes },
+        )
+        assertEquals("Empty static RouteCardData", sentryMessage)
+    }
 }

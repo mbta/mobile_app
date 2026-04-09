@@ -89,9 +89,12 @@
     <string name="crossing_issue_lowercase">problema en el cruce</string>
     <string name="crossing_malfunction">Fallo en el cruce</string>
     <string name="crossing_malfunction_lowercase">mal funcionamiento del cruce</string>
+    <string name="crowding_car_description">Coche %1$s de %2$s, %3$s</string>
     <string name="crowding_crowded">Atestado</string>
+    <string name="crowding_diagram">Diagrama de hacinamiento en los trenes</string>
     <string name="crowding_not_crowded">No hay mucha gente</string>
     <string name="crowding_some_crowding">Algunas aglomeraciones</string>
+    <string name="crowding_unknown">Aglomeración desconocida</string>
     <string name="daily">A diario</string>
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>
@@ -520,5 +523,8 @@
     <string name="weather_lowercase">clima</string>
     <string name="westbound">En dirección oeste</string>
     <string name="will_not_stop_at">no se detendrá en %1$s %2$s</string>
+    <string name="world_cup_service_inbound">Servicio desde el &lt;b>partido del Mundial&lt;/b> de hoy hasta la &lt;b>Estación Sur&lt;/b>.</string>
+    <string name="world_cup_service_outbound">Servicio desde la &lt;b>Estación Sur&lt;/b> hasta el &lt;b>partido del Mundial&lt;/b> de hoy.</string>
+    <string name="world_cup_ticket_required">Se requiere billete de tren para el estadio de Boston</string>
     <string name="x_and_y">%1$s y %2$s</string>
 </resources>

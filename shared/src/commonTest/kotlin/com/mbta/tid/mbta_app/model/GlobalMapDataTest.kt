@@ -154,9 +154,9 @@ internal class GlobalMapDataTest {
             "Route types are ordered to match the route sort order",
         )
 
-        assertFalse(
+        assertTrue(
             mapData.mapStops["A1"]!!.routeTypes.contains(MapStopRoute.BLUE),
-            "Atypical routes should not be included",
+            "Atypical routes should be included",
         )
         assertFalse(
             mapData.mapStops["A"]!!.routeTypes.contains(MapStopRoute.BUS),

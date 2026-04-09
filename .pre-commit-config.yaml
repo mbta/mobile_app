@@ -1,12 +1,16 @@
-default_install_hook_types: [pre-commit, post-checkout, post-merge]
+default_install_hook_types: [pre-commit, post-checkout, post-rewrite, post-merge]
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-yaml
+        stages: [pre-commit]
       - id: end-of-file-fixer
+        stages: [pre-commit]
       - id: trailing-whitespace
+        stages: [pre-commit]
       - id: pretty-format-json
+        stages: [pre-commit]
         types: [ text ]
         files: \.(json|arb)$
         args: [ "--autofix" ]
@@ -14,32 +18,46 @@ repos:
     rev: v0.3.0
     hooks:
       - id: gradle-spotless
+        stages: [pre-commit]
         entry: gradle-spotless -w
+        files: \.(kt|kts)$
       - id: gradle-task
+        stages: [pre-commit]
         alias: gradle-spotless-buildSrc
         name: "gradle spotless buildSrc"
         entry: gradle-task :buildSrc:spotlessCheck :buildSrc:spotlessApply -w
+        files: ^buildSrc/.*\.(kt|kts)$
   - repo: https://github.com/nicklockwood/SwiftFormat
     rev: 0.57.2
     hooks:
       - id: swiftformat
+        stages: [pre-commit]
         args: [ "--config","config.swiftformat" ]
   - repo: local
     hooks:
       - id: generate-xcodeproj
+        stages: [post-checkout, post-rewrite, post-merge]
         name: generate xcodeproj
         entry: ./bin/generate-xcodeproj.sh
         language: script
         always_run: true
-        stages: [post-checkout, post-merge]
         pass_filenames: false
       - id: diff-xcodeproj
+        stages: [pre-commit]
         name: diff xcodeproj
         entry: ./bin/diff-xcodeproj.sh
         language: script
+        files: ^iosApp/
+        pass_filenames: false
+      - id: cache-xcodeproj
+        stages: [pre-commit]
+        name: cache xcodeproj
+        entry: xcodegen cache --spec iosApp/project.yml
+        language: system
         always_run: true
         pass_filenames: false
       - id: rubocop
+        stages: [pre-commit]
         name: rubocop
         entry: bundle exec rubocop -A
         language: system

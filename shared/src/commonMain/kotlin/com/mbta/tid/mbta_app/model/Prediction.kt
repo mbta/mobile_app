@@ -5,6 +5,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 internal val ARRIVAL_CUTOFF = 30.seconds
 internal val APPROACH_CUTOFF = 60.seconds
@@ -37,4 +38,8 @@ internal constructor(
         @SerialName("unscheduled") Unscheduled,
         @SerialName("scheduled") Scheduled,
     }
+
+    @Transient
+    public var stoppingHere: Boolean =
+        scheduleRelationship !in setOf(ScheduleRelationship.Cancelled, ScheduleRelationship.Skipped)
 }

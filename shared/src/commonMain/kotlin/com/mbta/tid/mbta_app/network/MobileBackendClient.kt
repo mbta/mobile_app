@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.network
 import com.mbta.tid.mbta_app.AppVariant
 import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.repositories.ICurrentAppVersionRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.HttpClientEngine
 import io.ktor.client.plugins.ClientRequestException
@@ -21,11 +22,19 @@ import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.statement.HttpResponse
 import io.ktor.client.statement.bodyAsText
+import io.ktor.http.userAgent
 import io.ktor.serialization.kotlinx.KotlinxWebsocketSerializationConverter
 import io.ktor.serialization.kotlinx.json.json
 
-internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: AppVariant) {
-    constructor(appVariant: AppVariant) : this(getPlatform().httpClientEngine, appVariant)
+internal class MobileBackendClient(
+    engine: HttpClientEngine,
+    val appVariant: AppVariant,
+    private val currentAppVersionRepository: ICurrentAppVersionRepository? = null,
+) {
+    constructor(
+        appVariant: AppVariant,
+        currentAppVersionRepository: ICurrentAppVersionRepository? = null,
+    ) : this(getPlatform().httpClientEngine, appVariant, currentAppVersionRepository)
 
     private val httpClient =
         HttpClient(engine) {
@@ -39,7 +48,12 @@ internal class MobileBackendClient(engine: HttpClientEngine, val appVariant: App
                 constantDelay(1)
             }
             install(HttpTimeout) { requestTimeoutMillis = 8000 }
-            defaultRequest { url(appVariant.backendRoot) }
+            defaultRequest {
+                url(appVariant.backendRoot)
+                userAgent(
+                    "MBTA Go/${currentAppVersionRepository?.getCurrentAppVersion() ?: "?.?.?"} (${getPlatform().type})"
+                )
+            }
             HttpResponseValidator {
                 validateResponse { response ->
                     when (response.status.value) {

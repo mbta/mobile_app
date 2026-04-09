@@ -140,7 +140,13 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
             alertCards
-            if isAllServiceDisrupted {
+            if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
+                WorldCupBlurb(leaf: leaf, routeAccents: routeAccents, offerDetails: true)
+                    .padding(16)
+                    .background(Color.fill3)
+                    .withRoundedBorder()
+                    .padding(.horizontal, 16)
+            } else if isAllServiceDisrupted {
                 EmptyView()
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(
@@ -177,7 +183,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     context: .stopDetails,
                     now: now,
                     routeAccents: routeAccents,
-                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream)() },
+                    onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
                     errorBannerVM: errorBannerVM,
                     nearbyVM: nearbyVM,
                     mapVM: mapVM,
@@ -312,68 +318,42 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
     }
 
-    func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) -> () -> Void {
-        {
-            let line: Line? = switch onEnum(of: leaf.lineOrRoute) {
-            case let .line(line): line.line
-            default: nil
-            }
-            let routes = switch onEnum(of: leaf.lineOrRoute) {
-            case let .line(line): Array(line.routes)
-            case let .route(route): [route.route]
-            }
-            nearbyVM.pushNavEntry(.alertDetails(
-                alertId: alertId,
-                line: spec == .elevator ? nil : line,
-                routes: spec == .elevator ? nil : routes,
-                stop: leaf.stop
-            ))
-            analytics.tappedAlertDetails(
-                routeId: leaf.lineOrRoute.id,
-                stopId: leaf.stop.id,
-                alertId: alertId,
-                elevator: spec == .elevator
-            )
+    func getAlertDetailsHandler(_ alertId: String, spec: AlertCardSpec) {
+        let line: Line? = switch onEnum(of: leaf.lineOrRoute) {
+        case let .line(line): line.line
+        default: nil
         }
-    }
-
-    @ViewBuilder
-    func alertCard(_ displayAlert: Shared.DisplayAlert, _ summary: AlertSummary?) -> some View {
-        let alert = displayAlert.alert
-        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
-
-        AlertCard(
-            alert: alert,
-            alertSummary: summary,
-            spec: spec,
-            routeAccents: routeAccents,
-            onViewDetails: getAlertDetailsHandler(alert.id, spec: spec)
+        let routes = switch onEnum(of: leaf.lineOrRoute) {
+        case let .line(line): Array(line.routes)
+        case let .route(route): [route.route]
+        }
+        nearbyVM.pushNavEntry(.alertDetails(
+            alertId: alertId,
+            line: spec == .elevator ? nil : line,
+            routes: spec == .elevator ? nil : routes,
+            stop: leaf.stop
+        ))
+        analytics.tappedAlertDetails(
+            routeId: leaf.lineOrRoute.id,
+            stopId: leaf.stop.id,
+            alertId: alertId,
+            elevator: spec == .elevator
         )
     }
 
     @ViewBuilder
     var alertCards: some View {
-        if !displayAlerts.allAlerts.isEmpty ||
-            (settingsCache.get(.stationAccessibility) && (!leaf.stop.isWheelchairAccessible)) {
-            VStack(spacing: 16) {
-                ForEach(displayAlerts.highPriority, id: \.alert.id) { displayAlert in
-                    let alert = displayAlert.alert
-                    if alertSummaries.keys.contains(alert.id) {
-                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
-                    }
-                }
+        let showNotAccessibleCard = settingsCache.get(.stationAccessibility) && !leaf.stop.isWheelchairAccessible
+        if !displayAlerts.allAlerts.isEmpty || showNotAccessibleCard {
+            AlertListContainer(displayAlerts: displayAlerts,
+                               showNotAccessibleCard: showNotAccessibleCard,
+                               alertSummaries: alertSummaries,
+                               now: now,
+                               isAllServiceDisrupted: isAllServiceDisrupted,
+                               routeAccents: routeAccents,
+                               onRowTap: { id, spec in getAlertDetailsHandler(id, spec: spec) })
 
-                if settingsCache.get(.stationAccessibility), !leaf.stop.isWheelchairAccessible {
-                    NotAccessibleCard()
-                }
-                ForEach(displayAlerts.lowPriority, id: \.alert.id) { displayAlert in
-                    let alert = displayAlert.alert
-                    if alertSummaries.keys.contains(alert.id) {
-                        alertCard(displayAlert, alertSummaries[alert.id] ?? nil)
-                    }
-                }
-
-            }.padding(.horizontal, 16)
+                .padding(.horizontal, 16)
         }
     }
 }

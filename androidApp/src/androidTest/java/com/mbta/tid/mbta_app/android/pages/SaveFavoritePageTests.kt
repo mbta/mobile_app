@@ -111,6 +111,41 @@ class SaveFavoritePageTests {
     }
 
     @Test
+    fun testTogglesDirectionWithSaved() {
+        val objects = TestData.clone()
+        val route = objects.getRoute("Orange")
+        val stop = objects.getStop("place-welln")
+        loadKoinMocks(objects) {
+            favorites =
+                MockFavoritesRepository(
+                    favorites =
+                        Favorites(
+                            mapOf(RouteStopDirection(route.id, stop.id, 1) to FavoriteSettings())
+                        )
+                )
+        }
+
+        composeTestRule.setContent {
+            SaveFavoritePage(route.id, stop.id, 0, EditFavoritesContext.StopDetails, {})
+        }
+
+        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("toggle direction")
+            .assertIsDisplayed()
+            .performClick()
+        composeTestRule.onNodeWithText("Northbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Oak Grove").assertIsDisplayed()
+        composeTestRule
+            .onNodeWithContentDescription("toggle direction")
+            .assertIsDisplayed()
+            .performClick()
+        composeTestRule.onNodeWithText("Southbound to").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Forest Hills").assertIsDisplayed()
+    }
+
+    @Test
     fun testNotifications() {
         val objects = TestData.clone()
         val route = objects.getRoute("Orange")
@@ -188,6 +223,7 @@ class SaveFavoritePageTests {
             )
         }
 
+        composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText("Edit Favorite").assertIsDisplayed()
         composeTestRule.onNodeWithContentDescription("toggle direction").assertDoesNotExist()
         composeTestRule

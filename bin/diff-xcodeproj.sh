@@ -19,14 +19,13 @@ rm "$FAKE_ROOT"/iosApp/Pods
 ln -s "$REAL_REPO"/shared "$FAKE_ROOT"
 pushd "$FAKE_ROOT"/iosApp
 xcodegen generate --quiet
-bundle exec pod install --silent
 # this will print a leading '---' for YAML reasons even if the diff is empty, so tail -n +2 strips off the first line
 bundle exec xcodeproj project-diff $REAL_REPO/iosApp/iosApp.xcodeproj $FAKE_ROOT/iosApp/iosApp.xcodeproj | tail -n +2 > "$FAKE_ROOT"/diff-raw.yml
 "$REAL_REPO"/bin/filter-xcodeproj-diff.rb "$FAKE_ROOT"/diff-raw.yml > "$FAKE_ROOT"/diff.yml
 # check if diff.yml is nonempty
 if [ -s "$FAKE_ROOT"/diff.yml ]; then
   ERR=1
-  echo "Xcode project is dirty. Adjust project.yml to account for any real differences and then run bin/generate-xcodeproj.sh."
+  echo "Xcode project is dirty. Adjust project.yml to account for any real differences and then run bin/generate-xcodeproj.sh --force."
   cat "$FAKE_ROOT"/diff.yml
 else
   ERR=0

@@ -156,13 +156,18 @@ struct HomeMapView: View {
                 mapVM.vehiclesChanged(vehicles: newVehicleData)
             }
             .task {
-                for await vehicle in tripDetailsVM.selectedVehicleUpdates {
-                    let currentNavEntry = nearbyVM.navigationStack.lastSafe()
-                    let follow = switch currentNavEntry {
-                    case .tripDetails: viewportProvider.isVehicleOverview
-                    default: false
+                for await mapUpdate in tripDetailsVM.mapUpdates {
+                    switch onEnum(of: mapUpdate) {
+                    case let .selectedVehicle(mapUpdate):
+                        let currentNavEntry = nearbyVM.navigationStack.lastSafe()
+                        let follow = switch currentNavEntry {
+                        case .tripDetails: viewportProvider.isVehicleOverview
+                        default: false
+                        }
+                        mapVM.selectedVehicleUpdated(vehicle: mapUpdate.vehicle, follow: follow)
+                    case let .tripStops(mapUpdate):
+                        mapVM.tripStopsUpdated(tripStops: mapUpdate.tripStops)
                     }
-                    mapVM.selectedVehicleUpdated(vehicle: vehicle, follow: follow)
                 }
             }
     }

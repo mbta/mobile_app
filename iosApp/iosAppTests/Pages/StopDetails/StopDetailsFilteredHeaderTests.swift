@@ -63,4 +63,19 @@ final class StopDetailsFilteredHeaderTests: XCTestCase {
         XCTAssertNoThrow(try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap())
         wait(for: [tapExpectation], timeout: 1)
     }
+
+    func testNoFavoriteWorldCup() throws {
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = WorldCupService.shared.route
+        objects.put(object: route)
+        let sut = StopDetailsFilteredHeader(
+            route: route,
+            stop: stop,
+            direction: 0,
+            onFavorite: {},
+            navCallbacks: .init(onBack: nil, onClose: nil, backButtonPresentation: .floating)
+        )
+        XCTAssertThrowsError(try sut.inspect().find(StarButton.self))
+    }
 }

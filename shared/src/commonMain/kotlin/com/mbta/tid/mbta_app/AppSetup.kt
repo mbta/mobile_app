@@ -7,6 +7,7 @@ public fun initializeSentry(dsn: String, environment: String) {
     val configuration: (SentryOptions) -> Unit = {
         it.dsn = dsn
         it.environment = environment
+        it.beforeBreadcrumb = { breadcrumb -> breadcrumb }
     }
     Sentry.init(configuration)
 }

@@ -18,16 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
-import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 
 @Composable
-fun NotAccessibleCard() {
+fun NotAccessibleCard(modifier: Modifier = Modifier) {
     if (IsLoadingSheetContents.current) {
         return
     }
     Column(
-        modifier = Modifier.haloContainer(2.dp).padding(horizontal = 12.dp, vertical = 10.dp),
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.Start,
     ) {

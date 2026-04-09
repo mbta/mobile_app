@@ -14,8 +14,10 @@ internal object PatternSorting {
 
     private fun patternServiceBucket(leafData: RouteCardData.Leaf, now: EasternTimeInstant) =
         when {
-            // showing either a trip or an alert
-            leafData.hasMajorAlerts(now) || leafData.upcomingTrips.isNotEmpty() -> 1
+            // showing either a trip or an alert (or World Cup service)
+            leafData.hasMajorAlerts(now) ||
+                leafData.upcomingTrips.isNotEmpty() ||
+                leafData.lineOrRoute.id == WorldCupService.route.id -> 1
             // service ended
             leafData.hasSchedulesToday -> 2
             // no service today
@@ -38,7 +40,11 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.stopData.first().data.first(), it.at) },
+            {
+                it.stopData.firstOrNull()?.data?.firstOrNull()?.let { firstLeaf ->
+                    patternServiceBucket(firstLeaf, it.at)
+                } ?: 0
+            },
             if (context != RouteCardData.Context.Favorites) {
                 { subwayBucket(it.lineOrRoute.sortRoute) }
             } else {
@@ -61,7 +67,11 @@ internal object PatternSorting {
             } else {
                 { 0 }
             },
-            { patternServiceBucket(it.data.first(), EasternTimeInstant.now()) },
+            {
+                it.data.firstOrNull()?.let { firstLeaf ->
+                    patternServiceBucket(firstLeaf, EasternTimeInstant.now())
+                } ?: 0
+            },
             if (sortByDistanceFrom != null) {
                 { it.stop.distanceFrom(sortByDistanceFrom) }
             } else {

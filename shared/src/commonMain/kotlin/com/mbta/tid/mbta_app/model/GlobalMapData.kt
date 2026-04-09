@@ -104,16 +104,14 @@ public data class GlobalMapData(
                 val patterns =
                     stopIdSet
                         .flatMap { stopId -> globalData.patternIdsByStop[stopId] ?: listOf() }
-                        .mapNotNull { globalData.routePatterns[it] }
-                val typicalPatterns =
-                    patterns.filter {
-                        !it.routeId.idText.startsWith("Shuttle-") &&
-                            (it.typicality == RoutePattern.Typicality.Typical ||
-                                it.typicality == RoutePattern.Typicality.CanonicalOnly)
-                    }
+                        .mapNotNull {
+                            globalData.routePatterns[it]?.takeUnless {
+                                it.routeId.idText.startsWith("Shuttle-")
+                            }
+                        }
 
                 val isTerminal =
-                    typicalPatterns.any { pattern ->
+                    patterns.any { pattern ->
                         val route = globalData.routes[pattern.routeId]
                         if (route == null || route.type == RouteType.BUS) {
                             // Don't mark bus terminals, only rail and ferry
@@ -131,12 +129,17 @@ public data class GlobalMapData(
                     }
 
                 val allRoutes = mutableSetOf<Route>()
-                val routeDirections = mutableMapOf<Route.Id, MutableSet<Int>>()
+                val typicalRouteDirections = mutableMapOf<Route.Id, MutableSet<Int>>()
 
-                for (pattern in typicalPatterns.sorted()) {
-                    routeDirections
-                        .getOrPut(pattern.routeId, ::mutableSetOf)
-                        .add(pattern.directionId)
+                for (pattern in patterns.sorted()) {
+                    if (
+                        pattern.isTypical() ||
+                            pattern.typicality == RoutePattern.Typicality.CanonicalOnly
+                    ) {
+                        typicalRouteDirections
+                            .getOrPut(pattern.routeId, ::mutableSetOf)
+                            .add(pattern.directionId)
+                    }
                     val route = globalData.routes[pattern.routeId] ?: continue
                     allRoutes.add(route)
                 }
@@ -172,7 +175,7 @@ public data class GlobalMapData(
                         stop = stop,
                         routes = categorizedRoutes,
                         routeTypes = mapRouteList,
-                        routeDirections = routeDirections,
+                        routeDirections = typicalRouteDirections,
                         isTerminal = isTerminal,
                         alerts = categorizedAlerts,
                     )
