@@ -21,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,8 +50,10 @@ import com.mbta.tid.mbta_app.android.util.key
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
 import com.mbta.tid.mbta_app.model.Dependency
 import com.mbta.tid.mbta_app.model.getAllDependencies
+import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.viewModel.MoreViewModel
+import kotlin.collections.orEmpty
 import org.koin.compose.koinInject
 
 @SuppressLint("LocalContextConfigurationRead")
@@ -73,11 +76,17 @@ fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinI
 
     val navController = rememberNavController()
 
-    val sections = remember {
-        viewModel.getSections(translation, BuildConfig.VERSION_NAME) {
+    val settings = SettingsCache.getNullable()
+
+    fun getSections(): List<MoreSection> {
+        return viewModel.getSections(translation, BuildConfig.VERSION_NAME, settings.orEmpty()) {
             navController.navigate("licenses")
         }
     }
+    var sections = remember { getSections() }
+
+    LaunchedEffect(settings) { sections = getSections() }
+
     val dependencies = Dependency.getAllDependencies()
     var showingBuildNumber by remember { mutableStateOf(false) }
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
