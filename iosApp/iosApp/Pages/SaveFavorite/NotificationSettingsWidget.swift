@@ -171,7 +171,7 @@ struct NotificationSettingsWidget: View {
                     LabeledTimeInput(
                         label: Text("To"),
                         time: $window.endTime,
-                        minimumTime: .init(hour: window.startTime.hour, minute: (window.startTime.minute ?? 0) + 1)
+                        minimumTime: window.minimumEndTime()
                     )
                     DaysOfWeekInput(daysOfWeek: $window.daysOfWeek)
                 }
