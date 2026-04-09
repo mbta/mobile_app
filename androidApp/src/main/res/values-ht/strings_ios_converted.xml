@@ -361,6 +361,8 @@
     <string name="scheduled_to_depart_accessibility_desc">Chwazi %1$s pwograme pou ale %2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">Chwazi %1$s pwograme pou ale %2$s, arè ou chwazi a</string>
     <string name="search_by_stop">Chèche dapre arè a</string>
+    <string name="select_end_time">Chwazi lè fini an</string>
+    <string name="select_start_time">Chwazi lè kòmansman an</string>
     <string name="selected_stop">%1$s, arè ou chwazi a</string>
     <string name="selected_stop_first_stop">%1$s, arè ou chwazi a, premye arè</string>
     <string name="serves_route_list">sèvi %1$s</string>
@@ -444,6 +446,7 @@
     <string name="this_stop_is_drop_off_only">Arè sa a se pou depoze moun sèlman</string>
     <string name="tie_replacement">Ranplasman kòd</string>
     <string name="tie_replacement_lowercase">ranplasman mare</string>
+    <string name="time_picker_type_toggle">Chanje/dezaktive kalite seleksyon tan an</string>
     <string name="to">Pou</string>
     <string name="toast_tip_prefix">Konsèy: %1$s</string>
     <string name="today">jodi a</string>
