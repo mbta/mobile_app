@@ -100,9 +100,9 @@ struct AlertDetails: View {
                     time: .shortened
                 )
             let dateRange = if recurrence.endDayKnown {
-                Text("\(startDay) – \(endDay)")
+                Text("\(startDay) – \(endDay)").font(Typography.bodySemibold)
             } else {
-                Text("Until further notice")
+                Text("Until further notice").font(Typography.bodySemibold)
             }
             if recurrence.daily {
                 Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
