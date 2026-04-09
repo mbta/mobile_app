@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 data class FormattedAlert(
     val alert: Alert?,
@@ -499,12 +500,16 @@ data class FormattedAlert(
                 is AlertSummary.Timeframe.LaterDate ->
                     resources.getString(
                         R.string.alert_summary_timeframe_later_date,
-                        timeframe.time.formattedServiceDate(),
+                        timeframe.time.formattedServiceDate(
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                        ),
                     )
                 is AlertSummary.Timeframe.ThisWeek ->
                     resources.getString(
                         R.string.alert_summary_timeframe_this_week,
-                        timeframe.time.formattedServiceDay(),
+                        timeframe.time.formattedServiceDay(
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                        ),
                     )
                 is AlertSummary.Timeframe.Time ->
                     resources.getString(
@@ -638,12 +643,16 @@ data class FormattedAlert(
                 is AlertSummary.Timeframe.ThisWeek ->
                     resources.getString(
                         R.string.alert_summary_recurrence_end_day_this_week,
-                        endDay.time.formattedServiceDay(),
+                        endDay.time.formattedServiceDay(
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                        ),
                     )
                 is AlertSummary.Timeframe.LaterDate ->
                     resources.getString(
                         R.string.alert_summary_recurrence_end_day_later_date,
-                        endDay.time.formattedServiceDate(),
+                        endDay.time.formattedServiceDate(
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                        ),
                     )
                 AlertSummary.Timeframe.Unknown -> ""
             }

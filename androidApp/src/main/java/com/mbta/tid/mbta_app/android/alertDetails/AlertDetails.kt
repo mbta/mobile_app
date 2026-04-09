@@ -197,11 +197,8 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
         val dateFormat =
             if (recurrence.daily) EasternTimeInstant::formattedShortServiceDayAndDate
             else EasternTimeInstant::formattedServiceDate
-        val startDay = recurrence.start.dateFormat()
-        val endDay =
-            recurrence.end
-                .coerceInServiceDay(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
-                .dateFormat()
+        val startDay = recurrence.start.dateFormat(EasternTimeInstant.ServiceDateRounding.FORWARDS)
+        val endDay = recurrence.end.dateFormat(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
         val startTime =
             if (recurrence.fromStartOfService) stringResource(R.string.start_of_service)
             else recurrence.start.formattedTime()

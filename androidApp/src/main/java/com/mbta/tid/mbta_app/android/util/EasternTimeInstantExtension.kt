@@ -54,24 +54,32 @@ fun EasternTimeInstant.formattedShortDateShortTime(): String =
     this.formatWith(formatShortDateShortTime)
 
 /** Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday" */
-fun EasternTimeInstant.formattedServiceDay(): String =
-    this.coerceInServiceDay().formatWith(formatWeekday)
+fun EasternTimeInstant.formattedServiceDay(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatWeekday)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday, Jan
  * 1"
  */
-fun EasternTimeInstant.formattedServiceDayAndDate(): String =
-    this.coerceInServiceDay().formatWith(formatWeekdayAndDate)
+fun EasternTimeInstant.formattedServiceDayAndDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatWeekdayAndDate)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Mon, Jan 1"
  */
-fun EasternTimeInstant.formattedShortServiceDayAndDate(): String =
-    this.coerceInServiceDay().formatWith(formatShortWeekdayAndDate)
+fun EasternTimeInstant.formattedShortServiceDayAndDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatShortWeekdayAndDate)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "January 1"
  */
-fun EasternTimeInstant.formattedServiceDate(): String =
-    this.coerceInServiceDay().formatWith(formatMonthDay)
+fun EasternTimeInstant.formattedServiceDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatMonthDay)
