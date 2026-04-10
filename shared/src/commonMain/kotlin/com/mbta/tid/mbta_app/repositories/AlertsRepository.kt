@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
@@ -64,7 +65,47 @@ internal class AlertsRepository(
                     return
                 }
             println("Received ${newAlerts.alerts.size} alerts")
-            onReceive(ApiResult.Ok(newAlerts))
+            onReceive(
+                ApiResult.Ok(
+                    AlertsStreamDataResponse(
+                        newAlerts.alerts.mapValues {
+                            if (it.key == "1000129") {
+
+                                it.value.copy(
+                                    informedEntity =
+                                        it.value.informedEntity.map { ie ->
+                                            if (
+                                                ie.stop == "WML-0025-07" ||
+                                                    ie.stop == "place-WML-0025"
+                                            ) {
+                                                ie.copy(
+                                                    activities =
+                                                        listOf(
+                                                            Alert.InformedEntity.Activity.Board,
+                                                            Alert.InformedEntity.Activity.Ride,
+                                                        )
+                                                )
+                                            } else if (
+                                                ie.stop == "WML-0102-02" ||
+                                                    ie.stop == "place-WML-0102"
+                                            ) {
+                                                ie.copy(
+                                                    activities =
+                                                        listOf(
+                                                            Alert.InformedEntity.Activity.Exit,
+                                                            Alert.InformedEntity.Activity.Ride,
+                                                        )
+                                                )
+                                            } else ie
+                                        }
+                                )
+                            } else {
+                                it.value
+                            }
+                        }
+                    )
+                )
+            )
         } else {
             println("No jsonPayload found for message ${message.body}")
         }
