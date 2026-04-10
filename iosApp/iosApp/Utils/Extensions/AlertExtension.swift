@@ -52,6 +52,10 @@ extension Alert.Cause {
                 "drawbridge being raised",
                 comment: "Alert cause, used in 'Delays due to [cause]'"
             )
+        case .drawbridgeIssue: NSLocalizedString(
+                "drawbridge issue",
+                comment: "Alert cause, used in 'Delays due to [cause]'"
+            )
         case .electricalWork: NSLocalizedString(
                 "electrical work",
                 comment: "Alert cause, used in 'Delays due to [cause]'"
@@ -167,6 +171,7 @@ extension Alert.Cause {
         case .disabledBus: NSLocalizedString("Disabled Bus", comment: "Possible alert cause")
         case .disabledTrain: NSLocalizedString("Disabled Train", comment: "Possible alert cause")
         case .drawbridgeBeingRaised: NSLocalizedString("Drawbridge Being Raised", comment: "Possible alert cause")
+        case .drawbridgeIssue: NSLocalizedString("Drawbridge Issue", comment: "Possible alert cause")
         case .electricalWork: NSLocalizedString("Electrical Work", comment: "Possible alert cause")
         case .fire: NSLocalizedString("Fire", comment: "Possible alert cause")
         case .fireDepartmentActivity: NSLocalizedString("Fire Department Activity", comment: "Possible alert cause")
@@ -230,6 +235,7 @@ extension Alert.Effect {
         case .facilityIssue: NSLocalizedString("Facility issue", comment: "Possible alert effect")
         case .modifiedService: NSLocalizedString("Modified service", comment: "Possible alert effect")
         case .noService: NSLocalizedString("No service", comment: "Possible alert effect")
+        case .notice: NSLocalizedString("Notice", comment: "Possible alert effect")
         case .parkingClosure: NSLocalizedString("Parking closed", comment: "Possible alert effect")
         case .parkingIssue: NSLocalizedString("Parking issue", comment: "Possible alert effect")
         case .policyChange: NSLocalizedString("Policy change", comment: "Possible alert effect")
@@ -266,6 +272,7 @@ extension Alert.Effect {
         case .facilityIssue: NSLocalizedString("Facility Issue", comment: "Possible alert effect")
         case .modifiedService: NSLocalizedString("Modified Service", comment: "Possible alert effect")
         case .noService: NSLocalizedString("No Service", comment: "Possible alert effect")
+        case .notice: NSLocalizedString("Notice", comment: "Possible alert effect")
         case .parkingClosure: NSLocalizedString("Parking Closure", comment: "Possible alert effect")
         case .parkingIssue: NSLocalizedString("Parking Issue", comment: "Possible alert effect")
         case .policyChange: NSLocalizedString("Policy Change", comment: "Possible alert effect")

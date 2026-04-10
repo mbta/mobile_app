@@ -126,6 +126,8 @@
     <string name="drag_handle">Kontwolè deplasman</string>
     <string name="drawbridge_being_raised">Y ap Leve Pon ki ka Bouje a</string>
     <string name="drawbridge_being_raised_lowercase">pon levasyon ap monte</string>
+    <string name="drawbridge_issue">Pwoblèm Pon Levab</string>
+    <string name="drawbridge_issue_lowercase">pwoblèm pon leve</string>
     <string name="due_to_cause">\u0020akòz %1$s</string>
     <string name="eastbound">Pran direksyon lès</string>
     <string name="edit">Modifye</string>
@@ -288,6 +290,7 @@
     <string name="northbound">Nan direksyon nò</string>
     <string name="not_accessible">Pa aksesib</string>
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
+    <string name="notice">Avi</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
     <string name="notifications_settings_link">Pèmèt Notifikasyon nan Anviwònman yo</string>
     <string name="now">Kounye a</string>

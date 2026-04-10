@@ -121,6 +121,8 @@
     <string name="drag_handle">拖曳控制柄</string>
     <string name="drawbridge_being_raised">吊橋升起</string>
     <string name="drawbridge_being_raised_lowercase">吊橋升起</string>
+    <string name="drawbridge_issue">吊橋問題</string>
+    <string name="drawbridge_issue_lowercase">吊橋問題</string>
     <string name="due_to_cause">\u0020由於 %1$s</string>
     <string name="eastbound">東行</string>
     <string name="edit">編輯</string>
@@ -273,6 +275,7 @@
     <string name="northbound">北行</string>
     <string name="not_accessible">不適合輪椅通行</string>
     <string name="not_accessible_stop_card">此車站不適合輪椅通行</string>
+    <string name="notice">注意</string>
     <string name="notifications_enabled">通知已開啟</string>
     <string name="notifications_settings_link">在設定中允許通知</string>
     <string name="now">現在</string>

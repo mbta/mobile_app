@@ -246,6 +246,7 @@ data class FormattedAlert(
                 Alert.Effect.FacilityIssue -> R.string.facility_issue
                 Alert.Effect.ModifiedService -> R.string.modified_service
                 Alert.Effect.NoService -> R.string.no_service
+                Alert.Effect.Notice -> R.string.notice
                 Alert.Effect.ParkingClosure -> R.string.parking_closure
                 Alert.Effect.ParkingIssue -> R.string.parking_issue
                 Alert.Effect.PolicyChange -> R.string.policy_change
@@ -285,6 +286,7 @@ data class FormattedAlert(
                 Alert.Effect.FacilityIssue -> R.string.facility_issue_sentence_case
                 Alert.Effect.ModifiedService -> R.string.modified_service_sentence_case
                 Alert.Effect.NoService -> R.string.no_service_sentence_case
+                Alert.Effect.Notice -> R.string.notice
                 Alert.Effect.ParkingClosure -> R.string.parking_closed
                 Alert.Effect.ParkingIssue -> R.string.parking_issue_sentence_case
                 Alert.Effect.PolicyChange -> R.string.policy_change_sentence_case
@@ -323,6 +325,7 @@ data class FormattedAlert(
                 Alert.Cause.DisabledBus -> R.string.disabled_bus
                 Alert.Cause.DisabledTrain -> R.string.disabled_train
                 Alert.Cause.DrawbridgeBeingRaised -> R.string.drawbridge_being_raised
+                Alert.Cause.DrawbridgeIssue -> R.string.drawbridge_issue
                 Alert.Cause.ElectricalWork -> R.string.electrical_work
                 Alert.Cause.Fire -> R.string.fire
                 Alert.Cause.FireDepartmentActivity -> R.string.fire_department_activity
@@ -385,6 +388,7 @@ data class FormattedAlert(
                 Alert.Cause.DisabledBus -> R.string.disabled_bus_lowercase
                 Alert.Cause.DisabledTrain -> R.string.disabled_train_lowercase
                 Alert.Cause.DrawbridgeBeingRaised -> R.string.drawbridge_being_raised_lowercase
+                Alert.Cause.DrawbridgeIssue -> R.string.drawbridge_issue_lowercase
                 Alert.Cause.ElectricalWork -> R.string.electrical_work_lowercase
                 Alert.Cause.Fire -> R.string.fire_lowercase
                 Alert.Cause.FireDepartmentActivity -> R.string.fire_department_activity_lowercase

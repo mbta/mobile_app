@@ -262,5 +262,27 @@ fun AlertCardPreview() {
                 ),
             onViewDetails = {},
         )
+
+        AlertListContainer(
+            highPriority =
+                listOf({ modifier ->
+                    AlertCard(
+                        ObjectCollectionBuilder.Single.alert({
+                            effect = Alert.Effect.Delay
+                            cause = Alert.Cause.DrawbridgeIssue
+                        }),
+                        AlertSummary.Standard(effect = Alert.Effect.Delay),
+                        AlertCardSpec.Delay,
+                        routeAccents =
+                            TripRouteAccents(
+                                color = Color.fromHex("ED8B00"),
+                                textColor = Color.fromHex("FFFFFF"),
+                                type = RouteType.HEAVY_RAIL,
+                            ),
+                        onViewDetails = {},
+                        modifier = modifier,
+                    )
+                })
+        )
     }
 }
