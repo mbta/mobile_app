@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model.morePage
 
 import com.mbta.tid.mbta_app.PlatformType
+import com.mbta.tid.mbta_app.repositories.Settings
 import io.ktor.http.URLBuilder
 import io.ktor.util.appendAll
 
@@ -9,6 +10,7 @@ public fun feedbackFormUrl(
     translation: String,
     version: String?,
     platform: PlatformType,
+    settings: Map<Settings, Boolean>,
 ): String {
     val builder = URLBuilder(baseUrl)
     builder.parameters
@@ -25,6 +27,7 @@ public fun feedbackFormUrl(
                 ),
             )
         )
+        .appendAll(settings.entries.associate { it.key.name to it.value.toString() })
         .build()
 
     return builder.build().toString()

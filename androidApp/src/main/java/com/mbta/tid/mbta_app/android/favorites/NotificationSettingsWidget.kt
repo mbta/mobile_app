@@ -14,33 +14,40 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimeInput
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -53,6 +60,8 @@ import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.PermissionStatus
@@ -68,10 +77,8 @@ import com.mbta.tid.mbta_app.android.util.formattedAbbr
 import com.mbta.tid.mbta_app.android.util.formattedFull
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import com.mbta.tid.mbta_app.android.util.notificationPermissionState
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlin.collections.ifEmpty
 import kotlin.uuid.ExperimentalUuidApi
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalTime
@@ -230,6 +237,7 @@ private fun WindowWidget(
         Column(Modifier.background(colorResource(R.color.fill3), RoundedCornerShape(8.dp))) {
             LabeledTimeInput(
                 stringResource(R.string.from),
+                stringResource(R.string.select_start_time),
                 window.startTime,
                 setTime = {
                     setWindow(
@@ -248,6 +256,7 @@ private fun WindowWidget(
             HaloSeparator()
             LabeledTimeInput(
                 stringResource(R.string.to),
+                stringResource(R.string.select_end_time),
                 window.endTime,
                 setTime = { setWindow(window.copy(endTime = it)) },
                 minimumTime = window.startTime,
@@ -260,15 +269,57 @@ private fun WindowWidget(
     }
 }
 
+// https://developer.android.com/develop/ui/compose/components/time-pickers-dialogs#advanced
+@Composable
+fun AdvancedTimePickerDialog(
+    title: String = "Select Time",
+    onDismiss: () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    dismissButton: @Composable () -> Unit,
+    toggle: @Composable () -> Unit,
+    content: @Composable () -> Unit,
+) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(usePlatformDefaultWidth = false),
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            tonalElevation = 6.dp,
+            modifier = Modifier.width(IntrinsicSize.Min).height(IntrinsicSize.Min),
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+                    text = title,
+                    style = Typography.title3Semibold,
+                )
+                content()
+                Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
+                    toggle()
+                    Spacer(modifier = Modifier.weight(1f))
+                    dismissButton()
+                    confirmButton()
+                }
+            }
+        }
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LabeledTimeInput(
     label: String,
+    modalTitle: String,
     time: LocalTime,
     setTime: (LocalTime) -> Unit,
     minimumTime: LocalTime? = null,
 ) {
-    var isPicking by remember { mutableStateOf(false) }
+    var isPicking by rememberSaveable { mutableStateOf(false) }
     Row(
         Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -292,10 +343,12 @@ private fun LabeledTimeInput(
         }
     }
     if (isPicking) {
+        var isDial by rememberSaveable { mutableStateOf(true) }
         val timePickerState =
             rememberTimePickerState(initialHour = time.hour, initialMinute = time.minute)
-        AlertDialog(
-            onDismissRequest = { isPicking = false },
+        AdvancedTimePickerDialog(
+            title = modalTitle,
+            onDismiss = { isPicking = false },
             confirmButton = {
                 TextButton(
                     onClick = {
@@ -314,7 +367,24 @@ private fun LabeledTimeInput(
                     Text(stringResource(R.string.cancel))
                 }
             },
-            text = { TimeInput(timePickerState) },
+            toggle = {
+                IconButton(onClick = { isDial = !isDial }) {
+                    Icon(
+                        painterResource(
+                            if (isDial) R.drawable.baseline_edit_calendar_24
+                            else R.drawable.baseline_access_time_24
+                        ),
+                        stringResource(R.string.time_picker_type_toggle),
+                    )
+                }
+            },
+            content = {
+                CompositionLocalProvider(
+                    LocalContentColor provides AlertDialogDefaults.textContentColor
+                ) {
+                    if (isDial) TimePicker(timePickerState) else TimeInput(timePickerState)
+                }
+            },
         )
     }
 }

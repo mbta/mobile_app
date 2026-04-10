@@ -25,6 +25,8 @@ struct SaveFavoritePage: View {
     @State var favorites: Favorites = .init(routeStopDirection: [:])
     @State var pendingSettings: MutableFavoriteSettings
     @State var selectedDirection: Int32
+    @State var favoritesLoaded: Bool = false
+    @State var wasAdding: Bool = false
 
     let inspection = Inspection<Self>()
 
@@ -84,6 +86,8 @@ struct SaveFavoritePage: View {
             }
         } else { [] }
     }
+
+    var showDirectionToggle: Bool { stopDirections.count > 1 && wasAdding }
 
     func resetPendingSettings() {
         pendingSettings = .init(
@@ -173,7 +177,7 @@ struct SaveFavoritePage: View {
                             lineOrRoute: lineOrRoute,
                             stop: stop,
                             direction: stopDirections.first(where: { $0.id == selectedDirection }),
-                            toggleDirection: (stopDirections.count > 1 && !isFavorite) ? {
+                            toggleDirection: showDirectionToggle ? {
                                 selectedDirection = 1 - selectedDirection
                             } : nil,
                         )
@@ -190,14 +194,18 @@ struct SaveFavoritePage: View {
                     }
                     .padding(.horizontal, 14)
                     .padding(.vertical, 24)
-                } else {
-                    Text(verbatim: "Placeholder loading")
                 }
             }
         }
         .onAppear { resetPendingSettings() }
         .onChange(of: selectedDirection) { _ in resetPendingSettings() }
-        .onChange(of: favorites) { _ in resetPendingSettings() }
+        .onChange(of: favorites) { _ in
+            resetPendingSettings()
+            favoritesLoaded = true
+        }
+        .onChange(of: [isFavorite, favoritesLoaded]) { _ in
+            if !isFavorite, favoritesLoaded { wasAdding = true }
+        }
         .frame(maxHeight: .infinity)
         .background(Color.fill2)
         .favorites($favorites)

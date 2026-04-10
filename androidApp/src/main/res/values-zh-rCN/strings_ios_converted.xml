@@ -121,6 +121,8 @@
     <string name="drag_handle">拖动手柄</string>
     <string name="drawbridge_being_raised">吊桥升起</string>
     <string name="drawbridge_being_raised_lowercase">吊桥升起</string>
+    <string name="drawbridge_issue">吊桥问题</string>
+    <string name="drawbridge_issue_lowercase">吊桥问题</string>
     <string name="due_to_cause">\u0020由于 %1$s</string>
     <string name="eastbound">东行</string>
     <string name="edit">编辑</string>
@@ -273,6 +275,7 @@
     <string name="northbound">北行</string>
     <string name="not_accessible">不适合轮椅通行</string>
     <string name="not_accessible_stop_card">此车站不适合轮椅通行</string>
+    <string name="notice">注意</string>
     <string name="notifications_enabled">通知已开启</string>
     <string name="notifications_settings_link">在设置中允许通知</string>
     <string name="now">现在</string>
@@ -346,6 +349,8 @@
     <string name="scheduled_to_depart_accessibility_desc">选定%1$s计划离开%2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">选定%1$s计划离开%2$s，选定站点</string>
     <string name="search_by_stop">按站点搜索</string>
+    <string name="select_end_time">选择结束时间</string>
+    <string name="select_start_time">选择开始时间</string>
     <string name="selected_stop">%1$s，选定站点</string>
     <string name="selected_stop_first_stop">%1$s，选定站点，第一站</string>
     <string name="serves_route_list">服务%1$s</string>
@@ -424,6 +429,7 @@
     <string name="this_stop_is_drop_off_only">此站点仅供下客</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
+    <string name="time_picker_type_toggle">时间选择器类型切换</string>
     <string name="to">目的地</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="today">今天</string>
