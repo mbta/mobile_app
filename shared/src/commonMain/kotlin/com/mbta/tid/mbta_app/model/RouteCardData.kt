@@ -1224,8 +1224,13 @@ public data class RouteCardData(
                     (patternsNotSeenAtEarlierStops?.contains(it.id) ?: false) && it.isTypical()
                 } ?: false
 
+            // Typical shuttle with no service today
+            val shuttleWithNoServiceToday =
+                upcomingTrips?.isEmpty() == true && lineOrRoute.isShuttle
+
             return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
-                !(shouldBeFilteredAsArrivalOnly)
+                !(shouldBeFilteredAsArrivalOnly) &&
+                !(shuttleWithNoServiceToday)
         }
 
         private fun isTypicalLastStopOnRoutePattern(

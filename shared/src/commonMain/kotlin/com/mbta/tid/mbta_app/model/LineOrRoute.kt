@@ -96,6 +96,16 @@ public sealed class LineOrRoute {
                 is Route -> this.route.type.isSubway()
             }
 
+    internal val isShuttle: Boolean
+        get() =
+            when (this) {
+                is Line ->
+                    this.routes.any {
+                        it.id.idText.startsWith("Shuttle")
+                    } // Should this just hard code to false?
+                is Route -> this.id.idText.startsWith("Shuttle")
+            }
+
     /** The route whose sortOrder to use when sorting a RouteCardData. */
     public val sortRoute: RouteModel
         get() =
