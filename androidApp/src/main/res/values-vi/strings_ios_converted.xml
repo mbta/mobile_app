@@ -349,6 +349,8 @@
     <string name="scheduled_to_depart_accessibility_desc">Đã chọn %1$s đã lên lịch khởi hành %2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">Đã chọn %1$s đã lên lịch khởi hành %2$s, điểm dừng đã chọn</string>
     <string name="search_by_stop">Tìm kiếm theo điểm dừng</string>
+    <string name="select_end_time">Chọn thời gian kết thúc</string>
+    <string name="select_start_time">Chọn thời gian bắt đầu</string>
     <string name="selected_stop">%1$s, điểm dừng được chọn</string>
     <string name="selected_stop_first_stop">%1$s, điểm dừng đã chọn, điểm dừng đầu tiên</string>
     <string name="serves_route_list">phục vụ %1$s</string>
@@ -427,6 +429,7 @@
     <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
+    <string name="time_picker_type_toggle">công tắc chọn loại thời gian</string>
     <string name="to">Đến</string>
     <string name="toast_tip_prefix">Mẹo: %1$s</string>
     <string name="today">Hôm nay</string>

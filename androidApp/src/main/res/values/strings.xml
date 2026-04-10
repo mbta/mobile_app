@@ -355,6 +355,8 @@
     <string name="scheduled_to_depart_accessibility_desc">Selected %1$s scheduled to depart %2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">Selected %1$s scheduled to depart %2$s, selected stop</string>
     <string name="search_by_stop">Search by stop</string>
+    <string name="select_end_time">Select end time</string>
+    <string name="select_start_time">Select start time</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="serves_route_list">serves %1$s</string>
@@ -434,6 +436,7 @@
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
+    <string name="time_picker_type_toggle">Time picker type toggle</string>
     <string name="to">To</string>
     <string name="toast_tip_prefix">Tip: %1$s</string>
     <string name="today">today</string>

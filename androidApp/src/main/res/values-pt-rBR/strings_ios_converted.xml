@@ -355,6 +355,8 @@
     <string name="scheduled_to_depart_accessibility_desc">%1$s Programado para partir %2$s selecionado</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">%1$s Programado para partir %2$s selecionado, parada selecionada</string>
     <string name="search_by_stop">Pesquisar por parada</string>
+    <string name="select_end_time">Selecione o horário de término</string>
+    <string name="select_start_time">Selecione a hora de início</string>
     <string name="selected_stop">%1$s, parada selecionada</string>
     <string name="selected_stop_first_stop">%1$s, parada selecionada, primeira parada</string>
     <string name="serves_route_list">atende %1$s</string>
@@ -435,6 +437,7 @@
     <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
     <string name="tie_replacement">Troca de pneu</string>
     <string name="tie_replacement_lowercase">substituição de dormentes</string>
+    <string name="time_picker_type_toggle">Alternar tipo de seletor de tempo</string>
     <string name="to">Para</string>
     <string name="toast_tip_prefix">Dica: %1$s</string>
     <string name="today">hoje</string>

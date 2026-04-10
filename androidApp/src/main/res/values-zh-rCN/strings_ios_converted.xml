@@ -349,6 +349,8 @@
     <string name="scheduled_to_depart_accessibility_desc">选定%1$s计划离开%2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">选定%1$s计划离开%2$s，选定站点</string>
     <string name="search_by_stop">按站点搜索</string>
+    <string name="select_end_time">选择结束时间</string>
+    <string name="select_start_time">选择开始时间</string>
     <string name="selected_stop">%1$s，选定站点</string>
     <string name="selected_stop_first_stop">%1$s，选定站点，第一站</string>
     <string name="serves_route_list">服务%1$s</string>
@@ -427,6 +429,7 @@
     <string name="this_stop_is_drop_off_only">此站点仅供下客</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
+    <string name="time_picker_type_toggle">时间选择器类型切换</string>
     <string name="to">目的地</string>
     <string name="toast_tip_prefix">提示：%1$s</string>
     <string name="today">今天</string>
