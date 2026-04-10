@@ -106,6 +106,7 @@ fun StopDetailsFilteredDeparturesView(
             leaf.alertsHere(tripFilter?.tripId),
             leaf.alertsDownstream(tripFilter?.tripId),
             showStationAccessibility,
+            tripFilter?.tripId,
             now,
         )
 
@@ -180,7 +181,7 @@ fun StopDetailsFilteredDeparturesView(
 
     @Composable
     fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
-        val spec = displayAlert.cardSpec(now, isAllServiceDisrupted)
+        val spec = displayAlert.cardSpec(isAllServiceDisrupted, tripFilter?.tripId)
 
         AlertCard(
             displayAlert.alert,

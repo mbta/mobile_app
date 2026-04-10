@@ -28,6 +28,7 @@ public data class DisplayAlerts(
             alertsHere: List<Alert>,
             alertsDownstream: List<Alert>,
             includeElevatorAlerts: Boolean = false,
+            tripId: String? = null,
             now: EasternTimeInstant,
         ): DisplayAlerts {
             val idsHere = alertsHere.map { it.id }.toSet()
@@ -42,7 +43,11 @@ public data class DisplayAlerts(
                             .thenBy { it.currentOrNextPeriod(now)?.start?.instant }
                     )
                     .map { DisplayAlert(it, !idsHere.contains(it.id)) }
-                    .partition { it.alert.isActive(now) && !it.isDownstream }
+                    .partition {
+                        (it.alert.isActive(now) ||
+                            it.alert.anyInformedEntitySatisfies { checkTrip(tripId) }) &&
+                            !it.isDownstream
+                    }
 
             return DisplayAlerts(tier1, tier2)
         }

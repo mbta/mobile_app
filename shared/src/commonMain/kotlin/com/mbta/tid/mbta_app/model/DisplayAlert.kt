@@ -1,7 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-
 public enum class AlertCardSpec {
     Delay,
     Downstream,
@@ -14,12 +12,15 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
 
     val id: String = alert.id
 
-    public fun cardSpec(now: EasternTimeInstant, isAllServiceDisrupted: Boolean): AlertCardSpec {
+    public fun cardSpec(isAllServiceDisrupted: Boolean, tripId: String? = null): AlertCardSpec {
 
-        val significance = alert.significance(now)
+        val significance = alert.significance(null)
         return if (isDownstream) {
             AlertCardSpec.Downstream
-        } else if (significance == AlertSignificance.Major && isAllServiceDisrupted) {
+        } else if (
+            significance == AlertSignificance.Major &&
+                (isAllServiceDisrupted || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+        ) {
             AlertCardSpec.Takeover
         } else if (significance == AlertSignificance.Minor && alert.effect == Alert.Effect.Delay) {
             AlertCardSpec.Delay
