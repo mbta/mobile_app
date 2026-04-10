@@ -47,7 +47,7 @@ fun FavoriteStopCard(
             RoutePill(
                 (route as? LineOrRoute.Route)?.route,
                 (route as? LineOrRoute.Line)?.line,
-                type = RoutePillType.Flex,
+                type = RoutePillType.Fixed,
             )
             DirectionLabel(
                 direction,
@@ -134,6 +134,7 @@ private fun FavoriteStopCardPreview() {
                 objects.getRoute("Green-E"),
             ),
         )
+    val providence = objects.getRoute("CR-Providence")
     val olSouthbound = Direction(0, ol.route, wellington)
     val blWestbound = Direction(0, bl.route, wonderland)
     val bus66Inbound = Direction(1, bus66.route, harvardStadiumGate2Inbound)
@@ -160,6 +161,12 @@ private fun FavoriteStopCardPreview() {
                 onlyServingOppositeDirection = true,
             )
             FavoriteStopCard(boylston, gl, glWestbound, toggleDirection = {})
+            FavoriteStopCard(
+                objects.getStop("place-bbsta"),
+                LineOrRoute.Route(providence),
+                Direction(0, providence),
+                toggleDirection = {},
+            )
         }
     }
 }
