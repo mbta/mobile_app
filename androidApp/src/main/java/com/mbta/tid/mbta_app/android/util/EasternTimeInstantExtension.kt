@@ -53,25 +53,51 @@ fun EasternTimeInstant.formattedTime(): String = this.formatWith(formatHourMinut
 fun EasternTimeInstant.formattedShortDateShortTime(): String =
     this.formatWith(formatShortDateShortTime)
 
-/** Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday" */
-fun EasternTimeInstant.formattedServiceDay(): String =
-    this.coerceInServiceDay().formatWith(formatWeekday)
+/**
+ * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
+ */
+fun EasternTimeInstant.formattedServiceDay(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatWeekday)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Monday, Jan
  * 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
-fun EasternTimeInstant.formattedServiceDayAndDate(): String =
-    this.coerceInServiceDay().formatWith(formatWeekdayAndDate)
+fun EasternTimeInstant.formattedServiceDayAndDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatWeekdayAndDate)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "Mon, Jan 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
-fun EasternTimeInstant.formattedShortServiceDayAndDate(): String =
-    this.coerceInServiceDay().formatWith(formatShortWeekdayAndDate)
+fun EasternTimeInstant.formattedShortServiceDayAndDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatShortWeekdayAndDate)
 
 /**
  * Converts the [EasternTimeInstant] to its service day and formats it in the form of "January 1"
+ *
+ * @param rounding If the instant is exactly on the service date threshold (3:00AM), this will
+ *   determine which date is returned. Backwards will return the prior service day and forwards will
+ *   return the upcoming service day.
  */
-fun EasternTimeInstant.formattedServiceDate(): String =
-    this.coerceInServiceDay().formatWith(formatMonthDay)
+fun EasternTimeInstant.formattedServiceDate(
+    rounding: EasternTimeInstant.ServiceDateRounding =
+        EasternTimeInstant.ServiceDateRounding.FORWARDS
+): String = this.coerceInServiceDay(rounding).formatWith(formatMonthDay)
