@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,16 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.routeCard.WorldCupBlurb
-import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.model.Alert
@@ -111,11 +107,6 @@ fun StopDetailsFilteredDeparturesView(
         )
 
     val downstreamAlerts: List<Alert> = leaf.alertsDownstream(tripId = tripFilter?.tripId)
-
-    val selectedTripIsCancelled =
-        if (tripFilter != null)
-            leaf.upcomingTrips.any { it.trip.id == tripFilter.tripId && it.isCancelled }
-        else false
 
     val routeAccents = TripRouteAccents(lineOrRoute.sortRoute)
 
@@ -274,7 +265,12 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 WorldCupBlurb(leaf, routeAccents, offerDetails = true)
             }
-        } else if (isAllServiceDisrupted) {
+        } else if (
+            isAllServiceDisrupted ||
+                (displayAlerts.highPriority + displayAlerts.lowPriority).any {
+                    it.cardSpec(isAllServiceDisrupted, tripFilter?.tripId) == AlertCardSpec.Takeover
+                }
+        ) {
             Box {}
         } else if (noPredictionsStatus != null) {
             Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {
@@ -305,23 +301,6 @@ fun StopDetailsFilteredDeparturesView(
                     routeType = routeAccents.type,
                     now = now,
                     nextScheduleResponse = nextScheduleResponse,
-                )
-            }
-        } else if (selectedTripIsCancelled) {
-            Box(modifier = Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
-                StopDetailsIconCard(
-                    routeAccents.color,
-                    details = { Text(stringResource(R.string.trip_cancelled_details)) },
-                    header = { modifier ->
-                        Text(stringResource(R.string.trip_cancelled), modifier = modifier)
-                    },
-                    icon = { modifier ->
-                        Icon(
-                            painter = routeSlashIcon(routeType = routeAccents.type),
-                            contentDescription = null,
-                            modifier = modifier.testTag("route_slash_icon"),
-                        )
-                    },
                 )
             }
         } else {

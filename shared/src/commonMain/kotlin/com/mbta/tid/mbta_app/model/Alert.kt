@@ -54,7 +54,10 @@ internal constructor(
     public fun allClear(atTime: EasternTimeInstant): Boolean =
         activePeriod.all { it.end != null && it.end < atTime }
 
-    public fun significance(atTime: EasternTimeInstant?): AlertSignificance {
+    public fun significance(
+        atTime: EasternTimeInstant?,
+        tripId: String? = null,
+    ): AlertSignificance {
         val intrinsicSignificance =
             when (effect) {
                 // suspensions or shuttles can reasonably apply to an entire route
@@ -73,7 +76,10 @@ internal constructor(
                 Effect.TrackChange -> AlertSignificance.Minor
                 // cancellation is major for the specific trip but minor for the
                 // route/stop/direction
-                Effect.Cancellation -> AlertSignificance.Minor
+                Effect.Cancellation ->
+                    if (tripId != null && this.anyInformedEntitySatisfies { checkTrip(tripId) })
+                        AlertSignificance.Major
+                    else AlertSignificance.Minor
                 Effect.Delay ->
                     if (
                         (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||

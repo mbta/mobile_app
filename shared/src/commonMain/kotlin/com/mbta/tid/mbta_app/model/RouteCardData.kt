@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse

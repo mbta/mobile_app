@@ -14,7 +14,7 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
 
     public fun cardSpec(isAllServiceDisrupted: Boolean, tripId: String? = null): AlertCardSpec {
 
-        val significance = alert.significance(null)
+        val significance = alert.significance(null, tripId = tripId)
         return if (isDownstream) {
             AlertCardSpec.Downstream
         } else if (
