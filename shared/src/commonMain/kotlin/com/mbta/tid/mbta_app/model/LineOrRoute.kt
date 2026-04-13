@@ -96,6 +96,13 @@ public sealed class LineOrRoute {
                 is Route -> this.route.type.isSubway()
             }
 
+    internal val isShuttle: Boolean
+        get() =
+            when (this) {
+                is Line -> false
+                is Route -> this.route.isShuttle
+            }
+
     /** The route whose sortOrder to use when sorting a RouteCardData. */
     public val sortRoute: RouteModel
         get() =

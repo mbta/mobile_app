@@ -6187,4 +6187,109 @@ class RouteCardDataTest {
         )
         assertEquals("Empty static RouteCardData", sentryMessage)
     }
+
+    @Test
+    fun `RouteCardData omits typical shuttle patterns with no service`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val stop = objects.stop { id = "test" }
+
+        val serviceEndedRoute =
+            objects.route {
+                id = "Shuttle-service-ended"
+                type = RouteType.BUS
+            }
+
+        val serviceEndedPattern =
+            objects.routePattern(serviceEndedRoute) {
+                sortOrder = 1
+                representativeTrip {
+                    headsign = "Test"
+                    stopIds = listOf(stop.id)
+                }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
+
+        objects.schedule {
+            departureTime = time.minus(1.hours)
+            routeId = serviceEndedRoute.id.idText
+            tripId = serviceEndedPattern.representativeTripId
+            stopId = stop.id
+        }
+
+        val global =
+            GlobalResponse(
+                objects,
+                patternIdsByStop = mapOf(stop.id to listOf(serviceEndedPattern.id)),
+            )
+
+        val routeCards =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                now = time,
+                context = RouteCardData.Context.NearbyTransit,
+            )
+
+        assertEquals(emptyList(), checkNotNull(routeCards).flatMap { it.lineOrRoute.allRoutes })
+    }
+
+    @Test
+    fun `RouteCardData includes typical shuttle patterns with service`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val stop = objects.stop { id = "test" }
+
+        val servicedRoute =
+            objects.route {
+                id = "Shuttle-with-service"
+                type = RouteType.BUS
+            }
+
+        val servicedPattern =
+            objects.routePattern(servicedRoute) {
+                sortOrder = 1
+                representativeTrip {
+                    headsign = "Test"
+                    stopIds = listOf(stop.id)
+                }
+                typicality = RoutePattern.Typicality.Typical
+            }
+
+        val time = EasternTimeInstant(2024, Month.FEBRUARY, 21, 9, 30, 8)
+
+        objects.schedule {
+            arrivalTime = time
+            departureTime = time
+            routeId = servicedRoute.id.idText
+            tripId = servicedPattern.representativeTripId
+            stopId = stop.id
+        }
+
+        val global =
+            GlobalResponse(objects, patternIdsByStop = mapOf(stop.id to listOf(servicedPattern.id)))
+
+        val routeCards =
+            RouteCardData.routeCardsForStopList(
+                listOf(stop.id),
+                global,
+                sortByDistanceFrom = stop.position,
+                schedules = ScheduleResponse(objects),
+                predictions = PredictionsStreamDataResponse(objects),
+                alerts = AlertsStreamDataResponse(objects),
+                now = time,
+                context = RouteCardData.Context.NearbyTransit,
+            )
+
+        assertEquals(
+            listOf(servicedRoute),
+            checkNotNull(routeCards).flatMap { it.lineOrRoute.allRoutes },
+        )
+    }
 }
