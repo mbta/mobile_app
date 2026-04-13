@@ -102,7 +102,7 @@ private fun entityMatcher(
 private fun getServiceAlerts(alerts: List<Alert>, atTime: EasternTimeInstant): List<Alert> {
     // In practice, AlertAssociatedStop is only used for the map, where only Major alerts are shown.
     return alerts.filter { alert ->
-        alert.significance(atTime) >= AlertSignificance.Major &&
+        alert.significanceAtTime(atTime) >= AlertSignificance.Major &&
             // Alerts that only affect certain trips shouldn't reflect on the map
             !alert.informedEntity.any { it.trip != null }
     }

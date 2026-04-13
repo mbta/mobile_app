@@ -30,7 +30,7 @@ class AlertTest {
     }
 
     @Test
-    fun `alert significance is set properly`() {
+    fun `alert intrinsicSignificance is set properly`() {
         for (effect in Alert.Effect.entries) {
             val inherentlyStopSpecific =
                 when (effect) {
@@ -67,7 +67,7 @@ class AlertTest {
                     }
                 assertEquals(
                     expectedSignificance,
-                    alert.significance(null),
+                    alert.intrinsicSignificance,
                     "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops",
                 )
             }
@@ -118,12 +118,12 @@ class AlertTest {
                 cause = Alert.Cause.SingleTracking
             }
 
-        assertEquals(subwayDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(crDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(ferryDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(singleTrackingDelayInfo.significance(null), AlertSignificance.Minor)
-        assertEquals(subwayDelayNotSevere.significance(null), AlertSignificance.None)
-        assertEquals(busDelaySevere.significance(null), AlertSignificance.None)
+        assertEquals(subwayDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(crDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(ferryDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(singleTrackingDelayInfo.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(subwayDelayNotSevere.intrinsicSignificance, AlertSignificance.None)
+        assertEquals(busDelaySevere.intrinsicSignificance, AlertSignificance.None)
     }
 
     @Test
@@ -228,14 +228,19 @@ class AlertTest {
                 activePeriod(alertStart, alertEnd)
             }
 
-        assertEquals(AlertSignificance.Major, alert.significance(atTime = null))
-        assertEquals(AlertSignificance.None, alert.significance(atTime = alertStart - 25.hours))
+        assertEquals(
+            AlertSignificance.None,
+            alert.significanceAtTime(atTime = alertStart - 25.hours),
+        )
         assertEquals(
             AlertSignificance.Secondary,
-            alert.significance(atTime = alertStart - 12.hours),
+            alert.significanceAtTime(atTime = alertStart - 12.hours),
         )
-        assertEquals(AlertSignificance.Major, alert.significance(atTime = alertStart))
-        assertEquals(AlertSignificance.Major, alert.significance(atTime = alertEnd + 1.minutes))
+        assertEquals(AlertSignificance.Major, alert.significanceAtTime(atTime = alertStart))
+        assertEquals(
+            AlertSignificance.Major,
+            alert.significanceAtTime(atTime = alertEnd + 1.minutes),
+        )
     }
 
     @Test

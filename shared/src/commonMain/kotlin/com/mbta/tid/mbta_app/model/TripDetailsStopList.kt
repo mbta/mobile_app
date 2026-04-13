@@ -497,7 +497,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             )
                         } &&
                         // there's no UI yet for secondary alerts in trip details
-                        alert.significance(entryTime) >= AlertSignificance.Major
+                        alert.significanceAtTime(entryTime) >= AlertSignificance.Major
                 }
             if (alert == null) return null
             return UpcomingFormat.Disruption(alert, route?.let { MapStopRoute.matching(it) })

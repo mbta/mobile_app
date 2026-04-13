@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -172,15 +171,17 @@ public data class RouteCardData(
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
         internal fun hasMajorAlerts(atTime: EasternTimeInstant): Boolean =
-            this.alertsHere.any { alert -> alert.significance(atTime) == AlertSignificance.Major }
+            this.alertsHere.any { alert ->
+                alert.significanceAtTime(atTime) == AlertSignificance.Major
+            }
 
         private fun majorAlert(atTime: EasternTimeInstant) =
-            alertsHere.firstOrNull { it.significance(atTime) >= AlertSignificance.Major }
+            alertsHere.firstOrNull { it.significanceAtTime(atTime) >= AlertSignificance.Major }
 
         private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
-                it.significance(atTime) < AlertSignificance.Major &&
-                    it.significance(atTime) >= AlertSignificance.Secondary
+                it.significanceAtTime(atTime) < AlertSignificance.Major &&
+                    it.significanceAtTime(atTime) >= AlertSignificance.Secondary
             } ?: alertsDownstream.firstOrNull()
 
         public fun alertsHere(tripId: String? = null): List<Alert> =
@@ -297,7 +298,9 @@ public data class RouteCardData(
                         .orEmpty()
                 val majorAlert =
                     Alert.applicableAlerts(
-                        alertsHere.filter { it.significance(atTime) >= AlertSignificance.Major },
+                        alertsHere.filter {
+                            it.significanceAtTime(atTime) >= AlertSignificance.Major
+                        },
                         directionId,
                         routePatterns.map { it.routeId },
                         stopIds,
@@ -981,7 +984,7 @@ public data class RouteCardData(
         ): List<Alert> =
             alerts?.alerts?.values?.filter {
                 (it.isActive(filterAtTime) || it.willBeActiveSoon(filterAtTime)) &&
-                    it.significance(filterAtTime) >=
+                    it.significanceAtTime(filterAtTime) >=
                         if (includeMinorAlerts) AlertSignificance.Minor
                         else AlertSignificance.Accessibility
             } ?: emptyList()

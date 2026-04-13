@@ -171,7 +171,8 @@ public sealed class AlertSummary {
             global: GlobalResponse,
         ): AlertSummary? {
             return withContext(Dispatchers.Default) {
-                if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
+                if (alert.significanceAtTime(atTime) < AlertSignificance.Minor)
+                    return@withContext null
 
                 val location by lazy { alertLocation(alert, stopId, directionId, patterns, global) }
 

@@ -38,7 +38,7 @@ public data class DisplayAlerts(
                     .sortedWith(
                         compareByDescending<Alert> { it.isActive(now) }
                             .thenByDescending { idsHere.contains(it.id) }
-                            .thenByDescending { it.significance(null) }
+                            .thenByDescending { it.intrinsicSignificance }
                             .thenBy { it.currentOrNextPeriod(now)?.start?.instant }
                     )
                     .map { DisplayAlert(it, !idsHere.contains(it.id)) }
