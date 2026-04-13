@@ -398,6 +398,7 @@
     <string name="start_of_service">início do serviço</string>
     <string name="starting_later_today">\u0020começando &lt;b>%1$s&lt;/b> hoje</string>
     <string name="starting_tomorrow">\u0020a partir de amanhã</string>
+    <string name="starting_tomorrow_until_further_notice">A partir de amanhã, até novo aviso.</string>
     <string name="station_closed">Estação fechada</string>
     <string name="station_closed_sentence_case">Estação fechada</string>
     <string name="station_closure">Fechamento de estação</string>
