@@ -75,4 +75,22 @@ class FavoriteStopCardTest {
 
         composeTestRule.onNodeWithText("Only Southbound to").assertIsDisplayed()
     }
+
+    @Test
+    fun testCommuterRailPill() {
+        val objects = TestData.clone()
+        val providence = objects.getRoute("CR-Providence")
+        val backBay = objects.getStop("place-bbsta")
+        composeTestRule.setContent {
+            FavoriteStopCard(
+                backBay,
+                LineOrRoute.Route(providence),
+                Direction(0, providence, backBay),
+                toggleDirection = {},
+            )
+        }
+
+        composeTestRule.onNodeWithText("Providence/Stoughton").assertDoesNotExist()
+        composeTestRule.onNodeWithText("CR").assertIsDisplayed()
+    }
 }

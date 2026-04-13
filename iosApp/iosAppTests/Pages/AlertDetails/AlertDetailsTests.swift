@@ -375,4 +375,52 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "From"))
         XCTAssertNotNil(try sut.inspect().find(text: "9:41\u{202F}AM – 11:41\u{202F}AM"))
     }
+
+    func testRecurringStartTomorrowEndUnknown() throws {
+        let objects = ObjectCollectionBuilder()
+        let now = EasternTimeInstant.now()
+        let tomorrow = now.serviceDate.plus(days: 1)
+        let overmorrow = tomorrow.plus(days: 1)
+        let alert = objects.alert { alert in
+            alert.effect = .stationClosure
+            alert.activePeriod(
+                start: .init(date: tomorrow, time: .init(hour: 3, minute: 0, second: 0, nanosecond: 0)),
+                end: .init(date: tomorrow, time: .init(hour: 9, minute: 0, second: 0, nanosecond: 0))
+            )
+            alert.activePeriod(
+                start: .init(date: overmorrow, time: .init(hour: 3, minute: 0, second: 0, nanosecond: 0)),
+                end: .init(date: overmorrow, time: .init(hour: 9, minute: 0, second: 0, nanosecond: 0))
+            )
+            alert.durationCertainty = .unknown
+        }
+
+        let sut = AlertDetails(alert: alert, affectedStops: [], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Starting tomorrow until further notice"))
+    }
+
+    func testRecurringStartLaterTodayEndUnknown() throws {
+        let objects = ObjectCollectionBuilder()
+        let today = EasternTimeInstant.now().serviceDate
+        let now = EasternTimeInstant(date: today, time: .init(hour: 18, minute: 0, second: 0, nanosecond: 0))
+        let tomorrow = today.plus(days: 1)
+        let overmorrow = tomorrow.plus(days: 1)
+        let alert = objects.alert { alert in
+            alert.effect = .stationClosure
+            alert.activePeriod(
+                start: .init(date: today, time: .init(hour: 20, minute: 0, second: 0, nanosecond: 0)),
+                end: .init(date: tomorrow, time: .init(hour: 3, minute: 0, second: 0, nanosecond: 0))
+            )
+            alert.activePeriod(
+                start: .init(date: tomorrow, time: .init(hour: 20, minute: 0, second: 0, nanosecond: 0)),
+                end: .init(date: overmorrow, time: .init(hour: 3, minute: 0, second: 0, nanosecond: 0))
+            )
+            alert.durationCertainty = .unknown
+        }
+
+        let sut = AlertDetails(alert: alert, affectedStops: [], now: now)
+
+        XCTAssertThrowsError(try sut.inspect().find(text: "Starting tomorrow until further notice"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Until further notice"))
+    }
 }

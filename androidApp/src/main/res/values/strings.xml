@@ -398,6 +398,7 @@
     <string name="start_of_service">start of service</string>
     <string name="starting_later_today">\u0020starting &lt;b>%1$s&lt;/b> today</string>
     <string name="starting_tomorrow">\u0020starting tomorrow</string>
+    <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
     <string name="station_closure">Station Closure</string>
