@@ -103,6 +103,16 @@ internal constructor(
         return minOf(intrinsicSignificance, maxSignificance)
     }
 
+    public fun significanceForTrip(tripId: String): AlertSignificance {
+
+        if (anyInformedEntitySatisfies { checkTrip(tripId) }) {
+            if (effect == Effect.Cancellation) {
+                return AlertSignificance.Major
+            }
+        }
+        return intrinsicSignificance
+    }
+
     val hasNoThroughService: Boolean = effect in setOf(Effect.Shuttle, Effect.Suspension)
 
     public suspend fun summary(

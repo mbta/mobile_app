@@ -75,7 +75,7 @@ class AlertTest {
     }
 
     @Test
-    fun `alert significance for delay alerts`() {
+    fun `alert intrinsicSignificance for delay alerts`() {
         val subwayDelaySevere =
             ObjectCollectionBuilder.Single.alert {
                 effect = Alert.Effect.Delay
@@ -218,7 +218,7 @@ class AlertTest {
     }
 
     @Test
-    fun `alert significance limited for upcoming and past alerts`() {
+    fun `alert significanceAtTime limited for upcoming and past alerts`() {
         val objects = ObjectCollectionBuilder()
         val alertStart = EasternTimeInstant.now()
         val alertEnd = alertStart + 2.hours
@@ -241,6 +241,46 @@ class AlertTest {
             AlertSignificance.Major,
             alert.significanceAtTime(atTime = alertEnd + 1.minutes),
         )
+    }
+
+    @Test
+    fun `alert significanceForTrip major for cancellation of matching trip`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alertStart = now + 1.hours
+        val alertEnd = alertStart + 2.hours
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Cancellation
+                activePeriod(alertStart, alertEnd)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                    stop = "stop",
+                    trip = "targetTrip",
+                )
+            }
+
+        assertEquals(AlertSignificance.Major, alert.significanceForTrip("targetTrip"))
+        assertEquals(AlertSignificance.Minor, alert.significanceForTrip("otherTrip"))
+    }
+
+    @Test
+    fun `alert significanceForTrip is intrinsic for non-cancellations`() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val alertStart = now + 1.hours
+        val alertEnd = alertStart + 2.hours
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                activePeriod(alertStart, alertEnd)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Ride),
+                    stop = "stop",
+                )
+            }
+
+        assertEquals(AlertSignificance.Secondary, alert.significanceForTrip("targetTrip"))
     }
 
     @Test
