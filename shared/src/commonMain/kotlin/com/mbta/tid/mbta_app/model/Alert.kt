@@ -363,6 +363,12 @@ internal constructor(
                     isSatisfied = false
                 }
             }
+
+            fun checkNullTrip() {
+                if (this@InformedEntity.trip != null) {
+                    isSatisfied = false
+                }
+            }
         }
 
         internal fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {

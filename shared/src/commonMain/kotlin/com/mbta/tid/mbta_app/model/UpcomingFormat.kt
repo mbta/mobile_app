@@ -93,7 +93,7 @@ public sealed class UpcomingFormat {
                 lastTrip: Boolean,
             ) : this(trip, routeType, trip.display(now, routeType, context, lastTrip), lastTrip)
 
-            override fun toString(): String = format.toString()
+            //     override fun toString(): String = format.toString()
         }
 
         public constructor(
