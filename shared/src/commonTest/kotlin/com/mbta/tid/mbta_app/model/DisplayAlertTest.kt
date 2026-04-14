@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder.Single.alert
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.runBlocking
 
@@ -60,6 +61,29 @@ class DisplayAlertTest {
                 id = "hereForTargetTrip"
                 effect = Effect.Shuttle
                 activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            trip = "trip1",
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                        )
+                    )
+            }
+        assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
+    }
+
+    @Test
+    fun `cardSpec major for selected trip with alert in  future is takeover`() = runBlocking {
+        val tripAlert =
+            objects.alert {
+                id = "hereForTargetTrip"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.plus(5.hours), null))
                 informedEntity =
                     mutableListOf(
                         Alert.InformedEntity(

@@ -9,6 +9,7 @@ public data class DisplayAlerts(
     val lowPriority: List<DisplayAlert>,
 ) {
 
+    public val all: List<DisplayAlert> = highPriority + lowPriority
     public val allAlerts: List<Alert> = (highPriority + lowPriority).map { it.alert }
 
     public companion object {

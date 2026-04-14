@@ -20,15 +20,20 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
         tripId: String?,
     ): AlertCardSpec {
 
-        val significance = alert.significance(now)
+        val significanceNow = alert.significance(now)
         return if (isDownstream) {
             AlertCardSpec.Downstream
         } else if (
-            significance == AlertSignificance.Major &&
-                ((isAllServiceDisrupted) || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+            significanceNow == AlertSignificance.Major && (isAllServiceDisrupted) ||
+                // May be looking at a trip in the future, so use the intrinsic significance instead
+                // of significance now.
+                (alert.anyInformedEntitySatisfies { checkTrip(tripId) } &&
+                    alert.significance(null) == AlertSignificance.Major)
         ) {
             AlertCardSpec.Takeover
-        } else if (significance == AlertSignificance.Minor && alert.effect == Alert.Effect.Delay) {
+        } else if (
+            significanceNow == AlertSignificance.Minor && alert.effect == Alert.Effect.Delay
+        ) {
             AlertCardSpec.Delay
         } else if (alert.effect == Alert.Effect.ElevatorClosure) {
             AlertCardSpec.Elevator

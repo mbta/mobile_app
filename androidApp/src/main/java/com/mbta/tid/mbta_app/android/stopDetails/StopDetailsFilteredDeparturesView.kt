@@ -275,7 +275,7 @@ fun StopDetailsFilteredDeparturesView(
             }
         } else if (
             isAllServiceDisrupted ||
-                displayAlerts.highPriority.any {
+                displayAlerts.all.any {
                     it.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId) ==
                         AlertCardSpec.Takeover
                 }
