@@ -146,11 +146,9 @@ struct StopDetailsFilteredDepartureDetails: View {
                     .background(Color.fill3)
                     .withRoundedBorder()
                     .padding(.horizontal, 16)
-            } else if isAllServiceDisrupted || displayAlerts.all.contains(where: { $0.cardSpec(
-                now: now,
-                isAllServiceDisrupted: isAllServiceDisrupted,
-                tripId: tripFilter?.tripId
-            ) == AlertCardSpec.takeover }) {
+            } else if isAllServiceDisrupted || displayAlerts.hasTakeover(now: now,
+                                                                         isAllServiceDisrupted: isAllServiceDisrupted,
+                                                                         tripId: tripFilter?.tripId) {
                 EmptyView()
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(

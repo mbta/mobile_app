@@ -8,9 +8,17 @@ public data class DisplayAlerts(
     val highPriority: List<DisplayAlert>,
     val lowPriority: List<DisplayAlert>,
 ) {
-
-    public val all: List<DisplayAlert> = highPriority + lowPriority
     public val allAlerts: List<Alert> = (highPriority + lowPriority).map { it.alert }
+
+    public fun hasTakeover(
+        now: EasternTimeInstant,
+        isAllServiceDisrupted: Boolean,
+        tripId: String?,
+    ): Boolean {
+        return (highPriority + lowPriority).any {
+            it.cardSpec(now, isAllServiceDisrupted, tripId) == AlertCardSpec.Takeover
+        }
+    }
 
     public companion object {
         /**

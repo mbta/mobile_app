@@ -275,10 +275,7 @@ fun StopDetailsFilteredDeparturesView(
             }
         } else if (
             isAllServiceDisrupted ||
-                displayAlerts.all.any {
-                    it.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId) ==
-                        AlertCardSpec.Takeover
-                }
+                displayAlerts.hasTakeover(now, isAllServiceDisrupted, tripFilter?.tripId)
         ) {
             Box {}
         } else if (noPredictionsStatus != null) {
