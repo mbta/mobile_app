@@ -372,6 +372,7 @@ internal constructor(
             }
 
             fun checkNullTrip() {
+                if (!isSatisfied) return
                 if (this@InformedEntity.trip != null) {
                     isSatisfied = false
                 }
