@@ -78,6 +78,29 @@ class DisplayAlertTest {
     }
 
     @Test
+    fun `cardSpec cancellation for selected trip is takeover`() = runBlocking {
+        val tripAlert =
+            objects.alert {
+                id = "hereForTargetTrip"
+                effect = Effect.Cancellation
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            trip = "trip1",
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                        )
+                    )
+            }
+        assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
+    }
+
+    @Test
     fun `cardSpec when alert is major but not trip-specific an not all service is disrupted`() =
         runBlocking {
             val majorAlert =
