@@ -78,6 +78,32 @@ class DisplayAlertTest {
     }
 
     @Test
+    fun `cardSpec when alert is major but not trip-specific an not all service is disrupted`() =
+        runBlocking {
+            val majorAlert =
+                objects.alert {
+                    id = "hereForTargetTrip"
+                    effect = Effect.Shuttle
+                    activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+                    informedEntity =
+                        mutableListOf(
+                            Alert.InformedEntity(
+                                activities =
+                                    listOf(
+                                        Alert.InformedEntity.Activity.Board,
+                                        Alert.InformedEntity.Activity.Exit,
+                                        Alert.InformedEntity.Activity.Ride,
+                                    )
+                            )
+                        )
+                }
+            assertEquals(
+                AlertCardSpec.Basic,
+                DisplayAlert(majorAlert).cardSpec(now, false, "trip1"),
+            )
+        }
+
+    @Test
     fun `cardSpec major for selected trip with alert in  future is takeover`() = runBlocking {
         val tripAlert =
             objects.alert {

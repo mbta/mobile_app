@@ -171,7 +171,7 @@ public data class RouteCardData(
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
         internal fun hasMajorAlertsAffectingAllTrips(atTime: EasternTimeInstant): Boolean =
-            majorAlertAffectingAllTrips(atTime) == null
+            majorAlertAffectingAllTrips(atTime) != null
 
         private fun majorAlertAffectingAllTrips(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {

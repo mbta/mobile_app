@@ -27,7 +27,8 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
             significanceNow == AlertSignificance.Major && (isAllServiceDisrupted) ||
                 // May be looking at a trip in the future, so use the intrinsic significance instead
                 // of significance now.
-                (alert.anyInformedEntitySatisfies { checkTrip(tripId) } &&
+                (tripId != null &&
+                    alert.anyInformedEntitySatisfies { checkTripStrict(tripId) } &&
                     alert.significance(null) == AlertSignificance.Major)
         ) {
             AlertCardSpec.Takeover

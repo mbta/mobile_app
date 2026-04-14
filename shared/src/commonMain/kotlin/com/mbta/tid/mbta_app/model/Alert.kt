@@ -364,6 +364,13 @@ internal constructor(
                 }
             }
 
+            fun checkTripStrict(tripId: String) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
             fun checkNullTrip() {
                 if (this@InformedEntity.trip != null) {
                     isSatisfied = false
