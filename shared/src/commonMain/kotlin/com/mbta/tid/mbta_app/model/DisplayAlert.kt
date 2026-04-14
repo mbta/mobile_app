@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+
 public enum class AlertCardSpec {
     Delay,
     Downstream,
@@ -12,9 +14,13 @@ public data class DisplayAlert(val alert: Alert, val isDownstream: Boolean = fal
 
     val id: String = alert.id
 
-    public fun cardSpec(isAllServiceDisrupted: Boolean, tripId: String? = null): AlertCardSpec {
+    public fun cardSpec(
+        now: EasternTimeInstant,
+        isAllServiceDisrupted: Boolean,
+        tripId: String? = null,
+    ): AlertCardSpec {
 
-        val significance = alert.significance(null, tripId = tripId)
+        val significance = alert.significance(now, tripId = tripId)
         return if (isDownstream) {
             AlertCardSpec.Downstream
         } else if (

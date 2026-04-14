@@ -172,7 +172,7 @@ fun StopDetailsFilteredDeparturesView(
 
     @Composable
     fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
-        val spec = displayAlert.cardSpec(isAllServiceDisrupted, tripFilter?.tripId)
+        val spec = displayAlert.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId)
 
         AlertCard(
             displayAlert.alert,
@@ -268,7 +268,8 @@ fun StopDetailsFilteredDeparturesView(
         } else if (
             isAllServiceDisrupted ||
                 (displayAlerts.highPriority + displayAlerts.lowPriority).any {
-                    it.cardSpec(isAllServiceDisrupted, tripFilter?.tripId) == AlertCardSpec.Takeover
+                    it.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId) ==
+                        AlertCardSpec.Takeover
                 }
         ) {
             Box {}
