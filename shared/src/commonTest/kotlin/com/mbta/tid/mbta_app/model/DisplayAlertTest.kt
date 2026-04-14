@@ -44,26 +44,49 @@ class DisplayAlertTest {
         }
 
     @Test
-    fun `cardSpec major with still some service is regular`() = runBlocking {
-        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorNow).cardSpec(now, false))
+    fun `cardSpec major with still some service somehow is regular`() = runBlocking {
+        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorNow).cardSpec(now, false, null))
     }
 
     @Test
-    fun `cardSpec major with no service somehow is takeover`() = runBlocking {
-        assertEquals(AlertCardSpec.Takeover, DisplayAlert(hereMajorNow).cardSpec(now, true))
+    fun `cardSpec major with no service is takeover`() = runBlocking {
+        assertEquals(AlertCardSpec.Takeover, DisplayAlert(hereMajorNow).cardSpec(now, true, null))
+    }
+
+    @Test
+    fun `cardSpec major for selected trip is takeover`() = runBlocking {
+        val tripAlert =
+            objects.alert {
+                id = "hereForTargetTrip"
+                effect = Effect.Shuttle
+                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            trip = "trip1",
+                            activities =
+                                listOf(
+                                    Alert.InformedEntity.Activity.Board,
+                                    Alert.InformedEntity.Activity.Exit,
+                                    Alert.InformedEntity.Activity.Ride,
+                                ),
+                        )
+                    )
+            }
+        assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
     }
 
     @Test
     fun `cardSpec major downstream now is downstream`() = runBlocking {
         assertEquals(
             AlertCardSpec.Downstream,
-            DisplayAlert(downstreamMajorNow, true).cardSpec(now, false),
+            DisplayAlert(downstreamMajorNow, true).cardSpec(now, false, null),
         )
     }
 
     @Test
     fun `cardSpec major here later is regular`() = runBlocking {
-        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorLater).cardSpec(now, false))
+        assertEquals(AlertCardSpec.Basic, DisplayAlert(hereMajorLater).cardSpec(now, false, null))
     }
 
     @Test
@@ -73,11 +96,14 @@ class DisplayAlertTest {
             severity = 5
             cause = Alert.Cause.SingleTracking
         }
-        assertEquals(AlertCardSpec.Delay, DisplayAlert(minorDelay).cardSpec(now, false))
+        assertEquals(AlertCardSpec.Delay, DisplayAlert(minorDelay).cardSpec(now, false, null))
     }
 
     @Test
     fun `cardSpec elevator`() {
-        assertEquals(AlertCardSpec.Elevator, DisplayAlert(hereElevatorNow).cardSpec(now, false))
+        assertEquals(
+            AlertCardSpec.Elevator,
+            DisplayAlert(hereElevatorNow).cardSpec(now, false, null),
+        )
     }
 }

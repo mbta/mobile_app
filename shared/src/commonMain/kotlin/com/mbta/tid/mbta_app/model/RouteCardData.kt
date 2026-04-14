@@ -476,6 +476,8 @@ public data class RouteCardData(
         ): LeafFormat.Single {
             val majorAlert = majorAlertAffectingAllTrips(now)
             val format =
+                // Format as disrupted. Assume any upcoming trips that exist should not be shown
+                // and are in fact affected by the alert
                 if (majorAlert != null) {
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
                 } else {
