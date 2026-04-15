@@ -35,8 +35,7 @@ extension Shared.Alert.ActivePeriod {
                 "end of service",
                 comment: "Used when an alert ends at the end of a service day"
             )
-            let previousDate = instant.minus(hours: 24)
-            formattedDate = previousDate.formatted(dateFormat)
+            formattedDate = instant.coerceInServiceDay(rounding: .backwards).formatted(dateFormat)
         } else if !isStart, endingLaterToday {
             formattedTime = NSLocalizedString(
                 "later today",

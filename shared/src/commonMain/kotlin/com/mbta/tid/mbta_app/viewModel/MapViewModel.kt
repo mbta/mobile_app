@@ -337,23 +337,41 @@ public class MapViewModel(
             }
         }
 
-        LaunchedEffect(
-            stopId,
-            stopFilter,
-            tripId,
-            allRailRouteShapes,
-            globalData,
-            globalMapData,
-            routeCardData.data,
-        ) {
-            if (tripId != null) {
-                val tripShapes =
+        var stopMapData: StopMapResponse? by remember { mutableStateOf(null) }
+        LaunchedEffect(stopId) {
+            stopMapData = if (stopId != null) getStopMapData(stopId = stopId) else null
+        }
+
+        var tripShapes: List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>? by remember {
+            mutableStateOf(null)
+        }
+        LaunchedEffect(tripId) {
+            tripShapes =
+                if (tripId != null) {
                     withContext(iOCoroutineDispatcher) {
                         when (val data = tripRepository.getTripShape(tripId)) {
                             is ApiResult.Ok -> data.data.routesWithSegmentedShapes
                             is ApiResult.Error -> null
                         }
                     }
+                } else {
+                    null
+                }
+        }
+
+        LaunchedEffect(
+            stopId,
+            stopMapData,
+            stopFilter,
+            tripId,
+            tripShapes,
+            allRailRouteShapes,
+            globalData,
+            globalMapData,
+            routeCardData.data,
+        ) {
+            if (tripId != null) {
+                val tripShapes = tripShapes
                 val resolvedGlobal = globalData
                 if (tripShapes != null && resolvedGlobal != null) {
                     routeSourceData =
@@ -372,6 +390,7 @@ public class MapViewModel(
                         globalResponse = globalData,
                         railRouteShapes = allRailRouteShapes,
                         stopId = stopId,
+                        stopMapData = stopMapData,
                         stopFilter = stopFilter,
                         globalMapData = globalMapData,
                         routeCardData = routeCardData.data,
@@ -609,6 +628,7 @@ public class MapViewModel(
         globalResponse: GlobalResponse?,
         railRouteShapes: MapFriendlyRouteResponse?,
         stopId: String,
+        stopMapData: StopMapResponse?,
         stopFilter: StopDetailsFilter?,
         globalMapData: GlobalMapData?,
         routeCardData: List<RouteCardData>?,
@@ -617,8 +637,13 @@ public class MapViewModel(
         List<MapFriendlyRouteResponse.RouteWithSegmentedShapes>,
         StopLayerGenerator.State,
     >? {
-        if (globalResponse == null || railRouteShapes == null || globalMapData == null) return null
-        val stopMapData = getStopMapData(stopId = stopId) ?: return null
+        if (
+            globalResponse == null ||
+                railRouteShapes == null ||
+                globalMapData == null ||
+                stopMapData == null
+        )
+            return null
 
         val filteredRouteShapes =
             if (stopFilter != null) {

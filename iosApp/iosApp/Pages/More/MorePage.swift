@@ -30,6 +30,7 @@ struct MorePage: View {
         viewModel.getSections(
             translation: translation,
             version: version,
+            settings: settingsCache.cache?.mapValues { KotlinBoolean(bool: $0) } ?? [:],
             licensesCallback: {
                 path.append(MoreNavTarget.licenses)
             }

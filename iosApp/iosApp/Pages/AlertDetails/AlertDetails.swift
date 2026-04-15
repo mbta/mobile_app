@@ -71,9 +71,9 @@ struct AlertDetails: View {
         }
     }
 
-    private var currentPeriod: Shared.Alert.ActivePeriod? {
-        alert.currentPeriod(time: now) ?? alert.nextPeriod(time: now)
-    }
+    private var currentPeriod: Shared.Alert.ActivePeriod? { alert.currentPeriod(time: now) }
+    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now) }
+    private var relevantPeriod: Shared.Alert.ActivePeriod? { currentPeriod ?? nextPeriod }
 
     static var calendar: Calendar {
         var result = Calendar(identifier: .iso8601)
@@ -100,9 +100,17 @@ struct AlertDetails: View {
                     time: .shortened
                 )
             let dateRange = if recurrence.endDayKnown {
-                Text("\(startDay) – \(endDay)")
+                Text("\(startDay) – \(endDay)").font(Typography.bodySemibold)
+            } else if currentPeriod == nil, let nextPeriod, nextPeriod.startServiceDate != now.serviceDate {
+                Text(
+                    "Starting tomorrow until further notice",
+                    comment: """
+                    Date range for a recurring alert which hasn’t started yet and has an unknown end date; \
+                    may be shown next to “Daily” or a list of weekdays
+                    """
+                ).font(Typography.bodySemibold)
             } else {
-                Text("Until further notice")
+                Text("Until further notice").font(Typography.bodySemibold)
             }
             if recurrence.daily {
                 Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {

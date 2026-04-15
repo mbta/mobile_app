@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.util.formattedServiceDayAndDate
 import com.mbta.tid.mbta_app.android.util.formattedTime
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 
 /**
  * Return a localized string containing the date and time of an alert. This includes special
@@ -36,7 +37,11 @@ private fun format(
                     SpanStyle(fontWeight = FontWeight.Bold),
                 )
 
-    val formattedDate = instant.formattedServiceDayAndDate()
+    val formattedDate =
+        instant.formattedServiceDayAndDate(
+            if (isStart) EasternTimeInstant.ServiceDateRounding.FORWARDS
+            else EasternTimeInstant.ServiceDateRounding.BACKWARDS
+        )
     var formattedTime = instant.formattedTime()
 
     if (isStart && period.fromStartOfService) {

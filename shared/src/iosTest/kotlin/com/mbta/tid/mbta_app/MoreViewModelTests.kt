@@ -19,7 +19,7 @@ class MoreViewModelTests {
                 MockSubscriptionsRepository(),
                 MockOnboardingRepository(),
             )
-        val sections = vm.getSections("es", "1.2.3", {})
+        val sections = vm.getSections("es", "1.2.3", mapOf(), {})
         assertEquals(
             "https://mbta.com/appfeedback?language=es&version=1.2.3&platform=iOS",
             sections
@@ -39,7 +39,7 @@ class MoreViewModelTests {
                 MockSubscriptionsRepository(),
                 MockOnboardingRepository(),
             )
-        val sections = vm.getSections("", "", {})
+        val sections = vm.getSections("", "", mapOf(), {})
         assertEquals(
             "https://apps.apple.com/us/app/mbta-mticket/id560487958",
             sections

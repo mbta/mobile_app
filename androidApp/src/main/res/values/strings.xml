@@ -123,6 +123,8 @@
     <string name="drag_handle">Drag handle</string>
     <string name="drawbridge_being_raised">Drawbridge Being Raised</string>
     <string name="drawbridge_being_raised_lowercase">drawbridge being raised</string>
+    <string name="drawbridge_issue">Drawbridge Issue</string>
+    <string name="drawbridge_issue_lowercase">drawbridge issue</string>
     <string name="due_to_cause">\u0020due to %1$s</string>
     <string name="eastbound">Eastbound</string>
     <string name="edit">Edit</string>
@@ -281,6 +283,7 @@
     <string name="northbound">Northbound</string>
     <string name="not_accessible">Not accessible</string>
     <string name="not_accessible_stop_card">This stop is not accessible</string>
+    <string name="notice">Notice</string>
     <string name="notifications_beta_dialog_body">May we contact you to share your feedback on Notifications?</string>
     <string name="notifications_beta_dialog_header">We depend on riders like you to learn how we can improve!</string>
     <string name="notifications_beta_dialog_no">No thanks</string>
@@ -361,6 +364,8 @@
     <string name="scheduled_to_depart_accessibility_desc">Selected %1$s scheduled to depart %2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">Selected %1$s scheduled to depart %2$s, selected stop</string>
     <string name="search_by_stop">Search by stop</string>
+    <string name="select_end_time">Select end time</string>
+    <string name="select_start_time">Select start time</string>
     <string name="selected_stop">%1$s, selected stop</string>
     <string name="selected_stop_first_stop">%1$s, selected stop, first stop</string>
     <string name="serves_route_list">serves %1$s</string>
@@ -402,6 +407,7 @@
     <string name="start_of_service">start of service</string>
     <string name="starting_later_today">\u0020starting &lt;b>%1$s&lt;/b> today</string>
     <string name="starting_tomorrow">\u0020starting tomorrow</string>
+    <string name="starting_tomorrow_until_further_notice">Starting tomorrow until further notice</string>
     <string name="station_closed">Station Closed</string>
     <string name="station_closed_sentence_case">Station closed</string>
     <string name="station_closure">Station Closure</string>
@@ -440,6 +446,7 @@
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
+    <string name="time_picker_type_toggle">Time picker type toggle</string>
     <string name="to">To</string>
     <string name="toast_tip_prefix">Tip: %1$s</string>
     <string name="today">today</string>

@@ -123,6 +123,8 @@
     <string name="drag_handle">Poignée de déplacement</string>
     <string name="drawbridge_being_raised">Élévation du pont</string>
     <string name="drawbridge_being_raised_lowercase">le pont est relevé</string>
+    <string name="drawbridge_issue">Problème du pont-levis</string>
+    <string name="drawbridge_issue_lowercase">problème du pont-levis</string>
     <string name="due_to_cause">\u0020en raison de %1$s</string>
     <string name="eastbound">En direction de l’est</string>
     <string name="edit">Modifier</string>
@@ -281,6 +283,7 @@
     <string name="northbound">En direction du nord</string>
     <string name="not_accessible">Non accessible</string>
     <string name="not_accessible_stop_card">Cet arrêt n’est pas accessible</string>
+    <string name="notice">Avis</string>
     <string name="notifications_beta_dialog_body">Pouvons-nous vous contacter pour recueillir vos commentaires sur les notifications?</string>
     <string name="notifications_beta_dialog_header">Nous comptons sur des cyclistes comme vous pour savoir comment nous pouvons nous améliorer!</string>
     <string name="notifications_beta_dialog_no">Non merci</string>
@@ -361,6 +364,8 @@
     <string name="scheduled_to_depart_accessibility_desc">%1$s programmé au départ de %2$s sélectionné</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">%1$s programmé au départ de %2$s sélectionné, arrêt sélectionné</string>
     <string name="search_by_stop">Rechercher par arrêt</string>
+    <string name="select_end_time">Sélectionnez l’heure de fin</string>
+    <string name="select_start_time">Sélectionnez l’heure de début</string>
     <string name="selected_stop">%1$s, arrêt sélectionné</string>
     <string name="selected_stop_first_stop">%1$s, arrêt sélectionné, premier arrêt</string>
     <string name="serves_route_list">sert %1$s</string>
@@ -402,6 +407,7 @@
     <string name="start_of_service">début du service</string>
     <string name="starting_later_today">\u0020à partir de &lt;b>%1$s&lt;/b> aujourd’hui</string>
     <string name="starting_tomorrow">\u0020à partir de demain</string>
+    <string name="starting_tomorrow_until_further_notice">À compter de demain et jusqu’à nouvel ordre</string>
     <string name="station_closed">Station fermée</string>
     <string name="station_closed_sentence_case">Station fermée</string>
     <string name="station_closure">Fermeture de la station</string>
@@ -441,6 +447,7 @@
     <string name="this_stop_is_drop_off_only">Cet arrêt est réservé à la descente uniquement</string>
     <string name="tie_replacement">Remplacement de traverses</string>
     <string name="tie_replacement_lowercase">remplacement de traverses</string>
+    <string name="time_picker_type_toggle">bascule du type de sélecteur d’heure</string>
     <string name="to">Jusqu’à</string>
     <string name="toast_tip_prefix">Astuce : %1$s</string>
     <string name="today">aujourd’hui</string>

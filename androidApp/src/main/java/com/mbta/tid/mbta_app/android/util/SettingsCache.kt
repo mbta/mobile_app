@@ -51,6 +51,19 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
      */
     @Composable
     fun getNullable(setting: Settings): Boolean? {
+        val cachedData = getNullable()
+        return cachedData?.get(setting)
+    }
+
+    /**
+     * Retrieves the value of all [Settings], updating automatically when this cache is updated, and
+     * loading in the background if the cache is empty.
+     *
+     * Will not automatically see changes made directly to the [settingsRepository]; make sure all
+     * changes are made via [set].
+     */
+    @Composable
+    fun getNullable(): Map<Settings, Boolean>? {
         val cachedData by cache.collectAsState()
 
         LaunchedEffect(cachedData == null) {
@@ -59,7 +72,7 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
             }
         }
 
-        return cachedData?.get(setting)
+        return cachedData
     }
 
     companion object {
@@ -72,5 +85,11 @@ class SettingsCache(private val settingsRepository: ISettingsRepository) : KoinC
          */
         @Composable
         fun getNullable(setting: Settings) = koinInject<SettingsCache>().getNullable(setting)
+
+        /**
+         * Gets the value of all settings from the current Koin context’s [SettingsCache]. Returns
+         * null if not yet loaded
+         */
+        @Composable fun getNullable() = koinInject<SettingsCache>().getNullable()
     }
 }

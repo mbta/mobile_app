@@ -16,6 +16,7 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.MainActivity
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.json
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.model.response.fromWorkData
 import org.koin.core.component.KoinComponent
@@ -78,7 +79,12 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
         )
         notificationManager.createNotificationChannel(channel)
 
-        val notificationId = 0
+        val idSuffix =
+            when (payload.summary) {
+                is AlertSummary.AllClear -> "-all-clear"
+                else -> ""
+            }
+        val notificationId = (payload.alertId + idSuffix).hashCode()
         notificationManager.notify(notificationId, notificationBuilder.build())
         return Result.success()
     }

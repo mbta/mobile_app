@@ -103,7 +103,7 @@ fun AlertDetails(
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)
         if (!isElevatorAlert) {
-            AlertPeriod(alert, currentPeriod ?: nextPeriod)
+            AlertPeriod(alert, currentPeriod, nextPeriod, now)
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 AffectedStopCollapsible(
@@ -121,7 +121,7 @@ fun AlertDetails(
         }
         AlertDescription(alert, affectedStopsKnown = affectedStops.isNotEmpty())
         if (isElevatorAlert) {
-            AlertPeriod(alert, currentPeriod ?: nextPeriod)
+            AlertPeriod(alert, currentPeriod, nextPeriod, now)
         }
         AlertFooter(alert.updatedAt)
     }
@@ -167,7 +167,12 @@ private fun AlertTitle(
 }
 
 @Composable
-private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
+private fun AlertPeriod(
+    alert: Alert,
+    currentPeriod: Alert.ActivePeriod?,
+    nextPeriod: Alert.ActivePeriod?,
+    now: EasternTimeInstant,
+) {
     // This is all because Jetpack Compose has no built in table layout, we need the "Start" and
     // "End" label texts to take up the same column width, but they can be variable widths in
     // different languages, so we can't use a fixed size, but we also need the label and formatted
@@ -191,17 +196,15 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
         }
     }
 
+    val relevantPeriod = currentPeriod ?: nextPeriod
     val recurrence = alert.recurrenceRange()
 
     if (recurrence != null) {
         val dateFormat =
             if (recurrence.daily) EasternTimeInstant::formattedShortServiceDayAndDate
             else EasternTimeInstant::formattedServiceDate
-        val startDay = recurrence.start.dateFormat()
-        val endDay =
-            recurrence.end
-                .coerceInServiceDay(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
-                .dateFormat()
+        val startDay = recurrence.start.dateFormat(EasternTimeInstant.ServiceDateRounding.FORWARDS)
+        val endDay = recurrence.end.dateFormat(EasternTimeInstant.ServiceDateRounding.BACKWARDS)
         val startTime =
             if (recurrence.fromStartOfService) stringResource(R.string.start_of_service)
             else recurrence.start.formattedTime()
@@ -209,8 +212,17 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
             if (recurrence.toEndOfService) stringResource(R.string.end_of_service)
             else recurrence.end.formattedTime()
         val dateRange =
-            if (recurrence.endDayKnown) stringResource(R.string.en_dash_range, startDay, endDay)
-            else stringResource(R.string.until_further_notice)
+            when {
+                recurrence.endDayKnown -> stringResource(R.string.en_dash_range, startDay, endDay)
+                // if the alert isn’t active already but starts later today, the start time will
+                // make it clear, but if it starts tomorrow, the start time will have already
+                // elapsed today, so we need to disambiguate
+                currentPeriod == null &&
+                    nextPeriod != null &&
+                    nextPeriod.startServiceDate != now.serviceDate ->
+                    stringResource(R.string.starting_tomorrow_until_further_notice)
+                else -> stringResource(R.string.until_further_notice)
+            }
         Column(
             Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -243,7 +255,7 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
                 Text(stringResource(R.string.en_dash_range, startTime, endTime), style = style)
             }
         }
-    } else if (currentPeriod != null) {
+    } else if (relevantPeriod != null) {
         Column(
             Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -254,14 +266,14 @@ private fun AlertPeriod(alert: Alert, currentPeriod: Alert.ActivePeriod?) {
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(columnTexts[0], Modifier.width(columnWidth), style = style)
-                Text(currentPeriod.formatStart(LocalResources.current), style = style)
+                Text(relevantPeriod.formatStart(LocalResources.current), style = style)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.Top,
             ) {
                 Text(columnTexts[1], Modifier.width(columnWidth), style = style)
-                Text(currentPeriod.formatEnd(LocalResources.current), style = style)
+                Text(relevantPeriod.formatEnd(LocalResources.current), style = style)
             }
         }
     } else {
