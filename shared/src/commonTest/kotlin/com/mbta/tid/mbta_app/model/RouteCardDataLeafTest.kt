@@ -93,7 +93,7 @@ class RouteCardDataLeafTest {
                     headsign = null,
                     UpcomingFormat.NoTrips(
                         UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                        UpcomingFormat.SecondaryAlert(icon),
+                        UpcomingFormat.WarningAlert(icon),
                     ),
                 ),
                 RouteCardData.Leaf(
@@ -216,8 +216,8 @@ class RouteCardDataLeafTest {
                                 lastTrip = true,
                             )
                         ),
-                    secondaryAlert =
-                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, MapStopRoute.COMMUTER),
+                    warningAlert =
+                        UpcomingFormat.WarningAlert(StopAlertState.Issue, MapStopRoute.COMMUTER),
                 ),
             ),
             RouteCardData.Leaf(
@@ -273,7 +273,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    secondaryAlert = null,
+                    warningAlert = null,
                 ),
             ),
             RouteCardData.Leaf(
@@ -333,7 +333,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    secondaryAlert = null,
+                    warningAlert = null,
                 ),
             ),
             RouteCardData.Leaf(
@@ -388,7 +388,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             ),
             RouteCardData.Leaf(
@@ -439,7 +439,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             ),
             RouteCardData.Leaf(
@@ -973,8 +973,8 @@ class RouteCardDataLeafTest {
 
             assertEquals(
                 LeafFormat.branched {
-                    secondaryAlert =
-                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, MapStopRoute.RED)
+                    warningAlert =
+                        UpcomingFormat.WarningAlert(StopAlertState.Issue, MapStopRoute.RED)
                     branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(

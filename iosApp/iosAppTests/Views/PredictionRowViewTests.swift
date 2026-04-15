@@ -13,11 +13,11 @@ import ViewInspector
 import XCTest
 
 final class PredictionRowViewTests: XCTestCase {
-    func testSecondaryAlert() throws {
+    func testWarningAlert() throws {
         let sut = PredictionRowView(
             predictions: UpcomingFormat.NoTrips(
                 noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
-                secondaryAlert: .init(iconName: "alert-large-bus-issue")
+                warningAlert: .init(iconName: "alert-large-bus-issue")
             ),
             pillDecoration: .none,
             destination: { EmptyView() }

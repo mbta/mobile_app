@@ -37,7 +37,7 @@ public sealed class LeafFormat {
                     TileData(
                         route = route,
                         headsign = headsign.takeUnless { it == directionDestination },
-                        UpcomingFormat.Some(trip, format.secondaryAlert),
+                        UpcomingFormat.Some(trip, format.warningAlert),
                         trip.trip,
                     )
                 }
@@ -58,14 +58,14 @@ public sealed class LeafFormat {
      *   [branchRows] when it has upcoming service. When a branch has
      *   [UpcomingFormat.NoTripsFormat.PredictionsUnavailable] or [UpcomingFormat.Disruption], it
      *   should only appear once in [branchRows].
-     * @param secondaryAlert The [UpcomingFormat.SecondaryAlert] affecting this stop to to display
-     *   once for the entire direction. This may be a secondary alert at this stop, or a major alert
+     * @param warningAlert The [UpcomingFormat.WarningAlert] affecting this stop to to display once
+     *   for the entire direction. This may be a secondary alert at this stop, or a major alert
      *   affecting a stop downstream of this one on any of the route patterns it serves.
      */
     public data class Branched
     internal constructor(
         val branchRows: List<BranchRow>,
-        val secondaryAlert: UpcomingFormat.SecondaryAlert? = null,
+        val warningAlert: UpcomingFormat.WarningAlert? = null,
     ) : LeafFormat() {
         public data class BranchRow
         internal constructor(
@@ -93,7 +93,7 @@ public sealed class LeafFormat {
                     TileData(
                         branch.route,
                         branch.headsign,
-                        UpcomingFormat.Some(trip, branch.format.secondaryAlert),
+                        UpcomingFormat.Some(trip, branch.format.warningAlert),
                         trip.trip,
                     )
                 } else null
@@ -119,7 +119,7 @@ public sealed class LeafFormat {
 
     internal class BranchedBuilder {
         private val branchRows = mutableListOf<Branched.BranchRow>()
-        var secondaryAlert: UpcomingFormat.SecondaryAlert? = null
+        var warningAlert: UpcomingFormat.WarningAlert? = null
 
         fun branchRow(headsign: String, format: UpcomingFormat) = branchRow(null, headsign, format)
 
@@ -127,7 +127,7 @@ public sealed class LeafFormat {
             branchRows.add(Branched.BranchRow(route, headsign, format))
         }
 
-        internal fun built() = Branched(branchRows, secondaryAlert)
+        internal fun built() = Branched(branchRows, warningAlert)
     }
 
     internal companion object {

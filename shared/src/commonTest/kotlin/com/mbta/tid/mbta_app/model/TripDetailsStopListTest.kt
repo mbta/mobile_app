@@ -1101,7 +1101,7 @@ class TripDetailsStopListTest {
                     TripInstantDisplay.Time(now, false),
                     false,
                 ),
-                secondaryAlert = null,
+                warningAlert = null,
             ),
             entry.format(trip, now, route),
         )
@@ -1137,7 +1137,7 @@ class TripDetailsStopListTest {
                     TripInstantDisplay.Time(now, false),
                     false,
                 ),
-                secondaryAlert = null,
+                warningAlert = null,
             ),
             entry.format(trip, now, route),
         )

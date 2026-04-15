@@ -181,7 +181,7 @@ final class AlertCardTests: XCTestCase {
             .find(text: "Shuttle buses from Start Stop to End Stop through 4:00\u{202F}PM"))
     }
 
-    func testSecondaryAlertCard() throws {
+    func testWarningAlertCard() throws {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
@@ -209,7 +209,7 @@ final class AlertCardTests: XCTestCase {
         wait(for: [exp], timeout: 1)
     }
 
-    func testSecondaryAlertCardSummary() throws {
+    func testWarningAlertCardSummary() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
             alert.effect = .detour

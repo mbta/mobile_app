@@ -78,7 +78,7 @@ class AlertCardTests {
     }
 
     @Test
-    fun testSecondaryAlertCard() {
+    fun testWarningAlertCard() {
         val alert =
             ObjectCollectionBuilder.Single.alert {
                 header = "Alert header"
@@ -253,7 +253,7 @@ class AlertCardTests {
     }
 
     @Test
-    fun testSecondaryAlertCardSummary() {
+    fun testWarningAlertCardSummary() {
         val alert =
             ObjectCollectionBuilder.Single.alert {
                 header = "Alert header"

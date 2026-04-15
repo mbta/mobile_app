@@ -18,8 +18,8 @@ struct RouteCardDirection: View {
         case let .branched(branched):
             VStack(alignment: .leading, spacing: 6) {
                 HStack(alignment: .center) {
-                    if let secondaryAlert = branched.secondaryAlert {
-                        Image(secondaryAlert.iconName)
+                    if let warningAlert = branched.warningAlert {
+                        Image(warningAlert.iconName)
                             .accessibilityLabel("Alert")
                             .frame(width: 18, height: 18)
                     }

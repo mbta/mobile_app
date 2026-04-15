@@ -44,7 +44,7 @@ class DepartureTileTest {
                                     false,
                                 )
                             ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     upcoming,
                 ),
@@ -84,7 +84,7 @@ class DepartureTileTest {
                                     false,
                                 )
                             ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     upcoming,
                 ),
@@ -119,7 +119,7 @@ class DepartureTileTest {
                                     false,
                                 )
                             ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     upcoming,
                 ),
@@ -156,7 +156,7 @@ class DepartureTileTest {
                                     false,
                                 )
                             ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     upcoming,
                 ),

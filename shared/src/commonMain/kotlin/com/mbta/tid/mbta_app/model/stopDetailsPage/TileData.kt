@@ -32,10 +32,7 @@ public data class TileData(
                 )
             val formatted =
                 if (formattedUpcomingTrip != null) {
-                    UpcomingFormat.Some(
-                        trips = listOf(formattedUpcomingTrip),
-                        secondaryAlert = null,
-                    )
+                    UpcomingFormat.Some(trips = listOf(formattedUpcomingTrip), warningAlert = null)
                 } else {
                     return null
                 }
