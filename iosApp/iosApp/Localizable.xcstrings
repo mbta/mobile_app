@@ -23221,7 +23221,6 @@
     },
     "This trip has been cancelled. We’re sorry for the inconvenience." : {
       "comment" : "Explanation for a cancelled trip on stop details",
-      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -24442,7 +24441,7 @@
       }
     },
     "Trip cancelled" : {
-      "comment" : "Possible alert effect",
+      "comment" : "Header for a cancelled trip card on stop details\nPossible alert effect",
       "localizations" : {
         "es" : {
           "stringUnit" : {

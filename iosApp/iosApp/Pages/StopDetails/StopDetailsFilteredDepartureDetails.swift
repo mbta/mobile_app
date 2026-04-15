@@ -161,6 +161,20 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
                 .accessibilityHeading(.h3)
                 .accessibilityFocused($selectedDepartureFocus, equals: cardFocusId)
+            } else if selectedTripIsCancelled {
+                StopDetailsIconCard(
+                    accentColor: routeAccents.color,
+                    details: Text(
+                        "This trip has been cancelled. We’re sorry for the inconvenience.",
+                        comment: "Explanation for a cancelled trip on stop details"
+                    ),
+                    header: Text(
+                        "Trip cancelled",
+                        comment: "Header for a cancelled trip card on stop details"
+                    ),
+                    icon: routeSlashIcon(routeAccents.type)
+                )
+                .accessibilityHeading(.h4)
             } else {
                 let tripPageFilter: TripDetailsPageFilter? = if let tripFilter {
                     .init(stopId: stopId, stopFilter: stopFilter, tripFilter: tripFilter)
