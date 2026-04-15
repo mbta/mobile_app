@@ -110,9 +110,9 @@ fun Departures(
                         }
                         formatted is LeafFormat.Branched -> {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                formatted.secondaryAlert?.let { secondaryAlert ->
+                                formatted.warningAlert?.let { warningAlert ->
                                     Image(
-                                        painterResource(drawableByName(secondaryAlert.iconName)),
+                                        painterResource(drawableByName(warningAlert.iconName)),
                                         stringResource(R.string.alert),
                                         modifier =
                                             Modifier.placeholderIfLoading().padding(end = 8.dp),

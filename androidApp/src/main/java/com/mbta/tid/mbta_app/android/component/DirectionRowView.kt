@@ -72,7 +72,7 @@ private fun DirectionRowViewPreview() {
                                     lastTrip = false,
                                 ),
                             ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
             )
             DirectionRowView(
