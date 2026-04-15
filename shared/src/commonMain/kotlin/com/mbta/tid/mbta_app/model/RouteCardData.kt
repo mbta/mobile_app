@@ -176,7 +176,8 @@ public data class RouteCardData(
         private fun majorAlertAffectingAllTrips(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
                 it.significance(atTime) >= AlertSignificance.Major &&
-                    it.anyInformedEntitySatisfies { checkNullTrip() }
+                    (it.informedEntity.isEmpty() ||
+                        it.anyInformedEntitySatisfies { checkNullTrip() })
             }
 
         private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
