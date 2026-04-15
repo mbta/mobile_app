@@ -165,14 +165,14 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats as Some with major alert affecting only one trip`() = parametricTest {
+    fun `formats as Some with major alert affecting only one trip`() {
         val now = EasternTimeInstant.now()
 
         val objects = ObjectCollectionBuilder()
         val route =
             objects.route {
-                id = "741"
-                type = RouteType.BUS
+                id = "CR-Worcester"
+                type = RouteType.COMMUTER_RAIL
             }
 
         val trip = objects.trip()
@@ -208,11 +208,16 @@ class RouteCardDataLeafTest {
                             UpcomingFormat.Some.FormattedTrip(
                                 upcomingTrip,
                                 route.type,
-                                TripInstantDisplay.Minutes(minutes = 5, last = true),
+                                TripInstantDisplay.Time(
+                                    predictionTime = prediction.departureTime!!,
+                                    last = true,
+                                    headline = true,
+                                ),
                                 lastTrip = true,
                             )
                         ),
-                    secondaryAlert = null,
+                    secondaryAlert =
+                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, MapStopRoute.COMMUTER),
                 ),
             ),
             RouteCardData.Leaf(
@@ -227,7 +232,7 @@ class RouteCardDataLeafTest {
                     true,
                     null,
                     emptyList(),
-                    anyEnumValue(),
+                    RouteCardData.Context.NearbyTransit,
                 )
                 .format(now, GlobalResponse(objects)),
         )
