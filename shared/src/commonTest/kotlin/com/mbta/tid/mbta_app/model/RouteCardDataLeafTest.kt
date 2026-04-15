@@ -165,6 +165,75 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats as Some with major alert affecting only one trip`() = parametricTest {
+        val now = EasternTimeInstant.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                id = "741"
+                type = RouteType.BUS
+            }
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 5.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = trip.directionId,
+                            route = route.id,
+                            trip = trip.id,
+                        )
+                    )
+            }
+
+        assertEquals(
+            LeafFormat.Single(
+                route = null,
+                headsign = "",
+                UpcomingFormat.Some(
+                    trips =
+                        listOf(
+                            UpcomingFormat.Some.FormattedTrip(
+                                upcomingTrip,
+                                route.type,
+                                TripInstantDisplay.Minutes(minutes = 5, last = true),
+                                lastTrip = true,
+                            )
+                        ),
+                    secondaryAlert = null,
+                ),
+            ),
+            RouteCardData.Leaf(
+                    LineOrRoute.Route(route),
+                    objects.stop(),
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    listOf(upcomingTrip),
+                    listOf(alert),
+                    true,
+                    true,
+                    null,
+                    emptyList(),
+                    anyEnumValue(),
+                )
+                .format(now, GlobalResponse(objects)),
+        )
+    }
+
+    @Test
     fun `formats CR as prediction in past with status`() {
         val now = EasternTimeInstant.now()
         val predictionTime = now - 2.minutes

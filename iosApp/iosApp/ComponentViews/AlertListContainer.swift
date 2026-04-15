@@ -15,6 +15,7 @@ struct AlertListContainer: View {
     let alertSummaries: [String: AlertSummary?]
     let now: EasternTimeInstant
     let isAllServiceDisrupted: Bool
+    let tripId: String?
     let routeAccents: TripRouteAccents
     let onRowTap: (String, AlertCardSpec) -> Void
 
@@ -61,7 +62,7 @@ struct AlertListContainer: View {
     @ViewBuilder
     func alertCard(_ displayAlert: DisplayAlert) -> some View {
         let alert = displayAlert.alert
-        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted)
+        let spec = displayAlert.cardSpec(now: now, isAllServiceDisrupted: isAllServiceDisrupted, tripId: tripId)
 
         if alertSummaries.keys.contains(displayAlert.id) {
             AlertCard(
@@ -99,6 +100,7 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }
             )
@@ -109,6 +111,7 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }
             )
@@ -119,6 +122,7 @@ struct AlertListContainer: View {
                 alertSummaries: [serviceChange.id: nil, elevator.id: nil],
                 now: now,
                 isAllServiceDisrupted: false,
+                tripId: nil,
                 routeAccents: .init(),
                 onRowTap: { _, _ in }
             )

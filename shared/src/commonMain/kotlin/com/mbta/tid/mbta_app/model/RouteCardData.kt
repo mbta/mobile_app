@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -171,11 +170,15 @@ public data class RouteCardData(
 
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
-        internal fun hasMajorAlerts(atTime: EasternTimeInstant): Boolean =
-            this.alertsHere.any { alert -> alert.significance(atTime) == AlertSignificance.Major }
+        internal fun hasMajorAlertsAffectingAllTrips(atTime: EasternTimeInstant): Boolean =
+            majorAlertAffectingAllTrips(atTime) != null
 
-        private fun majorAlert(atTime: EasternTimeInstant) =
-            alertsHere.firstOrNull { it.significance(atTime) >= AlertSignificance.Major }
+        private fun majorAlertAffectingAllTrips(atTime: EasternTimeInstant) =
+            alertsHere.firstOrNull {
+                it.significance(atTime) >= AlertSignificance.Major &&
+                    (it.informedEntity.isEmpty() ||
+                        it.anyInformedEntitySatisfies { checkNullTrip() })
+            }
 
         private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
@@ -472,8 +475,10 @@ public data class RouteCardData(
             secondaryAlert: UpcomingFormat.SecondaryAlert?,
             now: EasternTimeInstant,
         ): LeafFormat.Single {
-            val majorAlert = majorAlert(now)
+            val majorAlert = majorAlertAffectingAllTrips(now)
             val format =
+                // Format as disrupted. Assume any upcoming trips that exist should not be shown
+                // and are in fact affected by the alert
                 if (majorAlert != null) {
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
                 } else {
@@ -517,7 +522,7 @@ public data class RouteCardData(
                     UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
                 }
 
-            if (majorAlert(now) == null && tripsToShow.isEmpty()) {
+            if (majorAlertAffectingAllTrips(now) == null && tripsToShow.isEmpty()) {
                 // base case is the same for branched & non-branched routes:
                 // if there is no alert & no trips to show, use the single format
                 val service = if (isBranching) null else potentialService.firstOrNull()
