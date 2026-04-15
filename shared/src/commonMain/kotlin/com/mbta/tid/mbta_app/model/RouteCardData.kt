@@ -182,8 +182,10 @@ public data class RouteCardData(
 
         private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
-                it.significance(atTime) < AlertSignificance.Major &&
-                    it.significance(atTime) >= AlertSignificance.Secondary
+                (it.significance(atTime) < AlertSignificance.Major &&
+                    it.significance(atTime) >= AlertSignificance.Secondary) ||
+                    (it.significance(atTime) == AlertSignificance.Major &&
+                        !it.anyInformedEntitySatisfies { checkNullTrip() })
             } ?: alertsDownstream.firstOrNull()
 
         public fun alertsHere(tripId: String? = null): List<Alert> =
