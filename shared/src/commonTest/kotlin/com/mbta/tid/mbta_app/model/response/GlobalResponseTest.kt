@@ -10,6 +10,7 @@ import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopAlertState
+import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -20,6 +21,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 
 class GlobalResponseTest {
@@ -563,5 +565,21 @@ class GlobalResponseTest {
             LineOrRoute.Line(line, setOf(route1, route2)),
             globalData.getLineOrRoute(route2.id),
         )
+    }
+
+    @Test
+    fun `withWorldCupService adds World Cup service if date has a match`() {
+        val objects = ObjectCollectionBuilder()
+        val global = GlobalResponse(objects)
+        val globalAdded = global.withWorldCupService(LocalDate(2026, Month.JUNE, 29))
+        assertEquals(WorldCupService.route, globalAdded.getRoute(WorldCupService.route.id))
+    }
+
+    @Test
+    fun `withWorldCupService does nothing if date does not have a match`() {
+        val objects = ObjectCollectionBuilder()
+        val global = GlobalResponse(objects)
+        val globalAdded = global.withWorldCupService(LocalDate(2026, Month.JUNE, 30))
+        assertNull(globalAdded.getRoute(WorldCupService.route.id))
     }
 }

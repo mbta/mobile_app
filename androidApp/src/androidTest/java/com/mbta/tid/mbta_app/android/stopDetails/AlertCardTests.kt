@@ -235,7 +235,7 @@ class AlertCardTests {
             }
 
         // Fixed time so we can have a specific day of the week (sat)
-        val endTime = EasternTimeInstant(2025, Month.APRIL, 5, 3, 0)
+        val endTime = EasternTimeInstant(2025, Month.APRIL, 6, 3, 0)
         composeTestRule.setContent {
             AlertCard(
                 alert,

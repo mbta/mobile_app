@@ -85,8 +85,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                 PushNotificationPayload.companion.launchKey:
                     PushNotificationPayload.companion.serialize(payload: payload),
             ]
-            let uuidString = UUID().uuidString
-            let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: nil)
+            content.sound = .default
+            let idSuffix = switch onEnum(of: payload.summary) {
+            case .allClear: "-all-clear"
+            default: ""
+            }
+            let notificationId = payload.alertId + idSuffix
+            let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: nil)
             let notificationCenter = UNUserNotificationCenter.current()
             notificationCenter.add(request, withCompletionHandler: { error in
                 if let error {
@@ -105,8 +110,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         FcmTokenContainer.shared.token = token
     }
 
-    func userNotificationCenter(_: UNUserNotificationCenter,
-                                willPresent notification: UNNotification) async -> UNNotificationPresentationOptions {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        willPresent notification: UNNotification
+    ) async -> UNNotificationPresentationOptions {
         let userInfo = notification.request.content.userInfo
         Messaging.messaging().appDidReceiveMessage(userInfo)
         return [[.banner, .list, .sound]]

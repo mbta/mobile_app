@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.cache.ResponseCache
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.header
 import io.ktor.http.HttpHeaders
@@ -30,7 +31,9 @@ internal class GlobalRepository(
     override val state = cache.state
 
     override suspend fun getGlobalData() =
-        cache.getOrFetch { etag: String? ->
+        cache.getOrFetch(
+            postprocess = { it.withWorldCupService(EasternTimeInstant.now().serviceDate) }
+        ) { etag: String? ->
             mobileBackendClient.get {
                 timeout { requestTimeoutMillis = 10000 }
                 url { path("api/global") }

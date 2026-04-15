@@ -6846,6 +6846,52 @@
         }
       }
     },
+    "Boston Stadium Train ticket required" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Se requiere billete de tren para el estadio de Boston"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Billet de train pour le stade de Boston requis"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tikè tren Boston Stadium obligatwa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "É necessário um bilhete de trem para o Estádio de Boston."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Cần có vé tàu đến Sân vận động Boston."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "需要波士顿体育场火车票"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "需要波士頓球場火車票"
+          }
+        }
+      }
+    },
     "BRD" : {
       "comment" : "Shorthand for boarding",
       "localizations" : {
@@ -9826,6 +9872,100 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "吊橋升起"
+          }
+        }
+      }
+    },
+    "drawbridge issue" : {
+      "comment" : "Alert cause, used in 'Delays due to [cause]'",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema del puente levadizo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problème du pont-levis"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "pwoblèm pon leve"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "problema da ponte levadiça"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "vấn đề cầu kéo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊桥问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊橋問題"
+          }
+        }
+      }
+    },
+    "Drawbridge Issue" : {
+      "comment" : "Possible alert cause",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema del puente levadizo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problème du pont-levis"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pwoblèm Pon Levab"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Problema da ponte levadiça"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Vấn đề cầu kéo"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊桥问题"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "吊橋問題"
           }
         }
       }
@@ -15792,6 +15932,53 @@
         }
       }
     },
+    "Notice" : {
+      "comment" : "Possible alert effect",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Aviso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Avis"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Avi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Perceber"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Để ý"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "注意"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "注意"
+          }
+        }
+      }
+    },
     "notifications enabled" : {
       "comment" : "Screen reader text for an icon on the edit favorites page that displays whether or not the user has notifications turned on for a specific row",
       "extractionState" : "manual",
@@ -18520,6 +18707,102 @@
         }
       }
     },
+    "Select end time" : {
+      "comment" : "Title for the Android modal dialog to select the end time of a notification window",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seleccione la hora de finalización."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sélectionnez l’heure de fin"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chwazi lè fini an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Selecione o horário de término"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chọn thời gian kết thúc"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "选择结束时间"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "選擇結束時間"
+          }
+        }
+      }
+    },
+    "Select start time" : {
+      "comment" : "Title for the Android modal dialog to select the end time of a notification window",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Seleccione la hora de inicio."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sélectionnez l’heure de début"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chwazi lè kòmansman an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Selecione a hora de início"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chọn thời gian bắt đầu"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "选择开始时间"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "選擇開始時間"
+          }
+        }
+      }
+    },
     "Select to call" : {
       "comment" : "Screen reader text for a link to call a phone number",
       "localizations" : {
@@ -19016,6 +19299,98 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服務已結束"
+          }
+        }
+      }
+    },
+    "Service from **South Station** to today’s **World Cup match**" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicio desde la **Estación Sur** hasta el **partido del Mundial** de hoy."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Service de **gare du Sud** pour le match de la **Coupe du Monde** d’aujourd’hui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sèvis soti nan **Estasyon Sid** pou rive nan **match koup di mond** jodi a"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Serviço da **Estação Sul** para o jogo da **Copa do Mundo** de hoje."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tuyến xe buýt từ **Ga Nam** đến **trận đấu World Cup hôm nay**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从**南站**开往今日**世界杯比赛**的列车服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從**南站**開往今日**世界盃比賽**的列車服務"
+          }
+        }
+      }
+    },
+    "Service from today’s **World Cup match** to **South Station**" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Servicio desde el **partido del Mundial** de hoy hasta la **Estación Sur**."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Service depuis le match de la **Coupe du Monde** d’aujourd’hui jusqu’à **South Station**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sèvis apati match **Koup di Mond** jodi a pou rive nan **Estasyon Sid**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Serviço de hoje para a **Estação Sul**, partindo da **partida da Copa do Mundo**."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tuyến xe buýt từ **trận đấu World Cup** hôm nay đến **Ga phía Nam**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从今天的**世界杯比赛**到**南站**的列车服务"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從今天的**世界盃比賽**到**南站**的列車服務"
           }
         }
       }
@@ -20752,6 +21127,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "服務開始"
+          }
+        }
+      }
+    },
+    "Starting tomorrow until further notice" : {
+      "comment" : "Date range for a recurring alert which hasn’t started yet and has an unknown end date; may be shown next to “Daily” or a list of weekdays",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "A partir de mañana y hasta nuevo aviso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "À compter de demain et jusqu’à nouvel ordre"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Apati demen jiskaske nou jwenn plis avi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "A partir de amanhã, até novo aviso."
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bắt đầu từ ngày mai cho đến khi có thông báo mới."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "从明天开始，直至另行通知。"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "從明天開始，直至另行通知。"
           }
         }
       }
@@ -22934,6 +23356,54 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "更換軌枕"
+          }
+        }
+      }
+    },
+    "Time picker type toggle" : {
+      "comment" : "Screen reader label for the button on Android that switches between the dial time picker and the text input time picker",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alternar tipo de selector de hora"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "bascule du type de sélecteur d’heure"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chanje/dezaktive kalite seleksyon tan an"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Alternar tipo de seletor de tempo"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "công tắc chọn loại thời gian"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "时间选择器类型切换"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "時間選擇器類型切換"
           }
         }
       }

@@ -123,6 +123,8 @@
     <string name="drag_handle">Palanca de arrastre</string>
     <string name="drawbridge_being_raised">Puente levadizo en elevación</string>
     <string name="drawbridge_being_raised_lowercase">puente levadizo levantado</string>
+    <string name="drawbridge_issue">Problema del puente levadizo</string>
+    <string name="drawbridge_issue_lowercase">problema del puente levadizo</string>
     <string name="due_to_cause">\u0020debido a %1$s</string>
     <string name="eastbound">En dirección este</string>
     <string name="edit">Editar</string>
@@ -279,6 +281,7 @@
     <string name="northbound">En dirección norte</string>
     <string name="not_accessible">No accesible</string>
     <string name="not_accessible_stop_card">Esta parada no es accesible</string>
+    <string name="notice">Aviso</string>
     <string name="notifications_enabled">notificaciones habilitadas</string>
     <string name="notifications_settings_link">Permitir notificaciones en la configuración</string>
     <string name="now">Ahora</string>
@@ -352,6 +355,8 @@
     <string name="scheduled_to_depart_accessibility_desc">%1$s seleccionado programado para salir %2$s</string>
     <string name="scheduled_to_depart_selected_stop_accessibility_desc">%1$s seleccionado programado para salir %2$s, parada seleccionada</string>
     <string name="search_by_stop">Buscar por parada</string>
+    <string name="select_end_time">Seleccione la hora de finalización.</string>
+    <string name="select_start_time">Seleccione la hora de inicio.</string>
     <string name="selected_stop">%1$s, parada seleccionada</string>
     <string name="selected_stop_first_stop">%1$s, parada seleccionada, primera parada</string>
     <string name="serves_route_list">sirve %1$s</string>
@@ -393,6 +398,7 @@
     <string name="start_of_service">inicio del servicio</string>
     <string name="starting_later_today">\u0020comenzando &lt;b>%1$s&lt;/b> hoy</string>
     <string name="starting_tomorrow">\u0020a partir de mañana</string>
+    <string name="starting_tomorrow_until_further_notice">A partir de mañana y hasta nuevo aviso.</string>
     <string name="station_closed">Estación cerrada</string>
     <string name="station_closed_sentence_case">Estación cerrada</string>
     <string name="station_closure">Cierre de estación</string>
@@ -432,6 +438,7 @@
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
+    <string name="time_picker_type_toggle">Alternar tipo de selector de hora</string>
     <string name="to">A</string>
     <string name="toast_tip_prefix">Consejo: %1$s</string>
     <string name="today">hoy</string>
@@ -514,5 +521,8 @@
     <string name="weather_lowercase">clima</string>
     <string name="westbound">En dirección oeste</string>
     <string name="will_not_stop_at">no se detendrá en %1$s %2$s</string>
+    <string name="world_cup_service_inbound">Servicio desde el &lt;b>partido del Mundial&lt;/b> de hoy hasta la &lt;b>Estación Sur&lt;/b>.</string>
+    <string name="world_cup_service_outbound">Servicio desde la &lt;b>Estación Sur&lt;/b> hasta el &lt;b>partido del Mundial&lt;/b> de hoy.</string>
+    <string name="world_cup_ticket_required">Se requiere billete de tren para el estadio de Boston</string>
     <string name="x_and_y">%1$s y %2$s</string>
 </resources>

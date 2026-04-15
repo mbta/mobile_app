@@ -5,7 +5,9 @@ import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
 import com.mbta.tid.mbta_app.mocks.MockClock
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.SegmentAlertState
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
@@ -13,9 +15,12 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
+import com.mbta.tid.mbta_app.model.response.StopMapResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -37,8 +42,10 @@ import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
+import kotlin.test.fail
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -618,5 +625,58 @@ internal class MapViewModelTests : KoinTest {
                 )
             }
         }
+    }
+
+    @Test
+    fun `does not fetch stop data again when route card data changes`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        setUpKoin(dispatcher)
+        val routeCardDataVM = MockRouteCardDataViewModel(RouteCardDataViewModel.State(emptyList()))
+        val stopRepo =
+            object : IStopRepository {
+                var callCount = 0
+
+                override suspend fun getStopMapData(stopId: String): ApiResult<StopMapResponse> {
+                    callCount++
+                    if (callCount > 1) {
+                        fail("Fetched stop map data more than once")
+                    }
+                    return ApiResult.Ok(StopMapResponse(emptyList(), emptyMap()))
+                }
+            }
+        val viewModel =
+            MapViewModel(
+                routeCardDataVM,
+                globalRepository = get(),
+                railRouteShapeRepository = get(),
+                sentryRepository = get(),
+                stopRepository = stopRepo,
+                tripRepository = get(),
+                clock = get(),
+                defaultCoroutineDispatcher = dispatcher,
+                iOCoroutineDispatcher = dispatcher,
+            )
+
+        viewModel.setViewportManager(MockViewportManager())
+
+        testViewModelFlow(viewModel).test {
+            awaitItem()
+            viewModel.selectedStop(TestData.getStop("place-sstat"), null)
+            awaitItem()
+            routeCardDataVM.models.value =
+                RouteCardDataViewModel.State(
+                    listOf(
+                        RouteCardData(
+                            LineOrRoute.Route(TestData.getRoute("Red")),
+                            stopData = emptyList(),
+                            at = EasternTimeInstant.now(),
+                        )
+                    )
+                )
+            // there won’t be a new model, but we do want to give the LaunchedEffect time to run
+            delay(100.milliseconds)
+        }
+
+        assertEquals(1, stopRepo.callCount)
     }
 }

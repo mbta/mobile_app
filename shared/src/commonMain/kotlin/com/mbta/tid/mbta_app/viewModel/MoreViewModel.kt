@@ -20,28 +20,19 @@ public class MoreViewModel(
     public fun getSections(
         translation: String,
         version: String?,
+        settings: Map<Settings, Boolean>,
         licensesCallback: () -> Unit,
     ): List<MoreSection> {
         val platform = getPlatform()
-        val feedbackFormUrl =
+        val baseUrl =
             when (platform.type) {
-                PlatformType.iOS ->
-                    feedbackFormUrl(
-                        "https://mbta.com/appfeedback",
-                        translation,
-                        version,
-                        platform.type,
-                    )
-
+                PlatformType.iOS -> "https://mbta.com/appfeedback"
                 PlatformType.Android,
-                PlatformType.JVM ->
-                    feedbackFormUrl(
-                        "https://mbta.com/androidappfeedback",
-                        translation,
-                        version,
-                        platform.type,
-                    )
+                PlatformType.JVM -> "https://mbta.com/androidappfeedback"
             }
+        val feedbackFormUrl =
+            feedbackFormUrl(baseUrl, translation, version, platform.type, settings)
+
         val mTicketURL =
             when (platform.type) {
                 PlatformType.iOS -> "https://apps.apple.com/us/app/mbta-mticket/id560487958"

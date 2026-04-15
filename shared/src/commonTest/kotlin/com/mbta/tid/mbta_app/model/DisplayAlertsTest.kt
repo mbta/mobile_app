@@ -88,87 +88,111 @@ class DisplayAlertsTest {
         }
 
     @Test
-    fun `Leaf alertsDisplayOrder sorts and splits alerts in expected order no elevator `() =
-        runBlocking {
-            val displayAlerts =
-                DisplayAlerts.forAlertsAtStop(
-                    listOf(
-                        hereMinorLater,
-                        hereMajorLater,
-                        hereElevatorLater,
-                        hereElevatorNow,
-                        hereMinorNow,
-                        hereMajorNow,
-                    ),
-                    listOf(
-                        downstreamMinorEvenLater,
-                        downstreamMinorLater,
-                        downstreamMajorLater,
-                        downstreamMinorNow,
-                        downstreamMajorNow,
-                    ),
-                    false,
-                    now,
-                )
-
-            assertEquals(
-                listOf(hereMajorNow, hereMinorNow),
-                displayAlerts.highPriority.map { it.alert },
-            )
-            assertEquals(
+    fun `forAlertsAtStop sorts and splits alerts in expected order no elevator `() = runBlocking {
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
                 listOf(
-                    downstreamMajorNow,
-                    downstreamMinorNow,
-                    hereMajorLater,
                     hereMinorLater,
-                    downstreamMajorLater,
-                    downstreamMinorLater,
-                    downstreamMinorEvenLater,
+                    hereMajorLater,
+                    hereElevatorLater,
+                    hereElevatorNow,
+                    hereMinorNow,
+                    hereMajorNow,
                 ),
-                displayAlerts.lowPriority.map { it.alert },
+                listOf(
+                    downstreamMinorEvenLater,
+                    downstreamMinorLater,
+                    downstreamMajorLater,
+                    downstreamMinorNow,
+                    downstreamMajorNow,
+                ),
+                false,
+                now,
             )
-        }
+
+        assertEquals(
+            listOf(hereMajorNow, hereMinorNow),
+            displayAlerts.highPriority.map { it.alert },
+        )
+        assertEquals(
+            listOf(
+                downstreamMajorNow,
+                downstreamMinorNow,
+                hereMajorLater,
+                hereMinorLater,
+                downstreamMajorLater,
+                downstreamMinorLater,
+                downstreamMinorEvenLater,
+            ),
+            displayAlerts.lowPriority.map { it.alert },
+        )
+    }
 
     @Test
-    fun `Leaf alertsDisplayOrder sorts and splits alerts in expected order with elevator `() =
-        runBlocking {
-            val displayAlerts =
-                DisplayAlerts.forAlertsAtStop(
-                    listOf(
-                        hereMinorLater,
-                        hereMajorLater,
-                        hereElevatorLater,
-                        hereElevatorNow,
-                        hereMinorNow,
-                        hereMajorNow,
-                    ),
-                    listOf(
-                        downstreamMinorEvenLater,
-                        downstreamMinorLater,
-                        downstreamMajorLater,
-                        downstreamMinorNow,
-                        downstreamMajorNow,
-                    ),
-                    true,
-                    now,
-                )
-
-            assertEquals(
-                listOf(hereMajorNow, hereElevatorNow, hereMinorNow),
-                displayAlerts.highPriority.map { it.alert },
-            )
-            assertEquals(
+    fun `forAlertsAtStop sorts and splits alerts in expected order with elevator `() = runBlocking {
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
                 listOf(
-                    Pair(downstreamMajorNow, true),
-                    Pair(downstreamMinorNow, true),
-                    Pair(hereMajorLater, false),
-                    Pair(hereElevatorLater, false),
-                    Pair(hereMinorLater, false),
-                    Pair(downstreamMajorLater, true),
-                    Pair(downstreamMinorLater, true),
-                    Pair(downstreamMinorEvenLater, true),
+                    hereMinorLater,
+                    hereMajorLater,
+                    hereElevatorLater,
+                    hereElevatorNow,
+                    hereMinorNow,
+                    hereMajorNow,
                 ),
-                displayAlerts.lowPriority.map { Pair(it.alert, it.isDownstream) },
+                listOf(
+                    downstreamMinorEvenLater,
+                    downstreamMinorLater,
+                    downstreamMajorLater,
+                    downstreamMinorNow,
+                    downstreamMajorNow,
+                ),
+                true,
+                now,
             )
-        }
+
+        assertEquals(
+            listOf(hereMajorNow, hereElevatorNow, hereMinorNow),
+            displayAlerts.highPriority.map { it.alert },
+        )
+        assertEquals(
+            listOf(
+                Pair(downstreamMajorNow, true),
+                Pair(downstreamMinorNow, true),
+                Pair(hereMajorLater, false),
+                Pair(hereElevatorLater, false),
+                Pair(hereMinorLater, false),
+                Pair(downstreamMajorLater, true),
+                Pair(downstreamMinorLater, true),
+                Pair(downstreamMinorEvenLater, true),
+            ),
+            displayAlerts.lowPriority.map { Pair(it.alert, it.isDownstream) },
+        )
+    }
+
+    @Test
+    fun `hasTakeover true when any takeover`() = runBlocking {
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
+                listOf(hereMajorNow),
+                listOf(downstreamMinorEvenLater),
+                true,
+                now,
+            )
+
+        assertEquals(true, displayAlerts.hasTakeover(now, true, null))
+    }
+
+    @Test
+    fun `hasTakeover false when no takeover`() = runBlocking {
+        val displayAlerts =
+            DisplayAlerts.forAlertsAtStop(
+                listOf(hereMinorNow),
+                listOf(downstreamMinorEvenLater),
+                true,
+                now,
+            )
+
+        assertEquals(false, displayAlerts.hasTakeover(now, true, null))
+    }
 }

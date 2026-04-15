@@ -140,7 +140,15 @@ struct StopDetailsFilteredDepartureDetails: View {
                 }
             }
             alertCards
-            if isAllServiceDisrupted {
+            if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
+                WorldCupBlurb(leaf: leaf, routeAccents: routeAccents, offerDetails: true)
+                    .padding(16)
+                    .background(Color.fill3)
+                    .withRoundedBorder()
+                    .padding(.horizontal, 16)
+            } else if isAllServiceDisrupted || displayAlerts.hasTakeover(now: now,
+                                                                         isAllServiceDisrupted: isAllServiceDisrupted,
+                                                                         tripId: tripFilter?.tripId) {
                 EmptyView()
             } else if let noPredictionsStatus {
                 StopDetailsNoTripCard(
@@ -344,6 +352,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                                alertSummaries: alertSummaries,
                                now: now,
                                isAllServiceDisrupted: isAllServiceDisrupted,
+                               tripId: tripFilter?.tripId,
                                routeAccents: routeAccents,
                                onRowTap: { id, spec in getAlertDetailsHandler(id, spec: spec) })
 

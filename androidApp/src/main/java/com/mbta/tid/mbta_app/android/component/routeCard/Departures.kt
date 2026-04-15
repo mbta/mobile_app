@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.android.component.HeadsignRowView
 import com.mbta.tid.mbta_app.android.component.NavDrilldownRow
 import com.mbta.tid.mbta_app.android.component.PillDecoration
 import com.mbta.tid.mbta_app.android.generated.drawableByName
+import com.mbta.tid.mbta_app.android.stopDetails.TripRouteAccents
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.model.LeafFormat
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -35,6 +36,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
+import com.mbta.tid.mbta_app.model.WorldCupService
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -86,8 +88,15 @@ fun Departures(
                     horizontalAlignment = Alignment.Start,
                     verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
                 ) {
-                    when (formatted) {
-                        is LeafFormat.Single -> {
+                    when {
+                        leaf.lineOrRoute.id == WorldCupService.route.id -> {
+                            WorldCupBlurb(
+                                leaf,
+                                TripRouteAccents(leaf.lineOrRoute.sortRoute),
+                                offerDetails = false,
+                            )
+                        }
+                        formatted is LeafFormat.Single -> {
                             DirectionRowView(
                                 direction.copy(
                                     destination = formatted.headsign ?: direction.destination
@@ -99,7 +108,7 @@ fun Departures(
                                     },
                             )
                         }
-                        is LeafFormat.Branched -> {
+                        formatted is LeafFormat.Branched -> {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 formatted.secondaryAlert?.let { secondaryAlert ->
                                     Image(

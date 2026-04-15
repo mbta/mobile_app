@@ -38,7 +38,15 @@ struct RouteCardDepartures: View {
                         },
                         showChevron: true
                     ) {
-                        RouteCardDirection(direction: direction, formatted: formatted)
+                        if leaf.lineOrRoute.id == WorldCupService.shared.route.id {
+                            WorldCupBlurb(
+                                leaf: leaf,
+                                routeAccents: .init(route: leaf.lineOrRoute.sortRoute),
+                                offerDetails: false
+                            )
+                        } else {
+                            RouteCardDirection(direction: direction, formatted: formatted)
+                        }
                     }
                     .padding(.leading, 16)
                     .padding(.trailing, 8)

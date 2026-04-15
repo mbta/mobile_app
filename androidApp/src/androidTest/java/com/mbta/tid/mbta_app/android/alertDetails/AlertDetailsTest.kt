@@ -13,7 +13,10 @@ import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.Month
+import kotlinx.datetime.plus
 import org.junit.Rule
 import org.junit.Test
 
@@ -450,5 +453,77 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Sunday, Friday").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
         composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+    }
+
+    @Test
+    fun testRecurringStartTomorrowEndUnknown() {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val tomorrow = now.serviceDate.plus(DatePeriod(days = 1))
+        val overmorrow = tomorrow.plus(DatePeriod(days = 1))
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StationClosure
+                activePeriod(
+                    EasternTimeInstant(tomorrow, LocalTime(3, 0)),
+                    EasternTimeInstant(tomorrow, LocalTime(9, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(overmorrow, LocalTime(3, 0)),
+                    EasternTimeInstant(overmorrow, LocalTime(9, 0)),
+                )
+                durationCertainty = Alert.DurationCertainty.Unknown
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stop = null,
+                affectedStops = emptyList(),
+                now = now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("Starting tomorrow until further notice").assertIsDisplayed()
+    }
+
+    @Test
+    fun testRecurringStartLaterTodayEndUnknown() {
+        val objects = ObjectCollectionBuilder()
+        val today = EasternTimeInstant.now().serviceDate
+        val now = EasternTimeInstant(today, LocalTime(18, 0))
+        val tomorrow = today.plus(DatePeriod(days = 1))
+        val overmorrow = tomorrow.plus(DatePeriod(days = 1))
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.StationClosure
+                activePeriod(
+                    EasternTimeInstant(today, LocalTime(20, 0)),
+                    EasternTimeInstant(tomorrow, LocalTime(3, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(tomorrow, LocalTime(20, 0)),
+                    EasternTimeInstant(overmorrow, LocalTime(3, 0)),
+                )
+                durationCertainty = Alert.DurationCertainty.Unknown
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = null,
+                stop = null,
+                affectedStops = emptyList(),
+                now = now,
+            )
+        }
+
+        composeTestRule
+            .onNodeWithText("Starting tomorrow until further notice")
+            .assertDoesNotExist()
+        composeTestRule.onNodeWithText("Until further notice").assertIsDisplayed()
     }
 }

@@ -160,6 +160,7 @@ internal constructor(
         @SerialName("disabled_bus") DisabledBus,
         @SerialName("disabled_train") DisabledTrain,
         @SerialName("drawbridge_being_raised") DrawbridgeBeingRaised,
+        @SerialName("drawbridge_issue") DrawbridgeIssue,
         @SerialName("electrical_work") ElectricalWork,
         @SerialName("fire") Fire,
         @SerialName("fire_department_activity") FireDepartmentActivity,
@@ -228,6 +229,7 @@ internal constructor(
         @SerialName("facility_issue") FacilityIssue,
         @SerialName("modified_service") ModifiedService,
         @SerialName("no_service") NoService,
+        @SerialName("notice") Notice,
         @SerialName("other_effect") OtherEffect,
         @SerialName("parking_closure") ParkingClosure,
         @SerialName("parking_issue") ParkingIssue,
@@ -358,6 +360,20 @@ internal constructor(
                 if (tripId == null) return
                 if (this@InformedEntity.trip == null) return
                 if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkTripStrict(tripId: String) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkNullTrip() {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != null) {
                     isSatisfied = false
                 }
             }

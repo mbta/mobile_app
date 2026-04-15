@@ -101,6 +101,39 @@ class MutableFavoriteSettings: ObservableObject, Equatable, CustomDebugStringCon
                 )
             }
 
+            /**
+             The earliest possible end time for a given start time - one minute after start.
+             */
+            func minimumEndTime() -> DateComponents {
+                if let startHour = startTime.hour, let startMinute = startTime.minute {
+                    if startHour == 23, startMinute == 59 {
+                        return startTime
+                    }
+
+                    if startMinute < 59 {
+                        return .init(hour: startHour, minute: startMinute + 1, second: 0)
+                    }
+                    return .init(hour: startHour + 1, minute: 0, second: 0)
+                }
+                return .init(hour: 0, minute: 0, second: 0)
+            }
+
+            /**
+             Based on the new startTime, update the end time to be safely after the start.
+             If the new startTime is after endTime, push endTime to one hour after the start.
+             */
+            func setSafeEndTime(startTime: DateComponents) {
+                if let startHour = startTime.hour, let endHour = endTime.hour,
+                   let startMinute = startTime.minute, let endMinute = endTime.minute, startHour > endHour
+                   || (startHour == endHour && startMinute >= endMinute) {
+                    if startHour < 23 {
+                        endTime = .init(hour: startHour + 1, minute: startMinute, second: 0)
+                    } else {
+                        endTime = .init(hour: 23, minute: 59, second: 0)
+                    }
+                }
+            }
+
             var debugDescription: String {
                 "Window(startTime: \(startTime), endTime: \(endTime), daysOfWeek: \(daysOfWeek))"
             }
