@@ -157,7 +157,7 @@ data class FormattedAlert(
                         summaryRecurrence(alertSummary.recurrence, resources),
                     )
                 )
-            is AlertSummary.Unknown -> summary(alertSummary.fallback, resources)
+            is AlertSummary.Unknown -> AnnotatedString.fromHtml(alertSummary.fallback)
             null -> null
         }
 

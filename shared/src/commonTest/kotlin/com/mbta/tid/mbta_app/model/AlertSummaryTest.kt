@@ -152,15 +152,9 @@ class AlertSummaryTest {
         val jsonObject = buildJsonObject {
             put("type", "subliminal")
             put("foo", "bar")
-            putJsonObject("fallback") {
-                put("type", "standard")
-                put("effect", "service_change")
-            }
+            put("fallback", "Fallback summary")
         }
-        val summary: AlertSummary =
-            AlertSummary.Unknown(
-                fallback = AlertSummary.Standard(effect = Alert.Effect.ServiceChange)
-            )
+        val summary: AlertSummary = AlertSummary.Unknown(fallback = "Fallback summary")
         assertEquals(summary, json.decodeFromJsonElement(jsonObject))
     }
 

@@ -37,9 +37,9 @@ public sealed class AlertSummary {
     }
 
     @Serializable
-    public data class Unknown(val fallback: AlertSummary) : AlertSummary() {
-        override val effect: Alert.Effect? = fallback.effect
-        override val recurrence: Recurrence? = fallback.recurrence
+    public data class Unknown(val fallback: String) : AlertSummary() {
+        override val effect: Alert.Effect? = null
+        override val recurrence: Recurrence? = null
     }
 
     @Serializable
