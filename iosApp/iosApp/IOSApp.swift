@@ -87,6 +87,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                         PushNotificationPayload.companion.serialize(payload: payload),
                 ]
                 content.sound = .default
+
+                if payload.summary is AlertSummary.Unknown {
+                    Shared.Sentry.shared.captureMessage(message: "Notification using fallback")
+                }
+
                 let idSuffix = switch onEnum(of: payload.summary) {
                 case .allClear: "-all-clear"
                 default: ""
@@ -108,6 +113,7 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         } catch {
             // Intentionally no using SentryRepository. That should be used entirely from shared code,
             // This is a rare exception.
+            let sentryRepo: ISentryRepository
             Shared.Sentry.shared.captureMessage(message: "Error processing notification: \(error)")
         }
     }
