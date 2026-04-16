@@ -72,49 +72,42 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        do {
-            if let payload = PushNotificationPayload.companion.fromUserInfo(userInfo: userInfo) {
-                AnalyticsProvider.shared.notificationReceived(payload: payload)
+        if let payload = PushNotificationPayload.companion.fromUserInfo(userInfo: userInfo) {
+            AnalyticsProvider.shared.notificationReceived(payload: payload)
 
-                let summary = payload.summary
-                let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
-                let content = UNMutableNotificationContent()
-                content.title = Self.getTitle(payload.title)
-                // https://forums.swift.org/t/attributedstring-to-string/61667/2
-                content.body = String(formattedAlert.alertCardMajorBody.characters[...])
-                content.userInfo = [
-                    PushNotificationPayload.companion.launchKey:
-                        PushNotificationPayload.companion.serialize(payload: payload),
-                ]
-                content.sound = .default
+            let summary = payload.summary
+            let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
+            let content = UNMutableNotificationContent()
+            content.title = Self.getTitle(payload.title)
+            // https://forums.swift.org/t/attributedstring-to-string/61667/2
+            content.body = String(formattedAlert.alertCardMajorBody.characters[...])
+            content.userInfo = [
+                PushNotificationPayload.companion.launchKey:
+                    PushNotificationPayload.companion.serialize(payload: payload),
+            ]
+            content.sound = .default
 
-                if payload.summary is AlertSummary.Unknown {
-                    Shared.Sentry.shared.captureMessage(message: "Notification using fallback")
-                }
-
-                let idSuffix = switch onEnum(of: payload.summary) {
-                case .allClear: "-all-clear"
-                default: ""
-                }
-                let notificationId = payload.alertId + idSuffix
-                let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: nil)
-                let notificationCenter = UNUserNotificationCenter.current()
-                notificationCenter.add(request, withCompletionHandler: { error in
-                    if let error {
-                        debugPrint(error)
-                        completionHandler(.failed)
-                    } else {
-                        completionHandler(.newData)
-                    }
-                })
-            } else {
-                completionHandler(.noData)
+            if payload.summary is AlertSummary.Unknown {
+                AnalyticsProvider.shared.notificationsFallback()
             }
-        } catch {
-            // Intentionally no using SentryRepository. That should be used entirely from shared code,
-            // This is a rare exception.
-            let sentryRepo: ISentryRepository
-            Shared.Sentry.shared.captureMessage(message: "Error processing notification: \(error)")
+
+            let idSuffix = switch onEnum(of: payload.summary) {
+            case .allClear: "-all-clear"
+            default: ""
+            }
+            let notificationId = payload.alertId + idSuffix
+            let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: nil)
+            let notificationCenter = UNUserNotificationCenter.current()
+            notificationCenter.add(request, withCompletionHandler: { error in
+                if let error {
+                    debugPrint(error)
+                    completionHandler(.failed)
+                } else {
+                    completionHandler(.newData)
+                }
+            })
+        } else {
+            completionHandler(.noData)
         }
     }
 

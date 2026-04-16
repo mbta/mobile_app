@@ -82,7 +82,7 @@ class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
             notificationManager.createNotificationChannel(channel)
 
             if (payload.summary is AlertSummary.Unknown) {
-                Sentry.captureMessage("Notification using fallback")
+                analytics.notificationsFallback()
             }
 
             val idSuffix =
