@@ -180,7 +180,14 @@ public data class RouteCardData(
                         it.anyInformedEntitySatisfies { checkNullTrip() })
             }
 
-        private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
+        /**
+         * A warning alert should be displayed without obstructing schedules + predictions. It is
+         * one of
+         * - a secondary alert for this stop/route/direction
+         * - a major alert that affects only some trip for this stop/route/direction
+         * - an alert downstream of this stop/route/direction
+         */
+        private fun warningAlertToDisplay(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
                 (it.significance(atTime) < AlertSignificance.Major &&
                     it.significance(atTime) >= AlertSignificance.Secondary) ||
@@ -338,7 +345,7 @@ public data class RouteCardData(
             potentialService: Set<PotentialService>,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
-            secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            warningAlert: UpcomingFormat.WarningAlert?,
             globalData: GlobalResponse?,
             now: EasternTimeInstant,
         ): LeafFormat {
@@ -367,7 +374,7 @@ public data class RouteCardData(
                             UpcomingFormat.Some(format, null),
                         )
                     },
-                    secondaryAlert,
+                    warningAlert,
                 )
             }
 
@@ -461,7 +468,7 @@ public data class RouteCardData(
 
             return LeafFormat.Branched(
                 upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches,
-                secondaryAlert,
+                warningAlert,
             )
         }
 
@@ -474,7 +481,7 @@ public data class RouteCardData(
             headsign: String?,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
-            secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            warningAlert: UpcomingFormat.WarningAlert?,
             now: EasternTimeInstant,
         ): LeafFormat.Single {
             val majorAlert = majorAlertAffectingAllTrips(now)
@@ -484,7 +491,7 @@ public data class RouteCardData(
                 if (majorAlert != null) {
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
                 } else {
-                    UpcomingFormat.Some(formattedTrips, secondaryAlert)
+                    UpcomingFormat.Some(formattedTrips, warningAlert)
                 }
             return LeafFormat.Single(route, headsign, format)
         }
@@ -519,9 +526,9 @@ public data class RouteCardData(
 
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 
-            val secondaryAlert =
-                secondaryAlertToDisplay(now)?.let {
-                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+            val warningAlert =
+                warningAlertToDisplay(now)?.let {
+                    UpcomingFormat.WarningAlert(StopAlertState.Issue, mapStopRoute)
                 }
 
             if (majorAlertAffectingAllTrips(now) == null && tripsToShow.isEmpty()) {
@@ -543,7 +550,7 @@ public data class RouteCardData(
                                     now,
                                     subwayServiceStartTime,
                                 ),
-                                secondaryAlert,
+                                warningAlert,
                             ),
                         )
                 }
@@ -554,7 +561,7 @@ public data class RouteCardData(
                     potentialService,
                     tripsToShow,
                     mapStopRoute,
-                    secondaryAlert,
+                    warningAlert,
                     globalData,
                     now,
                 )
@@ -566,7 +573,7 @@ public data class RouteCardData(
                     potentialService.singleOrNull()?.headsign,
                     tripsToShow,
                     mapStopRoute,
-                    secondaryAlert,
+                    warningAlert,
                     now,
                 )
             }

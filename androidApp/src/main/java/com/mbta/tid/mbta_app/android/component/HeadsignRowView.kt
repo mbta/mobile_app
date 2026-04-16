@@ -60,7 +60,7 @@ fun HeadsignRowViewPreview() {
                             null,
                         ),
                     ),
-                    secondaryAlert = null,
+                    warningAlert = null,
                 ),
             )
             HeadsignRowView(
@@ -82,7 +82,7 @@ fun HeadsignRowViewPreview() {
                             null,
                         ),
                     ),
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    warningAlert = UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             )
             HeadsignRowView(
@@ -93,14 +93,14 @@ fun HeadsignRowViewPreview() {
                 "None with Alert",
                 UpcomingFormat.NoTrips(
                     UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    warningAlert = UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             )
             HeadsignRowView(
                 "Decorated None with Alert",
                 UpcomingFormat.NoTrips(
                     UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                    secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue"),
+                    warningAlert = UpcomingFormat.WarningAlert("alert-large-green-issue"),
                 ),
                 pillDecoration =
                     PillDecoration.OnRow(
