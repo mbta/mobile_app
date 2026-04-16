@@ -180,7 +180,7 @@ fun StopDetailsFilteredDeparturesView(
 
     @Composable
     fun AlertCard(displayAlert: DisplayAlert, summary: AlertSummary?, modifier: Modifier) {
-        val spec = displayAlert.cardSpec(now, isAllServiceDisrupted)
+        val spec = displayAlert.cardSpec(now, isAllServiceDisrupted, tripFilter?.tripId)
 
         AlertCard(
             displayAlert.alert,
@@ -273,7 +273,10 @@ fun StopDetailsFilteredDeparturesView(
             ) {
                 WorldCupBlurb(leaf, routeAccents, offerDetails = true)
             }
-        } else if (isAllServiceDisrupted) {
+        } else if (
+            isAllServiceDisrupted ||
+                displayAlerts.hasTakeover(now, isAllServiceDisrupted, tripFilter?.tripId)
+        ) {
             Box {}
         } else if (noPredictionsStatus != null) {
             Box(modifier = Modifier.padding(horizontal = 10.dp).padding(bottom = 12.dp)) {

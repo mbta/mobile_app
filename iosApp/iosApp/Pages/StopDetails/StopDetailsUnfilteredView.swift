@@ -130,6 +130,7 @@ struct StopDetailsUnfilteredView: View {
                                                        alertSummaries: summaries,
                                                        now: now,
                                                        isAllServiceDisrupted: false,
+                                                       tripId: nil,
                                                        routeAccents: .init(),
                                                        onRowTap: { id, _ in
                                                            nearbyVM.pushNavEntry(.alertDetails(

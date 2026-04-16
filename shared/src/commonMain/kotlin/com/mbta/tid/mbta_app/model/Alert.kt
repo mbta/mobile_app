@@ -363,6 +363,20 @@ internal constructor(
                     isSatisfied = false
                 }
             }
+
+            fun checkTripStrict(tripId: String) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkNullTrip() {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != null) {
+                    isSatisfied = false
+                }
+            }
         }
 
         internal fun satisfies(block: PredicateBuilder.() -> Unit): Boolean {

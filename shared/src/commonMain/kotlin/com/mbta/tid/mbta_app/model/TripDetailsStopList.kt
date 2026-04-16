@@ -61,7 +61,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                 UpcomingTrip(trip, schedule, prediction, predictionStop, vehicle, disruption?.alert)
                     .format(now, route, TripInstantDisplay.Context.TripDetails, false)
                     ?: return null,
-                secondaryAlert = null,
+                warningAlert = null,
             )
         }
     }

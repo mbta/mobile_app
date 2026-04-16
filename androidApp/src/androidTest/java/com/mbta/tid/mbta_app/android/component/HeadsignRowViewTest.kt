@@ -41,7 +41,7 @@ class HeadsignRowViewTest {
                         true,
                     ),
                 ),
-                secondaryAlert = null,
+                warningAlert = null,
             ),
         )
 
@@ -63,7 +63,7 @@ class HeadsignRowViewTest {
                         true,
                     )
                 ),
-                secondaryAlert = null,
+                warningAlert = null,
             ),
         )
 
@@ -72,7 +72,7 @@ class HeadsignRowViewTest {
     }
 
     @Test
-    fun showsOnePredictionWithSecondaryAlert() {
+    fun showsOnePredictionWithWarningAlert() {
         init(
             "A Place",
             UpcomingFormat.Some(
@@ -84,7 +84,7 @@ class HeadsignRowViewTest {
                         true,
                     )
                 ),
-                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-green-issue"),
+                warningAlert = UpcomingFormat.WarningAlert("alert-large-green-issue"),
             ),
         )
 
@@ -105,12 +105,12 @@ class HeadsignRowViewTest {
     }
 
     @Test
-    fun showsNoPredictionsWithSecondaryAlert() {
+    fun showsNoPredictionsWithWarningAlert() {
         init(
             "Somewhere",
             UpcomingFormat.NoTrips(
                 noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable,
-                secondaryAlert = UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                warningAlert = UpcomingFormat.WarningAlert("alert-large-bus-issue"),
             ),
         )
 

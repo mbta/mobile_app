@@ -33,7 +33,7 @@ final class DepartureTileTests: XCTestCase {
                         lastTrip: false,
                         alert: nil
                     )],
-                    secondaryAlert: nil
+                    warningAlert: nil
                 ),
                 upcoming: upcomingTrip
             ),
@@ -61,7 +61,7 @@ final class DepartureTileTests: XCTestCase {
                         lastTrip: false,
                         alert: nil
                     )],
-                    secondaryAlert: nil
+                    warningAlert: nil
                 ),
                 upcoming: upcomingTrip
             ),
@@ -91,7 +91,7 @@ final class DepartureTileTests: XCTestCase {
                         lastTrip: false,
                         alert: nil
                     )],
-                    secondaryAlert: nil
+                    warningAlert: nil
                 ),
                 upcoming: upcomingTrip
             ),
@@ -119,7 +119,7 @@ final class DepartureTileTests: XCTestCase {
                     lastTrip: false,
                     alert: nil
                 )],
-                secondaryAlert: nil
+                warningAlert: nil
             ),
             upcoming: upcomingTrip
         )

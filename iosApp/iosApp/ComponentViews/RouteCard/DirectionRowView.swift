@@ -63,7 +63,7 @@ struct DirectionRowView_Previews: PreviewProvider {
                             now: now, context: .nearbyTransit,
                             lastTrip: false,
                         ),
-                    ], secondaryAlert: nil)
+                    ], warningAlert: nil)
                 )
                 DirectionRowView(
                     direction: Direction(name: "North", destination: "None", id: 0),

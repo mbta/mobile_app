@@ -93,7 +93,7 @@ class RouteCardDataLeafTest {
                     headsign = null,
                     UpcomingFormat.NoTrips(
                         UpcomingFormat.NoTripsFormat.ServiceEndedToday,
-                        UpcomingFormat.SecondaryAlert(icon),
+                        UpcomingFormat.WarningAlert(icon),
                     ),
                 ),
                 RouteCardData.Leaf(
@@ -165,6 +165,80 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats as Some with major alert affecting only one trip`() {
+        val now = EasternTimeInstant.now()
+
+        val objects = ObjectCollectionBuilder()
+        val route =
+            objects.route {
+                id = "CR-Worcester"
+                type = RouteType.COMMUTER_RAIL
+            }
+
+        val trip = objects.trip()
+        val prediction =
+            objects.prediction {
+                this.trip = trip
+                departureTime = now + 5.minutes
+            }
+        val upcomingTrip = objects.upcomingTrip(prediction)
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity =
+                    mutableListOf(
+                        Alert.InformedEntity(
+                            activities = listOf(Alert.InformedEntity.Activity.Board),
+                            directionId = trip.directionId,
+                            route = route.id,
+                            trip = trip.id,
+                        )
+                    )
+            }
+
+        assertEquals(
+            LeafFormat.Single(
+                route = null,
+                headsign = "",
+                UpcomingFormat.Some(
+                    trips =
+                        listOf(
+                            UpcomingFormat.Some.FormattedTrip(
+                                upcomingTrip,
+                                route.type,
+                                TripInstantDisplay.Time(
+                                    predictionTime = prediction.departureTime!!,
+                                    last = true,
+                                    headline = true,
+                                ),
+                                lastTrip = true,
+                            )
+                        ),
+                    warningAlert =
+                        UpcomingFormat.WarningAlert(StopAlertState.Issue, MapStopRoute.COMMUTER),
+                ),
+            ),
+            RouteCardData.Leaf(
+                    LineOrRoute.Route(route),
+                    objects.stop(),
+                    0,
+                    emptyList(),
+                    emptySet(),
+                    listOf(upcomingTrip),
+                    listOf(alert),
+                    true,
+                    true,
+                    null,
+                    emptyList(),
+                    RouteCardData.Context.NearbyTransit,
+                )
+                .format(now, GlobalResponse(objects)),
+        )
+    }
+
+    @Test
     fun `formats CR as prediction in past with status`() {
         val now = EasternTimeInstant.now()
         val predictionTime = now - 2.minutes
@@ -199,7 +273,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    secondaryAlert = null,
+                    warningAlert = null,
                 ),
             ),
             RouteCardData.Leaf(
@@ -259,7 +333,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    secondaryAlert = null,
+                    warningAlert = null,
                 ),
             ),
             RouteCardData.Leaf(
@@ -314,7 +388,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             ),
             RouteCardData.Leaf(
@@ -365,7 +439,7 @@ class RouteCardDataLeafTest {
                             lastTrip = true,
                         )
                     ),
-                    UpcomingFormat.SecondaryAlert("alert-large-bus-issue"),
+                    UpcomingFormat.WarningAlert("alert-large-bus-issue"),
                 ),
             ),
             RouteCardData.Leaf(
@@ -899,8 +973,8 @@ class RouteCardDataLeafTest {
 
             assertEquals(
                 LeafFormat.branched {
-                    secondaryAlert =
-                        UpcomingFormat.SecondaryAlert(StopAlertState.Issue, MapStopRoute.RED)
+                    warningAlert =
+                        UpcomingFormat.WarningAlert(StopAlertState.Issue, MapStopRoute.RED)
                     branchRow(
                         "Ashmont",
                         UpcomingFormat.Some(

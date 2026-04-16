@@ -49,10 +49,10 @@ struct HeadsignRowView_Previews: PreviewProvider {
                 prediction.trip = trip2
                 prediction.departureTime = now.plus(minutes: 12)
             }
-            let secondaryAlert = UpcomingFormat.SecondaryAlert(
+            let warningAlert = UpcomingFormat.WarningAlert(
                 iconName: "alert-large-bus-issue"
             )
-            let greenLineEAlert = UpcomingFormat.SecondaryAlert(
+            let greenLineEAlert = UpcomingFormat.WarningAlert(
                 iconName: "alert-large-green-issue"
             )
             let greenLineERoute = objects.route { route in
@@ -80,7 +80,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
                             now: now, context: .nearbyTransit,
                             lastTrip: false,
                         ),
-                    ], secondaryAlert: nil)
+                    ], warningAlert: nil)
                 )
                 HeadsignRowView(
                     headsign: "Some with Alert",
@@ -97,7 +97,7 @@ struct HeadsignRowView_Previews: PreviewProvider {
                             now: now, context: .nearbyTransit,
                             lastTrip: false,
                         ),
-                    ], secondaryAlert: secondaryAlert)
+                    ], warningAlert: warningAlert)
                 )
                 HeadsignRowView(
                     headsign: "None",
@@ -109,14 +109,14 @@ struct HeadsignRowView_Previews: PreviewProvider {
                     headsign: "None with Alert",
                     predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
-                        secondaryAlert: secondaryAlert
+                        warningAlert: warningAlert
                     )
                 )
                 HeadsignRowView(
                     headsign: "Decorated None with Alert",
                     predictions: UpcomingFormat.NoTrips(
                         noTripsFormat: UpcomingFormat.NoTripsFormatPredictionsUnavailable(),
-                        secondaryAlert: greenLineEAlert
+                        warningAlert: greenLineEAlert
                     ),
                     pillDecoration: .onRow(route: greenLineERoute)
                 )

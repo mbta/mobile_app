@@ -32,8 +32,8 @@ struct PredictionRowView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            if let secondaryAlert = predictions.secondaryAlert {
-                Image(secondaryAlert.iconName)
+            if let warningAlert = predictions.warningAlert {
+                Image(warningAlert.iconName)
                     .accessibilityLabel("Alert")
                     .frame(width: 18, height: 18)
                     .padding(.trailing, 8)
@@ -106,7 +106,7 @@ struct PredictionRowView: View {
                     alert: nil
 
                 ),
-            ], secondaryAlert: nil),
+            ], warningAlert: nil),
             destination: { Text("Needham Heights") }
         )
 
@@ -119,7 +119,7 @@ struct PredictionRowView: View {
                     lastTrip: false,
                     alert: nil
                 ),
-                secondaryAlert: nil
+                warningAlert: nil
             ),
             destination: { Text("Longer Destination than That") }
         )
@@ -131,7 +131,7 @@ struct PredictionRowView: View {
                 format: .Overridden(text: "Stopped 10 stops away", last: false),
                 lastTrip: false,
                 alert: nil
-            ), secondaryAlert: nil),
+            ), warningAlert: nil),
             pillDecoration: .onRow(route: TestData.getRoute(id: "Green-B")),
             destination: { Text("Destination") }
         )
@@ -143,7 +143,7 @@ struct PredictionRowView: View {
                 format: .Overridden(text: "Stopped 10 stops away", last: false),
                 lastTrip: false,
                 alert: nil
-            ), secondaryAlert: nil),
+            ), warningAlert: nil),
             destination: { Text("Destination") }
         )
 
@@ -163,7 +163,7 @@ struct PredictionRowView: View {
                     lastTrip: false,
                     alert: nil
                 ),
-            ], secondaryAlert: nil),
+            ], warningAlert: nil),
             destination: { Text("Destination") }
         )
 

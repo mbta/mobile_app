@@ -30,7 +30,7 @@ class DrawableByNameTest {
         for (alertEffect in Alert.Effect.entries - Alert.Effect.ElevatorClosure) {
             val alert = alert { effect = alertEffect }
             for (route in MapStopRoute.entries + null) {
-                val icon = UpcomingFormat.SecondaryAlert(alert, route)
+                val icon = UpcomingFormat.WarningAlert(alert, route)
                 assertNotNull(drawableByName(icon.iconName))
             }
         }
