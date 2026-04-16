@@ -531,7 +531,7 @@ struct FormattedAlert: Equatable {
                 alertSummary.endStopName,
                 Self.summaryRecurrence(recurrence: alertSummary.recurrence)
             ))
-        case let .unknown(alertSummary): return summary(alertSummary: alertSummary.fallback)
+        case let .unknown(alertSummary): return AttributedString(alertSummary.fallback)
         case nil: return nil
         }
     }
