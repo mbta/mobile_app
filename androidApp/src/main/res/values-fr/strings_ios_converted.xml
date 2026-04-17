@@ -95,6 +95,7 @@
     <string name="crowding_not_crowded">Pas bondé</string>
     <string name="crowding_some_crowding">Quelques attroupements</string>
     <string name="crowding_unknown">Foule inconnue</string>
+    <string name="current_locale">fr</string>
     <string name="daily">Tous les jours</string>
     <string name="delay">Retard</string>
     <string name="delays_due_to_cause">Retards dus à &lt;b>%1$s&lt;/b></string>

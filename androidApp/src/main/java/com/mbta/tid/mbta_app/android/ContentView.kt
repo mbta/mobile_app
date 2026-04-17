@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -93,6 +94,7 @@ fun ContentView(
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
+    val currentLocale = stringResource(R.string.current_locale)
 
     if (notificationsEnabled) {
         LaunchedEffect(fcmToken) {
@@ -100,7 +102,7 @@ fun ContentView(
                 val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
                 val subscriptions =
                     SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
-                subscriptionsRepository.updateSubscriptions(it, subscriptions)
+                subscriptionsRepository.updateSubscriptions(it, subscriptions, currentLocale)
             }
         }
     }

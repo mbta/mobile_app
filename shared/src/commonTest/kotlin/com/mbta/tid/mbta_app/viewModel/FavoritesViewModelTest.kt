@@ -580,6 +580,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 0,
                 null,
                 false,
+                "en",
             )
             awaitItemSatisfying {
                 it.routeCardData != null &&
@@ -1066,7 +1067,7 @@ internal class FavoritesViewModelTest : KoinTest {
             }
 
         val subscriptionsRepository = mock<ISubscriptionsRepository>(MockMode.autofill)
-        everySuspend { subscriptionsRepository.updateSubscriptions(any(), any()) } calls
+        everySuspend { subscriptionsRepository.updateSubscriptions(any(), any(), any()) } calls
             {
                 delay(20.days)
             }
@@ -1143,6 +1144,7 @@ internal class FavoritesViewModelTest : KoinTest {
                 0,
                 "fcmToken",
                 false,
+                "en",
             )
             awaitItemSatisfying {
                 it.routeCardData != null &&

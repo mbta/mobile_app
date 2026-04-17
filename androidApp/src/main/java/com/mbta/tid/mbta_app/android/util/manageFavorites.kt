@@ -4,6 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.stringResource
+import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.repositories.Settings
@@ -25,6 +27,7 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
     LaunchedEffect(Unit) { favoritesUseCases.getRouteStopDirectionFavorites() }
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
+    val currentLocale = stringResource(R.string.current_locale)
     val updateFavorites:
         suspend (Map<RouteStopDirection, FavoriteSettings?>, EditFavoritesContext, Int) -> Unit =
         { newValues, context, defaultDirection ->
@@ -34,6 +37,7 @@ fun manageFavorites(favoritesUseCases: FavoritesUsecases = koinInject()): Manage
                 defaultDirection,
                 if (notificationsEnabled) fcmToken else null,
                 includeAccessibility,
+                currentLocale,
             )
         }
 
