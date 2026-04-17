@@ -54,41 +54,62 @@ internal constructor(
     public fun allClear(atTime: EasternTimeInstant): Boolean =
         activePeriod.all { it.end != null && it.end < atTime }
 
-    public fun significance(atTime: EasternTimeInstant?): AlertSignificance {
-        val intrinsicSignificance =
-            when (effect) {
-                // suspensions or shuttles can reasonably apply to an entire route
-                in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
-                // detours and closures are only major if they specify stops
-                in setOf(
-                    Effect.StationClosure,
-                    Effect.StopClosure,
-                    Effect.DockClosure,
-                    Effect.Detour,
-                    Effect.SnowRoute,
-                ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
-                // service changes are always secondary
-                Effect.ServiceChange -> AlertSignificance.Secondary
-                Effect.ElevatorClosure -> AlertSignificance.Accessibility
-                Effect.TrackChange -> AlertSignificance.Minor
-                // cancellation is major for the specific trip but minor for the
-                // route/stop/direction
-                Effect.Cancellation -> AlertSignificance.Minor
-                Effect.Delay ->
-                    if (
-                        (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
-                            cause == Cause.SingleTracking
-                    ) {
-                        AlertSignificance.Minor
-                    } else {
-                        AlertSignificance.None
-                    }
-                else -> AlertSignificance.None
+    /**
+     * If this alert has the given trip as an informed entity, return the significance of that trip
+     * (same as the intrinsic significance, with the exception of treating cancellations as Major)
+     *
+     * if the alert doesn't specify the given trip, then returns null.
+     */
+    public fun tripSpecificSignificance(trip: String): AlertSignificance? {
+
+        if (this.anyInformedEntitySatisfies { checkTripStrict(trip) }) {
+            if (effect == Effect.Cancellation) {
+                return AlertSignificance.Major
+            } else {
+                return intrinsicSignificance
             }
+        } else {
+            return null
+        }
+    }
+
+    /** The intrinsic significance of the alert, not considering the effect period. */
+    public val intrinsicSignificance: AlertSignificance =
+        when (effect) {
+            // suspensions or shuttles can reasonably apply to an entire route
+            in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
+            // detours and closures are only major if they specify stops
+            in setOf(
+                Effect.StationClosure,
+                Effect.StopClosure,
+                Effect.DockClosure,
+                Effect.Detour,
+                Effect.SnowRoute,
+            ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
+            // service changes are always secondary
+            Effect.ServiceChange -> AlertSignificance.Secondary
+            Effect.ElevatorClosure -> AlertSignificance.Accessibility
+            Effect.TrackChange -> AlertSignificance.Minor
+            // cancellation is major for the specific trip but minor for the
+            // route/stop/direction
+            Effect.Cancellation -> AlertSignificance.Minor
+            Effect.Delay ->
+                if (
+                    (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
+                        cause == Cause.SingleTracking
+                ) {
+                    AlertSignificance.Minor
+                } else {
+                    AlertSignificance.None
+                }
+            else -> AlertSignificance.None
+        }
+
+    public fun significance(atTime: EasternTimeInstant): AlertSignificance {
         val maxSignificance =
             when {
-                // active now or checking intrinsic significance, use intrinsic
-                atTime == null || isActive(atTime) -> AlertSignificance.Major
+                // active now - use intrinsic significance
+                isActive(atTime) -> AlertSignificance.Major
                 // upcoming, show as secondary if will be major later
                 willBeActiveSoon(atTime) -> AlertSignificance.Secondary
                 // all clear
@@ -540,7 +561,8 @@ internal constructor(
 
             val alerts =
                 alerts.filter {
-                    it.hasStopsSpecified && it.significance(null) >= AlertSignificance.Accessibility
+                    it.hasStopsSpecified &&
+                        it.intrinsicSignificance >= AlertSignificance.Accessibility
                 }
 
             val targetStopAlertIds =

@@ -49,6 +49,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalTestApi::class)
 class StopDetailsFilteredDeparturesViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
@@ -261,7 +262,7 @@ class StopDetailsFilteredDeparturesViewTest {
     }
 
     @Test
-    fun testShowsCancelledTripCard() {
+    fun testShowsCancelledTripCardWhenNoAlert() {
         val objects = ObjectCollectionBuilder()
         val now = EasternTimeInstant.now()
         val route =
@@ -362,6 +363,138 @@ class StopDetailsFilteredDeparturesViewTest {
         composeTestRule
             .onNodeWithTag("route_slash_icon", useUnmergedTree = true)
             .assertIsDisplayed()
+    }
+
+    @Test
+    fun testShowsCancelledTripCardOnlyOnceWhenAlert(): Unit = runBlocking {
+        val objects = ObjectCollectionBuilder()
+        val now = EasternTimeInstant.now()
+        val route =
+            objects.route {
+                id = "route_1"
+                type = RouteType.BUS
+                color = "DA291C"
+                routePatternIds = mutableListOf("pattern_1")
+            }
+        val routePattern =
+            objects.routePattern(route) {
+                id = "pattern_1"
+                directionId = 0
+                representativeTripId = "trip_1"
+            }
+
+        val stop = objects.stop { id = "stop_1" }
+        val trip =
+            objects.trip {
+                id = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                routePatternId = "pattern_1"
+            }
+
+        val schedule =
+            objects.schedule {
+                tripId = "trip_1"
+                stopId = "stop_1"
+                departureTime = now.plus(10.minutes)
+            }
+        val prediction =
+            objects.prediction {
+                id = "prediction_1"
+                stopId = "stop_1"
+                tripId = "trip_1"
+                routeId = "route_1"
+                directionId = 0
+                departureTime = now.plus(10.minutes)
+                scheduleRelationship = Prediction.ScheduleRelationship.Cancelled
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Cancellation
+                activePeriod(now - 5.seconds, now + 5.seconds)
+                informedEntity(
+                    directionId = 0,
+                    route = route.id.idText,
+                    stop = stop.id,
+                    trip = trip.id,
+                )
+            }
+
+        val globalResponse =
+            GlobalResponse(objects, mutableMapOf(stop.id to listOf(routePattern.id)))
+
+        val lineOrRoute = LineOrRoute.Route(route)
+        val leaf =
+            RouteCardData.Leaf(
+                lineOrRoute,
+                stop,
+                trip.directionId,
+                listOf(routePattern),
+                setOf(stop.id),
+                listOf(UpcomingTrip(trip, schedule, prediction)),
+                alertsHere = listOf(alert),
+                allDataLoaded = true,
+                hasSchedulesToday = true,
+                subwayServiceStartTime = null,
+                alertsDownstream = emptyList(),
+                RouteCardData.Context.StopDetailsFiltered,
+            )
+        val routeStopData = RouteCardData.RouteStopData(route, stop, listOf(leaf), globalResponse)
+
+        val stopFilter = StopDetailsFilter(routeId = route.id, directionId = trip.directionId)
+        val tripFilter = TripDetailsFilter(trip.id, null, null, false)
+
+        val routeData =
+            StopDetailsViewModel.RouteData.Filtered(
+                StopDetailsPageFilters(stop.id, stopFilter, tripFilter),
+                routeStopData,
+            )
+
+        val summaries =
+            mapOf(
+                alert.id to
+                    alert.summary(
+                        stop.id,
+                        0,
+                        listOf(routePatternOne, routePatternTwo),
+                        now,
+                        null,
+                        globalResponse,
+                    )
+            )
+
+        val viewModel =
+            MockStopDetailsViewModel(
+                StopDetailsViewModel.State(routeData, alertSummaries = summaries)
+            )
+
+        loadKoinMocks(objects) { settings = settingsRepository }
+        composeTestRule.setContent {
+            StopDetailsFilteredDeparturesView(
+                stopId = stop.id,
+                stopFilter = stopFilter,
+                tripFilter = tripFilter,
+                leaf = leaf,
+                selectedDirection = routeStopData.directions.first(),
+                allAlerts = AlertsStreamDataResponse(mapOf(alert.id to alert)),
+                now = now,
+                updateTripFilter = {},
+                tileScrollState = rememberScrollState(),
+                isFavorite = false,
+                openModal = {},
+                openSheetRoute = {},
+                viewModel = viewModel,
+            )
+        }
+
+        composeTestRule.waitForIdle()
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Cancellation"))
+
+        composeTestRule.onNodeWithText("Trip cancelled").assertIsNotDisplayed()
+        composeTestRule
+            .onNodeWithText("This trip has been cancelled. We’re sorry for the inconvenience.")
+            .assertIsNotDisplayed()
     }
 
     @Test
