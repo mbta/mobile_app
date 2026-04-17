@@ -213,6 +213,7 @@ private constructor(
         public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
+                routeId = trip.routeId.idText
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it.idText }
                 tripId = trip.id
                 directionId = trip.directionId
@@ -342,6 +343,7 @@ private constructor(
         public var trip: Trip
             get() = checkNotNull(trips[tripId])
             set(trip) {
+                routeId = trip.routeId.idText
                 routePatterns[trip.routePatternId]?.routeId?.let { routeId = it.idText }
                 tripId = trip.id
             }
