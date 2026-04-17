@@ -83,19 +83,16 @@ class DisplayAlertTest {
             objects.alert {
                 id = "hereForTargetTrip"
                 effect = Effect.Cancellation
-                activePeriod = mutableListOf(Alert.ActivePeriod(now.minus(10.minutes), null))
-                informedEntity =
-                    mutableListOf(
-                        Alert.InformedEntity(
-                            trip = "trip1",
-                            activities =
-                                listOf(
-                                    Alert.InformedEntity.Activity.Board,
-                                    Alert.InformedEntity.Activity.Exit,
-                                    Alert.InformedEntity.Activity.Ride,
-                                ),
-                        )
-                    )
+                activePeriod(now.minus(10.minutes), null)
+                informedEntity(
+                    trip = "trip1",
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                )
             }
         assertEquals(AlertCardSpec.Takeover, DisplayAlert(tripAlert).cardSpec(now, true, "trip1"))
     }
