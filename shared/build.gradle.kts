@@ -1,5 +1,6 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
 import com.diffplug.spotless.FormatterFunc
+import com.diffplug.spotless.Lint
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
@@ -160,6 +161,23 @@ spotless {
                         }
                     }
                     return text
+                }
+            },
+        )
+        custom(
+            "ban commented out override fun toString",
+            object : Serializable, FormatterFunc {
+                private val badRegex = Regex("""//\s+override fun toString""")
+
+                override fun apply(p0: String) = p0
+
+                override fun lint(content: String, file: File): List<Lint> {
+                    return content.lines().withIndex().mapNotNull { line ->
+                        val match = badRegex.find(line.value)
+                        if (match != null) {
+                            Lint.atLine(line.index + 1, "", "")
+                        } else null
+                    }
                 }
             },
         )
