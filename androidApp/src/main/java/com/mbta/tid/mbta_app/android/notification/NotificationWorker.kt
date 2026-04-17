@@ -19,74 +19,84 @@ import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.model.response.fromWorkData
+import io.sentry.kotlin.multiplatform.Sentry
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 
 class NotificationWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams), KoinComponent {
     override suspend fun doWork(): Result {
-        val payload = PushNotificationPayload.fromWorkData(inputData) ?: return Result.failure()
+        try {
+            val payload = PushNotificationPayload.fromWorkData(inputData) ?: return Result.failure()
 
-        val analytics: Analytics = get()
-        analytics.notificationReceived(payload)
+            val analytics: Analytics = get()
+            analytics.notificationReceived(payload)
 
-        val requestCode = payload.hashCode()
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.putExtra(PushNotificationPayload.launchKey, json.encodeToString(payload))
-        val pendingIntent =
-            PendingIntent.getActivity(
-                applicationContext,
-                requestCode,
-                intent,
-                PendingIntent.FLAG_IMMUTABLE,
+            val requestCode = payload.hashCode()
+            val intent = Intent(applicationContext, MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.putExtra(PushNotificationPayload.launchKey, json.encodeToString(payload))
+            val pendingIntent =
+                PendingIntent.getActivity(
+                    applicationContext,
+                    requestCode,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE,
+                )
+
+            // The applicationContext is not always guaranteed to be set to use the current system
+            // locale and can sometimes use a different but lower priority selected locale, even
+            // when the applicationContext has the correct locales set in its config.
+            val localeConfig = Configuration(applicationContext.resources.configuration)
+            val localeContext = applicationContext.createConfigurationContext(localeConfig)
+
+            val content = NotificationContent.build(localeContext.resources, payload)
+
+            val title = content.title
+            val body = content.body
+
+            val channelId = ALERTS_CHANNEL_ID
+            val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+            val notificationBuilder =
+                NotificationCompat.Builder(applicationContext, channelId)
+                    .setSmallIcon(R.drawable.app_icon_monochrome)
+                    .setContentTitle(title)
+                    .setContentText(body)
+                    .setAutoCancel(true)
+                    .setSound(defaultSoundUri)
+                    .setContentIntent(pendingIntent)
+
+            val notificationManager =
+                applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+            val channel =
+                NotificationChannel(
+                    channelId,
+                    applicationContext.getString(R.string.alerts_channel),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                )
+            channel.setSound(
+                defaultSoundUri,
+                AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build(),
             )
+            notificationManager.createNotificationChannel(channel)
 
-        // The applicationContext is not always guaranteed to be set to use the current system
-        // locale and can sometimes use a different but lower priority selected locale, even
-        // when the applicationContext has the correct locales set in its config.
-        val localeConfig = Configuration(applicationContext.resources.configuration)
-        val localeContext = applicationContext.createConfigurationContext(localeConfig)
-
-        val content = NotificationContent.build(localeContext.resources, payload)
-
-        val title = content.title
-        val body = content.body
-
-        val channelId = ALERTS_CHANNEL_ID
-        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder =
-            NotificationCompat.Builder(applicationContext, channelId)
-                .setSmallIcon(R.drawable.app_icon_monochrome)
-                .setContentTitle(title)
-                .setContentText(body)
-                .setAutoCancel(true)
-                .setSound(defaultSoundUri)
-                .setContentIntent(pendingIntent)
-
-        val notificationManager =
-            applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
-        val channel =
-            NotificationChannel(
-                channelId,
-                applicationContext.getString(R.string.alerts_channel),
-                NotificationManager.IMPORTANCE_DEFAULT,
-            )
-        channel.setSound(
-            defaultSoundUri,
-            AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build(),
-        )
-        notificationManager.createNotificationChannel(channel)
-
-        val idSuffix =
-            when (payload.summary) {
-                is AlertSummary.AllClear -> "-all-clear"
-                else -> ""
+            if (payload.summary is AlertSummary.Unknown) {
+                analytics.notificationsFallback()
             }
-        val notificationId = (payload.alertId + idSuffix).hashCode()
-        notificationManager.notify(notificationId, notificationBuilder.build())
-        return Result.success()
+
+            val idSuffix =
+                when (payload.summary) {
+                    is AlertSummary.AllClear -> "-all-clear"
+                    else -> ""
+                }
+            val notificationId = (payload.alertId + idSuffix).hashCode()
+            notificationManager.notify(notificationId, notificationBuilder.build())
+            return Result.success()
+        } catch (t: Throwable) {
+            Sentry.captureMessage("Error delivering notification: $t")
+            return Result.failure()
+        }
     }
 
     companion object {

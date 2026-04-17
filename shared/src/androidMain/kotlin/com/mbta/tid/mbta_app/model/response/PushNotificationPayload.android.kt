@@ -36,5 +36,6 @@ public fun PushNotificationPayload.Companion.fromWorkData(
         json.decodeFromJsonElement(JsonPrimitive(rawNotificationType))
     val rawSentAt = workData.getString("sent_at") ?: return null
     val sentAt = Instant.parse(rawSentAt)
+
     return PushNotificationPayload(title, summary, alertId, subscriptions, notificationType, sentAt)
 }
