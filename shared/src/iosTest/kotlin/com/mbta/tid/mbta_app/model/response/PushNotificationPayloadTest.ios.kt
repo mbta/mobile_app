@@ -45,4 +45,24 @@ class PushNotificationPayloadTestIos {
             payload,
         )
     }
+
+    @Test
+    fun `fromUserInfo returns null if failure to parse`() {
+        val title: PushNotificationPayload.Title =
+            PushNotificationPayload.Title.BareLabel("Red Line")
+        val subscriptions = listOf(RouteStopDirection(Route.Id("route"), "stop", 0))
+        val alertId = "alert"
+        val sentAt = Clock.System.now()
+        val userInfo =
+            mapOf<Any, Any?>(
+                "title" to json.encodeToString(title),
+                "summary" to "THIS IS A BAD SUMMARY",
+                "alert_id" to alertId,
+                "subscriptions" to json.encodeToString(subscriptions),
+                "notification_type" to "notification",
+                "sent_at" to sentAt.toString(),
+            )
+        val payload = PushNotificationPayload.fromUserInfo(userInfo)
+        assertEquals(null, payload)
+    }
 }
