@@ -342,19 +342,35 @@ internal constructor(
                 }
             }
 
-            fun checkRoute(routeId: Route.Id?) {
+            fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route != routeId) {
+                if (this@InformedEntity.route == null && this@InformedEntity.routeType == null)
+                    return
+                if (this@InformedEntity.route != null && this@InformedEntity.route != routeId) {
+                    isSatisfied = false
+                }
+                if (
+                    this@InformedEntity.routeType != null &&
+                        routeType != null &&
+                        this@InformedEntity.routeType != routeType
+                ) {
                     isSatisfied = false
                 }
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>) {
+            fun checkRouteIn(routeIds: Collection<Route.Id>, routeType: RouteType?) {
                 if (!isSatisfied) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route !in routeIds) {
+                if (this@InformedEntity.route == null && this@InformedEntity.routeType == null)
+                    return
+                if (this@InformedEntity.route != null && this@InformedEntity.route !in routeIds) {
+                    isSatisfied = false
+                }
+                if (
+                    this@InformedEntity.routeType != null &&
+                        routeType != null &&
+                        this@InformedEntity.routeType != routeType
+                ) {
                     isSatisfied = false
                 }
             }
@@ -504,6 +520,7 @@ internal constructor(
             alerts: Collection<Alert>,
             directionId: Int?,
             routeIds: List<Route.Id>,
+            routeType: RouteType?,
             stopIds: Set<String>?,
             tripId: String?,
         ): List<Alert> {
@@ -512,7 +529,7 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds)
+                        checkRouteIn(routeIds, routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
@@ -555,6 +572,7 @@ internal constructor(
         fun downstreamAlerts(
             alerts: Collection<Alert>,
             trip: Trip,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
@@ -574,7 +592,7 @@ internal constructor(
                                 InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
-                            checkRoute(trip.routeId)
+                            checkRoute(trip.routeId, routeType)
                             checkStopIn(targetStopWithChildren)
                         }
                     }
@@ -595,7 +613,7 @@ internal constructor(
                                         InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
-                                    checkRoute(trip.routeId)
+                                    checkRoute(trip.routeId, routeType)
                                     checkStop(stop)
                                 } && !targetStopAlertIds.contains(it.id)
                             }
@@ -614,6 +632,7 @@ internal constructor(
         fun alertsDownstreamForPatterns(
             alerts: Collection<Alert>,
             patterns: List<RoutePattern>,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
             tripsById: Map<String, Trip>,
         ): List<Alert> {
@@ -621,7 +640,7 @@ internal constructor(
                 .flatMap {
                     val trip = tripsById[it.representativeTripId]
                     if (trip != null) {
-                        downstreamAlerts(alerts, trip, targetStopWithChildren)
+                        downstreamAlerts(alerts, trip, routeType, targetStopWithChildren)
                     } else {
                         listOf()
                     }
