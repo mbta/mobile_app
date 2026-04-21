@@ -430,6 +430,8 @@
     <string name="technical_problem_lowercase">技術故障</string>
     <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">此網站僅供下客</string>
+    <string name="this_vehicle">這 %1$s</string>
+    <string name="this_vehicle_shuttle">這 %1$s</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
     <string name="time_picker_type_toggle">時間選擇器類型切換</string>

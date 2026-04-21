@@ -437,8 +437,8 @@
     <string name="technical_problem_lowercase">technical problem</string>
     <string name="the_time_mode">the &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
-    <string name="this_vehicle">This %1$s </string>
-    <string name="this_vehicle_shuttle">this %1$s </string>
+    <string name="this_vehicle">This %1$s</string>
+    <string name="this_vehicle_shuttle">this %1$s</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
     <string name="time_picker_type_toggle">Time picker type toggle</string>

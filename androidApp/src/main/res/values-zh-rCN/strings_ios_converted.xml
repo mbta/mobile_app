@@ -430,6 +430,8 @@
     <string name="technical_problem_lowercase">技术故障</string>
     <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">此站点仅供下客</string>
+    <string name="this_vehicle">这 %1$s</string>
+    <string name="this_vehicle_shuttle">这 %1$s</string>
     <string name="tie_replacement">更换轨枕</string>
     <string name="tie_replacement_lowercase">更换轨枕</string>
     <string name="time_picker_type_toggle">时间选择器类型切换</string>

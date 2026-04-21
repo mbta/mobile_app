@@ -430,6 +430,8 @@
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
     <string name="the_time_mode">cái &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
+    <string name="this_vehicle">Cái này %1$s</string>
+    <string name="this_vehicle_shuttle">cái này %1$s</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
     <string name="time_picker_type_toggle">công tắc chọn loại thời gian</string>

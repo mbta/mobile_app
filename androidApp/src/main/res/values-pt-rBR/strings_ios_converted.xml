@@ -438,6 +438,8 @@
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="the_time_mode">o &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">Esta parada é somente para desembarque</string>
+    <string name="this_vehicle">Este %1$s</string>
+    <string name="this_vehicle_shuttle">este %1$s</string>
     <string name="tie_replacement">Troca de pneu</string>
     <string name="tie_replacement_lowercase">substituição de dormentes</string>
     <string name="time_picker_type_toggle">Alternar tipo de seletor de tempo</string>
