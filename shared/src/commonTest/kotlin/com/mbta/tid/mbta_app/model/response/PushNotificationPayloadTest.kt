@@ -4,6 +4,7 @@ import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -453,7 +454,7 @@ class PushNotificationPayloadTest {
             PushNotificationPayload(
                 PushNotificationPayload.Title.BareLabel("Some Line"),
                 TripSpecificAlertSummary(
-                    TripSpecificAlertSummary.TripFrom(tripTime, "Here"),
+                    TripSpecificAlertSummary.TripFrom(tripTime, RouteType.COMMUTER_RAIL, "Here"),
                     Alert.Effect.Cancellation,
                 ),
                 "alert",

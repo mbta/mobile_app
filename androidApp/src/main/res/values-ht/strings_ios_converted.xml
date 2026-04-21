@@ -42,7 +42,6 @@
     <string name="alert_summary_timeframe_time">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020jiska demen</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020jiskaske yo bay lòt avi</string>
-    <string name="alert_summary_trip_shuttle">Otobis navèt yo ranplase %1$s %2$s soti &lt;b>%3$s&lt;/b> pou rive &lt;b>%4$s&lt;/b>%5$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Mizajou:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Lòt chemen</string>
@@ -476,10 +475,8 @@
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>
     <string name="trip_complete">Vwayaj konplè</string>
     <string name="trip_complete_body">%1$s sa a rive nan destinasyon li.</string>
-    <string name="trip_from">&lt;b>%1$s&lt;/b> soti nan &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Vwayaj pa disponib</string>
     <string name="trip_not_available_body">%1$s sa a poko resevwa yon vwayaj.</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> pou rive nan &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Eseye yon diferan òtograf oswa non.</string>
     <string name="try_your_search_again">Eseye rechèch ou a ankò.</string>
     <string name="unable_to_connect">Pa ka konekte</string>

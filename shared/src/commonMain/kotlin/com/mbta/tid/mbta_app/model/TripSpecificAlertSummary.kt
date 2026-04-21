@@ -21,9 +21,14 @@ constructor(
     @Serializable public sealed interface TripIdentity
 
     @Serializable
+    @SerialName("this_trip")
+    public data class ThisTrip(@SerialName("route_type") val routeType: RouteType) : TripIdentity
+
+    @Serializable
     @SerialName("trip_from")
     public data class TripFrom(
         @SerialName("trip_time") val tripTime: EasternTimeInstant,
+        @SerialName("route_type") val routeType: RouteType,
         @SerialName("stop_name") val stopName: String,
     ) : TripIdentity
 
@@ -31,6 +36,7 @@ constructor(
     @SerialName("trip_to")
     public data class TripTo(
         @SerialName("trip_time") val tripTime: EasternTimeInstant,
+        @SerialName("route_type") val routeType: RouteType,
         val headsign: String,
     ) : TripIdentity
 
@@ -60,20 +66,23 @@ constructor(
                         stopId,
                         directionId,
                         patterns,
-                        atTime,
                         informedTrips,
                         global,
                         recurrence,
                     )
                 }
                 Alert.Effect.StationClosure -> {
+                    val routeType =
+                        patterns.firstNotNullOfOrNull { global.getRoute(it.routeId)?.type }
+                            ?: return null
                     val (rawTripIdentity, isToday) =
-                        tripIdentityIsToday(stopId, atTime, informedTrips, global) ?: return null
+                        tripIdentityIsToday(atTime, routeType, informedTrips) ?: return null
                     val tripIdentity =
                         when (rawTripIdentity) {
                             is TripFrom ->
                                 TripTo(
                                     rawTripIdentity.tripTime,
+                                    routeType,
                                     informedTrip?.headsign ?: return null,
                                 )
                             else -> rawTripIdentity
@@ -94,12 +103,31 @@ constructor(
                     )
                 }
                 else -> {
+                    val routeType =
+                        patterns.firstNotNullOfOrNull { global.getRoute(it.routeId)?.type }
+                            ?: return null
                     val (tripIdentity, isToday) =
-                        tripIdentityIsToday(stopId, atTime, informedTrips, global) ?: return null
+                        tripIdentityIsToday(atTime, routeType, informedTrips) ?: return null
+                    val suspensionEffectStops =
+                        if (alert.effect == Alert.Effect.Suspension) {
+                            val location =
+                                alertLocation(alert, stopId, directionId, patterns, global)
+                            when (location) {
+                                is Location.SingleStop ->
+                                    if (location.downstream == true) location.stopName else null
+                                is Location.SuccessiveStops ->
+                                    if (location.downstream == true) location.startStopName
+                                    else null
+                                is Location.StopToDirection ->
+                                    if (location.downstream == true) location.startStopName
+                                    else null
+                                else -> null
+                            }?.let { listOf(it) }
+                        } else null
                     TripSpecificAlertSummary(
                         tripIdentity,
                         alert.effect,
-                        null,
+                        suspensionEffectStops,
                         isToday,
                         alert.cause,
                         recurrence,
@@ -109,10 +137,9 @@ constructor(
         }
 
         private fun tripIdentityIsToday(
-            stopId: String,
             atTime: EasternTimeInstant,
+            routeType: RouteType,
             informedTrips: List<UpcomingTrip>,
-            global: GlobalResponse,
         ): Pair<TripIdentity, Boolean>? {
             return when (val informedTrip = informedTrips.singleOrNull()) {
                 null if informedTrips.isEmpty() -> null
@@ -130,10 +157,7 @@ constructor(
                         informedTrip.schedule?.departureTime
                             ?: informedTrip.schedule?.arrivalTime
                             ?: return null
-                    Pair(
-                        TripFrom(tripTime, global.getStop(stopId)?.name ?: return null),
-                        tripTime.serviceDate == atTime.serviceDate,
-                    )
+                    Pair(ThisTrip(routeType), tripTime.serviceDate == atTime.serviceDate)
                 }
             }
         }

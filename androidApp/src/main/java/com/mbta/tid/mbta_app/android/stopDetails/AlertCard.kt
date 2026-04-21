@@ -218,6 +218,7 @@ fun AlertCardPreview() {
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(2026, Month.MARCH, 10, 22, 17),
+                    RouteType.COMMUTER_RAIL,
                     "Mansfield",
                 ),
                 Alert.Effect.Cancellation,

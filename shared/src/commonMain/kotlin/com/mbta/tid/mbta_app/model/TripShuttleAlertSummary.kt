@@ -12,9 +12,8 @@ public data class TripShuttleAlertSummary
 @DefaultArgumentInterop.Enabled
 constructor(
     @SerialName("trip_identity") val tripIdentity: TripIdentity,
-    @SerialName("current_stop_name") val currentStopName: String,
+    @SerialName("start_stop_name") val startStopName: String,
     @SerialName("end_stop_name") val endStopName: String,
-    @SerialName("is_today") val isToday: Boolean = true,
     override val recurrence: Recurrence? = null,
 ) : AlertSummary() {
     override val effect: Alert.Effect = Alert.Effect.Shuttle
@@ -26,7 +25,12 @@ constructor(
     public data class SingleTrip(
         @SerialName("trip_time") val tripTime: EasternTimeInstant,
         @SerialName("route_type") val routeType: RouteType,
+        @SerialName("from_stop") val fromStop: String?,
     ) : TripIdentity
+
+    @Serializable
+    @SerialName("this_trip")
+    public data class ThisTrip(@SerialName("route_type") val routeType: RouteType) : TripIdentity
 
     @Serializable @SerialName("multiple_trips") public data object MultipleTrips : TripIdentity
 
@@ -36,13 +40,11 @@ constructor(
             stopId: String,
             directionId: Int,
             patterns: List<RoutePattern>,
-            atTime: EasternTimeInstant,
             informedTrips: List<UpcomingTrip>,
             global: GlobalResponse,
             recurrence: Recurrence?,
         ): TripShuttleAlertSummary? {
-            val (tripIdentity, isToday) =
-                tripIdentityIsToday(patterns, atTime, informedTrips, global) ?: return null
+            val tripIdentity = tripIdentity(patterns, informedTrips, global) ?: return null
             val currentStopName = global.getStop(stopId)?.name
             val location =
                 alertLocation(
@@ -57,9 +59,8 @@ constructor(
             return if (currentStopName != null && location is Location.SuccessiveStops) {
                 TripShuttleAlertSummary(
                     tripIdentity,
-                    currentStopName,
+                    if (location.downstream == false) currentStopName else location.startStopName,
                     location.endStopName,
-                    isToday,
                     recurrence,
                 )
             } else {
@@ -67,35 +68,20 @@ constructor(
             }
         }
 
-        private fun tripIdentityIsToday(
+        private fun tripIdentity(
             patterns: List<RoutePattern>,
-            atTime: EasternTimeInstant,
             informedTrips: List<UpcomingTrip>,
             global: GlobalResponse,
-        ): Pair<TripIdentity, Boolean>? {
-            return when (val informedTrip = informedTrips.singleOrNull()) {
+        ): TripIdentity? {
+            return when (informedTrips.singleOrNull()) {
                 null if informedTrips.isEmpty() -> null
-                null ->
-                    Pair(
-                        MultipleTrips,
-                        informedTrips.any {
-                            (it.schedule?.departureTime ?: it.schedule?.arrivalTime)?.serviceDate ==
-                                atTime.serviceDate
-                        },
-                    )
+                null -> MultipleTrips
 
                 else -> {
-                    val tripTime =
-                        informedTrip.schedule?.departureTime
-                            ?: informedTrip.schedule?.arrivalTime
-                            ?: return null
                     val routeType =
                         patterns.firstNotNullOfOrNull { global.getRoute(it.routeId)?.type }
                             ?: return null
-                    Pair(
-                        SingleTrip(tripTime, routeType),
-                        tripTime.serviceDate == atTime.serviceDate,
-                    )
+                    ThisTrip(routeType)
                 }
             }
         }

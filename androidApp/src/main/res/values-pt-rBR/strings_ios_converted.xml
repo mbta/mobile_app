@@ -39,7 +39,6 @@
     <string name="alert_summary_timeframe_time">\u0020até %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020até amanhã</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020até novo aviso</string>
-    <string name="alert_summary_trip_shuttle">Ônibus de transporte substituem %1$s %2$s de &lt;b>%3$s&lt;/b> a &lt;b>%4$s&lt;/b>%5$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Atualização:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Caminho alternativo</string>
@@ -464,10 +463,8 @@
     <string name="trip_cancelled_details">Esta viagem foi cancelada. Lamentamos o inconveniente.</string>
     <string name="trip_complete">Viagem concluída</string>
     <string name="trip_complete_body">%1$s chegou ao destino.</string>
-    <string name="trip_from">&lt;b>%1$s&lt;/b> de &lt;b>%2$s&lt;/b></string>
     <string name="trip_not_available">Viagem não disponível</string>
     <string name="trip_not_available_body">Este %1$s ainda não foi atribuído a uma viagem.</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> para &lt;b>%2$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Tente uma ortografia ou nome diferente.</string>
     <string name="try_your_search_again">Tente pesquisar novamente.</string>
     <string name="unable_to_connect">Impossível conectar</string>
