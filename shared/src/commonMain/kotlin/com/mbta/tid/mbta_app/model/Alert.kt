@@ -343,38 +343,32 @@ internal constructor(
             }
 
             fun checkRoute(route: Route?) {
-                checkRoute(route?.id, route?.type)
+                checkRoute(route?.id)
+                checkRouteType(route?.type)
             }
 
-            fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
+            fun checkRoute(routeId: Route.Id?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
-                if (this@InformedEntity.route == null && this@InformedEntity.routeType == null)
-                    return
-                if (this@InformedEntity.route != null && this@InformedEntity.route != routeId) {
-                    isSatisfied = false
-                }
-                if (
-                    this@InformedEntity.routeType != null &&
-                        routeType != null &&
-                        this@InformedEntity.routeType != routeType
-                ) {
+                if (this@InformedEntity.route == null) return
+                if (this@InformedEntity.route != routeId) {
                     isSatisfied = false
                 }
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>, routeType: RouteType?) {
+            fun checkRouteIn(routeIds: Collection<Route.Id>) {
                 if (!isSatisfied) return
-                if (this@InformedEntity.route == null && this@InformedEntity.routeType == null)
-                    return
-                if (this@InformedEntity.route != null && this@InformedEntity.route !in routeIds) {
+                if (this@InformedEntity.route == null) return
+                if (this@InformedEntity.route !in routeIds) {
                     isSatisfied = false
                 }
-                if (
-                    this@InformedEntity.routeType != null &&
-                        routeType != null &&
-                        this@InformedEntity.routeType != routeType
-                ) {
+            }
+
+            fun checkRouteType(routeType: RouteType?) {
+                if (!isSatisfied) return
+                if (routeType == null) return
+                if (this@InformedEntity.routeType == null) return
+                if (this@InformedEntity.routeType != routeType) {
                     isSatisfied = false
                 }
             }
@@ -533,7 +527,8 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds, routeType)
+                        checkRouteIn(routeIds)
+                        checkRouteType(routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
@@ -596,7 +591,8 @@ internal constructor(
                                 InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
-                            checkRoute(trip.routeId, routeType)
+                            checkRoute(trip.routeId)
+                            checkRouteType(routeType)
                             checkStopIn(targetStopWithChildren)
                         }
                     }
@@ -617,7 +613,8 @@ internal constructor(
                                         InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
-                                    checkRoute(trip.routeId, routeType)
+                                    checkRoute(trip.routeId)
+                                    checkRouteType(routeType)
                                     checkStop(stop)
                                 } && !targetStopAlertIds.contains(it.id)
                             }
