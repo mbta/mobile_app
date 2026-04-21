@@ -823,6 +823,17 @@
         }
       }
     },
+    "**%@** %@ from %@" : {
+      "comment" : "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "**%1$@** %2$@ from %3$@"
+          }
+        }
+      }
+    },
     "**%@** ahead" : {
       "comment" : "Label for an alert that exists on a future stop along the selected route,\nthe interpolated value can be any alert effect,\nex. \"[Detour] ahead\", \"[Shuttle buses] ahead\"",
       "localizations" : {
@@ -964,6 +975,12 @@
         }
       }
     },
+    "**%1$@** %2$@ from **%3$@**" : {
+      "comment" : "Trip identity in the form of ”[time] [vehicle type] from [stop]”, ex “[12:13 PM] [train] from [Ruggles]”"
+    },
+    "**%1$@** %2$@ to **%3$@**" : {
+      "comment" : "Trip identity in the form of ”[time] [vehicle type] to [headsign]”, ex “[12:13 PM] [train] to [Stoughton]”"
+    },
     "**%1$@** at **%2$@** added to Favorites" : {
       "comment" : "Favorite added toast text, the first value is the route name (Red Line, 1 bus),\nand the second is a stop name (Ruggles, Alewife).\nThe asterisks surround bolded text. ex. \"[Green Line] at [Arlington] added to Favorites\"",
       "localizations" : {
@@ -1013,6 +1030,7 @@
     },
     "**%1$@** from **%2$@**" : {
       "comment" : "Trip identity in the form of ”[time] from [stop]”, ex “[12:13 PM] from [Ruggles]”",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -1060,6 +1078,7 @@
     },
     "**%1$@** to **%2$@**" : {
       "comment" : "Trip identity in the form of ”[time] to [headsign]”, ex “[12:13 PM] to [Stoughton]”",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -3146,6 +3165,9 @@
           }
         }
       }
+    },
+    "%1$@ is replaced by shuttle buses from **%2$@** to **%3$@**%4$@" : {
+      "comment" : "Alert summary in the format of “[trip identity] is replaced by shuttle buses from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] from [Ruggles] to [Forest Hills][ some days until Friday]”"
     },
     "%1$@ to %2$@ has departed %3$@" : {
       "comment" : "Screen reader text that is announced when a trip disappears from the screen.,\nin the format \"[train/bus/ferry] to [destination] has departed [stop name]\",\nex. \"[train] to [Alewife] has departed [Central]\", \"[bus] to [Nubian] has departed [Harvard]\"",
@@ -20058,6 +20080,7 @@
     },
     "Shuttle buses replace %1$@ %2$@ from **%3$@** to **%4$@**%5$@" : {
       "comment" : "Alert summary in the format of “Shuttle buses replace [trip identity] [day] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] [today] from [Ruggles] to [Forest Hills][ some days until Friday]”",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -20102,6 +20125,9 @@
           }
         }
       }
+    },
+    "Shuttle buses replace %1$@ from **%2$@** to **%3$@**%4$@" : {
+      "comment" : "Alert summary in the format of “Shuttle buses replace [trip identity] from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [this train] from [Ruggles] to [Forest Hills][ some days until Friday]”"
     },
     "Shuttle buses replace service" : {
       "comment" : "Shuttle alert VoiceOver text",
@@ -23023,6 +23049,12 @@
           }
         }
       }
+    },
+    "this %1$@" : {
+      "comment" : "Trip identity in the form of ”this [vehicle type]”, ex ”this [train]”"
+    },
+    "This %1$@" : {
+      "comment" : "Trip identity in the form of ”This [vehicle type]”, ex ”This [train]”"
     },
     "This stop has %ld elevators closed" : {
       "comment" : "Describe an elevator outage at the stop in the list of all stops on the trip",
@@ -26111,6 +26143,9 @@
           }
         }
       }
+    },
+    "will terminate at %1$@ %2$@" : {
+      "comment" : "Trip specific alert effect denoting suspension downstream, with interpolated stop name, ex: “will terminate at [Porter]“"
     },
     "You can always change location settings later in the Settings app." : {
       "localizations" : {
