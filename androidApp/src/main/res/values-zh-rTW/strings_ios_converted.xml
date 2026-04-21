@@ -93,6 +93,7 @@
     <string name="crowding_not_crowded">不擁擠。</string>
     <string name="crowding_some_crowding">有些擁擠</string>
     <string name="crowding_unknown">擁擠程度未知</string>
+    <string name="current_locale">zh-Hant-TW</string>
     <string name="daily">日常的</string>
     <string name="delay">延誤</string>
     <string name="delays_due_to_cause">因 &lt;b>%1$s&lt;/b> 造成延誤</string>

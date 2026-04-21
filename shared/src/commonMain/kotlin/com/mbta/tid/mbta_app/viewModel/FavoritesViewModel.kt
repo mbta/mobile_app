@@ -66,6 +66,7 @@ public interface IFavoritesViewModel {
         defaultDirection: Int,
         fcmToken: String?,
         includeAccessibility: Boolean,
+        locale: String,
     )
 }
 
@@ -96,6 +97,7 @@ public class FavoritesViewModel(
             val defaultDirection: Int,
             val fcmToken: String?,
             val includeAccessibility: Boolean,
+            val locale: String,
         ) : Event
     }
 
@@ -256,6 +258,7 @@ public class FavoritesViewModel(
                         event.defaultDirection,
                         event.fcmToken,
                         event.includeAccessibility,
+                        event.locale,
                     )
                     reloadFavorites()
                 }
@@ -366,6 +369,7 @@ public class FavoritesViewModel(
         defaultDirection: Int,
         fcmToken: String?,
         includeAccessibility: Boolean,
+        locale: String,
     ) {
         fireEvent(
             Event.UpdateFavorites(
@@ -374,6 +378,7 @@ public class FavoritesViewModel(
                 defaultDirection,
                 fcmToken,
                 includeAccessibility,
+                locale,
             )
         )
     }
@@ -435,6 +440,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         defaultDirection: Int,
         fcmToken: String?,
         includeAccessibility: Boolean,
+        locale: String,
     ) {
         onUpdateFavorites(updatedFavorites)
     }

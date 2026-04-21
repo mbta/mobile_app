@@ -95,6 +95,7 @@
     <string name="crowding_not_crowded">No hay mucha gente</string>
     <string name="crowding_some_crowding">Algunas aglomeraciones</string>
     <string name="crowding_unknown">Aglomeración desconocida</string>
+    <string name="current_locale">es</string>
     <string name="daily">A diario</string>
     <string name="delay">Demora</string>
     <string name="delays_due_to_cause">Retrasos debido a &lt;b>%1$s&lt;/b></string>

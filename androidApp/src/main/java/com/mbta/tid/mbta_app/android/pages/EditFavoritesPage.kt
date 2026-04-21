@@ -96,6 +96,7 @@ fun EditFavoritesPage(
 ) {
     val state by favoritesViewModel.models.collectAsState()
     val resources = LocalResources.current
+    val currentLocale = stringResource(R.string.current_locale)
 
     val removeToastText = stringResource(R.string.favorites_toast_remove)
     val removeToastFallbackText = stringResource(R.string.favorites_toast_remove_fallback)
@@ -149,6 +150,7 @@ fun EditFavoritesPage(
                     deletedFavorite.direction,
                     fcmToken,
                     includeAccessibility,
+                    currentLocale,
                 )
 
                 toastViewModel.showToast(
@@ -165,6 +167,7 @@ fun EditFavoritesPage(
                                         deletedFavorite.direction,
                                         fcmToken,
                                         includeAccessibility,
+                                        currentLocale,
                                     )
                                     toastViewModel.hideToast()
                                 },
