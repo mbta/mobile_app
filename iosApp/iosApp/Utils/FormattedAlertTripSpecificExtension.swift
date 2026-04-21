@@ -21,7 +21,7 @@ extension FormattedAlert {
         case let .tripFrom(tripIdentity): String(
                 format: NSLocalizedString(
                     "**%1$@** %2$@ from **%3$@**",
-                    comment: "Trip identity in the form of ”[time] [vehicle type] from [stop]”, ex “[12:13 PM] [train] from [Ruggles]”"
+                    comment: "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]“"
                 ),
                 tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
                 tripIdentity.routeType.typeText(isOnly: true),

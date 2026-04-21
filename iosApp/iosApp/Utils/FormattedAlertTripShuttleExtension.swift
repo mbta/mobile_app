@@ -16,8 +16,8 @@ extension FormattedAlert {
             if let fromStop = tripIdentity.fromStop {
                 String(
                     format: NSLocalizedString(
-                        "**%@** %@ from %@",
-                        comment: "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]"
+                        "**%1$@** %2$@ from **%3$@**",
+                        comment: "Trip identity in the format of “[time] [vehicle] from [stop]”, ex “[12:13 PM] [train] from [South Station]“"
                     ),
                     tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
                     tripIdentity.routeType.typeText(isOnly: true),
