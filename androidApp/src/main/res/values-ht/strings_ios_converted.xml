@@ -98,6 +98,7 @@
     <string name="crowding_not_crowded">Pa gen moun</string>
     <string name="crowding_some_crowding">Gen kèk moun ki te twò chaje</string>
     <string name="crowding_unknown">Foul moun enkoni</string>
+    <string name="current_locale">ht</string>
     <string name="daily">Chak jou</string>
     <string name="delay">Reta</string>
     <string name="delays_due_to_cause">Reta akòz &lt;b>%1$s&lt;/b></string>

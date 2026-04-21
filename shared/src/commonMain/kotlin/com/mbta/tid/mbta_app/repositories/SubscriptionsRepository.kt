@@ -18,9 +18,14 @@ public interface ISubscriptionsRepository {
     public suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
+        locale: String,
     )
 
-    public suspend fun updateAccessibility(fcmToken: String, includeAccessibility: Boolean)
+    public suspend fun updateAccessibility(
+        fcmToken: String,
+        includeAccessibility: Boolean,
+        locale: String,
+    )
 }
 
 internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent {
@@ -30,8 +35,9 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
     override suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
+        locale: String,
     ) {
-        val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions)
+        val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions, locale)
         ApiResult.runCatching {
             mobileBackendClient
                 .post {
@@ -43,8 +49,12 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
         }
     }
 
-    override suspend fun updateAccessibility(fcmToken: String, includeAccessibility: Boolean) {
-        val requestBody = UpdateAccessibilityRequest(fcmToken, includeAccessibility)
+    override suspend fun updateAccessibility(
+        fcmToken: String,
+        includeAccessibility: Boolean,
+        locale: String,
+    ) {
+        val requestBody = UpdateAccessibilityRequest(fcmToken, includeAccessibility, locale)
         ApiResult.runCatching {
             mobileBackendClient
                 .post {
@@ -58,17 +68,24 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
 }
 
 public class MockSubscriptionsRepository(
-    public val onUpdateSubscriptions: (String, List<SubscriptionRequest>) -> Unit = { _, _ -> },
-    public val onUpdateAccessibility: (String, Boolean) -> Unit = { _, _ -> },
+    public val onUpdateSubscriptions: (String, List<SubscriptionRequest>, String) -> Unit =
+        { _, _, _ ->
+        },
+    public val onUpdateAccessibility: (String, Boolean, String) -> Unit = { _, _, _ -> },
 ) : ISubscriptionsRepository {
     override suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
+        locale: String,
     ) {
-        onUpdateSubscriptions(fcmToken, subscriptions)
+        onUpdateSubscriptions(fcmToken, subscriptions, locale)
     }
 
-    override suspend fun updateAccessibility(fcmToken: String, includeAccessibility: Boolean) {
-        onUpdateAccessibility(fcmToken, includeAccessibility)
+    override suspend fun updateAccessibility(
+        fcmToken: String,
+        includeAccessibility: Boolean,
+        locale: String,
+    ) {
+        onUpdateAccessibility(fcmToken, includeAccessibility, locale)
     }
 }

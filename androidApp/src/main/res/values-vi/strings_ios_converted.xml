@@ -93,6 +93,7 @@
     <string name="crowding_not_crowded">Không đông đúc</string>
     <string name="crowding_some_crowding">Một số chỗ chật chội</string>
     <string name="crowding_unknown">Tình trạng đông đúc chưa rõ</string>
+    <string name="current_locale">vi</string>
     <string name="daily">Hằng ngày</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>

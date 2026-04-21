@@ -95,6 +95,7 @@
     <string name="crowding_not_crowded">Not crowded</string>
     <string name="crowding_some_crowding">Some crowding</string>
     <string name="crowding_unknown">Crowding unknown</string>
+    <string name="current_locale">en</string>
     <string name="daily">Daily</string>
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
