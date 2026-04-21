@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 public data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
-    public constructor(objects: ObjectCollectionBuilder) : this(objects.alerts)
+    public constructor(objects: ObjectCollectionBuilder) : this(objects.alerts.toMap())
 
     public fun getAlert(alertId: String): Alert? = alerts[alertId]
 

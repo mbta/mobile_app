@@ -93,7 +93,7 @@ constructor(
 
     internal constructor(
         objects: ObjectCollectionBuilder
-    ) : this(response = VehiclesStreamDataResponse(objects.vehicles))
+    ) : this(response = VehiclesStreamDataResponse(objects.vehicles.toMap()))
 
     override fun connect(
         routeId: LineOrRoute.Id,

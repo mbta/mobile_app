@@ -35,8 +35,8 @@ internal constructor(
     public constructor(
         objects: ObjectCollectionBuilder
     ) : this(
-        objects.facilities,
-        objects.lines,
+        objects.facilities.toMap(),
+        objects.lines.toMap(),
         objects.routePatterns
             .flatMap {
                 objects.trips[it.value.representativeTripId]?.stopIds?.map { stopId ->
@@ -44,23 +44,23 @@ internal constructor(
                 } ?: emptyList()
             }
             .groupBy({ it.first }, { it.second }),
-        objects.routes,
-        objects.routePatterns,
-        objects.stops,
-        objects.trips,
+        objects.routes.toMap(),
+        objects.routePatterns.toMap(),
+        objects.stops.toMap(),
+        objects.trips.toMap(),
     )
 
     public constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
     ) : this(
-        objects.facilities,
-        objects.lines,
-        patternIdsByStop,
-        objects.routes,
-        objects.routePatterns,
-        objects.stops,
-        objects.trips,
+        objects.facilities.toMap(),
+        objects.lines.toMap(),
+        patternIdsByStop.toMap(),
+        objects.routes.toMap(),
+        objects.routePatterns.toMap(),
+        objects.stops.toMap(),
+        objects.trips.toMap(),
     )
 
     public fun withWorldCupService(today: LocalDate): GlobalResponse =
