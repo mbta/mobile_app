@@ -14,7 +14,7 @@ public data class PredictionsStreamDataResponse(
 ) {
     public constructor(
         objects: ObjectCollectionBuilder
-    ) : this(objects.predictions, objects.trips, objects.vehicles)
+    ) : this(objects.predictions.toMap(), objects.trips.toMap(), objects.vehicles.toMap())
 
     public fun predictionQuantity(): Int = predictions.size
 

@@ -21,8 +21,8 @@ public data class PredictionsByStopJoinResponse(
         objects.predictions.values
             .groupBy { it.stopId }
             .mapValues { predictions -> predictions.value.associateBy { it.id } },
-        objects.trips,
-        objects.vehicles,
+        objects.trips.toMap(),
+        objects.vehicles.toMap(),
     )
 
     public constructor(
