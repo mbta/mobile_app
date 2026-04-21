@@ -350,10 +350,7 @@ internal constructor(
             fun checkRoute(routeId: Route.Id?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route != routeId) {
-                    isSatisfied = false
-                }
+                checkRouteIn(listOf(routeId))
             }
 
             fun checkRouteIn(routeIds: Collection<Route.Id>) {
