@@ -342,6 +342,10 @@ internal constructor(
                 }
             }
 
+            fun checkRoute(route: Route?) {
+                checkRoute(route?.id, route?.type)
+            }
+
             fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
