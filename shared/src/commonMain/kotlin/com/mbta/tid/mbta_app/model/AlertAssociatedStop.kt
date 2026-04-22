@@ -37,11 +37,12 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
 
             for (patternId in global.patternIdsByStop.getOrElse(stop.id) { listOf() }) {
                 val pattern = global.routePatterns[patternId] ?: continue
+                val route = global.routes[pattern.routeId] ?: continue
                 // If pattern is on the GL, ignore atypical routes
                 if (greenRoutes.contains(pattern.routeId) && !pattern.isTypical()) continue
                 relevantAlerts =
                     nullStopAlerts.filter { alert ->
-                        alert.anyInformedEntity { entityMatcher(it, null, pattern) }
+                        alert.anyInformedEntity { entityMatcher(it, null, pattern, route) }
                     } + relevantAlerts
             }
 
@@ -91,10 +92,12 @@ private fun entityMatcher(
     entity: Alert.InformedEntity,
     stop: Stop?,
     pattern: RoutePattern,
+    route: Route?,
 ): Boolean {
     return entity.appliesTo(
         stopId = stop?.id,
         routeId = pattern.routeId,
+        routeType = route?.type,
         directionId = pattern.directionId,
     )
 }
@@ -139,7 +142,10 @@ private fun getAlertStateByRoute(
                 childAlerts.values.mapNotNull { stopState(it.stop, mapRoute, childAlerts) }
 
             val patternStates =
-                (patterns ?: emptyList()).map { statesForPattern(it, stop, serviceAlerts) }
+                (patterns ?: emptyList()).map {
+                    val route = global.routes[it.routeId]
+                    statesForPattern(it, stop, route, serviceAlerts)
+                }
 
             // Children will always have a Normal StopAlertState if they have any service for the
             // given MapStopRoute, so patterns and child states being empty here means that the
@@ -179,12 +185,14 @@ private fun stopState(
 private fun statesForPattern(
     pattern: RoutePattern,
     stop: Stop,
+    route: Route?,
     serviceAlerts: List<Alert>,
 ): StopAlertState {
 
     val matchingAlert =
-        serviceAlerts.find { alert -> alert.anyInformedEntity { entityMatcher(it, stop, pattern) } }
-            ?: return StopAlertState.Normal
+        serviceAlerts.find { alert ->
+            alert.anyInformedEntity { entityMatcher(it, stop, pattern, route) }
+        } ?: return StopAlertState.Normal
     if (matchingAlert.effect == Alert.Effect.Shuttle) {
         return StopAlertState.Shuttle
     }

@@ -342,19 +342,30 @@ internal constructor(
                 }
             }
 
-            fun checkRoute(routeId: Route.Id?) {
+            fun checkRoute(route: Route?) {
+                checkRoute(route?.id, route?.type)
+            }
+
+            fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
+                checkRouteType(routeType)
                 if (routeId == null) return
+                checkRouteIdIn(listOf(routeId))
+            }
+
+            fun checkRouteIdIn(routeIds: Collection<Route.Id>) {
+                if (!isSatisfied) return
                 if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route != routeId) {
+                if (this@InformedEntity.route !in routeIds) {
                     isSatisfied = false
                 }
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>) {
+            fun checkRouteType(routeType: RouteType?) {
                 if (!isSatisfied) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route !in routeIds) {
+                if (routeType == null) return
+                if (this@InformedEntity.routeType == null) return
+                if (this@InformedEntity.routeType != routeType) {
                     isSatisfied = false
                 }
             }
@@ -504,6 +515,7 @@ internal constructor(
             alerts: Collection<Alert>,
             directionId: Int?,
             routeIds: List<Route.Id>,
+            routeType: RouteType?,
             stopIds: Set<String>?,
             tripId: String?,
         ): List<Alert> {
@@ -512,7 +524,8 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds)
+                        checkRouteIdIn(routeIds)
+                        checkRouteType(routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
@@ -555,6 +568,7 @@ internal constructor(
         fun downstreamAlerts(
             alerts: Collection<Alert>,
             trip: Trip,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
@@ -574,7 +588,7 @@ internal constructor(
                                 InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
-                            checkRoute(trip.routeId)
+                            checkRoute(trip.routeId, routeType)
                             checkStopIn(targetStopWithChildren)
                         }
                     }
@@ -595,7 +609,7 @@ internal constructor(
                                         InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
-                                    checkRoute(trip.routeId)
+                                    checkRoute(trip.routeId, routeType)
                                     checkStop(stop)
                                 } && !targetStopAlertIds.contains(it.id)
                             }
@@ -614,6 +628,7 @@ internal constructor(
         fun alertsDownstreamForPatterns(
             alerts: Collection<Alert>,
             patterns: List<RoutePattern>,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
             tripsById: Map<String, Trip>,
         ): List<Alert> {
@@ -621,7 +636,7 @@ internal constructor(
                 .flatMap {
                     val trip = tripsById[it.representativeTripId]
                     if (trip != null) {
-                        downstreamAlerts(alerts, trip, targetStopWithChildren)
+                        downstreamAlerts(alerts, trip, routeType, targetStopWithChildren)
                     } else {
                         listOf()
                     }

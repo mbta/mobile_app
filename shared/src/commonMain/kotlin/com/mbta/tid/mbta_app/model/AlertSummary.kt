@@ -406,7 +406,7 @@ public sealed class AlertSummary {
                                         // `affectedStops` only includes parent stops, here we check
                                         // if the child stops on each pattern are affected
                                         checkStop(stopOnTrip)
-                                        checkRoute(pattern.routeId)
+                                        checkRoute(pattern.routeId, routes.firstOrNull()?.type)
                                     }
                                 }
                                 ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }

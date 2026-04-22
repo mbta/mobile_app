@@ -300,6 +300,7 @@ class AlertTest {
                 ),
                 0,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             )
@@ -333,6 +334,7 @@ class AlertTest {
                 listOf(validAlert, invalidAlert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -361,6 +363,7 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -384,6 +387,7 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -411,10 +415,44 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
             emptyList(),
+        )
+    }
+
+    @Test
+    fun `filters out alerts with non-matching route type`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route =
+            objects.route {
+                sortOrder = 1
+                type = RouteType.COMMUTER_RAIL
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(route = null, routeType = route.type, stop = stop.id)
+            }
+        val otherModeAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(route = null, routeType = RouteType.BUS, stop = stop.id)
+            }
+        assertEquals(
+            Alert.applicableAlerts(
+                listOf(alert, otherModeAlert),
+                null,
+                listOf(route.id),
+                route.type,
+                setOf(stop.id),
+                tripId = null,
+            ),
+            listOf(alert),
         )
     }
 
@@ -451,6 +489,7 @@ class AlertTest {
                 listOf(alert, otherAlert),
                 directionId = null,
                 listOf(route.id),
+                routeType = null,
                 stopIds = null,
                 tripId = null,
             ),
@@ -526,10 +565,50 @@ class AlertTest {
             Alert.downstreamAlerts(
                 listOf(alertRideTargetStop, alertBoard, firstRideAlert, secondRideAlert),
                 trip,
+                null,
                 setOf(targetStop.id),
             )
 
         assertEquals(listOf(firstRideAlert), downstreamAlerts)
+    }
+
+    @Test
+    fun `downstreamAlerts returns mode-specific alert for first downstream alerting stop`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val targetStop = objects.stop()
+        val stopWithBoardAlert = objects.stop()
+        val firstStopWithRideAlert = objects.stop()
+        val secondStopWithRideAlert = objects.stop()
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    routeType = route.type,
+                    stop = firstStopWithRideAlert.id,
+                    directionId = null,
+                )
+            }
+
+        val trip =
+            objects.trip {
+                routeId = route.id.idText
+                directionId = 0
+                stopIds =
+                    listOf(
+                        targetStop.id,
+                        stopWithBoardAlert.id,
+                        firstStopWithRideAlert.id,
+                        secondStopWithRideAlert.id,
+                    )
+            }
+
+        val downstreamAlerts =
+            Alert.downstreamAlerts(listOf(alert), trip, route.type, setOf(targetStop.id))
+
+        assertEquals(listOf(alert), downstreamAlerts)
     }
 
     @Test
@@ -585,6 +664,7 @@ class AlertTest {
             Alert.downstreamAlerts(
                 listOf(alertAllStops, alertDownstream2Only),
                 trip,
+                null,
                 setOf(targetStop.id),
             )
 
@@ -615,7 +695,8 @@ class AlertTest {
                 stopIds = listOf(targetStop.id, nextStop.id)
             }
 
-        val downstreamAlerts = Alert.downstreamAlerts(listOf(alert), trip, setOf(targetStop.id))
+        val downstreamAlerts =
+            Alert.downstreamAlerts(listOf(alert), trip, null, setOf(targetStop.id))
 
         assertEquals(listOf(), downstreamAlerts)
     }
@@ -770,6 +851,7 @@ class AlertTest {
                         alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAshmont, routePatternBraintree),
+                null,
                 targetStopWithChildren = setOf(park.id),
                 tripsById = global.trips,
             )
@@ -786,6 +868,7 @@ class AlertTest {
                         alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAlewife),
+                null,
                 targetStopWithChildren = setOf(park.id),
                 tripsById = global.trips,
             )
@@ -806,5 +889,24 @@ class AlertTest {
             }
         assertFalse { active.allClear(now) }
         assertTrue { allClear.allClear(now) }
+    }
+
+    @Test
+    fun `anyInformedEntitySatisfies checkRoute`() {
+        val objects = ObjectCollectionBuilder()
+
+        val alert =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    routeType = RouteType.BUS,
+                )
+            }
+
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.BUS) })
+        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.COMMUTER_RAIL) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), null) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, null) })
     }
 }

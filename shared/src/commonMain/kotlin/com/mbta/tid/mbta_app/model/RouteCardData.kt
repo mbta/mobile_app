@@ -312,6 +312,7 @@ public data class RouteCardData(
                         alertsHere.filter { it.significance(atTime) >= AlertSignificance.Major },
                         directionId,
                         routePatterns.map { it.routeId },
+                        lineOrRoute.type,
                         stopIds,
                         null,
                     )
@@ -942,12 +943,15 @@ public data class RouteCardData(
                                     }
                             is Route.Id -> listOf(path.routeOrLineId)
                         }
+                    val routeType: RouteType? =
+                        routes.firstOrNull()?.let { globalData.getRoute(it)?.type }
                     val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
                                 activeRelevantAlerts,
                                 path.directionId,
                                 routes,
+                                routeType,
                                 leafBuilder.stopIds,
                                 null,
                             )
@@ -963,6 +967,7 @@ public data class RouteCardData(
                         Alert.alertsDownstreamForPatterns(
                             activeRelevantAlerts,
                             leafBuilder.routePatterns.orEmpty(),
+                            routeType,
                             leafBuilder.stopIds.orEmpty(),
                             globalData.trips,
                         ) +
@@ -971,6 +976,7 @@ public data class RouteCardData(
                                         activeRelevantAlerts,
                                         path.directionId,
                                         greenRoutes.minus(routes.toSet()).toList(),
+                                        routeType,
                                         leafBuilder.stopIds,
                                         null,
                                     )
