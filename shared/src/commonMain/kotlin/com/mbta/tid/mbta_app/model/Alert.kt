@@ -447,12 +447,7 @@ internal constructor(
         val days: Set<DayOfWeek>,
         val endDayKnown: Boolean,
     ) {
-        /**
-         * If the alert is for > 1 day and it is active for all days in the range, treat it as daily
-         */
-        public val daily: Boolean =
-            days == (start.serviceDate..end.serviceDate).map { it.dayOfWeek }.toSet() &&
-                days.size > 1
+        public val daily: Boolean = days.size == 7
 
         public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
         public val toEndOfService: Boolean =
@@ -464,7 +459,7 @@ internal constructor(
         val firstPeriod = activePeriod.minBy { it.start }
         val lastPeriod = activePeriod.maxBy { it.end ?: return@recurrenceRange null }
         val lastPeriodEnd = lastPeriod.end ?: return null
-        val daysOfWeek =
+        val seenDaysOfWeek =
             activePeriod
                 .flatMap {
                     if (it.endServiceDate == null) {
@@ -475,6 +470,21 @@ internal constructor(
                 }
                 .sorted()
                 .toSet()
+
+        val allDaysInRangeSeen =
+            lastPeriod.endServiceDate != null &&
+                (firstPeriod.startServiceDate..lastPeriod.endServiceDate)
+                    .map { it.dayOfWeek }
+                    .toSet() == seenDaysOfWeek
+
+        // If all the days in the range have been seen, then include all days.
+        // This indicates that the alert is "daily".
+        val daysOfWeek =
+            if (allDaysInRangeSeen && seenDaysOfWeek.size > 1) {
+                DayOfWeek.entries.toSet()
+            } else {
+                seenDaysOfWeek
+            }
 
         return RecurrenceInfo(
             firstPeriod.start,

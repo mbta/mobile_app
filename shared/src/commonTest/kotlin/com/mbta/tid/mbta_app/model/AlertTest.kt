@@ -134,7 +134,7 @@ class AlertTest {
         val endOfService = LocalTime(3, 0)
         val alert =
             ObjectCollectionBuilder.Single.alert {
-                for (daysForward in 0..6) {
+                for (daysForward in 0..5) {
                     activePeriod(
                         EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
                         EasternTimeInstant(
@@ -148,7 +148,7 @@ class AlertTest {
         assertEquals(
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
-                EasternTimeInstant(today.plus(DatePeriod(days = 7)), endOfService),
+                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
                 DayOfWeek.entries.toSet(),
                 endDayKnown = true,
             ),
@@ -164,7 +164,7 @@ class AlertTest {
         val alert =
             ObjectCollectionBuilder.Single.alert {
                 durationCertainty = Alert.DurationCertainty.Unknown
-                for (daysForward in 0..6) {
+                for (daysForward in 0..5) {
                     activePeriod(
                         EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
                         EasternTimeInstant(
@@ -178,7 +178,7 @@ class AlertTest {
         assertEquals(
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
-                EasternTimeInstant(today.plus(DatePeriod(days = 7)), endOfService),
+                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
                 DayOfWeek.entries.toSet(),
                 endDayKnown = false,
             ),
