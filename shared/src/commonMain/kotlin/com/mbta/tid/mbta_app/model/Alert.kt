@@ -458,6 +458,12 @@ internal constructor(
         if (activePeriod.size <= 1) return null
         val firstPeriod = activePeriod.minBy { it.start }
         val lastPeriod = activePeriod.maxBy { it.end ?: return@recurrenceRange null }
+        if (
+            lastPeriod.endServiceDate != null &&
+                firstPeriod.startServiceDate == lastPeriod.endServiceDate
+        ) {
+            return null
+        }
         val lastPeriodEnd = lastPeriod.end ?: return null
         val seenDaysOfWeek =
             activePeriod
