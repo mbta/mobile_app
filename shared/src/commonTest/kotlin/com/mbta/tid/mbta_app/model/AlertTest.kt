@@ -890,4 +890,23 @@ class AlertTest {
         assertFalse { active.allClear(now) }
         assertTrue { allClear.allClear(now) }
     }
+
+    @Test
+    fun `anyInformedEntitySatisfies checkRoute`() {
+        val objects = ObjectCollectionBuilder()
+
+        val alert =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    routeType = RouteType.BUS,
+                )
+            }
+
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.BUS) })
+        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.COMMUTER_RAIL) })
+        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), null) })
+        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, null) })
+    }
 }
