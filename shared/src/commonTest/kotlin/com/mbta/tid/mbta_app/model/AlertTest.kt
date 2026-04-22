@@ -906,7 +906,7 @@ class AlertTest {
         assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
         assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.BUS) })
         assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.COMMUTER_RAIL) })
-        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), null) })
-        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, null) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), null) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, null) })
     }
 }

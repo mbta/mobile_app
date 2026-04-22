@@ -363,9 +363,8 @@ internal constructor(
 
             fun checkRouteType(routeType: RouteType?) {
                 if (!isSatisfied) return
-                if (routeType == null && this@InformedEntity.routeType != null) {
-                    isSatisfied = false
-                }
+                if (routeType == null && this@InformedEntity.routeType != null) return
+
                 if (this@InformedEntity.routeType == null) return
                 if (this@InformedEntity.routeType != routeType) {
                     isSatisfied = false
