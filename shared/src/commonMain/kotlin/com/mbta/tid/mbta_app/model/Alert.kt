@@ -447,8 +447,12 @@ internal constructor(
         val days: Set<DayOfWeek>,
         val endDayKnown: Boolean,
     ) {
+        /**
+         * If the alert is for > 1 day and it is active for all days in the range, treat it as daily
+         */
         public val daily: Boolean =
-            days == (start.serviceDate..end.serviceDate).map { it.dayOfWeek }.toSet()
+            days == (start.serviceDate..end.serviceDate).map { it.dayOfWeek }.toSet() &&
+                days.size > 1
 
         public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
         public val toEndOfService: Boolean =
