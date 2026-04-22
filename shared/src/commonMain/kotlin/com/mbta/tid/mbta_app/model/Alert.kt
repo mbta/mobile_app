@@ -343,25 +343,25 @@ internal constructor(
             }
 
             fun checkRoute(route: Route?) {
-                checkRoute(route?.id)
-                checkRouteType(route?.type)
+                checkRoute(route?.id, route?.type)
             }
 
-            fun checkRoute(routeId: Route.Id?) {
+            fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
-                checkRouteIn(listOf(routeId))
+                checkRouteIn(listOf(routeId), routeType)
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>) {
+            fun checkRouteIn(routeIds: Collection<Route.Id>, routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (this@InformedEntity.route == null) return
                 if (this@InformedEntity.route !in routeIds) {
                     isSatisfied = false
                 }
+                checkRouteType(routeType)
             }
 
-            fun checkRouteType(routeType: RouteType?) {
+            private fun checkRouteType(routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeType == null) return
                 if (this@InformedEntity.routeType == null) return
@@ -524,8 +524,7 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds)
-                        checkRouteType(routeType)
+                        checkRouteIn(routeIds, routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
@@ -588,8 +587,7 @@ internal constructor(
                                 InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
-                            checkRoute(trip.routeId)
-                            checkRouteType(routeType)
+                            checkRoute(trip.routeId, routeType)
                             checkStopIn(targetStopWithChildren)
                         }
                     }
@@ -610,8 +608,7 @@ internal constructor(
                                         InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
-                                    checkRoute(trip.routeId)
-                                    checkRouteType(routeType)
+                                    checkRoute(trip.routeId, routeType)
                                     checkStop(stop)
                                 } && !targetStopAlertIds.contains(it.id)
                             }
