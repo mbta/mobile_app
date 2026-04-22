@@ -447,7 +447,8 @@ internal constructor(
         val days: Set<DayOfWeek>,
         val endDayKnown: Boolean,
     ) {
-        public val daily: Boolean = days.size == 7
+        public val daily: Boolean =
+            days == (start.serviceDate..end.serviceDate).map { it.dayOfWeek }.toSet()
 
         public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
         public val toEndOfService: Boolean =

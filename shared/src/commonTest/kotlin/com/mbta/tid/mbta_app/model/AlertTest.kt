@@ -239,16 +239,37 @@ class AlertTest {
                     EasternTimeInstant(LocalDate(2026, 5, 1), LocalTime(3, 0, 0)),
                 )
             }
-
-        assertEquals(
+        val expectedInfo =
             Alert.RecurrenceInfo(
                 alert.activePeriod.first().start,
                 alert.activePeriod.last().end!!,
                 selectedDays,
                 endDayKnown = true,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+        assertEquals(expectedInfo, alert.recurrenceRange())
+        assertFalse(expectedInfo.daily)
+    }
+
+    @Test
+    fun `recurrenceRange subset of continuous weekdays is still daily `() {
+
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(9, 0, 0)),
+                )
+            }
+
+        assertTrue(alert.recurrenceRange()!!.daily)
     }
 
     @Test
