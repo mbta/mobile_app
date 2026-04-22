@@ -349,19 +349,19 @@ internal constructor(
             fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeId == null) return
-                checkRouteIn(listOf(routeId), routeType)
+                checkRouteIdIn(listOf(routeId))
+                checkRouteType(routeType)
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>, routeType: RouteType?) {
+            fun checkRouteIdIn(routeIds: Collection<Route.Id>) {
                 if (!isSatisfied) return
                 if (this@InformedEntity.route == null) return
                 if (this@InformedEntity.route !in routeIds) {
                     isSatisfied = false
                 }
-                checkRouteType(routeType)
             }
 
-            private fun checkRouteType(routeType: RouteType?) {
+            fun checkRouteType(routeType: RouteType?) {
                 if (!isSatisfied) return
                 if (routeType == null) return
                 if (this@InformedEntity.routeType == null) return
@@ -524,7 +524,8 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds, routeType)
+                        checkRouteIdIn(routeIds)
+                        checkRouteType(routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
