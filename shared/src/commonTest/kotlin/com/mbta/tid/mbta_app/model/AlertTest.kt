@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 
@@ -133,7 +134,7 @@ class AlertTest {
         val endOfService = LocalTime(3, 0)
         val alert =
             ObjectCollectionBuilder.Single.alert {
-                for (daysForward in 0..5) {
+                for (daysForward in 0..6) {
                     activePeriod(
                         EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
                         EasternTimeInstant(
@@ -147,7 +148,7 @@ class AlertTest {
         assertEquals(
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
-                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
+                EasternTimeInstant(today.plus(DatePeriod(days = 7)), endOfService),
                 DayOfWeek.entries.toSet(),
                 endDayKnown = true,
             ),
@@ -163,7 +164,7 @@ class AlertTest {
         val alert =
             ObjectCollectionBuilder.Single.alert {
                 durationCertainty = Alert.DurationCertainty.Unknown
-                for (daysForward in 0..5) {
+                for (daysForward in 0..6) {
                     activePeriod(
                         EasternTimeInstant(today.plus(DatePeriod(days = daysForward)), ninePM),
                         EasternTimeInstant(
@@ -177,7 +178,7 @@ class AlertTest {
         assertEquals(
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
-                EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
+                EasternTimeInstant(today.plus(DatePeriod(days = 7)), endOfService),
                 DayOfWeek.entries.toSet(),
                 endDayKnown = false,
             ),
@@ -204,6 +205,39 @@ class AlertTest {
                         ),
                     )
                 }
+            }
+
+        assertEquals(
+            Alert.RecurrenceInfo(
+                alert.activePeriod.first().start,
+                alert.activePeriod.last().end!!,
+                selectedDays,
+                endDayKnown = true,
+            ),
+            alert.recurrenceRange(),
+        )
+    }
+
+    @Test
+    fun `recurrenceRange two sets of continuous week days `() {
+        val selectedDays =
+            setOf(
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY,
+            )
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 25), LocalTime(3, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 27), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 5, 1), LocalTime(3, 0, 0)),
+                )
             }
 
         assertEquals(

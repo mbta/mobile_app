@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -460,32 +459,22 @@ internal constructor(
         val firstPeriod = activePeriod.minBy { it.start }
         val lastPeriod = activePeriod.maxBy { it.end ?: return@recurrenceRange null }
         val lastPeriodEnd = lastPeriod.end ?: return null
-        val alertDays =
-            activePeriod.map {
-                if (
-                    it.startServiceDate == it.endServiceDate &&
-                        it.start.local.time == firstPeriod.start.local.time &&
-                        it.end?.local?.time == lastPeriodEnd.local.time
-                ) {
-                    it.startServiceDate
-                } else {
-                    return@recurrenceRange null
+        val daysOfWeek =
+            activePeriod
+                .flatMap {
+                    if (it.endServiceDate == null) {
+                        DayOfWeek.entries.toSet()
+                    } else {
+                        (it.startServiceDate..it.endServiceDate).map { it.dayOfWeek }.toSet()
+                    }
                 }
-            }
-        val allAlertDaysContiguous =
-            alertDays
-                .windowed(size = 2, step = 1) { (a, b) -> (b - a) == DatePeriod(days = 1) }
-                .all { it }
-        val days =
-            if (allAlertDaysContiguous) {
-                DayOfWeek.entries.toSet()
-            } else {
-                alertDays.map { it.dayOfWeek }.toSet()
-            }
+                .sorted()
+                .toSet()
+
         return RecurrenceInfo(
             firstPeriod.start,
             lastPeriodEnd,
-            days,
+            daysOfWeek,
             endDayKnown = durationCertainty == DurationCertainty.Known,
         )
     }
