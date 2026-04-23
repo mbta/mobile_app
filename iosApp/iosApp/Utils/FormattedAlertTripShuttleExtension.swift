@@ -13,7 +13,7 @@ extension FormattedAlert {
     static func summaryTripShuttleIdentity(tripIdentity: TripShuttleAlertSummaryTripIdentity) -> String {
         switch onEnum(of: tripIdentity) {
         case let .singleTrip(tripIdentity):
-            if let fromStop = tripIdentity.fromStop {
+            if let fromStop = tripIdentity.fromStopName {
                 String(
                     format: NSLocalizedString(
                         "**%1$@** %2$@ from **%3$@**",
@@ -52,7 +52,7 @@ extension FormattedAlert {
         let identity = alertSummary.tripIdentity
         let identityString = Self.summaryTripShuttleIdentity(tripIdentity: identity)
 
-        return if case let .singleTrip(singleTrip) = onEnum(of: identity), singleTrip.fromStop != nil {
+        return if case let .singleTrip(singleTrip) = onEnum(of: identity), singleTrip.fromStopName != nil {
             AttributedString.tryMarkdown(String(
                 format: NSLocalizedString(
                     "%1$@ is replaced by shuttle buses from **%2$@** to **%3$@**%4$@",

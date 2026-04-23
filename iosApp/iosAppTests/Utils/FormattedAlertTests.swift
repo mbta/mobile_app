@@ -28,7 +28,7 @@ final class FormattedAlertTests: XCTestCase {
                         second: 0
                     ),
                     routeType: .commuterRail,
-                    fromStop: nil
+                    fromStopName: nil
                 ),
                 startStopName: "Oak Grove",
                 endStopName: "Forest Hills",
@@ -55,7 +55,7 @@ final class FormattedAlertTests: XCTestCase {
                         second: 0
                     ),
                     routeType: .commuterRail,
-                    fromStop: "Oak Grove"
+                    fromStopName: "Oak Grove"
                 ),
                 startStopName: "Ruggles",
                 endStopName: "Forest Hills",
@@ -100,7 +100,7 @@ final class FormattedAlertTests: XCTestCase {
                         second: 0
                     ),
                     routeType: .commuterRail,
-                    fromStop: "Oak Grove"
+                    fromStopName: "Oak Grove"
                 ),
                 startStopName: "Ruggles",
                 endStopName: "Forest Hills",

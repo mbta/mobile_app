@@ -686,7 +686,7 @@ final class AlertCardTests: XCTestCase {
                         second: 0
                     ),
                     routeType: .commuterRail,
-                    fromStop: "Oak Grove"
+                    fromStopName: "Oak Grove"
                 ),
                 startStopName: "Ruggles",
                 endStopName: "Forest Hills"
@@ -816,7 +816,7 @@ final class AlertCardTests: XCTestCase {
                         second: 0
                     ),
                     routeType: .commuterRail,
-                    fromStop: "Oak Grove"
+                    fromStopName: "Oak Grove"
                 ),
                 startStopName: "Ruggles",
                 endStopName: "Forest Hills",
