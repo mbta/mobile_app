@@ -319,11 +319,6 @@ final class ContentViewTests: XCTestCase {
             connectExp?.fulfill()
         }
 
-        func __getSnapshot() async throws -> ApiResult<AlertsStreamDataResponse> {
-            XCTFail()
-            return ApiResultError(code: nil, message: "")
-        }
-
         func disconnect() {
             disconnectExp?.fulfill()
         }

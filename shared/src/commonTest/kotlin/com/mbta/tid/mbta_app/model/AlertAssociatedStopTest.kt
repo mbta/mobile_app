@@ -100,6 +100,51 @@ class AlertAssociatedStopTest {
     }
 
     @Test
+    fun `doesn't include mode-wide shuttle for a mode the stop doesn't serve`() {
+        val objects = ObjectCollectionBuilder()
+        lateinit var child1: Stop
+        lateinit var child2: Stop
+        val stop =
+            objects.stop {
+                child1 = childStop()
+                child2 = childStop()
+            }
+        val route =
+            objects.route {
+                id = "Mattapan"
+                type = RouteType.LIGHT_RAIL
+            }
+        objects.routePattern(route) {
+            directionId = 0
+            representativeTrip { stopIds = listOf(child1.id) }
+        }
+        objects.routePattern(route) {
+            directionId = 1
+            representativeTrip { stopIds = listOf(child2.id) }
+        }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Shuttle
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                informedEntity(route = null, routeType = RouteType.FERRY)
+            }
+
+        val result =
+            AlertAssociatedStop(
+                stop,
+                emptyMap(),
+                setOf(),
+                now = EasternTimeInstant.now(),
+                GlobalResponse(objects),
+            )
+
+        assertEquals(mapOf(MapStopRoute.MATTAPAN to StopAlertState.Normal), result.stateByRoute)
+        assertEquals(listOf(), result.childAlerts[child1.id]!!.serviceAlerts)
+        assertEquals(listOf(), result.childAlerts[child2.id]!!.serviceAlerts)
+    }
+
+    @Test
     fun `doesn't show alert icon if alert affects trips`() {
         val objects = ObjectCollectionBuilder()
         val route = objects.route { id = "Red" }

@@ -71,6 +71,7 @@ public data class GlobalMapData(
             now: EasternTimeInstant,
             globalData: GlobalResponse,
         ): AlertAssociatedStop? {
+
             val alertingStop =
                 AlertAssociatedStop(
                     stop = stop,
