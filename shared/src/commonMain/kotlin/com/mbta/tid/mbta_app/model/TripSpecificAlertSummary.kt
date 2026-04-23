@@ -71,7 +71,9 @@ constructor(
                         recurrence,
                     )
                 }
-                Alert.Effect.StationClosure -> {
+                Alert.Effect.StationClosure,
+                Alert.Effect.StopClosure,
+                Alert.Effect.DockClosure -> {
                     val routeType =
                         patterns.firstNotNullOfOrNull { global.getRoute(it.routeId)?.type }
                             ?: return null
