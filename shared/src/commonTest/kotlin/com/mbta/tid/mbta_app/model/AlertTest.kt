@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 
@@ -215,6 +216,60 @@ class AlertTest {
             ),
             alert.recurrenceRange(),
         )
+    }
+
+    @Test
+    fun `recurrenceRange two sets of continuous week days `() {
+        val selectedDays =
+            setOf(
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY,
+            )
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 25), LocalTime(3, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 27), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 5, 1), LocalTime(3, 0, 0)),
+                )
+            }
+        val expectedInfo =
+            Alert.RecurrenceInfo(
+                alert.activePeriod.first().start,
+                alert.activePeriod.last().end!!,
+                selectedDays,
+                endDayKnown = true,
+            )
+        assertEquals(expectedInfo, alert.recurrenceRange())
+        assertFalse(expectedInfo.daily)
+    }
+
+    @Test
+    fun `recurrenceRange subset of continuous weekdays is still daily `() {
+
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(9, 0, 0)),
+                )
+            }
+
+        assertTrue(alert.recurrenceRange()!!.daily)
     }
 
     @Test
