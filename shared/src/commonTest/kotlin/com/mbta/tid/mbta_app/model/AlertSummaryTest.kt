@@ -130,7 +130,7 @@ class AlertSummaryTest {
                 put("type", "single_trip")
                 put("trip_time", "2026-03-06T15:21:00-05:00")
                 put("route_type", "commuter_rail")
-                put("from_stop", "Oak Grove")
+                put("from_stop_name", "Oak Grove")
             }
             put("start_stop_name", "Ruggles")
             put("end_stop_name", "Forest Hills")

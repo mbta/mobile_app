@@ -25,7 +25,7 @@ constructor(
     public data class SingleTrip(
         @SerialName("trip_time") val tripTime: EasternTimeInstant,
         @SerialName("route_type") val routeType: RouteType,
-        @SerialName("from_stop") val fromStop: String?,
+        @SerialName("from_stop_name") val fromStopName: String?,
     ) : TripIdentity
 
     @Serializable

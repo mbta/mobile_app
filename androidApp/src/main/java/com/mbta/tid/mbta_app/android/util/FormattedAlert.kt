@@ -148,7 +148,7 @@ data class FormattedAlert(
             is TripShuttleAlertSummary -> {
                 val identity = alertSummary.tripIdentity
                 val identityString = summaryTripShuttleIdentity(identity, resources)
-                if (identity is TripShuttleAlertSummary.SingleTrip && identity.fromStop != null)
+                if (identity is TripShuttleAlertSummary.SingleTrip && identity.fromStopName != null)
                     AnnotatedString.fromHtml(
                         resources.getString(
                             R.string.alert_summary_trip_shuttle_downstream,
@@ -654,7 +654,7 @@ data class FormattedAlert(
         ) =
             when (tripIdentity) {
                 is TripShuttleAlertSummary.SingleTrip ->
-                    tripIdentity.fromStop?.let {
+                    tripIdentity.fromStopName?.let {
                         resources.getString(
                             R.string.trip_from,
                             tripIdentity.tripTime.formattedTime(),
