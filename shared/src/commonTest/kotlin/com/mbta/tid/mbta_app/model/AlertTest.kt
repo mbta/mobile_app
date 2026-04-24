@@ -129,7 +129,7 @@ class AlertTest {
 
     @Test
     fun `recurrenceRange daily on all days`() {
-        val today = EasternTimeInstant.now().serviceDate
+        val today = EasternTimeInstant(LocalDate(2026, 4, 13), LocalTime(3, 0, 0)).serviceDate
         val ninePM = LocalTime(21, 0)
         val endOfService = LocalTime(3, 0)
         val alert =
@@ -145,20 +145,28 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
                 EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
-                DayOfWeek.entries.toSet(),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                    DayOfWeek.SATURDAY,
+                ),
                 endDayKnown = true,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertTrue(recurrence.daily)
     }
 
     @Test
     fun `recurrenceRange end unknown`() {
-        val today = EasternTimeInstant.now().serviceDate
+        val today = EasternTimeInstant(LocalDate(2026, 4, 13), LocalTime(3, 0, 0)).serviceDate
         val ninePM = LocalTime(21, 0)
         val endOfService = LocalTime(3, 0)
         val alert =
@@ -175,15 +183,22 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
                 EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
-                DayOfWeek.entries.toSet(),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                    DayOfWeek.SATURDAY,
+                ),
                 endDayKnown = false,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertTrue(recurrence.daily)
     }
 
     @Test
@@ -207,15 +222,15 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 alert.activePeriod.first().start,
                 alert.activePeriod.last().end!!,
                 selectedDays,
                 endDayKnown = true,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertFalse(recurrence.daily)
     }
 
     @Test
