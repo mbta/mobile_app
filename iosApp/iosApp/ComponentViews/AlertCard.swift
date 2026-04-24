@@ -207,7 +207,10 @@ struct AlertCard: View {
                 alert: alert,
                 alertSummary: AlertSummary.Standard(
                     effect: .shuttle,
-                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                    location: .some(AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start",
+                        endStopName: "End"
+                    )),
                     timeframe: .some(AlertSummary.TimeframeTime(
                         time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                     )),
@@ -253,6 +256,7 @@ struct AlertCard: View {
                 alertSummary: TripSpecificAlertSummary(
                     tripIdentity: TripSpecificAlertSummary.TripFrom(
                         tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                        routeType: .commuterRail,
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue
                 ),

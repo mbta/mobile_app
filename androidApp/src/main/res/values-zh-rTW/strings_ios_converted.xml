@@ -37,7 +37,8 @@
     <string name="alert_summary_timeframe_time">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020直至明天</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020等待進一步通知</string>
-    <string name="alert_summary_trip_shuttle">接駁巴士取代了從&lt;b>%3$s&lt;/b>到&lt;b>%4$s&lt;/b>%5$s之間的%1$s %2$s</string>
+    <string name="alert_summary_trip_shuttle">接駁巴士取代了從 &lt;b>%2$s&lt;/b> 到 &lt;b>%3$s&lt;/b>%4$s 的 %1$s</string>
+    <string name="alert_summary_trip_shuttle_downstream">%1$s 由 &lt;b>%2$s&lt;/b> 至 &lt;b>%3$s&lt;/b>%4$s 的接駁巴士取代</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>更新：&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">替代路徑</string>
@@ -429,6 +430,8 @@
     <string name="technical_problem_lowercase">技術故障</string>
     <string name="the_time_mode">&lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">此網站僅供下客</string>
+    <string name="this_vehicle">這 %1$s</string>
+    <string name="this_vehicle_shuttle">這 %1$s</string>
     <string name="tie_replacement">更換軌枕</string>
     <string name="tie_replacement_lowercase">更換軌枕</string>
     <string name="time_picker_type_toggle">時間選擇器類型切換</string>
@@ -456,10 +459,10 @@
     <string name="trip_cancelled_details">本行程已取消。對於造成您的不便，我們深表歉意。</string>
     <string name="trip_complete">行程結束</string>
     <string name="trip_complete_body">本%1$s已到達目的地。</string>
-    <string name="trip_from">來自 &lt;b>%2$s&lt;/b> 的 &lt;b>%1$s&lt;/b></string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> %2$s 來自 &lt;b>%3$s&lt;/b></string>
     <string name="trip_not_available">行程不可用</string>
     <string name="trip_not_available_body">此 %1$s 尚未分配給任何行程。</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> 到 &lt;b>%2$s&lt;/b></string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> %2$s 至 &lt;b>%3$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">嘗試不同的拼字或名稱。</string>
     <string name="try_your_search_again">再次嘗試搜尋。</string>
     <string name="unable_to_connect">無法連接</string>
@@ -512,6 +515,7 @@
     <string name="weather_lowercase">天氣</string>
     <string name="westbound">西行</string>
     <string name="will_not_stop_at">不會止步於 %1$s %2$s</string>
+    <string name="will_terminate_at">將在 %1$s %2$s 處終止</string>
     <string name="world_cup_service_inbound">從今天的&lt;b>世界盃比賽&lt;/b>到&lt;b>南站&lt;/b>的列車服務</string>
     <string name="world_cup_service_outbound">從&lt;b>南站&lt;/b>開往今日&lt;b>世界盃比賽&lt;/b>的列車服務</string>
     <string name="world_cup_ticket_required">需要波士頓球場火車票</string>

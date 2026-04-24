@@ -39,7 +39,8 @@
     <string name="alert_summary_timeframe_time">\u0020hasta las %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020hasta mañana</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020hasta nuevo aviso</string>
-    <string name="alert_summary_trip_shuttle">Los autobuses lanzadera reemplazan a %1$s %2$s desde &lt;b>%3$s&lt;/b> hasta &lt;b>%4$s&lt;/b>%5$s</string>
+    <string name="alert_summary_trip_shuttle">Los autobuses lanzadera reemplazan a %1$s desde &lt;b>%2$s&lt;/b> hasta &lt;b>%3$s&lt;/b>%4$s</string>
+    <string name="alert_summary_trip_shuttle_downstream">%1$s se reemplaza por autobuses lanzadera desde &lt;b>%2$s&lt;/b> hasta &lt;b>%3$s&lt;/b>%4$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Actualización:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Camino alternativo</string>
@@ -437,6 +438,8 @@
     <string name="technical_problem_lowercase">problema técnico</string>
     <string name="the_time_mode">el &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">Esta parada es solo para descenso</string>
+    <string name="this_vehicle">Este %1$s</string>
+    <string name="this_vehicle_shuttle">este %1$s</string>
     <string name="tie_replacement">Reemplazo de traviesas</string>
     <string name="tie_replacement_lowercase">reemplazo de traviesas</string>
     <string name="time_picker_type_toggle">Alternar tipo de selector de hora</string>
@@ -464,10 +467,10 @@
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
     <string name="trip_complete">Viaje completado</string>
     <string name="trip_complete_body">Este %1$s ha llegado a su destino.</string>
-    <string name="trip_from">&lt;b>%1$s&lt;/b> de &lt;b>%2$s&lt;/b></string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> %2$s de &lt;b>%3$s&lt;/b></string>
     <string name="trip_not_available">Viaje no disponible</string>
     <string name="trip_not_available_body">Este %1$s aún no está asignado a ningún viaje.</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> a &lt;b>%2$s&lt;/b></string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> %2$s a &lt;b>%3$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Pruebe con una ortografía o un nombre diferentes.</string>
     <string name="try_your_search_again">Busque de nuevo.</string>
     <string name="unable_to_connect">No se puede conectar</string>
@@ -522,6 +525,7 @@
     <string name="weather_lowercase">clima</string>
     <string name="westbound">En dirección oeste</string>
     <string name="will_not_stop_at">no se detendrá en %1$s %2$s</string>
+    <string name="will_terminate_at">finalizará en %1$s %2$s</string>
     <string name="world_cup_service_inbound">Servicio desde el &lt;b>partido del Mundial&lt;/b> de hoy hasta la &lt;b>Estación Sur&lt;/b>.</string>
     <string name="world_cup_service_outbound">Servicio desde la &lt;b>Estación Sur&lt;/b> hasta el &lt;b>partido del Mundial&lt;/b> de hoy.</string>
     <string name="world_cup_ticket_required">Se requiere billete de tren para el estadio de Boston</string>

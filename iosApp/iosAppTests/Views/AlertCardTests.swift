@@ -6,11 +6,12 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
 import XCTest
+
+@testable import iosApp
 
 final class AlertCardTests: XCTestCase {
     override func setUp() {
@@ -40,8 +41,12 @@ final class AlertCardTests: XCTestCase {
             }
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Station Closure"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
-        XCTAssertThrowsError(try sut.inspect().find(imageName: "fa-chevron-right"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-suspension")
+        )
+        XCTAssertThrowsError(
+            try sut.inspect().find(imageName: "fa-chevron-right")
+        )
         try sut.inspect().find(button: "View details").tap()
         wait(for: [exp], timeout: 1)
     }
@@ -55,19 +60,28 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(effect: .shuttle,
-                                                location: .some(AlertSummary.LocationSuccessiveStops(
-                                                    startStopName: "Start Stop",
-                                                    endStopName: "End Stop"
-                                                )),
-                                                timeframe: .some(AlertSummary.TimeframeTomorrow()),
-                                                recurrence: nil,
-                                                isUpdate: false),
+            alertSummary: AlertSummary.Standard(
+                effect: .shuttle,
+                location: .some(
+                    AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start Stop",
+                        endStopName: "End Stop"
+                    )
+                ),
+                timeframe: .some(AlertSummary.TimeframeTomorrow()),
+                recurrence: nil,
+                isUpdate: false
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to End Stop through tomorrow"))
+        XCTAssertNotNil(
+            try sut.inspect().find(
+                text:
+                "Shuttle buses from Start Stop to End Stop through tomorrow"
+            )
+        )
     }
 
     func testMajorAlertCardSummaryThroughEndOfService() throws {
@@ -79,17 +93,25 @@ final class AlertCardTests: XCTestCase {
 
         let sut = AlertCard(
             alert: alert,
-            alertSummary: AlertSummary.Standard(effect: .stopClosure,
-                                                location: .some(AlertSummary
-                                                    .LocationSingleStop(stopName: "Single Stop")),
-                                                timeframe: .some(AlertSummary.TimeframeEndOfService()),
-                                                recurrence: nil,
-                                                isUpdate: false),
+            alertSummary: AlertSummary.Standard(
+                effect: .stopClosure,
+                location: .some(
+                    AlertSummary
+                        .LocationSingleStop(stopName: "Single Stop")
+                ),
+                timeframe: .some(AlertSummary.TimeframeEndOfService()),
+                recurrence: nil,
+                isUpdate: false
+            ),
             spec: .takeover,
             routeAccents: .init(),
             onViewDetails: {}
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Stop closed at Single Stop through end of service"))
+        XCTAssertNotNil(
+            try sut.inspect().find(
+                text: "Stop closed at Single Stop through end of service"
+            )
+        )
     }
 
     func testMajorAlertCardSummaryThroughLaterDate() throws {
@@ -104,13 +126,28 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
-                location: .some(AlertSummary.LocationStopToDirection(
-                    startStopName: "Start Stop",
-                    direction: Direction(name: "West", destination: "Destination", id: 0)
-                )),
-                timeframe: .some(AlertSummary.TimeframeLaterDate(
-                    time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                )),
+                location: .some(
+                    AlertSummary.LocationStopToDirection(
+                        startStopName: "Start Stop",
+                        direction: Direction(
+                            name: "West",
+                            destination: "Destination",
+                            id: 0
+                        )
+                    )
+                ),
+                timeframe: .some(
+                    AlertSummary.TimeframeLaterDate(
+                        time: EasternTimeInstant(
+                            year: 2025,
+                            month: .april,
+                            day: 16,
+                            hour: 16,
+                            minute: 0,
+                            second: 0
+                        )
+                    )
+                ),
                 recurrence: nil,
                 isUpdate: false
             ),
@@ -119,7 +156,12 @@ final class AlertCardTests: XCTestCase {
             onViewDetails: {}
         )
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Shuttle buses from Start Stop to Westbound stops through Apr 16"))
+        XCTAssertNotNil(
+            try sut.inspect().find(
+                text:
+                "Shuttle buses from Start Stop to Westbound stops through Apr 16"
+            )
+        )
     }
 
     func testMajorAlertCardSummaryThroughThisWeek() throws {
@@ -133,13 +175,28 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
-                location: .some(AlertSummary.LocationDirectionToStop(
-                    direction: Direction(name: "West", destination: "Destination", id: 0),
-                    endStopName: "End Stop"
-                )),
-                timeframe: .some(AlertSummary.TimeframeThisWeek(
-                    time: EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
-                )),
+                location: .some(
+                    AlertSummary.LocationDirectionToStop(
+                        direction: Direction(
+                            name: "West",
+                            destination: "Destination",
+                            id: 0
+                        ),
+                        endStopName: "End Stop"
+                    )
+                ),
+                timeframe: .some(
+                    AlertSummary.TimeframeThisWeek(
+                        time: EasternTimeInstant(
+                            year: 2025,
+                            month: .april,
+                            day: 16,
+                            hour: 16,
+                            minute: 0,
+                            second: 0
+                        )
+                    )
+                ),
                 recurrence: nil,
                 isUpdate: false
             ),
@@ -147,8 +204,13 @@ final class AlertCardTests: XCTestCase {
             routeAccents: .init(),
             onViewDetails: {}
         )
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Shuttle buses from Westbound stops to End Stop through Wednesday"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "Shuttle buses from Westbound stops to End Stop through Wednesday"
+                )
+        )
     }
 
     func testMajorAlertCardSummaryThroughTime() throws {
@@ -158,16 +220,25 @@ final class AlertCardTests: XCTestCase {
             alert.header = "Test header"
         }
 
-        let time = EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
+        let time = EasternTimeInstant(
+            year: 2025,
+            month: .april,
+            day: 16,
+            hour: 16,
+            minute: 0,
+            second: 0
+        )
 
         let sut = AlertCard(
             alert: alert,
             alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
-                location: .some(AlertSummary.LocationSuccessiveStops(
-                    startStopName: "Start Stop",
-                    endStopName: "End Stop"
-                )),
+                location: .some(
+                    AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start Stop",
+                        endStopName: "End Stop"
+                    )
+                ),
                 timeframe: .some(AlertSummary.TimeframeTime(time: time)),
                 recurrence: nil,
                 isUpdate: false
@@ -177,8 +248,13 @@ final class AlertCardTests: XCTestCase {
             onViewDetails: {}
         )
 
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Shuttle buses from Start Stop to End Stop through 4:00\u{202F}PM"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "Shuttle buses from Start Stop to End Stop through 4:00\u{202F}PM"
+                )
+        )
     }
 
     func testWarningAlertCard() throws {
@@ -203,7 +279,9 @@ final class AlertCardTests: XCTestCase {
             }
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Detour"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-issue"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-issue")
+        )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
@@ -253,7 +331,9 @@ final class AlertCardTests: XCTestCase {
             }
         )
         XCTAssertNotNil(try sut.inspect().find(text: "Service change ahead"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-issue"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-issue")
+        )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
@@ -281,8 +361,10 @@ final class AlertCardTests: XCTestCase {
                 exp.fulfill()
             }
         )
-        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "accessibility-icon-alert"))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.header)))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "accessibility-icon-alert")
+        )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
@@ -298,7 +380,10 @@ final class AlertCardTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .elevatorClosure
             alert.header = "Elevator header"
-            alert.informedEntity(activities: [.usingWheelchair], facility: facility.id)
+            alert.informedEntity(
+                activities: [.usingWheelchair],
+                facility: facility.id
+            )
             alert.facilities = [facility.id: facility]
             alert.activePeriod(
                 start: now.minus(hours: 3 * 24),
@@ -316,8 +401,12 @@ final class AlertCardTests: XCTestCase {
                 exp.fulfill()
             }
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Elevator closure (Elevator name)"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "accessibility-icon-alert"))
+        XCTAssertNotNil(
+            try sut.inspect().find(text: "Elevator closure (Elevator name)")
+        )
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "accessibility-icon-alert")
+        )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
         try sut.inspect().implicitAnyView().button().tap()
         wait(for: [exp], timeout: 1)
@@ -338,7 +427,9 @@ final class AlertCardTests: XCTestCase {
             routeAccents: .init(),
             onViewDetails: {}
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Delays due to heavy ridership"))
+        XCTAssertNotNil(
+            try sut.inspect().find(text: "Delays due to heavy ridership")
+        )
 
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
     }
@@ -351,13 +442,23 @@ final class AlertCardTests: XCTestCase {
             alert.header = "Test header"
         }
 
-        let time = EasternTimeInstant(year: 2025, month: .april, day: 16, hour: 21, minute: 0, second: 0)
+        let time = EasternTimeInstant(
+            year: 2025,
+            month: .april,
+            day: 16,
+            hour: 21,
+            minute: 0,
+            second: 0
+        )
 
         let sut = AlertCard(
             alert: alert,
             alertSummary: AlertSummary.Standard(
                 effect: .delay,
-                location: AlertSummary.LocationWholeRoute(routeLabel: "Red Line", routeType: .heavyRail),
+                location: AlertSummary.LocationWholeRoute(
+                    routeLabel: "Red Line",
+                    routeType: .heavyRail
+                ),
                 timeframe: AlertSummary.TimeframeStartingLaterToday(time: time),
                 recurrence: nil,
                 isUpdate: false
@@ -367,8 +468,10 @@ final class AlertCardTests: XCTestCase {
             onViewDetails: {}
         )
 
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Delay on Red Line starting 9:00\u{202F}PM today"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(text: "Delay on Red Line starting 9:00\u{202F}PM today")
+        )
     }
 
     func testDelayAlertCardUnknownCause() throws {
@@ -426,10 +529,12 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: AlertSummary.AllClear(
-                location: .some(AlertSummary.LocationSuccessiveStops(
-                    startStopName: "Start Stop",
-                    endStopName: "End Stop"
-                )),
+                location: .some(
+                    AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start Stop",
+                        endStopName: "End Stop"
+                    )
+                )
             ),
             spec: .takeover,
             routeAccents: .init(),
@@ -438,9 +543,16 @@ final class AlertCardTests: XCTestCase {
             }
         )
 
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "All clear: Regular service from Start Stop to End Stop"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-allclear"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "All clear: Regular service from Start Stop to End Stop"
+                )
+        )
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-allclear")
+        )
     }
 
     func testUpdateAlertCard() throws {
@@ -458,10 +570,12 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: AlertSummary.Standard(
                 effect: .shuttle,
-                location: .some(AlertSummary.LocationSuccessiveStops(
-                    startStopName: "Start Stop",
-                    endStopName: "End Stop"
-                )),
+                location: .some(
+                    AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start Stop",
+                        endStopName: "End Stop"
+                    )
+                ),
                 timeframe: AlertSummary.TimeframeTomorrow(),
                 recurrence: nil,
                 isUpdate: true
@@ -473,9 +587,16 @@ final class AlertCardTests: XCTestCase {
             }
         )
 
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Update: Shuttle buses from Start Stop to End Stop through tomorrow"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "Update: Shuttle buses from Start Stop to End Stop through tomorrow"
+                )
+        )
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-shuttle")
+        )
     }
 
     func testTripCancellationAlertCard() throws {
@@ -488,9 +609,19 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripFrom(
-                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    tripTime: .init(
+                        year: 2026,
+                        month: .march,
+                        day: 9,
+                        hour: 12,
+                        minute: 13,
+                        second: 0
+                    ),
+                    routeType: .commuterRail,
                     stopName: "Ruggles"
-                ), effect: .cancellation, cause: .mechanicalIssue
+                ),
+                effect: .cancellation,
+                cause: .mechanicalIssue
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -499,8 +630,13 @@ final class AlertCardTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "Train cancelled"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "12:13\u{202F}PM from Ruggles is cancelled today due to mechanical issue"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "12:13\u{202F}PM train from Ruggles is cancelled today due to mechanical issue"
+                )
+        )
     }
 
     func testMultipleTripSuspensionAlertCard() throws {
@@ -512,7 +648,9 @@ final class AlertCardTests: XCTestCase {
         let sut = AlertCard(
             alert: alert,
             alertSummary: TripSpecificAlertSummary(
-                tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared, effect: .suspension, cause: .holiday
+                tripIdentity: TripSpecificAlertSummary.MultipleTrips.shared,
+                effect: .suspension,
+                cause: .holiday
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -520,9 +658,13 @@ final class AlertCardTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Train suspended"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Multiple trips are suspended today due to holiday"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-suspension")
+        )
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(text: "Multiple trips are suspended today due to holiday")
+        )
     }
 
     func testTripShuttleAlertCard() throws {
@@ -535,9 +677,19 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.SingleTrip(
-                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
-                    routeType: .commuterRail
-                ), currentStopName: "Ruggles", endStopName: "Forest Hills"
+                    tripTime: .init(
+                        year: 2026,
+                        month: .march,
+                        day: 9,
+                        hour: 12,
+                        minute: 13,
+                        second: 0
+                    ),
+                    routeType: .commuterRail,
+                    fromStopName: "Oak Grove"
+                ),
+                startStopName: "Ruggles",
+                endStopName: "Forest Hills"
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -545,9 +697,21 @@ final class AlertCardTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-shuttle")
+        )
+        try print(
+            sut.inspect().findAll(ViewType.Text.self).map { text in
+                try text.string()
+            }
+        )
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "12:13\u{202F}PM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills"
+                )
+        )
     }
 
     func testTripStationBypassAlertCard() throws {
@@ -560,9 +724,19 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripTo(
-                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    tripTime: .init(
+                        year: 2026,
+                        month: .march,
+                        day: 9,
+                        hour: 12,
+                        minute: 13,
+                        second: 0
+                    ),
+                    routeType: .commuterRail,
                     headsign: "Stoughton"
-                ), effect: .stationClosure, effectStops: ["Back Bay", "Ruggles"]
+                ),
+                effect: .stationClosure,
+                effectStops: ["Back Bay", "Ruggles"]
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -570,9 +744,16 @@ final class AlertCardTests: XCTestCase {
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Stop skipped"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-suspension"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "12:13\u{202F}PM to Stoughton will not stop at Back Bay and Ruggles today"))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-suspension")
+        )
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "12:13\u{202F}PM train to Stoughton will not stop at Back Bay and Ruggles today"
+                )
+        )
     }
 
     func testTripSpecificReminder() throws {
@@ -585,9 +766,20 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: TripSpecificAlertSummary(
                 tripIdentity: TripSpecificAlertSummary.TripFrom(
-                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                    tripTime: .init(
+                        year: 2026,
+                        month: .march,
+                        day: 9,
+                        hour: 12,
+                        minute: 13,
+                        second: 0
+                    ),
+                    routeType: .commuterRail,
                     stopName: "Ruggles"
-                ), effect: .cancellation, isToday: false, cause: .mechanicalIssue
+                ),
+                effect: .cancellation,
+                isToday: false,
+                cause: .mechanicalIssue
             ),
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
@@ -596,8 +788,13 @@ final class AlertCardTests: XCTestCase {
 
         XCTAssertNotNil(try sut.inspect().find(text: "Train cancelled"))
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-cr-slash"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(text: "12:13\u{202F}PM from Ruggles is cancelled tomorrow due to mechanical issue"))
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text:
+                    "12:13\u{202F}PM train from Ruggles is cancelled tomorrow due to mechanical issue"
+                )
+        )
     }
 
     func testTripShuttleRecurrence() throws {
@@ -610,30 +807,49 @@ final class AlertCardTests: XCTestCase {
             alert: alert,
             alertSummary: TripShuttleAlertSummary(
                 tripIdentity: TripShuttleAlertSummary.SingleTrip(
-                    tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
-                    routeType: .commuterRail
-                ), currentStopName: "Ruggles", endStopName: "Forest Hills",
-                recurrence: AlertSummary.RecurrenceDaily(ending: AlertSummary.TimeframeThisWeek(time: .init(
-                    year: 2026,
-                    month: .march,
-                    day: 12,
-                    hour: 9,
-                    minute: 6,
-                    second: 0
-                )))
+                    tripTime: .init(
+                        year: 2026,
+                        month: .march,
+                        day: 9,
+                        hour: 12,
+                        minute: 13,
+                        second: 0
+                    ),
+                    routeType: .commuterRail,
+                    fromStopName: "Oak Grove"
+                ),
+                startStopName: "Ruggles",
+                endStopName: "Forest Hills",
+                recurrence: AlertSummary.RecurrenceDaily(
+                    ending: AlertSummary.TimeframeThisWeek(
+                        time: .init(
+                            year: 2026,
+                            month: .march,
+                            day: 12,
+                            hour: 9,
+                            minute: 6,
+                            second: 0
+                        )
+                    )
+                )
             ),
+
             spec: .takeover,
             routeAccents: .init(type: .commuterRail),
             onViewDetails: {}
         )
 
         XCTAssertNotNil(try sut.inspect().find(text: "Shuttle bus"))
-        XCTAssertNotNil(try sut.inspect().find(imageName: "alert-borderless-shuttle"))
-        XCTAssertNotNil(try sut.inspect()
-            .find(
-                text: """
-                Shuttle buses replace the 12:13\u{202F}PM train today from Ruggles to Forest Hills daily until Thursday
-                """
-            ))
+        XCTAssertNotNil(
+            try sut.inspect().find(imageName: "alert-borderless-shuttle")
+        )
+        XCTAssertNotNil(
+            try sut.inspect()
+                .find(
+                    text: """
+                    12:13\u{202F}PM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills daily until Thursday
+                    """
+                )
+        )
     }
 }
