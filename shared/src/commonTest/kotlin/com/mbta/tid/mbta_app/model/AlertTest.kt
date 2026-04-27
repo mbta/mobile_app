@@ -11,6 +11,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.plus
 
@@ -67,7 +68,7 @@ class AlertTest {
                     }
                 assertEquals(
                     expectedSignificance,
-                    alert.significance(null),
+                    alert.intrinsicSignificance,
                     "significance for effect $effect with${if (specifiedStops) "" else "out"} specified stops",
                 )
             }
@@ -118,17 +119,17 @@ class AlertTest {
                 cause = Alert.Cause.SingleTracking
             }
 
-        assertEquals(subwayDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(crDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(ferryDelaySevere.significance(null), AlertSignificance.Minor)
-        assertEquals(singleTrackingDelayInfo.significance(null), AlertSignificance.Minor)
-        assertEquals(subwayDelayNotSevere.significance(null), AlertSignificance.None)
-        assertEquals(busDelaySevere.significance(null), AlertSignificance.None)
+        assertEquals(subwayDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(crDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(ferryDelaySevere.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(singleTrackingDelayInfo.intrinsicSignificance, AlertSignificance.Minor)
+        assertEquals(subwayDelayNotSevere.intrinsicSignificance, AlertSignificance.None)
+        assertEquals(busDelaySevere.intrinsicSignificance, AlertSignificance.None)
     }
 
     @Test
     fun `recurrenceRange daily on all days`() {
-        val today = EasternTimeInstant.now().serviceDate
+        val today = EasternTimeInstant(LocalDate(2026, 4, 13), LocalTime(3, 0, 0)).serviceDate
         val ninePM = LocalTime(21, 0)
         val endOfService = LocalTime(3, 0)
         val alert =
@@ -144,20 +145,28 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
                 EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
-                DayOfWeek.entries.toSet(),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                    DayOfWeek.SATURDAY,
+                ),
                 endDayKnown = true,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertTrue(recurrence.daily)
     }
 
     @Test
     fun `recurrenceRange end unknown`() {
-        val today = EasternTimeInstant.now().serviceDate
+        val today = EasternTimeInstant(LocalDate(2026, 4, 13), LocalTime(3, 0, 0)).serviceDate
         val ninePM = LocalTime(21, 0)
         val endOfService = LocalTime(3, 0)
         val alert =
@@ -174,15 +183,22 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 EasternTimeInstant(today, ninePM),
                 EasternTimeInstant(today.plus(DatePeriod(days = 6)), endOfService),
-                DayOfWeek.entries.toSet(),
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                    DayOfWeek.SATURDAY,
+                ),
                 endDayKnown = false,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertTrue(recurrence.daily)
     }
 
     @Test
@@ -206,15 +222,69 @@ class AlertTest {
                 }
             }
 
-        assertEquals(
+        val recurrence =
             Alert.RecurrenceInfo(
                 alert.activePeriod.first().start,
                 alert.activePeriod.last().end!!,
                 selectedDays,
                 endDayKnown = true,
-            ),
-            alert.recurrenceRange(),
-        )
+            )
+        assertEquals(recurrence, alert.recurrenceRange())
+        assertFalse(recurrence.daily)
+    }
+
+    @Test
+    fun `recurrenceRange two sets of continuous week days `() {
+        val selectedDays =
+            setOf(
+                DayOfWeek.MONDAY,
+                DayOfWeek.TUESDAY,
+                DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY,
+                DayOfWeek.FRIDAY,
+            )
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 25), LocalTime(3, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 27), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 5, 1), LocalTime(3, 0, 0)),
+                )
+            }
+        val expectedInfo =
+            Alert.RecurrenceInfo(
+                alert.activePeriod.first().start,
+                alert.activePeriod.last().end!!,
+                selectedDays,
+                endDayKnown = true,
+            )
+        assertEquals(expectedInfo, alert.recurrenceRange())
+        assertFalse(expectedInfo.daily)
+    }
+
+    @Test
+    fun `recurrenceRange subset of continuous weekdays is still daily `() {
+
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 22), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 23), LocalTime(9, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(5, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, 4, 24), LocalTime(9, 0, 0)),
+                )
+            }
+
+        assertTrue(alert.recurrenceRange()!!.daily)
     }
 
     @Test
@@ -228,7 +298,7 @@ class AlertTest {
                 activePeriod(alertStart, alertEnd)
             }
 
-        assertEquals(AlertSignificance.Major, alert.significance(atTime = null))
+        assertEquals(AlertSignificance.Major, alert.intrinsicSignificance)
         assertEquals(AlertSignificance.None, alert.significance(atTime = alertStart - 25.hours))
         assertEquals(
             AlertSignificance.Secondary,
@@ -300,6 +370,7 @@ class AlertTest {
                 ),
                 0,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             )
@@ -333,6 +404,7 @@ class AlertTest {
                 listOf(validAlert, invalidAlert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -361,6 +433,7 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -384,6 +457,7 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
@@ -411,10 +485,44 @@ class AlertTest {
                 listOf(alert),
                 null,
                 listOf(route.id),
+                null,
                 setOf(stop.id),
                 tripId = null,
             ),
             emptyList(),
+        )
+    }
+
+    @Test
+    fun `filters out alerts with non-matching route type`() {
+        val objects = ObjectCollectionBuilder()
+        val stop = objects.stop()
+        val route =
+            objects.route {
+                sortOrder = 1
+                type = RouteType.COMMUTER_RAIL
+            }
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(route = null, routeType = route.type, stop = stop.id)
+            }
+        val otherModeAlert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                informedEntity(route = null, routeType = RouteType.BUS, stop = stop.id)
+            }
+        assertEquals(
+            Alert.applicableAlerts(
+                listOf(alert, otherModeAlert),
+                null,
+                listOf(route.id),
+                route.type,
+                setOf(stop.id),
+                tripId = null,
+            ),
+            listOf(alert),
         )
     }
 
@@ -451,6 +559,7 @@ class AlertTest {
                 listOf(alert, otherAlert),
                 directionId = null,
                 listOf(route.id),
+                routeType = null,
                 stopIds = null,
                 tripId = null,
             ),
@@ -526,10 +635,50 @@ class AlertTest {
             Alert.downstreamAlerts(
                 listOf(alertRideTargetStop, alertBoard, firstRideAlert, secondRideAlert),
                 trip,
+                null,
                 setOf(targetStop.id),
             )
 
         assertEquals(listOf(firstRideAlert), downstreamAlerts)
+    }
+
+    @Test
+    fun `downstreamAlerts returns mode-specific alert for first downstream alerting stop`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route()
+        val targetStop = objects.stop()
+        val stopWithBoardAlert = objects.stop()
+        val firstStopWithRideAlert = objects.stop()
+        val secondStopWithRideAlert = objects.stop()
+
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.ServiceChange
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Ride),
+                    routeType = route.type,
+                    stop = firstStopWithRideAlert.id,
+                    directionId = null,
+                )
+            }
+
+        val trip =
+            objects.trip {
+                routeId = route.id.idText
+                directionId = 0
+                stopIds =
+                    listOf(
+                        targetStop.id,
+                        stopWithBoardAlert.id,
+                        firstStopWithRideAlert.id,
+                        secondStopWithRideAlert.id,
+                    )
+            }
+
+        val downstreamAlerts =
+            Alert.downstreamAlerts(listOf(alert), trip, route.type, setOf(targetStop.id))
+
+        assertEquals(listOf(alert), downstreamAlerts)
     }
 
     @Test
@@ -585,6 +734,7 @@ class AlertTest {
             Alert.downstreamAlerts(
                 listOf(alertAllStops, alertDownstream2Only),
                 trip,
+                null,
                 setOf(targetStop.id),
             )
 
@@ -615,7 +765,8 @@ class AlertTest {
                 stopIds = listOf(targetStop.id, nextStop.id)
             }
 
-        val downstreamAlerts = Alert.downstreamAlerts(listOf(alert), trip, setOf(targetStop.id))
+        val downstreamAlerts =
+            Alert.downstreamAlerts(listOf(alert), trip, null, setOf(targetStop.id))
 
         assertEquals(listOf(), downstreamAlerts)
     }
@@ -770,6 +921,7 @@ class AlertTest {
                         alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAshmont, routePatternBraintree),
+                null,
                 targetStopWithChildren = setOf(park.id),
                 tripsById = global.trips,
             )
@@ -786,6 +938,7 @@ class AlertTest {
                         alewifeShuttleAlert,
                     ),
                 patterns = listOf(routePatternAlewife),
+                null,
                 targetStopWithChildren = setOf(park.id),
                 tripsById = global.trips,
             )
@@ -806,5 +959,24 @@ class AlertTest {
             }
         assertFalse { active.allClear(now) }
         assertTrue { allClear.allClear(now) }
+    }
+
+    @Test
+    fun `anyInformedEntitySatisfies checkRoute`() {
+        val objects = ObjectCollectionBuilder()
+
+        val alert =
+            objects.alert {
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board),
+                    routeType = RouteType.BUS,
+                )
+            }
+
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.BUS) })
+        assertFalse(alert.anyInformedEntitySatisfies { checkRoute(null, RouteType.COMMUTER_RAIL) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), null) })
+        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(null, null) })
     }
 }

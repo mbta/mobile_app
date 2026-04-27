@@ -130,7 +130,7 @@ struct DepartureTile: View {
                             lastTrip: false,
                             alert: nil
                         ),
-                    ], secondaryAlert: nil),
+                    ], warningAlert: nil),
                     upcoming: upcomingTrip
                 ),
                 onTap: {},
@@ -148,7 +148,7 @@ struct DepartureTile: View {
                             lastTrip: false,
                             alert: nil
                         ),
-                    ], secondaryAlert: nil),
+                    ], warningAlert: nil),
                     upcoming: upcomingTrip
                 ),
                 onTap: {},
@@ -173,7 +173,7 @@ struct DepartureTile: View {
                                 alert: nil
                             ),
                         ],
-                        secondaryAlert: nil
+                        warningAlert: nil
                     ),
                     upcoming: upcomingTrip
                 ),
@@ -191,7 +191,7 @@ struct DepartureTile: View {
                             lastTrip: false,
                             alert: nil
                         ),
-                    ], secondaryAlert: nil),
+                    ], warningAlert: nil),
                     upcoming: upcomingTrip
                 ),
                 onTap: {},

@@ -20,7 +20,7 @@ internal constructor(
     internal constructor(
         objects: ObjectCollectionBuilder,
         stopId: String = objects.stops.keys.single(),
-    ) : this(stopId, objects.predictions, objects.trips, objects.vehicles)
+    ) : this(stopId, objects.predictions.toMap(), objects.trips.toMap(), objects.vehicles.toMap())
 
     override fun toString(): String = "[PredictionsByStopMessageResponse]"
 }

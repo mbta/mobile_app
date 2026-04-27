@@ -61,13 +61,12 @@ fun PredictionRowView(
                 line = null,
                 RoutePillType.Flex,
                 modifier =
-                    if (predictions.secondaryAlert == null) Modifier.padding(end = 8.dp)
-                    else Modifier,
+                    if (predictions.warningAlert == null) Modifier.padding(end = 8.dp) else Modifier,
             )
         }
-        predictions.secondaryAlert?.let { secondaryAlert ->
+        predictions.warningAlert?.let { warningAlert ->
             Image(
-                painterResource(drawableByName(secondaryAlert.iconName)),
+                painterResource(drawableByName(warningAlert.iconName)),
                 stringResource(R.string.alert),
                 modifier = Modifier.placeholderIfLoading().padding(end = 8.dp),
             )

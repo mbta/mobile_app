@@ -37,7 +37,8 @@
     <string name="alert_summary_timeframe_time">\u0020đến %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020đến ngày mai</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020cho đến khi có thông báo mới</string>
-    <string name="alert_summary_trip_shuttle">Xe buýt đưa đón thay thế %1$s %2$s từ &lt;b>%3$s&lt;/b> đến &lt;b>%4$s&lt;/b>%5$s</string>
+    <string name="alert_summary_trip_shuttle">Xe buýt đưa đón thay thế %1$s từ &lt;b>%2$s&lt;/b> đến &lt;b>%3$s&lt;/b>%4$s</string>
+    <string name="alert_summary_trip_shuttle_downstream">Tuyến %1$s được thay thế bằng xe buýt đưa đón từ &lt;b>%2$s&lt;/b> đến &lt;b>%3$s&lt;/b>%4$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Cập nhật:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alternative_path">Đường đi thay thế</string>
@@ -93,6 +94,7 @@
     <string name="crowding_not_crowded">Không đông đúc</string>
     <string name="crowding_some_crowding">Một số chỗ chật chội</string>
     <string name="crowding_unknown">Tình trạng đông đúc chưa rõ</string>
+    <string name="current_locale">vi</string>
     <string name="daily">Hằng ngày</string>
     <string name="delay">Trễ</string>
     <string name="delays_due_to_cause">Trì hoãn do &lt;b>%1$s&lt;/b></string>
@@ -437,6 +439,8 @@
     <string name="technical_problem_lowercase">vấn đề kỹ thuật</string>
     <string name="the_time_mode">cái &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">Điểm dừng này chỉ để trả khách</string>
+    <string name="this_vehicle">Cái này %1$s</string>
+    <string name="this_vehicle_shuttle">cái này %1$s</string>
     <string name="tie_replacement">Thay tà vẹt</string>
     <string name="tie_replacement_lowercase">thay tà vẹt</string>
     <string name="time_picker_type_toggle">công tắc chọn loại thời gian</string>
@@ -464,10 +468,10 @@
     <string name="trip_cancelled_details">Chuyến đi này đã bị hủy. Chúng tôi xin lỗi vì sự bất tiện này.</string>
     <string name="trip_complete">Chuyến đi hoàn tất</string>
     <string name="trip_complete_body">%1$s này đã đến đích.</string>
-    <string name="trip_from">&lt;b>%1$s&lt;/b> từ &lt;b>%2$s&lt;/b></string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> %2$s từ &lt;b>%3$s&lt;/b></string>
     <string name="trip_not_available">Chuyến đi không khả dụng</string>
     <string name="trip_not_available_body">Mã %1$s này chưa được chỉ định cho chuyến đi nào.</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> đến &lt;b>%2$s&lt;/b></string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> %2$s đến &lt;b>%3$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Thử cách viết hoặc tên khác.</string>
     <string name="try_your_search_again">Thử tìm kiếm lại.</string>
     <string name="unable_to_connect">Không thể kết nối</string>
@@ -520,6 +524,7 @@
     <string name="weather_lowercase">thời tiết</string>
     <string name="westbound">Về hướng tây</string>
     <string name="will_not_stop_at">sẽ không dừng lại ở %1$s %2$s</string>
+    <string name="will_terminate_at">sẽ kết thúc tại %1$s %2$s</string>
     <string name="world_cup_service_inbound">Tuyến xe buýt từ &lt;b>trận đấu World Cup&lt;/b> hôm nay đến &lt;b>Ga phía Nam&lt;/b></string>
     <string name="world_cup_service_outbound">Tuyến xe buýt từ &lt;b>Ga Nam&lt;/b> đến &lt;b>trận đấu World Cup hôm nay&lt;/b></string>
     <string name="world_cup_ticket_required">Cần có vé tàu đến Sân vận động Boston.</string>

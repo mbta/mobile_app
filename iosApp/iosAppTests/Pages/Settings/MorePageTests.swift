@@ -64,10 +64,11 @@ final class MorePageTests: XCTestCase {
         FcmTokenContainer.shared.token = expectedToken
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { _, _ in },
-            onUpdateAccessibility: { token, accessibility in
+            onUpdateSubscriptions: { _, _, _ in },
+            onUpdateAccessibility: { token, accessibility, locale in
                 XCTAssertEqual(expectedToken, token)
                 XCTAssertTrue(accessibility.boolValue)
+                XCTAssertEqual("en", locale)
                 updateExp.fulfill()
             }
         )

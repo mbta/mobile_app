@@ -69,14 +69,11 @@ public data class PushNotificationPayload(
     @DefaultArgumentInterop.Enabled
     public fun isStillActive(now: EasternTimeInstant = EasternTimeInstant.now()): StillActive {
         val sentAt by lazy { EasternTimeInstant(sentAt) }
-        var summary = this.summary
-        while (summary is AlertSummary.Unknown) {
-            summary = summary.fallback
-        }
         when (summary) {
             is AlertSummary.AllClear -> return StillActive.AllClear
             is TripSpecificAlertSummary ->
                 when (summary.tripIdentity) {
+                    is TripSpecificAlertSummary.ThisTrip -> {}
                     is TripSpecificAlertSummary.TripFrom ->
                         if (now < summary.tripIdentity.tripTime) return StillActive.Yes
                     is TripSpecificAlertSummary.TripTo ->
@@ -85,6 +82,7 @@ public data class PushNotificationPayload(
                 }
             is TripShuttleAlertSummary ->
                 when (summary.tripIdentity) {
+                    is TripShuttleAlertSummary.ThisTrip -> {}
                     is TripShuttleAlertSummary.SingleTrip ->
                         if (now < summary.tripIdentity.tripTime) return StillActive.Yes
                     TripShuttleAlertSummary.MultipleTrips -> {}

@@ -86,6 +86,7 @@ class AlertSummaryTest {
             putJsonObject("trip_identity") {
                 put("type", "trip_from")
                 put("trip_time", "2026-03-06T15:19:00-05:00")
+                put("route_type", "heavy_rail")
                 put("stop_name", "North Station")
             }
             put("effect", "suspension")
@@ -102,6 +103,7 @@ class AlertSummaryTest {
             TripSpecificAlertSummary(
                 TripSpecificAlertSummary.TripFrom(
                     EasternTimeInstant(2026, Month.MARCH, 6, 15, 19),
+                    RouteType.HEAVY_RAIL,
                     "North Station",
                 ),
                 Alert.Effect.Suspension,
@@ -128,8 +130,9 @@ class AlertSummaryTest {
                 put("type", "single_trip")
                 put("trip_time", "2026-03-06T15:21:00-05:00")
                 put("route_type", "commuter_rail")
+                put("from_stop_name", "Oak Grove")
             }
-            put("current_stop_name", "Ruggles")
+            put("start_stop_name", "Ruggles")
             put("end_stop_name", "Forest Hills")
         }
         val summary: AlertSummary =
@@ -137,10 +140,10 @@ class AlertSummaryTest {
                 TripShuttleAlertSummary.SingleTrip(
                     EasternTimeInstant(2026, Month.MARCH, 6, 15, 21),
                     RouteType.COMMUTER_RAIL,
+                    "Oak Grove",
                 ),
                 "Ruggles",
                 "Forest Hills",
-                isToday = true,
                 recurrence = null,
             )
         assertEquals(jsonObject, json.encodeToJsonElement(summary))
@@ -152,15 +155,9 @@ class AlertSummaryTest {
         val jsonObject = buildJsonObject {
             put("type", "subliminal")
             put("foo", "bar")
-            putJsonObject("fallback") {
-                put("type", "standard")
-                put("effect", "service_change")
-            }
+            put("fallback", "Fallback summary")
         }
-        val summary: AlertSummary =
-            AlertSummary.Unknown(
-                fallback = AlertSummary.Standard(effect = Alert.Effect.ServiceChange)
-            )
+        val summary: AlertSummary = AlertSummary.Unknown(fallback = "Fallback summary")
         assertEquals(summary, json.decodeFromJsonElement(jsonObject))
     }
 
@@ -321,22 +318,26 @@ class AlertSummaryTest {
         performCheck(
             TripSpecificAlertSummary.TripFrom(
                 EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
+                RouteType.COMMUTER_RAIL,
                 "Ruggles",
             )
         ) {
             put("type", "trip_from")
             put("trip_time", "2026-03-06T15:25:00-05:00")
+            put("route_type", "commuter_rail")
             put("stop_name", "Ruggles")
         }
 
         performCheck(
             TripSpecificAlertSummary.TripTo(
                 EasternTimeInstant(2026, Month.MARCH, 6, 15, 25),
+                RouteType.COMMUTER_RAIL,
                 "South Station",
             )
         ) {
             put("type", "trip_to")
             put("trip_time", "2026-03-06T15:25:00-05:00")
+            put("route_type", "commuter_rail")
             put("headsign", "South Station")
         }
 
@@ -685,6 +686,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
                     successiveStops.last().name,
+                    true,
                 ),
                 null,
             ),
@@ -799,6 +801,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
+                    true,
                 ),
                 null,
             ),
@@ -871,6 +874,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.DirectionToStop(
                     Direction(route.directionNames[1]!!, route.directionDestinations[1]!!, 1),
                     lastStop.name,
+                    true,
                 ),
                 null,
             ),
@@ -943,6 +947,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.StopToDirection(
                     firstStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
+                    false,
                 ),
                 null,
             ),
@@ -1014,7 +1019,7 @@ class AlertSummaryTest {
         assertEquals(
             AlertSummary.Standard(
                 alert.effect,
-                AlertSummary.Location.SuccessiveStops(cBranchStop.name, trunkStop.name),
+                AlertSummary.Location.SuccessiveStops(cBranchStop.name, trunkStop.name, false),
                 null,
             ),
             alertSummary,
@@ -1108,6 +1113,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.StopToDirection(
                     trunkAlertingStop.name,
                     Direction(route.directionNames[0]!!, route.directionDestinations[0]!!, 0),
+                    true,
                 ),
                 null,
             ),
@@ -1319,6 +1325,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
                     successiveStops.last().name,
+                    true,
                 ),
                 null,
                 null,
@@ -1371,6 +1378,7 @@ class AlertSummaryTest {
                 AlertSummary.Location.SuccessiveStops(
                     successiveStops.first().name,
                     successiveStops.last().name,
+                    true,
                 )
             ),
             alertSummary,
@@ -1628,7 +1636,7 @@ class AlertSummaryTest {
         val now = EasternTimeInstant(today, LocalTime(12, 0))
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Ruggles" }
-        val route = objects.route {}
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) {}
         val alert =
@@ -1656,10 +1664,7 @@ class AlertSummaryTest {
 
         assertEquals(
             TripSpecificAlertSummary(
-                TripSpecificAlertSummary.TripFrom(
-                    EasternTimeInstant(today, LocalTime(12, 13)),
-                    "Ruggles",
-                ),
+                TripSpecificAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
                 Alert.Effect.Suspension,
                 cause = Alert.Cause.Weather,
             ),
@@ -1754,10 +1759,7 @@ class AlertSummaryTest {
 
         assertEquals(
             TripShuttleAlertSummary(
-                TripShuttleAlertSummary.SingleTrip(
-                    EasternTimeInstant(today, LocalTime(12, 13)),
-                    RouteType.COMMUTER_RAIL,
-                ),
+                TripShuttleAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
                 "Ruggles",
                 "Forest Hills",
             ),
@@ -1772,7 +1774,7 @@ class AlertSummaryTest {
         val objects = ObjectCollectionBuilder()
         val stop1 = objects.stop { name = "Ruggles" }
         val stop2 = objects.stop { name = "Back Bay" }
-        val route = objects.route {}
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) { headsign = "Stoughton" }
         val alert =
@@ -1801,10 +1803,7 @@ class AlertSummaryTest {
 
         assertEquals(
             TripSpecificAlertSummary(
-                TripSpecificAlertSummary.TripTo(
-                    EasternTimeInstant(today, LocalTime(12, 13)),
-                    trip.headsign,
-                ),
+                TripSpecificAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
                 Alert.Effect.StationClosure,
                 listOf("Back Bay", "Ruggles"),
                 cause = Alert.Cause.UnknownCause,
@@ -1819,7 +1818,7 @@ class AlertSummaryTest {
         val now = EasternTimeInstant(today, LocalTime(12, 0))
         val objects = ObjectCollectionBuilder()
         val stop = objects.stop { name = "Ruggles" }
-        val route = objects.route {}
+        val route = objects.route { type = RouteType.COMMUTER_RAIL }
         val pattern = objects.routePattern(route) {}
         val trip = objects.trip(pattern) {}
         val alert =
@@ -1847,10 +1846,7 @@ class AlertSummaryTest {
 
         assertEquals(
             TripSpecificAlertSummary(
-                TripSpecificAlertSummary.TripFrom(
-                    EasternTimeInstant(today.plus(DatePeriod(days = 1)), LocalTime(12, 13)),
-                    "Ruggles",
-                ),
+                TripSpecificAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
                 Alert.Effect.Suspension,
                 isToday = false,
             ),
@@ -1912,10 +1908,7 @@ class AlertSummaryTest {
 
         assertEquals(
             TripShuttleAlertSummary(
-                TripShuttleAlertSummary.SingleTrip(
-                    EasternTimeInstant(monday, onePM),
-                    RouteType.COMMUTER_RAIL,
-                ),
+                TripShuttleAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
                 "Ruggles",
                 "Forest Hills",
                 recurrence =

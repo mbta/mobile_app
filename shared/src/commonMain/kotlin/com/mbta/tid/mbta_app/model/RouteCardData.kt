@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -171,16 +170,29 @@ public data class RouteCardData(
 
         internal val hasSchedulesToday: Boolean = hasSchedulesTodayByPattern.any { it.value }
 
-        internal fun hasMajorAlerts(atTime: EasternTimeInstant): Boolean =
-            this.alertsHere.any { alert -> alert.significance(atTime) == AlertSignificance.Major }
+        internal fun hasMajorAlertsAffectingAllTrips(atTime: EasternTimeInstant): Boolean =
+            majorAlertAffectingAllTrips(atTime) != null
 
-        private fun majorAlert(atTime: EasternTimeInstant) =
-            alertsHere.firstOrNull { it.significance(atTime) >= AlertSignificance.Major }
-
-        private fun secondaryAlertToDisplay(atTime: EasternTimeInstant) =
+        private fun majorAlertAffectingAllTrips(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
-                it.significance(atTime) < AlertSignificance.Major &&
-                    it.significance(atTime) >= AlertSignificance.Secondary
+                it.significance(atTime) >= AlertSignificance.Major &&
+                    (it.informedEntity.isEmpty() ||
+                        it.anyInformedEntitySatisfies { checkNullTrip() })
+            }
+
+        /**
+         * A warning alert should be displayed without obstructing schedules + predictions. It is
+         * one of
+         * - a secondary alert for this stop/route/direction
+         * - a major alert that affects only some trip for this stop/route/direction
+         * - an alert downstream of this stop/route/direction
+         */
+        private fun warningAlertToDisplay(atTime: EasternTimeInstant) =
+            alertsHere.firstOrNull {
+                (it.significance(atTime) < AlertSignificance.Major &&
+                    it.significance(atTime) >= AlertSignificance.Secondary) ||
+                    (it.significance(atTime) == AlertSignificance.Major &&
+                        !it.anyInformedEntitySatisfies { checkNullTrip() })
             } ?: alertsDownstream.firstOrNull()
 
         public fun alertsHere(tripId: String? = null): List<Alert> =
@@ -224,7 +236,7 @@ public data class RouteCardData(
                 val trip = formattedTrip.trip
                 if (context.isStopDetails() || trip.isUpcoming()) {
                     val existingPatterns =
-                        potentialService.getOrPut(Pair(trip.trip.routeId, trip.headsign)) {
+                        potentialService.getOrPut(Pair(trip.routeId, trip.headsign)) {
                             mutableSetOf()
                         }
                     if (trip.trip.routePatternId != null) {
@@ -300,6 +312,7 @@ public data class RouteCardData(
                         alertsHere.filter { it.significance(atTime) >= AlertSignificance.Major },
                         directionId,
                         routePatterns.map { it.routeId },
+                        lineOrRoute.type,
                         stopIds,
                         null,
                     )
@@ -333,7 +346,7 @@ public data class RouteCardData(
             potentialService: Set<PotentialService>,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
-            secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            warningAlert: UpcomingFormat.WarningAlert?,
             globalData: GlobalResponse?,
             now: EasternTimeInstant,
         ): LeafFormat {
@@ -354,15 +367,14 @@ public data class RouteCardData(
                     formattedTrips.map { format ->
                         val trip = format.trip
                         val route =
-                            if (shouldIncludeRoute) globalData?.getRoute(trip.trip.routeId)
-                            else null
+                            if (shouldIncludeRoute) globalData?.getRoute(trip.routeId) else null
                         LeafFormat.Branched.BranchRow(
                             route,
                             trip.headsign,
                             UpcomingFormat.Some(format, null),
                         )
                     },
-                    secondaryAlert,
+                    warningAlert,
                 )
             }
 
@@ -409,8 +421,7 @@ public data class RouteCardData(
                 formattedTrips.take(remainingRowsToShow).map { formatted ->
                     val upcomingTrip = formatted.trip
                     val route =
-                        if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.trip.routeId)
-                        else null
+                        if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
                     LeafFormat.Branched.BranchRow(
                         route,
                         upcomingTrip.trip.headsign,
@@ -456,7 +467,7 @@ public data class RouteCardData(
 
             return LeafFormat.Branched(
                 upcomingTripBranches + predictionsUnavailableBranches + disruptedHeadsignBranches,
-                secondaryAlert,
+                warningAlert,
             )
         }
 
@@ -469,15 +480,17 @@ public data class RouteCardData(
             headsign: String?,
             formattedTrips: List<UpcomingFormat.Some.FormattedTrip>,
             mapStopRoute: MapStopRoute?,
-            secondaryAlert: UpcomingFormat.SecondaryAlert?,
+            warningAlert: UpcomingFormat.WarningAlert?,
             now: EasternTimeInstant,
         ): LeafFormat.Single {
-            val majorAlert = majorAlert(now)
+            val majorAlert = majorAlertAffectingAllTrips(now)
             val format =
+                // Format as disrupted. Assume any upcoming trips that exist should not be shown
+                // and are in fact affected by the alert
                 if (majorAlert != null) {
                     UpcomingFormat.Disruption(majorAlert, mapStopRoute)
                 } else {
-                    UpcomingFormat.Some(formattedTrips, secondaryAlert)
+                    UpcomingFormat.Some(formattedTrips, warningAlert)
                 }
             return LeafFormat.Single(route, headsign, format)
         }
@@ -512,12 +525,12 @@ public data class RouteCardData(
 
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 
-            val secondaryAlert =
-                secondaryAlertToDisplay(now)?.let {
-                    UpcomingFormat.SecondaryAlert(StopAlertState.Issue, mapStopRoute)
+            val warningAlert =
+                warningAlertToDisplay(now)?.let {
+                    UpcomingFormat.WarningAlert(StopAlertState.Issue, mapStopRoute)
                 }
 
-            if (majorAlert(now) == null && tripsToShow.isEmpty()) {
+            if (majorAlertAffectingAllTrips(now) == null && tripsToShow.isEmpty()) {
                 // base case is the same for branched & non-branched routes:
                 // if there is no alert & no trips to show, use the single format
                 val service = if (isBranching) null else potentialService.firstOrNull()
@@ -536,7 +549,7 @@ public data class RouteCardData(
                                     now,
                                     subwayServiceStartTime,
                                 ),
-                                secondaryAlert,
+                                warningAlert,
                             ),
                         )
                 }
@@ -547,7 +560,7 @@ public data class RouteCardData(
                     potentialService,
                     tripsToShow,
                     mapStopRoute,
-                    secondaryAlert,
+                    warningAlert,
                     globalData,
                     now,
                 )
@@ -559,7 +572,7 @@ public data class RouteCardData(
                     potentialService.singleOrNull()?.headsign,
                     tripsToShow,
                     mapStopRoute,
-                    secondaryAlert,
+                    warningAlert,
                     now,
                 )
             }
@@ -844,7 +857,7 @@ public data class RouteCardData(
             for (upcomingTrip in upcomingTrips) {
                 val parentStopId =
                     upcomingTrip.stopId?.let { parentStop(globalData, it)?.id } ?: continue
-                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.trip.routeId) ?: continue
+                val lineOrRouteId = lineOrRouteId(globalData, upcomingTrip.routeId) ?: continue
                 upcomingTripsBySlot
                     .getOrPut(
                         HierarchyPath(lineOrRouteId, parentStopId, upcomingTrip.trip.directionId),
@@ -930,12 +943,15 @@ public data class RouteCardData(
                                     }
                             is Route.Id -> listOf(path.routeOrLineId)
                         }
+                    val routeType: RouteType? =
+                        routes.firstOrNull()?.let { globalData.getRoute(it)?.type }
                     val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
                                 activeRelevantAlerts,
                                 path.directionId,
                                 routes,
+                                routeType,
                                 leafBuilder.stopIds,
                                 null,
                             )
@@ -951,6 +967,7 @@ public data class RouteCardData(
                         Alert.alertsDownstreamForPatterns(
                             activeRelevantAlerts,
                             leafBuilder.routePatterns.orEmpty(),
+                            routeType,
                             leafBuilder.stopIds.orEmpty(),
                             globalData.trips,
                         ) +
@@ -959,6 +976,7 @@ public data class RouteCardData(
                                         activeRelevantAlerts,
                                         path.directionId,
                                         greenRoutes.minus(routes.toSet()).toList(),
+                                        routeType,
                                         leafBuilder.stopIds,
                                         null,
                                     )

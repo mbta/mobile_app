@@ -389,7 +389,7 @@ class EditFavoritesPageTest : KoinTest {
 
         val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, false)
+            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, false, "en")
         }
 
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
@@ -468,7 +468,7 @@ class EditFavoritesPageTest : KoinTest {
 
         val update = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to null)
         verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, false)
+            viewModel.updateFavorites(update, EditFavoritesContext.Favorites, 0, null, false, "en")
         }
 
         composeTestRule.waitUntilDefaultTimeout { update == updatedWith }
@@ -486,7 +486,7 @@ class EditFavoritesPageTest : KoinTest {
 
         val undo = mapOf(RouteStopDirection(route.id, sampleStop.id, 0) to FavoriteSettings())
         verifySuspend(VerifyMode.exactly(1)) {
-            viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0, null, false)
+            viewModel.updateFavorites(undo, EditFavoritesContext.Favorites, 0, null, false, "en")
         }
         composeTestRule.waitUntilDefaultTimeout { undo == updatedWith }
 

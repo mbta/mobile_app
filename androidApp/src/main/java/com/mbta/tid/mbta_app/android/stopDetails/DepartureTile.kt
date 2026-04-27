@@ -153,7 +153,7 @@ private fun DepartureTilePreview() {
                                 null,
                             )
                         ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     objects.upcomingTrip(schedule1),
                 ),
@@ -175,7 +175,7 @@ private fun DepartureTilePreview() {
                                 null,
                             )
                         ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     objects.upcomingTrip(schedule1),
                 ),
@@ -201,7 +201,7 @@ private fun DepartureTilePreview() {
                                 null,
                             )
                         ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     objects.upcomingTrip(schedule1),
                 ),
@@ -222,7 +222,7 @@ private fun DepartureTilePreview() {
                                 null,
                             )
                         ),
-                        secondaryAlert = null,
+                        warningAlert = null,
                     ),
                     objects.upcomingTrip(schedule1),
                 ),

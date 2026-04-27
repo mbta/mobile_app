@@ -53,9 +53,9 @@ public sealed class UpcomingFormat {
         }
     }
 
-    public abstract val secondaryAlert: SecondaryAlert?
+    public abstract val warningAlert: WarningAlert?
 
-    public data class SecondaryAlert(val iconName: String) {
+    public data class WarningAlert(val iconName: String) {
         public constructor(
             alert: Alert,
             mapStopRoute: MapStopRoute?,
@@ -68,12 +68,12 @@ public sealed class UpcomingFormat {
     }
 
     public data object Loading : UpcomingFormat() {
-        override val secondaryAlert: SecondaryAlert? = null
+        override val warningAlert: WarningAlert? = null
     }
 
     public data class Some(
         val trips: List<FormattedTrip>,
-        override val secondaryAlert: SecondaryAlert?,
+        override val warningAlert: WarningAlert?,
     ) : UpcomingFormat() {
         public data class FormattedTrip(
             internal val trip: UpcomingTrip,
@@ -98,19 +98,17 @@ public sealed class UpcomingFormat {
 
         public constructor(
             trip: FormattedTrip,
-            secondaryAlert: SecondaryAlert?,
-        ) : this(listOf(trip), secondaryAlert)
+            warningAlert: WarningAlert?,
+        ) : this(listOf(trip), warningAlert)
     }
 
     public data class NoTrips
     @DefaultArgumentInterop.Enabled
-    constructor(
-        val noTripsFormat: NoTripsFormat,
-        override val secondaryAlert: SecondaryAlert? = null,
-    ) : UpcomingFormat()
+    constructor(val noTripsFormat: NoTripsFormat, override val warningAlert: WarningAlert? = null) :
+        UpcomingFormat()
 
     public data class Disruption(val alert: Alert, val iconName: String) : UpcomingFormat() {
-        override val secondaryAlert: SecondaryAlert? = null
+        override val warningAlert: WarningAlert? = null
 
         public constructor(
             alert: Alert,

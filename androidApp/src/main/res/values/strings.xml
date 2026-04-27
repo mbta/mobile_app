@@ -38,7 +38,8 @@
     <string name="alert_summary_timeframe_time">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_tomorrow">\u0020through tomorrow</string>
     <string name="alert_summary_timeframe_until_further_notice">\u0020until further notice</string>
-    <string name="alert_summary_trip_shuttle">Shuttle buses replace %1$s %2$s from &lt;b>%3$s&lt;/b> to &lt;b>%4$s&lt;/b>%5$s</string>
+    <string name="alert_summary_trip_shuttle">Shuttle buses replace %1$s from &lt;b>%2$s&lt;/b> to &lt;b>%3$s&lt;/b>%4$s</string>
+    <string name="alert_summary_trip_shuttle_downstream">%1$s is replaced by shuttle buses from &lt;b>%2$s&lt;/b> to &lt;b>%3$s&lt;/b>%4$s</string>
     <string name="alert_summary_trip_specific">%1$s %2$s%3$s%4$s</string>
     <string name="alert_summary_with_update">&lt;b>Update:&lt;/b> %1$s%2$s%3$s%4$s</string>
     <string name="alerts_channel" tools:ignore="MissingTranslation">Service Alerts</string>
@@ -95,6 +96,7 @@
     <string name="crowding_not_crowded">Not crowded</string>
     <string name="crowding_some_crowding">Some crowding</string>
     <string name="crowding_unknown">Crowding unknown</string>
+    <string name="current_locale">en</string>
     <string name="daily">Daily</string>
     <string name="delay">Delay</string>
     <string name="delays_due_to_cause">&lt;b&gt;Delays&lt;/b&gt; due to %1$s</string>
@@ -444,6 +446,8 @@
     <string name="technical_problem_lowercase">technical problem</string>
     <string name="the_time_mode">the &lt;b>%1$s&lt;/b> %2$s</string>
     <string name="this_stop_is_drop_off_only">This stop is drop-off only</string>
+    <string name="this_vehicle">This %1$s</string>
+    <string name="this_vehicle_shuttle">this %1$s</string>
     <string name="tie_replacement">Tie Replacement</string>
     <string name="tie_replacement_lowercase">tie replacement</string>
     <string name="time_picker_type_toggle">Time picker type toggle</string>
@@ -471,10 +475,10 @@
     <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
     <string name="trip_complete">Trip complete</string>
     <string name="trip_complete_body">This %1$s has reached its destination.</string>
-    <string name="trip_from">&lt;b>%1$s&lt;/b> from &lt;b>%2$s&lt;/b></string>
+    <string name="trip_from">&lt;b>%1$s&lt;/b> %2$s from &lt;b>%3$s&lt;/b></string>
     <string name="trip_not_available">Trip not available</string>
     <string name="trip_not_available_body">This %1$s is not assigned to a trip yet.</string>
-    <string name="trip_to">&lt;b>%1$s&lt;/b> to &lt;b>%2$s&lt;/b></string>
+    <string name="trip_to">&lt;b>%1$s&lt;/b> %2$s to &lt;b>%3$s&lt;/b></string>
     <string name="try_a_different_spelling_or_name">Try a different spelling or name.</string>
     <string name="try_your_search_again">Try your search again.</string>
     <string name="unable_to_connect">Unable to connect</string>
@@ -528,6 +532,7 @@
     <string name="weather_lowercase">weather</string>
     <string name="westbound">Westbound</string>
     <string name="will_not_stop_at">will not stop at %1$s %2$s</string>
+    <string name="will_terminate_at">will terminate at %1$s %2$s</string>
     <string name="world_cup_service_inbound">Service from today’s &lt;b>World Cup match&lt;/b> to &lt;b>South Station&lt;/b></string>
     <string name="world_cup_service_outbound">Service from &lt;b>South Station&lt;/b> to today’s &lt;b>World Cup match&lt;/b></string>
     <string name="world_cup_ticket_required">Boston Stadium Train ticket required</string>

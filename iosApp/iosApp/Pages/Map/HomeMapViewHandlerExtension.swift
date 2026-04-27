@@ -124,7 +124,7 @@ extension HomeMapView {
             .flatMap(\.upcomingTrips)
             .first { upcoming in upcoming.trip.id == tripId }
         let stopSequence = upcoming?.stopSequence ?? tripFilter?.stopSequence
-        let routeId = upcoming?.trip.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? stopFilter.routeId
+        let routeId = upcoming?.routeId ?? vehicle.routeId ?? routeCard?.lineOrRoute.id ?? stopFilter.routeId
 
         analytics.tappedVehicle(routeId: routeId)
 

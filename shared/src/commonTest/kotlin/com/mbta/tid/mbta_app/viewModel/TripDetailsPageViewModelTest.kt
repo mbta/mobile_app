@@ -359,6 +359,7 @@ class TripDetailsPageViewModelTest : KoinTest {
                                         AlertSummary.Location.SuccessiveStops(
                                             "North Quincy",
                                             "Braintree",
+                                            downstream = true,
                                         ),
                                     timeframe = AlertSummary.Timeframe.EndOfService,
                                 )

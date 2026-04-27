@@ -50,6 +50,10 @@ public abstract class Analytics {
             }
     }
 
+    public fun notificationsFallback() {
+        logEvent("notifications_fallback_delivered")
+    }
+
     public fun notificationsPermissionDenied() {
         logEvent("notifications_permission_denied")
     }

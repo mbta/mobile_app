@@ -52,6 +52,7 @@ final class AlertListContainerTests: XCTestCase {
                                      alertSummaries: [highAlert.id: highAlertSummary, downstreamAlert.id: nil],
                                      now: now,
                                      isAllServiceDisrupted: false,
+                                     tripId: nil,
                                      routeAccents: .init(),
                                      onRowTap: { _, _ in })
 
@@ -70,6 +71,7 @@ final class AlertListContainerTests: XCTestCase {
                                      alertSummaries: [:],
                                      now: now,
                                      isAllServiceDisrupted: false,
+                                     tripId: nil,
                                      routeAccents: .init(),
                                      onRowTap: { _, _ in })
 

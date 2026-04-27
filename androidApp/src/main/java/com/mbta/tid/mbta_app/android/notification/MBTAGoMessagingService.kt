@@ -7,6 +7,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.model.response.messageToWorkData
+import io.sentry.kotlin.multiplatform.Sentry
 
 class MBTAGoMessagingService : FirebaseMessagingService() {
 
@@ -22,11 +23,16 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
-        val workRequest =
-            OneTimeWorkRequestBuilder<NotificationWorker>()
-                .setInputData(PushNotificationPayload.messageToWorkData(message.data))
-                .build()
-        WorkManager.Companion.getInstance(this).enqueue(workRequest)
+        try {
+            super.onMessageReceived(message)
+
+            val workRequest =
+                OneTimeWorkRequestBuilder<NotificationWorker>()
+                    .setInputData(PushNotificationPayload.messageToWorkData(message.data))
+                    .build()
+            WorkManager.Companion.getInstance(this).enqueue(workRequest)
+        } catch (t: Throwable) {
+            Sentry.captureMessage("Error enqueueing notification: $t")
+        }
     }
 }

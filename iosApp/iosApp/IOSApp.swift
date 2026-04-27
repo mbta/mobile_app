@@ -86,6 +86,11 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
                     PushNotificationPayload.companion.serialize(payload: payload),
             ]
             content.sound = .default
+
+            if payload.summary is AlertSummary.Unknown {
+                AnalyticsProvider.shared.notificationsFallback()
+            }
+
             let idSuffix = switch onEnum(of: payload.summary) {
             case .allClear: "-all-clear"
             default: ""

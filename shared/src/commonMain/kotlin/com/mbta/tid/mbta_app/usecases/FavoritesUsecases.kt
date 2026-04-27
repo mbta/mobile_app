@@ -40,6 +40,7 @@ public class FavoritesUsecases(
         defaultDirection: Int,
         fcmToken: String?,
         includeAccessibility: Boolean,
+        locale: String,
     ) {
         val storedFavorites = repository.getFavorites()
         val currentFavorites = storedFavorites.routeStopDirection.toMutableMap()
@@ -65,7 +66,7 @@ public class FavoritesUsecases(
         fcmToken?.let {
             val subs = SubscriptionRequest.fromFavorites(currentFavorites, includeAccessibility)
             CoroutineScope(Dispatchers.IO).launch {
-                subscriptionsRepository.updateSubscriptions(it, subs)
+                subscriptionsRepository.updateSubscriptions(it, subs, locale)
             }
         }
         getRouteStopDirectionFavorites()

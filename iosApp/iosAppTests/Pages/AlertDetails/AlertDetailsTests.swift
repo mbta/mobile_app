@@ -48,8 +48,8 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: stop2.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop3.name))
         XCTAssertNotNil(try sut.inspect().find(text: "Full Description"))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.description_!))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.description_)))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.header)))
         XCTAssertNotNil(try sut.inspect().find(text: "Updated: 7/28/2025, 3:30\u{202F}PM"))
     }
 
@@ -115,7 +115,7 @@ final class AlertDetailsTests: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, later today"))
     }
 
-    func testNoCurrentActivePeriod() throws {
+    func testNoCurrentActivePeriod() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -137,7 +137,7 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(text: "Start"))
     }
 
-    func testNoDescription() throws {
+    func testNoDescription() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -158,7 +158,7 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(text: "Full Description"))
     }
 
-    func testStopsInDescription() throws {
+    func testStopsInDescription() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -185,7 +185,6 @@ final class AlertDetailsTests: XCTestCase {
             affectedStops: [], now: now
         )
 
-        try print(sutWithoutStops.inspect().findAll(ViewType.Text.self).map { text in try text.string() })
         XCTAssertNil(try? sutWithoutStops.inspect().find(text: "3 affected stops"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Alert description"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))

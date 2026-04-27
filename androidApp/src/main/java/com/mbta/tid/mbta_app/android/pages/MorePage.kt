@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.pages
 
 import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -63,20 +61,7 @@ fun MorePage(
     bottomBar: @Composable () -> Unit,
     viewModel: MoreViewModel = koinInject(),
 ) {
-    val context = LocalContext.current
-    val locales = AppCompatDelegate.getApplicationLocales()
-    val primaryLocale = locales[0] ?: context.resources.configuration.locales[0]
-    val translation =
-        when (primaryLocale.language) {
-            "es" -> "es"
-            "fr" -> "fr"
-            "ht" -> "ht"
-            "pt" -> "pt-BR"
-            "vi" -> "vi"
-            "zh" if primaryLocale.script == "Hans" -> "zh-Hans-CN"
-            "zh" if primaryLocale.script == "Hant" -> "zh-Hant-TW"
-            else -> "en"
-        }
+    val translation = stringResource(R.string.current_locale)
 
     val navController = rememberNavController()
 
@@ -139,6 +124,7 @@ fun MorePage(
                             verticalArrangement = Arrangement.spacedBy(16.dp),
                         ) {
                             sections.map { section ->
+                                val currentLocale = stringResource(R.string.current_locale)
                                 MoreSectionView(
                                     section = section,
                                     highlighted = section.id == highlightSection,
@@ -148,6 +134,7 @@ fun MorePage(
                                                 viewModel.updateAccessibility(
                                                     it,
                                                     includeAccessibility,
+                                                    currentLocale,
                                                 )
                                             }
                                         }

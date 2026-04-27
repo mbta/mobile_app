@@ -344,113 +344,6 @@ struct FormattedAlert: Equatable {
         }
     }
 
-    static func summaryTripIdentity(tripIdentity: TripSpecificAlertSummaryTripIdentity) -> String {
-        switch onEnum(of: tripIdentity) {
-        case let .tripFrom(tripIdentity): String(
-                format: NSLocalizedString(
-                    "**%1$@** from **%2$@**",
-                    comment: "Trip identity in the form of ”[time] from [stop]”, ex “[12:13 PM] from [Ruggles]”"
-                ),
-                tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
-                tripIdentity.stopName
-            )
-        case let .tripTo(tripIdentity): String(
-                format: NSLocalizedString(
-                    "**%1$@** to **%2$@**",
-                    comment: "Trip identity in the form of ”[time] to [headsign]”, ex “[12:13 PM] to [Stoughton]”"
-                ),
-                tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
-                tripIdentity.headsign
-            )
-        case .multipleTrips: NSLocalizedString(
-                "Multiple trips",
-                comment: "Trip identity referring to more than one specific trip"
-            )
-        }
-    }
-
-    static func summaryTripEffect(
-        tripIdentity: TripSpecificAlertSummaryTripIdentity,
-        effect: Alert.Effect,
-        effectStops: [String]?,
-        isToday: Bool,
-    ) -> String {
-        let day = isToday ? NSLocalizedString("today", comment: "") : NSLocalizedString("tomorrow", comment: "")
-        let isPlural = tripIdentity is TripSpecificAlertSummary.MultipleTrips
-        switch effect {
-        case .cancellation where isPlural: return String(format: NSLocalizedString(
-                "are cancelled %@",
-                comment: "Multiple trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”"
-            ), day)
-        case .cancellation: return String(format: NSLocalizedString(
-                "is cancelled %@",
-                comment: "Trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”"
-            ), day)
-        case .stationClosure: if let effectStops {
-                return String(
-                    format: NSLocalizedString(
-                        "will not stop at %@ %@",
-                        comment: "Trip specific alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”"
-                    ),
-                    effectStops.map { "**\($0)**" }.reduce(nil) { lhs, rhs in
-                        if let lhs { String(
-                            format: NSLocalizedString(
-                                "%1$@ and %2$@",
-                                comment: "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”"
-                            ),
-                            lhs,
-                            rhs
-                        ) } else { rhs }
-                    } ?? "",
-                    day
-                )
-            }
-        case .suspension where isPlural: return String(format: NSLocalizedString(
-                "are suspended %@",
-                comment: "Multiple trip specific alert effect denoting suspension, will specify “today” or “tomorrow”"
-            ), day)
-        case .suspension: return String(format: NSLocalizedString(
-                "is suspended %@",
-                comment: "Trip specific alert effect denoting suspension, will specify “today” or “tomorrow”"
-            ), day)
-        default:
-            break
-        }
-        return String(
-            format: NSLocalizedString(
-                "affected by %@ %@",
-                comment: "Trip specific alert effect fallback, ex “affected by [snow route] [today]”"
-            ),
-            effect.effectSentenceCaseString,
-            day
-        )
-    }
-
-    var summaryTripCause: String {
-        if let dueToCause {
-            String(format: NSLocalizedString(" due to %@", comment: ""), dueToCause)
-        } else {
-            ""
-        }
-    }
-
-    static func summaryTripShuttleIdentity(tripIdentity: TripShuttleAlertSummaryTripIdentity) -> String {
-        switch onEnum(of: tripIdentity) {
-        case let .singleTrip(tripIdentity): String(
-                format: NSLocalizedString(
-                    "the **%@** %@",
-                    comment: "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]"
-                ),
-                tripIdentity.tripTime.formatted(date: .omitted, time: .shortened),
-                tripIdentity.routeType.typeText(isOnly: true)
-            )
-        case .multipleTrips: NSLocalizedString(
-                "multiple trips",
-                comment: "Trip identity referring to more than one specific trip"
-            )
-        }
-    }
-
     var summary: AttributedString? {
         summary(alertSummary: alertSummary)
     }
@@ -494,44 +387,9 @@ struct FormattedAlert: Equatable {
                         """
                     ), args.map { $0 as CVarArg }))
             }
-        case let .tripSpecificAlertSummary(alertSummary): return AttributedString.tryMarkdown(String(
-                format: NSLocalizedString(
-                    "%1$@ %2$@%3$@%4$@",
-                    comment: """
-                    Alert summary in the format of “[trip identity] [is affected][due to cause][until recurrence]”, \
-                    ex “[12:13 PM from Ruggles] [is cancelled today][ due to a mechanical issue][ \
-                    some days until Wednesday]” or “[Multiple trips] [are suspended today][][]”
-                    """
-                ),
-                Self.summaryTripIdentity(tripIdentity: alertSummary.tripIdentity),
-                Self.summaryTripEffect(
-                    tripIdentity: alertSummary.tripIdentity,
-                    effect: alertSummary.effect,
-                    effectStops: alertSummary.effectStops,
-                    isToday: alertSummary.isToday
-                ),
-                summaryTripCause,
-                Self.summaryRecurrence(recurrence: alertSummary.recurrence)
-            ))
-        case let .tripShuttleAlertSummary(alertSummary): return AttributedString.tryMarkdown(String(
-                format: NSLocalizedString(
-                    "Shuttle buses replace %1$@ %2$@ from **%3$@** to **%4$@**%5$@",
-                    comment: """
-                    Alert summary in the format of “Shuttle buses replace [trip identity] [day] \
-                    from [stop] to [stop][until recurrence]”, ex “Shuttle buses replace [the 12:13 PM train] \
-                    [today] from [Ruggles] to [Forest Hills][ some days until Friday]”
-                    """
-                ),
-                Self.summaryTripShuttleIdentity(tripIdentity: alertSummary.tripIdentity),
-                alertSummary.isToday ? NSLocalizedString("today", comment: "") : NSLocalizedString(
-                    "tomorrow",
-                    comment: ""
-                ),
-                alertSummary.currentStopName,
-                alertSummary.endStopName,
-                Self.summaryRecurrence(recurrence: alertSummary.recurrence)
-            ))
-        case let .unknown(alertSummary): return summary(alertSummary: alertSummary.fallback)
+        case let .tripSpecificAlertSummary(alertSummary): return tripSpecificAlertSummary(alertSummary: alertSummary)
+        case let .tripShuttleAlertSummary(alertSummary): return tripShuttleAlertSummary(alertSummary: alertSummary)
+        case let .unknown(alertSummary): return AttributedString(alertSummary.fallback)
         case nil: return nil
         }
     }
@@ -597,7 +455,9 @@ struct FormattedAlert: Equatable {
                 AttributedString(NSLocalizedString("Ferry suspended", comment: ""))
             case (_, .suspension) where alertSummary is TripSpecificAlertSummary:
                 AttributedString(NSLocalizedString("Train suspended", comment: ""))
-            case (_, .stationClosure) where alertSummary is TripSpecificAlertSummary:
+            case (_, .stationClosure) where alertSummary is TripSpecificAlertSummary,
+                 (_, .stopClosure) where alertSummary is TripSpecificAlertSummary,
+                 (_, .dockClosure) where alertSummary is TripSpecificAlertSummary:
                 AttributedString(NSLocalizedString("Stop skipped", comment: ""))
             default: AttributedString.tryMarkdown(effect)
             }

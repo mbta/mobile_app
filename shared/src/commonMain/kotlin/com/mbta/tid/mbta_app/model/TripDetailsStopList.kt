@@ -61,7 +61,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                 UpcomingTrip(trip, schedule, prediction, predictionStop, vehicle, disruption?.alert)
                     .format(now, route, TripInstantDisplay.Context.TripDetails, false)
                     ?: return null,
-                secondaryAlert = null,
+                warningAlert = null,
             )
         }
     }
@@ -497,7 +497,8 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             )
                         } &&
                         // there's no UI yet for secondary alerts in trip details
-                        alert.significance(entryTime) >= AlertSignificance.Major
+                        (entryTime?.let { alert.significance(it) }
+                            ?: alert.intrinsicSignificance) >= AlertSignificance.Major
                 }
             if (alert == null) return null
             return UpcomingFormat.Disruption(alert, route?.let { MapStopRoute.matching(it) })

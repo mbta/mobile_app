@@ -3,7 +3,6 @@ package com.mbta.tid.mbta_app.model
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.hours
-import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -54,41 +53,62 @@ internal constructor(
     public fun allClear(atTime: EasternTimeInstant): Boolean =
         activePeriod.all { it.end != null && it.end < atTime }
 
-    public fun significance(atTime: EasternTimeInstant?): AlertSignificance {
-        val intrinsicSignificance =
-            when (effect) {
-                // suspensions or shuttles can reasonably apply to an entire route
-                in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
-                // detours and closures are only major if they specify stops
-                in setOf(
-                    Effect.StationClosure,
-                    Effect.StopClosure,
-                    Effect.DockClosure,
-                    Effect.Detour,
-                    Effect.SnowRoute,
-                ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
-                // service changes are always secondary
-                Effect.ServiceChange -> AlertSignificance.Secondary
-                Effect.ElevatorClosure -> AlertSignificance.Accessibility
-                Effect.TrackChange -> AlertSignificance.Minor
-                // cancellation is major for the specific trip but minor for the
-                // route/stop/direction
-                Effect.Cancellation -> AlertSignificance.Minor
-                Effect.Delay ->
-                    if (
-                        (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
-                            cause == Cause.SingleTracking
-                    ) {
-                        AlertSignificance.Minor
-                    } else {
-                        AlertSignificance.None
-                    }
-                else -> AlertSignificance.None
+    /**
+     * If this alert has the given trip as an informed entity, return the significance of that trip
+     * (same as the intrinsic significance, with the exception of treating cancellations as Major)
+     *
+     * if the alert doesn't specify the given trip, then returns null.
+     */
+    public fun tripSpecificSignificance(trip: String): AlertSignificance? {
+
+        if (this.anyInformedEntitySatisfies { checkTripStrict(trip) }) {
+            if (effect == Effect.Cancellation) {
+                return AlertSignificance.Major
+            } else {
+                return intrinsicSignificance
             }
+        } else {
+            return null
+        }
+    }
+
+    /** The intrinsic significance of the alert, not considering the effect period. */
+    public val intrinsicSignificance: AlertSignificance =
+        when (effect) {
+            // suspensions or shuttles can reasonably apply to an entire route
+            in setOf(Effect.Shuttle, Effect.Suspension) -> AlertSignificance.Major
+            // detours and closures are only major if they specify stops
+            in setOf(
+                Effect.StationClosure,
+                Effect.StopClosure,
+                Effect.DockClosure,
+                Effect.Detour,
+                Effect.SnowRoute,
+            ) -> if (hasStopsSpecified) AlertSignificance.Major else AlertSignificance.Secondary
+            // service changes are always secondary
+            Effect.ServiceChange -> AlertSignificance.Secondary
+            Effect.ElevatorClosure -> AlertSignificance.Accessibility
+            Effect.TrackChange -> AlertSignificance.Minor
+            // cancellation is major for the specific trip but minor for the
+            // route/stop/direction
+            Effect.Cancellation -> AlertSignificance.Minor
+            Effect.Delay ->
+                if (
+                    (severity >= 3 && informedEntity.any { it.routeType !== RouteType.BUS }) ||
+                        cause == Cause.SingleTracking
+                ) {
+                    AlertSignificance.Minor
+                } else {
+                    AlertSignificance.None
+                }
+            else -> AlertSignificance.None
+        }
+
+    public fun significance(atTime: EasternTimeInstant): AlertSignificance {
         val maxSignificance =
             when {
-                // active now or checking intrinsic significance, use intrinsic
-                atTime == null || isActive(atTime) -> AlertSignificance.Major
+                // active now - use intrinsic significance
+                isActive(atTime) -> AlertSignificance.Major
                 // upcoming, show as secondary if will be major later
                 willBeActiveSoon(atTime) -> AlertSignificance.Secondary
                 // all clear
@@ -321,19 +341,30 @@ internal constructor(
                 }
             }
 
-            fun checkRoute(routeId: Route.Id?) {
+            fun checkRoute(route: Route?) {
+                checkRoute(route?.id, route?.type)
+            }
+
+            fun checkRoute(routeId: Route.Id?, routeType: RouteType?) {
                 if (!isSatisfied) return
+                checkRouteType(routeType)
                 if (routeId == null) return
+                checkRouteIdIn(listOf(routeId))
+            }
+
+            fun checkRouteIdIn(routeIds: Collection<Route.Id>) {
+                if (!isSatisfied) return
                 if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route != routeId) {
+                if (this@InformedEntity.route !in routeIds) {
                     isSatisfied = false
                 }
             }
 
-            fun checkRouteIn(routeIds: Collection<Route.Id>) {
+            fun checkRouteType(routeType: RouteType?) {
                 if (!isSatisfied) return
-                if (this@InformedEntity.route == null) return
-                if (this@InformedEntity.route !in routeIds) {
+                if (routeType == null) return
+                if (this@InformedEntity.routeType == null) return
+                if (this@InformedEntity.routeType != routeType) {
                     isSatisfied = false
                 }
             }
@@ -360,6 +391,20 @@ internal constructor(
                 if (tripId == null) return
                 if (this@InformedEntity.trip == null) return
                 if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkTripStrict(tripId: String) {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != tripId) {
+                    isSatisfied = false
+                }
+            }
+
+            fun checkNullTrip() {
+                if (!isSatisfied) return
+                if (this@InformedEntity.trip != null) {
                     isSatisfied = false
                 }
             }
@@ -413,7 +458,13 @@ internal constructor(
         val days: Set<DayOfWeek>,
         val endDayKnown: Boolean,
     ) {
-        public val daily: Boolean = days.size == 7
+        public val daily: Boolean =
+            days ==
+                (start.serviceDate..end.serviceDate(
+                            EasternTimeInstant.ServiceDateRounding.BACKWARDS
+                        ))
+                    .map { it.dayOfWeek }
+                    .toSet() && days.count() > 1
 
         public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
         public val toEndOfService: Boolean =
@@ -424,33 +475,29 @@ internal constructor(
         if (activePeriod.size <= 1) return null
         val firstPeriod = activePeriod.minBy { it.start }
         val lastPeriod = activePeriod.maxBy { it.end ?: return@recurrenceRange null }
+        if (
+            lastPeriod.endServiceDate != null &&
+                firstPeriod.startServiceDate == lastPeriod.endServiceDate
+        ) {
+            return null
+        }
         val lastPeriodEnd = lastPeriod.end ?: return null
-        val alertDays =
-            activePeriod.map {
-                if (
-                    it.startServiceDate == it.endServiceDate &&
-                        it.start.local.time == firstPeriod.start.local.time &&
-                        it.end?.local?.time == lastPeriodEnd.local.time
-                ) {
-                    it.startServiceDate
-                } else {
-                    return@recurrenceRange null
+        val seenDaysOfWeek =
+            activePeriod
+                .flatMap {
+                    if (it.endServiceDate == null) {
+                        DayOfWeek.entries.toSet()
+                    } else {
+                        (it.startServiceDate..it.endServiceDate).map { it.dayOfWeek }.toSet()
+                    }
                 }
-            }
-        val allAlertDaysContiguous =
-            alertDays
-                .windowed(size = 2, step = 1) { (a, b) -> (b - a) == DatePeriod(days = 1) }
-                .all { it }
-        val days =
-            if (allAlertDaysContiguous) {
-                DayOfWeek.entries.toSet()
-            } else {
-                alertDays.map { it.dayOfWeek }.toSet()
-            }
+                .sorted()
+                .toSet()
+
         return RecurrenceInfo(
             firstPeriod.start,
             lastPeriodEnd,
-            days,
+            seenDaysOfWeek,
             endDayKnown = durationCertainty == DurationCertainty.Known,
         )
     }
@@ -469,6 +516,7 @@ internal constructor(
             alerts: Collection<Alert>,
             directionId: Int?,
             routeIds: List<Route.Id>,
+            routeType: RouteType?,
             stopIds: Set<String>?,
             tripId: String?,
         ): List<Alert> {
@@ -477,7 +525,8 @@ internal constructor(
                     alert.anyInformedEntitySatisfies {
                         checkActivity(InformedEntity.Activity.Board)
                         checkDirection(directionId)
-                        checkRouteIn(routeIds)
+                        checkRouteIdIn(routeIds)
+                        checkRouteType(routeType)
                         if (stopIds != null) {
                             checkStopIn(stopIds)
                         }
@@ -520,13 +569,15 @@ internal constructor(
         fun downstreamAlerts(
             alerts: Collection<Alert>,
             trip: Trip,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
         ): List<Alert> {
             val stopIds = trip.stopIds ?: emptyList()
 
             val alerts =
                 alerts.filter {
-                    it.hasStopsSpecified && it.significance(null) >= AlertSignificance.Accessibility
+                    it.hasStopsSpecified &&
+                        it.intrinsicSignificance >= AlertSignificance.Accessibility
                 }
 
             val targetStopAlertIds =
@@ -538,7 +589,7 @@ internal constructor(
                                 InformedEntity.Activity.Ride,
                             )
                             checkDirection(trip.directionId)
-                            checkRoute(trip.routeId)
+                            checkRoute(trip.routeId, routeType)
                             checkStopIn(targetStopWithChildren)
                         }
                     }
@@ -559,7 +610,7 @@ internal constructor(
                                         InformedEntity.Activity.Ride,
                                     )
                                     checkDirection(trip.directionId)
-                                    checkRoute(trip.routeId)
+                                    checkRoute(trip.routeId, routeType)
                                     checkStop(stop)
                                 } && !targetStopAlertIds.contains(it.id)
                             }
@@ -578,6 +629,7 @@ internal constructor(
         fun alertsDownstreamForPatterns(
             alerts: Collection<Alert>,
             patterns: List<RoutePattern>,
+            routeType: RouteType?,
             targetStopWithChildren: Set<String>,
             tripsById: Map<String, Trip>,
         ): List<Alert> {
@@ -585,7 +637,7 @@ internal constructor(
                 .flatMap {
                     val trip = tripsById[it.representativeTripId]
                     if (trip != null) {
-                        downstreamAlerts(alerts, trip, targetStopWithChildren)
+                        downstreamAlerts(alerts, trip, routeType, targetStopWithChildren)
                     } else {
                         listOf()
                     }
