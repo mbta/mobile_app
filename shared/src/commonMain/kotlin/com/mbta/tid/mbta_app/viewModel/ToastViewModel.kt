@@ -38,6 +38,12 @@ public class ToastViewModel internal constructor(private val sentryRepository: I
 
     @Serializable
     public sealed class ToastAction {
+        @Serializable public data class Body(val onAction: (() -> Unit)) : ToastAction()
+
+        @Serializable
+        public data class BodyWithClose(val onAction: (() -> Unit), val onClose: (() -> Unit)) :
+            ToastAction()
+
         @Serializable public data class Close(val onClose: (() -> Unit)) : ToastAction()
 
         @Serializable

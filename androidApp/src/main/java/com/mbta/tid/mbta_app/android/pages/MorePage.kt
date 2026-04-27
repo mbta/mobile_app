@@ -56,7 +56,11 @@ import org.koin.compose.koinInject
 
 @SuppressLint("LocalContextConfigurationRead")
 @Composable
-fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinInject()) {
+fun MorePage(
+    highlightSection: MoreSection.Category? = null,
+    bottomBar: @Composable () -> Unit,
+    viewModel: MoreViewModel = koinInject(),
+) {
     val translation = stringResource(R.string.current_locale)
 
     val navController = rememberNavController()
@@ -123,6 +127,7 @@ fun MorePage(bottomBar: @Composable () -> Unit, viewModel: MoreViewModel = koinI
                                 val currentLocale = stringResource(R.string.current_locale)
                                 MoreSectionView(
                                     section = section,
+                                    highlighted = section.id == highlightSection,
                                     updateAccessibility = { includeAccessibility ->
                                         if (notificationsEnabled) {
                                             fcmToken?.let {

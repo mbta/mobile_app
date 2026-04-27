@@ -262,6 +262,8 @@
     <string name="more_link_external">Lyen ekstèn</string>
     <string name="more_page_footer">Ki fèt ak ♥ pa T a</string>
     <string name="more_section_feature_flags">Drapo Opsyon</string>
+    <string name="more_section_public_beta">Teste Nouvo Fonksyonalite yo</string>
+    <string name="more_section_public_beta_note">Jwenn aksè bonè pou teste nouvo fonksyonalite yo epi bay fidbak</string>
     <string name="more_section_resources">Resous</string>
     <string name="more_section_settings">Paramèt</string>
     <string name="more_section_support">Enfòmasyon ak Sipò Jeneral MBTA</string>
@@ -293,7 +295,14 @@
     <string name="not_accessible">Pa aksesib</string>
     <string name="not_accessible_stop_card">Estasyon sa a pa aksesib</string>
     <string name="notice">Avi</string>
+    <string name="notifications_beta_dialog_body">Èske nou ka kontakte ou pou pataje fidbak ou sou Notifikasyon yo?</string>
+    <string name="notifications_beta_dialog_header">Nou konte sou siklis tankou ou pou aprann kijan nou ka amelyore!</string>
+    <string name="notifications_beta_dialog_no">Non mèsi</string>
+    <string name="notifications_beta_dialog_yes">Wi</string>
+    <string name="notifications_beta_toast">&lt;u>Jwenn aksè bonè nan Notifikasyon yo&lt;/u> epi bay fidbak</string>
+    <string name="notifications_beta_toggle_label">Notifikasyon Entèripsyon</string>
     <string name="notifications_enabled">notifikasyon yo pèmèt</string>
+    <string name="notifications_favorites_hint">Kounye a, &lt;u>modifye favori ou yo&lt;/u> pou resevwa notifikasyon entèripsyon yo</string>
     <string name="notifications_settings_link">Pèmèt Notifikasyon nan Anviwònman yo</string>
     <string name="now">Kounye a</string>
     <string name="now_at">Kounye a li nan</string>

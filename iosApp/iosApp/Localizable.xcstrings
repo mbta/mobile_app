@@ -1853,6 +1853,53 @@
         }
       }
     },
+    "%@ and provide feedback" : {
+      "comment" : "Part of a longer piece of text used in a toast message, “Get early access to Notifications and provide feedback”. This portion is not underlined, but it will always be presented in the full sentence.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ y proporcionar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ et fournissez des commentaires"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ epi bay fidbak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ e forneça feedback"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@ và cung cấp phản hồi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@并提供反馈"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%@並提供回饋"
+          }
+        }
+      }
+    },
     "%@ arriving at %@ cancelled" : {
       "comment" : "Describe the time at which a cancelled vehicle was scheduled to arrive, as read aloud for VoiceOver users.\nFirst value is the type of vehicle (bus, train, ferry), second is the clock time it will arrive.\nFor example, 'bus arriving at 10:30AM cancelled'",
       "localizations" : {
@@ -3749,6 +3796,54 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "<u>Get early access to Notifications</u> and provide feedback" : {
+      "comment" : "Notifications beta toast text, preserve the underline HTML tags around the corresponding section of the translation. Only used in Android, split into two parts for underlined and not underlined in iOS.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Obtén acceso anticipado a las notificaciones</u> y proporciona comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Accédez en avant-première aux notifications et donnez votre avis</u>"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Jwenn aksè bonè nan Notifikasyon yo</u> epi bay fidbak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Receba notificações antecipadamente</u> e envie seu feedback"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Nhận thông báo sớm</u> và cung cấp phản hồi"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>提前获取通知</u>并提供反馈"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>提前取得通知</u>並提供回饋"
           }
         }
       }
@@ -9499,6 +9594,53 @@
         }
       }
     },
+    "Disruption Notifications" : {
+      "comment" : "A setting on the More page to enable the disruption notification beta",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Notificaciones de interrupción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Notifications de perturbation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Notifikasyon Entèripsyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Notificações de interrupção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thông báo gián đoạn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "中断通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "中斷通知"
+          }
+        }
+      }
+    },
     "Dock closed" : {
       "comment" : "Possible alert effect",
       "localizations" : {
@@ -10201,6 +10343,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "編輯我的最愛"
+          }
+        }
+      }
+    },
+    "edit your favorites" : {
+      "comment" : "Part of a longer piece of text used in a toast message, “Now edit your favorites to get disruption notifications”. This portion is underlined, but it will always be presented in the full sentence.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "editar tus favoritos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "modifier vos favoris"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "modifye favori ou yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "editar seus favoritos"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "chỉnh sửa mục yêu thích của bạn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "编辑您的收藏夹"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "編輯您的收藏夾"
           }
         }
       }
@@ -12328,6 +12517,100 @@
         }
       }
     },
+    "Get early access to Notifications" : {
+      "comment" : "Part of a longer piece of text used in a toast message, “Get early access to Notifications and provide feedback”. This portion is underlined, but it will always be presented in the full sentence.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Obtén acceso anticipado a las notificaciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Accédez en avant-première aux notifications"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Jwenn aksè bonè nan Notifikasyon yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Receba notificações antecipadamente"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhận thông báo sớm"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提前获取通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "提前取得通知"
+          }
+        }
+      }
+    },
+    "Get early access to test new features and provide feedback" : {
+      "comment" : "A note within the \"Test New Features\" section explaining its purpose",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Obtén acceso anticipado para probar nuevas funciones y proporcionar comentarios"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bénéficiez d’un accès anticipé pour tester les nouvelles fonctionnalités et nous faire part de vos commentaires"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Jwenn aksè bonè pou teste nouvo fonksyonalite yo epi bay fidbak"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Obtenha acesso antecipado para testar novos recursos e fornecer feedback"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhận quyền truy cập sớm để thử nghiệm các tính năng mới và cung cấp phản hồi."
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "抢先体验新功能并提供反馈"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "搶先體驗新功能並提供回饋"
+          }
+        }
+      }
+    },
     "Get started" : {
       "localizations" : {
         "es" : {
@@ -14391,6 +14674,52 @@
         }
       }
     },
+    "May we contact you to share your feedback on Notifications?" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Podemos ponernos en contacto con usted para que nos dé su opinión sobre las notificaciones?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Pouvons-nous vous contacter pour recueillir vos commentaires sur les notifications?"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Èske nou ka kontakte ou pou pataje fidbak ou sou Notifikasyon yo?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Podemos entrar em contato com você para compartilhar sua opinião sobre as notificações?"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi có thể liên hệ với bạn để chia sẻ phản hồi về tính năng Thông báo không?"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们能否联系您，了解您对通知功能的反馈意见？"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們能否聯絡您，了解您對通知功能的回饋意見？"
+          }
+        }
+      }
+    },
     "MBTA Go" : {
       "localizations" : {
         "es" : {
@@ -14448,7 +14777,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "MBTA Go est encore en développement ! Votre avis est précieux pour continuer à l’améliorer et ajouter de nouvelles fonctionnalités."
+            "value" : "MBTA Go est encore en développement! Votre avis est précieux pour continuer à l’améliorer et ajouter de nouvelles fonctionnalités."
           }
         },
         "ht" : {
@@ -15891,6 +16220,52 @@
         }
       }
     },
+    "No thanks" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "No, gracias"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Non merci"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Non mèsi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Não, obrigado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Không, cảm ơn"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不，谢谢"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "不，謝謝"
+          }
+        }
+      }
+    },
     "Northbound" : {
       "comment" : "A route direction label",
       "localizations" : {
@@ -16220,6 +16595,101 @@
         }
       }
     },
+    "Now %@ to get disruption notifications" : {
+      "comment" : "Part of a longer piece of text used in a toast message, “Now edit your favorites to get disruption notifications”. This portion is never underlined, but it will always be presented in the full sentence.",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ahora %@ para recibir notificaciones de interrupción"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Maintenant %@ pour recevoir des notifications de perturbation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kounye a %@ pou resevwa notifikasyon entèripsyon"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agora %@ para receber notificações de interrupção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nhấn %@ ngay để nhận thông báo về sự cố"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "现在 %@ 即可接收中断通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "現在 %@ 即可接收中斷通知"
+          }
+        }
+      }
+    },
+    "Now <u>edit your favorites</u> to get disruption notifications" : {
+      "comment" : "Notifications favorites hint text, preserve the underline HTML tags around the corresponding section of the translation. Only used in Android, split into two parts for underlined and not underlined in iOS.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ahora <u>edita tus favoritos</u> para recibir notificaciones de interrupciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "<u>Modifiez vos favoris</u> pour recevoir des notifications de perturbation"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Kounye a, <u>modifye favori ou yo</u> pou resevwa notifikasyon entèripsyon yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Agora <u>edite seus favoritos</u> para receber notificações de interrupção"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Giờ đây, <u>chỉnh sửa mục yêu thích</u> của bạn để nhận thông báo về sự cố"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "现在<u>编辑您的收藏</u>以接收中断通知"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "現在<u>編輯您的收藏</u>以接收中斷通知"
+          }
+        }
+      }
+    },
     "Now at" : {
       "comment" : "Label for a where a vehicle is currently stopped. For example: Now at Alewife",
       "localizations" : {
@@ -16344,7 +16814,7 @@
         "vi" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "Giờ đây bạn có thể nhận thông báo về sự gián đoạn."
+            "value" : "Giờ đây bạn có thể nhận thông báo về sự gián đoạn"
           }
         },
         "zh-Hans-CN" : {
@@ -22783,6 +23253,53 @@
         }
       }
     },
+    "Test New Features" : {
+      "comment" : "More page section header, includes toggles for enabling beta features",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Prueba las nuevas funciones"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tester les nouvelles fonctionnalités"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Teste Nouvo Fonksyonalite yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Testar novas funcionalidades"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Thử nghiệm các tính năng mới"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "测试新功能"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "測試新功能"
+          }
+        }
+      }
+    },
     "the **%@** %@" : {
       "comment" : "Trip identity in the format of “the [time] [vehicle]”, ex “the [12:13 PM] [train]",
       "localizations" : {
@@ -25781,6 +26298,52 @@
         }
       }
     },
+    "We depend on riders like you to learn how we can improve!" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¡Dependemos de ciclistas como tú para aprender cómo podemos mejorar!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nous comptons sur des cyclistes comme vous pour savoir comment nous pouvons nous améliorer!"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Nou konte sou siklis tankou ou pou aprann kijan nou ka amelyore!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dependemos de ciclistas como você para aprendermos como podemos melhorar!"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Chúng tôi phụ thuộc vào những người dùng như bạn để học hỏi và tìm cách cải thiện!"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我们依靠像您这样的骑手来了解如何改进！"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "我們依靠像您這樣的騎手來了解如何改進！"
+          }
+        }
+      }
+    },
     "We don’t have live predictions for this trip yet, but they will appear closer to the scheduled time. If the trip is delayed or cancelled, we’ll let you know here." : {
       "localizations" : {
         "es" : {
@@ -25839,7 +26402,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous affichons maintenant les **arrivées** et les **emplacements détaillés des véhicules** en un seul coup d’œil. Dites-nous ce que vous en pensez !"
+            "value" : "Nous affichons maintenant les **arrivées** et les **emplacements détaillés des véhicules** en un seul coup d’œil. Dites-nous ce que vous en pensez!"
           }
         },
         "ht" : {
@@ -26296,6 +26859,52 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "將在 %1$@ %2$@ 處終止"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Oui"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Wi"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Sim"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Đúng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "是的"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "是的"
           }
         }
       }

@@ -253,6 +253,8 @@
     <string name="more_link_external">External link</string>
     <string name="more_page_footer">Made with ♥ by the T</string>
     <string name="more_section_feature_flags">Feature Flags</string>
+    <string name="more_section_public_beta">Test New Features</string>
+    <string name="more_section_public_beta_note">Get early access to test new features and provide feedback</string>
     <string name="more_section_resources">Resources</string>
     <string name="more_section_settings">Settings</string>
     <string name="more_section_support">General MBTA Information &amp; Support</string>
@@ -284,7 +286,14 @@
     <string name="not_accessible">Not accessible</string>
     <string name="not_accessible_stop_card">This stop is not accessible</string>
     <string name="notice">Notice</string>
+    <string name="notifications_beta_dialog_body">May we contact you to share your feedback on Notifications?</string>
+    <string name="notifications_beta_dialog_header">We depend on riders like you to learn how we can improve!</string>
+    <string name="notifications_beta_dialog_no">No thanks</string>
+    <string name="notifications_beta_dialog_yes">Yes</string>
+    <string name="notifications_beta_toast">&lt;u>Get early access to Notifications&lt;/u> and provide feedback</string>
+    <string name="notifications_beta_toggle_label">Disruption Notifications</string>
     <string name="notifications_enabled">notifications enabled</string>
+    <string name="notifications_favorites_hint">Now &lt;u>edit your favorites&lt;/u> to get disruption notifications</string>
     <string name="notifications_settings_link">Allow Notifications in Settings</string>
     <string name="now">Now</string>
     <string name="now_at">Now at</string>

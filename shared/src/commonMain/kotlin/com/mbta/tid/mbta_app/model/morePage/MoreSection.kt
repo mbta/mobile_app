@@ -11,6 +11,7 @@ public class MoreSection(
 ) {
 
     public enum class Category {
+        PublicBetas,
         Feedback,
         FeatureFlags,
         Settings,

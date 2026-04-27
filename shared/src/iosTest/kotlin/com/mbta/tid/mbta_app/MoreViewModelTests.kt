@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
+import com.mbta.tid.mbta_app.repositories.MockOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.viewModel.MoreViewModel
 import kotlin.test.Test
@@ -12,7 +13,12 @@ class MoreViewModelTests {
 
     @Test
     fun testLocalizedFeedbackLink() {
-        val vm = MoreViewModel(Dispatchers.Default, MockSubscriptionsRepository())
+        val vm =
+            MoreViewModel(
+                Dispatchers.Default,
+                MockSubscriptionsRepository(),
+                MockOnboardingRepository(),
+            )
         val sections = vm.getSections("es", "1.2.3", mapOf(), {})
         assertEquals(
             "https://mbta.com/appfeedback?language=es&version=1.2.3&platform=iOS",
@@ -27,7 +33,12 @@ class MoreViewModelTests {
 
     @Test
     fun testMTicketURL() {
-        val vm = MoreViewModel(Dispatchers.Default, MockSubscriptionsRepository())
+        val vm =
+            MoreViewModel(
+                Dispatchers.Default,
+                MockSubscriptionsRepository(),
+                MockOnboardingRepository(),
+            )
         val sections = vm.getSections("", "", mapOf(), {})
         assertEquals(
             "https://apps.apple.com/us/app/mbta-mticket/id560487958",

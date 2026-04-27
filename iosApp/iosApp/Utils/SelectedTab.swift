@@ -8,20 +8,32 @@
 
 import DeveloperToolsSupport
 import Foundation
+import Shared
 
-enum SelectedTab: Hashable, CaseIterable {
+enum SelectedTab: Hashable {
     case favorites
     case nearby
-    case more
+    case more(highlight: MoreSection.Category?)
+
+    static func == (lhs: SelectedTab, rhs: SelectedTab) -> Bool {
+        lhs.hashValue == rhs.hashValue
+    }
+
+    // Implement hashable to ignore the highlighted more category
+    func hash(into hasher: inout Hasher) {
+        let hashString = switch self {
+        case .favorites: "favorites"
+        case .nearby: "nearby"
+        case .more: "more"
+        }
+        hasher.combine(hashString)
+    }
 
     var imageResource: ImageResource {
         switch self {
-        case .favorites:
-            .tabIconFavorites
-        case .nearby:
-            .tabIconNearby
-        case .more:
-            .tabIconMore
+        case .favorites: .tabIconFavorites
+        case .nearby: .tabIconNearby
+        case .more: .tabIconMore
         }
     }
 
@@ -46,7 +58,7 @@ enum SelectedTab: Hashable, CaseIterable {
         switch self {
         case .favorites: .favorites
         case .nearby: .nearby
-        case .more: .more
+        case let .more(category): .more(highlight: category)
         }
     }
 }

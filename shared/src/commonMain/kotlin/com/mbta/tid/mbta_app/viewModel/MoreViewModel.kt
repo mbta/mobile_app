@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.getPlatform
 import com.mbta.tid.mbta_app.model.morePage.MoreItem
 import com.mbta.tid.mbta_app.model.morePage.MoreSection
 import com.mbta.tid.mbta_app.model.morePage.feedbackFormUrl
+import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.SharedString
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 public class MoreViewModel(
     private val coroutineDispatcher: CoroutineDispatcher,
     private val subscriptionsRepository: ISubscriptionsRepository,
+    private val onboardingRepository: IOnboardingRepository,
 ) {
 
     public fun getSections(
@@ -47,6 +49,18 @@ public class MoreViewModel(
                     listOf(
                         MoreItem.Link(label = SharedString.SendAppFeedback, url = feedbackFormUrl)
                     ),
+            ),
+            MoreSection(
+                id = MoreSection.Category.PublicBetas,
+                label = SharedString.BetaSection,
+                items =
+                    listOf(
+                        MoreItem.Toggle(
+                            label = SharedString.Notifications,
+                            settings = Settings.Notifications,
+                        )
+                    ),
+                noteBelow = SharedString.BetaEarlyAccessNote,
             ),
             MoreSection(
                 id = MoreSection.Category.Resources,
@@ -96,9 +110,13 @@ public class MoreViewModel(
                             label = SharedString.RouteSearch,
                             settings = Settings.SearchRouteResults,
                         ),
-                        MoreItem.Toggle(
-                            label = SharedString.Notifications,
-                            settings = Settings.Notifications,
+                        MoreItem.Action(
+                            label = SharedString.ForceNotificationsBeta,
+                            action = {
+                                CoroutineScope(coroutineDispatcher).launch {
+                                    onboardingRepository.notificationsBetaResetAndForce()
+                                }
+                            },
                         ),
                     ),
             ),

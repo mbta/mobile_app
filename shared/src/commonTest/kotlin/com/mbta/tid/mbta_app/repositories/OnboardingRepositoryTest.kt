@@ -4,6 +4,8 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.Storage
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.mbta.tid.mbta_app.mocks.MockDatastoreStorage
@@ -13,6 +15,8 @@ import kotlin.test.Test
 import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlinx.coroutines.runBlocking
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
@@ -138,6 +142,71 @@ class OnboardingRepositoryTest : KoinTest {
                 OnboardingScreen.Feedback,
             ),
             repo.getPendingOnboarding(),
+        )
+    }
+
+    @Test
+    fun `marks notifications beta properties as displayed`() = runBlocking {
+        val storage = MockDatastoreStorage()
+        startKoin(isScreenReaderEnabled = false, storage = storage)
+        val repo = OnboardingRepository()
+
+        assertTrue(repo.notificationsBetaFeedbackDialogShouldShow())
+        assertTrue(repo.notificationsBetaPromptShouldShow())
+        assertTrue(repo.notificationsFavoritesHintShouldShow())
+        assertEquals(emptyPreferences(), storage.preferences)
+
+        repo.notificationsBetaFeedbackDialogSetState(false)
+        repo.notificationsBetaPromptDismissed()
+        repo.notificationsFavoriteHintDismissed()
+
+        assertFalse(repo.notificationsBetaFeedbackDialogShouldShow())
+        assertFalse(repo.notificationsBetaPromptShouldShow())
+        assertFalse(repo.notificationsFavoritesHintShouldShow())
+
+        assertEquals(
+            preferencesOf(
+                booleanPreferencesKey("notificationsBetaFeedbackDialogShouldShow") to false,
+                booleanPreferencesKey("notificationsBetaPromptShouldShow") to false,
+                booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false,
+            ),
+            storage.preferences,
+        )
+    }
+
+    @Test
+    fun `notifications beta dev reset wipes properties and sets override`() = runBlocking {
+        val storage = MockDatastoreStorage()
+        storage.preferences =
+            preferencesOf(
+                booleanPreferencesKey("notificationsBetaFeedbackDialogShouldShow") to false,
+                booleanPreferencesKey("notificationsBetaPromptShouldShow") to false,
+                booleanPreferencesKey("notificationsFavoritesHintShouldShow") to false,
+                stringSetPreferencesKey("onboardingScreensCompleted") to
+                    setOf(OnboardingScreen.NotificationsBeta.name, OnboardingScreen.Location.name),
+            )
+        startKoin(isScreenReaderEnabled = false, storage = storage)
+        val repo = OnboardingRepository()
+
+        assertFalse(repo.notificationsBetaFeedbackDialogShouldShow())
+        assertFalse(repo.notificationsBetaPromptShouldShow())
+        assertFalse(repo.notificationsFavoritesHintShouldShow())
+        assertNull(repo.notificationsBetaTargetingOverride())
+
+        repo.notificationsBetaResetAndForce()
+
+        assertTrue(repo.notificationsBetaFeedbackDialogShouldShow())
+        assertTrue(repo.notificationsBetaPromptShouldShow())
+        assertTrue(repo.notificationsFavoritesHintShouldShow())
+        assertTrue(repo.notificationsBetaTargetingOverride() ?: false)
+
+        assertEquals(
+            preferencesOf(
+                booleanPreferencesKey("notificationsBetaTargetingOverride") to true,
+                stringSetPreferencesKey("onboardingScreensCompleted") to
+                    setOf(OnboardingScreen.Location.name),
+            ),
+            storage.preferences,
         )
     }
 }

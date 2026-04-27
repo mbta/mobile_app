@@ -5,8 +5,7 @@ import com.mbta.tid.mbta_app.utils.SharedString
 
 public sealed class MoreItem {
 
-    public data class Action internal constructor(val label: SharedString, val action: () -> Unit) :
-        MoreItem()
+    public data class Action(val label: SharedString, val action: () -> Unit) : MoreItem()
 
     public data class Link(
         val label: SharedString,
@@ -24,13 +23,13 @@ public sealed class MoreItem {
 
     public data class Toggle(val label: SharedString, val settings: Settings) : MoreItem()
 
-    internal fun id() {
-        when (this) {
-            is Action -> label
-            is Link -> url
-            is NavLink -> label
-            is Phone -> phoneNumber
-            is Toggle -> settings.name
-        }
-    }
+    public val id: String
+        get() =
+            when (this) {
+                is Action -> label.name
+                is Link -> url
+                is NavLink -> label.name
+                is Phone -> phoneNumber
+                is Toggle -> settings.name
+            }
 }

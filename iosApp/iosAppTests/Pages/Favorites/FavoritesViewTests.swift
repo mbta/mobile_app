@@ -34,6 +34,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -122,6 +123,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
@@ -193,6 +195,7 @@ final class FavoritesViewTests: XCTestCase {
             awaitingPredictionsAfterBackground: false,
             favorites: [:],
             shouldShowFirstTimeToast: false,
+            shouldShowNotificationsHint: false,
             routeCardData: [],
             staticRouteCardData: [],
             loadedLocation: nil,
@@ -369,6 +372,7 @@ final class FavoritesViewTests: XCTestCase {
                 awaitingPredictionsAfterBackground: false,
                 favorites: [:],
                 shouldShowFirstTimeToast: true,
+                shouldShowNotificationsHint: false,
                 routeCardData: [],
                 staticRouteCardData: [],
                 loadedLocation: nil
@@ -395,5 +399,69 @@ final class FavoritesViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [setToastShownExp, hideToast, isFirstExposureToFavoritesSet], timeout: 2)
+    }
+
+    @MainActor func testShowsNotificationHint() throws {
+        let dismissHint = expectation(description: "hint dismissed")
+
+        let favoritesVM = MockFavoritesViewModel(
+            initialState: .init(
+                awaitingPredictionsAfterBackground: false,
+                favorites: [.init(route: Route.Id(""), stop: "", direction: 0): .init()],
+                shouldShowFirstTimeToast: false,
+                shouldShowNotificationsHint: true,
+                routeCardData: [],
+                staticRouteCardData: [],
+                loadedLocation: nil
+            )
+        )
+
+        favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
+
+        let sut = FavoritesView(
+            errorBannerVM: MockErrorBannerViewModel(),
+            favoritesVM: favoritesVM,
+            nearbyVM: .init(),
+            toastVM: MockToastViewModel(),
+            location: .constant(.init(latitude: 0, longitude: 0))
+        )
+
+        sut.inspection.inspect(after: 1) { view in
+            try view.find(text: "Now edit your favorites to get disruption notifications")
+                .find(ViewType.HStack.self, relation: .parent)
+                .callOnTapGesture()
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        wait(for: [dismissHint], timeout: 2)
+    }
+
+    @MainActor func testDismissesNotificationHintWhenFavoritesEmpty() throws {
+        let dismissHint = expectation(description: "hint dismissed")
+
+        let favoritesVM = MockFavoritesViewModel(
+            initialState: .init(
+                awaitingPredictionsAfterBackground: false,
+                favorites: [:],
+                shouldShowFirstTimeToast: false,
+                shouldShowNotificationsHint: true,
+                routeCardData: [],
+                staticRouteCardData: [],
+                loadedLocation: nil
+            )
+        )
+
+        favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
+
+        let sut = FavoritesView(
+            errorBannerVM: MockErrorBannerViewModel(),
+            favoritesVM: favoritesVM,
+            nearbyVM: .init(),
+            toastVM: MockToastViewModel(),
+            location: .constant(.init(latitude: 0, longitude: 0))
+        )
+
+        ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))
+        wait(for: [dismissHint], timeout: 2)
     }
 }

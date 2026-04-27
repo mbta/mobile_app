@@ -12,6 +12,8 @@ import SwiftUI
 struct MorePage: View {
     let inspection = Inspection<Self>()
 
+    let highlight: MoreSection.Category?
+
     let viewModel = ViewModelDI().more
     @State var showingBuildNumber = false
     @State private var path = NavigationPath()
@@ -74,6 +76,7 @@ struct MorePage: View {
                         ForEach(sections, id: \.id) { section in
                             MoreSectionView(
                                 section: section,
+                                highlight: section.id == highlight,
                                 updateAccessibility: { includeAccessibility in
                                     if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
                                         viewModel.updateAccessibility(
@@ -139,7 +142,7 @@ struct MorePage: View {
 }
 
 #Preview {
-    MorePage()
+    MorePage(highlight: nil)
         .font(Typography.body)
         .withFixedSettings([:])
 }
