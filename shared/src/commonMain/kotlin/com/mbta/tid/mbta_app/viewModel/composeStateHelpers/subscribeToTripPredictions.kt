@@ -47,23 +47,16 @@ internal fun subscribeToTripPredictions(
     ) {
         tripPredictionsRepository.disconnect()
         if (tripId != null && active) {
-            tripPredictionsRepository.connect(tripId, onReceive)
+            tripPredictionsRepository.connect(tripId, errorKey, onReceive)
         }
     }
 
     fun onReceive(message: ApiResult<PredictionsStreamDataResponse>) {
         onAnyMessageReceived()
         when (message) {
-            is ApiResult.Ok -> {
-                errorBannerRepository.clearDataError(errorKey)
-                predictions = message.data
-            }
-            is ApiResult.Error -> {
-                errorBannerRepository.setDataError(errorKey, message.toString()) {
-                    connect(tripId, active, ::onReceive)
-                }
+            is ApiResult.Ok -> predictions = message.data
+            is ApiResult.Error ->
                 println("Trip predictions stream failed to join: ${message.message}")
-            }
         }
     }
 

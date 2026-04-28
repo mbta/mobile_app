@@ -1,14 +1,12 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
-import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
-import com.mbta.tid.mbta_app.phoenix.ChannelOwner
+import com.mbta.tid.mbta_app.phoenix.AsymmetricChannelOwner
 import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration.Companion.minutes
@@ -17,8 +15,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import org.koin.core.component.KoinComponent
 
 public interface IPredictionsRepository {
-    public fun connectV2(
+    public fun connect(
         stopIds: List<String>,
+        errorKey: String,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
@@ -30,9 +29,17 @@ public interface IPredictionsRepository {
     public fun disconnect()
 }
 
-internal class PredictionsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
-    IPredictionsRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket, ioDispatcher)
+internal class PredictionsRepository(
+    socket: PhoenixSocket,
+    errorBannerStateRepository: IErrorBannerStateRepository,
+    ioDispatcher: CoroutineDispatcher,
+) : IPredictionsRepository, KoinComponent {
+    private val channelOwner =
+        AsymmetricChannelOwner<PredictionsByStopJoinResponse, PredictionsByStopMessageResponse>(
+            socket,
+            ioDispatcher,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override var lastUpdated: EasternTimeInstant? = null
@@ -41,73 +48,41 @@ internal class PredictionsRepository(socket: PhoenixSocket, ioDispatcher: Corout
         (EasternTimeInstant.now() - (lastUpdated ?: EasternTimeInstant(Instant.DISTANT_FUTURE))) >
             10.minutes && predictionCount > 0
 
-    override fun connectV2(
+    override fun connect(
         stopIds: List<String>,
+        errorKey: String,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
         channelOwner.connect(
             PredictionsForStopsChannel.V2(stopIds),
-            handleJoin = { handleV2JoinMessage(it, onJoin) },
-            handleMessage = { handleV2Message(it, onMessage) },
-            handleError = { onMessage(ApiResult.Error(message = it)) },
+            parseJoinMessage = PredictionsForStopsChannel::parseV2JoinMessage,
+            parseMessage = PredictionsForStopsChannel::parseV2Message,
+            handleJoinResult = {
+                when (it) {
+                    is ApiResult.Ok -> {
+                        val predictionCount =
+                            it.data.predictionsByStop.values.flatMap { stop -> stop.values }.size
+                        println("Received $predictionCount predictions on join")
+                        lastUpdated = EasternTimeInstant.now()
+                    }
+                    else -> {}
+                }
+                onJoin(it)
+            },
+            handleResult = {
+                when (it) {
+                    is ApiResult.Ok -> lastUpdated = EasternTimeInstant.now()
+                    else -> {}
+                }
+                onMessage(it)
+            },
+            errorKey = errorKey,
         )
     }
 
     override fun disconnect() {
         channelOwner.disconnect()
-    }
-
-    private fun handleV2JoinMessage(
-        message: PhoenixMessage,
-        onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
-    ) {
-        val rawPayload: String? = message.jsonBody
-
-        if (rawPayload != null) {
-            val newPredictionsByStop =
-                try {
-                    PredictionsForStopsChannel.parseV2JoinMessage(rawPayload)
-                } catch (e: IllegalArgumentException) {
-                    print("ERROR $e")
-                    onJoin(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
-                    return
-                }
-            println(
-                "Received ${newPredictionsByStop.predictionsByStop.values.flatMap { it.values}.size} predictions on join"
-            )
-            lastUpdated = EasternTimeInstant.now()
-            onJoin(ApiResult.Ok(newPredictionsByStop))
-        } else {
-            println("No jsonPayload found for message ${message.body}")
-        }
-    }
-
-    /**
-     * Parse the phoenix message & pass to the onMessage callback
-     *
-     * @param message: the message to parse, expected as a PredictionsByStopMessageResponse
-     * @param onMessage: the callback ot invoke on the parsed message
-     */
-    internal fun handleV2Message(
-        message: PhoenixMessage,
-        onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
-    ) {
-        val rawPayload: String? = message.jsonBody
-
-        if (rawPayload != null) {
-            val newPredictionsForStop =
-                try {
-                    PredictionsForStopsChannel.parseV2Message(rawPayload)
-                } catch (e: IllegalArgumentException) {
-                    onMessage(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
-                    return
-                }
-            lastUpdated = EasternTimeInstant.now()
-            onMessage(ApiResult.Ok(newPredictionsForStop))
-        } else {
-            println("No jsonPayload found for message ${message.body}")
-        }
     }
 }
 
@@ -128,8 +103,9 @@ constructor(
         connectV2Response: PredictionsByStopJoinResponse,
     ) : this(onConnectV2, onDisconnect, ApiResult.Ok(connectV2Response))
 
-    override fun connectV2(
+    override fun connect(
         stopIds: List<String>,
+        errorKey: String,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {

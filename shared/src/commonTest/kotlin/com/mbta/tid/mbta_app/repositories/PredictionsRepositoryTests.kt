@@ -45,7 +45,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel("predictions:stops:v2:1,2", any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
@@ -66,7 +66,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
@@ -75,7 +75,7 @@ class PredictionsRepositoryTests : KoinTest {
 
         assertNotNull(predictionsRepo.channel)
 
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("3", "4"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
@@ -96,7 +96,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
@@ -187,7 +187,7 @@ class PredictionsRepositoryTests : KoinTest {
         every { socket.getChannel(any(), any()) } returns channel
         every { channel.attach() } returns push
 
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 val data = outcome.dataOrThrow()
@@ -312,13 +312,14 @@ class PredictionsRepositoryTests : KoinTest {
             }
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(SocketError.RECEIVED_ERROR, outcome.message)
             },
             onMessage = { /* no-op */ },
+            errorKey = "",
         )
     }
 
@@ -356,7 +357,7 @@ class PredictionsRepositoryTests : KoinTest {
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         every { channel.attach() } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
