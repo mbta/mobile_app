@@ -106,7 +106,7 @@ class ContentViewTests : KoinTest {
             )
 
         composeTestRule.setContent {
-            val flow = MutableStateFlow(null).asStateFlow()
+            val flow = MutableStateFlow(null)
             CompositionLocalProvider(
                 LocalLocationClient provides MockFusedLocationProviderClient()
             ) {
