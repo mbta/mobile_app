@@ -33,6 +33,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020remplacer &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020jusqu’à %1$s</string>
+    <string name="alert_summary_skipped">%1$s%2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jusqu’à la fin du service</string>
     <string name="alert_summary_timeframe_later_date">\u0020jusqu’au %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020jusqu’à %1$s</string>
@@ -72,6 +73,7 @@
     <string name="bus_lowercase">bus</string>
     <string name="bus_suspended">Bus suspendu</string>
     <string name="buses">bus</string>
+    <string name="buses_sentence_case">Les autobus</string>
     <string name="cancel">Annuler</string>
     <string name="cancellation">Annulation</string>
     <string name="cancelled">Annulé</string>
@@ -415,8 +417,6 @@
     <string name="station_closure">Fermeture de la station</string>
     <string name="station_issue">Problème de station</string>
     <string name="station_issue_sentence_case">Problème de station</string>
-    <string name="stop_closed">Arrêt fermé</string>
-    <string name="stop_closed_sentence_case">Arrêt fermé</string>
     <string name="stop_closure">Fermeture de l’arrêt</string>
     <string name="stop_filter_pills_filter_hint">Appliquer un filtre pour n’afficher que les arrivées de ce trajet</string>
     <string name="stop_filter_pills_remove_hint">Supprimer le filtre et afficher tous les trajets</string>
@@ -425,6 +425,7 @@
     <string name="stop_shoveling">Déneigement de l’arrêt</string>
     <string name="stop_shoveling_sentence_case">Déneigement de l’arrêt</string>
     <string name="stop_skipped">Arrêt ignoré</string>
+    <string name="stop_skipped_sentence_case">Arrêt ignoré</string>
     <string name="stops">Arrêts</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d arrêt restant</item>
@@ -472,6 +473,7 @@
     <string name="train_traffic">Trafic ferroviaire</string>
     <string name="train_traffic_lowercase">trafic ferroviaire</string>
     <string name="trains">trains</string>
+    <string name="trains_sentence_case">Trains</string>
     <string name="trip_cancelled">Trajet annulé</string>
     <string name="trip_cancelled_details">Ce voyage a été annulé. Nous sommes désolés pour la gêne occasionnée.</string>
     <string name="trip_complete">Voyage terminé</string>

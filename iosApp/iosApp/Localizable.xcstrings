@@ -3288,6 +3288,53 @@
         }
       }
     },
+    "%1$@%2$@" : {
+      "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@%2$@"
+          }
+        }
+      }
+    },
     "%ld elevators closed" : {
       "comment" : "Header displayed when elevators are not working at a station",
       "localizations" : {
@@ -7358,6 +7405,53 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "巴士"
+          }
+        }
+      }
+    },
+    "Buses" : {
+      "comment" : "Mode of travel prefixing alert summary e.g.: \"Buses will not stop at...\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "autobuses"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Les autobus"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Bis"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Ônibus"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Xe buýt"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "公交车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "公車"
           }
         }
       }
@@ -21797,6 +21891,7 @@
     },
     "Station closed" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -21891,6 +21986,7 @@
     },
     "Station Closure" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22032,6 +22128,7 @@
     },
     "Stop closed" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22126,6 +22223,7 @@
     },
     "Stop Closure" : {
       "comment" : "Possible alert effect",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22407,7 +22505,7 @@
       }
     },
     "Stop skipped" : {
-      "comment" : "The status label for a skipped stop on a trip",
+      "comment" : "Possible alert effect\nThe status label for a skipped stop on a trip",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -22437,6 +22535,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "Dừng lại đã bỏ qua"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "停止跳过"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "停止跳過"
+          }
+        }
+      }
+    },
+    "Stop Skipped" : {
+      "comment" : "Possible alert effect",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Detener omitido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arrêt ignoré"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Arè Sote"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Parar Ignorado"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Dừng lại rồi bỏ qua"
           }
         },
         "zh-Hans-CN" : {
@@ -25151,6 +25296,53 @@
         }
       }
     },
+    "Trains" : {
+      "comment" : "Mode of travel prefixing alert summary e.g.: \"Trains will not stop at...\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "trenes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trains"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tren yo"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Trens"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "Tàu hỏa"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火车"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "火車"
+          }
+        }
+      }
+    },
     "Trip cancelled" : {
       "comment" : "Header for a cancelled trip card on stop details\nPossible alert effect",
       "localizations" : {
@@ -26764,7 +26956,7 @@
       }
     },
     "will not stop at %@ %@" : {
-      "comment" : "Trip specific alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
+      "comment" : "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”",
       "localizations" : {
         "en" : {
           "stringUnit" : {

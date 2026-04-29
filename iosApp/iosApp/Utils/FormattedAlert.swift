@@ -152,6 +152,9 @@ struct FormattedAlert: Equatable {
                         """
                     ), location.modeLabel)
 
+        case let .affectedStops(location):
+            summaryAffectedStops(stops: location.stops)
+
         case .unknown: ""
 
         case nil: ""
@@ -344,6 +347,50 @@ struct FormattedAlert: Equatable {
         }
     }
 
+    static func summarySkippedEffect(stops: String, timeframe: String) -> String {
+        String(
+            format: NSLocalizedString(
+                "will not stop at %@ %@",
+                comment: "Alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”"
+            ),
+            stops,
+            timeframe
+        )
+    }
+
+    static func summaryAffectedStops(stops: [String]) -> String {
+        stops.map { "**\($0)**" }.reduce(nil) { lhs, rhs in
+            if let lhs { String(
+                format: NSLocalizedString(
+                    "%1$@ and %2$@",
+                    comment: "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”"
+                ),
+                lhs,
+                rhs
+            ) } else { rhs }
+        } ?? ""
+    }
+
+    static func summaryAffectedMode(effect: Alert.Effect) -> String {
+        if effect == .stationClosure {
+            NSLocalizedString(
+                "Trains",
+                comment: """
+                Mode of travel prefixing alert summary e.g.: "Trains will not stop at..."
+                """
+            ) + " "
+        } else if effect == .stopClosure {
+            NSLocalizedString(
+                "Buses",
+                comment: """
+                Mode of travel prefixing alert summary e.g.: "Buses will not stop at..."
+                """
+            ) + " "
+        } else {
+            ""
+        }
+    }
+
     var summary: AttributedString? {
         summary(alertSummary: alertSummary)
     }
@@ -360,13 +407,31 @@ struct FormattedAlert: Equatable {
                 ), Self.summaryLocation(effect: nil, location: alertSummary.location)
             ))
         case let .standard(alertSummary):
+            let location = Self.summaryLocation(effect: alertSummary.effect, location: alertSummary.location)
+            let timeframe = Self.summaryTimeframe(timeframe: alertSummary.timeframe)
             let args = [
                 sentenceCaseEffect,
-                Self.summaryLocation(effect: alertSummary.effect, location: alertSummary.location),
-                Self.summaryTimeframe(timeframe: alertSummary.timeframe),
+                location,
+                timeframe,
                 Self.summaryRecurrence(recurrence: alertSummary.recurrence),
             ]
-            if alertSummary.isUpdate {
+            if alertSummary.effect.stopSkipped {
+                let skippedArgs = [
+                    Self.summaryAffectedMode(effect: alertSummary.effect),
+                    Self.summarySkippedEffect(
+                        stops: location,
+                        timeframe: String(timeframe.trimmingPrefix(.horizontalWhitespace))
+                    ),
+                ]
+                return AttributedString.tryMarkdown(String(format:
+                    NSLocalizedString(
+                        "%1$@%2$@",
+                        comment: """
+                        Alert summary in the format of "[trains/buses] will not stop at [affected stop(s)] [timeframe]" \
+                        ex "[Trains ][will not stop at Back Bay and Ruggles until further notice]"
+                        """
+                    ), skippedArgs.map { $0 as CVarArg }))
+            } else if alertSummary.isUpdate {
                 return AttributedString.tryMarkdown(String(format:
                     NSLocalizedString(
                         "**Update:** %1$@%2$@%3$@%4$@",

@@ -53,6 +53,8 @@ internal constructor(
     public fun allClear(atTime: EasternTimeInstant): Boolean =
         activePeriod.all { it.end != null && it.end < atTime }
 
+    val stopSkipped: Boolean = effect.stopSkipped
+
     /**
      * If this alert has the given trip as an informed entity, return the significance of that trip
      * (same as the intrinsic significance, with the exception of treating cancellations as Major)
@@ -267,7 +269,10 @@ internal constructor(
         @SerialName("summary") Summary,
         @SerialName("suspension") Suspension,
         @SerialName("track_change") TrackChange,
-        @SerialName("unknown_effect") UnknownEffect,
+        @SerialName("unknown_effect") UnknownEffect;
+
+        public val stopSkipped: Boolean
+            get() = this in setOf(StationClosure, StopClosure)
     }
 
     @Serializable

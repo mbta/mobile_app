@@ -61,23 +61,8 @@ extension FormattedAlert {
                 comment: "Trip specific alert effect denoting cancellation, will specify “today” or “tomorrow”"
             ), day)
         case .stationClosure, .stopClosure, .dockClosure: if let effectStops {
-                return String(
-                    format: NSLocalizedString(
-                        "will not stop at %@ %@",
-                        comment: "Trip specific alert effect denoting station bypass, ex “will not stop at [Back Bay and Ruggles] [today]”"
-                    ),
-                    effectStops.map { "**\($0)**" }.reduce(nil) { lhs, rhs in
-                        if let lhs { String(
-                            format: NSLocalizedString(
-                                "%1$@ and %2$@",
-                                comment: "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”"
-                            ),
-                            lhs,
-                            rhs
-                        ) } else { rhs }
-                    } ?? "",
-                    day
-                )
+                let effectStops = summaryAffectedStops(stops: effectStops)
+                return summarySkippedEffect(stops: effectStops, timeframe: day)
             }
         case .suspension:
             if let terminatingStop = effectStops?.first {

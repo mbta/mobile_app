@@ -10,6 +10,7 @@ import androidx.compose.ui.text.fromHtml
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.directionNameFormatted
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Alert.Effect
 import com.mbta.tid.mbta_app.model.AlertCardSpec
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.Facility
@@ -107,14 +108,25 @@ data class FormattedAlert(
                         summaryLocation(alertSummary.effect, alertSummary.location, resources),
                     )
                 )
-            is AlertSummary.Standard ->
-                if (alertSummary.isUpdate) {
+            is AlertSummary.Standard -> {
+                val location =
+                    summaryLocation(alertSummary.effect, alertSummary.location, resources)
+                val timeframe = summaryTimeframe(alertSummary.timeframe, resources)
+                if (alertSummary.effect.stopSkipped) {
+                    AnnotatedString.fromHtml(
+                        resources.getString(
+                            R.string.alert_summary_skipped,
+                            summaryAffectedMode(alertSummary.effect, resources),
+                            summarySkippedEffect(location, timeframe.trimStart(), resources),
+                        )
+                    )
+                } else if (alertSummary.isUpdate) {
                     AnnotatedString.fromHtml(
                         resources.getString(
                             R.string.alert_summary_with_update,
                             resources.getString(sentenceEffectRes),
-                            summaryLocation(alertSummary.effect, alertSummary.location, resources),
-                            summaryTimeframe(alertSummary.timeframe, resources),
+                            location,
+                            timeframe,
                             summaryRecurrence(alertSummary.recurrence, resources),
                         )
                     )
@@ -123,12 +135,13 @@ data class FormattedAlert(
                         resources.getString(
                             R.string.alert_summary,
                             resources.getString(sentenceEffectRes),
-                            summaryLocation(alertSummary.effect, alertSummary.location, resources),
-                            summaryTimeframe(alertSummary.timeframe, resources),
+                            location,
+                            timeframe,
                             summaryRecurrence(alertSummary.recurrence, resources),
                         )
                     )
                 }
+            }
             is TripSpecificAlertSummary ->
                 AnnotatedString.fromHtml(
                     resources.getString(
@@ -209,7 +222,7 @@ data class FormattedAlert(
 
                         Alert.Effect.StationClosure,
                         Alert.Effect.StopClosure,
-                        Alert.Effect.DockClosure -> R.string.stop_skipped
+                        Alert.Effect.DockClosure -> R.string.stop_skipped_sentence_case
 
                         else -> null
                     }?.let {
@@ -269,9 +282,9 @@ data class FormattedAlert(
                 Alert.Effect.ServiceChange -> R.string.service_change
                 Alert.Effect.Shuttle -> R.string.shuttle
                 Alert.Effect.SnowRoute -> R.string.snow_route
-                Alert.Effect.StationClosure -> R.string.station_closure
+                Alert.Effect.StationClosure -> R.string.stop_skipped
                 Alert.Effect.StationIssue -> R.string.station_issue
-                Alert.Effect.StopClosure -> R.string.stop_closure
+                Alert.Effect.StopClosure -> R.string.stop_skipped
                 Alert.Effect.StopMove,
                 Alert.Effect.StopMoved -> R.string.stop_moved
                 Alert.Effect.StopShoveling -> R.string.stop_shoveling
@@ -309,9 +322,9 @@ data class FormattedAlert(
                 Alert.Effect.ServiceChange -> R.string.service_change_sentence_case
                 Alert.Effect.Shuttle -> R.string.shuttle_buses
                 Alert.Effect.SnowRoute -> R.string.snow_route_sentence_case
-                Alert.Effect.StationClosure -> R.string.station_closed_sentence_case
+                Alert.Effect.StationClosure -> R.string.stop_skipped_sentence_case
                 Alert.Effect.StationIssue -> R.string.station_issue_sentence_case
-                Alert.Effect.StopClosure -> R.string.stop_closed_sentence_case
+                Alert.Effect.StopClosure -> R.string.stop_skipped_sentence_case
                 Alert.Effect.StopMove,
                 Alert.Effect.StopMoved -> R.string.stop_moved_sentence_case
                 Alert.Effect.StopShoveling -> R.string.stop_shoveling_sentence_case
@@ -456,8 +469,10 @@ data class FormattedAlert(
                         R.string.shuttle_bus,
                         R.string.shuttle_buses_replace_service,
                     )
-                Alert.Effect.StationClosure -> PredictionReplacement(R.string.station_closed)
-                Alert.Effect.StopClosure -> PredictionReplacement(R.string.stop_closed)
+                Alert.Effect.StationClosure ->
+                    PredictionReplacement(R.string.stop_skipped_sentence_case)
+                Alert.Effect.StopClosure ->
+                    PredictionReplacement(R.string.stop_skipped_sentence_case)
                 Alert.Effect.Suspension ->
                     PredictionReplacement(R.string.suspension, R.string.service_suspended)
                 else -> PredictionReplacement(effectRes(effect))
@@ -502,6 +517,8 @@ data class FormattedAlert(
                             resources.getString(R.string.bus_label, location.routeLabel)
                         else location.routeLabel,
                     )
+                is AlertSummary.Location.AffectedStops ->
+                    summaryAffectedStops(location.stops, resources)
 
                 AlertSummary.Location.Unknown,
                 null -> ""
@@ -589,6 +606,24 @@ data class FormattedAlert(
                     resources.getString(R.string.multiple_trips)
             }
 
+        private fun summaryAffectedStops(stops: List<String>, resources: Resources): String =
+            stops
+                .map { "<b>${it}</b>" }
+                .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) }
+
+        private fun summaryAffectedMode(effect: Alert.Effect, resources: Resources): String =
+            when (effect) {
+                Effect.StationClosure -> resources.getString(R.string.trains_sentence_case) + " "
+                Effect.StopClosure -> resources.getString(R.string.buses_sentence_case) + " "
+                else -> ""
+            }
+
+        private fun summarySkippedEffect(
+            stops: String,
+            timeframe: String,
+            resources: Resources,
+        ): String = resources.getString(R.string.will_not_stop_at, stops, timeframe)
+
         private fun summaryTripEffect(
             tripIdentity: TripSpecificAlertSummary.TripIdentity,
             effect: Alert.Effect,
@@ -606,7 +641,11 @@ data class FormattedAlert(
                     else resources.getString(R.string.is_cancelled, day)
 
                 Alert.Effect.StationClosure if effectStops != null ->
-                    summaryTripWillNotStopAt(effectStops, day, resources)
+                    summarySkippedEffect(
+                        summaryAffectedStops(effectStops, resources),
+                        day,
+                        resources,
+                    )
 
                 Alert.Effect.DockClosure if effectStops != null ->
                     summaryTripWillNotStopAt(effectStops, day, resources)

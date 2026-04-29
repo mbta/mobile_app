@@ -191,7 +191,7 @@ class TripDetailsViewTest {
 
         composeTestRule.waitForIdle()
         composeTestRule.onNodeWithText(downstreamStop.name).assertIsDisplayed()
-        composeTestRule.onNodeWithText("Stop Closed").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Stop skipped").assertIsDisplayed()
     }
 
     @Test

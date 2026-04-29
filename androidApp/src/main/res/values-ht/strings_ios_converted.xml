@@ -36,6 +36,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020ranplase &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020jiska %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020jiska %1$s</string>
+    <string name="alert_summary_skipped">%1$s%2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jiska fen sèvis la</string>
     <string name="alert_summary_timeframe_later_date">\u0020jiska %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020jiska %1$s</string>
@@ -75,6 +76,7 @@
     <string name="bus_lowercase">bis</string>
     <string name="bus_suspended">Bis sispann</string>
     <string name="buses">bis yo</string>
+    <string name="buses_sentence_case">Bis</string>
     <string name="cancel">Anile</string>
     <string name="cancellation">Anilasyon</string>
     <string name="cancelled">Anile</string>
@@ -424,8 +426,6 @@
     <string name="station_closure">Estasyon Fèmen</string>
     <string name="station_issue">Pwoblèm Estasyon</string>
     <string name="station_issue_sentence_case">Pwoblèm estasyon</string>
-    <string name="stop_closed">Arè Fèmen</string>
-    <string name="stop_closed_sentence_case">Arè a fèmen</string>
     <string name="stop_closure">Fèmti Arè</string>
     <string name="stop_filter_pills_filter_hint">Aplike yon filtè pou se sèlman arive soti nan wout sa a ki parèt</string>
     <string name="stop_filter_pills_remove_hint">Retire filtè a epi montre tout wout yo</string>
@@ -433,7 +433,8 @@
     <string name="stop_moved_sentence_case">Arè Fèmen</string>
     <string name="stop_shoveling">Arè Denèjman</string>
     <string name="stop_shoveling_sentence_case">Arè denèjman</string>
-    <string name="stop_skipped">Arè sote</string>
+    <string name="stop_skipped">Arè Sote</string>
+    <string name="stop_skipped_sentence_case">Arè sote</string>
     <string name="stops">Arè</string>
     <plurals name="stops_away">
         <item quantity="zero">%1$d kanpe lwen</item>
@@ -484,6 +485,7 @@
     <string name="train_traffic">Trafik tren</string>
     <string name="train_traffic_lowercase">trafik tren</string>
     <string name="trains">tren yo</string>
+    <string name="trains_sentence_case">Tren yo</string>
     <string name="trip_cancelled">Vwayaj la anile</string>
     <string name="trip_cancelled_details">Vwayaj sa a anile. Nou regrèt deranjman an.</string>
     <string name="trip_complete">Vwayaj konplè</string>

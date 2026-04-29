@@ -33,6 +33,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020reemplazando &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020hasta %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020hasta %1$s</string>
+    <string name="alert_summary_skipped">%1$s%2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020hasta el final del servicio</string>
     <string name="alert_summary_timeframe_later_date">\u0020hasta el %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020hasta el día %1$s</string>
@@ -72,6 +73,7 @@
     <string name="bus_lowercase">autobús</string>
     <string name="bus_suspended">Autobús suspendido</string>
     <string name="buses">autobuses</string>
+    <string name="buses_sentence_case">autobuses</string>
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
     <string name="cancelled">Cancelado</string>
@@ -415,8 +417,6 @@
     <string name="station_closure">Cierre de estación</string>
     <string name="station_issue">Problema en la estación</string>
     <string name="station_issue_sentence_case">Problema en la estación</string>
-    <string name="stop_closed">Parada cerrada</string>
-    <string name="stop_closed_sentence_case">Parada cerrada</string>
     <string name="stop_closure">Cierre de parada</string>
     <string name="stop_filter_pills_filter_hint">Aplicar un filtro para que solo se muestren las llegadas de esta ruta</string>
     <string name="stop_filter_pills_remove_hint">Eliminar el filtro y mostrar todas las rutas</string>
@@ -424,7 +424,8 @@
     <string name="stop_moved_sentence_case">Parada modificada</string>
     <string name="stop_shoveling">Trabajo de paleo en la parada</string>
     <string name="stop_shoveling_sentence_case">Trabajo de paleo en la parada</string>
-    <string name="stop_skipped">Parada omitida</string>
+    <string name="stop_skipped">Detener omitido</string>
+    <string name="stop_skipped_sentence_case">Parada omitida</string>
     <string name="stops">Paradas</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d parada antes de</item>
@@ -472,6 +473,7 @@
     <string name="train_traffic">Tráfico de trenes</string>
     <string name="train_traffic_lowercase">tráfico de trenes</string>
     <string name="trains">trenes</string>
+    <string name="trains_sentence_case">trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
     <string name="trip_complete">Viaje completado</string>
