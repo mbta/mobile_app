@@ -18,6 +18,7 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -38,7 +39,9 @@ class VehiclesRepositoryTest : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehiclesRepo =
+            VehiclesRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
@@ -47,6 +50,7 @@ class VehiclesRepositoryTest : KoinTest {
             routeId = Route.Id("Red"),
             directionId = 0,
             onReceive = { /* no-op */ },
+            errorKey = "testChannelSetOnRun",
         )
         advanceUntilIdle()
         assertNotNull(vehiclesRepo.channel)
@@ -55,7 +59,8 @@ class VehiclesRepositoryTest : KoinTest {
     @Test
     fun testChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel =
             socket.getChannel(
@@ -73,12 +78,19 @@ class VehiclesRepositoryTest : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehiclesRepo =
+            VehiclesRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         vehiclesRepo.channel = channel
-        vehiclesRepo.connect(routeId = Route.Id("Test"), directionId = 0, onReceive = {})
+        vehiclesRepo.connect(
+            routeId = Route.Id("Test"),
+            directionId = 0,
+            onReceive = {},
+            errorKey = "testChannelClearedBeforeJoin",
+        )
         advanceUntilIdle()
         verify { channel.detach() }
     }
@@ -97,7 +109,8 @@ class VehiclesRepositoryTest : KoinTest {
             }
         }
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = MockPush()
         every { socket.getChannel(any(), any()) } returns channel
@@ -109,13 +122,15 @@ class VehiclesRepositoryTest : KoinTest {
             onReceive = { outcome ->
                 assertEquals(VehiclesStreamDataResponse(emptyMap()), outcome.dataOrThrow())
             },
+            errorKey = "testSetsVehiclesOnJoinResponse",
         )
     }
 
     @Test
     fun testSetsErrorWhenErrorReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val vehiclesRepo = VehiclesRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -145,8 +160,9 @@ class VehiclesRepositoryTest : KoinTest {
             directionId = 0,
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
-                assertEquals(outcome.message, SocketError.FAILURE)
+                assertContains(outcome.message, SocketError.FAILURE)
             },
+            errorKey = "testSetsErrorWhenErrorReceived",
         )
     }
 }
