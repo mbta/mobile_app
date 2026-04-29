@@ -29,7 +29,13 @@ internal class AlertsRepository(
         channelOwner.connect(
             AlertsChannel,
             AlertsChannel::parseMessage,
-            onReceive,
+            {
+                when (it) {
+                    is ApiResult.Ok -> println("Received ${it.data.alerts.size} alerts")
+                    else -> {}
+                }
+                onReceive(it)
+            },
             "AlertsRepository",
         )
     }
