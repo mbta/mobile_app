@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -58,6 +59,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -99,6 +101,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -146,6 +149,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -193,6 +197,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -232,6 +237,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -272,6 +278,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -312,6 +319,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -405,6 +413,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -449,6 +458,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -490,6 +500,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
