@@ -84,7 +84,7 @@ import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IToastViewModel
 import com.mbta.tid.mbta_app.viewModel.ToastViewModel
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.map as flowMap
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 import org.koin.core.context.startKoin
@@ -254,7 +254,7 @@ fun RouteStopListView(
     var firstTimeToast by remember { mutableStateOf<ToastViewModel.Toast?>(null) }
     val displayedToast by
         remember(toastViewModel) {
-                toastViewModel.models.map {
+                toastViewModel.models.flowMap {
                     when (it) {
                         is ToastViewModel.State.Hidden -> null
                         is ToastViewModel.State.Visible -> it.toast
