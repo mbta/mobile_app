@@ -13,12 +13,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-internal class ChannelOwner<X : Any>(
+internal class ChannelOwner<MessageData : Any>(
     socket: PhoenixSocket,
     dispatcher: CoroutineDispatcher,
     errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
-    private val owner = AsymmetricChannelOwner<X, X>(socket, dispatcher, errorBannerStateRepository)
+    private val owner =
+        AsymmetricChannelOwner<MessageData, MessageData>(
+            socket,
+            dispatcher,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel?
         get() = owner.channel
         set(channel) {
@@ -27,15 +32,15 @@ internal class ChannelOwner<X : Any>(
 
     fun connect(
         spec: ChannelSpec,
-        parseMessage: (String) -> X,
-        handleResult: (ApiResult<X>) -> Unit,
+        parseMessage: (String) -> MessageData,
+        handleResult: (ApiResult<MessageData>) -> Unit,
         errorKey: String,
     ) = owner.connect(spec, parseMessage, parseMessage, handleResult, handleResult, errorKey)
 
     fun disconnect() = owner.disconnect()
 }
 
-internal class AsymmetricChannelOwner<X : Any, Y : Any>(
+internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
     private val socket: PhoenixSocket,
     private val dispatcher: CoroutineDispatcher,
     private val errorBannerStateRepository: IErrorBannerStateRepository,
@@ -45,13 +50,16 @@ internal class AsymmetricChannelOwner<X : Any, Y : Any>(
 
     fun connect(
         spec: ChannelSpec,
-        parseJoinMessage: (String) -> X,
-        parseMessage: (String) -> Y,
-        handleJoinResult: (ApiResult<X>) -> Unit,
-        handleResult: (ApiResult<Y>) -> Unit,
+        parseJoinMessage: (String) -> JoinData,
+        parseMessage: (String) -> MessageData,
+        handleJoinResult: (ApiResult<JoinData>) -> Unit,
+        handleResult: (ApiResult<MessageData>) -> Unit,
         errorKey: String,
     ) {
-        fun <Z : Any> parseResult(message: PhoenixMessage, parse: (String) -> Z): ApiResult<Z> {
+        fun <Data : Any> parseResult(
+            message: PhoenixMessage,
+            parse: (String) -> Data,
+        ): ApiResult<Data> {
             val rawPayload: String? = message.jsonBody
 
             val errorMessage =
@@ -67,17 +75,17 @@ internal class AsymmetricChannelOwner<X : Any, Y : Any>(
             return ApiResult.Error(message = "${SocketError.FAILED_TO_PARSE} - $errorMessage")
         }
 
-        fun handleJoinResultAndBanner(result: ApiResult.Ok<X>) {
+        fun handleJoinResultAndBanner(result: ApiResult.Ok<JoinData>) {
             errorBannerStateRepository.clearDataError(errorKey)
             handleJoinResult(result)
         }
 
-        fun handleResultAndBanner(result: ApiResult.Ok<Y>) {
+        fun handleResultAndBanner(result: ApiResult.Ok<MessageData>) {
             errorBannerStateRepository.clearDataError(errorKey)
             handleResult(result)
         }
 
-        fun handleJoinErrorAndBanner(result: ApiResult.Error<X>) {
+        fun handleJoinErrorAndBanner(result: ApiResult.Error<JoinData>) {
             errorBannerStateRepository.setDataError(errorKey, result.message) {
                 connect(
                     spec,
@@ -98,8 +106,8 @@ internal class AsymmetricChannelOwner<X : Any, Y : Any>(
 
                 channel.onEvent(spec.updateEvent) {
                     when (val result = parseResult(it, parseMessage)) {
-                        is ApiResult.Ok<Y> -> handleResultAndBanner(result)
-                        is ApiResult.Error<Y> -> handleResult(result)
+                        is ApiResult.Ok<MessageData> -> handleResultAndBanner(result)
+                        is ApiResult.Error<MessageData> -> handleResult(result)
                     }
                 }
                 channel.onFailure {
@@ -113,8 +121,8 @@ internal class AsymmetricChannelOwner<X : Any, Y : Any>(
                         onOk = { message ->
                             println("joined channel ${message.subject}")
                             when (val result = parseResult(message, parseJoinMessage)) {
-                                is ApiResult.Ok<X> -> handleJoinResultAndBanner(result)
-                                is ApiResult.Error<X> -> handleJoinErrorAndBanner(result)
+                                is ApiResult.Ok<JoinData> -> handleJoinResultAndBanner(result)
+                                is ApiResult.Error<JoinData> -> handleJoinErrorAndBanner(result)
                             }
                         },
                         onError = {
