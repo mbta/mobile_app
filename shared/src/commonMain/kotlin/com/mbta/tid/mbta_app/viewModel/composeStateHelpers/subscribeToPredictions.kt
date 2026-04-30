@@ -45,17 +45,14 @@ internal fun subscribeToPredictions(
     ) {
         predictionsRepository.disconnect()
         if (stopIds != null && active) {
-            predictionsRepository.connectV2(stopIds, onJoin, onMessage)
+            predictionsRepository.connect(stopIds, errorKey, onJoin, onMessage)
         }
     }
 
     fun onMessage(message: ApiResult<PredictionsByStopMessageResponse>) {
         onAnyMessageReceived()
         when (message) {
-            is ApiResult.Ok -> {
-                errorBannerRepository.clearDataError(errorKey)
-                predictions = predictions.orEmpty().mergePredictions(message.data)
-            }
+            is ApiResult.Ok -> predictions = predictions.orEmpty().mergePredictions(message.data)
             is ApiResult.Error ->
                 println("Predictions stream failed on message: ${message.message}")
         }
@@ -65,16 +62,10 @@ internal fun subscribeToPredictions(
         onAnyMessageReceived()
         when (message) {
             is ApiResult.Ok -> {
-                errorBannerRepository.clearDataError(errorKey)
                 loadedStopIds = stopIds
                 predictions = message.data
             }
-            is ApiResult.Error -> {
-                errorBannerRepository.setDataError(errorKey, message.toString()) {
-                    connect(stopIds, active, ::onJoin, ::onMessage)
-                }
-                println("Predictions stream failed to join: ${message.message}")
-            }
+            is ApiResult.Error -> println("Predictions stream failed to join: ${message.message}")
         }
     }
 

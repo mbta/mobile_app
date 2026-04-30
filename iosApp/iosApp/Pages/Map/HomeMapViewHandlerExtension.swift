@@ -65,7 +65,11 @@ extension HomeMapView {
 
     func joinVehiclesChannel(routeId: LineOrRoute.Id, directionId: Int32) {
         leaveVehiclesChannel()
-        vehiclesRepository.connect(routeId: routeId, directionId: directionId) { outcome in
+        vehiclesRepository.connect(
+            routeId: routeId,
+            directionId: directionId,
+            errorKey: "HomeMapView.joinVehiclesChannel",
+        ) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
                 if let routeCardData = routeCardDataState?.data {
                     vehiclesData = Array(StopDetailsUtils.shared.filterVehiclesByUpcoming(

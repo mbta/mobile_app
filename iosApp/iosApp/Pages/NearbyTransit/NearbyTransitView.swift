@@ -211,34 +211,39 @@ struct NearbyTransitView: View {
 
     func joinPredictions(_ stopIds: [String]?) {
         guard let stopIds else { return }
-        predictionsRepository.connectV2(stopIds: stopIds, onJoin: { outcome in
-            DispatchQueue.main.async {
-                switch onEnum(of: outcome) {
-                case let .ok(result):
-                    predictionsByStop = result.data
-                    checkPredictionsStale()
-                case .error: break
-                }
-                setIsReturningFromBackground(false)
-            }
-        }, onMessage: { outcome in
-            DispatchQueue.main.async {
-                switch onEnum(of: outcome) {
-                case let .ok(result):
-                    if let existingPredictionsByStop = predictionsByStop {
-                        predictionsByStop = existingPredictionsByStop.mergePredictions(updatedPredictions: result.data)
-                    } else {
-                        predictionsByStop = PredictionsByStopJoinResponse(
-                            partialResponse: result.data
-                        )
+        predictionsRepository.connect(
+            stopIds: stopIds,
+            errorKey: "NearbyTransitView.joinPredictions",
+            onJoin: { outcome in
+                DispatchQueue.main.async {
+                    switch onEnum(of: outcome) {
+                    case let .ok(result):
+                        predictionsByStop = result.data
+                        checkPredictionsStale()
+                    case .error: break
                     }
-                    checkPredictionsStale()
-                case .error: break
+                    setIsReturningFromBackground(false)
                 }
-                setIsReturningFromBackground(false)
+            },
+            onMessage: { outcome in
+                DispatchQueue.main.async {
+                    switch onEnum(of: outcome) {
+                    case let .ok(result):
+                        if let existingPredictionsByStop = predictionsByStop {
+                            predictionsByStop = existingPredictionsByStop
+                                .mergePredictions(updatedPredictions: result.data)
+                        } else {
+                            predictionsByStop = PredictionsByStopJoinResponse(
+                                partialResponse: result.data
+                            )
+                        }
+                        checkPredictionsStale()
+                    case .error: break
+                    }
+                    setIsReturningFromBackground(false)
+                }
             }
-
-        })
+        )
     }
 
     func leavePredictions() {

@@ -23,13 +23,22 @@ class TripPredictionsRepositoryTests {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val errorBannerRepo = MockErrorBannerStateRepository()
         val tripPredictionsRepo =
-            TripPredictionsRepository(socket, StandardTestDispatcher(testScheduler))
+            TripPredictionsRepository(
+                socket,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         tripPredictionsRepo.channel = channel
-        tripPredictionsRepo.connect(tripId = "Test", onReceive = {})
+        tripPredictionsRepo.connect(
+            tripId = "Test",
+            onReceive = {},
+            errorKey = "testChannelClearedBeforeJoin",
+        )
         advanceUntilIdle()
         verify { channel.detach() }
     }

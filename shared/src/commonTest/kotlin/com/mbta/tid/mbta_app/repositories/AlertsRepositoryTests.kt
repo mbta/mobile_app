@@ -16,6 +16,7 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -34,7 +35,9 @@ class AlertsRepositoryTests {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val alertsRepo =
+            AlertsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
@@ -49,7 +52,9 @@ class AlertsRepositoryTests {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val alertsRepo =
+            AlertsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
@@ -62,7 +67,8 @@ class AlertsRepositoryTests {
     @Test
     fun testChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val alertsRepo = AlertsRepository(socket, errorBannerRepo, Dispatchers.IO)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         alertsRepo.channel = socket.getChannel(topic = AlertsChannel.topic, params = emptyMap())
         assertNotNull(alertsRepo.channel)
@@ -74,7 +80,8 @@ class AlertsRepositoryTests {
     @Test
     fun testSetsAlertsWhenMessageReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val alertsRepo = AlertsRepository(socket, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -113,7 +120,8 @@ class AlertsRepositoryTests {
     @Test
     fun testSetsErrorWhenErrorReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val alertsRepo = AlertsRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val alertsRepo = AlertsRepository(socket, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -142,7 +150,7 @@ class AlertsRepositoryTests {
             onReceive = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertNotNull(outcome.message)
-                assertEquals(outcome.message, SocketError.FAILURE)
+                assertContains(outcome.message, SocketError.FAILURE)
             }
         )
     }

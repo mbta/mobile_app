@@ -23,12 +23,18 @@ class VehicleRepositoryTests {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val vehicleRepo = VehicleRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val vehicleRepo =
+            VehicleRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         vehicleRepo.channel = channel
-        vehicleRepo.connect(vehicleId = "Test", onReceive = {})
+        vehicleRepo.connect(
+            vehicleId = "Test",
+            onReceive = {},
+            errorKey = "testChannelClearedBeforeJoin",
+        )
         advanceUntilIdle()
         verify { channel.detach() }
     }

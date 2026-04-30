@@ -1,11 +1,9 @@
 package com.mbta.tid.mbta_app.repositories
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
-import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.PredictionsForTripChannel
@@ -18,6 +16,7 @@ import org.koin.core.component.KoinComponent
 public interface ITripPredictionsRepository {
     public fun connect(
         tripId: String,
+        errorKey: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     )
 
@@ -28,9 +27,17 @@ public interface ITripPredictionsRepository {
     public fun disconnect()
 }
 
-internal class TripPredictionsRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
-    ITripPredictionsRepository, KoinComponent {
-    private val channelOwner = ChannelOwner(socket, ioDispatcher)
+internal class TripPredictionsRepository(
+    socket: PhoenixSocket,
+    errorBannerStateRepository: IErrorBannerStateRepository,
+    ioDispatcher: CoroutineDispatcher,
+) : ITripPredictionsRepository, KoinComponent {
+    private val channelOwner =
+        ChannelOwner<PredictionsStreamDataResponse>(
+            socket,
+            ioDispatcher,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override var lastUpdated: EasternTimeInstant? = null
@@ -41,39 +48,28 @@ internal class TripPredictionsRepository(socket: PhoenixSocket, ioDispatcher: Co
 
     override fun connect(
         tripId: String,
+        errorKey: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
             PredictionsForTripChannel(tripId),
-            handleMessage = { handleNewDataMessage(it, onReceive) },
-            handleError = { onReceive(ApiResult.Error(message = it)) },
+            PredictionsForTripChannel::parseMessage,
+            handleResult = {
+                when (it) {
+                    is ApiResult.Ok -> {
+                        println("Received ${it.data.predictions.size} predictions")
+                        lastUpdated = EasternTimeInstant.now()
+                    }
+                    else -> {}
+                }
+                onReceive(it)
+            },
+            errorKey = errorKey,
         )
     }
 
     override fun disconnect() {
         channelOwner.disconnect()
-    }
-
-    private fun handleNewDataMessage(
-        message: PhoenixMessage,
-        onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
-    ) {
-        val rawPayload: String? = message.jsonBody
-
-        if (rawPayload != null) {
-            val newPredictions =
-                try {
-                    PredictionsForTripChannel.parseMessage(rawPayload)
-                } catch (e: IllegalArgumentException) {
-                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
-                    return
-                }
-            println("Received ${newPredictions.predictions.size} predictions")
-            lastUpdated = EasternTimeInstant.now()
-            onReceive(ApiResult.Ok(newPredictions))
-        } else {
-            println("No jsonPayload found for message ${message.body}")
-        }
     }
 }
 
@@ -88,6 +84,7 @@ constructor(
 
     override fun connect(
         tripId: String,
+        errorKey: String,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         onReceive(ApiResult.Ok(response))

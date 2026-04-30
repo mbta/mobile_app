@@ -18,7 +18,6 @@ fun TripInstantDisplay.contentDescription(isFirst: Boolean, vehicleType: String)
                 when (this) {
                     is TripInstantDisplay.Arriving -> this.last
                     is TripInstantDisplay.Now -> this.last
-                    else -> false
                 }
             val description =
                 if (isFirst) stringResource(R.string.vehicle_arriving_first, vehicleType)
@@ -105,7 +104,6 @@ private fun predictedMinutesDescription(
         when (trip) {
             is TripInstantDisplay.Approaching -> trip.last
             is TripInstantDisplay.Minutes -> trip.last
-            else -> false
         }
     val description =
         if (isFirst)
