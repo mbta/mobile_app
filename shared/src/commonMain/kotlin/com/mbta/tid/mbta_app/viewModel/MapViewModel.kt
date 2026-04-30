@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
@@ -37,6 +38,7 @@ import com.mbta.tid.mbta_app.utils.ViewportManager
 import com.mbta.tid.mbta_app.utils.timer
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event
 import com.mbta.tid.mbta_app.viewModel.MapViewModel.Event.RecenterType
+import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.fetchApi
 import io.ktor.util.reflect.instanceOf
 import kotlin.reflect.KClass
 import kotlin.time.Clock
@@ -89,6 +91,7 @@ public interface IMapViewModel {
 
 public class MapViewModel(
     private val routeCardDataViewModel: IRouteCardDataViewModel,
+    private val errorBannerRepository: IErrorBannerStateRepository,
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
@@ -204,7 +207,7 @@ public class MapViewModel(
         val tripStops = (layerState as? LayerState.TripSelected)?.tripStops
 
         LaunchedEffect(null) { globalRepository.getGlobalData() }
-        LaunchedEffect(null) { allRailRouteShapes = fetchRailRouteShapes() }
+        LaunchedEffect(null) { fetchRailRouteShapes { allRailRouteShapes = it } }
         LaunchedEffect(alertCheckTimer, globalData, alerts) {
             globalMapData = globalMapData(EasternTimeInstant.now(clock), globalData, alerts)
         }
@@ -733,13 +736,18 @@ public class MapViewModel(
         )
     }
 
-    private suspend fun fetchRailRouteShapes(): MapFriendlyRouteResponse? =
-        withContext(iOCoroutineDispatcher) {
-            when (val data = railRouteShapeRepository.getRailRouteShapes()) {
-                is ApiResult.Ok -> data.data
-                is ApiResult.Error -> null
-            }
+    private fun fetchRailRouteShapes(onSuccess: (MapFriendlyRouteResponse) -> Unit) {
+        CoroutineScope(iOCoroutineDispatcher).launch {
+            val errorKey = "MapViewModel.fetchRailRouteShapes"
+            fetchApi(
+                errorBannerRepo = errorBannerRepository,
+                errorKey = errorKey,
+                getData = { railRouteShapeRepository.getRailRouteShapes() },
+                onSuccess = onSuccess,
+                onRefreshAfterError = { fetchRailRouteShapes(onSuccess) },
+            )
         }
+    }
 }
 
 public class MockMapViewModel

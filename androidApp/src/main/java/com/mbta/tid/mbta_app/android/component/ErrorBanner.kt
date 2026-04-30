@@ -65,7 +65,7 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                 },
                 button = {
                     RefreshButton(label = stringResource(R.string.reload_data)) {
-                        (errorState).action()
+                        errorState.action()
                         vm.clearState()
                     }
                 },
@@ -92,7 +92,7 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                 ErrorCard(
                     modifier,
                     details = {
-                        val minutes = (errorState).minutesAgo()
+                        val minutes = errorState.minutesAgo()
                         Text(
                             pluralStringResource(
                                 R.plurals.updated_mins_ago,
@@ -104,7 +104,7 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                     },
                     button = {
                         RefreshButton(label = stringResource(R.string.refresh_predictions)) {
-                            (errorState).action()
+                            errorState.action()
                             vm.clearState()
                         }
                     },

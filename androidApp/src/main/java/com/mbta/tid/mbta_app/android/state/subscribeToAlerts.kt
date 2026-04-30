@@ -24,12 +24,8 @@ class AlertsViewModel(private val alertsUsecase: AlertsUsecase) : ViewModel() {
     fun connect() {
         alertsUsecase.connect {
             when (it) {
-                is ApiResult.Ok -> {
-                    _alerts.value = it.data
-                }
-                is ApiResult.Error -> {
-                    Log.e("AlertsViewModel", "subscribeToAlerts failed: $it")
-                }
+                is ApiResult.Ok -> _alerts.value = it.data
+                is ApiResult.Error -> Log.e("AlertsViewModel", "subscribeToAlerts failed: $it")
             }
         }
     }

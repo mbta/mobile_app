@@ -8,6 +8,7 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixPush
 import com.mbta.tid.mbta_app.network.PhoenixPushStatus
 import com.mbta.tid.mbta_app.network.PhoenixSocket
+import com.mbta.tid.mbta_app.phoenix.PredictionsForStopsChannel
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
 import dev.mokkery.answering.returns
@@ -16,7 +17,9 @@ import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import dev.mokkery.verify
 import kotlin.test.Test
+import kotlin.test.assertContains
 import kotlin.test.assertEquals
+import kotlin.test.assertFails
 import kotlin.test.assertFalse
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
@@ -39,16 +42,19 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel("predictions:stops:v2:1,2", any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
+            errorKey = "testV2ChannelSetOnRun",
         )
         advanceUntilIdle()
 
@@ -60,25 +66,29 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
+            errorKey = "testV2ChannelJoinTwiceLeavesOldChannel",
         )
         advanceUntilIdle()
 
         assertNotNull(predictionsRepo.channel)
 
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("3", "4"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
+            errorKey = "testV2ChannelJoinTwiceLeavesOldChannel",
         )
         advanceUntilIdle()
 
@@ -90,16 +100,19 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, StandardTestDispatcher(testScheduler))
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
         assertNull(predictionsRepo.channel)
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
+            errorKey = "testV2ChannelClearedOnLeave",
         )
         advanceUntilIdle()
 
@@ -181,13 +194,15 @@ class PredictionsRepositoryTests : KoinTest {
             }
         }
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, Dispatchers.IO)
+
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = MockPush()
         every { socket.getChannel(any(), any()) } returns channel
         every { channel.attach() } returns push
 
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 val data = outcome.dataOrThrow()
@@ -202,6 +217,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertEquals("v_1", data.vehicles["v_1"]?.id)
             },
             onMessage = { /* no-op */ },
+            errorKey = "testV2SetsPredictionsOnJoinResponse",
         )
     }
 
@@ -265,29 +281,24 @@ class PredictionsRepositoryTests : KoinTest {
                     """
                         .trimIndent()
             )
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, Dispatchers.IO)
-        predictionsRepo.handleV2Message(
-            message,
-            onMessage = { outcome ->
-                val data = outcome.dataOrThrow()
-                assertNotNull(data)
-                assertEquals("12345", data.stopId)
-                assertEquals("p_1", data.predictions["p_1"]?.id)
+        val data = PredictionsForStopsChannel.parseV2Message(message.jsonBody!!)
 
-                assertEquals(1, data.trips.size)
-                assertEquals("t_1", data.trips["t_1"]?.id)
+        assertNotNull(data)
+        assertEquals("12345", data.stopId)
+        assertEquals("p_1", data.predictions["p_1"]?.id)
 
-                assertEquals(1, data.vehicles.size)
-                assertEquals("v_1", data.vehicles["v_1"]?.id)
-            },
-        )
+        assertEquals(1, data.trips.size)
+        assertEquals("t_1", data.trips["t_1"]?.id)
+
+        assertEquals(1, data.vehicles.size)
+        assertEquals("v_1", data.vehicles["v_1"]?.id)
     }
 
     @Test
     fun testV2SetsErrorWhenReceivedOnJoin() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -312,35 +323,28 @@ class PredictionsRepositoryTests : KoinTest {
             }
         }
         every { socket.getChannel(any(), any()) } returns MockChannel()
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertEquals(SocketError.RECEIVED_ERROR, outcome.message)
             },
             onMessage = { /* no-op */ },
+            errorKey = "testV2SetsErrorWhenReceivedOnJoin",
         )
     }
 
     @Test
     fun testV2SetsErrorWhenReceivedOnMessage() {
-
         val message = MockMessage(jsonBody = "BAD_DATA")
-        val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, Dispatchers.IO)
-        predictionsRepo.handleV2Message(
-            message,
-            onMessage = { outcome ->
-                assertIs<ApiResult.Error<*>>(outcome)
-                assertEquals(SocketError.FAILED_TO_PARSE, outcome.message)
-            },
-        )
+        assertFails { PredictionsForStopsChannel.parseV2Message(message.jsonBody!!) }
     }
 
     @Test
     fun `v2 sets error when timeout on join`() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
-        val predictionsRepo = PredictionsRepository(socket, Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
         val push =
             object : PhoenixPush {
                 override fun receive(
@@ -356,19 +360,22 @@ class PredictionsRepositoryTests : KoinTest {
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         every { channel.attach() } returns push
         every { socket.getChannel(any(), any()) } returns channel
-        predictionsRepo.connectV2(
+        predictionsRepo.connect(
             stopIds = listOf("1"),
             onJoin = { outcome ->
                 assertIs<ApiResult.Error<*>>(outcome)
-                assertEquals(SocketError.TIMEOUT, outcome.message)
+                assertContains(outcome.message, SocketError.TIMEOUT)
             },
             onMessage = { /* no-op */ },
+            errorKey = "v2 sets error when timeout on join",
         )
     }
 
     @Test
     fun `shouldForgetPredictions false when never updated`() {
-        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill), Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
         predictionsRepo.lastUpdated = null
         // there will not, in practice, be ten predictions and no last updated time
         assertFalse(predictionsRepo.shouldForgetPredictions(10))
@@ -376,21 +383,27 @@ class PredictionsRepositoryTests : KoinTest {
 
     @Test
     fun `shouldForgetPredictions false when no predictions`() {
-        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill), Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
         predictionsRepo.lastUpdated = EasternTimeInstant(Instant.DISTANT_PAST)
         assertFalse(predictionsRepo.shouldForgetPredictions(0))
     }
 
     @Test
     fun `shouldForgetPredictions false when within ten minutes`() {
-        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill), Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
         predictionsRepo.lastUpdated = EasternTimeInstant.now() - 9.9.minutes
         assertFalse(predictionsRepo.shouldForgetPredictions(10))
     }
 
     @Test
     fun `shouldForgetPredictions true when old and nonempty`() {
-        val predictionsRepo = PredictionsRepository(mock(MockMode.autofill), Dispatchers.IO)
+        val errorBannerRepo = MockErrorBannerStateRepository()
+        val predictionsRepo =
+            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
         predictionsRepo.lastUpdated = EasternTimeInstant.now() - 10.1.minutes
         assertTrue(predictionsRepo.shouldForgetPredictions(10))
     }
