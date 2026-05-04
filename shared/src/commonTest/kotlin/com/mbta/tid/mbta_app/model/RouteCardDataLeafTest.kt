@@ -562,6 +562,55 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats as none with subway schedules on atypical pattern but no predictions`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+
+            val objects = ObjectCollectionBuilder()
+            val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "A" }
+            }
+            objects.routePattern(route) {
+                typicality = RoutePattern.Typicality.Typical
+                representativeTrip { headsign = "B" }
+            }
+            val pattern =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Atypical
+                    representativeTrip { headsign = "A" }
+                }
+            val schedule =
+                objects.schedule {
+                    trip = objects.trip(pattern)
+                    departureTime = now + 2.minutes
+                }
+            assertEquals(
+                LeafFormat.Single(
+                    route = null,
+                    headsign = null,
+                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
+                ),
+                RouteCardData.Leaf(
+                        LineOrRoute.Route(route),
+                        objects.stop(),
+                        0,
+                        emptyList(),
+                        emptySet(),
+                        listOf(objects.upcomingTrip(schedule)),
+                        emptyList(),
+                        true,
+                        true,
+                        null,
+                        emptyList(),
+                        anyEnumValue(),
+                    )
+                    .format(now, GlobalResponse(objects)),
+            )
+        }
+
+    @Test
     fun `formats as none with Silver Line schedules but no predictions and no alert`() =
         parametricTest {
             val now = EasternTimeInstant.now()
