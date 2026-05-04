@@ -31,6 +31,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020替换 &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020直到 %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020直到 %1$s</string>
+    <string name="alert_summary_skipped">%1$s %2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020直至服务结束</string>
     <string name="alert_summary_timeframe_later_date">\u0020至%1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020至%1$s</string>
@@ -70,6 +71,7 @@
     <string name="bus_lowercase">巴士</string>
     <string name="bus_suspended">公交车停运</string>
     <string name="buses">巴士</string>
+    <string name="buses_sentence_case">公交车</string>
     <string name="cancel">取消</string>
     <string name="cancellation">取消</string>
     <string name="cancelled">已取消</string>
@@ -256,6 +258,7 @@
     <string name="more_section_support_note_hours">周一至周五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">多条路线</string>
+    <string name="multiple_stops">&lt;b>多站停靠&lt;/b></string>
     <string name="multiple_trips">多次旅行</string>
     <string name="multiple_trips_lowercase">多次旅行</string>
     <string name="nearby_transit">附近的交通</string>
@@ -409,8 +412,6 @@
     <string name="station_closure">车站关闭</string>
     <string name="station_issue">车站问题</string>
     <string name="station_issue_sentence_case">车站问题</string>
-    <string name="stop_closed">站点已关闭</string>
-    <string name="stop_closed_sentence_case">站点已关闭</string>
     <string name="stop_closure">站点关闭</string>
     <string name="stop_filter_pills_filter_hint">应用筛选条件，以便仅显示此路线的车辆到达信息</string>
     <string name="stop_filter_pills_remove_hint">删除筛选条件并显示所有路线</string>
@@ -419,6 +420,7 @@
     <string name="stop_shoveling">站点铲雪中</string>
     <string name="stop_shoveling_sentence_case">站点铲雪中</string>
     <string name="stop_skipped">停止跳过</string>
+    <string name="stop_skipped_sentence_case">停止跳过</string>
     <string name="stops">站点</string>
     <plurals name="stops_away">
         <item quantity="other">还有%1$d站</item>
@@ -464,6 +466,7 @@
     <string name="train_traffic">火车交通</string>
     <string name="train_traffic_lowercase">火车交通</string>
     <string name="trains">列车</string>
+    <string name="trains_sentence_case">火车</string>
     <string name="trip_cancelled">行程已取消</string>
     <string name="trip_cancelled_details">此行程已取消。我们对此造成的不便深表歉意。</string>
     <string name="trip_complete">行程结束</string>

@@ -294,4 +294,72 @@ final class FormattedAlertTests: XCTestCase {
             String(formatted.alertCardMajorBody.characters[...])
         )
     }
+
+    func testOneStopSkipped() throws {
+        let formatted = FormattedAlert(
+            alert: nil,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: AlertSummary.LocationAffectedStops(stops: ["Back Bay"]),
+                timeframe: AlertSummary.TimeframeUntilFurtherNotice(),
+                recurrence: nil,
+                isUpdate: false
+            )
+        )
+        XCTAssertEqual(
+            "Trains will not stop at Back Bay until further notice",
+            String(formatted.alertCardMajorBody.characters[...])
+        )
+    }
+
+    func testTwoStopsSkipped() throws {
+        let formatted = FormattedAlert(
+            alert: nil,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles"]),
+                timeframe: AlertSummary.TimeframeUntilFurtherNotice(),
+                recurrence: nil,
+                isUpdate: false
+            )
+        )
+        XCTAssertEqual(
+            "Trains will not stop at Back Bay and Ruggles until further notice",
+            String(formatted.alertCardMajorBody.characters[...])
+        )
+    }
+
+    func testThreeStopsSkipped() throws {
+        let formatted = FormattedAlert(
+            alert: nil,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles", "Hyde Park"]),
+                timeframe: AlertSummary.TimeframeUntilFurtherNotice(),
+                recurrence: nil,
+                isUpdate: false
+            )
+        )
+        XCTAssertEqual(
+            "Trains will not stop at Back Bay, Ruggles, and Hyde Park until further notice",
+            String(formatted.alertCardMajorBody.characters[...])
+        )
+    }
+
+    func testMultipleStopsSkipped() throws {
+        let formatted = FormattedAlert(
+            alert: nil,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles", "Hyde Park", "Readville"]),
+                timeframe: AlertSummary.TimeframeUntilFurtherNotice(),
+                recurrence: nil,
+                isUpdate: false
+            )
+        )
+        XCTAssertEqual(
+            "Trains will not stop at multiple stops until further notice",
+            String(formatted.alertCardMajorBody.characters[...])
+        )
+    }
 }

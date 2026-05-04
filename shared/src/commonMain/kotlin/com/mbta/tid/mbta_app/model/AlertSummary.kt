@@ -91,6 +91,10 @@ public sealed class AlertSummary {
             @SerialName("route_type") val routeType: RouteType,
         ) : Location()
 
+        @Serializable
+        @SerialName("affected_stops")
+        public data class AffectedStops(val stops: List<String>) : Location()
+
         @Serializable public data object Unknown : Location()
     }
 
@@ -213,7 +217,6 @@ public sealed class AlertSummary {
                 }
 
                 val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
-
                 if (location == null && timeframe == null) return@withContext null
                 return@withContext Standard(
                     alert.effect,
@@ -310,6 +313,10 @@ public sealed class AlertSummary {
             }
 
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
+
+            if (alert.stopSkipped && affectedStops.isNotEmpty()) {
+                return Location.AffectedStops(affectedStops.map { it.name })
+            }
 
             if (affectedStops.size == 1) {
                 return Location.SingleStop(affectedStops.first().name)

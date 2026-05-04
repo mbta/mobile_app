@@ -22,7 +22,7 @@ final class AlertCardTests: XCTestCase {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
-            alert.effect = .stationClosure
+            alert.effect = .suspension
             alert.header = "Test header"
             alert.activePeriod(
                 start: now.minus(hours: 3 * 24),
@@ -40,7 +40,7 @@ final class AlertCardTests: XCTestCase {
                 exp.fulfill()
             }
         )
-        XCTAssertNotNil(try sut.inspect().find(text: "Station Closure"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Suspension"))
         XCTAssertNotNil(
             try sut.inspect().find(imageName: "alert-borderless-suspension")
         )
@@ -87,14 +87,14 @@ final class AlertCardTests: XCTestCase {
     func testMajorAlertCardSummaryThroughEndOfService() throws {
         let objects = ObjectCollectionBuilder()
         let alert = objects.alert { alert in
-            alert.effect = .stopClosure
+            alert.effect = .noService
             alert.header = "Test header"
         }
 
         let sut = AlertCard(
             alert: alert,
             alertSummary: AlertSummary.Standard(
-                effect: .stopClosure,
+                effect: .noService,
                 location: .some(
                     AlertSummary
                         .LocationSingleStop(stopName: "Single Stop")
@@ -109,7 +109,7 @@ final class AlertCardTests: XCTestCase {
         )
         XCTAssertNotNil(
             try sut.inspect().find(
-                text: "Stop closed at Single Stop through end of service"
+                text: "No service at Single Stop through end of service"
             )
         )
     }
@@ -850,6 +850,66 @@ final class AlertCardTests: XCTestCase {
                     12:13\u{202F}PM train from Oak Grove is replaced by shuttle buses from Ruggles to Forest Hills daily until Thursday
                     """
                 )
+        )
+    }
+
+    func testStationBypass() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .stationClosure
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: .some(
+                    AlertSummary
+                        .LocationAffectedStops(stops: ["Stop 1"])
+                ),
+                timeframe: .some(AlertSummary.TimeframeUntilFurtherNotice()),
+                recurrence: nil,
+                isUpdate: false
+            ),
+            spec: .takeover,
+            routeAccents: .init(),
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(
+            try sut.inspect().find(
+                text: "Trains will not stop at Stop 1 until further notice"
+            )
+        )
+    }
+
+    func testStopBypass() throws {
+        let objects = ObjectCollectionBuilder()
+        let alert = objects.alert { alert in
+            alert.effect = .stopClosure
+            alert.header = "Test header"
+        }
+
+        let sut = AlertCard(
+            alert: alert,
+            alertSummary: AlertSummary.Standard(
+                effect: .stopClosure,
+                location: .some(
+                    AlertSummary
+                        .LocationAffectedStops(stops: ["Stop 1", "Stop 2"])
+                ),
+                timeframe: .some(AlertSummary.TimeframeUntilFurtherNotice()),
+                recurrence: nil,
+                isUpdate: false
+            ),
+            spec: .takeover,
+            routeAccents: .init(),
+            onViewDetails: {}
+        )
+        XCTAssertNotNil(
+            try sut.inspect().find(
+                text: "Buses will not stop at Stop 1 and Stop 2 until further notice"
+            )
         )
     }
 }

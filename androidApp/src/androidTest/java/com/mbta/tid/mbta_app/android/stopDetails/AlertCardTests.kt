@@ -500,6 +500,54 @@ class AlertCardTests {
     }
 
     @Test
+    fun testStationBypassAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.StationClosure }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.Standard(
+                    Alert.Effect.StationClosure,
+                    AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
+                    AlertSummary.Timeframe.UntilFurtherNotice,
+                ),
+                AlertCardSpec.Takeover,
+                routeAccents.copy(type = RouteType.COMMUTER_RAIL),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Stop Skipped").assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Trains will not stop at Back Bay and Ruggles until further notice")
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun testStopBypassAlertCard() {
+        val objects = ObjectCollectionBuilder()
+        val alert = objects.alert { effect = Alert.Effect.StopClosure }
+        composeTestRule.setContent {
+            AlertCard(
+                alert,
+                AlertSummary.Standard(
+                    Alert.Effect.StopClosure,
+                    AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
+                    AlertSummary.Timeframe.UntilFurtherNotice,
+                ),
+                AlertCardSpec.Takeover,
+                routeAccents.copy(type = RouteType.BUS),
+                onViewDetails = {},
+            )
+        }
+        composeTestRule.onNodeWithText("Stop Skipped").assertIsDisplayed()
+
+        composeTestRule
+            .onNodeWithText("Buses will not stop at Back Bay and Ruggles until further notice")
+            .assertIsDisplayed()
+    }
+
+    @Test
     fun testTripSpecificReminder() {
         val objects = ObjectCollectionBuilder()
         val alert = objects.alert { effect = Alert.Effect.Cancellation }

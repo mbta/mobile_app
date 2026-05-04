@@ -3,6 +3,7 @@ package com.mbta.tid.mbta_app.android.util
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.TripShuttleAlertSummary
 import com.mbta.tid.mbta_app.model.TripSpecificAlertSummary
@@ -185,6 +186,73 @@ class FormattedAlertTests {
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals(expected, summaryString)
+        }
+    }
+
+    @Test
+    fun testOneStopSkipped() = runTest {
+        val summary =
+            AlertSummary.Standard(
+                Alert.Effect.StationClosure,
+                AlertSummary.Location.AffectedStops(listOf("Back Bay")),
+                AlertSummary.Timeframe.UntilFurtherNotice,
+            )
+        val format = FormattedAlert(null, summary)
+        val pattern = "Trains will not stop at Back Bay until further notice"
+        composeTestRule.setContent {
+            val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
+            assert(Regex(pattern).matches(summaryString))
+        }
+    }
+
+    @Test
+    fun testTwoStopsSkipped() = runTest {
+        val summary =
+            AlertSummary.Standard(
+                Alert.Effect.StationClosure,
+                AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles")),
+                AlertSummary.Timeframe.UntilFurtherNotice,
+            )
+        val format = FormattedAlert(null, summary)
+        val pattern = "Trains will not stop at Back Bay and Ruggles until further notice"
+        composeTestRule.setContent {
+            val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
+            assert(Regex(pattern).matches(summaryString))
+        }
+    }
+
+    @Test
+    fun testThreeStopsSkipped() = runTest {
+        val summary =
+            AlertSummary.Standard(
+                Alert.Effect.StationClosure,
+                AlertSummary.Location.AffectedStops(listOf("Back Bay", "Ruggles", "Hyde Park")),
+                AlertSummary.Timeframe.UntilFurtherNotice,
+            )
+        val format = FormattedAlert(null, summary)
+        val pattern =
+            "Trains will not stop at Back Bay, Ruggles, and Hyde Park until further notice"
+        composeTestRule.setContent {
+            val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
+            assert(Regex(pattern).matches(summaryString))
+        }
+    }
+
+    @Test
+    fun testMultipleStopsSkipped() = runTest {
+        val summary =
+            AlertSummary.Standard(
+                Alert.Effect.StationClosure,
+                AlertSummary.Location.AffectedStops(
+                    listOf("Back Bay", "Ruggles", "Hyde Park", "Readville")
+                ),
+                AlertSummary.Timeframe.UntilFurtherNotice,
+            )
+        val format = FormattedAlert(null, summary)
+        val pattern = "Trains will not stop at multiple stops until further notice"
+        composeTestRule.setContent {
+            val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
+            assert(Regex(pattern).matches(summaryString))
         }
     }
 }

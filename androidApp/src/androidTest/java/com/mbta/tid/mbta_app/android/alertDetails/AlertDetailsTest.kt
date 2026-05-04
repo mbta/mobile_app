@@ -44,8 +44,8 @@ class AlertDetailsTest {
                 activePeriod(now - 5.minutes, now + 5.minutes)
                 description = "Long description"
                 cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
+                effect = Alert.Effect.Suspension
+                effectName = "Suspension"
                 header = "Alert header"
                 updatedAt = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 36, 13)
             }
@@ -61,7 +61,7 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Red Line Stop Closure").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line Suspension").assertIsDisplayed()
         composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
         composeTestRule
             .onNode(hasTextMatching(Regex("Wednesday, Jan 22, 10:35\\sAM")))
@@ -298,8 +298,8 @@ class AlertDetailsTest {
             objects.alert {
                 activePeriod(now - 5.minutes, now + 5.minutes)
                 cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
+                effect = Alert.Effect.Suspension
+                effectName = "Suspension"
                 updatedAt = now - 100.minutes
                 header = "Alert header"
                 description = "Alert description"
@@ -316,7 +316,7 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("${stop.name} Stop Closure").assertExists()
+        composeTestRule.onNodeWithText("${stop.name} Suspension").assertExists()
     }
 
     @Test

@@ -32,6 +32,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020replacing &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020until %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020until %1$s</string>
+    <string name="alert_summary_skipped">%1$s %2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020through end of service</string>
     <string name="alert_summary_timeframe_later_date">\u0020through %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020through %1$s</string>
@@ -72,6 +73,7 @@
     <string name="bus_lowercase">bus</string>
     <string name="bus_suspended">Bus suspended</string>
     <string name="buses">buses</string>
+    <string name="buses_sentence_case">Buses</string>
     <string name="cancel">Cancel</string>
     <string name="cancellation">Cancellation</string>
     <string name="cancelled">Cancelled</string>
@@ -262,6 +264,7 @@
     <string name="more_section_support_note_hours">Monday through Friday: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Multiple routes</string>
+    <string name="multiple_stops">&lt;b>multiple stops&lt;/b></string>
     <string name="multiple_trips">Multiple trips</string>
     <string name="multiple_trips_lowercase">multiple trips</string>
     <string name="nearby_transit">Nearby Transit</string>
@@ -415,8 +418,6 @@
     <string name="station_closure">Station Closure</string>
     <string name="station_issue">Station Issue</string>
     <string name="station_issue_sentence_case">Station issue</string>
-    <string name="stop_closed">Stop Closed</string>
-    <string name="stop_closed_sentence_case">Stop closed</string>
     <string name="stop_closure">Stop Closure</string>
     <string name="stop_filter_pills_filter_hint">Apply a filter so that only arrivals from this route are displayed</string>
     <string name="stop_filter_pills_remove_hint">Remove the filter and display all routes</string>
@@ -424,7 +425,8 @@
     <string name="stop_moved_sentence_case">Stop moved</string>
     <string name="stop_shoveling">Stop Shoveling</string>
     <string name="stop_shoveling_sentence_case">Stop shoveling</string>
-    <string name="stop_skipped">Stop skipped</string>
+    <string name="stop_skipped">Stop Skipped</string>
+    <string name="stop_skipped_sentence_case">Stop skipped</string>
     <string name="stops">Stops</string>
     <plurals name="stops_away">
         <item quantity="one">%1$d stop away</item>
@@ -471,6 +473,7 @@
     <string name="train_traffic">Train Traffic</string>
     <string name="train_traffic_lowercase">train traffic</string>
     <string name="trains">trains</string>
+    <string name="trains_sentence_case">Trains</string>
     <string name="trip_cancelled">Trip cancelled</string>
     <string name="trip_cancelled_details">This trip has been cancelled. We’re sorry for the inconvenience.</string>
     <string name="trip_complete">Trip complete</string>

@@ -58,8 +58,8 @@ class AlertDetailsPageTest {
                 activePeriod(now - 5.seconds, now + 5.seconds)
                 description = "Long description"
                 cause = Alert.Cause.Fire
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
+                effect = Alert.Effect.Suspension
+                effectName = "Suspension"
                 header = "Alert header"
                 informedEntity(route = route.id.idText, stop = stop1.id)
                 informedEntity(directionId = 0, route = route.id.idText, stop = stop1a.id)
@@ -83,7 +83,7 @@ class AlertDetailsPageTest {
 
         composeTestRule.waitForIdle()
 
-        composeTestRule.onNodeWithText("Orange Line Stop Closure").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Orange Line Suspension").assertIsDisplayed()
         composeTestRule.onNodeWithText("Fire").assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").assertIsDisplayed()
         composeTestRule.onNodeWithText("3 affected stops").performClick()

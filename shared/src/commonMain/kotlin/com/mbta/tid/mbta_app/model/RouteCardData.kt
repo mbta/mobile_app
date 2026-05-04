@@ -359,7 +359,9 @@ public data class RouteCardData(
             val (nonDisruptedHeadsigns, disruptedHeadsigns) =
                 dataByHeadsign.entries.partition { entry ->
                     val majorAlert = entry.value.majorAlert
-                    majorAlert == null || majorAlert.informedEntity.any { it.trip != null }
+                    majorAlert == null ||
+                        majorAlert.informedEntity.any { it.trip != null } ||
+                        majorAlert.stopSkipped
                 }
 
             if (disruptedHeadsigns.isEmpty()) {
@@ -384,7 +386,8 @@ public data class RouteCardData(
                         .map { it.value.majorAlert }
                         .all { alert ->
                             alert == disruptedHeadsigns.first().value.majorAlert &&
-                                alert?.informedEntity?.any { it.trip != null } == false
+                                alert?.informedEntity?.any { it.trip != null } == false &&
+                                !alert.stopSkipped
                         }
             ) {
                 return LeafFormat.Single(

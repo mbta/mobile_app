@@ -39,7 +39,7 @@ final class AlertDetailsTests: XCTestCase {
 
         let sut = AlertDetails(alert: alert, line: nil, routes: [route], affectedStops: [stop1, stop2, stop3], now: now)
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Closure"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Skipped"))
         XCTAssertNotNil(try sut.inspect().find(text: "Unruly Passenger"))
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[0].formatStart().characters)))
         XCTAssertNotNil(try sut.inspect().find(text: "3 affected stops"))
