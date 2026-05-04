@@ -13,6 +13,7 @@ import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.plus
 
 class AlertTest {
@@ -231,6 +232,8 @@ class AlertTest {
             )
         assertEquals(recurrence, alert.recurrenceRange())
         assertFalse(recurrence.daily)
+        assertFalse(recurrence.isWeekdays)
+        assertFalse(recurrence.isWeekends)
     }
 
     @Test
@@ -263,6 +266,33 @@ class AlertTest {
             )
         assertEquals(expectedInfo, alert.recurrenceRange())
         assertFalse(expectedInfo.daily)
+        assertTrue(expectedInfo.isWeekdays)
+    }
+
+    @Test
+    fun `recurrenceRange identifies weekends`() {
+        val selectedDays = setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
+        val alert =
+            ObjectCollectionBuilder.Single.alert {
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, Month.MAY, 2), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, Month.MAY, 4), LocalTime(3, 0, 0)),
+                )
+                activePeriod(
+                    EasternTimeInstant(LocalDate(2026, Month.MAY, 9), LocalTime(3, 0, 0)),
+                    EasternTimeInstant(LocalDate(2026, Month.MAY, 11), LocalTime(3, 0, 0)),
+                )
+            }
+        val expectedInfo =
+            Alert.RecurrenceInfo(
+                alert.activePeriod.first().start,
+                alert.activePeriod.last().end!!,
+                selectedDays,
+                endDayKnown = true,
+            )
+        assertEquals(expectedInfo, alert.recurrenceRange())
+        assertFalse(expectedInfo.daily)
+        assertTrue(expectedInfo.isWeekends)
     }
 
     @Test

@@ -525,6 +525,8 @@
     <string name="waiting_to_depart">等待出发</string>
     <string name="weather">天气</string>
     <string name="weather_lowercase">天气</string>
+    <string name="weekdays">工作日</string>
+    <string name="weekends">周末</string>
     <string name="westbound">西行</string>
     <string name="will_not_stop_at">不会止步于 %1$s %2$s</string>
     <string name="will_terminate_at">将在 %1$s %2$s 处终止</string>

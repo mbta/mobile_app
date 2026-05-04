@@ -525,6 +525,8 @@
     <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
     <string name="weather_lowercase">thời tiết</string>
+    <string name="weekdays">Các ngày trong tuần</string>
+    <string name="weekends">Cuối tuần</string>
     <string name="westbound">Về hướng tây</string>
     <string name="will_not_stop_at">sẽ không dừng lại ở %1$s %2$s</string>
     <string name="will_terminate_at">sẽ kết thúc tại %1$s %2$s</string>

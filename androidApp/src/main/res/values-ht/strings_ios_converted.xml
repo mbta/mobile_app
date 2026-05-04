@@ -550,6 +550,8 @@
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>
     <string name="weather_lowercase">move tan</string>
+    <string name="weekdays">Jou lasemèn</string>
+    <string name="weekends">wikenn yo</string>
     <string name="westbound">Pran direksyon lwès</string>
     <string name="will_not_stop_at">p ap rete nan %1$s %2$s</string>
     <string name="will_terminate_at">ap fini nan %1$s %2$s</string>

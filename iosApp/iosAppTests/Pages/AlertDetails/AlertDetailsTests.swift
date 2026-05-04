@@ -348,6 +348,80 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "9:41\u{202F}AM – 11:41\u{202F}AM"))
     }
 
+    func testRecurringWeekdays() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = EasternTimeInstant(year: 2026, month: .may, day: 4, hour: 14, minute: 38, second: 0)
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.activePeriod(
+                start: now.minus(hours: 1),
+                end: now.plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 24).minus(hours: 1),
+                end: now.plus(hours: 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 2 * 24).minus(hours: 1),
+                end: now.plus(hours: 2 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 3 * 24).minus(hours: 1),
+                end: now.plus(hours: 3 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 4 * 24).minus(hours: 1),
+                end: now.plus(hours: 4 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 7 * 24).minus(hours: 1),
+                end: now.plus(hours: 7 * 24).plus(hours: 1)
+            )
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "May 4 – May 11"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Weekdays"))
+        XCTAssertNotNil(try sut.inspect().find(text: "From"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1:38\u{202F}PM – 3:38\u{202F}PM"))
+    }
+
+    func testRecurringWeekends() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = EasternTimeInstant(year: 2026, month: .may, day: 3, hour: 14, minute: 38, second: 0)
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.activePeriod(
+                start: now.minus(hours: 1),
+                end: now.plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 6 * 24).minus(hours: 1),
+                end: now.plus(hours: 6 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 7 * 24).minus(hours: 1),
+                end: now.plus(hours: 7 * 24).plus(hours: 1)
+            )
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "May 3 – May 10"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Weekends"))
+        XCTAssertNotNil(try sut.inspect().find(text: "From"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1:38\u{202F}PM – 3:38\u{202F}PM"))
+    }
+
     func testRecurringSomeDays() throws {
         let objects = ObjectCollectionBuilder()
 

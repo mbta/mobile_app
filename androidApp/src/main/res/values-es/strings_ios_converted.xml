@@ -535,6 +535,8 @@
     <string name="waiting_to_depart">Esperando para partir</string>
     <string name="weather">Clima</string>
     <string name="weather_lowercase">clima</string>
+    <string name="weekdays">días laborables</string>
+    <string name="weekends">fines de semana</string>
     <string name="westbound">En dirección oeste</string>
     <string name="will_not_stop_at">no se detendrá en %1$s %2$s</string>
     <string name="will_terminate_at">finalizará en %1$s %2$s</string>
