@@ -1931,7 +1931,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with closure sets AffectedStop Location type`() = runBlocking {
+    fun `summary with closure sets AffectedStops Location type`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()

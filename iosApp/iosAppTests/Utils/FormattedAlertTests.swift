@@ -294,4 +294,21 @@ final class FormattedAlertTests: XCTestCase {
             String(formatted.alertCardMajorBody.characters[...])
         )
     }
+
+    func testMultipleStopsSkipped() throws {
+        let formatted = FormattedAlert(
+            alert: nil,
+            alertSummary: AlertSummary.Standard(
+                effect: .stationClosure,
+                location: AlertSummary.LocationAffectedStops(stops: ["Back Bay", "Ruggles", "Hyde Park", "Readville"]),
+                timeframe: AlertSummary.TimeframeUntilFurtherNotice(),
+                recurrence: nil,
+                isUpdate: false
+            )
+        )
+        XCTAssertEqual(
+            "Trains will not stop at multiple stops until further notice",
+            String(formatted.alertCardMajorBody.characters[...])
+        )
+    }
 }

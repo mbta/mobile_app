@@ -33,7 +33,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020remplacer &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020jusqu’à %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020jusqu’à %1$s</string>
-    <string name="alert_summary_skipped">%2$s %1$s</string>
+    <string name="alert_summary_skipped">%1$s %2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020jusqu’à la fin du service</string>
     <string name="alert_summary_timeframe_later_date">\u0020jusqu’au %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020jusqu’à %1$s</string>
@@ -264,6 +264,7 @@
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Plusieurs itinéraires</string>
+    <string name="multiple_stops">arrêts multiples</string>
     <string name="multiple_trips">Plusieurs voyages</string>
     <string name="multiple_trips_lowercase">plusieurs voyages</string>
     <string name="nearby_transit">Transports à proximité</string>
@@ -357,7 +358,7 @@
     <string name="resources_link_mticket_note">Application mTicket</string>
     <string name="resources_link_trip_planner">Planificateur de trajet</string>
     <string name="results_failed_to_load">Échec du chargement des résultats ☹️</string>
-    <string name="route_effect">%2$s %1$s</string>
+    <string name="route_effect">%1$s %2$s</string>
     <string name="route_mode_label">%2$s %1$s</string>
     <string name="route_picker_header_favorites">Ajouter les arrêts favoris</string>
     <string name="routes">Trajets</string>

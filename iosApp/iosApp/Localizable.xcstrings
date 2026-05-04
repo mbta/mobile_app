@@ -2866,7 +2866,51 @@
       }
     },
     "%1$@ %2$@" : {
-      "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\""
+      "comment" : "Alert summary in the format of \"[trains/buses] will not stop at [affected stop(s)] [timeframe]\" ex \"[Trains ][will not stop at Back Bay and Ruggles until further notice]\"",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
     },
     "%1$@ %2$@ delayed" : {
       "comment" : "Screen reader text containing an originally scheduled time, which precedes another string containing the delayed predicted time.\nThe first interpolated value is the scheduled time, and the second one is the vehicle type ('train', 'bus', or 'ferry').\nex, '10:00 PM train delayed[, arriving at 10:05 PM]'",
@@ -15563,6 +15607,53 @@
           "stringUnit" : {
             "state" : "needs_review",
             "value" : "多條路線"
+          }
+        }
+      }
+    },
+    "multiple stops" : {
+      "comment" : "Used when more than 3 stops are affected",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "múltiples paradas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "arrêts multiples"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "plizyè arè"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "várias paradas"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "nhiều điểm dừng"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多站"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "多站"
           }
         }
       }

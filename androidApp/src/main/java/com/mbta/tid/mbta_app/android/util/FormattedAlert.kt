@@ -606,10 +606,15 @@ data class FormattedAlert(
                     resources.getString(R.string.multiple_trips)
             }
 
-        private fun summaryAffectedStops(stops: List<String>, resources: Resources): String =
-            stops
-                .map { "<b>${it}</b>" }
-                .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) }
+        private fun summaryAffectedStops(stops: List<String>, resources: Resources): String {
+            return if (stops.count() > 3) {
+                resources.getString(R.string.multiple_stops)
+            } else {
+                stops
+                    .map { "<b>${it}</b>" }
+                    .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) }
+            }
+        }
 
         private fun summaryAffectedMode(effect: Alert.Effect, resources: Resources): String =
             when (effect) {
