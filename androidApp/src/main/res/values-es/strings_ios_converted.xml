@@ -33,7 +33,7 @@
     <string name="alert_summary_location_whole_route_shuttle">\u0020reemplazando &lt;b>%1$s&lt;/b></string>
     <string name="alert_summary_recurrence_end_day_later_date">\u0020hasta %1$s</string>
     <string name="alert_summary_recurrence_end_day_this_week">\u0020hasta %1$s</string>
-    <string name="alert_summary_skipped">%1$s%2$s</string>
+    <string name="alert_summary_skipped">%1$s %2$s</string>
     <string name="alert_summary_timeframe_end_of_service">\u0020hasta el final del servicio</string>
     <string name="alert_summary_timeframe_later_date">\u0020hasta el %1$s</string>
     <string name="alert_summary_timeframe_this_week">\u0020hasta el día %1$s</string>
@@ -73,7 +73,7 @@
     <string name="bus_lowercase">autobús</string>
     <string name="bus_suspended">Autobús suspendido</string>
     <string name="buses">autobuses</string>
-    <string name="buses_sentence_case">autobuses</string>
+    <string name="buses_sentence_case">Autobuses</string>
     <string name="cancel">Cancelar</string>
     <string name="cancellation">Cancelación</string>
     <string name="cancelled">Cancelado</string>
@@ -473,7 +473,7 @@
     <string name="train_traffic">Tráfico de trenes</string>
     <string name="train_traffic_lowercase">tráfico de trenes</string>
     <string name="trains">trenes</string>
-    <string name="trains_sentence_case">trenes</string>
+    <string name="trains_sentence_case">Trenes</string>
     <string name="trip_cancelled">Viaje cancelado</string>
     <string name="trip_cancelled_details">Este viaje ha sido cancelado. Lamentamos las molestias.</string>
     <string name="trip_complete">Viaje completado</string>

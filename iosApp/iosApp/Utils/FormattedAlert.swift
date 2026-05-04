@@ -378,14 +378,14 @@ struct FormattedAlert: Equatable {
                 comment: """
                 Mode of travel prefixing alert summary e.g.: "Trains will not stop at..."
                 """
-            ) + " "
+            )
         } else if effect == .stopClosure {
             NSLocalizedString(
                 "Buses",
                 comment: """
                 Mode of travel prefixing alert summary e.g.: "Buses will not stop at..."
                 """
-            ) + " "
+            )
         } else {
             ""
         }
@@ -409,29 +409,28 @@ struct FormattedAlert: Equatable {
         case let .standard(alertSummary):
             let location = Self.summaryLocation(effect: alertSummary.effect, location: alertSummary.location)
             let timeframe = Self.summaryTimeframe(timeframe: alertSummary.timeframe)
+            if alertSummary.effect.stopSkipped {
+                let affectedMode = Self.summaryAffectedMode(effect: alertSummary.effect)
+                let skippedEffect = Self.summarySkippedEffect(
+                    stops: location,
+                    timeframe: String(timeframe.trimmingPrefix(.horizontalWhitespace))
+                )
+                return AttributedString.tryMarkdown(String(format:
+                    NSLocalizedString(
+                        "%1$@ %2$@",
+                        comment: """
+                        Alert summary in the format of "[trains/buses] will not stop at [affected stop(s)] [timeframe]" \
+                        ex "[Trains ][will not stop at Back Bay and Ruggles until further notice]"
+                        """
+                    ), affectedMode, skippedEffect))
+            }
             let args = [
                 sentenceCaseEffect,
                 location,
                 timeframe,
                 Self.summaryRecurrence(recurrence: alertSummary.recurrence),
             ]
-            if alertSummary.effect.stopSkipped {
-                let skippedArgs = [
-                    Self.summaryAffectedMode(effect: alertSummary.effect),
-                    Self.summarySkippedEffect(
-                        stops: location,
-                        timeframe: String(timeframe.trimmingPrefix(.horizontalWhitespace))
-                    ),
-                ]
-                return AttributedString.tryMarkdown(String(format:
-                    NSLocalizedString(
-                        "%1$@%2$@",
-                        comment: """
-                        Alert summary in the format of "[trains/buses] will not stop at [affected stop(s)] [timeframe]" \
-                        ex "[Trains ][will not stop at Back Bay and Ruggles until further notice]"
-                        """
-                    ), skippedArgs.map { $0 as CVarArg }))
-            } else if alertSummary.isUpdate {
+            if alertSummary.isUpdate {
                 return AttributedString.tryMarkdown(String(format:
                     NSLocalizedString(
                         "**Update:** %1$@%2$@%3$@%4$@",

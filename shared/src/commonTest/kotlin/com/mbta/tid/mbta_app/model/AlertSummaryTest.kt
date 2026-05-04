@@ -1929,4 +1929,75 @@ class AlertSummaryTest {
             alertSummary,
         )
     }
+
+    @Test
+    fun `summary with closure sets AffectedStop Location type`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant.now()
+
+        val stop =
+            objects.stop {
+                name = "Parent Name"
+                childStop {}
+            }
+        val childStop = objects.stops[stop.childStopIds.first()]
+
+        val route = objects.route {}
+        val pattern = objects.routePattern(route) { directionId = 0 }
+        val stopClosureAlert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                informedEntity(route = route.id.idText, stop = childStop?.id)
+            }
+
+        val stopClosureSummary =
+            AlertSummary.summarizing(
+                stopClosureAlert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
+
+        val stationClosureAlert =
+            objects.alert {
+                effect = Alert.Effect.StationClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.plus(1.hours))
+                informedEntity(route = route.id.idText, stop = childStop?.id)
+            }
+
+        val stationClosureSummary =
+            AlertSummary.summarizing(
+                stationClosureAlert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.Standard(
+                stopClosureAlert.effect,
+                AlertSummary.Location.AffectedStops(listOf(stop.name)),
+                null,
+            ),
+            stopClosureSummary,
+        )
+        assertEquals(
+            AlertSummary.Standard(
+                stationClosureAlert.effect,
+                AlertSummary.Location.AffectedStops(listOf(stop.name)),
+                null,
+            ),
+            stationClosureSummary,
+        )
+    }
 }

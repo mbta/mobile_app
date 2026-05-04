@@ -613,8 +613,8 @@ data class FormattedAlert(
 
         private fun summaryAffectedMode(effect: Alert.Effect, resources: Resources): String =
             when (effect) {
-                Effect.StationClosure -> resources.getString(R.string.trains_sentence_case) + " "
-                Effect.StopClosure -> resources.getString(R.string.buses_sentence_case) + " "
+                Effect.StationClosure -> resources.getString(R.string.trains_sentence_case)
+                Effect.StopClosure -> resources.getString(R.string.buses_sentence_case)
                 else -> ""
             }
 
