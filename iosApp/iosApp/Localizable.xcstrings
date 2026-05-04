@@ -1648,6 +1648,53 @@
         }
       }
     },
+    "**multiple stops**" : {
+      "comment" : "Used when more than 3 stops are affected",
+      "localizations" : {
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**varias paradas**"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**plusieurs arrêts**"
+          }
+        },
+        "ht" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**plizyè arè**"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**várias paradas**"
+          }
+        },
+        "vi" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**nhiều điểm dừng**"
+          }
+        },
+        "zh-Hans-CN" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**多站停靠**"
+          }
+        },
+        "zh-Hant-TW" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "**多站停靠**"
+          }
+        }
+      }
+    },
     "**Update:** %1$@%2$@%3$@%4$@" : {
       "comment" : "Alert summary in the format of \"Update: [Alert effect][at location][through timeframe][until recurrence]\", ex \"[Update][Stop closed][ at Haymarket][ through this Friday][]\" or \"[Update][Service suspended][ from Alewife to Harvard][ through end of service][ daily until Friday]\"",
       "localizations" : {
@@ -3055,6 +3102,7 @@
     },
     "%1$@ and %2$@" : {
       "comment" : "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {
@@ -15613,6 +15661,7 @@
     },
     "multiple stops" : {
       "comment" : "Used when more than 3 stops are affected",
+      "extractionState" : "stale",
       "localizations" : {
         "es" : {
           "stringUnit" : {

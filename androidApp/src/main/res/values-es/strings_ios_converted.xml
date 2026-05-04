@@ -264,7 +264,7 @@
     <string name="more_section_support_note_hours">De lunes a viernes de 6:30 a. m. a 8:00 p. m.</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Múltiples rutas</string>
-    <string name="multiple_stops">múltiples paradas</string>
+    <string name="multiple_stops">&lt;b>varias paradas&lt;/b></string>
     <string name="multiple_trips">Múltiples viajes</string>
     <string name="multiple_trips_lowercase">múltiples viajes</string>
     <string name="nearby_transit">Tránsito cercano</string>

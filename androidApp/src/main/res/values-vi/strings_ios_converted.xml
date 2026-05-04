@@ -258,7 +258,7 @@
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
     <string name="multiple_routes">Nhiều tuyến đường</string>
-    <string name="multiple_stops">nhiều điểm dừng</string>
+    <string name="multiple_stops">&lt;b>nhiều điểm dừng&lt;/b></string>
     <string name="multiple_trips">Nhiều chuyến đi</string>
     <string name="multiple_trips_lowercase">nhiều chuyến đi</string>
     <string name="nearby_transit">Phương tiện công cộng ở gần</string>

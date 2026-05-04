@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.android.util
 
 import android.content.res.Resources
+import android.icu.text.ListFormatter
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalResources
@@ -610,9 +611,8 @@ data class FormattedAlert(
             return if (stops.count() > 3) {
                 resources.getString(R.string.multiple_stops)
             } else {
-                stops
-                    .map { "<b>${it}</b>" }
-                    .reduce { l, r -> resources.getString(R.string.x_and_y, l, r) }
+                val stopNames = stops.map { "<b>${it}</b>" }
+                ListFormatter.getInstance().format(stopNames)
             }
         }
 

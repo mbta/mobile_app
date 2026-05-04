@@ -361,20 +361,11 @@ struct FormattedAlert: Equatable {
     static func summaryAffectedStops(stops: [String]) -> String {
         if stops.count > 3 {
             NSLocalizedString(
-                "multiple stops",
+                "**multiple stops**",
                 comment: "Used when more than 3 stops are affected"
             )
         } else {
-            stops.map { "**\($0)**" }.reduce(nil) { lhs, rhs in
-                if let lhs { String(
-                    format: NSLocalizedString(
-                        "%1$@ and %2$@",
-                        comment: "Joins two stops into a list, ex “[Back Bay] and [Ruggles]”"
-                    ),
-                    lhs,
-                    rhs
-                ) } else { rhs }
-            } ?? ""
+            ListFormatter.localizedString(byJoining: stops.map { "**\($0)**" })
         }
     }
 
