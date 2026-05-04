@@ -39,7 +39,14 @@ kotlin {
         )
     }
 
-    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
+    androidLibrary {
+        namespace = "com.mbta.tid.mbta_app"
+        compileSdk = 36
+        minSdk = 28
+        withHostTest { isReturnDefaultValues = true }
+
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) }
+    }
 
     if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
         iosX64()
@@ -126,13 +133,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.mbta.tid.mbta_app"
-    compileSdk = 36
-    defaultConfig { minSdk = 28 }
-    testOptions { unitTests.isReturnDefaultValues = true }
-}
-
 skie {
     features {
         group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) }
@@ -198,7 +198,8 @@ if (
     !(System.getenv("CI")?.lowercase() == "true" &&
         DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
 ) {
-    tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
+    tasks.getByName("androidPreBuild").dependsOn("bomCodegenAndroid")
+    tasks.getByName("compileAndroidMain").dependsOn("bomCodegenAndroid")
 }
 
 tasks.withType<JavaExec> {
