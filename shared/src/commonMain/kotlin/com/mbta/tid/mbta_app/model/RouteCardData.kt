@@ -219,7 +219,7 @@ public data class RouteCardData(
          * disrupted, etc. but should still be considered) could be shown
          */
         private fun potentialService(
-            tripsUpcoming: List<UpcomingFormat.Some.FormattedTrip>,
+            tripsUpcoming: List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip?>>,
             representativeRoute: Route,
             globalData: GlobalResponse?,
             context: Context,
@@ -228,12 +228,14 @@ public data class RouteCardData(
                 mutableMapOf()
             val isBus = representativeRoute.type == RouteType.BUS
             val tripsToConsider =
-                if (isBus && context != Context.StopDetailsFiltered)
-                    tripsUpcoming.take(TYPICAL_LEAF_ROWS)
-                else tripsUpcoming
+                tripsUpcoming
+                    .run { if (any { it.second != null }) filter { it.second != null } else this }
+                    .run {
+                        if (isBus && context != Context.StopDetailsFiltered) take(TYPICAL_LEAF_ROWS)
+                        else this
+                    }
 
-            for (formattedTrip in tripsToConsider) {
-                val trip = formattedTrip.trip
+            for ((trip, _) in tripsToConsider) {
                 if (context.isStopDetails() || trip.isUpcoming()) {
                     val existingPatterns =
                         potentialService.getOrPut(Pair(trip.routeId, trip.headsign)) {
@@ -402,7 +404,9 @@ public data class RouteCardData(
 
             val disruptedHeadsignBranches =
                 disruptedHeadsigns
-                    .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
+                    .sortedBy {
+                        it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
+                    }
                     .take(BRANCHING_LEAF_ROWS)
                     .map { (headsign, groupedData) ->
                         val route =
@@ -437,7 +441,9 @@ public data class RouteCardData(
             val predictionsUnavailableBranches =
                 if (remainingRowsToShow > 0) {
                     nonDisruptedHeadsigns
-                        .sortedBy { it.value.routePatterns.minOf { pattern -> pattern.sortOrder } }
+                        .sortedBy {
+                            it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
+                        }
                         .mapNotNull { (headsign, groupedData) ->
                             val route =
                                 if (shouldIncludeRoute)
@@ -523,8 +529,9 @@ public data class RouteCardData(
                     else -> TYPICAL_LEAF_ROWS
                 }
             val tripsToShow =
-                if (countTripsToDisplay != null) allTripsToShow.take(countTripsToDisplay)
-                else allTripsToShow
+                allTripsToShow
+                    .mapNotNull { it.second }
+                    .run { if (countTripsToDisplay != null) take(countTripsToDisplay) else this }
 
             val mapStopRoute = MapStopRoute.matching(representativeRoute)
 

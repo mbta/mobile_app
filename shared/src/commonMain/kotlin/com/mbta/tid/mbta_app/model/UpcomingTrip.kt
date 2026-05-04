@@ -324,37 +324,43 @@ internal fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
 }
 
 /**
- * Associate each upcoming trip with its format. Omits any upcoming trip that shouldn't be shown.
+ * Associate each upcoming trip with its format.
+ *
+ * Any upcoming trip that shouldn't be shown will have a format of null.
  */
 internal fun List<UpcomingTrip>.withFormat(
     now: EasternTimeInstant,
     route: Route,
     context: TripInstantDisplay.Context,
-): List<UpcomingFormat.Some.FormattedTrip> {
+): List<Pair<UpcomingTrip, UpcomingFormat.Some.FormattedTrip?>> {
     val formattedTrips =
-        this.mapNotNull {
+        this.map {
             val last =
                 (route.type.isSubway() && it.prediction?.lastTrip == true) ||
                     (!route.type.isSubway() && this.last() == it)
-            it.format(now, route, context, last)
+            val formatted = it.format(now, route, context, last)
+            Pair(it, formatted)
         }
 
     val lastNonCancelledTrip =
-        formattedTrips.lastOrNull { it.format !is TripInstantDisplay.Cancelled }
+        formattedTrips.lastOrNull { it.second?.format !is TripInstantDisplay.Cancelled }
     // If no trips are tagged as the last trip, this is subway and we shouldn't change anything
-    if (formattedTrips.none { it.lastTrip } || lastNonCancelledTrip?.lastTrip ?: false) {
+    if (
+        formattedTrips.none { it.second?.lastTrip == true } ||
+            lastNonCancelledTrip?.second?.lastTrip ?: false
+    ) {
         return formattedTrips
     }
 
     // If the last non-cancelled trip is not flagged as the last trip, we need to set the last
     // trip flag on the cancelled trip to false, and set it to true on the actual last trip
-    return formattedTrips.mapNotNull {
+    return formattedTrips.map {
         if (it == lastNonCancelledTrip) {
-            return@mapNotNull it.trip.format(now, route, context, true)
-        } else if (it.lastTrip) {
-            return@mapNotNull it.trip.format(now, route, context, false)
+            it.copy(second = it.first.format(now, route, context, true))
+        } else if (it.second?.lastTrip == true) {
+            it.copy(second = it.first.format(now, route, context, false))
         } else {
-            return@mapNotNull it
+            it
         }
     }
 }
