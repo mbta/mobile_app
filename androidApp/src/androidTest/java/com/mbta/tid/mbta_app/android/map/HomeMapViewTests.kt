@@ -77,7 +77,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -120,7 +120,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -174,7 +174,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -216,7 +216,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.NearbyTransit,
@@ -256,7 +256,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -297,7 +297,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -338,7 +338,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -432,7 +432,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -477,7 +477,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -528,7 +528,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = MockLocationDataManager(),
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,

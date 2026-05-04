@@ -22,7 +22,6 @@ import com.mbta.tid.mbta_app.json
 import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -66,7 +65,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             MyApplicationTheme {
                 CompositionLocalProvider(LocalLocationClient provides fusedLocationClient) {
-                    ContentView(deepLinkStateFlow.asStateFlow(), ::clearDeepLink)
+                    ContentView(deepLinkStateFlow, ::clearDeepLink)
                 }
             }
         }
