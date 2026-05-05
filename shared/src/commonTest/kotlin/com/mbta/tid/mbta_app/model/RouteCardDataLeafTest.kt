@@ -531,7 +531,11 @@ class RouteCardDataLeafTest {
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
-        val pattern = objects.routePattern(route)
+        val pattern =
+            objects.routePattern(route) {
+                representativeTrip { headsign = "headsign" }
+                typicality = RoutePattern.Typicality.Typical
+            }
         val schedule =
             objects.schedule {
                 trip = objects.trip(pattern)
@@ -540,7 +544,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 route = null,
-                headsign = null,
+                headsign = "headsign",
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             ),
             RouteCardData.Leaf(
@@ -660,7 +664,11 @@ class RouteCardDataLeafTest {
                     type = RouteType.BUS
                     id = anyOfList(silverRoutes.toList()).idText
                 }
-            val pattern = objects.routePattern(route)
+            val pattern =
+                objects.routePattern(route) {
+                    representativeTrip { headsign = "headsign" }
+                    typicality = RoutePattern.Typicality.Typical
+                }
             val schedule =
                 objects.schedule {
                     trip = objects.trip(pattern)
@@ -669,7 +677,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 LeafFormat.Single(
                     route = null,
-                    headsign = null,
+                    headsign = "headsign",
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
                 ),
                 RouteCardData.Leaf(
