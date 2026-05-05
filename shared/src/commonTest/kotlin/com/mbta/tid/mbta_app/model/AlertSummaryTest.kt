@@ -1919,7 +1919,7 @@ class AlertSummaryTest {
         assertEquals(
             TripShuttleAlertSummary(
                 TripShuttleAlertSummary.ThisTrip(RouteType.COMMUTER_RAIL),
-                "Ruggles",
+                "Juggles",
                 "Forest Hills",
                 recurrence =
                     AlertSummary.Recurrence.Daily(

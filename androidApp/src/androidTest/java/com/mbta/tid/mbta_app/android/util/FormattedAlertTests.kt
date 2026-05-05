@@ -182,7 +182,7 @@ class FormattedAlertTests {
                 Alert.Cause.Weather,
             )
         val format = FormattedAlert(null, summary)
-        val expected = "This train will not stop at Porter today due to weather"
+        val expected = "This train will not stop at Porter today due to alien invasion"
         composeTestRule.setContent {
             val summaryString = format.alertCardMajorBody(LocalResources.current).toString()
             assertEquals(expected, summaryString)
