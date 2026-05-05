@@ -12,6 +12,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsUnfilteredView: View {
+    @ObserveInjection var inject
     var stopId: String
 
     var routeData: StopDetailsViewModel.RouteData?
@@ -181,6 +182,7 @@ struct StopDetailsUnfilteredView: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     @ViewBuilder private func loadingBody() -> some View {

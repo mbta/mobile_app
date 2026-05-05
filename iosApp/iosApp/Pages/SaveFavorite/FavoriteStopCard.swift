@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct FavoriteStopCard: View {
+    @ObserveInjection var inject
     var lineOrRoute: LineOrRoute
     var stop: Stop
     var direction: Direction?
@@ -43,5 +44,6 @@ struct FavoriteStopCard: View {
         }
         .background(Color.fill3)
         .withRoundedBorder(width: 2)
+        .enableInjection()
     }
 }

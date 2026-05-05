@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 private struct TakeoverAlertCard: View {
+    @ObserveInjection var inject
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let routeAccents: TripRouteAccents
@@ -65,10 +66,12 @@ private struct TakeoverAlertCard: View {
         }
         .padding(internalPadding)
         .padding(16)
+        .enableInjection()
     }
 }
 
 struct AlertCard: View {
+    @ObserveInjection var inject
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let spec: AlertCardSpec

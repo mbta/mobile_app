@@ -10,8 +10,10 @@ import Shared
 import SwiftUI
 
 struct LoadingResultsView: View {
+    @ObserveInjection var inject
     var body: some View {
         StopResultsView(stops: LoadingPlaceholders.shared.stopResults(), handleStopTap: { _ in })
             .loadingPlaceholder()
+            .enableInjection()
     }
 }

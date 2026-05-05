@@ -6,6 +6,8 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
+@_exported import Inject
+
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     class NotificationDeepLinkOwner: ObservableObject {
         var notificationDeepLink: DeepLinkState?

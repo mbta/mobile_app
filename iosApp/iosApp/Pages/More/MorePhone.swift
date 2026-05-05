@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct MorePhone: View {
+    @ObserveInjection var inject
     var label: String
     var phoneNumber: String
 
@@ -41,5 +42,6 @@ struct MorePhone: View {
         }
         .accessibilityAddTraits(.isButton)
         .accessibilityHint(Text("Select to call", comment: "Screen reader text for a link to call a phone number"))
+        .enableInjection()
     }
 }

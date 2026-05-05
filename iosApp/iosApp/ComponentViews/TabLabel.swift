@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct TabLabel: View {
+    @ObserveInjection var inject
     var title: String
     var image: ImageResource
 
@@ -24,5 +25,6 @@ struct TabLabel: View {
 
     var body: some View {
         Label(title: { Text(title) }, icon: { Image(image) })
+            .enableInjection()
     }
 }

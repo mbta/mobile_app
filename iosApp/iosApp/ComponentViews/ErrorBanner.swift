@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct ErrorBanner: View {
+    @ObserveInjection var inject
     let errorBannerVM: IErrorBannerViewModel
     let padding: [BannerPadding]
     @State var errorBannerVMState: ErrorBannerViewModel.State = .init()
@@ -49,6 +50,7 @@ struct ErrorBanner: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     @ViewBuilder private var content: some View {

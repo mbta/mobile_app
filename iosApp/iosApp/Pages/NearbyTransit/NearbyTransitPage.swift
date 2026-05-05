@@ -14,6 +14,7 @@ import Shared
 import SwiftUI
 
 struct NearbyTransitPage: View {
+    @ObserveInjection var inject
     var errorBannerVM: IErrorBannerViewModel
     @ObservedObject var nearbyVM: NearbyViewModel
     @ObservedObject var viewportProvider: ViewportProvider
@@ -79,5 +80,6 @@ struct NearbyTransitPage: View {
                 }
             }
         }
+        .enableInjection()
     }
 }

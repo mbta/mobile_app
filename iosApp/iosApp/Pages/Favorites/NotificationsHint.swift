@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct NotificationsHint: View {
+    @ObserveInjection var inject
     var onTap: () -> Void
     var onDismiss: () -> Void
 
@@ -39,5 +40,6 @@ struct NotificationsHint: View {
         }
         .padding(.horizontal, 16)
         .padding(.bottom, 14)
+        .enableInjection()
     }
 }

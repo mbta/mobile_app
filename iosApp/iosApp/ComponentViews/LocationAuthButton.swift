@@ -30,6 +30,8 @@ struct LocationAuthLabelStyle: LabelStyle {
 }
 
 struct LocationAuthButton: View {
+    @ObserveInjection var inject
+
     @EnvironmentObject var locationDataManager: LocationDataManager
 
     @Binding var showingAlert: Bool
@@ -86,6 +88,7 @@ struct LocationAuthButton: View {
                     )
                 }
             )
+            .enableInjection()
         case .authorizedAlways, .authorizedWhenInUse, nil:
             EmptyView()
         @unknown default:

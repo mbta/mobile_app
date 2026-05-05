@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct DirectionPicker: View {
+    @ObserveInjection var inject
     var availableDirections: [Int32]
     var directions: [Direction]
     let route: Route
@@ -82,6 +83,7 @@ struct DirectionPicker: View {
             .padding(2)
             .background(Color.routeColorContrast)
             .clipShape(.rect(cornerRadius: 8))
+            .enableInjection()
         } else if availableDirections.count == 1, let direction = availableDirections.first {
             DirectionLabel(direction: directions[Int(direction)])
                 .foregroundStyle(route.uiTextColor)
@@ -90,6 +92,7 @@ struct DirectionPicker: View {
                 .accessibilityElement(children: .combine)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityHeading(.h2)
+                .enableInjection()
         }
     }
 }

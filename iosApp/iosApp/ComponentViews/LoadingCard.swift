@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 struct LoadingCard<Message: View>: View {
+    @ObserveInjection var inject
     var message: () -> Message?
 
     init(message: @escaping () -> Message? = { Text("Loading...") }) {
@@ -26,6 +27,7 @@ struct LoadingCard<Message: View>: View {
             }
         }
         .withRoundedBorder()
+        .enableInjection()
     }
 }
 

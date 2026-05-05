@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct WorldCupBlurb: View {
+    @ObserveInjection var inject
     let leaf: RouteCardData.Leaf
     let routeAccents: TripRouteAccents
     let offerDetails: Bool
@@ -54,6 +55,7 @@ struct WorldCupBlurb: View {
                 .preventScrollTaps()
             }
         }
+        .enableInjection()
     }
 }
 

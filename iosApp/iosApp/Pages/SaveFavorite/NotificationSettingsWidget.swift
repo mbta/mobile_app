@@ -27,6 +27,7 @@ private extension DateComponents {
 }
 
 struct NotificationSettingsWidget: View {
+    @ObserveInjection var inject
     @ObservedObject var settings: MutableFavoriteSettings.Notifications
 
     var notificationPermissionManager: INotificationPermissionManager
@@ -125,6 +126,7 @@ struct NotificationSettingsWidget: View {
                 .foregroundStyle(Color.text.opacity(0.6))
             }
         }
+        .enableInjection()
     }
 
     static func defaultWindow(existingWindows: [MutableFavoriteSettings.Notifications.Window] = [])
@@ -146,6 +148,7 @@ struct NotificationSettingsWidget: View {
     }
 
     struct WindowWidget: View {
+        @ObserveInjection var inject
         @ObservedObject var window: MutableFavoriteSettings.Notifications.Window
         let deleteWindow: (() -> Void)?
 
@@ -181,10 +184,12 @@ struct NotificationSettingsWidget: View {
             }
             .background(Color.halo)
             .clipShape(RoundedRectangle(cornerRadius: 8))
+            .enableInjection()
         }
     }
 
     struct LabeledTimeInput: View {
+        @ObserveInjection var inject
         let label: Text
         @Binding var time: DateComponents
         let minimumTime: DateComponents?
@@ -223,10 +228,12 @@ struct NotificationSettingsWidget: View {
             .datePickerStyle(.compact)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
+            .enableInjection()
         }
     }
 
     struct DaysOfWeekInput: View {
+        @ObserveInjection var inject
         @Binding var daysOfWeek: Set<Kotlinx_datetimeDayOfWeek>
 
         static var days: [Kotlinx_datetimeDayOfWeek] {
@@ -279,12 +286,14 @@ struct NotificationSettingsWidget: View {
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
+            .enableInjection()
         }
     }
 }
 
 struct NotificationSettingsWidget_Previews: PreviewProvider {
     struct Holder: View {
+        @ObserveInjection var inject
         @State var settings = MutableFavoriteSettings.Notifications(
             enabled: true,
             windows: [
@@ -298,6 +307,7 @@ struct NotificationSettingsWidget_Previews: PreviewProvider {
                 settings: settings,
                 notificationPermissionManager: MockNotificationPermissionManager()
             )
+            .enableInjection()
         }
     }
 

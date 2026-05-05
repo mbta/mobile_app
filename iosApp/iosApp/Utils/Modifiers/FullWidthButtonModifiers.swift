@@ -17,6 +17,7 @@ struct KeyButton: ViewModifier {
             .frame(maxWidth: .infinity, minHeight: 52)
             .background(Color.key)
             .clipShape(.rect(cornerRadius: 8.0))
+            .enableInjection()
     }
 }
 
@@ -29,6 +30,7 @@ struct SecondaryButton: ViewModifier {
             .clipShape(.rect(cornerRadius: 8.0))
             .overlay(RoundedRectangle(cornerRadius: 8.0)
                 .stroke(Color.key, lineWidth: 1.0))
+            .enableInjection()
     }
 }
 

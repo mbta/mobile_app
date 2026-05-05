@@ -20,6 +20,7 @@ struct RouteCardParams: Equatable {
 }
 
 struct StopDetailsPage: View {
+    @ObserveInjection var inject
     var filters: StopDetailsPageFilters
     var navCallbacks: NavigationCallbacks
 
@@ -108,6 +109,7 @@ struct StopDetailsPage: View {
                 }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
     }
 
     func announceDeparture(_ previousFilters: StopDetailsPageFilters) {

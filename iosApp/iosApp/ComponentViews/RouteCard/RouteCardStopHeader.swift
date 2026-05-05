@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteCardStopHeader: View {
+    @ObserveInjection var inject
     let data: RouteCardData.RouteStopData
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -59,5 +60,6 @@ struct RouteCardStopHeader: View {
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Color.fill2)
+        .enableInjection()
     }
 }

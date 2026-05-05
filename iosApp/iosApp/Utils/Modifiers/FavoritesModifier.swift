@@ -41,6 +41,7 @@ struct FavoritesModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.onAppear { loadFavorites() }
+            .enableInjection()
     }
 }
 

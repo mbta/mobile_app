@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopResultsView: View {
+    @ObserveInjection var inject
     let stops: [SearchViewModel.StopResult]
     let handleStopTap: (String) -> Void
 
@@ -28,6 +29,7 @@ struct StopResultsView: View {
                 }
             }
         }
+        .enableInjection()
     }
 
     private func result(_ stop: SearchViewModel.StopResult) -> some View {

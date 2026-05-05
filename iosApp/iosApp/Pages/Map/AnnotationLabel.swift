@@ -31,5 +31,6 @@ struct FloatingLabel<LabelContent: View>: ViewModifier {
             },
             alignment: .leading
         )
+        .enableInjection()
     }
 }

@@ -25,6 +25,7 @@ struct ScenePhaseChangeModifier: ViewModifier {
                 onBackground()
             }
         }
+        .enableInjection()
     }
 }
 

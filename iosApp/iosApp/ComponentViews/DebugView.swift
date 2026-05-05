@@ -10,6 +10,8 @@ import Foundation
 import SwiftUI
 
 struct DebugView<Content: View>: View {
+    @ObserveInjection var inject
+
     let content: () -> Content
 
     @EnvironmentObject var settingsCache: SettingsCache
@@ -28,6 +30,7 @@ struct DebugView<Content: View>: View {
             .background(Color.fill3)
             .padding(4)
             .fixedSize(horizontal: false, vertical: true)
+            .enableInjection()
         }
     }
 }

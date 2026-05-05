@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsIconCard<Header: View, Details: View>: View {
+    @ObserveInjection var inject
     var accentColor: Color
     var details: Details?
     var header: Header
@@ -40,5 +41,6 @@ struct StopDetailsIconCard<Header: View, Details: View>: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 1))
         .padding(.horizontal, 16)
+        .enableInjection()
     }
 }

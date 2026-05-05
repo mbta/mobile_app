@@ -15,6 +15,7 @@ enum MissingTripCardType {
 }
 
 struct MissingTripCard: View {
+    @ObserveInjection var inject
     let type: MissingTripCardType
     let routeAccents: TripRouteAccents
 
@@ -65,6 +66,7 @@ struct MissingTripCard: View {
         .padding(16)
         .background(Color.fill3)
         .withRoundedBorder(width: 2)
+        .enableInjection()
     }
 }
 

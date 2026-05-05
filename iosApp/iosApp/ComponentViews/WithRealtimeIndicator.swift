@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct WithRealtimeIndicator: View {
+    @ObserveInjection var inject
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 12
     let prediction: any View
@@ -37,6 +38,7 @@ struct WithRealtimeIndicator: View {
             }
             AnyView(prediction)
         }
+        .enableInjection()
     }
 }
 
@@ -44,6 +46,7 @@ struct WithRealtimeIndicatorModifier: ViewModifier {
     var hideIndicator: Bool = false
     func body(content: Content) -> some View {
         WithRealtimeIndicator(content, hideIndicator: hideIndicator)
+            .enableInjection()
     }
 }
 

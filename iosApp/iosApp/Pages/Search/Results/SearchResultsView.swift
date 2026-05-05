@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct SearchResultsView: View {
+    @ObserveInjection var inject
     private var state: SearchViewModel.State
     private var handleStopTap: (String) -> Void
     private var handleRouteTap: (LineOrRoute.Id) -> Void
@@ -103,5 +104,6 @@ struct SearchResultsView: View {
             .padding(.horizontal, 16)
         }
         .background(Color.fill1)
+        .enableInjection()
     }
 }

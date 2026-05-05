@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct RecenterButton: View {
+    @ObserveInjection var inject
     var icon: ImageResource
     var label: Text
     var size: CGFloat
@@ -29,5 +30,6 @@ struct RecenterButton: View {
             .accessibilityRemoveTraits(.isImage)
             .accessibilityAddTraits(.isButton)
             .accessibilityIdentifier("mapRecenterButton")
+            .enableInjection()
     }
 }

@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct LoadingRouteCard: View {
+    @ObserveInjection var inject
     var body: some View {
         RouteCard(
             cardData: LoadingPlaceholders.shared.nearbyRoute(),
@@ -19,5 +20,6 @@ struct LoadingRouteCard: View {
             pushNavEntry: { _ in },
             showStopHeader: true
         )
+        .enableInjection()
     }
 }

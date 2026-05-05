@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteCardContainer<Content: View>: View {
+    @ObserveInjection var inject
     let cardData: RouteCardData
     let showStopHeader: Bool
     let departureContent: (RouteCardData.RouteStopData) -> Content
@@ -39,10 +40,12 @@ struct RouteCardContainer<Content: View>: View {
         }
         .background(Color.fill3)
         .withRoundedBorder()
+        .enableInjection()
     }
 }
 
 struct RouteCard: View {
+    @ObserveInjection var inject
     let cardData: RouteCardData
     let global: GlobalResponse?
     let now: EasternTimeInstant
@@ -66,6 +69,7 @@ struct RouteCard: View {
                 pushNavEntry: pushNavEntry
             )
         }
+        .enableInjection()
     }
 }
 

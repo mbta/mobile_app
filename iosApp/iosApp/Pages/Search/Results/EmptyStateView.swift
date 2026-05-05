@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct EmptyStateView: View {
+    @ObserveInjection var inject
     var headline: String
     var subheadline: String
 
@@ -20,5 +21,6 @@ struct EmptyStateView: View {
                 .font(Typography.subheadline)
         }
         .frame(maxWidth: .infinity)
+        .enableInjection()
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 struct NavTextButton: View {
+    @ObserveInjection var inject
     let string: String
     let backgroundColor: Color
     let textColor: Color
@@ -32,5 +33,6 @@ struct NavTextButton: View {
                     .clipShape(Capsule())
             }
         )
+        .enableInjection()
     }
 }

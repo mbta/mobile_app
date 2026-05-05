@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct SheetHeader<Title: View, RightActionContents: View>: View {
+    @ObserveInjection var inject
     let title: () -> Title
     let buttonColor: Color
     let buttonTextColor: Color
@@ -94,6 +95,7 @@ struct SheetHeader<Title: View, RightActionContents: View>: View {
 }
 
 struct SheetHeaderTitle: View {
+    @ObserveInjection var inject
     let title: String
     let titleAccessibilityLabel: String?
     let titleColor: Color
@@ -105,6 +107,7 @@ struct SheetHeaderTitle: View {
             .accessibilityAddTraits(.isHeader)
             .accessibilityHeading(.h1)
             .foregroundColor(titleColor)
+            .enableInjection()
     }
 }
 

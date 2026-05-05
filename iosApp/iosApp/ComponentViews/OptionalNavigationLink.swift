@@ -12,6 +12,8 @@ import SwiftUI
 /// This will render a button if there there is a SheetNavigationStackEntry to navigate to, otherwise it renders a
 /// regular label.
 struct OptionalNavigationLink<Label>: View where Label: View {
+    @ObserveInjection var inject
+
     let value: SheetNavigationStackEntry?
     let action: (SheetNavigationStackEntry) -> Void
     let showChevron: Bool
@@ -19,9 +21,9 @@ struct OptionalNavigationLink<Label>: View where Label: View {
 
     var body: some View {
         if let value {
-            SheetNavigationLink(value: value, action: action, showChevron: showChevron, label: label)
+            SheetNavigationLink(value: value, action: action, showChevron: showChevron, label: label).enableInjection()
         } else {
-            label()
+            label().enableInjection()
         }
     }
 }

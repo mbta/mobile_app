@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct AlertIcon: View {
+    @ObserveInjection var inject
+
     var color: Color
     var accessibilityHidden: Bool = false
     let icon: Image?
@@ -43,6 +45,7 @@ struct AlertIcon: View {
                 .foregroundStyle(color)
                 .accessibilityLabel(Text("Alert"))
                 .accessibilityHidden(accessibilityHidden)
+                .enableInjection()
         }
     }
 }
