@@ -26965,7 +26965,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "días laborables"
+            "value" : "Días laborables"
           }
         },
         "fr" : {
@@ -27012,7 +27012,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "fines de semana"
+            "value" : "Fines de semana"
           }
         },
         "fr" : {
@@ -27024,7 +27024,7 @@
         "ht" : {
           "stringUnit" : {
             "state" : "needs_review",
-            "value" : "wikenn yo"
+            "value" : "Wikenn yo"
           }
         },
         "pt-BR" : {
