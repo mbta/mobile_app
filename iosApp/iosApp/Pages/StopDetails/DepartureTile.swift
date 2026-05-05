@@ -81,11 +81,15 @@ struct DepartureTile: View {
                     TripStatus(predictions: data.formatted)
                 }
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
+            .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
+            .withProminentButtonPaddingRemoved()
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 10)
-        .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
-        .background(isSelected ? Color.fill3 : Color.routeColorContrast)
+        // using borderedProminent for readable layout with "Show Borders" setting.
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.roundedRectangle(radius: 8))
+        .tint(isSelected ? Color.fill3 : Color.routeColorContrast)
         .foregroundStyle(isSelected ? Color.text : Color.routeColorContrastText)
         .clipShape(.rect(cornerRadius: 8))
         .padding(1)

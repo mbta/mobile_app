@@ -22,7 +22,8 @@ struct StopResultsView: View {
                         handleStopTap(stop.id)
                     } label: {
                         result(stop)
-                    }
+
+                    }.tint(.fill3)
                     if stop != stops.last {
                         Divider().overlay(Color.halo)
                     }

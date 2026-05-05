@@ -64,6 +64,7 @@ struct DirectionPicker: View {
                                 maxHeight: .infinity,
                                 alignment: selectedDirection.destination == nil ? .center : .leading
                             )
+                            .withProminentButtonPaddingRemoved()
                     }
                     .preventScrollTaps()
                     .accessibilityAddTraits(isSelected ? [.isSelected, .isHeader] : [])
@@ -73,6 +74,9 @@ struct DirectionPicker: View {
                         "switches direction",
                         comment: "Screen reader hint for the direction toggle action"
                     ))
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.roundedRectangle(radius: 6))
+                    .tint(isSelected ? route.uiColor : Color.clear)
                     .background(isSelected ? route.uiColor : Color.clear)
                     .foregroundStyle(isSelected ? route.uiTextColor : Color.routeColorContrastText)
                     .clipShape(.rect(cornerRadius: 6))
