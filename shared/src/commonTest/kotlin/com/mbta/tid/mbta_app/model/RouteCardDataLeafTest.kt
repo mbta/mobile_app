@@ -562,46 +562,85 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats as none with subway schedules on atypical pattern but no predictions`() =
+    fun `formats branched with alert on one branch and no predictions on the other`() =
         parametricTest {
             val now = EasternTimeInstant.now()
 
             val objects = ObjectCollectionBuilder()
             val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "A" }
-            }
-            objects.routePattern(route) {
-                typicality = RoutePattern.Typicality.Typical
-                representativeTrip { headsign = "B" }
-            }
-            val pattern =
+            val stop = objects.stop { childStopIds = listOf("childPlatform1", "childPlatform2") }
+            val patternTypicalA =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf("childPlatform1")
+                    }
+                }
+            val patternTypicalB =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "B"
+                        stopIds = listOf("childPlatform2")
+                    }
+                }
+            val patternAtypicalA =
                 objects.routePattern(route) {
                     typicality = RoutePattern.Typicality.Atypical
-                    representativeTrip { headsign = "A" }
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf("childPlatform1")
+                    }
                 }
             val schedule =
                 objects.schedule {
-                    trip = objects.trip(pattern)
+                    trip = objects.trip(patternAtypicalA)
                     departureTime = now + 2.minutes
                 }
+            val alert =
+                objects.alert {
+                    activePeriod(now.minus(1.hours), now.plus(1.hours))
+                    effect = Alert.Effect.Shuttle
+                    cause = Alert.Cause.Maintenance
+                    informedEntity(
+                        directionId = 0,
+                        route = route.id.toString(),
+                        stop = "childPlatform2",
+                    )
+                }
             assertEquals(
-                LeafFormat.Single(
-                    route = null,
-                    headsign = null,
-                    UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
-                ),
+                LeafFormat.branched {
+                    branchRow(
+                        null,
+                        "A",
+                        UpcomingFormat.NoTrips(
+                            noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable
+                        ),
+                    )
+                    branchRow(
+                        null,
+                        "B",
+                        UpcomingFormat.Disruption(alert, "alert-borderless-shuttle"),
+                    )
+                },
                 RouteCardData.Leaf(
                         LineOrRoute.Route(route),
-                        objects.stop(),
+                        stop,
                         0,
-                        emptyList(),
-                        emptySet(),
+                        listOf(patternTypicalA, patternTypicalB, patternAtypicalA),
+                        setOf(stop.id) + stop.childStopIds,
                         listOf(objects.upcomingTrip(schedule)),
-                        emptyList(),
+                        listOf(alert),
                         true,
-                        true,
+                        mapOf(
+                            patternTypicalA.id to false,
+                            patternAtypicalA.id to true,
+                            patternTypicalB.id to false,
+                        ),
                         null,
                         emptyList(),
                         anyEnumValue(),
