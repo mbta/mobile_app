@@ -238,14 +238,18 @@ private fun AlertPeriod(
                 }
             } else {
                 Text(dateRange, style = Typography.bodySemibold)
-                Text(
-                    recurrence.days
-                        .sortedBy { it.numberSundayFirst }
-                        .joinToString(separator = stringResource(R.string.list_join)) {
-                            it.formattedFull()
-                        },
-                    style = Typography.bodySemibold,
-                )
+                val daysOfWeek =
+                    when {
+                        recurrence.isWeekdays -> stringResource(R.string.weekdays)
+                        recurrence.isWeekends -> stringResource(R.string.weekends)
+                        else ->
+                            recurrence.days
+                                .sortedBy { it.numberSundayFirst }
+                                .joinToString(separator = stringResource(R.string.list_join)) {
+                                    it.formattedFull()
+                                }
+                    }
+                Text(daysOfWeek, style = Typography.bodySemibold)
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
