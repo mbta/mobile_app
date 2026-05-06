@@ -72,13 +72,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return [[.banner, .list, .sound]]
     }
 
-    func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let userInfo = response.notification.request.content.userInfo
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        // TODO: if you open the notification when the app is not active in the background, this doesn’t work
+
         if let deepLinkPath = userInfo["deep_link_path"] as? String {
             Self.notificationDeepLinkOwner.notificationDeepLink = .companion.from(url: deepLinkPath)
         }
+        completionHandler()
     }
 }
 
