@@ -192,7 +192,9 @@ public sealed class AlertSummary {
             return withContext(Dispatchers.Default) {
                 if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
-                val location by lazy { alertLocation(alert, stopId, directionId, patterns, global) }
+                val location by lazy {
+                    alertLocation(alert, stopId, directionId, patterns, global, atTime)
+                }
 
                 if (alert.allClear(atTime)) {
                     return@withContext AllClear(location)
@@ -281,6 +283,7 @@ public sealed class AlertSummary {
             directionId: Int,
             patterns: List<RoutePattern>,
             global: GlobalResponse,
+            atTime: EasternTimeInstant,
         ): Location? {
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
 
@@ -314,7 +317,7 @@ public sealed class AlertSummary {
 
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
 
-            if (alert.stopSkipped && affectedStops.isNotEmpty()) {
+            if (alert.stopSkipped && affectedStops.isNotEmpty() && alert.isActive(atTime)) {
                 return Location.AffectedStops(affectedStops.map { it.name })
             }
 
