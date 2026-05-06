@@ -15614,6 +15614,7 @@
     },
     "Multiple routes" : {
       "comment" : "Title displayed in notification for alert that applies to multiple subscribed routes",
+      "extractionState" : "manual",
       "localizations" : {
         "es" : {
           "stringUnit" : {
