@@ -21,11 +21,12 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     val deepLinkStateFlow: MutableStateFlow<DeepLinkState?> = MutableStateFlow(null)
 
+    val deepLinkPathKey = "deep_link_path"
+
     fun handleIntent(intent: Intent?) {
         val deepLinkPath =
-            if (intent?.hasExtra("deep_link_path") == true) {
-                // TODO notification sound
-                intent.getStringExtra("deep_link_path")
+            if (intent?.hasExtra(deepLinkPathKey) == true) {
+                intent.getStringExtra(deepLinkPathKey)
             } else if (intent?.action == Intent.ACTION_VIEW) {
                 intent.dataString
             } else {
