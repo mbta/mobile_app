@@ -43,6 +43,7 @@ constructor(
             informedTrips: List<UpcomingTrip>,
             global: GlobalResponse,
             recurrence: Recurrence?,
+            atTime: EasternTimeInstant,
         ): TripShuttleAlertSummary? {
             val tripIdentity = tripIdentity(patterns, informedTrips, global) ?: return null
             val currentStopName = global.getStop(stopId)?.name
@@ -55,6 +56,7 @@ constructor(
                         informedTrips.any { it.trip.routePatternId == pattern.id }
                     },
                     global,
+                    atTime,
                 )
             return if (currentStopName != null && location is Location.SuccessiveStops) {
                 TripShuttleAlertSummary(
