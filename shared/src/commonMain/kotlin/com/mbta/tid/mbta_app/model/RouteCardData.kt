@@ -427,7 +427,9 @@ public data class RouteCardData(
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
                     LeafFormat.Branched.BranchRow(
                         route,
-                        upcomingTrip.trip.headsign,
+                        upcomingTrip.trip
+                            .headsign, // Why is this getting headsign directly from the trip?
+                        // Should it just be UpcomingTrip.headsign now?
                         UpcomingFormat.Some(formatted, null),
                     )
                 }

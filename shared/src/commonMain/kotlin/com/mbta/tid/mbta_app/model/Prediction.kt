@@ -28,6 +28,7 @@ internal constructor(
     @SerialName("stop_id") val stopId: String,
     @SerialName("trip_id") val tripId: String,
     @SerialName("vehicle_id") val vehicleId: String?,
+    @SerialName("trip_headsign") val tripHeadsign: String?,
 ) : BackendObject<String>, TripStopTime {
     @Serializable
     public enum class ScheduleRelationship {

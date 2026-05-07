@@ -63,7 +63,7 @@ constructor(
     }
 
     val headsign: String
-        get() = schedule?.stopHeadsign ?: trip.headsign
+        get() = prediction?.tripHeadsign ?: schedule?.stopHeadsign ?: trip.headsign
 
     val isCancelled: Boolean
         get() =
