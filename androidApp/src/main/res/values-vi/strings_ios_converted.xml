@@ -257,7 +257,6 @@
     <string name="more_section_support_note_accessibility">711 với người gọi TTY; VRS với người gọi ASL</string>
     <string name="more_section_support_note_hours">Từ thứ Hai đến thứ Sáu: 6:30 sáng - 8:00 tối</string>
     <string name="more_title">MBTA Go</string>
-    <string name="multiple_routes">Nhiều tuyến đường</string>
     <string name="multiple_stops">&lt;b>nhiều điểm dừng&lt;/b></string>
     <string name="multiple_trips">Nhiều chuyến đi</string>
     <string name="multiple_trips_lowercase">nhiều chuyến đi</string>
@@ -525,6 +524,8 @@
     <string name="waiting_to_depart">Đang chờ khởi hành</string>
     <string name="weather">Thời tiết</string>
     <string name="weather_lowercase">thời tiết</string>
+    <string name="weekdays">Các ngày trong tuần</string>
+    <string name="weekends">Cuối tuần</string>
     <string name="westbound">Về hướng tây</string>
     <string name="will_not_stop_at">sẽ không dừng lại ở %1$s %2$s</string>
     <string name="will_terminate_at">sẽ kết thúc tại %1$s %2$s</string>

@@ -272,7 +272,6 @@
     <string name="more_section_support_note_accessibility">711 pou moun ki rele TTY; VRS pou moun kap rele ASL</string>
     <string name="more_section_support_note_hours">Lendi rive vandredi: 6:30 AM - 8 PM</string>
     <string name="more_title">MBTA Go</string>
-    <string name="multiple_routes">Plizyè wout</string>
     <string name="multiple_stops">&lt;b>plizyè arè&lt;/b></string>
     <string name="multiple_trips">Plizyè vwayaj</string>
     <string name="multiple_trips_lowercase">plizyè vwayaj</string>
@@ -550,6 +549,8 @@
     <string name="waiting_to_depart">Ap tann pou yo ale</string>
     <string name="weather">Tan</string>
     <string name="weather_lowercase">move tan</string>
+    <string name="weekdays">Jou lasemèn</string>
+    <string name="weekends">Wikenn yo</string>
     <string name="westbound">Pran direksyon lwès</string>
     <string name="will_not_stop_at">p ap rete nan %1$s %2$s</string>
     <string name="will_terminate_at">ap fini nan %1$s %2$s</string>

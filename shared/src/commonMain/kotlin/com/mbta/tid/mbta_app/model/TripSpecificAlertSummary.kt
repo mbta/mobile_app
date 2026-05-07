@@ -69,6 +69,7 @@ constructor(
                         informedTrips,
                         global,
                         recurrence,
+                        atTime,
                     )
                 }
                 Alert.Effect.StationClosure,
@@ -113,7 +114,7 @@ constructor(
                     val suspensionEffectStops =
                         if (alert.effect == Alert.Effect.Suspension) {
                             val location =
-                                alertLocation(alert, stopId, directionId, patterns, global)
+                                alertLocation(alert, stopId, directionId, patterns, global, atTime)
                             when (location) {
                                 is Location.SingleStop ->
                                     if (location.downstream == true) location.stopName else null

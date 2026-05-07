@@ -263,7 +263,6 @@
     <string name="more_section_support_note_accessibility">711 pour le service TTY; VRS pour la langue des signes</string>
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
     <string name="more_title">MBTA Go</string>
-    <string name="multiple_routes">Plusieurs itinéraires</string>
     <string name="multiple_stops">&lt;b>plusieurs arrêts&lt;/b></string>
     <string name="multiple_trips">Plusieurs voyages</string>
     <string name="multiple_trips_lowercase">plusieurs voyages</string>
@@ -535,6 +534,8 @@
     <string name="waiting_to_depart">En attente de départ</string>
     <string name="weather">Météo</string>
     <string name="weather_lowercase">météo</string>
+    <string name="weekdays">Jours de la semaine</string>
+    <string name="weekends">Week-ends</string>
     <string name="westbound">En direction de l’ouest</string>
     <string name="will_not_stop_at">ne s’arrêtera pas à %1$s %2$s</string>
     <string name="will_terminate_at">se terminera à %1$s %2$s</string>

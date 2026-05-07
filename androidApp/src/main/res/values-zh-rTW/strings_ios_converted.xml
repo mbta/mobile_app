@@ -257,7 +257,6 @@
     <string name="more_section_support_note_accessibility">TTY呼叫者請致電711；ASL呼叫者請使用VRS</string>
     <string name="more_section_support_note_hours">週一至週五：上午6:30至晚上8:00</string>
     <string name="more_title">MBTA Go</string>
-    <string name="multiple_routes">多條路線</string>
     <string name="multiple_stops">&lt;b>多站停靠&lt;/b></string>
     <string name="multiple_trips">多次旅行</string>
     <string name="multiple_trips_lowercase">多次旅行</string>
@@ -525,6 +524,8 @@
     <string name="waiting_to_depart">等待離開</string>
     <string name="weather">天氣</string>
     <string name="weather_lowercase">天氣</string>
+    <string name="weekdays">工作日</string>
+    <string name="weekends">週末</string>
     <string name="westbound">西行</string>
     <string name="will_not_stop_at">不會止步於 %1$s %2$s</string>
     <string name="will_terminate_at">將在 %1$s %2$s 處終止</string>

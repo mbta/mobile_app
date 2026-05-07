@@ -129,12 +129,19 @@ struct AlertDetails: View {
                 VStack(alignment: .leading, spacing: 14) {
                     dateRange
                     let calendar = Self.calendar
-                    Text(recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
-                        .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }
-                        .joined(separator: NSLocalizedString(
-                            ", ",
-                            comment: "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday"
-                        )))
+                    let daysOfWeek = if recurrence.isWeekdays {
+                        NSLocalizedString("Weekdays", comment: "Mondays through Fridays")
+                    } else if recurrence.isWeekends {
+                        NSLocalizedString("Weekends", comment: "Saturdays and Sundays")
+                    } else {
+                        recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
+                            .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }
+                            .joined(separator: NSLocalizedString(
+                                ", ",
+                                comment: "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday"
+                            ))
+                    }
+                    Text(daysOfWeek)
                         .font(Typography.bodySemibold)
                     HStack(spacing: 8) {
                         Text("From", comment: "Label for the times of a recurring alert")

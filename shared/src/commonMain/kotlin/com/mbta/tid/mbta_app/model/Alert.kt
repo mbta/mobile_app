@@ -471,6 +471,17 @@ internal constructor(
                     .map { it.dayOfWeek }
                     .toSet() && days.count() > 1
 
+        public val isWeekdays: Boolean =
+            days ==
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                )
+        public val isWeekends: Boolean = days == setOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
+
         public val fromStartOfService: Boolean = start.local.time == LocalTime(3, 0)
         public val toEndOfService: Boolean =
             end.local.time == LocalTime(2, 59) || end.local.time == LocalTime(3, 0)

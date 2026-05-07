@@ -7,11 +7,9 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.UpcomingFormat
-import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import kotlin.experimental.ExperimentalObjCName
 import kotlin.native.ObjCName
-import kotlin.time.Clock
 
 public abstract class Analytics {
     protected abstract fun logEvent(name: String, parameters: Map<String, String>)
@@ -69,36 +67,6 @@ public abstract class Analytics {
             "start" to window.startTime.toString(),
             "end" to window.endTime.toString(),
             "days" to window.daysOfWeek.sorted().joinToString(),
-        )
-    }
-
-    public fun notificationReceived(payload: PushNotificationPayload) {
-        logEvent(
-            "notification_received",
-            "route_id" to payload.subscriptions.joinToString { it.route.idText },
-            "stop_id" to payload.subscriptions.joinToString { it.stop },
-            "direction_id" to payload.subscriptions.joinToString { it.direction.toString() },
-            "alert_effect" to payload.summary.effect.toString(),
-            "alert_id" to payload.alertId,
-            "notification_type" to payload.notificationType.name,
-            "latency_seconds" to (Clock.System.now() - payload.sentAt).inWholeSeconds.toString(),
-        )
-    }
-
-    public fun notificationClicked(
-        payload: PushNotificationPayload,
-        stillActive: PushNotificationPayload.StillActive,
-    ) {
-        logEvent(
-            "notification_clicked",
-            "route_id" to payload.subscriptions.joinToString { it.route.idText },
-            "stop_id" to payload.subscriptions.joinToString { it.stop },
-            "direction_id" to payload.subscriptions.joinToString { it.direction.toString() },
-            "alert_effect" to payload.summary.effect.toString(),
-            "alert_id" to payload.alertId,
-            "notification_type" to payload.notificationType.name,
-            "latency_seconds" to (Clock.System.now() - payload.sentAt).inWholeSeconds.toString(),
-            "still_active" to stillActive.name,
         )
     }
 
