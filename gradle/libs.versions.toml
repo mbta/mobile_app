@@ -54,6 +54,7 @@ spatialk = "0.7.0"
 # changelog: https://github.com/diffplug/spotless/blob/main/plugin-gradle/CHANGES.md
 spotless = "8.4.0"
 turbine = "1.2.1"
+testLogger = "4.0.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
@@ -136,3 +137,4 @@ sentry-kmp = { id = "io.sentry.kotlin.multiplatform.gradle", version.ref = "sent
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 skie = { id = "co.touchlab.skie", version.ref = "skie" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless"}
+testLogger = { id = "com.adarshr.test-logger", version.ref = 'testLogger' }
