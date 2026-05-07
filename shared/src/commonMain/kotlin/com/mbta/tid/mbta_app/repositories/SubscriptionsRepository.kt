@@ -18,13 +18,13 @@ public interface ISubscriptionsRepository {
     public suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
-        locale: String,
+        locale: String?,
     )
 
     public suspend fun updateAccessibility(
         fcmToken: String,
         includeAccessibility: Boolean,
-        locale: String,
+        locale: String?,
     )
 }
 
@@ -35,7 +35,7 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
     override suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
-        locale: String,
+        locale: String?,
     ) {
         val requestBody = WriteSubscriptionsRequest(fcmToken, subscriptions, locale)
         ApiResult.runCatching {
@@ -52,7 +52,7 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
     override suspend fun updateAccessibility(
         fcmToken: String,
         includeAccessibility: Boolean,
-        locale: String,
+        locale: String?,
     ) {
         val requestBody = UpdateAccessibilityRequest(fcmToken, includeAccessibility, locale)
         ApiResult.runCatching {
@@ -68,15 +68,15 @@ internal class SubscriptionsRepository : ISubscriptionsRepository, KoinComponent
 }
 
 public class MockSubscriptionsRepository(
-    public val onUpdateSubscriptions: (String, List<SubscriptionRequest>, String) -> Unit =
+    public val onUpdateSubscriptions: (String, List<SubscriptionRequest>, String?) -> Unit =
         { _, _, _ ->
         },
-    public val onUpdateAccessibility: (String, Boolean, String) -> Unit = { _, _, _ -> },
+    public val onUpdateAccessibility: (String, Boolean, String?) -> Unit = { _, _, _ -> },
 ) : ISubscriptionsRepository {
     override suspend fun updateSubscriptions(
         fcmToken: String,
         subscriptions: List<SubscriptionRequest>,
-        locale: String,
+        locale: String?,
     ) {
         onUpdateSubscriptions(fcmToken, subscriptions, locale)
     }
@@ -84,7 +84,7 @@ public class MockSubscriptionsRepository(
     override suspend fun updateAccessibility(
         fcmToken: String,
         includeAccessibility: Boolean,
-        locale: String,
+        locale: String?,
     ) {
         onUpdateAccessibility(fcmToken, includeAccessibility, locale)
     }

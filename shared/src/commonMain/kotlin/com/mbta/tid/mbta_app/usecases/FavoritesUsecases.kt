@@ -40,7 +40,7 @@ public class FavoritesUsecases(
         defaultDirection: Int,
         fcmToken: String?,
         includeAccessibility: Boolean,
-        locale: String,
+        locale: String?,
     ) {
         val storedFavorites = repository.getFavorites()
         val currentFavorites = storedFavorites.routeStopDirection.toMutableMap()
