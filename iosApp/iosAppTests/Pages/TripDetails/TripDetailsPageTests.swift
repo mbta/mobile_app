@@ -120,7 +120,7 @@ final class TripDetailsPageTests: XCTestCase {
             navCallbacks: .init(onBack: nil, onClose: { closeExp.fulfill() }, backButtonPresentation: .floating),
             nearbyVM: nearbyVM,
         )
-        try sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+        try sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
         wait(for: [closeExp], timeout: 1)
     }
 }

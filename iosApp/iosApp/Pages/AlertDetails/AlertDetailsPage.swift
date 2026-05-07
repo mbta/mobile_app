@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct AlertDetailsPage: View {
+    @ObserveInjection var inject
     var alertId: String
     var line: Line?
     var routes: [Route]?
@@ -98,6 +99,7 @@ struct AlertDetailsPage: View {
         .onChange(of: nearbyVM.alerts) { _ in updateAlert() }
         .onReceive(timer) { input in now = input }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     private func updateAlert() {

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct ResultContainer<Content: View>: View {
+    @ObserveInjection var inject
     @ViewBuilder
     var content: () -> Content
 
@@ -23,5 +24,6 @@ struct ResultContainer<Content: View>: View {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(Color.halo, lineWidth: 1)
         )
+        .enableInjection()
     }
 }

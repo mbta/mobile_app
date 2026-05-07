@@ -11,17 +11,17 @@ import kotlinx.coroutines.runBlocking
  */
 class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
     var state: State = State.Gathering
-    var parameterSpace = mutableListOf<List<Any>>()
+    var parameterSpace = mutableListOf<List<Any?>>()
 
     sealed interface State {
         data object Gathering : State
 
-        class Executing(val parameters: List<Any>, var parameterIndex: Int = 0) : State {
+        class Executing(val parameters: List<Any?>, var parameterIndex: Int = 0) : State {
             inline fun <reified T> nextParameter(): T {
                 val result = parameters[parameterIndex]
                 parameterIndex++
                 check(result is T) {
-                    "Parameter mismatch: expected ${T::class}, got ${result::class}"
+                    "Parameter mismatch: expected ${T::class}, got ${if (result != null) result::class else Nothing::class}"
                 }
                 return result
             }
@@ -30,14 +30,17 @@ class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
 
     fun anyBoolean(): Boolean = anyOf(false, true)
 
-    inline fun <reified T : Enum<T>> anyEnumValue(): T = anyEnumValueExcept()
+    inline fun <reified T : Enum<T>> anyEnumValue(): T = anyOfList(enumEntries<T>())
+
+    inline fun <reified T : Enum<T>> anyEnumValueOrNull(): T? =
+        anyOfList(enumEntries<T>() + listOf(null))
 
     inline fun <reified T : Enum<T>> anyEnumValueExcept(vararg omitted: T) =
         anyOfList(enumEntries<T>().filterNot(omitted::contains))
 
-    inline fun <reified T : Any> anyOf(vararg options: T) = anyOfList(options.asList())
+    inline fun <reified T> anyOf(vararg options: T) = anyOfList(options.asList())
 
-    inline fun <reified T : Any> anyOfList(options: List<T>): T =
+    inline fun <reified T> anyOfList(options: List<T>): T =
         when (val state = this.state) {
             is State.Gathering -> {
                 parameterSpace.add(options)
@@ -63,7 +66,7 @@ class ParametricTest(val block: suspend ParametricTest.() -> Unit) {
         // constructing all these partial lists will be inefficient for more than a handful of
         // parameters
         val parameterSets =
-            parameterSpace.fold(listOf(emptyList<Any>())) { acc, newObjects ->
+            parameterSpace.fold(listOf(emptyList<Any?>())) { acc, newObjects ->
                 acc.flatMap { prevObjects ->
                     newObjects.map { newObject ->
                         buildList {

@@ -12,6 +12,7 @@ import Shared
 import SwiftUI
 
 struct SearchResultsContainer: View {
+    @ObserveInjection var inject
     let query: String
 
     @ObservedObject var nearbyVM: NearbyViewModel
@@ -63,6 +64,7 @@ struct SearchResultsContainer: View {
             searchVM.setQuery(query: query)
             didChange?(self)
         }
+        .enableInjection()
     }
 }
 

@@ -12,6 +12,7 @@ import Shared
 import SwiftUI
 
 struct SaveFavoritesFlow: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
@@ -171,10 +172,12 @@ struct SaveFavoritesFlow: View {
                 )
             }
         }.onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
     }
 }
 
 struct FavoriteConfirmationDialog: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
@@ -233,10 +236,12 @@ struct FavoriteConfirmationDialog: View {
                     }
                 }
             }
+            .enableInjection()
     }
 }
 
 struct FavoriteConfirmationDialogContents: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let stop: Stop
     let directions: [Direction]
@@ -289,10 +294,12 @@ struct FavoriteConfirmationDialogContents: View {
                 }
             }
         }.accessibilityAddTraits(.isModal)
+            .enableInjection()
     }
 }
 
 struct DirectionButtons: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let favorites: [Direction: FavoriteSettings?]
     let updateLocalFavorite: (Direction, FavoriteSettings?) -> Void
@@ -349,5 +356,6 @@ struct DirectionButtons: View {
         }.withRoundedBorder()
             .padding(.horizontal, 12)
             .padding(.top, 8)
+            .enableInjection()
     }
 }

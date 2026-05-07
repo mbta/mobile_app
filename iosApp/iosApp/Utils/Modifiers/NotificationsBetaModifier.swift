@@ -93,6 +93,7 @@ struct NotificationsBetaModifier: ViewModifier {
             }
         }
         .configureCustomAlert(.betaConfig)
+        .enableInjection()
     }
 
     @ViewBuilder

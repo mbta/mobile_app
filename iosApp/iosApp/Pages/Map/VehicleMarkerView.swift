@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct VehicleMarkerView: View {
+    @ObserveInjection var inject
     let vehicle: Vehicle
     let routeAccents: TripRouteAccents
     let isSelected: Bool
@@ -62,6 +63,7 @@ struct VehicleMarkerView: View {
         .scaleEffect(vehicle.decoration != nil && enlargeIfDecorated ? 1.5 : 1)
         .accessibilityHidden(true)
         .onTapGesture { onTap() }
+        .enableInjection()
     }
 
     @ViewBuilder var vehicleIcon: some View {
@@ -148,6 +150,7 @@ struct VehicleMarkerView: View {
 
 struct DecorationPreview: PreviewProvider {
     struct Wrapper: View {
+        @ObserveInjection var inject
         let objects: ObjectCollectionBuilder
         let routeAccents: [TripRouteAccents]
 
@@ -178,6 +181,7 @@ struct DecorationPreview: PreviewProvider {
             }
             .padding(16)
             .background(Color.fill1)
+            .enableInjection()
         }
 
         @ViewBuilder func demoRow(

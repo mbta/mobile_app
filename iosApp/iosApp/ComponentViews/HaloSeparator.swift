@@ -9,10 +9,12 @@
 import SwiftUI
 
 struct HaloSeparator: View {
+    @ObserveInjection var inject
     var height: CGFloat = 1
     var haloColor: Color = .halo
 
     var body: some View {
         haloColor.frame(height: height)
+            .enableInjection()
     }
 }

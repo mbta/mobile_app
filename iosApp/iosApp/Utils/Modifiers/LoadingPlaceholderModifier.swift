@@ -18,6 +18,7 @@ struct LoadingPlaceholderModifier: ViewModifier {
             .allowsHitTesting(false)
             .accessibilityElement(children: .ignore)
             .accessibilityLabel("Loading...")
+            .enableInjection()
     }
 }
 

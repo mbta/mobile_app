@@ -12,6 +12,7 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct TripDetailsView: View {
+    @ObserveInjection var inject
     var tripFilter: TripDetailsPageFilter?
 
     var alertSummaries: [String: AlertSummary?]
@@ -103,6 +104,7 @@ struct TripDetailsView: View {
                 }
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
     }
 
     @ViewBuilder private var content: some View {

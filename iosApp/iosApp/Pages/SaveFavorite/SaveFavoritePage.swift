@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct SaveFavoritePage: View {
+    @ObserveInjection var inject
     var routeId: LineOrRoute.Id
     var stopId: String
     var initialSelectedDirection: Int32
@@ -211,5 +212,6 @@ struct SaveFavoritePage: View {
         .favorites($favorites)
         .global($globalResponse, errorKey: "SaveFavoritePage")
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 }

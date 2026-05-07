@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct DirectionRowView: View {
+    @ObserveInjection var inject
     var direction: Direction
     let predictions: UpcomingFormat
     let pillDecoration: PredictionRowView.PillDecoration
@@ -29,6 +30,7 @@ struct DirectionRowView: View {
             DirectionLabel(direction: direction, pillDecoration: pillDecoration)
                 .foregroundStyle(Color.text)
         }
+        .enableInjection()
     }
 }
 

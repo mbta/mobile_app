@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct TripStopRow: View {
+    @ObserveInjection var inject
     var stop: TripDetailsStopList.Entry
     var trip: Trip
     var now: EasternTimeInstant
@@ -73,6 +74,7 @@ struct TripStopRow: View {
             descriptor: { EmptyView() },
             rightSideContent: rightSideContent
         )
+        .enableInjection()
     }
 
     @ViewBuilder func rightSideContent() -> some View {

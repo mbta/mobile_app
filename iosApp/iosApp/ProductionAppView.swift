@@ -20,6 +20,7 @@ import SwiftUI
 #endif
 
 struct ProductionAppView: View {
+    @ObserveInjection var inject
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var contentVM: ContentViewModel = .init()
@@ -56,6 +57,7 @@ struct ProductionAppView: View {
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)
         }
+        .enableInjection()
     }
 
     private static func initSocket() -> PhoenixSocket {

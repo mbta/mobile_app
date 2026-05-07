@@ -15,6 +15,7 @@ enum OnboardingPieces {
     }
 
     struct PageDescription<FocusValue: Hashable>: View {
+        @ObserveInjection var inject
         let headerText: Text
         let bodyText: Text
 
@@ -54,6 +55,7 @@ enum OnboardingPieces {
                     .accessibilityFocused(focusBinding, equals: focusValue)
                 sizeHintBodyText
             }
+            .enableInjection()
         }
 
         private var leafBodyText: some View {
@@ -80,6 +82,7 @@ enum OnboardingPieces {
     }
 
     struct PageColumn<Content: View, Background: View>: View {
+        @ObserveInjection var inject
         @ViewBuilder let content: () -> Content
         @ViewBuilder let background: () -> Background
 
@@ -100,10 +103,12 @@ enum OnboardingPieces {
                 }
                 .ignoresSafeArea()
             }
+            .enableInjection()
         }
     }
 
     struct KeyButton: View {
+        @ObserveInjection var inject
         let text: Text
         let action: () -> Void
 
@@ -111,10 +116,12 @@ enum OnboardingPieces {
             Button(action: action) {
                 text.fullWidthKeyButton()
             }
+            .enableInjection()
         }
     }
 
     struct SecondaryButton: View {
+        @ObserveInjection var inject
         let text: Text
         let action: () -> Void
 
@@ -122,10 +129,12 @@ enum OnboardingPieces {
             Button(action: action) {
                 text.fullWidthSecondaryButton()
             }
+            .enableInjection()
         }
     }
 
     struct BackgroundImage: View {
+        @ObserveInjection var inject
         let image: ImageResource
 
         init(_ image: ImageResource) {
@@ -138,10 +147,12 @@ enum OnboardingPieces {
                 .scaledToFill()
                 .edgesIgnoringSafeArea(.all)
                 .accessibilityHidden(true)
+                .enableInjection()
         }
     }
 
     struct PromoImage: View {
+        @ObserveInjection var inject
         let image: ImageResource
 
         init(_ image: ImageResource) {
@@ -157,10 +168,12 @@ enum OnboardingPieces {
                     .accessibilityHidden(true)
                 Spacer()
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                .enableInjection()
         }
     }
 
     struct Halo: View {
+        @ObserveInjection var inject
         let size: CGFloat
         let offsetY: CGFloat
         let pulseSize: Double
@@ -192,10 +205,12 @@ enum OnboardingPieces {
                     }
                 }
                 .accessibilityHidden(true)
+                .enableInjection()
         }
     }
 
     struct SettingsToggle: View {
+        @ObserveInjection var inject
         let getSetting: () -> Bool
         let toggleSetting: () -> Void
         let label: Text
@@ -214,6 +229,7 @@ enum OnboardingPieces {
                     RoundedRectangle(cornerRadius: 8.0)
                         .stroke(Color.halo, lineWidth: 1.0)
                 )
+                .enableInjection()
         }
     }
 }

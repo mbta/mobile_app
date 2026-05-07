@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct NoNearbyStopsView: View {
+    @ObserveInjection var inject
     let onOpenSearch: () -> Void
     let onPanToDefaultCenter: () -> Void
 
@@ -63,6 +64,7 @@ struct NoNearbyStopsView: View {
         .padding(16)
         .background(Color.fill3)
         .withRoundedBorder(radius: 8)
+        .enableInjection()
     }
 }
 

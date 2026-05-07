@@ -6,6 +6,7 @@ import SwiftUI
 
 // swiftlint:disable:next type_body_length
 struct ContentView: View {
+    @ObserveInjection var inject
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
@@ -165,6 +166,7 @@ struct ContentView: View {
         ) { _ in
             Task { await contentVM.loadConfig() }
         }
+        .enableInjection()
     }
 
     @ViewBuilder
@@ -738,6 +740,7 @@ struct ContentView: View {
     struct AllowsBackgroundInteraction: ViewModifier {
         func body(content: Content) -> some View {
             content.presentationBackgroundInteraction(.enabled(upThrough: .medium))
+                .enableInjection()
         }
     }
 }

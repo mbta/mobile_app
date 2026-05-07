@@ -263,7 +263,6 @@
     <string name="more_section_support_note_accessibility">711 pour le service TTY; VRS pour la langue des signes</string>
     <string name="more_section_support_note_hours">Du lundi au vendredi : de 6 h 30 à 20 h</string>
     <string name="more_title">MBTA Go</string>
-    <string name="multiple_routes">Plusieurs itinéraires</string>
     <string name="multiple_stops">&lt;b>plusieurs arrêts&lt;/b></string>
     <string name="multiple_trips">Plusieurs voyages</string>
     <string name="multiple_trips_lowercase">plusieurs voyages</string>

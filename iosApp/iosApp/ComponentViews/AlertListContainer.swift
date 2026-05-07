@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct AlertListContainer: View {
+    @ObserveInjection var inject
     let displayAlerts: DisplayAlerts
     let showNotAccessibleCard: Bool
     let alertSummaries: [String: AlertSummary?]
@@ -57,6 +58,7 @@ struct AlertListContainer: View {
         .padding(2)
         .background(Color.halo)
         .clipShape(RoundedRectangle(cornerRadius: 10))
+        .enableInjection()
     }
 
     @ViewBuilder

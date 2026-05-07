@@ -18,6 +18,7 @@ extension TripInstantDisplay.Overridden {
 }
 
 struct UpcomingTripView: View {
+    @ObserveInjection var inject
     let prediction: State
     var routeType: RouteType?
     var hideRealtimeIndicators: Bool = false
@@ -43,6 +44,7 @@ struct UpcomingTripView: View {
         predictionView
             .frame(minWidth: 48, alignment: .trailing)
             .padding(.trailing, 4)
+            .enableInjection()
     }
 
     // swiftlint:disable:next function_body_length
@@ -266,6 +268,7 @@ struct UpcomingTripView: View {
 }
 
 struct DisruptionView: View {
+    @ObserveInjection var inject
     let spec: FormattedAlert.PredictionReplacement
     let iconName: String
     let maxTextAlpha: Double
@@ -290,6 +293,7 @@ struct DisruptionView: View {
                 fullImage
             }
         }
+        .enableInjection()
     }
 
     var rawText: Text {

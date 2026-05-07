@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct SaveFavoriteHeader: View {
+    @ObserveInjection var inject
     var isFavorite: Bool
     var onCancel: () -> Void
     var onSave: () -> Void
@@ -48,5 +49,6 @@ struct SaveFavoriteHeader: View {
         .padding([.bottom, .trailing], 16)
         .foregroundStyle(Color.text)
         .background(Color.fill3)
+        .enableInjection()
     }
 }

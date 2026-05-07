@@ -36,6 +36,7 @@ struct GlobalModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.task { loadGlobal() }
+            .enableInjection()
     }
 }
 

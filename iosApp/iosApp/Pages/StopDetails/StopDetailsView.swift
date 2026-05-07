@@ -14,6 +14,8 @@ import SwiftPhoenixClient
 import SwiftUI
 
 struct StopDetailsView: View {
+    @ObserveInjection var inject
+
     var filters: StopDetailsPageFilters
 
     var routeData: StopDetailsViewModel.RouteData?
@@ -83,6 +85,7 @@ struct StopDetailsView: View {
                 stopDetailsVM: stopDetailsVM
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
         } else {
             StopDetailsUnfilteredView(
                 stopId: filters.stopId,
@@ -96,6 +99,7 @@ struct StopDetailsView: View {
                 nearbyVM: nearbyVM,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
         }
     }
 }

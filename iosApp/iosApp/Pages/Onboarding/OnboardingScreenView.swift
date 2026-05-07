@@ -12,6 +12,7 @@ import Shared
 import SwiftUI
 
 struct OnboardingScreenView: View {
+    @ObserveInjection var inject
     let screen: OnboardingScreen
     let advance: () -> Void
 
@@ -214,6 +215,7 @@ struct OnboardingScreenView: View {
             )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     private enum NotificationsScreenState: Comparable {

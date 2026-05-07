@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteCardDepartures: View {
+    @ObserveInjection var inject
     var analytics: Analytics = AnalyticsProvider.shared
     let stopData: RouteCardData.RouteStopData
     let global: GlobalResponse?
@@ -60,6 +61,7 @@ struct RouteCardDepartures: View {
                 }
             }
         }
+        .enableInjection()
     }
 
     private func analyticsTappedDeparture(leaf: RouteCardData.Leaf, formatted: LeafFormat) {

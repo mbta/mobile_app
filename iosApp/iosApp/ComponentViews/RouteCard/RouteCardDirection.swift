@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct RouteCardDirection: View {
+    @ObserveInjection var inject
+
     let direction: Direction
     let formatted: LeafFormat
 
@@ -34,13 +36,15 @@ struct RouteCardDirection: View {
                         pillDecoration: pillDecoration
                     )
                 }
-            }.accessibilityElement(children: .combine)
-                .accessibilityInputLabels(Set([
-                    DirectionLabel.directionNameFormatted(direction),
-                    direction.destination,
-                ] +
-                    Set(branched.branchRows.map(\.headsign)))
-                    .compactMap { text in if let text { Text(text) } else { nil }})
+            }
+            .accessibilityElement(children: .combine)
+            .accessibilityInputLabels(Set([
+                DirectionLabel.directionNameFormatted(direction),
+                direction.destination,
+            ] +
+                Set(branched.branchRows.map(\.headsign)))
+                .compactMap { text in if let text { Text(text) } else { nil }})
+            .enableInjection()
 
         case let .single(single):
             let pillDecoration: PredictionRowView.PillDecoration =
@@ -56,9 +60,11 @@ struct RouteCardDirection: View {
                 ),
                 predictions: single.format,
                 pillDecoration: pillDecoration
-            ).accessibilityElement(children: .combine)
-                .accessibilityInputLabels(Set([DirectionLabel.directionNameFormatted(direction), destination])
-                    .compactMap { text in if let text { Text(text) } else { nil }})
+            )
+            .accessibilityElement(children: .combine)
+            .accessibilityInputLabels(Set([DirectionLabel.directionNameFormatted(direction), destination])
+                .compactMap { text in if let text { Text(text) } else { nil }})
+            .enableInjection()
         }
     }
 }

@@ -50,6 +50,7 @@ struct StopDetailsManageVMModifier: ViewModifier {
                     viewModel.setActive(active: false, wasSentToBackground: false)
                 }
             }
+            .enableInjection()
     }
 }
 

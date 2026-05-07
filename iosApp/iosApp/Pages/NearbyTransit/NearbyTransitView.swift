@@ -14,6 +14,8 @@ import Shared
 import SwiftUI
 
 struct NearbyTransitView: View {
+    @ObserveInjection var inject
+
     var analytics: Analytics = AnalyticsProvider.shared
     @State var predictionsRepository = RepositoryDI().predictions
     var schedulesRepository = RepositoryDI().schedules
@@ -117,6 +119,7 @@ struct NearbyTransitView: View {
                 setIsReturningFromBackground(true)
             }
         )
+        .enableInjection()
     }
 
     @ViewBuilder private func nearbyList(_ routeCardData: [RouteCardData], _ global: GlobalResponse) -> some View {

@@ -25,6 +25,7 @@ enum StopListContext {
 }
 
 struct StopListRow<Descriptor: View, RightSideContent: View>: View {
+    @ObserveInjection var inject
     var stop: Stop
     var stopLane: RouteBranchSegment.Lane
     var stickConnections: [RouteBranchSegment.StickConnection]
@@ -119,6 +120,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
             }
         }
         .fixedSize(horizontal: false, vertical: true).padding(.horizontal, stopListContext == .trip ? 7 : 0)
+        .enableInjection()
     }
 
     @ViewBuilder

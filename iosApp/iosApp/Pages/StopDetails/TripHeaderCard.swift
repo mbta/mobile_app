@@ -19,6 +19,7 @@ enum TripHeaderSpec {
 
 // swiftlint:disable:next type_body_length
 struct TripHeaderCard: View {
+    @ObserveInjection var inject
     let spec: TripHeaderSpec
     let trip: Trip
     let targetId: String
@@ -82,6 +83,7 @@ struct TripHeaderCard: View {
             "displays more information",
             comment: "Screen reader hint for tapping on the trip details header on the stop page"
         ) : "")
+        .enableInjection()
     }
 
     @ViewBuilder private var carLevelCrowding: some View {

@@ -14,6 +14,7 @@ typealias ToastState = ToastViewModel.Toast
 let notificationsBetaToastKey = "notifications_beta_toast_message_key"
 
 struct ToastView: View {
+    @ObserveInjection var inject
     @Environment(\.colorScheme) var colorScheme
 
     var state: ToastState
@@ -56,6 +57,7 @@ struct ToastView: View {
         .cornerRadius(8)
         .padding(.horizontal, 8)
         .padding(.bottom, tabBarVisible ? 64 : 32)
+        .enableInjection()
     }
 
     @ViewBuilder

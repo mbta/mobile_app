@@ -66,6 +66,18 @@ If you need to make changes that you only understand in Xcode, make the changes 
 When you switch branches or merge, pre-commit will automatically run `bin/generate-xcodeproj.sh`; this will clobber existing changes you may have made to your Xcode project, so don't change branches if your Xcode project is dirty.
 When you commit, pre-commit will automatically run `bin/diff-xcodeproj.sh` to check that your Xcode project is not dirty; you'll need to parse through the signal vs noise and make any necessary changes to project.yml before running `bin/generate-xcodeproj.sh` manually to synchronize the Xcode project with what XcodeGen thinks it should look like.
 
+We use [Inject](https://github.com/krzysztofzablocki/Inject) and
+[InjectionIII](https://github.com/johnno1962/InjectionIII) for hot reloading the iOS app in debug
+builds. To set it up on your machine, follow the
+[developer setup](https://github.com/krzysztofzablocki/Inject#individual-developer-setup-once-per-machine)
+section of the Inject readme. The build setting configurations are already set up within
+`project.yml`, so you should only need to follow these steps:
+- Download the [latest InjectionIII release](https://github.com/johnno1962/InjectionIII/releases)
+- Unpack it and place under `/Applications`
+- Run InjectionIII (you can set it to automatically open at startup in `General > Login Items & Extensions > Open at Login`)
+- Select `open project` from the top bar menu and select the `iosApp` directory
+- Once you launch the app you should see `💉 InjectionIII connected` in the logs
+
 The shared library dependency is managed using Cocoapods. To install the dependency and build the
 ios app:
 

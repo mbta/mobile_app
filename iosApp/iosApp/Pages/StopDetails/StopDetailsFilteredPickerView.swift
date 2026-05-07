@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsFilteredPickerView: View {
+    @ObserveInjection var inject
     var stopId: String
     var stopFilter: StopDetailsFilter
     var tripFilter: TripDetailsFilter?
@@ -142,5 +143,6 @@ struct StopDetailsFilteredPickerView: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
+        .enableInjection()
     }
 }

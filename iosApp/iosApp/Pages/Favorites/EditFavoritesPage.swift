@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct EditFavoritesPage: View {
+    @ObserveInjection var inject
     let viewModel: IFavoritesViewModel
     let navCallbacks: NavigationCallbacks
     let onOpenEditModal: (RouteStopDirection) -> Void
@@ -114,10 +115,12 @@ struct EditFavoritesPage: View {
                 }
             }
         }
+        .enableInjection()
     }
 }
 
 struct EditFavoritesList: View {
+    @ObserveInjection var inject
     let favorites: [RouteStopDirection: FavoriteSettings?]
     let routeCardData: [RouteCardData]?
     let global: GlobalResponse?
@@ -179,6 +182,7 @@ struct EditFavoritesList: View {
 }
 
 struct FavoriteDepartures: View {
+    @ObserveInjection var inject
     let favorites: [RouteStopDirection: FavoriteSettings?]
     let stopData: RouteCardData.RouteStopData
     let globalData: GlobalResponse?
@@ -234,10 +238,12 @@ struct FavoriteDepartures: View {
                 }
             }
         }
+        .enableInjection()
     }
 }
 
 struct FavoriteRowRightContent: View {
+    @ObserveInjection var inject
     let leaf: RouteCardData.Leaf
     let favoriteSettings: FavoriteSettings?
     let onClick: (RouteCardData.Leaf) -> Void
@@ -255,6 +261,7 @@ struct FavoriteRowRightContent: View {
 }
 
 struct BranchRows: View {
+    @ObserveInjection var inject
     let formatted: LeafFormat.Branched
 
     var body: some View {
@@ -274,10 +281,12 @@ struct BranchRows: View {
                 }
             }
         }
+        .enableInjection()
     }
 }
 
 struct NotificationStatusIcon: View {
+    @ObserveInjection var inject
     let favoriteSetting: FavoriteSettings?
 
     @ScaledMetric private var imageSize = 18
@@ -294,6 +303,7 @@ struct NotificationStatusIcon: View {
 }
 
 struct DeleteButton: View {
+    @ObserveInjection var inject
     let action: () -> Void
     @ScaledMetric private var imageHeight = 16
     @ScaledMetric private var imageWidth = 14
@@ -314,10 +324,12 @@ struct DeleteButton: View {
             "Delete",
             comment: "Content description for a button that removes a favorited route/stop/direction"
         ))
+        .enableInjection()
     }
 }
 
 struct EditFavoriteButton: View {
+    @ObserveInjection var inject
     let action: () -> Void
     @ScaledMetric private var imageSize = 24
     @ScaledMetric private var buttonSize = 44
@@ -338,5 +350,6 @@ struct EditFavoriteButton: View {
             "Edit",
             comment: "Button text to enter edit favorites flow"
         ))
+        .enableInjection()
     }
 }

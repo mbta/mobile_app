@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct ActionButton: View {
+    @ObserveInjection var inject
     enum Kind {
         case back
         case close
@@ -128,6 +129,7 @@ struct ActionButton: View {
         }
         .frame(width: buttonSize, height: buttonSize)
         .accessibilityLabel(kind.accessibilityLabel)
+        .enableInjection()
     }
 }
 

@@ -6,6 +6,8 @@ import Shared
 import SwiftPhoenixClient
 import SwiftUI
 
+@_exported import Inject
+
 class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
     class NotificationDeepLinkOwner: ObservableObject {
         var notificationDeepLink: DeepLinkState?
@@ -50,65 +52,13 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         print("Failed to register remote notifications: \(error)")
     }
 
-    private static func getTitle(_ title: PushNotificationPayload.Title) -> String {
-        switch onEnum(of: title) {
-        case let .bareLabel(title): title.label
-        case let .modeLabel(title): String(
-                format: NSLocalizedString("%@ %@", comment: ""),
-                title.label,
-                title.mode.typeText(isOnly: true)
-            )
-        case .multipleRoutes: NSLocalizedString(
-                "Multiple routes",
-                comment: "Title displayed in notification for alert that applies to multiple subscribed routes"
-            )
-        case let .unknown(title): getTitle(title.fallback)
-        }
-    }
-
     func application(
         _: UIApplication,
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        if let payload = PushNotificationPayload.companion.fromUserInfo(userInfo: userInfo) {
-            AnalyticsProvider.shared.notificationReceived(payload: payload)
-
-            let summary = payload.summary
-            let formattedAlert = FormattedAlert(alert: nil, alertSummary: summary)
-            let content = UNMutableNotificationContent()
-            content.title = Self.getTitle(payload.title)
-            // https://forums.swift.org/t/attributedstring-to-string/61667/2
-            content.body = String(formattedAlert.alertCardMajorBody.characters[...])
-            content.userInfo = [
-                PushNotificationPayload.companion.launchKey:
-                    PushNotificationPayload.companion.serialize(payload: payload),
-            ]
-            content.sound = .default
-
-            if payload.summary is AlertSummary.Unknown {
-                AnalyticsProvider.shared.notificationsFallback()
-            }
-
-            let idSuffix = switch onEnum(of: payload.summary) {
-            case .allClear: "-all-clear"
-            default: ""
-            }
-            let notificationId = payload.alertId + idSuffix
-            let request = UNNotificationRequest(identifier: notificationId, content: content, trigger: nil)
-            let notificationCenter = UNUserNotificationCenter.current()
-            notificationCenter.add(request, withCompletionHandler: { error in
-                if let error {
-                    debugPrint(error)
-                    completionHandler(.failed)
-                } else {
-                    completionHandler(.newData)
-                }
-            })
-        } else {
-            completionHandler(.noData)
-        }
+        completionHandler(.noData)
     }
 
     func messaging(_: Messaging, didReceiveRegistrationToken token: String?) {
@@ -124,15 +74,18 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         return [[.banner, .list, .sound]]
     }
 
-    func userNotificationCenter(_: UNUserNotificationCenter, didReceive response: UNNotificationResponse) async {
+    func userNotificationCenter(
+        _: UNUserNotificationCenter,
+        didReceive response: UNNotificationResponse,
+        withCompletionHandler completionHandler: @escaping () -> Void
+    ) {
         let userInfo = response.notification.request.content.userInfo
         Messaging.messaging().appDidReceiveMessage(userInfo)
-        if let rawPayload = userInfo[PushNotificationPayload.companion.launchKey] as? String {
-            let payload = PushNotificationPayload.companion.deserialize(rawPayload: rawPayload)
-            let stillActive = payload.isStillActive()
-            AnalyticsProvider.shared.notificationClicked(payload: payload, stillActive: stillActive)
-            Self.notificationDeepLinkOwner.notificationDeepLink = payload.getDeepLinkState()
+
+        if let deepLinkPath = userInfo["deep_link_path"] as? String {
+            Self.notificationDeepLinkOwner.notificationDeepLink = .companion.from(url: deepLinkPath)
         }
+        completionHandler()
     }
 }
 

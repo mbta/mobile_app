@@ -12,6 +12,7 @@ struct PreventScrollTapsModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .simultaneousGesture(TapGesture())
+            .enableInjection()
     }
 }
 

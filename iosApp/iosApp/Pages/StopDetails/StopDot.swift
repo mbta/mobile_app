@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct StopDot: View {
+    @ObserveInjection var inject
     let routeAccents: TripRouteAccents
     let targeted: Bool
     @ScaledMetric private var pinSize: CGFloat = 24
@@ -26,5 +27,6 @@ struct StopDot: View {
                         .frame(width: pinSize, height: pinSize).padding(.bottom, pinSize).accessibilityHidden(true)
                 }
             }
+            .enableInjection()
     }
 }

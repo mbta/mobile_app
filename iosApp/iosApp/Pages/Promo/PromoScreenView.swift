@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct PromoScreenView: View {
+    @ObserveInjection var inject
     let screen: FeaturePromo
     let advance: () -> Void
 
@@ -47,6 +48,7 @@ struct PromoScreenView: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     @ViewBuilder

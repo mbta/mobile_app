@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StarButton: View {
+    @ObserveInjection var inject
     let starred: Bool
     let color: Color
     let action: () -> Void
@@ -22,6 +23,7 @@ struct StarButton: View {
         .accessibilityIdentifier("starButton")
         .accessibilityAddTraits(starred ? [.isSelected] : [])
         .preventScrollTaps()
+        .enableInjection()
     }
 }
 
@@ -40,6 +42,7 @@ private extension Animation {
 }
 
 struct StarIcon: View {
+    @ObserveInjection var inject
     let starred: Bool
     let color: Color
 
@@ -198,6 +201,7 @@ struct StarIcon: View {
             "Adds to favorites",
             comment: "VoiceOver hint for favorite button when a route is not favorited"
         ))
+        .enableInjection()
     }
 
     func setStarred(_ starred: Bool) {
@@ -266,6 +270,7 @@ struct StarIcon: View {
 }
 
 private struct PreviewHelper: View {
+    @ObserveInjection var inject
     @State var starred = false
 
     var body: some View {
@@ -277,6 +282,7 @@ private struct PreviewHelper: View {
                     try? await Task.sleep(for: .milliseconds(500))
                 }
             }
+            .enableInjection()
     }
 }
 

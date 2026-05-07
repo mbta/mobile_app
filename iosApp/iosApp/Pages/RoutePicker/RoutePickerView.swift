@@ -12,6 +12,7 @@ import Shared
 import SwiftUI
 
 struct RoutePickerView: View {
+    @ObserveInjection var inject
     let context: RouteDetailsContext
     let path: RoutePickerPath
     let errorBannerVM: IErrorBannerViewModel
@@ -152,6 +153,7 @@ struct RoutePickerView: View {
         .onChange(of: searchObserver.searchText) { query in
             searchRoutesViewModel.setQuery(query: query)
         }
+        .enableInjection()
     }
 
     private var header: some View {

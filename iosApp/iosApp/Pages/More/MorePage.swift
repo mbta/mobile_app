@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct MorePage: View {
+    @ObserveInjection var inject
     let inspection = Inspection<Self>()
 
     let highlight: MoreSection.Category?
@@ -138,6 +139,7 @@ struct MorePage: View {
             .background(Color.fill1)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 }
 
