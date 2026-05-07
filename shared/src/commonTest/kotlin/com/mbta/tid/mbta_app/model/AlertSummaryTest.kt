@@ -1931,7 +1931,7 @@ class AlertSummaryTest {
     }
 
     @Test
-    fun `summary with closure sets AffectedStops Location type`() = runBlocking {
+    fun `summary with closure sets AffectedStops Location type when active`() = runBlocking {
         val objects = ObjectCollectionBuilder()
 
         val now = EasternTimeInstant.now()
@@ -1998,6 +1998,46 @@ class AlertSummaryTest {
                 null,
             ),
             stationClosureSummary,
+        )
+    }
+
+    @Test
+    fun `summary with closure sets SingleStop Location type when all clear`() = runBlocking {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant.now()
+
+        val stop =
+            objects.stop {
+                name = "Parent Name"
+                childStop {}
+            }
+        val childStop = objects.stops[stop.childStopIds.first()]
+
+        val route = objects.route {}
+        val pattern = objects.routePattern(route) { directionId = 0 }
+        val stopClosureAlert =
+            objects.alert {
+                effect = Alert.Effect.StopClosure
+                durationCertainty = Alert.DurationCertainty.Estimated
+                activePeriod(now.minus(1.hours), now.minus(5.minutes))
+                informedEntity(route = route.id.idText, stop = childStop?.id)
+            }
+
+        val stopClosureSummary =
+            AlertSummary.summarizing(
+                stopClosureAlert,
+                "",
+                0,
+                listOf(pattern),
+                now,
+                null,
+                GlobalResponse(objects),
+            )
+
+        assertEquals(
+            AlertSummary.AllClear(AlertSummary.Location.SingleStop(stop.name)),
+            stopClosureSummary,
         )
     }
 }
