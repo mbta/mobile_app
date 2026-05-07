@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RoutePickerRow: View {
+    @ObserveInjection var inject
     let route: LineOrRoute
     let onTap: () -> Void
 
@@ -39,5 +40,6 @@ struct RoutePickerRow: View {
                 .padding(.vertical, 12)
             }
         ).preventScrollTaps()
+            .enableInjection()
     }
 }

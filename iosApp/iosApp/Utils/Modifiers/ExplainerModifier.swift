@@ -25,6 +25,7 @@ struct ExplainerModifier: ViewModifier {
                 )
             }
         }
+        .enableInjection()
     }
 }
 

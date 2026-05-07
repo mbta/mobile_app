@@ -21,6 +21,7 @@ enum ExplainerType: String {
 }
 
 struct ExplainerPage: View {
+    @ObserveInjection var inject
     let explainer: Explainer
     let onClose: () -> Void
 
@@ -44,6 +45,7 @@ struct ExplainerPage: View {
             .padding(.bottom, 40)
         }
         .background(Color.fill2)
+        .enableInjection()
     }
 
     @ViewBuilder private var header: some View {

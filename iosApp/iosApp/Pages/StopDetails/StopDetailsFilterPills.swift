@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsFilterPills: View {
+    @ObserveInjection var inject
     enum FilterBy {
         var id: LineOrRoute.Id {
             switch self {
@@ -104,5 +105,6 @@ struct StopDetailsFilterPills: View {
                 .padding(.trailing, 16)
             }
         }
+        .enableInjection()
     }
 }

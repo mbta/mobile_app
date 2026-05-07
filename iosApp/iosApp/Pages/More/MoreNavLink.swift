@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct MoreNavLink: View {
+    @ObserveInjection var inject
     var label: String
     var callback: () -> Void
 
@@ -30,5 +31,6 @@ struct MoreNavLink: View {
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
         .frame(minHeight: 44)
+        .enableInjection()
     }
 }

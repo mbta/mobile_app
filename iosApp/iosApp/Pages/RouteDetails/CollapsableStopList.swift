@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct CollapsableStopList<RightSideContent: View>: View {
+    @ObserveInjection var inject
+
     let lineOrRoute: LineOrRoute
     let segment: RouteDetailsStopList.Segment
     let onClick: (RouteDetailsStopList.Entry) -> Void
@@ -52,6 +54,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 rightSideContent: { rightSideContent(stop) }
             ).background(Color.fill1)
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
+                .enableInjection()
         } else {
             DisclosureGroup(isExpanded: $stopsExpanded, content: {
                 VStack(alignment: .leading, spacing: 0) {
@@ -106,6 +109,7 @@ struct CollapsableStopList<RightSideContent: View>: View {
                 context: .routeDetails,
             ))
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
         }
     }
 }

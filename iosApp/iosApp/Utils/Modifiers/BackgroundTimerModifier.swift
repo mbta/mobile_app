@@ -25,6 +25,7 @@ struct BackgroundTimerModifier: ViewModifier {
         }, onBackground: {
             backgroundTime = EasternTimeInstant.now()
         })
+        .enableInjection()
     }
 }
 

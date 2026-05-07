@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct MoreAction: View {
+    @ObserveInjection var inject
     var label: String
     var callback: () -> Void
 
@@ -23,5 +24,6 @@ struct MoreAction: View {
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
         .frame(minHeight: 44)
+        .enableInjection()
     }
 }

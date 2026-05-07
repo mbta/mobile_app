@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct FollowButton: View {
+    @ObserveInjection var inject
     var action: () -> Void
     var routeAccents: TripRouteAccents
 
@@ -30,5 +31,6 @@ struct FollowButton: View {
         .frame(minWidth: 97, minHeight: 36)
         .background(routeAccents.color)
         .withRoundedBorder(radius: 88, width: 2)
+        .enableInjection()
     }
 }

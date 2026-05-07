@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsFilteredHeader: View {
+    @ObserveInjection var inject
     var route: Route?
     var line: Line?
     var stop: Stop?
@@ -31,6 +32,7 @@ struct StopDetailsFilteredHeader: View {
                 describes the selected route and and stop, ex '[Red Line] [train] at [Porter]'
                 """
             )
+
         } else {
             Text(
                 "Stop details",
@@ -73,6 +75,7 @@ struct StopDetailsFilteredHeader: View {
             }
         )
         .padding(.bottom, 16)
+        .enableInjection()
     }
 
     func stopLabel(_ stop: Stop) -> AttributedString {

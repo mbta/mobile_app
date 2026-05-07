@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct PromoPage: View {
+    @ObserveInjection var inject
     let screens: [FeaturePromo]
     @State var selectedIndex: Int = 0
 
@@ -41,6 +42,7 @@ struct PromoPage: View {
                 onFinish()
             }
         })
+        .enableInjection()
     }
 }
 

@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct TransitHeader<Content: View>: View {
+    @ObserveInjection var inject
     let name: String
     let routeType: RouteType
     let backgroundColor: Color
@@ -43,5 +44,6 @@ struct TransitHeader<Content: View>: View {
         }
         .padding(8)
         .background(backgroundColor)
+        .enableInjection()
     }
 }

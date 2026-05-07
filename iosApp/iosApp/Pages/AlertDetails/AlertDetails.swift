@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct AlertDetails: View {
+    @ObserveInjection var inject
     var analytics: Analytics = AnalyticsProvider.shared
     var alert: Shared.Alert
     var line: Line?
@@ -308,6 +309,7 @@ struct AlertDetails: View {
     var body: some View {
         scrollContent
             .font(Typography.body)
+            .enableInjection()
     }
 }
 

@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct ErrorCard<Content: View>: View {
+    @ObserveInjection var inject
     @ViewBuilder let details: Content
     var button: (() -> AnyView)?
 
@@ -34,6 +35,7 @@ struct ErrorCard<Content: View>: View {
         .background(Color.fill3)
         .withRoundedBorder()
         .frame(maxWidth: .infinity)
+        .enableInjection()
     }
 }
 

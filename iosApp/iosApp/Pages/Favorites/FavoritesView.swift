@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct FavoritesView: View {
+    @ObserveInjection var inject
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
@@ -136,6 +137,7 @@ struct FavoritesView: View {
             onInactive: { favoritesVM.setActive(active: false, wasSentToBackground: false) },
             onBackground: { favoritesVM.setActive(active: false, wasSentToBackground: true) }
         )
+        .enableInjection()
     }
 
     func showFirstTimeToast() {

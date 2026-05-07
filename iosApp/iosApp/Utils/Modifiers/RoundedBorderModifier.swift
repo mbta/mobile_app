@@ -22,6 +22,7 @@ struct RoundedBorderModifier: ViewModifier {
                 // Strokes are drawn centered on the component border,
                 // so the width is doubled to get the visible width to match the desired value.
                 .stroke(color.opacity(opacity), lineWidth: width * 2))
+            .enableInjection()
     }
 }
 

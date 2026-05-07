@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct PredictionText: View {
+    @ObserveInjection var inject
+
     var minutes: Int32
 
     var minutesFormat: MinutesFormat { MinutesFormat.companion.from(minutes: minutes) }
@@ -33,5 +35,8 @@ struct PredictionText: View {
 
     var predictionString: AttributedString { AttributedString.tryMarkdown(predictionKey) }
 
-    var body: some View { Text(predictionString) }
+    var body: some View {
+        Text(predictionString).enableInjection()
+            .enableInjection()
+    }
 }

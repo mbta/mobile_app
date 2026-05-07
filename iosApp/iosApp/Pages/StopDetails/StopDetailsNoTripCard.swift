@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsNoTripCard: View {
+    @ObserveInjection var inject
     var status: UpcomingFormat.NoTripsFormat
     var accentColor: Color
     var directionLabel: String
@@ -26,6 +27,7 @@ struct StopDetailsNoTripCard: View {
             header: headerText,
             icon: headerImage
         )
+        .enableInjection()
     }
 
     var detailText: Text? {

@@ -63,6 +63,7 @@ struct TripDetailsManageVMModifier: ViewModifier {
                     viewModel.setActive(active: false, wasSentToBackground: false)
                 }
             }
+            .enableInjection()
     }
 }
 

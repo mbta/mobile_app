@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct MoreSectionView: View {
+    @ObserveInjection var inject
+
     var section: MoreSection
     var highlight: Bool
     var updateAccessibility: (Bool) -> Void = { _ in }
@@ -22,7 +24,7 @@ struct MoreSectionView: View {
                 header
                 rows
                 footer
-            }
+            }.enableInjection()
         }
     }
 

@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct TripStops: View {
+    @ObserveInjection var inject
     let targetId: String
     let stops: TripDetailsStopList
     let stopSequence: Int?
@@ -193,6 +194,7 @@ struct TripStops: View {
         }
         .padding(.horizontal, 10)
         .padding(.bottom, 48)
+        .enableInjection()
     }
 
     private func nStopsAwayLabel(stopsAway: Int, target: TripDetailsStopList.Entry) -> Text {

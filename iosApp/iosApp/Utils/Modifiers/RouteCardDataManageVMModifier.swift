@@ -20,6 +20,7 @@ struct RouteCardDataManageVMModifier: ViewModifier {
                     vmState = models
                 }
             }
+            .enableInjection()
     }
 }
 

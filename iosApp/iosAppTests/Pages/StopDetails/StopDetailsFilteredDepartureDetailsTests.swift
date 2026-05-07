@@ -613,7 +613,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(AlertCard.self))
             XCTAssertNotNil(try view.find(text: "Service suspended ahead"))
             XCTAssertThrowsError(try view.find(text: alert.header!))
-            try view.find(AlertCard.self).implicitAnyView().button().tap()
+            try view.find(AlertCard.self).find(ViewType.Button.self).tap()
             XCTAssertEqual(
                 nearbyVM.navigationStack.last,
                 .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
@@ -681,7 +681,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
         XCTAssertNil(try? sut.inspect().find(text: "Elevator Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
+        try sut.inspect().find(AlertCard.self).find(ViewType.Button.self).tap()
         XCTAssertEqual(
             nearbyVM.navigationStack.last,
             .alertDetails(alertId: alert.id, line: nil, routes: nil, stop: stop)

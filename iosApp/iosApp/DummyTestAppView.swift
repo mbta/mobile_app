@@ -11,11 +11,13 @@ import Shared
 import SwiftUI
 
 struct DummyTestAppView: View {
+    @ObserveInjection var inject
     init() {
         HelpersKt.startKoinIOSTestApp()
     }
 
     var body: some View {
         Text(verbatim: "Dummy app for launching unit tests")
+            .enableInjection()
     }
 }

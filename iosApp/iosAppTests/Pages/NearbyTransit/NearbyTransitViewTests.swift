@@ -204,7 +204,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [davisExp], timeout: 2)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-alfcl"])
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ["place-alfcl"])
 
         wait(for: [alewifeExp], timeout: 2)
     }
@@ -247,7 +247,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         wait(for: [initialJoinExp], timeout: 2)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ["place-alfcl", "place-davis"])
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ["place-alfcl", "place-davis"])
 
         wait(for: [reorderedJoinExp], timeout: 2)
     }
@@ -354,7 +354,7 @@ final class NearbyTransitViewTests: XCTestCase {
             )
         }
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: changeParams(objects: objects))
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: changeParams(objects: objects))
         wait(for: [loadRouteCardExp], timeout: 2)
     }
 
@@ -381,7 +381,7 @@ final class NearbyTransitViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -410,7 +410,7 @@ final class NearbyTransitViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
         wait(for: [joinExpectation], timeout: 1)
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
     }
@@ -440,11 +440,11 @@ final class NearbyTransitViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.background)
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ScenePhase.background)
 
         wait(for: [leaveExpectation], timeout: 1)
 
-        try sut.inspect().implicitAnyView().vStack().callOnChange(newValue: ScenePhase.active)
+        try sut.inspect().find(ViewType.VStack.self).callOnChange(newValue: ScenePhase.active)
 
         wait(for: [joinExpectation], timeout: 1)
     }
@@ -494,7 +494,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
-        try sut.inspect().implicitAnyView().vStack()
+        try sut.inspect().find(ViewType.VStack.self)
             .callOnChange(newValue: ["new-stop"])
 
         wait(for: [scrollPositionSetExpectation], timeout: 2)

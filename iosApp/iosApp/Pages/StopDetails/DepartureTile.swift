@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct DepartureTile: View {
+    @ObserveInjection var inject
     var data: TileData
     var onTap: () -> Void
     var pillDecoration: PillDecoration = .none
@@ -95,6 +96,7 @@ struct DepartureTile: View {
             "displays more information about this trip",
             comment: "Screen reader hint for tapping a departure card in stop details"
         ))
+        .enableInjection()
     }
 }
 

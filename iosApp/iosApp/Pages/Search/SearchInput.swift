@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct SearchInput: View {
+    @ObserveInjection var inject
     @ObservedObject var searchObserver: TextFieldObserver
     var hint: String
     var onClear: (() -> Void)?
@@ -63,5 +64,6 @@ struct SearchInput: View {
         .onAppear { isFocused = searchObserver.isFocused }
         .onChange(of: isFocused) { searchObserver.isFocused = $0 }
         .onChange(of: searchObserver.isFocused) { isFocused = $0 }
+        .enableInjection()
     }
 }

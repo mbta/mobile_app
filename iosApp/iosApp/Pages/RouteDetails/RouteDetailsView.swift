@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteDetailsView: View {
+    @ObserveInjection var inject
     let selectionId: LineOrRoute.Id
     let context: RouteDetailsContext
     let onOpenStopDetails: (String) -> Void
@@ -54,6 +55,7 @@ struct RouteDetailsView: View {
         .onChange(of: globalData) { globalData in
             lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
         }
+        .enableInjection()
     }
 
     @ViewBuilder private func loadingBody() -> some View {

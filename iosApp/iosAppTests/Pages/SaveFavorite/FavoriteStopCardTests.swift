@@ -78,7 +78,7 @@ final class FavoriteStopCardTests: XCTestCase {
             toggleDirection: { toggleExp.fulfill() },
         )
 
-        try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+        try? sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
         wait(for: [toggleExp], timeout: 1)
     }
 }

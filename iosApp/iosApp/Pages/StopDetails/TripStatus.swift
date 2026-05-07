@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct TripStatus: View {
+    @ObserveInjection var inject
+
     let predictions: UpcomingFormat
 
     var body: some View {
@@ -20,16 +22,17 @@ struct TripStatus: View {
                     prediction: .some(trip.format),
                     routeType: trip.routeType,
                     hideDisruptionIcon: true
-                )
+                ).enableInjection()
             } else {
                 EmptyView()
             }
         case let .disruption(alert):
             UpcomingTripView(prediction: .disruption(.init(alert: alert.alert), iconName: alert.iconName))
+                .enableInjection()
         case let .noTrips(format):
-            UpcomingTripView(prediction: .noTrips(format.noTripsFormat))
+            UpcomingTripView(prediction: .noTrips(format.noTripsFormat)).enableInjection()
         case .loading:
-            UpcomingTripView(prediction: .loading)
+            UpcomingTripView(prediction: .loading).enableInjection()
         }
     }
 }

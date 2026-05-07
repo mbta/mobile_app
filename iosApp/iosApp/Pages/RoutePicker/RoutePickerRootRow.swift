@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RoutePickerRootRow: View {
+    @ObserveInjection var inject
     let routeType: RouteType
     let routeColor: Color
     let textColor: Color
@@ -83,6 +84,7 @@ struct RoutePickerRootRow: View {
                 .withRoundedBorder(width: 2)
             }
         ).preventScrollTaps()
+            .enableInjection()
     }
 }
 

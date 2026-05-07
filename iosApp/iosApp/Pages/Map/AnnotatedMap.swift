@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct AnnotatedMap: View {
+    @ObserveInjection var inject
     static let annotationTextZoomThreshold = 19.0
 
     private let centerMovingGestures: Set<GestureType> = [.pan, .pinch, .doubleTapToZoomIn, .quickZoom]
@@ -102,6 +103,7 @@ struct AnnotatedMap: View {
                 zoomLevel = newCameraState.zoom
             }
             .withScenePhaseHandlers(onActive: onActive)
+            .enableInjection()
     }
 
     func onActive() {

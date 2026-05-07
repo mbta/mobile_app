@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct RoutePillSection<Content: View>: View {
+    @ObserveInjection var inject
     let route: Route
     let line: Line?
     let headerContent: any View
@@ -30,5 +31,6 @@ struct RoutePillSection<Content: View>: View {
                 AnyView(headerContent)
             }
         })
+        .enableInjection()
     }
 }

@@ -10,6 +10,7 @@ import Foundation
 import SwiftUI
 
 struct SheetNavigationLink<Label>: View where Label: View {
+    @ObserveInjection var inject
     let value: SheetNavigationStackEntry
     let action: (SheetNavigationStackEntry) -> Void
     let showChevron: Bool
@@ -33,5 +34,6 @@ struct SheetNavigationLink<Label>: View where Label: View {
             }
         }
         .preventScrollTaps()
+        .enableInjection()
     }
 }
