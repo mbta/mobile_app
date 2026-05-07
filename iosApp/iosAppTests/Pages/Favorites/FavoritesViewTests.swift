@@ -242,7 +242,7 @@ final class FavoritesViewTests: XCTestCase {
             toastVM: MockToastViewModel(),
             location: .constant(.init(latitude: 0, longitude: 0))
         ).withFixedSettings([:])
-        try sut.inspect().view(FavoritesView.self).vStack(0).callOnAppear()
+        try sut.inspect().view(FavoritesView.self).find(ViewType.VStack.self).callOnAppear()
         wait(for: [exp], timeout: 1)
     }
 

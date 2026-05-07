@@ -162,7 +162,7 @@ final class ContentViewTests: XCTestCase {
             locationDataManager: locationDataManager,
             settings: [.hideMaps: true]
         )
-        let sut = try sutWithEnv.inspect().implicitAnyView().view(ContentView.self).actualView()
+        let sut = try sutWithEnv.inspect().find(ContentView.self).actualView()
 
         var cameraUpdate = 0
         let cancelSink = sut.viewportProvider.cameraStatePublisher.sink { updatedCamera in

@@ -35,12 +35,12 @@ final class RoutePillTests: XCTestCase {
         )
         let fixedPill = RoutePill(route: busRoute, type: .fixed)
         XCTAssertEqual(
-            try fixedPill.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try fixedPill.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "62/76"
         )
         let flexPill = RoutePill(route: busRoute, type: .flex)
         XCTAssertEqual(
-            try flexPill.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try flexPill.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "62/76"
         )
     }
@@ -81,19 +81,19 @@ final class RoutePillTests: XCTestCase {
         let blueLineFlex = RoutePill(route: blueLine, type: .flex)
 
         XCTAssertEqual(
-            try redLineFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try redLineFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "RL"
         )
         XCTAssertEqual(
-            try redLineFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try redLineFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "RL"
         )
         XCTAssertEqual(
-            try blueLineFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try blueLineFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "BL"
         )
         XCTAssertEqual(
-            try blueLineFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try blueLineFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "BL"
         )
     }
@@ -142,19 +142,19 @@ final class RoutePillTests: XCTestCase {
         let mattapanFlex = RoutePill(route: mattapan, type: .flex)
 
         XCTAssertEqual(
-            try greenLineCFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try greenLineCFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "GL C"
         )
         XCTAssertEqual(
-            try greenLineCFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try greenLineCFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "C"
         )
         XCTAssertEqual(
-            try mattapanFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try mattapanFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "M"
         )
         XCTAssertEqual(
-            try mattapanFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try mattapanFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "M"
         )
     }
@@ -195,19 +195,19 @@ final class RoutePillTests: XCTestCase {
         let providenceFlex = RoutePill(route: providence, type: .flex)
 
         XCTAssertEqual(
-            try middleboroughFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try middleboroughFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "CR"
         )
         XCTAssertEqual(
-            try middleboroughFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try middleboroughFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "Middleborough/Lakeville"
         )
         XCTAssertEqual(
-            try providenceFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try providenceFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "CR"
         )
         XCTAssertEqual(
-            try providenceFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try providenceFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "Providence/Stoughton"
         )
     }
@@ -232,12 +232,12 @@ final class RoutePillTests: XCTestCase {
         let ferryFlex = RoutePill(route: ferry, type: .flex)
 
         XCTAssertEqual(
-            try ferryFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().image().actualImage()
+            try ferryFixed.inspect().view(RoutePill.self).find(ViewType.Image.self).actualImage()
                 .name(),
             "mode-ferry"
         )
         XCTAssertEqual(
-            try ferryFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try ferryFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "Hingham/Hull Ferry"
         )
     }
@@ -267,19 +267,19 @@ final class RoutePillTests: XCTestCase {
         let glFlex = RoutePill(route: nil, line: greenLine, type: .flex)
 
         XCTAssertEqual(
-            try rlFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try rlFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "Red Line"
         )
         XCTAssertEqual(
-            try rlFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try rlFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "Red Line"
         )
         XCTAssertEqual(
-            try glFixed.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try glFixed.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "GL"
         )
         XCTAssertEqual(
-            try glFlex.inspect().view(RoutePill.self).implicitAnyView().implicitAnyView().text().string(),
+            try glFlex.inspect().view(RoutePill.self).find(ViewType.Text.self).string(),
             "GL"
         )
 

@@ -283,7 +283,7 @@ final class AlertCardTests: XCTestCase {
             try sut.inspect().find(imageName: "alert-borderless-issue")
         )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
-        try sut.inspect().implicitAnyView().button().tap()
+        try sut.inspect().find(ViewType.Button.self).tap()
         wait(for: [exp], timeout: 1)
     }
 
@@ -335,7 +335,7 @@ final class AlertCardTests: XCTestCase {
             try sut.inspect().find(imageName: "alert-borderless-issue")
         )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
-        try sut.inspect().implicitAnyView().button().tap()
+        try sut.inspect().find(ViewType.Button.self).tap()
         wait(for: [exp], timeout: 1)
     }
 
@@ -366,7 +366,7 @@ final class AlertCardTests: XCTestCase {
             try sut.inspect().find(imageName: "accessibility-icon-alert")
         )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
-        try sut.inspect().implicitAnyView().button().tap()
+        try sut.inspect().find(ViewType.Button.self).tap()
         wait(for: [exp], timeout: 1)
     }
 
@@ -408,7 +408,7 @@ final class AlertCardTests: XCTestCase {
             try sut.inspect().find(imageName: "accessibility-icon-alert")
         )
         XCTAssertNotNil(try sut.inspect().find(imageName: "fa-chevron-right"))
-        try sut.inspect().implicitAnyView().button().tap()
+        try sut.inspect().find(ViewType.Button.self).tap()
         wait(for: [exp], timeout: 1)
     }
 

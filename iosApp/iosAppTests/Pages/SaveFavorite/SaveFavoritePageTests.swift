@@ -62,7 +62,7 @@ final class SaveFavoritePageTests: XCTestCase {
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
 
-            try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+            try? sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
 
             XCTAssertNotNil(try view.find(text: "Ashmont/Braintree"))
             XCTAssertNotNil(try view.find(text: "Southbound to"))
@@ -99,14 +99,14 @@ final class SaveFavoritePageTests: XCTestCase {
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
 
-            try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+            try? sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
 
             XCTAssertNotNil(try view.find(text: "Ashmont/Braintree"))
             XCTAssertNotNil(try view.find(text: "Southbound to"))
 
             XCTAssertNotNil(try view.find(text: "Remove from Favorites"))
 
-            try? sut.inspect().find(ActionButton.self).implicitAnyView().button().tap()
+            try? sut.inspect().find(ActionButton.self).find(ViewType.Button.self).tap()
 
             XCTAssertNotNil(try sut.inspect().find(text: "Alewife"))
             XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
