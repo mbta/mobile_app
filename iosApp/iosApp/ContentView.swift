@@ -554,6 +554,9 @@ struct ContentView: View {
                     VStack {
                         navSheetContents
                             .presentationDetents([.small, .medium, .almostFull], selection: $selectedDetent)
+                            // Setting background color helps preserve contrast with accessibility setting "Show
+                            // Borders" turned on
+                            .presentationBackground(Color(.sheetBackground))
                             .interactiveDismissDisabled()
                             .modifier(AllowsBackgroundInteraction())
                     }

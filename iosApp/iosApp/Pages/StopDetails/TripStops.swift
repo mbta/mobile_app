@@ -84,7 +84,8 @@ struct TripStops: View {
                 routeAccents: routeAccents,
                 alertSummaries: alertSummaries,
                 showDownstreamAlert: showDownstreamAlerts,
-                lastStop: stop.stopSequence == stops.stops.last?.stopSequence
+                lastStop: stop.stopSequence == stops.stops.last?.stopSequence,
+                background: Color.fill2
             )
         }
     }
@@ -110,7 +111,8 @@ struct TripStops: View {
                         route: route,
                         routeAccents: routeAccents,
                         alertSummaries: alertSummaries,
-                        firstStop: true
+                        firstStop: true,
+                        background: .fill2
                     )
                 }
                 if let collapsedStops, !collapsedStops.isEmpty, let stopsAway, let target {

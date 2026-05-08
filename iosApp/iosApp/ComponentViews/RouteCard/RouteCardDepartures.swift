@@ -49,6 +49,7 @@ struct RouteCardDepartures: View {
                             RouteCardDirection(direction: direction, formatted: formatted)
                         }
                     }
+                    .tint(.fill3)
                     .padding(.leading, 16)
                     .padding(.trailing, 8)
                     .padding(.vertical, 10)
