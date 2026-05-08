@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
@@ -440,8 +441,10 @@ internal constructor(
      * Gets an active period which is not currently active but which will start in the next 24
      * hours.
      */
-    public fun nextPeriod(time: EasternTimeInstant): ActivePeriod? =
-        activePeriod.firstOrNull { it.start > time && it.start <= time + 24.hours }
+    public fun nextPeriod(time: EasternTimeInstant, within: Duration = 24.hours): ActivePeriod? =
+        activePeriod.firstOrNull {
+            it.start > time && (within == Duration.INFINITE || it.start <= time + within)
+        }
 
     internal fun isActive(time: EasternTimeInstant) = currentPeriod(time) != null
 

@@ -73,7 +73,7 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? { alert.currentPeriod(time: now) }
-    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now) }
+    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now, within: .max) }
     private var relevantPeriod: Shared.Alert.ActivePeriod? { currentPeriod ?? nextPeriod }
 
     static var calendar: Calendar {
@@ -150,16 +150,16 @@ struct AlertDetails: View {
                     }
                 }
             }
-        } else if let currentPeriod {
+        } else if let relevantPeriod {
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
                 GridRow {
                     Text("Start", comment: "Label for the start date of a disruption")
                         .frame(minWidth: 48, alignment: .leading)
-                    Text(currentPeriod.formatStart())
+                    Text(relevantPeriod.formatStart())
                 }
                 GridRow {
                     Text("End", comment: "Label for the end date of a disruption")
-                    Text(currentPeriod.formatEnd())
+                    Text(relevantPeriod.formatEnd())
                 }
             }
         } else {
