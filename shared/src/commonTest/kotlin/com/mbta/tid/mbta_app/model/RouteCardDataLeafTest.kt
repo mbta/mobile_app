@@ -531,7 +531,11 @@ class RouteCardDataLeafTest {
 
         val objects = ObjectCollectionBuilder()
         val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
-        val pattern = objects.routePattern(route)
+        val pattern =
+            objects.routePattern(route) {
+                representativeTrip { headsign = "headsign" }
+                typicality = RoutePattern.Typicality.Typical
+            }
         val schedule =
             objects.schedule {
                 trip = objects.trip(pattern)
@@ -540,7 +544,7 @@ class RouteCardDataLeafTest {
         assertEquals(
             LeafFormat.Single(
                 route = null,
-                headsign = null,
+                headsign = "headsign",
                 UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
             ),
             RouteCardData.Leaf(
@@ -562,6 +566,94 @@ class RouteCardDataLeafTest {
     }
 
     @Test
+    fun `formats branched with alert on one branch and no predictions on the other`() =
+        parametricTest {
+            val now = EasternTimeInstant.now()
+
+            val objects = ObjectCollectionBuilder()
+            val route = objects.route { type = anyOf(RouteType.LIGHT_RAIL, RouteType.HEAVY_RAIL) }
+            val stop = objects.stop { childStopIds = listOf("childPlatform1", "childPlatform2") }
+            val patternTypicalA =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf("childPlatform1")
+                    }
+                }
+            val patternTypicalB =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Typical
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "B"
+                        stopIds = listOf("childPlatform2")
+                    }
+                }
+            val patternAtypicalA =
+                objects.routePattern(route) {
+                    typicality = RoutePattern.Typicality.Atypical
+                    directionId = 0
+                    representativeTrip {
+                        headsign = "A"
+                        stopIds = listOf("childPlatform1")
+                    }
+                }
+            val schedule =
+                objects.schedule {
+                    trip = objects.trip(patternAtypicalA)
+                    departureTime = now + 2.minutes
+                }
+            val alert =
+                objects.alert {
+                    activePeriod(now.minus(1.hours), now.plus(1.hours))
+                    effect = Alert.Effect.Shuttle
+                    cause = Alert.Cause.Maintenance
+                    informedEntity(
+                        directionId = 0,
+                        route = route.id.toString(),
+                        stop = "childPlatform2",
+                    )
+                }
+            assertEquals(
+                LeafFormat.branched {
+                    branchRow(
+                        null,
+                        "A",
+                        UpcomingFormat.NoTrips(
+                            noTripsFormat = UpcomingFormat.NoTripsFormat.PredictionsUnavailable
+                        ),
+                    )
+                    branchRow(
+                        null,
+                        "B",
+                        UpcomingFormat.Disruption(alert, "alert-borderless-shuttle"),
+                    )
+                },
+                RouteCardData.Leaf(
+                        LineOrRoute.Route(route),
+                        stop,
+                        0,
+                        listOf(patternTypicalA, patternTypicalB, patternAtypicalA),
+                        setOf(stop.id) + stop.childStopIds,
+                        listOf(objects.upcomingTrip(schedule)),
+                        listOf(alert),
+                        true,
+                        mapOf(
+                            patternTypicalA.id to false,
+                            patternAtypicalA.id to true,
+                            patternTypicalB.id to false,
+                        ),
+                        null,
+                        emptyList(),
+                        anyEnumValue(),
+                    )
+                    .format(now, GlobalResponse(objects)),
+            )
+        }
+
+    @Test
     fun `formats as none with Silver Line schedules but no predictions and no alert`() =
         parametricTest {
             val now = EasternTimeInstant.now()
@@ -572,7 +664,11 @@ class RouteCardDataLeafTest {
                     type = RouteType.BUS
                     id = anyOfList(silverRoutes.toList()).idText
                 }
-            val pattern = objects.routePattern(route)
+            val pattern =
+                objects.routePattern(route) {
+                    representativeTrip { headsign = "headsign" }
+                    typicality = RoutePattern.Typicality.Typical
+                }
             val schedule =
                 objects.schedule {
                     trip = objects.trip(pattern)
@@ -581,7 +677,7 @@ class RouteCardDataLeafTest {
             assertEquals(
                 LeafFormat.Single(
                     route = null,
-                    headsign = null,
+                    headsign = "headsign",
                     UpcomingFormat.NoTrips(UpcomingFormat.NoTripsFormat.PredictionsUnavailable),
                 ),
                 RouteCardData.Leaf(
