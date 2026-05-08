@@ -194,6 +194,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                 }
             }
         )
+        .tint(background)
         .frame(minHeight: 56)
         .preventScrollTaps()
     }

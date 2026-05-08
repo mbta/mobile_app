@@ -32,6 +32,8 @@ struct DepartureTile: View {
     let maxTileWidth: CGFloat = 195.0
 
     var body: some View {
+        let backgroundColor = isSelected ? Color.fill3 : Color.routeColorContrast
+
         Button(action: onTap) {
             VStack(alignment: .leading, spacing: 4) {
                 if let headsign = data.headsign {
@@ -81,11 +83,13 @@ struct DepartureTile: View {
                     TripStatus(predictions: data.formatted)
                 }
             }
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
+            .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 10)
-        .frame(maxWidth: maxTileWidth, minHeight: 56, maxHeight: .infinity)
-        .background(isSelected ? Color.fill3 : Color.routeColorContrast)
+        .background(backgroundColor)
+        // Setting tint helps preserve contrast with accessibility setting "Show Borders" turned on
+        .tint(backgroundColor)
         .foregroundStyle(isSelected ? Color.text : Color.routeColorContrastText)
         .clipShape(.rect(cornerRadius: 8))
         .padding(1)

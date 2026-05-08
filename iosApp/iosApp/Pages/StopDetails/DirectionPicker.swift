@@ -55,6 +55,7 @@ struct DirectionPicker: View {
                     let isSelected = selectedDirectionId == direction
                     let action = { updateDirectionId(direction) }
                     let selectedDirection = directions[Int(direction)]
+                    let backgroundColor = isSelected ? route.uiColor : Color.clear
 
                     Button(action: action) {
                         DirectionLabel(direction: selectedDirection)
@@ -73,7 +74,10 @@ struct DirectionPicker: View {
                         "switches direction",
                         comment: "Screen reader hint for the direction toggle action"
                     ))
-                    .background(isSelected ? route.uiColor : Color.clear)
+                    // Setting tint helps preserve contrast with accessibility setting "Show Borders" turned on
+
+                    .background(backgroundColor)
+                    .tint(backgroundColor)
                     .foregroundStyle(isSelected ? route.uiTextColor : Color.routeColorContrastText)
                     .clipShape(.rect(cornerRadius: 6))
                 }
