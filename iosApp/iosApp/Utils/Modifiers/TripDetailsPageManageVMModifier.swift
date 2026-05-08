@@ -31,6 +31,7 @@ struct TripDetailsPageManageVMModifier: ViewModifier {
             .onChange(of: alerts) { viewModel.setAlerts(alerts: $0) }
             .onChange(of: filter) { viewModel.setFilter(filter: $0) }
             .onChange(of: now) { viewModel.setNow(now: $0) }
+            .enableInjection()
     }
 }
 

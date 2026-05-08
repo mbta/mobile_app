@@ -143,6 +143,7 @@ fun SaveFavoritePage(
     }
 
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val currentLocale = stringResource(R.string.current_locale)
 
     fun updateFavorites(update: Map<RouteStopDirection, FavoriteSettings?>) {
         favoritesViewModel.updateFavorites(
@@ -151,6 +152,7 @@ fun SaveFavoritePage(
             selectedDirection,
             fcmToken,
             includeAccessibility,
+            currentLocale,
         )
     }
 

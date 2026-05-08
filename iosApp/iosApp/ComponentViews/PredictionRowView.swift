@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct PredictionRowView: View {
+    @ObserveInjection var inject
     enum PillDecoration {
         case none
         case onRow(route: Route)
@@ -47,6 +48,7 @@ struct PredictionRowView: View {
         }
         .background(Color.fill3)
         .frame(maxWidth: .infinity, minHeight: 24)
+        .enableInjection()
     }
 
     @ViewBuilder

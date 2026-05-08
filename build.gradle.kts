@@ -10,12 +10,14 @@ plugins {
     alias(libs.plugins.kotlinCocoapods).apply(false)
     alias(libs.plugins.kotlinMultiplatform).apply(false)
     alias(libs.plugins.spotless)
+    alias(libs.plugins.testLogger)
 }
 
 spotless { kotlinGradle { ktlint() } }
 
 subprojects {
     apply(plugin = "com.diffplug.spotless")
+    apply(plugin = "com.adarshr.test-logger")
 
     spotless {
         kotlin {
@@ -24,24 +26,9 @@ subprojects {
         }
         kotlinGradle { ktfmt().kotlinlangStyle() }
     }
-
-    tasks.withType<AbstractTestTask> {
-        testLogging {
-            // set options for log level LIFECYCLE
-            events =
-                setOf(
-                    TestLogEvent.FAILED,
-                    TestLogEvent.PASSED,
-                    TestLogEvent.SKIPPED,
-                    TestLogEvent.STANDARD_OUT,
-                )
-
-            exceptionFormat = TestExceptionFormat.FULL
-            showStandardStreams = true
-            showExceptions = true
-            showCauses = true
-            showStackTraces = true
-        }
+    testlogger {
+        showPassed = false
+        showSkipped = false
     }
 }
 

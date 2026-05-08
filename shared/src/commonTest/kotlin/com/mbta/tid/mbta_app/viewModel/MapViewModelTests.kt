@@ -647,6 +647,7 @@ internal class MapViewModelTests : KoinTest {
         val viewModel =
             MapViewModel(
                 routeCardDataVM,
+                errorBannerRepository = get(),
                 globalRepository = get(),
                 railRouteShapeRepository = get(),
                 sentryRepository = get(),

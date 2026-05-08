@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct NotAccessibleCard: View {
+    @ObserveInjection var inject
     var body: some View {
         VStack {
             HStack(alignment: .center) {
@@ -23,6 +24,7 @@ struct NotAccessibleCard: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
+        .enableInjection()
     }
 
     func standaloneStyling() -> some View {

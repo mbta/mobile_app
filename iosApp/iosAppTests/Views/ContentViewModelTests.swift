@@ -44,9 +44,9 @@ final class ContentViewModelTests: XCTestCase {
     }
 
     func testLoadOnboardingSetsOnboarding() async {
-        let contentVM = ContentViewModel(
-            onboardingRepository: MockOnboardingRepository(pendingOnboarding: [.location, .feedback])
-        )
+        let onboardingRepo = MockOnboardingRepository()
+        onboardingRepo.pendingOnboarding = [.location, .feedback]
+        let contentVM = ContentViewModel(onboardingRepository: onboardingRepo)
         await contentVM.loadOnboardingScreens()
         XCTAssertEqual(contentVM.onboardingScreensPending, [.location, .feedback])
     }

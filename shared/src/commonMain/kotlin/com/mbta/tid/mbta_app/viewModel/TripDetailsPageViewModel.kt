@@ -112,6 +112,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
                             activeRelevantAlerts,
                             filter.directionId,
                             listOfNotNull(route?.id),
+                            route?.type,
                             null,
                             filter.tripId,
                         )

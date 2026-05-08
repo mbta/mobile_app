@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct MoreLink: View {
+    @ObserveInjection var inject
     var label: String
     var url: String
     var note: String?
@@ -45,5 +46,6 @@ struct MoreLink: View {
         .padding(.vertical, 10)
         .padding(.horizontal, 16)
         .frame(minHeight: 44)
+        .enableInjection()
     }
 }

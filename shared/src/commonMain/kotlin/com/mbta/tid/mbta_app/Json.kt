@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.model.AlertSummary
-import com.mbta.tid.mbta_app.model.response.PushNotificationPayload
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
@@ -32,9 +31,6 @@ public val json: Json = Json {
         }
         polymorphic(AlertSummary.Recurrence.EndDay::class) {
             defaultDeserializer { AlertSummary.Timeframe.Unknown.serializer() }
-        }
-        polymorphic(PushNotificationPayload.Title::class) {
-            defaultDeserializer { PushNotificationPayload.Title.Unknown.serializer() }
         }
     }
 }

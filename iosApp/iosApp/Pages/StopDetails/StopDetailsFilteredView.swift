@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct StopDetailsFilteredView: View {
+    @ObserveInjection var inject
     var stopId: String
     var stopFilter: StopDetailsFilter
     var tripFilter: TripDetailsFilter?
@@ -148,6 +149,7 @@ struct StopDetailsFilteredView: View {
         )
         .accessibilityHidden(inSaveFavoritesFlow)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     @ViewBuilder

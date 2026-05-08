@@ -7,6 +7,18 @@ import org.phoenixframework.Socket
 
 @JvmInline
 value class PhoenixSocketWrapper(private val socket: Socket) : PhoenixSocket {
+
+    init {
+        socket.reconnectAfterMs = { tries ->
+            if (tries > 9) 2_000
+            else listOf(10L, 50L, 100L, 150L, 200L, 250L, 500L, 1_000L, 2_000L)[tries - 1]
+        }
+
+        socket.rejoinAfterMs = { tries ->
+            if (tries > 2) 2_000 else listOf(1_000L, 2_000L)[tries - 1]
+        }
+    }
+
     override fun onAttach(callback: () -> Unit): String = socket.onOpen(callback)
 
     override fun onDetach(callback: () -> Unit): String = socket.onClose(callback)

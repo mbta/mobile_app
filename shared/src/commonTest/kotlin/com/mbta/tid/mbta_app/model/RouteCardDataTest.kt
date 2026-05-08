@@ -5057,7 +5057,11 @@ class RouteCardDataTest {
                 parentStationId = "place-forhl"
             }
 
-        val orangeRoute = objects.route { id = "Orange" }
+        val orangeRoute =
+            objects.route {
+                id = "Orange"
+                type = RouteType.HEAVY_RAIL
+            }
         val orangeNorthboundTypical =
             objects.routePattern(orangeRoute) {
                 id = "Orange-3-1"
@@ -5663,6 +5667,7 @@ class RouteCardDataTest {
                             parkElevatorAlert,
                         ),
                     patterns = listOf(routePatternAshmont, routePatternBraintree),
+                    null,
                     targetStopWithChildren = setOf(park.id),
                     tripsById = global.trips,
                 )

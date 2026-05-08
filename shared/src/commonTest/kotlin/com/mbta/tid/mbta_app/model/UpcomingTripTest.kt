@@ -573,6 +573,35 @@ class UpcomingTripTest {
     }
 
     @Test
+    fun `tripsFromData preserves multi-route trips on each route`() {
+        val objects = ObjectCollectionBuilder()
+        val route1 = objects.route()
+        val route2 = objects.route()
+        val trip = objects.trip { routeId = route1.id.idText }
+        val sched1 = objects.schedule { this.trip = trip }
+        val sched2 =
+            objects.schedule {
+                this.trip = trip
+                routeId = route2.id.idText
+            }
+        val pred1 = objects.prediction(sched1)
+        val pred2 = objects.prediction(sched2)
+
+        assertEquals(
+            listOf(UpcomingTrip(trip, sched1, pred1), UpcomingTrip(trip, sched2, pred2)),
+            UpcomingTrip.tripsFromData(
+                objects.stops,
+                listOf(sched1, sched2),
+                listOf(pred1, pred2),
+                objects.trips,
+                emptyMap(),
+                EasternTimeInstant.now(),
+                objects.alerts,
+            ),
+        )
+    }
+
+    @Test
     fun `time uses schedule time if there's no prediction`() {
         val now = EasternTimeInstant.now()
         val trip = trip()
@@ -799,5 +828,20 @@ class UpcomingTripTest {
         val trip = trip()
 
         assertNull(UpcomingTrip(trip, null, null, null).stopSequence)
+    }
+
+    @Test
+    fun `routeId prioritizes prediction then schedule then trip`() {
+        val objects = ObjectCollectionBuilder()
+        val trip = objects.trip { routeId = "route3" }
+        val schedule = objects.schedule { routeId = "route2" }
+        val prediction = objects.prediction { routeId = "route1" }
+        assertEquals(
+            Route.Id("route3"),
+            UpcomingTrip(trip, schedule = null, prediction = null).routeId,
+        )
+        assertEquals(Route.Id("route1"), UpcomingTrip(trip, schedule = null, prediction).routeId)
+        assertEquals(Route.Id("route2"), UpcomingTrip(trip, schedule, prediction = null).routeId)
+        assertEquals(Route.Id("route1"), UpcomingTrip(trip, schedule, prediction).routeId)
     }
 }

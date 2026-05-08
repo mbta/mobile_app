@@ -8,6 +8,7 @@ public class ViewModelDI : KoinComponent {
     public val errorBanner: ErrorBannerViewModel by inject()
     public val favorites: FavoritesViewModel by inject()
     public val map: MapViewModel by inject()
+    public val notificationsBeta: NotificationsBetaViewModel by inject()
     public val routeCardData: RouteCardDataViewModel by inject()
     public val search: SearchViewModel by inject()
     public val searchRoutes: SearchRoutesViewModel by inject()

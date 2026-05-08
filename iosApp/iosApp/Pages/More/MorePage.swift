@@ -10,7 +10,10 @@ import Shared
 import SwiftUI
 
 struct MorePage: View {
+    @ObserveInjection var inject
     let inspection = Inspection<Self>()
+
+    let highlight: MoreSection.Category?
 
     let viewModel = ViewModelDI().more
     @State var showingBuildNumber = false
@@ -19,7 +22,7 @@ struct MorePage: View {
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
     @EnvironmentObject var settingsCache: SettingsCache
 
-    private let translation = Bundle.main.preferredLocalizations.first ?? "en"
+    private let translation = NSLocalizedString("key/current_locale", comment: "")
 
     var infoPlist: [String: Any]? { Bundle.main.infoDictionary }
     var version: String? { infoPlist?["CFBundleShortVersionString"] as? String }
@@ -74,11 +77,13 @@ struct MorePage: View {
                         ForEach(sections, id: \.id) { section in
                             MoreSectionView(
                                 section: section,
+                                highlight: section.id == highlight,
                                 updateAccessibility: { includeAccessibility in
                                     if settingsCache.get(.notifications), let fcmToken = fcmTokenContainer.token {
                                         viewModel.updateAccessibility(
                                             fcmToken: fcmToken,
-                                            includeAccessibility: includeAccessibility
+                                            includeAccessibility: includeAccessibility,
+                                            locale: NSLocalizedString("key/current_locale", comment: "")
                                         )
                                     }
                                 },
@@ -134,11 +139,12 @@ struct MorePage: View {
             .background(Color.fill1)
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 }
 
 #Preview {
-    MorePage()
+    MorePage(highlight: nil)
         .font(Typography.body)
         .withFixedSettings([:])
 }

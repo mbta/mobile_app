@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.android.util.timer
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
-import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -31,7 +30,6 @@ import org.koin.compose.koinInject
 import org.koin.core.component.KoinComponent
 
 class StopPredictionsFetcher(
-    private val sheetRoute: SheetRoutes,
     private val predictionsRepository: IPredictionsRepository,
     private val onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
     private val onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
@@ -41,41 +39,35 @@ class StopPredictionsFetcher(
     constructor(
         sheetRoute: SheetRoutes,
         predictionsRepository: IPredictionsRepository,
-        errorRepository: IErrorBannerStateRepository,
+        errorBannerViewModel: IErrorBannerViewModel,
         onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
         onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
     ) : this(
-        sheetRoute,
         predictionsRepository,
         onJoinResponse,
         onPushMessage,
         { lastUpdatedTime, quantity, action ->
-            errorRepository.checkPredictionsStale(lastUpdatedTime, quantity, sheetRoute, action)
-        },
-    )
-
-    constructor(
-        sheetRoute: SheetRoutes,
-        predictionsRepository: IPredictionsRepository,
-        errorBannerVM: IErrorBannerViewModel,
-        onJoinResponse: (PredictionsByStopJoinResponse) -> Unit,
-        onPushMessage: (PredictionsByStopMessageResponse) -> PredictionsByStopJoinResponse?,
-    ) : this(
-        sheetRoute,
-        predictionsRepository,
-        onJoinResponse,
-        onPushMessage,
-        { lastUpdatedTime, quantity, action ->
-            errorBannerVM.checkPredictionsStale(lastUpdatedTime, quantity, sheetRoute, action)
+            errorBannerViewModel.checkPredictionsStale(
+                lastUpdatedTime,
+                quantity,
+                sheetRoute,
+                action,
+            )
         },
     )
 
     private var currentStopIds: List<String>? = null
+    val errorKey = "PredictionsViewModel.subscribeToPredictions"
 
     fun connect(stopIds: List<String>?) {
         currentStopIds = stopIds
         if (stopIds != null) {
-            predictionsRepository.connectV2(stopIds, ::handleJoinMessage, ::handlePushMessage)
+            predictionsRepository.connect(
+                stopIds,
+                errorKey,
+                ::handleJoinMessage,
+                ::handlePushMessage,
+            )
         }
     }
 
@@ -130,8 +122,8 @@ class StopPredictionsFetcher(
 }
 
 class PredictionsViewModel(
-    private val sheetRoute: SheetRoutes,
-    private val predictionsRepository: IPredictionsRepository,
+    sheetRoute: SheetRoutes,
+    predictionsRepository: IPredictionsRepository,
     private val errorBannerViewModel: IErrorBannerViewModel,
 ) : KoinComponent, ViewModel() {
     private val _predictions = MutableStateFlow<PredictionsByStopJoinResponse?>(null)

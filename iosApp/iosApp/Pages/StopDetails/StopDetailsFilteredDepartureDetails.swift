@@ -11,6 +11,7 @@ import SwiftUI
 
 // swiftlint:disable:next type_body_length
 struct StopDetailsFilteredDepartureDetails: View {
+    @ObserveInjection var inject
     var stopId: String
     var stopFilter: StopDetailsFilter
     var tripFilter: TripDetailsFilter?
@@ -211,6 +212,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .ignoresSafeArea(.all)
+        .enableInjection()
     }
 
     func handleViewportForStatus(_ status: UpcomingFormat.NoTripsFormat?) {

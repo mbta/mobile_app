@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.collections.filter
@@ -37,36 +38,50 @@ public sealed class AlertSummary {
     }
 
     @Serializable
-    public data class Unknown(val fallback: AlertSummary) : AlertSummary() {
-        override val effect: Alert.Effect? = fallback.effect
-        override val recurrence: Recurrence? = fallback.recurrence
+    public data class Unknown(val fallback: String) : AlertSummary() {
+        override val effect: Alert.Effect? = null
+        override val recurrence: Recurrence? = null
     }
 
     @Serializable
     public sealed class Location {
         @Serializable
         @SerialName("direction_to_stop")
-        public data class DirectionToStop(
+        public data class DirectionToStop
+        @DefaultArgumentInterop.Enabled
+        constructor(
             val direction: Direction,
             @SerialName("end_stop_name") val endStopName: String,
+            val downstream: Boolean? = null,
         ) : Location()
 
         @Serializable
         @SerialName("single_stop")
-        public data class SingleStop(@SerialName("stop_name") val stopName: String) : Location()
+        public data class SingleStop
+        @DefaultArgumentInterop.Enabled
+        constructor(
+            @SerialName("stop_name") val stopName: String,
+            val downstream: Boolean? = null,
+        ) : Location()
 
         @Serializable
         @SerialName("stop_to_direction")
-        public data class StopToDirection(
+        public data class StopToDirection
+        @DefaultArgumentInterop.Enabled
+        constructor(
             @SerialName("start_stop_name") val startStopName: String,
             val direction: Direction,
+            val downstream: Boolean? = null,
         ) : Location()
 
         @Serializable
         @SerialName("successive_stops")
-        public data class SuccessiveStops(
+        public data class SuccessiveStops
+        @DefaultArgumentInterop.Enabled
+        constructor(
             @SerialName("start_stop_name") val startStopName: String,
             @SerialName("end_stop_name") val endStopName: String,
+            @SerialName("downstream") val downstream: Boolean? = null,
         ) : Location()
 
         @Serializable
@@ -75,6 +90,10 @@ public sealed class AlertSummary {
             @SerialName("route_label") val routeLabel: String,
             @SerialName("route_type") val routeType: RouteType,
         ) : Location()
+
+        @Serializable
+        @SerialName("affected_stops")
+        public data class AffectedStops(val stops: List<String>) : Location()
 
         @Serializable public data object Unknown : Location()
     }
@@ -173,7 +192,9 @@ public sealed class AlertSummary {
             return withContext(Dispatchers.Default) {
                 if (alert.significance(atTime) < AlertSignificance.Minor) return@withContext null
 
-                val location by lazy { alertLocation(alert, stopId, directionId, patterns, global) }
+                val location by lazy {
+                    alertLocation(alert, stopId, directionId, patterns, global, atTime)
+                }
 
                 if (alert.allClear(atTime)) {
                     return@withContext AllClear(location)
@@ -198,7 +219,6 @@ public sealed class AlertSummary {
                 }
 
                 val timeframe = alertTimeframe(alert, atTime, hasRecurrence = recurrence != null)
-
                 if (location == null && timeframe == null) return@withContext null
                 return@withContext Standard(
                     alert.effect,
@@ -263,6 +283,7 @@ public sealed class AlertSummary {
             directionId: Int,
             patterns: List<RoutePattern>,
             global: GlobalResponse,
+            atTime: EasternTimeInstant,
         ): Location? {
             val routes = patterns.mapNotNull { global.routes[it.routeId] }.distinct()
 
@@ -296,6 +317,10 @@ public sealed class AlertSummary {
 
             val affectedStops = global.getAlertAffectedStops(alert, routes) ?: return null
 
+            if (alert.stopSkipped && affectedStops.isNotEmpty() && alert.isActive(atTime)) {
+                return Location.AffectedStops(affectedStops.map { it.name })
+            }
+
             if (affectedStops.size == 1) {
                 return Location.SingleStop(affectedStops.first().name)
             }
@@ -321,9 +346,14 @@ public sealed class AlertSummary {
             // same disrupted stops, or if multiple branches are disrupted
             val firstStops = affectedPatternStops.values.firstOrNull { it.size > 1 } ?: return null
             val orderedStops = firstStops.mapNotNull { global.stops[it] }
+            val downstream = affectedPatternStops.values.all { !it.contains(stopId) }
 
             if (affectedPatternStops.all { it.value.toSet() == firstStops.toSet() }) {
-                return Location.SuccessiveStops(orderedStops.first().name, orderedStops.last().name)
+                return Location.SuccessiveStops(
+                    orderedStops.first().name,
+                    orderedStops.last().name,
+                    downstream,
+                )
             }
 
             // Determine if every effected stop list starts or ends at the same stop, if they do,
@@ -341,9 +371,9 @@ public sealed class AlertSummary {
                     } else return null
 
                 return if (first) {
-                    Location.StopToDirection(stopName, direction)
+                    Location.StopToDirection(stopName, direction, downstream)
                 } else {
-                    Location.DirectionToStop(direction, stopName)
+                    Location.DirectionToStop(direction, stopName, downstream)
                 }
             }
 
@@ -406,7 +436,7 @@ public sealed class AlertSummary {
                                         // `affectedStops` only includes parent stops, here we check
                                         // if the child stops on each pattern are affected
                                         checkStop(stopOnTrip)
-                                        checkRoute(pattern.routeId)
+                                        checkRoute(pattern.routeId, routes.firstOrNull()?.type)
                                     }
                                 }
                                 ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }

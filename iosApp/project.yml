@@ -81,6 +81,9 @@ packages:
   Firebase:
     url: https://github.com/firebase/firebase-ios-sdk
     from: 12.1.0
+  Inject:
+    url: https://github.com/krzysztofzablocki/Inject.git
+    from: 1.6.0
   Lottie:
     url: https://github.com/airbnb/lottie-spm.git
     from: 4.6.0
@@ -113,7 +116,10 @@ targets:
       - package: Firebase
         product: FirebaseAnalyticsCore
       - package: Firebase
+        product: FirebaseInstallations
+      - package: Firebase
         product: FirebaseMessaging
+      - package: Inject
       - package: Lottie
       - package: MapboxMaps
       - package: Reachability
@@ -133,13 +139,17 @@ targets:
         INFOPLIST_FILE: iosApp/Info.plist
         OTHER_LDFLAGS:
           - "$(inherited)"
-          - "-framework"
-          - Shared
           - "-ObjC"
       configs:
         Debug:
           CODE_SIGN_STYLE: Automatic
           DEVELOPMENT_TEAM: RP77QY87AD
+          EMIT_FRONTEND_COMMAND_LINES: 'YES'
+          OTHER_LDFLAGS:
+            - "$(inherited)"
+            - "-ObjC"
+            - "-Xlinker"
+            - "-interposable"
         Release:
           CODE_SIGN_IDENTITY: iPhone Distribution
           CODE_SIGN_STYLE: Manual
@@ -159,6 +169,68 @@ targets:
           BUNDLE_NAME: MBTA Go
           CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-prod.entitlements
           PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp
+    preBuildScripts:
+      - name: Automatic Injection Code
+        script: |
+          #!/bin/bash
+          # Function to modify a single Swift file
+          modify_swift_file() {
+              local filepath="$1"
+              local filename=$(basename "$filepath")
+              local tempfile="$filepath.tmp"
+              # Check if the file should be processed
+              if [[ $(grep -c ": View {" "$filepath") -eq 0 ]]; then
+                  echo "Skipping: $filename (No ': View {' found)"
+                  return
+              fi
+              # Create a temporary file for modifications
+              cp "$filepath" "$tempfile"
+              # Add @ObserveInjection var inject if needed
+              if ! grep -q "@ObserveInjection var inject" "$tempfile"; then
+                  sed -i '' -e '/struct.*: View {/a\
+              @ObserveInjection var inject' "$tempfile"
+              fi
+              # Add .enableInjection() just before the closing brace of the body
+              # Find the start of var body: some View {
+              local body_start_line=$(grep -n "var body: some View {" "$tempfile" | cut -d ':' -f 1)
+              if [[ -n "$body_start_line" ]]; then
+                  # Get the line number of the closing brace of the body
+                  local body_end_line=$(awk -v start="$body_start_line" '
+                      NR == start { count = 1 }
+                      NR > start {
+                          if ($0 ~ /{/) count++
+                          if ($0 ~ /}/) {
+                              count--
+                              if (count == 0) {
+                                  print NR
+                                  exit
+                              }
+                          }
+                      }
+                  ' "$tempfile")
+                  if [[ -n "$body_end_line" ]]; then
+                      # Check if .enableInjection() is already present
+                      if ! grep -q ".enableInjection()" "$tempfile"; then
+                          # Insert .enableInjection() before the closing brace of the body
+                          sed -i '' -e "${body_end_line}i\\
+                  .enableInjection()" "$tempfile"
+                      fi
+                  fi
+              fi
+              # Check if modifications were made and overwrite the original file
+              if ! cmp -s "$filepath" "$tempfile"; then
+                  mv "$tempfile" "$filepath"
+                  echo "Modified: $filename"
+              else
+                  echo "No changes for: $filename"
+              fi
+              rm -f "$tempfile"
+          }
+          # Main script
+          find "$SRCROOT" -name "*.swift" -print0 | while IFS= read -r -d $'\0' filepath; do
+              modify_swift_file "$filepath"
+          done
+          echo "Inject modification script completed."
     postBuildScripts:
       - name: Configure Build Variables
         script: |

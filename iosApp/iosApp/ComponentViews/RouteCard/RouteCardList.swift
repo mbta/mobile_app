@@ -10,6 +10,8 @@ import Shared
 import SwiftUI
 
 struct RouteCardList<EmptyView: View>: View {
+    @ObserveInjection var inject
+
     let routeCardData: [RouteCardData]?
     @ViewBuilder let emptyView: () -> EmptyView
     let global: GlobalResponse?
@@ -36,6 +38,7 @@ struct RouteCardList<EmptyView: View>: View {
                 .padding(.vertical, 4)
                 .padding(.horizontal, 16)
             }
+            .enableInjection()
         } else if let routeCardData, routeCardData.isEmpty {
             HaloScrollView {
                 VStack {
@@ -44,6 +47,7 @@ struct RouteCardList<EmptyView: View>: View {
                 }
                 .padding(.horizontal, 16)
             }
+            .enableInjection()
         } else {
             ScrollView([]) {
                 LazyVStack(alignment: .center, spacing: 14) {
@@ -55,6 +59,7 @@ struct RouteCardList<EmptyView: View>: View {
                 .padding(.horizontal, 16)
                 .loadingPlaceholder()
             }
+            .enableInjection()
         }
     }
 }

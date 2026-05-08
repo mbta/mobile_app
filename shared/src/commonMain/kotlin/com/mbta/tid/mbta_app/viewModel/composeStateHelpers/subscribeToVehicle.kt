@@ -26,19 +26,13 @@ internal fun subscribeToVehicle(
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
         vehicleRepository.disconnect()
-        if (active) vehicleId?.let { vehicleRepository.connect(it, onReceive) }
+        if (active) vehicleId?.let { vehicleRepository.connect(it, errorKey, onReceive) }
     }
 
     fun onReceive(message: ApiResult<VehicleStreamDataResponse>) {
         when (message) {
-            is ApiResult.Ok -> {
-                errorBannerRepository.clearDataError(errorKey)
-                vehicle = message.data.vehicle
-            }
+            is ApiResult.Ok -> vehicle = message.data.vehicle
             is ApiResult.Error -> {
-                errorBannerRepository.setDataError(errorKey, message.toString()) {
-                    connect(vehicleId, ::onReceive)
-                }
                 println("Vehicle stream failed to join: ${message.message}")
                 vehicle = null
             }

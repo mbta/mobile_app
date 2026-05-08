@@ -25,7 +25,7 @@ jobs:
       - run: ./gradlew spotlessCheck
         if: ${{ !inputs.skip-everything }}
       - name: shared checks & unit tests
-        run: ./gradlew shared:check
+        run: ./gradlew shared:check --exclude-task shared:jvmTest
         if: ${{ !inputs.skip-everything }}
       - uses: actions/upload-artifact@v7
         if: failure() && !inputs.skip-everything

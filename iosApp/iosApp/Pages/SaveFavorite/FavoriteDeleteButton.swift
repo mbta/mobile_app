@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct FavoriteDeleteButton: View {
+    @ObserveInjection var inject
     var onDelete: () -> Void
 
     var body: some View {
@@ -28,5 +29,6 @@ struct FavoriteDeleteButton: View {
         .background(Color.delete)
         .foregroundStyle(Color.deleteBackground)
         .withRoundedBorder(width: 0)
+        .enableInjection()
     }
 }

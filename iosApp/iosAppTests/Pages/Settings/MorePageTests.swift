@@ -14,7 +14,7 @@ import XCTest
 
 final class MorePageTests: XCTestCase {
     @MainActor func testLoadsState() async throws {
-        let sut = MorePage()
+        let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
             XCTAssertTrue(try view.find(text: "Map Display").parent().parent().find(ViewType.Toggle.self).isOn())
@@ -38,7 +38,7 @@ final class MorePageTests: XCTestCase {
             }
         )
 
-        let sut = MorePage()
+        let sut = MorePage(highlight: nil)
         let tapExp = sut.inspection.inspect(after: 1) { view in
             try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).tap()
         }
@@ -64,16 +64,17 @@ final class MorePageTests: XCTestCase {
         FcmTokenContainer.shared.token = expectedToken
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { _, _ in },
-            onUpdateAccessibility: { token, accessibility in
+            onUpdateSubscriptions: { _, _, _ in },
+            onUpdateAccessibility: { token, accessibility, locale in
                 XCTAssertEqual(expectedToken, token)
                 XCTAssertTrue(accessibility.boolValue)
+                XCTAssertEqual("en", locale)
                 updateExp.fulfill()
             }
         )
         loadKoinMocks(repositories: mockRepos)
 
-        let sut = MorePage()
+        let sut = MorePage(highlight: nil)
         let tapExp = sut.inspection.inspect(after: 1) { view in
             try view.find(text: "Station Accessibility Info").parent().parent().find(ViewType.Toggle.self).tap()
         }
@@ -86,7 +87,7 @@ final class MorePageTests: XCTestCase {
     }
 
     @MainActor func testLinksExist() async throws {
-        let sut = MorePage()
+        let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 2) { view in
             try XCTAssertNotNil(view.find(text: "Send App Feedback"))
             try XCTAssertNotNil(view.find(text: "Trip Planner"))
@@ -104,7 +105,7 @@ final class MorePageTests: XCTestCase {
     }
 
     @MainActor func testShowsBuildNumberOnTap() {
-        let sut = MorePage()
+        let sut = MorePage(highlight: nil)
 
         let infoPlist = Bundle.main.infoDictionary
         guard let version = infoPlist?["CFBundleShortVersionString"] as? String,

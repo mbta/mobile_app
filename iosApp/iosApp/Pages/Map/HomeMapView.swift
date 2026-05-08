@@ -13,6 +13,7 @@ import Shared
 import SwiftUI
 
 struct HomeMapView: View {
+    @ObserveInjection var inject
     var analytics: Analytics = AnalyticsProvider.shared
     @ObservedObject var contentVM: ContentViewModel
     var mapVM: IMapViewModel
@@ -130,6 +131,7 @@ struct HomeMapView: View {
                 mapVM.colorPaletteChanged(isDarkMode: newColorScheme == .dark)
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
     }
 
     @ViewBuilder
@@ -219,6 +221,7 @@ struct HomeMapView: View {
 }
 
 struct ProxyModifiedMap: View {
+    @ObserveInjection var inject
     var mapContent: AnyView
     var handleAppear: (_ location: LocationManager?, _ map: MapboxMap?) async throws -> Void
     var handleAccessTokenLoaded: (_ map: MapboxMap?) -> Void
@@ -233,5 +236,6 @@ struct ProxyModifiedMap: View {
                     try? await handleAppear(proxy.location, proxy.map)
                 }
         }
+        .enableInjection()
     }
 }

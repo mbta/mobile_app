@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct StickDiagram: View {
+    @ObserveInjection var inject
     var color: Color
     var connections: [RouteBranchSegment.StickConnection]
     var getAlertState: (_ fromStop: String, _ toStop: String) -> SegmentAlertState
@@ -47,5 +48,6 @@ struct StickDiagram: View {
             }
         }
         .frame(width: 40)
+        .enableInjection()
     }
 }

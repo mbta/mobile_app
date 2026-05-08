@@ -33,11 +33,15 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
         vehiclesRepository.disconnect()
     }
 
-    fun connectToVehicles(routeDirection: RouteDirection?) {
+    fun connectToVehicles(routeDirection: RouteDirection?, errorKey: String) {
         disconnect()
 
         if (routeDirection != null) {
-            vehiclesRepository.connect(routeDirection.routeId, routeDirection.directionId) {
+            vehiclesRepository.connect(
+                routeDirection.routeId,
+                routeDirection.directionId,
+                errorKey,
+            ) {
                 when (it) {
                     is ApiResult.Ok -> {
                         _vehicles.value = it.data
@@ -77,7 +81,9 @@ fun subscribeToVehicles(
     val vehicleData by viewModel.vehiclesFlow.collectAsState(initial = null)
 
     LifecycleResumeEffect(routeDirection) {
-        CoroutineScope(Dispatchers.IO).launch { viewModel.connectToVehicles(routeDirection) }
+        CoroutineScope(Dispatchers.IO).launch {
+            viewModel.connectToVehicles(routeDirection, "VehiclesViewModel.subscribeToVehicles")
+        }
         onPauseOrDispose { viewModel.disconnect() }
     }
 

@@ -51,6 +51,7 @@ class SettingsCache: ObservableObject {
 
 /// Provides the `SettingsCache` to the `content` and also loads the cache data.
 struct SettingsCacheProvider<Content: View>: View {
+    @ObserveInjection var inject
     let content: () -> Content
     @State var cache = SettingsCache()
 
@@ -58,6 +59,7 @@ struct SettingsCacheProvider<Content: View>: View {
         content()
             .task { try? await cache.load() }
             .environmentObject(cache)
+            .enableInjection()
     }
 }
 

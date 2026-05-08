@@ -1,10 +1,13 @@
 package com.mbta.tid.mbta_app.utils
 
 public enum class SharedString {
+    BetaEarlyAccessNote,
+    BetaSection,
     CommuterRailAndFerryTickets,
     DebugMode,
     FareInformation,
     FeatureFlagsSection,
+    ForceNotificationsBeta,
     MapDisplay,
     MTicketApp,
     Notifications,

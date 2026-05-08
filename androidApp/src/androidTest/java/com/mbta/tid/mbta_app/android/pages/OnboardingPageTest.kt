@@ -18,11 +18,8 @@ class OnboardingPageTest {
     @Test
     fun testFlow() {
         val completedScreens = mutableSetOf<OnboardingScreen>()
-        val onboardingRepository =
-            MockOnboardingRepository(
-                pendingOnboarding = OnboardingScreen.entries,
-                onMarkComplete = completedScreens::add,
-            )
+        val onboardingRepository = MockOnboardingRepository(onMarkComplete = completedScreens::add)
+        onboardingRepository.pendingOnboarding = OnboardingScreen.entries
         var finished = false
 
         composeTestRule.setContent {

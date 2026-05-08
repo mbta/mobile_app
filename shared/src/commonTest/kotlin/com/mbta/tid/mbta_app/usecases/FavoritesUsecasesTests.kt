@@ -63,6 +63,7 @@ class FavoritesUsecasesTests : KoinTest {
             0,
             null,
             false,
+            "en",
         )
 
         assertEquals("updated_favorites", eventLogged)
@@ -76,11 +77,13 @@ class FavoritesUsecasesTests : KoinTest {
             )
         var token: String? = null
         var subs: List<SubscriptionRequest>? = null
+        var locale: String? = null
         val subscriptionsRepository =
             MockSubscriptionsRepository(
-                onUpdateSubscriptions = { fcmToken, subscriptions ->
+                onUpdateSubscriptions = { fcmToken, subscriptions, l ->
                     token = fcmToken
                     subs = subscriptions
+                    locale = l
                 }
             )
 
@@ -153,11 +156,13 @@ class FavoritesUsecasesTests : KoinTest {
             0,
             "fake_token",
             false,
+            "en",
         )
 
         delay(250.milliseconds)
 
         assertEquals("fake_token", token)
         assertEquals(expectedSubs, subs)
+        assertEquals("en", locale)
     }
 }

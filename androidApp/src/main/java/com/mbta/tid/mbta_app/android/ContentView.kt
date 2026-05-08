@@ -15,10 +15,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.mapbox.maps.extension.compose.animation.viewport.rememberMapViewportState
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.AnalyticsColorScheme
@@ -36,10 +38,12 @@ import com.mbta.tid.mbta_app.android.phoenix.PhoenixSocketWrapper
 import com.mbta.tid.mbta_app.android.promo.PromoPage
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.state.subscribeToAlerts
+import com.mbta.tid.mbta_app.android.util.NotificationsBeta
 import com.mbta.tid.mbta_app.android.util.SettingsCache
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.FeaturePromo
+import com.mbta.tid.mbta_app.model.OnboardingScreen
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
@@ -54,7 +58,6 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.datetime.plus
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.maplibre.spatialk.geojson.Position
@@ -93,6 +96,7 @@ fun ContentView(
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val pendingOnboarding = viewModel.pendingOnboarding.collectAsState().value
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
+    val currentLocale = stringResource(R.string.current_locale)
 
     if (notificationsEnabled) {
         LaunchedEffect(fcmToken) {
@@ -100,7 +104,7 @@ fun ContentView(
                 val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
                 val subscriptions =
                     SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
-                subscriptionsRepository.updateSubscriptions(it, subscriptions)
+                subscriptionsRepository.updateSubscriptions(it, subscriptions, currentLocale)
             }
         }
     }
@@ -158,7 +162,19 @@ fun ContentView(
     if (!pendingOnboarding.isNullOrEmpty()) {
         OnboardingPage(
             pendingOnboarding,
-            onFinish = { viewModel.clearPendingOnboarding() },
+            onFinish = {
+                if (pendingOnboarding.contains(OnboardingScreen.NotificationsBeta)) {
+                    try {
+                        navController.navigate(Routes.MapAndSheet)
+                    } catch (_: IllegalStateException) {
+                        // This can be run on launch, at which point the nav graph will not be
+                        // initialized and the navigate call will throw. It can also be called while
+                        // on the More page, which is where the Routes navigation is necessary.
+                    }
+                    sheetNavEntrypoint = SheetRoutes.Favorites
+                }
+                viewModel.clearPendingOnboarding()
+            },
             locationDataManager = locationDataManager,
         )
         return
@@ -208,15 +224,17 @@ fun ContentView(
                                 sheetNavEntrypoint = SheetRoutes.NearbyTransit
                                 viewModel.setTabPreference(DefaultTab.Nearby)
                             },
-                            navigateToMore = { navController.navigate(Routes.More) },
+                            navigateToMore = { navController.navigate(Routes.More()) },
                         )
                     }
                 },
             )
         }
-        composable<Routes.More> {
+        composable<Routes.More> { backStackEntry ->
+            val navRoute: Routes.More = backStackEntry.toRoute()
             LaunchedEffect(null) { analytics.track(AnalyticsScreen.Settings) }
             MorePage(
+                highlightSection = navRoute.highlight,
                 bottomBar = {
                     BottomNavBar(
                         currentDestination =
@@ -232,8 +250,13 @@ fun ContentView(
                         },
                         navigateToMore = {},
                     )
-                }
+                },
             )
         }
     }
+
+    NotificationsBeta(
+        { route -> navController.navigate(route) },
+        { viewModel.loadPendingOnboarding() },
+    )
 }

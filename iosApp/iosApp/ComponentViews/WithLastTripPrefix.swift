@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct WithLastTripPrefix: View {
+    @ObserveInjection var inject
     private static let subjectSpacing: CGFloat = 4
     @ScaledMetric private var iconSize: CGFloat = 12
     let content: any View
@@ -51,6 +52,7 @@ struct WithLastTripPrefix: View {
                 AnyView(content)
             }
         }
+        .enableInjection()
     }
 }
 
@@ -59,6 +61,7 @@ struct WithLastTripPrefixModifier: ViewModifier {
     var scheduleClock: Bool = false
     func body(content: Content) -> some View {
         WithLastTripPrefix(content, last: last, scheduleClock: scheduleClock)
+            .enableInjection()
     }
 }
 

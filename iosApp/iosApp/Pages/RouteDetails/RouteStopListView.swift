@@ -28,6 +28,7 @@ enum RouteDetailsRowContext: Equatable {
 }
 
 struct RouteStopListView<RightSideContent: View>: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let context: RouteDetailsContext
@@ -136,6 +137,7 @@ struct RouteStopListView<RightSideContent: View>: View {
             )
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 
     private func loadEverything() {
@@ -182,6 +184,7 @@ struct RouteStopListView<RightSideContent: View>: View {
 }
 
 struct RouteStopListContentView<RightSideContent: View>: View {
+    @ObserveInjection var inject
     let lineOrRoute: LineOrRoute
     let parameters: RouteDetailsStopList.RouteParameters
     let selectedDirection: Int32
@@ -336,6 +339,7 @@ struct RouteStopListContentView<RightSideContent: View>: View {
             }
         }
         .onDisappear { toastVM.hideToast() }
+        .enableInjection()
     }
 
     @ViewBuilder private func routeStopList(

@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct FavoritesPage: View {
+    @ObserveInjection var inject
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: FavoritesViewModel
     var nearbyVM: NearbyViewModel
@@ -54,5 +55,6 @@ struct FavoritesPage: View {
                 }
             }
         }
+        .enableInjection()
     }
 }

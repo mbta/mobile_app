@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,7 @@ import org.koin.compose.koinInject
 @Composable
 fun MoreSectionView(
     section: MoreSection,
+    highlighted: Boolean,
     settingsCache: SettingsCache = koinInject(),
     updateAccessibility: (Boolean) -> Unit = {},
 ) {
@@ -55,17 +57,23 @@ fun MoreSectionView(
                 }
             }
             Column(
-                modifier =
-                    Modifier.clip(MaterialTheme.shapes.medium)
-                        .border(1.dp, colorResource(R.color.halo), MaterialTheme.shapes.medium)
-                        .background(colorResource(R.color.fill3))
+                Modifier.clip(MaterialTheme.shapes.medium)
+                    .border(
+                        if (highlighted) 2.dp else 1.dp,
+                        if (highlighted) colorResource(R.color.key)
+                        else colorResource(R.color.halo),
+                        MaterialTheme.shapes.medium,
+                    )
+                    .background(colorResource(R.color.fill3))
             ) {
                 section.items.mapIndexed { index, item ->
                     when (item) {
                         is MoreItem.Toggle -> {
                             val settingValue = settingsCache.get(item.settings)
                             LabeledSwitch(
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),
+                                modifier =
+                                    Modifier.padding(horizontal = 16.dp, vertical = 10.dp)
+                                        .sizeIn(minHeight = 32.dp),
                                 label = item.label.value,
                                 // Setting is hide maps, but label is "Map Display" - invert the
                                 // value of hide maps to match the label

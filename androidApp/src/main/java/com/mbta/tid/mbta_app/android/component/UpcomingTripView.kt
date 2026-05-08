@@ -120,7 +120,7 @@ fun UpcomingTripView(
                         horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
                     ) {
                         Text(
-                            stringResource(R.string.stop_skipped),
+                            stringResource(R.string.stop_skipped_sentence_case),
                             color = colorResource(R.color.deemphasized),
                             textAlign = TextAlign.End,
                             style = Typography.footnote,

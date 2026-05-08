@@ -1,5 +1,6 @@
 import co.touchlab.skie.configuration.DefaultArgumentInterop
 import com.diffplug.spotless.FormatterFunc
+import com.diffplug.spotless.Lint
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
@@ -38,7 +39,14 @@ kotlin {
         )
     }
 
-    androidTarget { compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) } }
+    androidLibrary {
+        namespace = "com.mbta.tid.mbta_app"
+        compileSdk = 36
+        minSdk = 28
+        withHostTest { isReturnDefaultValues = true }
+
+        compilerOptions { jvmTarget.set(JvmTarget.JVM_1_8) }
+    }
 
     if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
         iosX64()
@@ -125,13 +133,6 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.mbta.tid.mbta_app"
-    compileSdk = 36
-    defaultConfig { minSdk = 28 }
-    testOptions { unitTests.isReturnDefaultValues = true }
-}
-
 skie {
     features {
         group { DefaultArgumentInterop.MaximumDefaultArgumentCount(8) }
@@ -163,6 +164,23 @@ spotless {
                 }
             },
         )
+        custom(
+            "ban commented out override fun toString",
+            object : Serializable, FormatterFunc {
+                private val badRegex = Regex("""//\s+override fun toString""")
+
+                override fun apply(p0: String) = p0
+
+                override fun lint(content: String, file: File): List<Lint> {
+                    return content.lines().withIndex().mapNotNull { line ->
+                        val match = badRegex.find(line.value)
+                        if (match != null) {
+                            Lint.atLine(line.index + 1, "", "")
+                        } else null
+                    }
+                }
+            },
+        )
     }
 }
 
@@ -180,7 +198,8 @@ if (
     !(System.getenv("CI")?.lowercase() == "true" &&
         DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX)
 ) {
-    tasks.getByName("preBuild").dependsOn("bomCodegenAndroid")
+    tasks.getByName("androidPreBuild").dependsOn("bomCodegenAndroid")
+    tasks.getByName("compileAndroidMain").dependsOn("bomCodegenAndroid")
 }
 
 tasks.withType<JavaExec> {

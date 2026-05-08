@@ -12,6 +12,16 @@ import Shared
 extension SharedString {
     var value: String {
         switch self {
+        case .betaEarlyAccessNote:
+            NSLocalizedString(
+                "Get early access to test new features and provide feedback",
+                comment: "A note within the \"Test New Features\" section explaining its purpose"
+            )
+        case .betaSection:
+            NSLocalizedString(
+                "Test New Features",
+                comment: "More page section header, includes toggles for enabling beta features"
+            )
         case .commuterRailAndFerryTickets:
             NSLocalizedString(
                 "Commuter Rail and Ferry Tickets",
@@ -32,6 +42,7 @@ extension SharedString {
                 "Feature Flags",
                 comment: "More page section header, only displayed in the developer app for enabling in-progress features"
             )
+        case .forceNotificationsBeta: "Reset and force notifications beta" // dev only, no i18n
         case .mapDisplay:
             NSLocalizedString(
                 "Map Display",
@@ -43,7 +54,10 @@ extension SharedString {
                 comment: "Footnote underneath the \"Commuter Rail and Ferry Tickets\" label on the More page link to the MBTA mTicket app"
             )
         case .notifications:
-            "Notifications" // Temp feature flag
+            NSLocalizedString(
+                "Disruption Notifications",
+                comment: "A setting on the More page to enable the disruption notification beta"
+            )
         case .privacyPolicy:
             NSLocalizedString(
                 "Privacy Policy",

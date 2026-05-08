@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteResultsView: View {
+    @ObserveInjection var inject
     let routes: [SearchViewModel.RouteResult]
     let handleRouteTap: (LineOrRoute.Id) -> Void
 
@@ -41,5 +42,6 @@ struct RouteResultsView: View {
                 }
             }
         }
+        .enableInjection()
     }
 }

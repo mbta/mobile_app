@@ -10,6 +10,7 @@ public data class WriteSubscriptionsRequest
 internal constructor(
     @SerialName("fcm_token") val fcmToken: String,
     val subscriptions: List<SubscriptionRequest>,
+    val locale: String,
 )
 
 @Serializable
@@ -17,6 +18,7 @@ public data class UpdateAccessibilityRequest
 internal constructor(
     @SerialName("fcm_token") val fcmToken: String,
     @SerialName("include_accessibility") val includeAccessibility: Boolean,
+    val locale: String,
 )
 
 @Serializable

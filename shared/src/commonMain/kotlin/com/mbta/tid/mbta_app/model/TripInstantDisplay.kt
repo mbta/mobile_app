@@ -115,6 +115,8 @@ public sealed class TripInstantDisplay {
                         return Cancelled(scheduleTime)
                     } else if (alert?.effect == Alert.Effect.Shuttle) {
                         return Shuttle(scheduleTime)
+                    } else if (alert?.stopSkipped == true) {
+                        return Skipped(scheduleTime)
                     }
                 }
             if (prediction?.status != null) {

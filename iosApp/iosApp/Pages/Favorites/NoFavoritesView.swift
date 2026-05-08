@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct NoFavoritesView: View {
+    @ObserveInjection var inject
     var onAddStops: (() -> Void)?
 
     var body: some View {
@@ -38,6 +39,7 @@ struct NoFavoritesView: View {
                 )
             }
         }
+        .enableInjection()
     }
 }
 

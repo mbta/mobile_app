@@ -26,7 +26,11 @@ struct FcmSubscriptionModifier: ViewModifier {
                     favorites: favorites.routeStopDirection,
                     includeAccessibility: includeAccessibility
                 )
-                try await subscriptionsRepository.updateSubscriptions(fcmToken: fcmToken, subscriptions: subscriptions)
+                try await subscriptionsRepository.updateSubscriptions(
+                    fcmToken: fcmToken,
+                    subscriptions: subscriptions,
+                    locale: NSLocalizedString("key/current_locale", comment: "")
+                )
             }
         }
     }
@@ -37,6 +41,7 @@ struct FcmSubscriptionModifier: ViewModifier {
             .onAppear { updateSubscriptions(fcmToken, notificationsEnabled) }
             .onChange(of: fcmToken) { newToken in updateSubscriptions(newToken, notificationsEnabled) }
             .onChange(of: notificationsEnabled) { newNotifications in updateSubscriptions(fcmToken, newNotifications) }
+            .enableInjection()
     }
 }
 

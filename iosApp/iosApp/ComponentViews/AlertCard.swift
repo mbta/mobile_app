@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 private struct TakeoverAlertCard: View {
+    @ObserveInjection var inject
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let routeAccents: TripRouteAccents
@@ -65,10 +66,12 @@ private struct TakeoverAlertCard: View {
         }
         .padding(internalPadding)
         .padding(16)
+        .enableInjection()
     }
 }
 
 struct AlertCard: View {
+    @ObserveInjection var inject
     let alert: Shared.Alert
     let alertSummary: AlertSummary?
     let spec: AlertCardSpec
@@ -207,7 +210,10 @@ struct AlertCard: View {
                 alert: alert,
                 alertSummary: AlertSummary.Standard(
                     effect: .shuttle,
-                    location: .some(AlertSummary.LocationSuccessiveStops(startStopName: "Start", endStopName: "End")),
+                    location: .some(AlertSummary.LocationSuccessiveStops(
+                        startStopName: "Start",
+                        endStopName: "End"
+                    )),
                     timeframe: .some(AlertSummary.TimeframeTime(
                         time: .init(year: 2025, month: .april, day: 16, hour: 16, minute: 0, second: 0)
                     )),
@@ -253,6 +259,7 @@ struct AlertCard: View {
                 alertSummary: TripSpecificAlertSummary(
                     tripIdentity: TripSpecificAlertSummary.TripFrom(
                         tripTime: .init(year: 2026, month: .march, day: 9, hour: 12, minute: 13, second: 0),
+                        routeType: .commuterRail,
                         stopName: "Ruggles"
                     ), effect: .cancellation, cause: .mechanicalIssue
                 ),

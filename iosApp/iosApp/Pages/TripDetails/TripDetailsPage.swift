@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct TripDetailsPage: View {
+    @ObserveInjection var inject
     var filter: TripDetailsPageFilter
     var navCallbacks: NavigationCallbacks
 
@@ -106,5 +107,6 @@ struct TripDetailsPage: View {
             }
         }
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
+        .enableInjection()
     }
 }

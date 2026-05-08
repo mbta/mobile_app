@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.DatePeriod
@@ -44,8 +45,8 @@ class AlertDetailsTest {
                 activePeriod(now - 5.minutes, now + 5.minutes)
                 description = "Long description"
                 cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
+                effect = Alert.Effect.Suspension
+                effectName = "Suspension"
                 header = "Alert header"
                 updatedAt = EasternTimeInstant(2025, Month.JANUARY, 22, 10, 36, 13)
             }
@@ -61,7 +62,7 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("Red Line Stop Closure").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Red Line Suspension").assertIsDisplayed()
         composeTestRule.onNodeWithText("Unruly Passenger").assertIsDisplayed()
         composeTestRule
             .onNode(hasTextMatching(Regex("Wednesday, Jan 22, 10:35\\sAM")))
@@ -298,8 +299,8 @@ class AlertDetailsTest {
             objects.alert {
                 activePeriod(now - 5.minutes, now + 5.minutes)
                 cause = Alert.Cause.UnrulyPassenger
-                effect = Alert.Effect.StopClosure
-                effectName = "Closure"
+                effect = Alert.Effect.Suspension
+                effectName = "Suspension"
                 updatedAt = now - 100.minutes
                 header = "Alert header"
                 description = "Alert description"
@@ -316,7 +317,7 @@ class AlertDetailsTest {
             )
         }
 
-        composeTestRule.onNodeWithText("${stop.name} Stop Closure").assertExists()
+        composeTestRule.onNodeWithText("${stop.name} Suspension").assertExists()
     }
 
     @Test
@@ -453,6 +454,75 @@ class AlertDetailsTest {
         composeTestRule.onNodeWithText("Sunday, Friday").assertIsDisplayed()
         composeTestRule.onNodeWithText("From").assertIsDisplayed()
         composeTestRule.onNode(hasTextMatching(Regex("9:41\\sAM – 11:41\\sAM"))).assertIsDisplayed()
+    }
+
+    @Test
+    fun testRecurringWeekdays() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant(2026, Month.MAY, 4, 14, 38)
+
+        val route = objects.route()
+        val stop = objects.stop { name = "Park Street" }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 1.hours, now + 1.hours)
+                activePeriod(now + 1.days - 1.hours, now + 1.days + 1.hours)
+                activePeriod(now + 2.days - 1.hours, now + 2.days + 1.hours)
+                activePeriod(now + 3.days - 1.hours, now + 3.days + 1.hours)
+                activePeriod(now + 4.days - 1.hours, now + 4.days + 1.hours)
+                activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = listOf(route),
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("May 4 – May 11").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Weekdays").assertIsDisplayed()
+        composeTestRule.onNodeWithText("From").assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
+    }
+
+    @Test
+    fun testRecurringWeekends() {
+        val objects = ObjectCollectionBuilder()
+
+        val now = EasternTimeInstant(2026, Month.MAY, 3, 14, 38)
+
+        val route = objects.route()
+        val stop = objects.stop { name = "Park Street" }
+        val alert =
+            objects.alert {
+                effect = Alert.Effect.Suspension
+                activePeriod(now - 1.hours, now + 1.hours)
+                activePeriod(now + 6.days - 1.hours, now + 6.days + 1.hours)
+                activePeriod(now + 7.days - 1.hours, now + 7.days + 1.hours)
+            }
+
+        composeTestRule.setContent {
+            AlertDetails(
+                alert,
+                line = null,
+                routes = listOf(route),
+                stop = stop,
+                affectedStops = listOf(stop),
+                now = now,
+            )
+        }
+
+        composeTestRule.onNodeWithText("May 3 – May 10").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Weekends").assertIsDisplayed()
+        composeTestRule.onNodeWithText("From").assertIsDisplayed()
+        composeTestRule.onNode(hasTextMatching(Regex("1:38\\sPM – 3:38\\sPM"))).assertIsDisplayed()
     }
 
     @Test

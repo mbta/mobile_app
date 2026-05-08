@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -36,7 +37,6 @@ import com.mbta.tid.mbta_app.android.util.overRouteColor
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
-import java.util.Locale
 
 @Composable
 fun ExplainerPage(type: ExplainerType, routeAccents: TripRouteAccents, goBack: () -> Unit) {
@@ -90,7 +90,8 @@ fun ExplanationHeadline(type: ExplainerType, routeType: RouteType, modifier: Mod
                         routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                        if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
+                        else it.toString()
                     }
         },
         modifier,
@@ -146,7 +147,8 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                         routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                        if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
+                        else it.toString()
                     }
             ExplainerType.NoPrediction -> stringResource(R.string.explainer_text_no_prediction)
             ExplainerType.NoVehicle ->
@@ -155,7 +157,8 @@ fun ExplanationText(type: ExplainerType, routeType: RouteType, modifier: Modifie
                         routeType.typeText(resources, true),
                     )
                     .replaceFirstChar {
-                        if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString()
+                        if (it.isLowerCase()) it.titlecase(LocalLocale.current.platformLocale)
+                        else it.toString()
                     }
         },
         modifier,

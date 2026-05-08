@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct SearchField: View {
+    @ObserveInjection var inject
     @ObservedObject var searchObserver: TextFieldObserver
 
     var body: some View {
@@ -29,5 +30,6 @@ struct SearchField: View {
             }
         }
         .padding(.horizontal, 16)
+        .enableInjection()
     }
 }

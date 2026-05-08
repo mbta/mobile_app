@@ -20,6 +20,7 @@ import SwiftUI
 #endif
 
 struct ProductionAppView: View {
+    @ObserveInjection var inject
     @StateObject var locationDataManager: LocationDataManager
 
     @StateObject var contentVM: ContentViewModel = .init()
@@ -56,10 +57,22 @@ struct ProductionAppView: View {
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)
         }
+        .enableInjection()
     }
 
     private static func initSocket() -> PhoenixSocket {
         let socket = Socket(appVariant.socketUrl)
+
+        // decreasing default from 5s
+        socket.reconnectAfter = { tries in
+            tries > 9 ? 2.0 : [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.5, 1.0, 2.0][tries - 1]
+        }
+
+        // decreasing default from 10s
+        socket.rejoinAfter = { tries in
+            tries > 2 ? 2 : [1, 2][tries - 1]
+        }
+
         socket.withRawMessages()
         socket.onOpen {
             Logger().debug("Socket opened")

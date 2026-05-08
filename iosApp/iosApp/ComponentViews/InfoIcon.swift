@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct InfoIcon: View {
+    @ObserveInjection var inject
     var size: Double = 16
 
     var body: some View {
@@ -17,5 +18,6 @@ struct InfoIcon: View {
             .frame(width: size, height: size)
             .foregroundStyle(Color.translucentContrast)
             .accessibilityHidden(true)
+            .enableInjection()
     }
 }

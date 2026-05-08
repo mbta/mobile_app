@@ -6,6 +6,7 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
+import Foundation
 import Shared
 
 extension IFavoritesViewModel {
@@ -22,6 +23,7 @@ extension IFavoritesViewModel {
             defaultDirection: defaultDirection,
             fcmToken: fcmToken,
             includeAccessibility: includeAccessibility,
+            locale: NSLocalizedString("key/current_locale", comment: ""),
         )
     }
 }

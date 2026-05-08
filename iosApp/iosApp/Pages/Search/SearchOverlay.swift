@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct SearchOverlay: View {
+    @ObserveInjection var inject
     @ObservedObject var searchObserver: TextFieldObserver
     @ObservedObject var nearbyVM: NearbyViewModel
     @State var searchVM: SearchViewModel
@@ -47,5 +48,6 @@ struct SearchOverlay: View {
                 }.padding(.top, 16)
             }
         }.background(searchObserver.isSearching ? Color.fill2 : Color.clear)
+            .enableInjection()
     }
 }

@@ -35,6 +35,14 @@ constructor(
 
     val id: String = "${trip.id}-${prediction?.stopSequence ?: schedule?.stopSequence}"
 
+    /**
+     * The effective route ID of this [UpcomingTrip].
+     *
+     * Multi-route trips are an MBTA GTFS extension; as implemented right now, we make extra copies
+     * of predictions and schedules that are rewritten to have the added route IDs.
+     */
+    public val routeId: Route.Id = prediction?.routeId ?: schedule?.routeId ?: trip.routeId
+
     internal val time =
         if (
             prediction != null &&
@@ -160,6 +168,11 @@ constructor(
             }
     }
 
+    internal data class WithFormat(
+        val trip: UpcomingTrip,
+        val format: UpcomingFormat.Some.FormattedTrip?,
+    )
+
     internal companion object {
         /**
          * Gets the list of [UpcomingTrip]s from the given [schedules], [predictions] and
@@ -175,6 +188,7 @@ constructor(
             alerts: Map<String, Alert>,
         ): List<UpcomingTrip> {
             data class UpcomingTripKey(
+                val routeId: Route.Id,
                 val tripId: String,
                 val rootStopId: String?,
                 val stopSequence: Int?,
@@ -182,6 +196,7 @@ constructor(
                 constructor(
                     schedule: Schedule
                 ) : this(
+                    schedule.routeId,
                     schedule.tripId,
                     stops.resolveParentId(schedule.stopId),
                     schedule.stopSequence,
@@ -190,6 +205,7 @@ constructor(
                 constructor(
                     prediction: Prediction
                 ) : this(
+                    prediction.routeId,
                     prediction.tripId,
                     stops.resolveParentId(prediction.stopId),
                     prediction.stopSequence,
@@ -313,37 +329,43 @@ internal fun List<UpcomingTrip>.isArrivalOnly(): Boolean {
 }
 
 /**
- * Associate each upcoming trip with its format. Omits any upcoming trip that shouldn't be shown.
+ * Associate each upcoming trip with its format.
+ *
+ * Any upcoming trip that shouldn't be shown will have a format of null.
  */
 internal fun List<UpcomingTrip>.withFormat(
     now: EasternTimeInstant,
     route: Route,
     context: TripInstantDisplay.Context,
-): List<UpcomingFormat.Some.FormattedTrip> {
+): List<UpcomingTrip.WithFormat> {
     val formattedTrips =
-        this.mapNotNull {
+        this.map {
             val last =
                 (route.type.isSubway() && it.prediction?.lastTrip == true) ||
                     (!route.type.isSubway() && this.last() == it)
-            it.format(now, route, context, last)
+            val formatted = it.format(now, route, context, last)
+            UpcomingTrip.WithFormat(it, formatted)
         }
 
     val lastNonCancelledTrip =
-        formattedTrips.lastOrNull { it.format !is TripInstantDisplay.Cancelled }
+        formattedTrips.lastOrNull { it.format?.format !is TripInstantDisplay.Cancelled }
     // If no trips are tagged as the last trip, this is subway and we shouldn't change anything
-    if (formattedTrips.none { it.lastTrip } || lastNonCancelledTrip?.lastTrip ?: false) {
+    if (
+        formattedTrips.none { it.format?.lastTrip == true } ||
+            lastNonCancelledTrip?.format?.lastTrip ?: false
+    ) {
         return formattedTrips
     }
 
     // If the last non-cancelled trip is not flagged as the last trip, we need to set the last
     // trip flag on the cancelled trip to false, and set it to true on the actual last trip
-    return formattedTrips.mapNotNull {
+    return formattedTrips.map {
         if (it == lastNonCancelledTrip) {
-            return@mapNotNull it.trip.format(now, route, context, true)
-        } else if (it.lastTrip) {
-            return@mapNotNull it.trip.format(now, route, context, false)
+            it.copy(format = it.trip.format(now, route, context, true))
+        } else if (it.format?.lastTrip == true) {
+            it.copy(format = it.trip.format(now, route, context, false))
         } else {
-            return@mapNotNull it
+            it
         }
     }
 }

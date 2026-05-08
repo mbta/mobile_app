@@ -35,6 +35,7 @@ struct ToastModifier: ViewModifier {
                     showToast(state: state.toast)
                 }
             }
+            .enableInjection()
     }
 
     @ViewBuilder

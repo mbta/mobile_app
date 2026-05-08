@@ -63,7 +63,7 @@ android {
         targetSdk = 35
         versionCode =
             Integer.parseInt((findProperty("android.injected.version.code") ?: "1") as String)
-        versionName = "2.0.15"
+        versionName = "2.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
     buildFeatures {
@@ -119,6 +119,7 @@ dependencies {
     implementation(libs.compose.ui)
     implementation(libs.compose.ui.tooling.preview)
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.installations)
     implementation(libs.firebase.messaging)
     implementation(libs.javaPhoenixClient)
     implementation(libs.koin.androidxCompose)

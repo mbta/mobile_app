@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RoutePill: View {
+    @ObserveInjection var inject
     let route: Route?
     let line: Line?
     let isActive: Bool
@@ -184,11 +185,13 @@ struct RoutePill: View {
             .modifier(BorderModifier(spec: spec, borderWidth: borderWidth, borderColor: borderColor))
             .accessibilityElement()
             .accessibilityLabel(routeModeLabel(line: line, route: route))
+            .enableInjection()
     }
 }
 
 struct RoutePill_Previews: PreviewProvider {
     struct RoutePillPreview: View {
+        @ObserveInjection var inject
         let route: Route
         let line: Line?
 
@@ -203,6 +206,7 @@ struct RoutePill_Previews: PreviewProvider {
                 RoutePill(route: route, line: line, type: .fixed)
                 RoutePill(route: route, line: line, type: .flex)
             }
+            .enableInjection()
         }
     }
 

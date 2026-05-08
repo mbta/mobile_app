@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct DirectionLabel: View {
+    @ObserveInjection var inject
     let direction: Direction
     let showDestination: Bool
     let pillDecoration: PredictionRowView.PillDecoration
@@ -78,5 +79,6 @@ struct DirectionLabel: View {
                 destinationLabel(DirectionLabel.directionNameFormatted(direction))
             }
         }.accessibilityElement(children: .combine)
+            .enableInjection()
     }
 }

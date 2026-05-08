@@ -11,6 +11,7 @@ import Shared
 import SwiftUI
 
 struct OnboardingPage: View {
+    @ObserveInjection var inject
     let screens: [OnboardingScreen]
     @State var selectedIndex: Int = 0
 
@@ -52,6 +53,7 @@ struct OnboardingPage: View {
             }
         }, skipLocationDialogue: skipLocationDialogue)
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
+            .enableInjection()
     }
 }
 

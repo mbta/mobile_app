@@ -92,7 +92,7 @@ final class RoutePickerViewTests: XCTestCase {
             navCallbacks: .init(onBack: { backCalled = true }, onClose: nil, backButtonPresentation: .header)
         )
 
-        try sut.inspect().find(viewWithAccessibilityLabel: "Back").implicitAnyView().button().tap()
+        try sut.inspect().find(viewWithAccessibilityLabel: "Back").find(ViewType.Button.self).tap()
         XCTAssertTrue(backCalled)
     }
 

@@ -110,7 +110,7 @@ public object StopDetailsUtils {
                 .flatMap { it.stopData }
                 .flatMap { it.data }
                 .flatMap { it.upcomingTrips }
-                .map { it.trip.routeId }
+                .map { it.routeId }
                 .toSet()
         val filtered = vehicles.vehicles.filter { routeIds.contains(it.value.routeId) }
         return filtered

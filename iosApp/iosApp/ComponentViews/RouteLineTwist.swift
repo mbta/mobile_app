@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct RouteLineTwist: View {
+    @ObserveInjection var inject
     let color: Color
     let proportionClosed: Float
     let connections: [(RouteBranchSegment.StickConnection, Bool)]
@@ -162,10 +163,12 @@ struct RouteLineTwist: View {
             })
         }
         .frame(width: 40)
+        .enableInjection()
     }
 }
 
 private struct PreviewHelper: View {
+    @ObserveInjection var inject
     @State var proportionClosed: Float = 1
 
     var body: some View {
@@ -182,6 +185,7 @@ private struct PreviewHelper: View {
                 try? await Task.sleep(for: .milliseconds(500))
             }
         }
+        .enableInjection()
     }
 }
 

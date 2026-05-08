@@ -39,7 +39,7 @@ final class AlertDetailsTests: XCTestCase {
 
         let sut = AlertDetails(alert: alert, line: nil, routes: [route], affectedStops: [stop1, stop2, stop3], now: now)
 
-        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Closure"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Red Line Stop Skipped"))
         XCTAssertNotNil(try sut.inspect().find(text: "Unruly Passenger"))
         XCTAssertNotNil(try sut.inspect().find(text: String(alert.activePeriod[0].formatStart().characters)))
         XCTAssertNotNil(try sut.inspect().find(text: "3 affected stops"))
@@ -48,8 +48,8 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: stop2.name))
         XCTAssertNotNil(try sut.inspect().find(text: stop3.name))
         XCTAssertNotNil(try sut.inspect().find(text: "Full Description"))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.description_!))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.description_)))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.header)))
         XCTAssertNotNil(try sut.inspect().find(text: "Updated: 7/28/2025, 3:30\u{202F}PM"))
     }
 
@@ -115,7 +115,7 @@ final class AlertDetailsTests: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(text: "Tuesday, Jul 29, later today"))
     }
 
-    func testNoCurrentActivePeriod() throws {
+    func testNoCurrentActivePeriod() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -137,7 +137,7 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(text: "Start"))
     }
 
-    func testNoDescription() throws {
+    func testNoDescription() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -158,7 +158,7 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(text: "Full Description"))
     }
 
-    func testStopsInDescription() throws {
+    func testStopsInDescription() {
         let objects = ObjectCollectionBuilder()
 
         let now = EasternTimeInstant.now()
@@ -185,7 +185,6 @@ final class AlertDetailsTests: XCTestCase {
             affectedStops: [], now: now
         )
 
-        try print(sutWithoutStops.inspect().findAll(ViewType.Text.self).map { text in try text.string() })
         XCTAssertNil(try? sutWithoutStops.inspect().find(text: "3 affected stops"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Alert description"))
         XCTAssertNotNil(try? sutWithoutStops.inspect().find(text: "Affected stops:\nStop 1\nStop 2\nStop 3"))
@@ -347,6 +346,80 @@ final class AlertDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "Until further notice"))
         XCTAssertNotNil(try sut.inspect().find(text: "From"))
         XCTAssertNotNil(try sut.inspect().find(text: "9:41\u{202F}AM – 11:41\u{202F}AM"))
+    }
+
+    func testRecurringWeekdays() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = EasternTimeInstant(year: 2026, month: .may, day: 4, hour: 14, minute: 38, second: 0)
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.activePeriod(
+                start: now.minus(hours: 1),
+                end: now.plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 24).minus(hours: 1),
+                end: now.plus(hours: 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 2 * 24).minus(hours: 1),
+                end: now.plus(hours: 2 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 3 * 24).minus(hours: 1),
+                end: now.plus(hours: 3 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 4 * 24).minus(hours: 1),
+                end: now.plus(hours: 4 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 7 * 24).minus(hours: 1),
+                end: now.plus(hours: 7 * 24).plus(hours: 1)
+            )
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "May 4 – May 11"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Weekdays"))
+        XCTAssertNotNil(try sut.inspect().find(text: "From"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1:38\u{202F}PM – 3:38\u{202F}PM"))
+    }
+
+    func testRecurringWeekends() throws {
+        let objects = ObjectCollectionBuilder()
+
+        let now = EasternTimeInstant(year: 2026, month: .may, day: 3, hour: 14, minute: 38, second: 0)
+
+        let route = objects.route { _ in }
+        let stop = objects.stop { $0.name = "Park Street" }
+        let alert = objects.alert { alert in
+            alert.effect = .suspension
+            alert.activePeriod(
+                start: now.minus(hours: 1),
+                end: now.plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 6 * 24).minus(hours: 1),
+                end: now.plus(hours: 6 * 24).plus(hours: 1)
+            )
+            alert.activePeriod(
+                start: now.plus(hours: 7 * 24).minus(hours: 1),
+                end: now.plus(hours: 7 * 24).plus(hours: 1)
+            )
+        }
+
+        let sut = AlertDetails(alert: alert, line: nil, routes: [route], stop: stop, affectedStops: [stop], now: now)
+
+        XCTAssertNotNil(try sut.inspect().find(text: "May 3 – May 10"))
+        XCTAssertNotNil(try sut.inspect().find(text: "Weekends"))
+        XCTAssertNotNil(try sut.inspect().find(text: "From"))
+        XCTAssertNotNil(try sut.inspect().find(text: "1:38\u{202F}PM – 3:38\u{202F}PM"))
     }
 
     func testRecurringSomeDays() throws {

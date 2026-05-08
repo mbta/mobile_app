@@ -126,10 +126,10 @@ final class DepartureTileTests: XCTestCase {
         let notSelected = DepartureTile(data: tileData, onTap: {})
         XCTAssertEqual(
             "displays more information about this trip",
-            try notSelected.inspect().implicitAnyView().button().accessibilityHint().string()
+            try notSelected.inspect().find(ViewType.Button.self).accessibilityHint().string()
         )
 
         let selected = DepartureTile(data: tileData, onTap: {}, isSelected: true)
-        XCTAssertEqual("", try selected.inspect().implicitAnyView().button().accessibilityHint().string())
+        XCTAssertEqual("", try selected.inspect().find(ViewType.Button.self).accessibilityHint().string())
     }
 }

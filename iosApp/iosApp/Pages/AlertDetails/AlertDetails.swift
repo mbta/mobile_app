@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct AlertDetails: View {
+    @ObserveInjection var inject
     var analytics: Analytics = AnalyticsProvider.shared
     var alert: Shared.Alert
     var line: Line?
@@ -72,7 +73,7 @@ struct AlertDetails: View {
     }
 
     private var currentPeriod: Shared.Alert.ActivePeriod? { alert.currentPeriod(time: now) }
-    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now) }
+    private var nextPeriod: Shared.Alert.ActivePeriod? { alert.nextPeriod(time: now, within: .max) }
     private var relevantPeriod: Shared.Alert.ActivePeriod? { currentPeriod ?? nextPeriod }
 
     static var calendar: Calendar {
@@ -129,12 +130,19 @@ struct AlertDetails: View {
                 VStack(alignment: .leading, spacing: 14) {
                     dateRange
                     let calendar = Self.calendar
-                    Text(recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
-                        .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }
-                        .joined(separator: NSLocalizedString(
-                            ", ",
-                            comment: "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday"
-                        )))
+                    let daysOfWeek = if recurrence.isWeekdays {
+                        NSLocalizedString("Weekdays", comment: "Mondays through Fridays")
+                    } else if recurrence.isWeekends {
+                        NSLocalizedString("Weekends", comment: "Saturdays and Sundays")
+                    } else {
+                        recurrence.days.sorted(by: { $0.indexSundayFirst < $1.indexSundayFirst })
+                            .map { calendar.standaloneWeekdaySymbols[$0.indexSundayFirst] }
+                            .joined(separator: NSLocalizedString(
+                                ", ",
+                                comment: "Separator between elements in a list, e.g. “Monday[, ]Wednesday[, ]Friday"
+                            ))
+                    }
+                    Text(daysOfWeek)
                         .font(Typography.bodySemibold)
                     HStack(spacing: 8) {
                         Text("From", comment: "Label for the times of a recurring alert")
@@ -142,16 +150,16 @@ struct AlertDetails: View {
                     }
                 }
             }
-        } else if let currentPeriod {
+        } else if let relevantPeriod {
             Grid(alignment: .leading, horizontalSpacing: 8, verticalSpacing: 14) {
                 GridRow {
                     Text("Start", comment: "Label for the start date of a disruption")
                         .frame(minWidth: 48, alignment: .leading)
-                    Text(currentPeriod.formatStart())
+                    Text(relevantPeriod.formatStart())
                 }
                 GridRow {
                     Text("End", comment: "Label for the end date of a disruption")
-                    Text(currentPeriod.formatEnd())
+                    Text(relevantPeriod.formatEnd())
                 }
             }
         } else {
@@ -301,6 +309,7 @@ struct AlertDetails: View {
     var body: some View {
         scrollContent
             .font(Typography.body)
+            .enableInjection()
     }
 }
 

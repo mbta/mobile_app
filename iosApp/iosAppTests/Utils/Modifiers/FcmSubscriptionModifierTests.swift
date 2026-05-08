@@ -44,12 +44,13 @@ final class FcmSubscriptionModifierTests: XCTestCase {
 
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { token, subs in
+            onUpdateSubscriptions: { token, subs, locale in
                 XCTAssertEqual(expectedToken, token)
                 XCTAssertEqual(expectedSubscriptions, subs)
+                XCTAssertEqual("en", locale)
                 updateExp.fulfill()
             },
-            onUpdateAccessibility: { _, _ in }
+            onUpdateAccessibility: { _, _, _ in }
         )
         loadKoinMocks(repositories: mockRepos)
 
@@ -86,11 +87,11 @@ final class FcmSubscriptionModifierTests: XCTestCase {
 
         let mockRepos = MockRepositories()
         mockRepos.subscriptions = MockSubscriptionsRepository(
-            onUpdateSubscriptions: { _, _ in
+            onUpdateSubscriptions: { _, _, _ in
                 XCTFail("Should not update when token is missing")
                 updateExp.fulfill()
             },
-            onUpdateAccessibility: { _, _ in }
+            onUpdateAccessibility: { _, _, _ in }
         )
         loadKoinMocks(repositories: mockRepos)
 

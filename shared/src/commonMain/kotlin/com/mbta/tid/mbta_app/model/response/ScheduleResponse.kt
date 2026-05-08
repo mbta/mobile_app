@@ -12,7 +12,7 @@ public data class ScheduleResponse(
 ) {
     public constructor(
         objects: ObjectCollectionBuilder
-    ) : this(objects.schedules.values.toList(), objects.trips)
+    ) : this(objects.schedules.values.toList(), objects.trips.toMap())
 
     internal fun getSchedulesTodayByPattern(): Map<String, Boolean> {
         val scheduledTrips = this.trips

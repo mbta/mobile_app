@@ -10,6 +10,7 @@ import Shared
 import SwiftUI
 
 struct HeadsignRowView: View {
+    @ObserveInjection var inject
     var headsign: String
     let predictions: UpcomingFormat
     let pillDecoration: PredictionRowView.PillDecoration
@@ -31,6 +32,7 @@ struct HeadsignRowView: View {
                 .font(Typography.bodySemibold)
                 .multilineTextAlignment(.leading)
         }
+        .enableInjection()
     }
 }
 

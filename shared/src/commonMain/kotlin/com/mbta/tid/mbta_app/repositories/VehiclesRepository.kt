@@ -5,13 +5,11 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
-import com.mbta.tid.mbta_app.model.SocketError
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.greenRoutes
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixChannel
-import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.phoenix.ChannelOwner
 import com.mbta.tid.mbta_app.phoenix.VehiclesOnRouteChannel
@@ -22,20 +20,26 @@ public interface IVehiclesRepository {
     public fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
+        errorKey: String,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     )
 
     public fun disconnect()
 }
 
-internal class VehiclesRepository(socket: PhoenixSocket, ioDispatcher: CoroutineDispatcher) :
-    IVehiclesRepository, KoinComponent {
-    var channelOwner = ChannelOwner(socket, ioDispatcher)
+internal class VehiclesRepository(
+    socket: PhoenixSocket,
+    errorBannerStateRepository: IErrorBannerStateRepository,
+    ioDispatcher: CoroutineDispatcher,
+) : IVehiclesRepository, KoinComponent {
+    var channelOwner =
+        ChannelOwner<VehiclesStreamDataResponse>(socket, ioDispatcher, errorBannerStateRepository)
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
+        errorKey: String,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
@@ -47,34 +51,20 @@ internal class VehiclesRepository(socket: PhoenixSocket, ioDispatcher: Coroutine
                 },
                 directionId,
             ),
-            handleMessage = { handleNewDataMessage(it, onReceive) },
-            handleError = { onReceive(ApiResult.Error(message = it)) },
+            VehiclesOnRouteChannel::parseMessage,
+            handleResult = {
+                when (it) {
+                    is ApiResult.Ok -> println("Received ${it.data.vehicles.size} vehicles")
+                    else -> {}
+                }
+                onReceive(it)
+            },
+            errorKey = errorKey,
         )
     }
 
     override fun disconnect() {
         channelOwner.disconnect()
-    }
-
-    private fun handleNewDataMessage(
-        message: PhoenixMessage,
-        onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
-    ) {
-        val rawPayload: String? = message.jsonBody
-
-        if (rawPayload != null) {
-            val newVehicleData: VehiclesStreamDataResponse =
-                try {
-                    VehiclesOnRouteChannel.parseMessage(rawPayload)
-                } catch (e: IllegalArgumentException) {
-                    onReceive(ApiResult.Error(message = SocketError.FAILED_TO_PARSE))
-                    return
-                }
-            println("Received ${newVehicleData.vehicles.size} vehicles")
-            onReceive(ApiResult.Ok(newVehicleData))
-        } else {
-            println("No jsonPayload found for message ${message.body}")
-        }
     }
 }
 
@@ -93,11 +83,12 @@ constructor(
 
     internal constructor(
         objects: ObjectCollectionBuilder
-    ) : this(response = VehiclesStreamDataResponse(objects.vehicles))
+    ) : this(response = VehiclesStreamDataResponse(objects.vehicles.toMap()))
 
     override fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
+        errorKey: String,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         onConnect(routeId, directionId)

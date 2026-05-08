@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct NonNilReplaceModifier<Value, NonNilContent>: ViewModifier where NonNilContent: View {
+    @ObserveInjection var inject
     var value: Value?
     var contentBuilder: (Value) -> NonNilContent
 
@@ -22,6 +23,7 @@ struct NonNilReplaceModifier<Value, NonNilContent>: ViewModifier where NonNilCon
 }
 
 struct NonNilAboveModifier<Value, NonNilContent>: ViewModifier where NonNilContent: View {
+    @ObserveInjection var inject
     var value: Value?
     var contentBuilder: (Value) -> NonNilContent
 
@@ -32,10 +34,12 @@ struct NonNilAboveModifier<Value, NonNilContent>: ViewModifier where NonNilConte
             }
             content
         }
+        .enableInjection()
     }
 }
 
 struct NonNilBelowModifier<Value, NonNilContent>: ViewModifier where NonNilContent: View {
+    @ObserveInjection var inject
     var value: Value?
     var contentBuilder: (Value) -> NonNilContent
 
@@ -46,6 +50,7 @@ struct NonNilBelowModifier<Value, NonNilContent>: ViewModifier where NonNilConte
                 contentBuilder(value!)
             }
         }
+        .enableInjection()
     }
 }
 

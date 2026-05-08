@@ -16,6 +16,8 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
 }
 
 struct HaloScrollView<Content>: View where Content: View {
+    @ObserveInjection var inject
+
     var content: Content
     var axes: Axis.Set
 
@@ -70,5 +72,6 @@ struct HaloScrollView<Content>: View where Content: View {
                 HaloSeparator(height: haloHeight, haloColor: haloColor).transition(.opacity)
             }
         }
+        .enableInjection()
     }
 }

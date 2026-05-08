@@ -327,6 +327,85 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(imageName: "mode-bus-slash"))
     }
 
+    func testShowsCancelledTripCardOnlyOnceWhenAlert() throws {
+        let now = EasternTimeInstant.now()
+        let objects = ObjectCollectionBuilder()
+        let stop = objects.stop { _ in }
+        let route = objects.route { route in
+            route.id = "66"
+            route.type = .bus
+        }
+        let pattern = objects.routePattern(route: route) { _ in }
+        let trip1 = objects.trip(routePattern: pattern)
+        let schedule1 = objects.schedule { schedule in
+            schedule.trip = trip1
+            schedule.departureTime = now.plus(seconds: 10)
+        }
+        let prediction1 = objects.prediction(schedule: schedule1) { prediction in
+            prediction.trip = trip1
+            prediction.scheduleRelationship = .cancelled
+        }
+        let upcoming1 = objects.upcomingTrip(schedule: schedule1, prediction: prediction1)
+        let trip2 = objects.trip(routePattern: pattern)
+        let schedule2 = objects.schedule { schedule in
+            schedule.trip = trip2
+            schedule.departureTime = now.plus(seconds: 10)
+        }
+        let prediction2 = objects.prediction(schedule: schedule2) { prediction in
+            prediction.trip = trip2
+            prediction.scheduleRelationship = .cancelled
+        }
+        let upcoming2 = objects.upcomingTrip(schedule: schedule2, prediction: prediction2)
+
+        let alert = objects.alert { alert in
+            alert.effect = .cancellation
+            alert.informedEntity(
+                directionId: 0,
+                facility: nil,
+                route: route.id.idText,
+                stop: stop.id,
+                trip: trip1.id
+            )
+            alert.activePeriod(start: now.minus(minutes: 30), end: nil)
+        }
+        let leaf = makeLeaf(
+            route: route,
+            stop: stop,
+            patterns: [pattern],
+            upcomingTrips: [upcoming1, upcoming2],
+            alerts: [alert],
+            objects: objects
+        )
+        let sut = StopDetailsFilteredDepartureDetails(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.id, directionId: 0),
+            tripFilter: .init(tripId: trip1.id, vehicleId: nil, stopSequence: nil, selectionLock: false),
+            setStopFilter: { _ in },
+            setTripFilter: { _ in },
+            leaf: leaf,
+            alertSummaries: [alert.id: AlertSummary.Standard(
+                effect: .cancellation,
+                location: AlertSummary.LocationSingleStop(stopName: stop.name),
+                timeframe: nil,
+                recurrence: nil,
+                isUpdate: false
+            )],
+            selectedDirection: .init(name: nil, destination: nil, id: 0),
+            favorite: false,
+            now: now,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: MockStopDetailsViewModel(),
+            viewportProvider: .init()
+        ).environmentObject(ViewportProvider()).withFixedSettings([:])
+
+        XCTAssertNotNil(try sut.inspect().find(text: "Cancellation"))
+        XCTAssertThrowsError(try sut.inspect().find(text: "Trip cancelled"))
+        XCTAssertThrowsError(try sut.inspect()
+            .find(text: "This trip has been cancelled. We’re sorry for the inconvenience."))
+    }
+
     func testShowsNoTripCard() throws {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
@@ -534,7 +613,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(AlertCard.self))
             XCTAssertNotNil(try view.find(text: "Service suspended ahead"))
             XCTAssertThrowsError(try view.find(text: alert.header!))
-            try view.find(AlertCard.self).implicitAnyView().button().tap()
+            try view.find(AlertCard.self).find(ViewType.Button.self).tap()
             XCTAssertEqual(
                 nearbyVM.navigationStack.last,
                 .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
@@ -602,7 +681,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
         XCTAssertNil(try? sut.inspect().find(text: "Elevator Closure"))
         XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
-        try sut.inspect().find(AlertCard.self).implicitAnyView().button().tap()
+        try sut.inspect().find(AlertCard.self).find(ViewType.Button.self).tap()
         XCTAssertEqual(
             nearbyVM.navigationStack.last,
             .alertDetails(alertId: alert.id, line: nil, routes: nil, stop: stop)

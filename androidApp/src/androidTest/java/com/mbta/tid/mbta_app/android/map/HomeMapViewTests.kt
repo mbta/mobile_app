@@ -21,6 +21,7 @@ import com.mbta.tid.mbta_app.android.location.MockLocationDataManager
 import com.mbta.tid.mbta_app.android.location.ViewportProvider
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
+import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
@@ -58,6 +59,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -75,7 +77,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -99,6 +101,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -117,7 +120,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -146,6 +149,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -170,7 +174,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -193,6 +197,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -211,7 +216,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.NearbyTransit,
@@ -232,6 +237,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -250,7 +256,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -272,6 +278,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -290,7 +297,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -312,6 +319,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -330,7 +338,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = SheetRoutes.StopDetails("stopId", null, null),
@@ -405,6 +413,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -423,7 +432,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -449,6 +458,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -467,7 +477,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = locationManager,
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
@@ -490,6 +500,7 @@ class HomeMapViewTests {
         val viewModel =
             MapViewModel(
                 MockRouteCardDataViewModel(),
+                MockErrorBannerStateRepository(),
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
@@ -517,7 +528,7 @@ class HomeMapViewTests {
             HomeMapView(
                 sheetPadding = PaddingValues(0.dp),
                 lastLoadedLocation = null,
-                isTargetingState = mutableStateOf(false),
+                isTargetingState = remember { mutableStateOf(false) },
                 locationDataManager = MockLocationDataManager(),
                 viewportProvider = viewportProvider,
                 currentNavEntry = null,
