@@ -66,6 +66,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.viewModel.ToastViewModel.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.datetime.DatePeriod
@@ -87,8 +88,7 @@ fun AlertDetails(
     val routeLabel = line?.longName ?: routes?.firstOrNull()?.label
     val stopLabel = stop?.name
     val formattedAlert = FormattedAlert(alert)
-    val currentPeriod = alert.currentPeriod(now)
-    val nextPeriod = if (currentPeriod == null) alert.nextPeriod(now) else null
+
     val isElevatorAlert = alert.effect == Alert.Effect.ElevatorClosure
     val elevatorSubtitle = if (isElevatorAlert) alert.header else null
 
@@ -103,7 +103,7 @@ fun AlertDetails(
     ) {
         AlertTitle(routeLabel, stopLabel, formattedAlert, elevatorSubtitle, isElevatorAlert)
         if (!isElevatorAlert) {
-            AlertPeriod(alert, currentPeriod, nextPeriod, now)
+            AlertPeriod(alert, now)
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 AffectedStopCollapsible(
@@ -121,7 +121,7 @@ fun AlertDetails(
         }
         AlertDescription(alert, affectedStopsKnown = affectedStops.isNotEmpty())
         if (isElevatorAlert) {
-            AlertPeriod(alert, currentPeriod, nextPeriod, now)
+            AlertPeriod(alert, now)
         }
         AlertFooter(alert.updatedAt)
     }
@@ -167,12 +167,7 @@ private fun AlertTitle(
 }
 
 @Composable
-private fun AlertPeriod(
-    alert: Alert,
-    currentPeriod: Alert.ActivePeriod?,
-    nextPeriod: Alert.ActivePeriod?,
-    now: EasternTimeInstant,
-) {
+private fun AlertPeriod(alert: Alert, now: EasternTimeInstant) {
     // This is all because Jetpack Compose has no built in table layout, we need the "Start" and
     // "End" label texts to take up the same column width, but they can be variable widths in
     // different languages, so we can't use a fixed size, but we also need the label and formatted
@@ -196,6 +191,9 @@ private fun AlertPeriod(
         }
     }
 
+    val currentPeriod = alert.currentPeriod(now)
+    val nextPeriod =
+        if (currentPeriod == null) alert.nextPeriod(now, kotlin.time.Duration.INFINITE) else null
     val relevantPeriod = currentPeriod ?: nextPeriod
     val recurrence = alert.recurrenceRange()
 
