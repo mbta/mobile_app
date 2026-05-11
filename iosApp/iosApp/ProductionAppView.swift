@@ -22,7 +22,6 @@ import SwiftUI
 struct ProductionAppView: View {
     @ObserveInjection var inject
     @StateObject var locationDataManager: LocationDataManager
-
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
@@ -43,6 +42,9 @@ struct ProductionAppView: View {
     }
 
     init(socket: PhoenixSocket) {
+        // Can only add error handling once koin is initialized
+        var errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner
+        Self.addSocketErrorHandling(socket: socket, errorBannerRepository: errorBannerRepository)
         // ignore updates less than 10m
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 10))
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
@@ -60,6 +62,26 @@ struct ProductionAppView: View {
         .enableInjection()
     }
 
+    private static func addSocketErrorHandling(
+        socket: PhoenixSocket,
+        errorBannerRepository: IErrorBannerStateRepository
+    ) {
+        socket.onError { error, response in
+            errorBannerRepository.setDataError(key: "socket", details: "\(error) \(response)", action: {
+                do {
+                    print("KB: retrying to attach")
+                    try socket.attach()
+                } catch {}
+            })
+            Logger().debug("socket error: \(error) \(response)")
+            Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
+                                                          type: nil,
+                                                          message: "socket error",
+                                                          category: "socket",
+                                                          data: ["error": error, "response": response]))
+        }
+    }
+
     private static func initSocket() -> PhoenixSocket {
         let socket = Socket(appVariant.socketUrl)
 
@@ -72,6 +94,8 @@ struct ProductionAppView: View {
         socket.rejoinAfter = { tries in
             tries > 2 ? 2 : [1, 2][tries - 1]
         }
+
+        socket.timeout = 6.0
 
         socket.withRawMessages()
         socket.onOpen {
@@ -91,16 +115,6 @@ struct ProductionAppView: View {
                                                           category: "socket",
                                                           data: nil))
         }
-
-        socket.onError { error, response in
-            Logger().debug("socket error: \(error) \(response)")
-            Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
-                                                          type: nil,
-                                                          message: "socket error",
-                                                          category: "socket",
-                                                          data: ["error": error, "response": response]))
-        }
-
         return socket
     }
 

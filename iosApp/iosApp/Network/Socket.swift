@@ -20,6 +20,13 @@ extension Socket: PhoenixSocket {
         onClose(callback: callback)
     }
 
+    public func onError(callback: @escaping (KotlinThrowable, String) -> Void) {
+        print("KB: onError set")
+        onError { error, response in
+            callback(KotlinThrowable(message: error.localizedDescription), response?.description ?? "")
+        }
+    }
+
     public func attach() {
         connect()
     }

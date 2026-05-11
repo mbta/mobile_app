@@ -15,7 +15,7 @@ open class MockSocket: PhoenixSocket {
     // Channel.socket is weak, so we need to maintain a reference to the Socket
     private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
-    public func attach() {}
+    public func attach() throws {}
 
     public func detach() {}
 
@@ -32,6 +32,8 @@ open class MockSocket: PhoenixSocket {
     public func onDetach(callback _: @escaping () -> Void) -> String {
         "Closed"
     }
+
+    public func onError(callback _: @escaping (KotlinThrowable, String) -> Void) {}
 }
 
 class MockPush: PhoenixPush {

@@ -45,6 +45,8 @@ public interface PhoenixSocket {
 
     public fun onDetach(callback: () -> Unit): String
 
+    public fun onError(callback: (Throwable, String) -> Unit)
+
     public fun attach()
 
     public fun getChannel(topic: String, params: Map<String, Any>): PhoenixChannel
@@ -65,6 +67,8 @@ constructor(
     override fun onDetach(callback: () -> Unit): String {
         return "detached"
     }
+
+    override fun onError(callback: (Throwable, String) -> Unit) {}
 
     override fun attach() {
         onAttachCallback()

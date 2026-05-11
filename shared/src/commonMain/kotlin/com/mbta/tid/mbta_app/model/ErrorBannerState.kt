@@ -15,7 +15,7 @@ public sealed class ErrorBannerState {
 
     public data class DataError(
         val messages: Set<String>,
-        internal val details: Set<String>,
+        val details: Set<String>,
         override val action: () -> Unit,
     ) : ErrorBannerState()
 
