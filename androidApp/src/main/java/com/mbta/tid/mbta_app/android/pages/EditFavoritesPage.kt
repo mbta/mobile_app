@@ -108,7 +108,6 @@ fun EditFavoritesPage(
             ?: removeToastFallbackText
     }
 
-    val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     // to make deletion animations work nicely, we persist the first staticRouteCardData we saw, and
     // then we visually hide things that are no longer in the favorites
     var firstStaticRouteCardData by remember { mutableStateOf<List<RouteCardData>?>(null) }
@@ -149,7 +148,6 @@ fun EditFavoritesPage(
                     EditFavoritesContext.Favorites,
                     deletedFavorite.direction,
                     fcmToken,
-                    includeAccessibility,
                     currentLocale,
                 )
 
@@ -166,7 +164,6 @@ fun EditFavoritesPage(
                                         EditFavoritesContext.Favorites,
                                         deletedFavorite.direction,
                                         fcmToken,
-                                        includeAccessibility,
                                         currentLocale,
                                     )
                                     toastViewModel.hideToast()

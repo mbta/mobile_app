@@ -35,7 +35,6 @@ struct EditFavoritesPage: View {
             context: .favorites,
             defaultDirection: rsd.direction,
             fcmToken: fcmTokenContainer.token,
-            includeAccessibility: settingsCache.get(.stationAccessibility),
         )
 
         let labels = rsd.getLabels(globalResponse)
@@ -70,7 +69,6 @@ struct EditFavoritesPage: View {
                         context: .favorites,
                         defaultDirection: rsd.direction,
                         fcmToken: fcmTokenContainer.token,
-                        includeAccessibility: settingsCache.get(.stationAccessibility),
                     )
                 }
             ),

@@ -580,7 +580,6 @@ internal class FavoritesViewModelTest : KoinTest {
                 EditFavoritesContext.Favorites,
                 0,
                 null,
-                false,
                 "en",
             )
             awaitItemSatisfying {
@@ -1047,10 +1046,9 @@ internal class FavoritesViewModelTest : KoinTest {
             }
 
         val subscriptionsRepository = mock<ISubscriptionsRepository>(MockMode.autofill)
-        everySuspend { subscriptionsRepository.updateSubscriptions(any(), any(), any()) } calls
-            {
-                delay(20.days)
-            }
+        everySuspend {
+            subscriptionsRepository.updateSubscriptions(any(), any(), any(), any())
+        } calls { delay(20.days) }
 
         val sentryRepository = mock<ISentryRepository>(MockMode.autofill)
         every { sentryRepository.captureException(any()) } calls
@@ -1123,7 +1121,6 @@ internal class FavoritesViewModelTest : KoinTest {
                 EditFavoritesContext.Favorites,
                 0,
                 "fcmToken",
-                false,
                 "en",
             )
             awaitItemSatisfying {

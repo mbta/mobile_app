@@ -100,14 +100,16 @@ fun ContentView(
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
     val currentLocale = stringResource(R.string.current_locale)
 
-    if (notificationsEnabled) {
-        LaunchedEffect(fcmToken) {
-            fcmToken?.let {
-                val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-                val subscriptions =
-                    SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
-                subscriptionsRepository.updateSubscriptions(it, subscriptions, currentLocale)
-            }
+    LaunchedEffect(fcmToken, notificationsEnabled) {
+        fcmToken?.let {
+            val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+            val subscriptions = SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
+            subscriptionsRepository.updateSubscriptions(
+                it,
+                subscriptions,
+                currentLocale,
+                notificationsEnabled,
+            )
         }
     }
 

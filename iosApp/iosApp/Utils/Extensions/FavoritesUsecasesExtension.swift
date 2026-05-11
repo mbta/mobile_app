@@ -15,15 +15,13 @@ extension FavoritesUsecases {
         context: EditFavoritesContext,
         defaultDirection: Int32,
         fcmToken: String?,
-        includeAccessibility: Bool,
     ) async throws {
         try await __updateRouteStopDirections(
             newValues: newValues as [RouteStopDirection: Any],
             context: context,
             defaultDirection: .init(int: defaultDirection),
             fcmToken: fcmToken,
-            includeAccessibility: includeAccessibility,
-            locale: NSLocalizedString("key/current_locale", comment: "")
+            locale: NSLocalizedString("key/current_locale", comment: ""),
         )
     }
 }

@@ -485,7 +485,6 @@ struct RouteStopListContentView<RightSideContent: View>: View {
                 context: editContext,
                 defaultDirection: selectedDirection,
                 fcmToken: fcmTokenContainer.token,
-                includeAccessibility: settingsCache.get(.stationAccessibility),
             )
         }
     }

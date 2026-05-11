@@ -65,6 +65,7 @@ import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -143,6 +144,7 @@ fun SaveFavoritePage(
     }
 
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
+    val notificationsEnabled = SettingsCache.get(Settings.Notifications)
     val currentLocale = stringResource(R.string.current_locale)
 
     fun updateFavorites(update: Map<RouteStopDirection, FavoriteSettings?>) {
@@ -151,7 +153,6 @@ fun SaveFavoritePage(
             context,
             selectedDirection,
             fcmToken,
-            includeAccessibility,
             currentLocale,
         )
     }
@@ -315,6 +316,7 @@ private fun SaveFavoritePagePreviewAdd() {
                 single {
                     FavoritesUsecases(
                         MockFavoritesRepository(),
+                        MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),
                     )
@@ -369,6 +371,7 @@ private fun SaveFavoritePagePreviewEdit() {
                                 )
                             )
                         ),
+                        MockSettingsRepository(),
                         MockSubscriptionsRepository(),
                         MockAnalytics(),
                     )
