@@ -66,7 +66,7 @@ public interface IFavoritesViewModel {
     public fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
-        defaultDirection: Int,
+        defaultDirection: Int?,
         fcmToken: String?,
         includeAccessibility: Boolean,
         locale: String?,
@@ -100,7 +100,7 @@ public class FavoritesViewModel(
         public data class UpdateFavorites(
             val updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
             val context: EditFavoritesContext,
-            val defaultDirection: Int,
+            val defaultDirection: Int?,
             val fcmToken: String?,
             val includeAccessibility: Boolean,
             val locale: String?,
@@ -254,8 +254,7 @@ public class FavoritesViewModel(
                 updateFavorites(
                     staleFavorites.mapValues { null },
                     EditFavoritesContext.StaleCheck,
-                    // There's no real default direction, but it's only used for analytics
-                    0,
+                    defaultDirection = null,
                     fcmToken,
                     false,
                     locale = null,
@@ -386,7 +385,7 @@ public class FavoritesViewModel(
     override fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
-        defaultDirection: Int,
+        defaultDirection: Int?,
         fcmToken: String?,
         includeAccessibility: Boolean,
         locale: String?,
@@ -462,7 +461,7 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
     override fun updateFavorites(
         updatedFavorites: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
-        defaultDirection: Int,
+        defaultDirection: Int?,
         fcmToken: String?,
         includeAccessibility: Boolean,
         locale: String?,
