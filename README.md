@@ -250,6 +250,15 @@ aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --
 aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key-passphrase --output json | jq -r '"storePassword=\(.SecretString)"' >> /path/to/key.properties
 ```
 
+To log in to the Google Cloud Platform CLI to run a deploy with Fastlane (which is unlikely):
+
+```
+gcloud auth application-default login --scopes=openid,https://www.googleapis.com/auth/userinfo.email,https://www.googleapis.com/auth/cloud-platform,https://www.googleapis.com/auth/androidpublisher
+
+# if you have multiple gcloud projects and something picked the wrong one:
+gcloud auth application-default set-quota-project <the GCP project we use for deploys>
+```
+
 ### Production Deploys
 
 Pushing a new tag with the `ios-` prefix will automatically deploy to the iOS internal testing group, and then release notes can be added and the build can be more widely published manually.
