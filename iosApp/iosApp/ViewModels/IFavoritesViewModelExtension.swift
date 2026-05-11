@@ -20,7 +20,7 @@ extension IFavoritesViewModel {
         __updateFavorites(
             updatedFavorites: updatedFavorites,
             context: context,
-            defaultDirection: defaultDirection,
+            defaultDirection: .init(int: defaultDirection),
             fcmToken: fcmToken,
             includeAccessibility: includeAccessibility,
             locale: NSLocalizedString("key/current_locale", comment: ""),

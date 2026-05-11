@@ -37,10 +37,10 @@ public class FavoritesUsecases(
     public suspend fun updateRouteStopDirections(
         newValues: Map<RouteStopDirection, FavoriteSettings?>,
         context: EditFavoritesContext,
-        defaultDirection: Int,
+        defaultDirection: Int?,
         fcmToken: String?,
         includeAccessibility: Boolean,
-        locale: String,
+        locale: String?,
     ) {
         val storedFavorites = repository.getFavorites()
         val currentFavorites = storedFavorites.routeStopDirection.toMutableMap()

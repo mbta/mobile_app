@@ -27,20 +27,22 @@ public abstract class Analytics {
     public fun favoritesUpdated(
         updatedFavorites: Map<RouteStopDirection, Boolean>,
         context: EditFavoritesContext,
-        defaultDirection: Int,
+        defaultDirection: Int?,
     ) {
 
         updatedFavorites.entries
             .groupBy { Pair(it.key.route, it.key.stop) }
             .forEach { (_routeStop, routeStopFavorites) ->
                 routeStopFavorites.forEach { (rsd, isFavorited) ->
+                    val isDefaultDirection =
+                        if (defaultDirection != null) rsd.direction == defaultDirection else "N/A"
                     logEvent(
                         "updated_favorites",
                         "action" to if (isFavorited) "add" else "remove",
                         "route_id" to rsd.route.idText,
                         "stop_id" to rsd.stop,
                         "direction_id" to "${rsd.direction}",
-                        "is_default_direction" to "${rsd.direction == defaultDirection}",
+                        "is_default_direction" to "$isDefaultDirection",
                         "context" to context.name,
                         "updated_both_directions_at_once" to "${routeStopFavorites.size == 2}",
                     )

@@ -20,7 +20,7 @@ extension FavoritesUsecases {
         try await __updateRouteStopDirections(
             newValues: newValues as [RouteStopDirection: Any],
             context: context,
-            defaultDirection: defaultDirection,
+            defaultDirection: .init(int: defaultDirection),
             fcmToken: fcmToken,
             includeAccessibility: includeAccessibility,
             locale: NSLocalizedString("key/current_locale", comment: "")

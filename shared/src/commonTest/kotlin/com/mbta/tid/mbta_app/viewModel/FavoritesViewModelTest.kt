@@ -35,7 +35,6 @@ import dev.mokkery.everySuspend
 import dev.mokkery.matcher.any
 import dev.mokkery.mock
 import kotlin.test.AfterTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -920,7 +919,6 @@ internal class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
-    @Ignore
     fun `clears stale favorites when stop is missing`() = runTest {
         val now = EasternTimeInstant.now()
 
@@ -930,13 +928,7 @@ internal class FavoritesViewModelTest : KoinTest {
         }
         val favoritesAfter = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
 
-        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
-
-        everySuspend { favoritesRepo.getFavorites() } sequentially
-            {
-                returns(favoritesBefore)
-                repeat { returns(favoritesAfter) }
-            }
+        val favoritesRepo = MockFavoritesRepository(favorites = favoritesBefore)
 
         val dispatcher = StandardTestDispatcher(testScheduler)
 
@@ -962,7 +954,6 @@ internal class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
-    @Ignore
     fun `clears stale favorites when route is missing`() = runTest {
         val now = EasternTimeInstant.now()
 
@@ -972,13 +963,7 @@ internal class FavoritesViewModelTest : KoinTest {
         }
         val favoritesAfter = buildFavorites { routeStopDirection(route1.id, stop1.id, 0) }
 
-        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
-
-        everySuspend { favoritesRepo.getFavorites() } sequentially
-            {
-                returns(favoritesBefore)
-                repeat { returns(favoritesAfter) }
-            }
+        val favoritesRepo = MockFavoritesRepository(favorites = favoritesBefore)
 
         val dispatcher = StandardTestDispatcher(testScheduler)
 
@@ -1004,7 +989,6 @@ internal class FavoritesViewModelTest : KoinTest {
     }
 
     @Test
-    @Ignore
     fun `clears stale favorites when direction is missing`() = runTest {
         val now = EasternTimeInstant.now()
 
@@ -1022,13 +1006,7 @@ internal class FavoritesViewModelTest : KoinTest {
         }
         val favoritesAfter = buildFavorites { routeStopDirection(route.id, stop.id, 0) }
 
-        val favoritesRepo = mock<IFavoritesRepository>(MockMode.autofill)
-
-        everySuspend { favoritesRepo.getFavorites() } sequentially
-            {
-                returns(favoritesBefore)
-                repeat { returns(favoritesAfter) }
-            }
+        val favoritesRepo = MockFavoritesRepository(favorites = favoritesBefore)
 
         val dispatcher = StandardTestDispatcher(testScheduler)
 
