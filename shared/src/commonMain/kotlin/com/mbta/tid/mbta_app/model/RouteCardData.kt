@@ -431,7 +431,7 @@ public data class RouteCardData(
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
                     LeafFormat.Branched.BranchRow(
                         route,
-                        upcomingTrip.trip.headsign,
+                        upcomingTrip.headsign,
                         UpcomingFormat.Some(formatted, null),
                     )
                 }

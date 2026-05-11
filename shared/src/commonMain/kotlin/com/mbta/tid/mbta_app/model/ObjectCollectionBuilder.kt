@@ -209,6 +209,7 @@ private constructor(
         public var stopId: String = ""
         public var tripId: String = ""
         public var vehicleId: String? = null
+        public var tripHeadsign: String? = null
 
         public var trip: Trip
             get() = checkNotNull(trips[tripId])
@@ -234,6 +235,7 @@ private constructor(
                 stopId,
                 tripId,
                 vehicleId,
+                tripHeadsign,
             )
     }
 

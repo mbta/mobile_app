@@ -816,6 +816,15 @@ class UpcomingTripTest {
     }
 
     @Test
+    fun `tripHeadsign overrides trip stopHeadsign`() {
+        val prediction = prediction { tripHeadsign = "Trip Headsign" }
+        val trip = trip { headsign = "Trip Headsign" }
+        val schedule = schedule { stopHeadsign = "Stop Headsign" }
+
+        assertEquals(prediction.tripHeadsign, UpcomingTrip(trip, schedule, prediction).headsign)
+    }
+
+    @Test
     fun `stopHeadsign in schedule overrides trip headsign`() {
         val trip = trip { headsign = "Trip Headsign" }
         val schedule = schedule { stopHeadsign = "Stop Headsign" }

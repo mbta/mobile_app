@@ -151,7 +151,8 @@ class PredictionsRepositoryTests : KoinTest {
                                                 "stop_id": "12345",
                                                 "trip_id": "t_1",
                                                 "vehicle_id": "v_1",
-                                                "stop_sequence": 38
+                                                "stop_sequence": 38,
+                                                "trip_headsign": "Nubian"
                                             }
                                         }
                                     },
@@ -245,7 +246,8 @@ class PredictionsRepositoryTests : KoinTest {
                                     "stop_id": "12345",
                                     "trip_id": "t_1",
                                     "vehicle_id": "v_1",
-                                    "stop_sequence": 38
+                                    "stop_sequence": 38,
+                                    "trip_headsign": "Nubian"
                                 }
                             },
                             "trips": {
