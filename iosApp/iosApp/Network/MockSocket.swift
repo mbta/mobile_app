@@ -32,6 +32,8 @@ open class MockSocket: PhoenixSocket {
     public func onDetach(callback _: @escaping () -> Void) -> String {
         "Closed"
     }
+
+    public func onError(callback _: @escaping (KotlinThrowable, String) -> Void) {}
 }
 
 class MockPush: PhoenixPush {

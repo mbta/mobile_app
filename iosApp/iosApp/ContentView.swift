@@ -64,6 +64,16 @@ struct ContentView: View {
         } action: { height in
             contentHeight = height
         }
+        .withScenePhaseHandlers(
+            onActive: {
+                socketProvider.socket.attach()
+                nearbyVM.joinAlertsChannel()
+            },
+            onBackground: {
+                nearbyVM.leaveAlertsChannel()
+                socketProvider.socket.detach()
+            }
+        )
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .onAppear {
             mapVM.setViewportManager(viewportManager: viewportProvider)
@@ -146,16 +156,6 @@ struct ContentView: View {
                 favoritesVM.setIsFirstExposureToNewFavorites(isFirst: true)
             }
         }
-        .withScenePhaseHandlers(
-            onActive: {
-                socketProvider.socket.attach()
-                nearbyVM.joinAlertsChannel()
-            },
-            onBackground: {
-                nearbyVM.leaveAlertsChannel()
-                socketProvider.socket.detach()
-            }
-        )
         .withBackgroundTimer {
             nearbyVM.popToEntrypoint()
             mapVM.recenter(type: .currentLocation)

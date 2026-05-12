@@ -132,7 +132,9 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
                         },
                         onTimeout = {
                             handleJoinErrorAndBanner(
-                                ApiResult.Error(message = "${SocketError.TIMEOUT} - $it")
+                                ApiResult.Error(
+                                    message = "${SocketError.TIMEOUT} - ${it.subject} ${it.body}"
+                                )
                             )
                         },
                     )
