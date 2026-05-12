@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.android
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -133,6 +134,15 @@ fun ContentView(
     LaunchedEffect(Unit) {
         mapViewModel.setViewportManager(viewportProvider)
         scheduleCache.deleteStaleSchedules(EasternTimeInstant.now().serviceDate)
+    }
+
+    LaunchedEffect(null) {
+        socket.onError { error, response ->
+            errorBannerRepository.setDataError("socket", "$error $response") {
+                Log.e("KB", "Calling attach again")
+                socket.attach()
+            }
+        }
     }
 
     LifecycleResumeEffect(null) {

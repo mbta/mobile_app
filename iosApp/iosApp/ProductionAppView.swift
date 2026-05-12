@@ -84,6 +84,9 @@ struct ProductionAppView: View {
 
     private static func initSocket() -> PhoenixSocket {
         let socket = Socket(appVariant.socketUrl)
+        socket.logger = { message in
+            print("KB: \(message)")
+        }
 
         // decreasing default from 5s
         socket.reconnectAfter = { tries in
