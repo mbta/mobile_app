@@ -166,7 +166,6 @@ struct ContentView: View {
         ) { _ in
             Task { await contentVM.loadConfig() }
         }
-
         .enableInjection()
     }
 

@@ -214,7 +214,6 @@ struct NearbyTransitView: View {
 
     func joinPredictions(_ stopIds: [String]?) {
         guard let stopIds else { return }
-
         predictionsRepository.connect(
             stopIds: stopIds,
             errorKey: "NearbyTransitView.joinPredictions",
