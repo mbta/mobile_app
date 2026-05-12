@@ -175,7 +175,6 @@ struct StopDetailsFilteredView: View {
                             context: .stopDetails,
                             defaultDirection: routeStopDirection.direction,
                             fcmToken: fcmTokenContainer.token,
-                            includeAccessibility: settingsCache.get(.stationAccessibility),
                         )
                     },
                     onClose: { inSaveFavoritesFlow = false },

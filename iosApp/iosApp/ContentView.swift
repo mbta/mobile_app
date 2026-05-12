@@ -633,7 +633,6 @@ struct ContentView: View {
                             context: context,
                             defaultDirection: selectedDirection,
                             fcmToken: fcmTokenContainer.token,
-                            includeAccessibility: includeAccessibility,
                         )
                     },
                     navCallbacks: navCallbacks,

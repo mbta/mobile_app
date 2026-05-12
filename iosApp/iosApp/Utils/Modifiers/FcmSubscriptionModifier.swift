@@ -20,7 +20,7 @@ struct FcmSubscriptionModifier: ViewModifier {
     @State var favorites: Favorites = LoadedFavorites.last
 
     func updateSubscriptions(_ fcmToken: String?, _ notificationsEnabled: Bool) {
-        if notificationsEnabled, let fcmToken {
+        if let fcmToken {
             Task {
                 let subscriptions = SubscriptionRequest.companion.fromFavorites(
                     favorites: favorites.routeStopDirection,
@@ -29,7 +29,8 @@ struct FcmSubscriptionModifier: ViewModifier {
                 try await subscriptionsRepository.updateSubscriptions(
                     fcmToken: fcmToken,
                     subscriptions: subscriptions,
-                    locale: NSLocalizedString("key/current_locale", comment: "")
+                    locale: NSLocalizedString("key/current_locale", comment: ""),
+                    notificationsEnabled: notificationsEnabled,
                 )
             }
         }
