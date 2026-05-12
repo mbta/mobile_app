@@ -29,12 +29,12 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.addSvg
-import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -92,14 +92,21 @@ fun VehiclePuck(
             contentAlignment = Alignment.Center,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.vehicle_halo),
+                painter =
+                    painterResource(
+                        id =
+                            if (vehicle.bearing != null) R.drawable.vehicle_halo_teardrop
+                            else R.drawable.vehicle_halo_circle
+                    ),
                 contentDescription = null,
             )
             if (vehicle.decoration == Vehicle.Decoration.Pride) {
                 val puckPath = Path()
-                puckPath.addSvg(
-                    "m-0,14c-0,-2.908 -0,-10.308 -0,-13.001 -0,-0.552 0.445,-0.999 0.997,-0.999 2.608,-0 9.66,-0 13.003,-0 7.732,-0 14,6.268 14,14 0,7.732 -6.268,14 -14,14 -7.732,0 -14,-6.268 -14,-14z"
-                )
+                if (vehicle.bearing == null) puckPath.addOval(Rect(Offset(14f, 14f), 14f))
+                else
+                    puckPath.addSvg(
+                        "m-0,14c-0,-2.908 -0,-10.308 -0,-13.001 -0,-0.552 0.445,-0.999 0.997,-0.999 2.608,-0 9.66,-0 13.003,-0 7.732,-0 14,6.268 14,14 0,7.732 -6.268,14 -14,14 -7.732,0 -14,-6.268 -14,-14z"
+                    )
                 Box(
                     Modifier.size(28.dp).drawWithCache {
                         onDrawWithContent {
@@ -147,7 +154,12 @@ fun VehiclePuck(
                 )
             } else {
                 Image(
-                    painter = painterResource(id = R.drawable.vehicle_puck),
+                    painter =
+                        painterResource(
+                            id =
+                                if (vehicle.bearing != null) R.drawable.vehicle_puck_teardrop
+                                else R.drawable.vehicle_puck_circle
+                        ),
                     contentDescription = null,
                     colorFilter = ColorFilter.tint(routeColor),
                 )

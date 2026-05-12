@@ -20,9 +20,9 @@ struct VehicleMarkerView: View {
     var body: some View {
         ZStack {
             ZStack {
-                Image(.vehicleHalo)
+                Image(vehicle.bearing != nil ? .vehicleHaloTeardrop : .vehicleHaloCircle)
                 if vehicle.decoration == .pride {
-                    VehiclePuckShape(bearing: vehicle.bearing?.doubleValue ?? 0)
+                    VehiclePuckShape(bearing: vehicle.bearing?.doubleValue)
                         .frame(width: 28, height: 28)
                         .rotationEffect(.degrees(360 - 45))
                         .rotationEffect(.degrees(360 - (vehicle.bearing?.doubleValue ?? 0)))
@@ -49,7 +49,8 @@ struct VehicleMarkerView: View {
                             .init(color: .init(hex: "80276C"), location: 1),
                         ]))
                 } else {
-                    Image(.vehiclePuck).foregroundStyle(routeAccents.color)
+                    Image(vehicle.bearing != nil ? .vehiclePuckTeardrop : .vehiclePuckCircle)
+                        .foregroundStyle(routeAccents.color)
                 }
             }
             .frame(width: 32, height: 32)
@@ -105,9 +106,10 @@ struct VehicleMarkerView: View {
     }
 
     struct VehiclePuckShape: SwiftUI.Shape {
-        let bearing: Double
+        let bearing: Double?
 
         func path(in rect: CGRect) -> SwiftUI.Path {
+            guard let bearing else { return .init(ellipseIn: .init(x: 0, y: 0, width: 28, height: 28)) }
             func p(_ origX: CGFloat, _ origY: CGFloat) -> CGPoint {
                 .init(x: origX * rect.width / 28 + rect.minX, y: origY * rect.height / 28 + rect.minY)
             }
@@ -198,7 +200,7 @@ struct DecorationPreview: PreviewProvider {
                             let vehicle = objects.vehicle {
                                 $0.currentStatus = .inTransitTo
                                 $0.decoration = decoration
-                                $0.bearing = Double(45 * routeIndex)
+                                $0.bearing = .init(value: 45.0 * Double(routeIndex))
                             }
                             VehicleMarkerView(
                                 vehicle: vehicle,
