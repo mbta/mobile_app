@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import RegexBuilder
 import Shared
 
 // swiftlint:disable:next type_body_length
