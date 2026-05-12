@@ -24,7 +24,7 @@ compose-shimmer= "1.4.0"
 # changelog: https://github.com/CycloneDX/cyclonedx-gradle-plugin/releases
 cyclonedx = "3.2.2"
 # changelog: https://developer.android.com/jetpack/androidx/releases/datastore
-cyclonedxCoreJava = "12.1.0"
+cyclonedxCoreJava = "12.2.0"
 datastorePreferencesCore = "1.2.1"
 # bom/changelog: https://firebase.google.com/support/release-notes/android
 firebase-bom = "34.13.0"
