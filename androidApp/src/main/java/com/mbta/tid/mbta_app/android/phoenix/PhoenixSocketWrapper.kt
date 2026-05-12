@@ -9,7 +9,7 @@ import org.phoenixframework.Socket
 value class PhoenixSocketWrapper(private val socket: Socket) : PhoenixSocket {
 
     init {
-        socket.timeout = 6_000
+        socket.timeout = 3_000
         socket.reconnectAfterMs = { tries ->
             if (tries > 9) 2_000
             else listOf(10L, 50L, 100L, 150L, 200L, 250L, 500L, 1_000L, 2_000L)[tries - 1]

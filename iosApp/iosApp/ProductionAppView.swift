@@ -92,7 +92,7 @@ struct ProductionAppView: View {
             tries > 2 ? 2 : [1, 2][tries - 1]
         }
 
-        socket.timeout = 6.0
+        socket.timeout = 3.0
 
         socket.withRawMessages()
         socket.onOpen {
