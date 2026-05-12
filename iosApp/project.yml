@@ -89,7 +89,7 @@ packages:
     from: 4.6.0
   MapboxMaps:
     url: https://github.com/mapbox/mapbox-maps-ios.git
-    from: 11.14.2
+    from: 11.23.0
   Reachability:
     url: https://github.com/ashleymills/Reachability.swift
     from: 5.2.4
