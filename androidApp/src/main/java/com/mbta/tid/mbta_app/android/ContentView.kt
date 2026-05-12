@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.android
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -138,10 +137,7 @@ fun ContentView(
 
     LaunchedEffect(null) {
         socket.onError { error, response ->
-            errorBannerRepository.setDataError("socket", "$error $response") {
-                Log.e("KB", "Calling attach again")
-                socket.attach()
-            }
+            errorBannerRepository.setDataError("socket", "$error $response") { socket.attach() }
         }
     }
 

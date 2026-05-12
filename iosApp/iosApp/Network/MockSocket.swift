@@ -15,7 +15,7 @@ open class MockSocket: PhoenixSocket {
     // Channel.socket is weak, so we need to maintain a reference to the Socket
     private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
-    public func attach() throws {}
+    public func attach() {}
 
     public func detach() {}
 

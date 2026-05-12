@@ -68,10 +68,7 @@ struct ProductionAppView: View {
     ) {
         socket.onError { error, response in
             errorBannerRepository.setDataError(key: "socket", details: "\(error) \(response)", action: {
-                do {
-                    print("KB: retrying to attach")
-                    try socket.attach()
-                } catch {}
+                socket.attach()
             })
             Logger().debug("socket error: \(error) \(response)")
             Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
@@ -84,9 +81,6 @@ struct ProductionAppView: View {
 
     private static func initSocket() -> PhoenixSocket {
         let socket = Socket(appVariant.socketUrl)
-        socket.logger = { message in
-            print("KB: \(message)")
-        }
 
         // decreasing default from 5s
         socket.reconnectAfter = { tries in

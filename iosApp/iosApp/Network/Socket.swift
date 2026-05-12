@@ -21,7 +21,6 @@ extension Socket: PhoenixSocket {
     }
 
     public func onError(callback: @escaping (KotlinThrowable, String) -> Void) {
-        print("KB: onError set")
         onError { error, response in
             callback(KotlinThrowable(message: error.localizedDescription), response?.description ?? "")
         }
