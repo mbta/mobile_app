@@ -6199,6 +6199,8 @@ class RouteCardDataTest {
 
         val stop = objects.stop { id = "test" }
 
+        val lastStop = objects.stop { id = "last-stop" }
+
         val serviceEndedRoute =
             objects.route {
                 id = "Shuttle-service-ended"
@@ -6210,7 +6212,7 @@ class RouteCardDataTest {
                 sortOrder = 1
                 representativeTrip {
                     headsign = "Test"
-                    stopIds = listOf(stop.id)
+                    stopIds = listOf(stop.id, lastStop.id)
                 }
                 typicality = RoutePattern.Typicality.Typical
             }
