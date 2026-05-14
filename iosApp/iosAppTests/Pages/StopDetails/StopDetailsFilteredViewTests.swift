@@ -67,51 +67,85 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         let stop = objects.stop { _ in }
         let route = objects.route()
         let directionId: Int32 = 0
+        let now = EasternTimeInstant.now()
+        let upcomingTrip = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = objects.trip { $0.headsign = "A" }
+            prediction.departureTime = now.plus(seconds: 15)
+        })
 
         let favoritesRepository = MockFavoritesRepository()
 
-        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(
-            routeData: .some(StopDetailsViewModel.RouteDataFiltered(
-                filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.id, directionId: 1),
-                                    tripFilter: nil),
-                stopData: .init(route: route, stop: stop, data: [RouteCardData.Leaf(
-                    lineOrRoute: LineOrRoute.Route(route: route),
-                    stop: stop,
-                    directionId: 0,
-                    routePatterns: [],
-                    stopIds: Set([stop.id]),
-                    upcomingTrips: [],
-                    alertsHere: [],
-                    allDataLoaded: true,
-                    hasSchedulesToday: true,
-                    subwayServiceStartTime: nil,
-                    alertsDownstream: [],
-                    context: .stopDetailsFiltered
-                ), RouteCardData.Leaf(
-                    lineOrRoute: LineOrRoute.Route(route: route),
-                    stop: stop,
-                    directionId: 1,
-                    routePatterns: [],
-                    stopIds: Set([stop.id]),
-                    upcomingTrips: [],
-                    alertsHere: [],
-                    allDataLoaded: true,
-                    hasSchedulesToday: true,
-                    subwayServiceStartTime: nil,
-                    alertsDownstream: [],
-                    context: .stopDetailsFiltered
-                )],
-                globalData: GlobalResponse(objects: objects))
-            )),
-            alertSummaries: [:],
-            awaitingPredictionsAfterBackground: false
-        ))
+        let stopData: RouteCardData.RouteStopData = .init(route: route, stop: stop, data: [RouteCardData.Leaf(
+            lineOrRoute: LineOrRoute.Route(route: route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [upcomingTrip],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .stopDetailsFiltered
+        ), RouteCardData.Leaf(
+            lineOrRoute: LineOrRoute.Route(route: route),
+            stop: stop,
+            directionId: 1,
+            routePatterns: [],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .stopDetailsFiltered
+        )],
+        globalData: GlobalResponse(objects: objects))
+
+        let routeData = StopDetailsViewModel.RouteDataFiltered(
+            filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.id, directionId: 1),
+                                tripFilter: nil),
+            stopData: .init(route: route, stop: stop, data: [RouteCardData.Leaf(
+                lineOrRoute: LineOrRoute.Route(route: route),
+                stop: stop,
+                directionId: 0,
+                routePatterns: [],
+                stopIds: Set([stop.id]),
+                upcomingTrips: [upcomingTrip],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: true,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .stopDetailsFiltered
+            ), RouteCardData.Leaf(
+                lineOrRoute: LineOrRoute.Route(route: route),
+                stop: stop,
+                directionId: 1,
+                routePatterns: [],
+                stopIds: Set([stop.id]),
+                upcomingTrips: [],
+                alertsHere: [],
+                allDataLoaded: true,
+                hasSchedulesToday: true,
+                subwayServiceStartTime: nil,
+                alertsDownstream: [],
+                context: .stopDetailsFiltered
+            )],
+            globalData: GlobalResponse(objects: objects))
+        )
+
+        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
+                                                                         alertSummaries: [:],
+                                                                         awaitingPredictionsAfterBackground: false))
 
         let sut = StopDetailsFilteredView(
             stopId: stop.id,
             stopFilter: .init(routeId: route.id, directionId: directionId),
             tripFilter: nil,
-            routeData: nil,
+            routeData: routeData,
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -127,11 +161,13 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(
-                try? view.find(StopDetailsFilteredPickerView.self)
+                try? view.find(DepartureTile.self)
             )
         }
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
     }
+
+    // TODO: test that can still see direction labels while data is loading
 }
