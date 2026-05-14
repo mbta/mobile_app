@@ -91,9 +91,11 @@ struct StopDetailsFilteredView: View {
     var stop: Stop? { global?.getStop(stopId: stopId) }
     var stopData: RouteCardData.RouteStopData? {
         if case let .filtered(data) = onEnum(of: routeData), routeData?.filters.stopId == stopId,
-           routeData?.filters.stopFilter == stopFilter {
+           routeData?.filters.stopFilter?.routeId == stopFilter.routeId {
             data.stopData
-        } else { nil }
+        } else {
+            nil
+        }
     }
 
     var tripPageFilter: TripDetailsPageFilter? {
