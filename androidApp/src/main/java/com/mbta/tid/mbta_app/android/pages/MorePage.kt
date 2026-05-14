@@ -148,7 +148,11 @@ fun MorePage(
                                             Settings.DevDebugMode,
                                             Settings.HideMaps,
                                             Settings.NotificationPresetWindows,
-                                            Settings.SearchRouteResults -> {}
+                                            Settings.SearchRouteResults,
+                                            Settings.ShiftingDisabled,
+                                            Settings.ShiftingIncludeStops,
+                                            Settings.ShiftingUseTranslate,
+                                            Settings.ShiftingScaleWithZoom -> {}
                                         }
                                     },
                                 )

@@ -15,6 +15,7 @@ class RouteLayerGeneratorTest {
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light,
+                settings = emptyMap(),
             )
 
         assertEquals(
@@ -44,6 +45,7 @@ class RouteLayerGeneratorTest {
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light,
+                settings = emptyMap(),
             )
 
         for (layer in routeLayers) {
@@ -58,6 +60,7 @@ class RouteLayerGeneratorTest {
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 ColorPalette.light,
+                settings = emptyMap(),
             )
 
         for (route in listOf(MapTestDataHelper.routeRed, MapTestDataHelper.routeOrange)) {
@@ -80,6 +83,7 @@ class RouteLayerGeneratorTest {
                 MapTestDataHelper.routeResponse.routesWithSegmentedShapes,
                 MapTestDataHelper.global,
                 colorPalette,
+                settings = emptyMap(),
             )
 
         for (suspendedLayer in routeLayers.filter { it.id.endsWith("-suspended") }) {
