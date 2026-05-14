@@ -15,7 +15,6 @@ val runLocalReleaseBuild = false
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.compose)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry.android)
     alias(libs.plugins.serialization)
