@@ -120,9 +120,9 @@ struct StopDetailsFilteredView: View {
     var body: some View {
         VStack(spacing: 0) {
             if let lineOrRoute, let global, let stop {
-                var allPatternsForStop: [RoutePattern] = global.getPatternsFor(stopId: stopId, lineOrRoute: lineOrRoute)
+                let allPatternsForStop: [RoutePattern] = global.getPatternsFor(stopId: stopId, lineOrRoute: lineOrRoute)
 
-                var directions: [Direction] = lineOrRoute.directions(
+                let directions: [Direction] = lineOrRoute.directions(
                     globalData: global,
                     stop: stop,
                     patterns: allPatternsForStop.filter { pattern in
@@ -130,7 +130,7 @@ struct StopDetailsFilteredView: View {
                     }
                 )
 
-                var availableDirections = directions.filter {
+                let availableDirections = directions.filter {
                     !stop.isLastStopForAllPatterns(directionId: $0.id, patterns: allPatternsForStop, global: global)
                 }
 
@@ -152,30 +152,27 @@ struct StopDetailsFilteredView: View {
                             .frame(height: 2)
                             .frame(maxWidth: .infinity)
 
-                        StopDetailsFilteredPickerView(
-                            stopId: stopId,
-                            stopFilter: stopFilter,
-                            tripFilter: tripFilter,
-                            setStopFilter: setStopFilter,
-                            setTripFilter: setTripFilter,
-                            route: lineOrRoute.sortRoute,
-                            leaf: leaf,
-                            availableDirections: availableDirections.map(\.id),
-                            directions: directions,
-                            alertSummaries: alertSummaries,
-                            favorite: isFavorite,
-                            now: now,
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM,
-                            viewportProvider: .init()
-                        )
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: 16) {
+                                DirectionPicker(
+                                    availableDirections: availableDirections.map(\.id),
+                                    directions: directions,
+                                    route: lineOrRoute.sortRoute,
+                                    filter: stopFilter,
+                                    setFilter: { setStopFilter($0) }
+                                )
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding([.horizontal, .top], 16)
+                                .padding(.bottom, 6)
+                                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+
+                                departures(directions: directions)
+                            }
+                        }
                     }
                 }
             } else {
-                // TODO: Still probs a loading state
-                EmptyView()
+                loadingDepartures()
             }
         }
         .task {
@@ -198,13 +195,64 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder
+    func departures(directions: [Direction]) -> some View {
+        if let leaf {
+            StopDetailsFilteredDepartureDetails(
+                stopId: stopId,
+                stopFilter: stopFilter,
+                tripFilter: tripFilter,
+                setStopFilter: setStopFilter,
+                setTripFilter: setTripFilter,
+                leaf: leaf,
+                alertSummaries: alertSummaries,
+                selectedDirection: directions[Int(stopFilter.directionId)],
+                favorite: isFavorite,
+                now: now.toEasternInstant(),
+                errorBannerVM: errorBannerVM,
+                nearbyVM: nearbyVM,
+                mapVM: mapVM,
+                stopDetailsVM: stopDetailsVM,
+                viewportProvider: .init()
+            )
+        } else {
+            loadingDepartures()
+        }
+    }
+
+    func loadingDepartures() -> some View {
+        let routeData = LoadingPlaceholders.shared.routeCardData(
+            routeId: stopFilter.routeId,
+            trips: 10,
+            context: .stopDetailsFiltered,
+            now: nowInstant
+        )
+
+        return StopDetailsFilteredDepartureDetails(
+            stopId: stopId,
+            stopFilter: stopFilter,
+            tripFilter: tripFilter,
+            setStopFilter: setStopFilter,
+            setTripFilter: setTripFilter,
+            leaf: routeData.stopData.first!.data.first!,
+            alertSummaries: alertSummaries,
+            selectedDirection: routeData.stopData.first!.directions[Int(stopFilter.directionId)],
+            favorite: isFavorite,
+            now: now.toEasternInstant(),
+            errorBannerVM: errorBannerVM,
+            nearbyVM: nearbyVM,
+            mapVM: mapVM,
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        )
+    }
+
+    @ViewBuilder
     func header(lineOrRoute: LineOrRoute, directions _: [Direction], availableDirections: [Direction]) -> some View {
         let line: Line? = switch onEnum(of: lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 0) {
-            // TODO: this should not be dependent on realtime data
             if let stop, let routeStopDirection, inSaveFavoritesFlow {
                 SaveFavoritesFlow(
                     lineOrRoute: lineOrRoute,
