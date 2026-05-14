@@ -98,7 +98,7 @@ fun MoreSectionView(
                             MoreLink(
                                 item.label.value,
                                 item.callback,
-                                item.note,
+                                item.note?.value,
                                 isKey = section.id == MoreSection.Category.Feedback,
                             )
                         is MoreItem.Phone ->

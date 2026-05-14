@@ -27,6 +27,10 @@ val SharedString.value: String
             SharedString.RouteSearch -> stringResource(R.string.feature_flag_route_search)
             SharedString.SendAppFeedback -> stringResource(R.string.feedback_link_form)
             SharedString.SettingsSection -> stringResource(R.string.more_section_settings)
+            SharedString.ShiftingDisabled -> "Shifting: Disabled"
+            SharedString.ShiftingIncludeStops -> "Shifting: Include Stops"
+            SharedString.ShiftingScaleWithZoom -> "Shifting: Scale With Zoom"
+            SharedString.ShiftingUseTranslate -> "Shifting: Use Translate for Shapes"
             SharedString.SoftwareLicenses -> stringResource(R.string.software_licenses)
             SharedString.StationAccessibilityInfo ->
                 stringResource(R.string.setting_station_accessibility)
