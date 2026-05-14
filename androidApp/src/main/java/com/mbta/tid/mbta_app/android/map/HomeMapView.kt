@@ -39,6 +39,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.ViewAnnotationAnchor
 import com.mapbox.maps.ViewAnnotationOptions
+import com.mapbox.maps.debugoptions.MapViewDebugOptions
 import com.mapbox.maps.extension.compose.DisposableMapEffect
 import com.mapbox.maps.extension.compose.MapEffect
 import com.mapbox.maps.extension.compose.MapboxMap
@@ -194,6 +195,7 @@ fun HomeMapView(
                 val locationProvider = remember { PassthroughLocationProvider() }
 
                 MapEffect { map ->
+                    map.debugOptions = setOf(MapViewDebugOptions.CAMERA)
                     map.mapboxMap.addOnMapClickListener { point ->
                         map.getStopIdAt(point) {
                             handleStopNavigation(it)
