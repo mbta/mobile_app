@@ -16,7 +16,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         static let animation: ViewportAnimation = .easeInOut(duration: 1)
         static let center: CLLocationCoordinate2D = .init(latitude: 42.3575, longitude: -71.0601)
         static let zoom: CGFloat = MapDefaults.shared.defaultZoomThreshold
-        static let overviewPadding: EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
+        static let overviewPadding: SwiftUI.EdgeInsets = .init(top: 75, leading: 50, bottom: 75, trailing: 50)
     }
 
     @Published private(set) var isManuallyCentering: Bool
@@ -145,7 +145,7 @@ class ViewportProvider: ObservableObject, Shared.ViewportManager {
         center: CLLocationCoordinate2D,
         inView: [CLLocationCoordinate2D],
         // Insets with different horizontal/vertical values will result in the center point being off center
-        padding: EdgeInsets = Defaults.overviewPadding
+        padding: SwiftUI.EdgeInsets = Defaults.overviewPadding
     ) -> Viewport {
         let reflectedPoints = inView.map { point in
             CLLocationCoordinate2D(

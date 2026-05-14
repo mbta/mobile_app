@@ -68,7 +68,6 @@ public interface IFavoritesViewModel {
         context: EditFavoritesContext,
         defaultDirection: Int?,
         fcmToken: String?,
-        includeAccessibility: Boolean,
         locale: String?,
     )
 }
@@ -102,7 +101,6 @@ public class FavoritesViewModel(
             val context: EditFavoritesContext,
             val defaultDirection: Int?,
             val fcmToken: String?,
-            val includeAccessibility: Boolean,
             val locale: String?,
         ) : Event
     }
@@ -232,7 +230,6 @@ public class FavoritesViewModel(
                         event.context,
                         event.defaultDirection,
                         event.fcmToken,
-                        event.includeAccessibility,
                         event.locale,
                     )
                     reloadFavorites()
@@ -256,7 +253,6 @@ public class FavoritesViewModel(
                     EditFavoritesContext.StaleCheck,
                     defaultDirection = null,
                     fcmToken,
-                    false,
                     locale = null,
                 )
                 sentryRepository.captureMessage("Clearing stale favorites") {
@@ -387,18 +383,10 @@ public class FavoritesViewModel(
         context: EditFavoritesContext,
         defaultDirection: Int?,
         fcmToken: String?,
-        includeAccessibility: Boolean,
         locale: String?,
     ) {
         fireEvent(
-            Event.UpdateFavorites(
-                updatedFavorites,
-                context,
-                defaultDirection,
-                fcmToken,
-                includeAccessibility,
-                locale,
-            )
+            Event.UpdateFavorites(updatedFavorites, context, defaultDirection, fcmToken, locale)
         )
     }
 }
@@ -463,7 +451,6 @@ constructor(initialState: FavoritesViewModel.State = FavoritesViewModel.State())
         context: EditFavoritesContext,
         defaultDirection: Int?,
         fcmToken: String?,
-        includeAccessibility: Boolean,
         locale: String?,
     ) {
         onUpdateFavorites(updatedFavorites)

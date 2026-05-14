@@ -5,7 +5,9 @@ import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.repositories.IFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import kotlin.experimental.ExperimentalObjCRefinement
 import kotlin.native.ShouldRefineInSwift
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +22,7 @@ import org.koin.core.component.KoinComponent
 
 public class FavoritesUsecases(
     private val repository: IFavoritesRepository,
+    private val settingsRepository: ISettingsRepository,
     private val subscriptionsRepository: ISubscriptionsRepository,
     private val analytics: Analytics,
 ) : KoinComponent {
@@ -39,7 +42,6 @@ public class FavoritesUsecases(
         context: EditFavoritesContext,
         defaultDirection: Int?,
         fcmToken: String?,
-        includeAccessibility: Boolean,
         locale: String?,
     ) {
         val storedFavorites = repository.getFavorites()
@@ -64,9 +66,19 @@ public class FavoritesUsecases(
         }
         repository.setFavorites(storedFavorites.copy(routeStopDirection = currentFavorites))
         fcmToken?.let {
-            val subs = SubscriptionRequest.fromFavorites(currentFavorites, includeAccessibility)
+            val settings = settingsRepository.getSettings()
+            val subs =
+                SubscriptionRequest.fromFavorites(
+                    currentFavorites,
+                    includeAccessibility = settings[Settings.StationAccessibility] ?: false,
+                )
             CoroutineScope(Dispatchers.IO).launch {
-                subscriptionsRepository.updateSubscriptions(it, subs, locale)
+                subscriptionsRepository.updateSubscriptions(
+                    fcmToken,
+                    subs,
+                    locale,
+                    notificationsEnabled = settings[Settings.Notifications] ?: false,
+                )
             }
         }
         getRouteStopDirectionFavorites()

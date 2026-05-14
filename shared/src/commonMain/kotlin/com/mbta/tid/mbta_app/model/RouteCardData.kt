@@ -1245,7 +1245,7 @@ public data class RouteCardData(
 
             // Typical shuttle with no service today
             val shuttleWithNoServiceToday =
-                upcomingTrips?.isEmpty() == true && lineOrRoute.isShuttle
+                upcomingTrips.orEmpty().isEmpty() && lineOrRoute.isShuttle
 
             return (hasUnseenTypicalPattern || hasUnseenUpcomingTrip) &&
                 !(shouldBeFilteredAsArrivalOnly) &&

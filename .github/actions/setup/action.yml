@@ -117,10 +117,6 @@ runs:
       uses: ruby/setup-ruby@v1
       with:
         bundler-cache: true
-    - name: Patch Fastlane to pick up application default credentials
-      if: steps.settings.outputs.ruby == 'true'
-      run: bin/patch-fastlane.sh
-      shell: bash
     - name: Configure Xcode version
       if: steps.settings.outputs.xcode == 'true'
       shell: bash

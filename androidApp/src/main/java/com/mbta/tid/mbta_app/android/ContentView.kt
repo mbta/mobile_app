@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
+import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
@@ -72,6 +73,7 @@ fun ContentView(
     favoritesViewModel: IFavoritesViewModel = koinInject(),
     favoritesUsecases: FavoritesUsecases = koinInject(),
     scheduleCache: ScheduleCache = koinInject(),
+    errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     subscriptionsRepository: ISubscriptionsRepository = koinInject(),
     mapViewModel: MapViewModel = koinInject(),
     accessibilityStatusRepository: IAccessibilityStatusRepository = koinInject(),
@@ -98,14 +100,16 @@ fun ContentView(
     val pendingFeaturePromos = viewModel.pendingFeaturePromos.collectAsState().value
     val currentLocale = stringResource(R.string.current_locale)
 
-    if (notificationsEnabled) {
-        LaunchedEffect(fcmToken) {
-            fcmToken?.let {
-                val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
-                val subscriptions =
-                    SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
-                subscriptionsRepository.updateSubscriptions(it, subscriptions, currentLocale)
-            }
+    LaunchedEffect(fcmToken, notificationsEnabled) {
+        fcmToken?.let {
+            val favorites = favoritesUsecases.getRouteStopDirectionFavorites()
+            val subscriptions = SubscriptionRequest.fromFavorites(favorites, includeAccessibility)
+            subscriptionsRepository.updateSubscriptions(
+                it,
+                subscriptions,
+                currentLocale,
+                notificationsEnabled,
+            )
         }
     }
 
@@ -131,6 +135,12 @@ fun ContentView(
     LaunchedEffect(Unit) {
         mapViewModel.setViewportManager(viewportProvider)
         scheduleCache.deleteStaleSchedules(EasternTimeInstant.now().serviceDate)
+    }
+
+    LaunchedEffect(null) {
+        socket.onError { error, response ->
+            errorBannerRepository.setDataError("socket", "$error $response") { socket.attach() }
+        }
     }
 
     LifecycleResumeEffect(null) {

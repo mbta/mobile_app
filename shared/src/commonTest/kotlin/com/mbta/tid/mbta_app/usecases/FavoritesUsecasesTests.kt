@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.WindowRequest
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockSubscriptionsRepository
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.Test
@@ -25,7 +26,13 @@ class FavoritesUsecasesTests : KoinTest {
         val routeStopDirection = RouteStopDirection(Route.Id("Red"), "place-alfcl", 0)
         val savedFavorites = buildFavorites { routeStopDirection(routeStopDirection) }
         val repository = MockFavoritesRepository(savedFavorites)
-        val usecase = FavoritesUsecases(repository, MockSubscriptionsRepository(), MockAnalytics())
+        val usecase =
+            FavoritesUsecases(
+                repository,
+                MockSettingsRepository(),
+                MockSubscriptionsRepository(),
+                MockAnalytics(),
+            )
         assertEquals(
             usecase.getRouteStopDirectionFavorites(),
             mapOf(routeStopDirection to FavoriteSettings()),
@@ -35,7 +42,13 @@ class FavoritesUsecasesTests : KoinTest {
     @Test
     fun testGetEmptyRouteStopDirectionFavorites() = runBlocking {
         val repository = MockFavoritesRepository()
-        val usecase = FavoritesUsecases(repository, MockSubscriptionsRepository(), MockAnalytics())
+        val usecase =
+            FavoritesUsecases(
+                repository,
+                MockSettingsRepository(),
+                MockSubscriptionsRepository(),
+                MockAnalytics(),
+            )
         assertEquals(usecase.getRouteStopDirectionFavorites(), emptyMap())
     }
 
@@ -50,6 +63,7 @@ class FavoritesUsecasesTests : KoinTest {
         val useCase =
             FavoritesUsecases(
                 repository,
+                MockSettingsRepository(),
                 MockSubscriptionsRepository(),
                 MockAnalytics(onLogEvent = { event, attrs -> eventLogged = event }),
             )
@@ -62,7 +76,6 @@ class FavoritesUsecasesTests : KoinTest {
             EditFavoritesContext.Favorites,
             0,
             null,
-            false,
             "en",
         )
 
@@ -87,7 +100,13 @@ class FavoritesUsecasesTests : KoinTest {
                 }
             )
 
-        val useCase = FavoritesUsecases(repository, subscriptionsRepository, MockAnalytics())
+        val useCase =
+            FavoritesUsecases(
+                repository,
+                MockSettingsRepository(),
+                subscriptionsRepository,
+                MockAnalytics(),
+            )
 
         val expectedSubs =
             listOf(
@@ -155,7 +174,6 @@ class FavoritesUsecasesTests : KoinTest {
             EditFavoritesContext.Favorites,
             0,
             "fake_token",
-            false,
             "en",
         )
 

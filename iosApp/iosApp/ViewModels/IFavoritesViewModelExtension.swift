@@ -15,14 +15,12 @@ extension IFavoritesViewModel {
         context: EditFavoritesContext,
         defaultDirection: Int32,
         fcmToken: String?,
-        includeAccessibility: Bool,
     ) {
         __updateFavorites(
             updatedFavorites: updatedFavorites,
             context: context,
             defaultDirection: .init(int: defaultDirection),
             fcmToken: fcmToken,
-            includeAccessibility: includeAccessibility,
             locale: NSLocalizedString("key/current_locale", comment: ""),
         )
     }
