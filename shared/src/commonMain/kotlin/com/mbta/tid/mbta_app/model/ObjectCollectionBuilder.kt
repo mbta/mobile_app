@@ -474,7 +474,7 @@ private constructor(
 
     public inner class VehicleBuilder : ObjectBuilder<Vehicle> {
         public var id: String = objectId()
-        public var bearing: Double = 0.0
+        public var bearing: Double? = 0.0
         public var carriages: List<Vehicle.Carriage>? = null
         public lateinit var currentStatus: Vehicle.CurrentStatus
         public var currentStopSequence: Int? = null
