@@ -17,7 +17,10 @@ struct StopDetailsFilteredPickerView: View {
     var setStopFilter: (StopDetailsFilter?) -> Void
     var setTripFilter: (TripDetailsFilter?) -> Void
 
-    var stopData: RouteCardData.RouteStopData
+    var route: Route
+    var leaf: RouteCardData.Leaf?
+    var availableDirections: [Int32]
+    var directions: [Direction]
     var alertSummaries: [String: AlertSummary?]
 
     var favorite: Bool
@@ -33,15 +36,16 @@ struct StopDetailsFilteredPickerView: View {
 
     let inspection = Inspection<Self>()
 
-    var routeColor: Color { Color(hex: stopData.lineOrRoute.backgroundColor) }
-
     init(
         stopId: String,
         stopFilter: StopDetailsFilter,
         tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        stopData: RouteCardData.RouteStopData,
+        route: Route,
+        leaf: RouteCardData.Leaf?,
+        availableDirections: [Int32],
+        directions: [Direction],
         alertSummaries: [String: AlertSummary?],
         favorite: Bool,
         now: Date,
@@ -56,7 +60,10 @@ struct StopDetailsFilteredPickerView: View {
         self.tripFilter = tripFilter
         self.setStopFilter = setStopFilter
         self.setTripFilter = setTripFilter
-        self.stopData = stopData
+        self.route = route
+        self.leaf = leaf
+        self.availableDirections = availableDirections
+        self.directions = directions
         self.alertSummaries = alertSummaries
         self.favorite = favorite
         self.now = now
@@ -66,78 +73,65 @@ struct StopDetailsFilteredPickerView: View {
         self.stopDetailsVM = stopDetailsVM
     }
 
-    var leaf: RouteCardData.Leaf? {
-        stopData.data
-            .first {
-                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.directionId == stopFilter
-                    .directionId
-            }
-    }
-
     var body: some View {
-        ZStack(alignment: .top) {
-            routeColor.ignoresSafeArea(.all)
-            Rectangle()
-                .fill(Color.halo)
-                .frame(height: 2)
-                .frame(maxWidth: .infinity)
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 16) {
-                    DirectionPicker(
-                        stopData: stopData,
-                        filter: stopFilter,
-                        setFilter: { setStopFilter($0) }
-                    )
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding([.horizontal, .top], 16)
-                    .padding(.bottom, 6)
-                    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 16) {
+                DirectionPicker(
+                    availableDirections: availableDirections,
+                    directions: directions,
+                    route: route,
+                    filter: stopFilter,
+                    setFilter: { setStopFilter($0) }
+                )
+                .fixedSize(horizontal: false, vertical: true)
+                .padding([.horizontal, .top], 16)
+                .padding(.bottom, 6)
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
 
-                    if let leaf {
-                        StopDetailsFilteredDepartureDetails(
-                            stopId: stopId,
-                            stopFilter: stopFilter,
-                            tripFilter: tripFilter,
-                            setStopFilter: setStopFilter,
-                            setTripFilter: setTripFilter,
-                            leaf: leaf,
-                            alertSummaries: alertSummaries,
-                            selectedDirection: stopData.directions[Int(stopFilter.directionId)],
-                            favorite: favorite,
-                            now: now.toEasternInstant(),
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM,
-                            viewportProvider: .init()
-                        )
-                    } else {
-                        let routeData = LoadingPlaceholders.shared.routeCardData(
-                            routeId: stopFilter.routeId,
-                            trips: 10,
-                            context: .stopDetailsFiltered,
-                            now: now.toEasternInstant()
-                        )
-                        let stopData = routeData.stopData.first!
-                        let leaf = stopData.data.first!
-                        StopDetailsFilteredDepartureDetails(
-                            stopId: stopId,
-                            stopFilter: stopFilter,
-                            tripFilter: tripFilter,
-                            setStopFilter: { _ in },
-                            setTripFilter: { _ in },
-                            leaf: leaf,
-                            alertSummaries: alertSummaries,
-                            selectedDirection: stopData.directions[0],
-                            favorite: false,
-                            now: now.toEasternInstant(),
-                            errorBannerVM: errorBannerVM,
-                            nearbyVM: nearbyVM,
-                            mapVM: mapVM,
-                            stopDetailsVM: stopDetailsVM,
-                            viewportProvider: .init()
-                        ).loadingPlaceholder()
-                    }
+                if let leaf {
+                    StopDetailsFilteredDepartureDetails(
+                        stopId: stopId,
+                        stopFilter: stopFilter,
+                        tripFilter: tripFilter,
+                        setStopFilter: setStopFilter,
+                        setTripFilter: setTripFilter,
+                        leaf: leaf,
+                        alertSummaries: alertSummaries,
+                        selectedDirection: directions[Int(stopFilter.directionId)],
+                        favorite: favorite,
+                        now: now.toEasternInstant(),
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM,
+                        stopDetailsVM: stopDetailsVM,
+                        viewportProvider: .init()
+                    )
+                } else {
+                    let routeData = LoadingPlaceholders.shared.routeCardData(
+                        routeId: stopFilter.routeId,
+                        trips: 10,
+                        context: .stopDetailsFiltered,
+                        now: now.toEasternInstant()
+                    )
+                    let stopData = routeData.stopData.first!
+                    let leaf = stopData.data.first!
+                    StopDetailsFilteredDepartureDetails(
+                        stopId: stopId,
+                        stopFilter: stopFilter,
+                        tripFilter: tripFilter,
+                        setStopFilter: { _ in },
+                        setTripFilter: { _ in },
+                        leaf: leaf,
+                        alertSummaries: alertSummaries,
+                        selectedDirection: stopData.directions[0],
+                        favorite: false,
+                        now: now.toEasternInstant(),
+                        errorBannerVM: errorBannerVM,
+                        nearbyVM: nearbyVM,
+                        mapVM: mapVM,
+                        stopDetailsVM: stopDetailsVM,
+                        viewportProvider: .init()
+                    ).loadingPlaceholder()
                 }
             }
         }
