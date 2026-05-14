@@ -18,20 +18,17 @@ struct DirectionPicker: View {
     let updateDirectionId: (Int32) -> Void
 
     init(
-        stopData: RouteCardData.RouteStopData,
+        availableDirections: [Int32],
+        directions: [Direction],
+        route: Route,
         filter: StopDetailsFilter?,
         setFilter: @escaping (StopDetailsFilter?) -> Void
     ) {
-        availableDirections = Set(stopData.data.map(\.directionId)).sorted()
-        directions = stopData.directions
-        let route = stopData.lineOrRoute.sortRoute
+        self.availableDirections = availableDirections
+        self.directions = directions
         self.route = route
-        let line: Line? = switch onEnum(of: stopData.lineOrRoute) {
-        case let .line(line): line.line
-        default: nil
-        }
         selectedDirectionId = filter?.directionId
-        updateDirectionId = { setFilter(.init(routeId: line?.id ?? route.id, directionId: $0)) }
+        updateDirectionId = { setFilter(.init(routeId: route.id, directionId: $0)) }
     }
 
     init(
@@ -150,11 +147,11 @@ struct DirectionPicker: View {
         .init(name: "Inbound", destination: "In", id: 1),
     ], data: [leaf0, leaf1])
 
-    DirectionPicker(
-        stopData: stopCard,
-        filter: .init(routeId: route.id, directionId: 0),
-        setFilter: { _ in }
-    )
-    .fixedSize(horizontal: false, vertical: true)
-    .padding(16)
+    //  DirectionPicker(
+    //       stopData: stopCard,
+    //      filter: .init(routeId: route.id, directionId: 0),
+    //       setFilter: { _ in }
+    //   )
+    //  .fixedSize(horizontal: false, vertical: true)
+    //  .padding(16)
 }
