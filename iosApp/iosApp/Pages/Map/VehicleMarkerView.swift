@@ -186,6 +186,25 @@ struct DecorationPreview: PreviewProvider {
             .enableInjection()
         }
 
+        @ViewBuilder func demoMarker(
+            decoration: Vehicle.Decoration,
+            routeIndex: Int,
+            routeAccents: TripRouteAccents
+        ) -> some View {
+            let vehicle = objects.vehicle {
+                $0.currentStatus = .inTransitTo
+                $0.decoration = decoration
+                $0.bearing = .init(value: 45.0 * Double(routeIndex))
+            }
+            VehicleMarkerView(
+                vehicle: vehicle,
+                routeAccents: routeAccents,
+                isSelected: false,
+                onTap: {},
+                enlargeIfDecorated: true
+            )
+        }
+
         @ViewBuilder func demoRow(
             _ decoration: Vehicle.Decoration,
             modes: Set<RouteType> = Set(RouteType.allCases)
@@ -197,18 +216,7 @@ struct DecorationPreview: PreviewProvider {
                         ForEach(indexChunk * 4 ..< min(routeAccents.count, (indexChunk + 1) * 4),
                                 id: \.self) { routeIndex in
                             let routeAccents = routeAccents[routeIndex]
-                            let vehicle = objects.vehicle {
-                                $0.currentStatus = .inTransitTo
-                                $0.decoration = decoration
-                                $0.bearing = .init(value: 45.0 * Double(routeIndex))
-                            }
-                            VehicleMarkerView(
-                                vehicle: vehicle,
-                                routeAccents: routeAccents,
-                                isSelected: false,
-                                onTap: {},
-                                enlargeIfDecorated: true
-                            )
+                            demoMarker(decoration: decoration, routeIndex: routeIndex, routeAccents: routeAccents)
                         }
                     }
                 }
