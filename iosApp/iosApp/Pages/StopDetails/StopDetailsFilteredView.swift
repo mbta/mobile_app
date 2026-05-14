@@ -243,7 +243,7 @@ struct StopDetailsFilteredView: View {
             mapVM: mapVM,
             stopDetailsVM: stopDetailsVM,
             viewportProvider: .init()
-        )
+        ).loadingPlaceholder()
     }
 
     @ViewBuilder
