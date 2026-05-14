@@ -17,8 +17,9 @@ import com.mapbox.geojson.Polygon as MapboxPolygon
 import com.mapbox.maps.extension.style.expressions.generated.Expression as MapboxExpression
 import com.mapbox.maps.extension.style.layers.generated.LineLayer as MapboxLineLayer
 import com.mapbox.maps.extension.style.layers.generated.SymbolLayer as MapboxSymbolLayer
-import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin.Companion as MapboxLineJoin
-import com.mapbox.maps.extension.style.layers.properties.generated.TextJustify.Companion as MapboxTextJustify
+import com.mapbox.maps.extension.style.layers.properties.generated.LineJoin as MapboxLineJoin
+import com.mapbox.maps.extension.style.layers.properties.generated.LineTranslateAnchor as MapboxLineTranslateAnchor
+import com.mapbox.maps.extension.style.layers.properties.generated.TextJustify as MapboxTextJustify
 import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.Feature
@@ -31,6 +32,7 @@ import com.mbta.tid.mbta_app.map.style.LineLayer
 import com.mbta.tid.mbta_app.map.style.SymbolLayer
 import com.mbta.tid.mbta_app.map.style.TextAnchor
 import com.mbta.tid.mbta_app.map.style.TextJustify
+import com.mbta.tid.mbta_app.map.style.TranslateAnchor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.maplibre.spatialk.geojson.Geometry
@@ -43,12 +45,13 @@ import org.maplibre.spatialk.geojson.Point
 import org.maplibre.spatialk.geojson.Polygon
 import org.maplibre.spatialk.geojson.Position
 
-fun Position.toMapbox() = toPoint()
+fun Position.toMapbox(): MapboxPoint = toPoint()
 
-@JvmName("listPositionToMapbox") private fun List<Position>.toMapbox() = map { it.toMapbox() }
+@JvmName("listPositionToMapbox")
+private fun List<Position>.toMapbox(): List<MapboxPoint> = map { it.toMapbox() }
 
 @JvmName("listListPositionToMapbox")
-private fun List<List<Position>>.toMapbox() = map { it.toMapbox() }
+private fun List<List<Position>>.toMapbox(): List<List<MapboxPoint>> = map { it.toMapbox() }
 
 private fun Geometry.toMapbox(): MapboxGeometry =
     when (this) {
@@ -93,9 +96,9 @@ suspend fun FeatureCollection.toMapbox(): MapboxFeatureCollection =
         MapboxFeatureCollection.fromFeatures(this@toMapbox.features.map { it.toMapbox() })
     }
 
-private fun <T> Exp<T>.toMapbox() = MapboxExpression.fromRaw(this.toJsonString())
+private fun <T> Exp<T>.toMapbox(): MapboxExpression = MapboxExpression.fromRaw(this.toJsonString())
 
-private fun LineJoin.toMapbox() =
+private fun LineJoin.toMapbox(): MapboxLineJoin? =
     when (this) {
         LineJoin.Bevel -> MapboxLineJoin.BEVEL
         LineJoin.Round -> MapboxLineJoin.ROUND
@@ -103,14 +106,20 @@ private fun LineJoin.toMapbox() =
         LineJoin.None -> null
     }
 
-private fun TextAnchor.toMapbox() = this.name.lowercase().replace("_", "-")
+private fun TextAnchor.toMapbox(): String = this.name.lowercase().replace("_", "-")
 
-private fun TextJustify.toMapbox() =
+private fun TextJustify.toMapbox(): MapboxTextJustify =
     when (this) {
         TextJustify.AUTO -> MapboxTextJustify.AUTO
         TextJustify.LEFT -> MapboxTextJustify.LEFT
         TextJustify.CENTER -> MapboxTextJustify.CENTER
         TextJustify.RIGHT -> MapboxTextJustify.RIGHT
+    }
+
+private fun TranslateAnchor.toMapboxLine(): MapboxLineTranslateAnchor =
+    when (this) {
+        TranslateAnchor.MAP -> MapboxLineTranslateAnchor.MAP
+        TranslateAnchor.VIEWPORT -> MapboxLineTranslateAnchor.VIEWPORT
     }
 
 suspend fun LineLayer.toMapbox(): MapboxLineLayer =
@@ -125,6 +134,8 @@ suspend fun LineLayer.toMapbox(): MapboxLineLayer =
         lineJoin?.toMapbox()?.let { result.lineJoin(it) }
         lineOffset?.let { result.lineOffset(it.toMapbox()) }
         lineSortKey?.let { result.lineSortKey(it.toMapbox()) }
+        lineTranslate?.let { result.lineTranslate(it.toMapbox()) }
+        lineTranslateAnchor?.toMapboxLine()?.let { result.lineTranslateAnchor(it) }
         lineWidth?.let { result.lineWidth(it.toMapbox()) }
 
         result

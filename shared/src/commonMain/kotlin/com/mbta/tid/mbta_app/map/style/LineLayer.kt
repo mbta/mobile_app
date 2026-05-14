@@ -4,6 +4,7 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 
+/** A Mapbox [line layer](https://docs.mapbox.com/style-spec/reference/layers/#line) */
 public data class LineLayer
 internal constructor(override val id: String, override val source: String) : Layer() {
     override val type: LayerType = LayerType.Line
@@ -14,6 +15,8 @@ internal constructor(override val id: String, override val source: String) : Lay
     var lineJoin: LineJoin? = null
     var lineOffset: Exp<Number>? = null
     var lineSortKey: Exp<Number>? = null
+    var lineTranslate: Exp<List<Number>>? = null
+    var lineTranslateAnchor: TranslateAnchor? = null
     var lineWidth: Exp<Number>? = null
 
     override fun layoutAsJson() = buildJsonObject {
@@ -25,6 +28,8 @@ internal constructor(override val id: String, override val source: String) : Lay
         lineColor?.let { put("line-color", it) }
         lineDasharray?.let { put("line-dasharray", JsonArray(it.map(::JsonPrimitive))) }
         lineOffset?.let { put("line-offset", it) }
+        lineTranslate?.let { put("line-translate", it) }
+        lineTranslateAnchor?.let { put("line-translate-anchor", it) }
         lineWidth?.let { put("line-width", it) }
     }
 }

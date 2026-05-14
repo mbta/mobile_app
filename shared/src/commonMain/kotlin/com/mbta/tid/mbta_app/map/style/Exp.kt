@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.map.style
 
 import kotlin.jvm.JvmName
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonArrayBuilder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
@@ -23,6 +22,15 @@ public sealed interface Exp<T> : MapboxStyleObject {
         override fun asJson(): JsonElement = body
 
         internal companion object {
+            fun <T> array(vararg elements: Exp<T>): Exp<List<T>> =
+                Bare(
+                    buildJsonArray {
+                        for (element in elements) {
+                            add(element)
+                        }
+                    }
+                )
+
             fun arrayOf(vararg elements: String) =
                 Bare<List<String>>(
                     buildJsonArray {
@@ -49,23 +57,19 @@ public sealed interface Exp<T> : MapboxStyleObject {
         internal fun <T> array(
             type: ArrayType<T>? = null,
             size: Number? = null,
-            value: Exp<List<T>>,
+            contents: List<Exp<T>>,
         ): Exp<List<T>> {
             check(!(type == null && size != null)) { "can't specify array size without array type" }
             return op("array") {
                 type?.let { add(it) }
                 size?.let { add(it) }
-                add(value)
+                add(Bare.array(*contents.toTypedArray()))
             }
         }
 
         internal fun boolean(value: Exp<Boolean>): Exp<Boolean> = op("boolean", value)
 
         internal fun image(value: Exp<String>): Exp<ResolvedImage> = op("image", value)
-
-        internal fun <T> literal(value: JsonArray): Exp<List<T>> = op("literal") { add(value) }
-
-        internal fun number(value: Exp<Number>): Exp<Number> = op("number", value)
 
         internal fun string(value: Exp<String>): Exp<String> = op("string", value)
 
@@ -107,13 +111,7 @@ public sealed interface Exp<T> : MapboxStyleObject {
 
         internal fun <T> notEq(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op("!=", lhs, rhs)
 
-        internal fun <T> lt(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op("<", lhs, rhs)
-
-        internal fun <T> le(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op("<=", lhs, rhs)
-
         internal fun <T> eq(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op("==", lhs, rhs)
-
-        internal fun <T> gt(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op(">", lhs, rhs)
 
         internal fun <T> ge(lhs: Exp<T>, rhs: Exp<T>): Exp<Boolean> = op(">=", lhs, rhs)
 

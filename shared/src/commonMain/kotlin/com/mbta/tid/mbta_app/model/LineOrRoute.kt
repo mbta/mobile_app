@@ -1,6 +1,5 @@
 package com.mbta.tid.mbta_app.model
 
-import com.mbta.tid.mbta_app.map.style.Color
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -75,14 +74,14 @@ public sealed class LineOrRoute {
                 is Route -> this.route.type
             }
 
-    public val backgroundColor: Color
+    public val backgroundColor: String
         get() =
             when (this) {
                 is Line -> this.line.color
                 is Route -> this.route.color
             }
 
-    public val textColor: Color
+    public val textColor: String
         get() =
             when (this) {
                 is Line -> this.line.textColor
