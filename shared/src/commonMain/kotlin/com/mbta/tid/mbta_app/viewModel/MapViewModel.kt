@@ -29,6 +29,7 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.IStopRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -95,6 +96,7 @@ public class MapViewModel(
     private val globalRepository: IGlobalRepository,
     private val railRouteShapeRepository: IRailRouteShapeRepository,
     private val sentryRepository: ISentryRepository,
+    private val settingsRepository: ISettingsRepository,
     private val stopRepository: IStopRepository,
     private val tripRepository: ITripRepository,
     private val clock: Clock,
@@ -286,9 +288,12 @@ public class MapViewModel(
                         val state = stopLayerGeneratorState
                         val globalResponse = globalData ?: return@run
                         val colorPalette = if (isDarkMode) ColorPalette.dark else ColorPalette.light
-                        routeShapes?.let { addLayers(it, state, globalResponse, colorPalette) }
+                        val settings = settingsRepository.getSettings()
+                        routeShapes?.let {
+                            addLayers(it, state, globalResponse, colorPalette, settings)
+                        }
                             ?: allRailRouteShapes?.let {
-                                addLayers(it, state, globalResponse, colorPalette)
+                                addLayers(it, state, globalResponse, colorPalette, settings)
                             }
                             ?: return@run
                         resetPuckPosition()
@@ -688,12 +693,14 @@ public class MapViewModel(
             return
         }
 
+        val settings = settingsRepository.getSettings()
         layerManager?.updateRouteSourceData(routeSourceData)
         layerManager?.addLayers(
             routeShapes,
             stopLayerGeneratorState,
             globalResponse,
             if (isDarkMode == true) ColorPalette.dark else ColorPalette.light,
+            settings,
         )
     }
 

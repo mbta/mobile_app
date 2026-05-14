@@ -118,6 +118,22 @@ public class MoreViewModel(
                                 }
                             },
                         ),
+                        MoreItem.Toggle(
+                            label = SharedString.ShiftingDisabled,
+                            settings = Settings.ShiftingDisabled,
+                        ),
+                        MoreItem.Toggle(
+                            label = SharedString.ShiftingUseTranslate,
+                            settings = Settings.ShiftingUseTranslate,
+                        ),
+                        MoreItem.Toggle(
+                            label = SharedString.ShiftingIncludeStops,
+                            settings = Settings.ShiftingIncludeStops,
+                        ),
+                        MoreItem.Toggle(
+                            label = SharedString.ShiftingScaleWithZoom,
+                            settings = Settings.ShiftingScaleWithZoom,
+                        ),
                     ),
             ),
             MoreSection(

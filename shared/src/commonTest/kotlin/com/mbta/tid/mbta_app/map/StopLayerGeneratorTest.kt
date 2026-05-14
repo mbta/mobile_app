@@ -25,6 +25,7 @@ class StopLayerGeneratorTest {
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
                 StopLayerGenerator.State.Default,
+                settings = emptyMap(),
             )
 
         assertEquals(11, stopLayers.size)
@@ -94,6 +95,7 @@ class StopLayerGeneratorTest {
             StopLayerGenerator.createStopLayers(
                 ColorPalette.light,
                 StopLayerGenerator.State.Default,
+                settings = emptyMap(),
             )
 
         val busLayer = stopLayers[1]
@@ -163,6 +165,7 @@ class StopLayerGeneratorTest {
                 StopLayerGenerator.State.StopDetails(
                     selectedStopId = checkNotNull(alewifeFeature.id)
                 ),
+                settings = emptyMap(),
             )
 
         val stopLayer = stopLayers[3]
@@ -237,6 +240,7 @@ class StopLayerGeneratorTest {
                     stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
                     tripStops = null,
                 ),
+                settings = emptyMap(),
             )
         val stopLayer = stopLayers.first { it.id == StopLayerGenerator.stopLayerId }
 
@@ -330,6 +334,7 @@ class StopLayerGeneratorTest {
                     stopFilter = StopDetailsFilter(routeId = selectedBusRoute.id, directionId = 0),
                     tripStops = listOf(typicalBusStop.id, atypicalBusStop.id),
                 ),
+                settings = emptyMap(),
             )
         val stopLayer = stopLayers.first { it.id == StopLayerGenerator.stopLayerId }
 

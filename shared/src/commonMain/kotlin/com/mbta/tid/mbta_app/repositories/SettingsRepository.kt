@@ -44,6 +44,10 @@ public enum class Settings(
     Notifications(booleanPreferencesKey("notifications")),
     SearchRouteResults(booleanPreferencesKey("searchRouteResults_featureFlag")),
     StationAccessibility(booleanPreferencesKey("elevator_accessibility")),
+    ShiftingDisabled(booleanPreferencesKey("shifting_disabled")),
+    ShiftingUseTranslate(booleanPreferencesKey("shifting_use_translate")),
+    ShiftingIncludeStops(booleanPreferencesKey("shifting_include_stops")),
+    ShiftingScaleWithZoom(booleanPreferencesKey("shifting_scale_with_zoom")),
 }
 
 public class MockSettingsRepository
