@@ -21,7 +21,7 @@ public object LoadingPlaceholders {
             if (routeId is Line.Id) {
                 objects.line {
                     id = routeId.idText
-                    color = "000000"
+                    color = "8A9199"
                     longName = "Loading"
                     shortName = "00"
                     textColor = "FFFFFF"
@@ -32,7 +32,7 @@ public object LoadingPlaceholders {
                 if (routeId is Route.Id) {
                     id = routeId.idText
                 }
-                color = "000000"
+                color = "8A9199"
                 longName = "Loading"
                 shortName = "00"
                 textColor = "FFFFFF"
