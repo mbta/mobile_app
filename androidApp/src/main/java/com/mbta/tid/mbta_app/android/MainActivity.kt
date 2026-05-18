@@ -10,7 +10,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import com.google.firebase.messaging.FirebaseMessaging
+import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
 import com.mbta.tid.mbta_app.android.util.fcmToken
 import com.mbta.tid.mbta_app.initializeSentry
@@ -24,6 +27,10 @@ class MainActivity : ComponentActivity() {
     val deepLinkPathKey = "deep_link_path"
 
     fun handleIntent(intent: Intent?) {
+        val notificationAnalyticsLabel = intent?.getStringExtra("analytics_label")
+        if (notificationAnalyticsLabel != null) {
+            AnalyticsProvider(Firebase.analytics).notificationClicked(notificationAnalyticsLabel)
+        }
         val deepLinkPath =
             if (intent?.hasExtra(deepLinkPathKey) == true) {
                 intent.getStringExtra(deepLinkPathKey)

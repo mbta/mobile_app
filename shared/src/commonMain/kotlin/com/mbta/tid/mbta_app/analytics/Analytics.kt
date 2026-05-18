@@ -72,6 +72,15 @@ public abstract class Analytics {
         )
     }
 
+    public fun notificationClicked(analyticsLabel: String) {
+        val pieces = analyticsLabel.split(';')
+        val parameters = pieces.map { piece ->
+            val (name, value) = piece.split('=', limit = 2)
+            name to value
+        }.toTypedArray()
+        logEvent("notification_clicked", *parameters)
+    }
+
     public fun performedSearch(query: String) {
         logEvent("search", "query" to query)
     }
