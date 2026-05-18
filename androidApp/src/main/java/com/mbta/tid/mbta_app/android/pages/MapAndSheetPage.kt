@@ -267,21 +267,20 @@ fun MapAndSheetPage(
             else -> null
         })
 
-    val mapUpdates = tripDetailsViewModel.mapUpdates
-    LaunchedEffect(mapUpdates) {
-        mapUpdates.collect { mapUpdate ->
-            when (mapUpdate) {
-                is TripDetailsViewModel.MapUpdate.SelectedVehicle -> {
-                    val follow =
-                        currentNavEntry is SheetRoutes.TripDetails &&
-                            nearbyTransit.viewportProvider.isVehicleOverview
-                    filters?.tripFilter?.let {
-                        mapViewModel.selectedVehicleUpdated(mapUpdate.vehicle, follow)
-                    }
+    val mapUpdate by tripDetailsViewModel.mapUpdates.collectAsStateWithLifecycle(null)
+    LaunchedEffect(mapUpdate) {
+        when (val update = mapUpdate) {
+            is TripDetailsViewModel.MapUpdate.SelectedVehicle -> {
+                val follow =
+                    currentNavEntry is SheetRoutes.TripDetails &&
+                        nearbyTransit.viewportProvider.isVehicleOverview
+                filters?.tripFilter?.let {
+                    mapViewModel.selectedVehicleUpdated(update.vehicle, follow)
                 }
-                is TripDetailsViewModel.MapUpdate.TripStops ->
-                    mapViewModel.tripStopsUpdated(mapUpdate.tripStops)
             }
+            is TripDetailsViewModel.MapUpdate.TripStops ->
+                mapViewModel.tripStopsUpdated(update.tripStops)
+            else -> {}
         }
     }
 
