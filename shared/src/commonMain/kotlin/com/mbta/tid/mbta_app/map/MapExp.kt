@@ -5,8 +5,6 @@ import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.Interpolation
 import com.mbta.tid.mbta_app.map.style.LetVariable
 import com.mbta.tid.mbta_app.model.MapStopRoute
-import kotlinx.serialization.json.add
-import kotlinx.serialization.json.buildJsonArray
 
 internal object MapExp {
     // Get the array of MapStopRoute string values from a stop feature
@@ -194,8 +192,7 @@ internal object MapExp {
     }
 
     // Similar to offsetAlertExp, the labels are set to different height and width offsets based on
-    // the type of icon that they're next to. I'm not certain what units these values are in though,
-    // they definitely aren't pixels, and the docs don't specify.
+    // the type of icon that they're next to. Text offsets are measured in em.
     val labelOffsetExp =
         Exp.interpolate(
             Interpolation.Exponential(1.5),
@@ -238,16 +235,7 @@ internal object MapExp {
 
     // Mapbox only accepts iconOffset values if they're wrapped in this array literal expression
     fun xyExp(x: Number, y: Number): Exp<List<Number>> {
-        return Exp.array(
-            ArrayType.Number,
-            2,
-            Exp.Bare(
-                buildJsonArray {
-                    add(x)
-                    add(y)
-                }
-            ),
-        )
+        return Exp.array(ArrayType.Number, 2, listOf(Exp(x), Exp(y)))
     }
 
     // For the separate bus only stop and alert layers, this takes any arbitrary

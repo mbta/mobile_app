@@ -5,6 +5,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
+/** A Mapbox [layer](https://docs.mapbox.com/style-spec/reference/layers/) */
 public sealed class Layer : MapboxStyleObject {
     public abstract val id: String
     public abstract val type: LayerType

@@ -5,6 +5,7 @@ import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
+/** A Mapbox [symbol layer](https://docs.mapbox.com/style-spec/reference/layers/#symbol) */
 public data class SymbolLayer(override val id: String, override val source: String) : Layer() {
     override val type: LayerType = LayerType.Symbol
     override var filter: Exp<Boolean>? = null

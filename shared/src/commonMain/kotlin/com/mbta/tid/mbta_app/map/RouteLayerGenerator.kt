@@ -101,7 +101,7 @@ public object RouteLayerGenerator {
     internal fun baseRouteLayer(layerId: String, route: Route): LineLayer {
         val layer =
             LineLayer(id = layerId, source = RouteFeaturesBuilder.getRouteSourceId(route.id))
-        layer.lineColor = Exp("#${route.color}")
+        layer.lineColor = Exp("#${route.color}").downcastToColor()
         layer.lineJoin = LineJoin.Round
         layer.lineOffset = Exp(lineOffset(route))
         checkNotNull(layer.id)

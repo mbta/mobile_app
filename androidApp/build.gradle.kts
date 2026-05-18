@@ -1,4 +1,5 @@
 import com.diffplug.spotless.FormatterFunc
+import com.mbta.tid.mbta_app.gradle.CheckMapboxBridgeTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosLocalizationTask
 import com.mbta.tid.mbta_app.gradle.ConvertIosMapIconsTask
 import java.io.BufferedReader
@@ -18,7 +19,6 @@ plugins {
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry.android)
     alias(libs.plugins.serialization)
-    id("check-mapbox-bridge")
 }
 
 kotlin {
@@ -196,6 +196,17 @@ tasks.register<ConvertIosLocalizationTask>("convertIosLocalization") {
     androidEnglishStrings = layout.projectDirectory.file("src/main/res/values/strings.xml")
     xcstrings = layout.projectDirectory.file("../iosApp/iosApp/Localizable.xcstrings")
     resources = layout.projectDirectory.dir("src/main/res")
+}
+
+tasks.register<CheckMapboxBridgeTask>("checkMapboxBridge") {
+    mapboxBridgePath =
+        layout.projectDirectory.file(
+            "src/main/java/com/mbta/tid/mbta_app/android/map/MapboxBridge.kt"
+        )
+    sharedMapStylePackage =
+        layout.projectDirectory.dir(
+            "../shared/src/commonMain/kotlin/com/mbta/tid/mbta_app/map/style"
+        )
 }
 
 // https://github.com/mapbox/mapbox-gl-native-android/blob/7f03a710afbd714368084e4b514d3880bad11c27/gradle/gradle-config.gradle

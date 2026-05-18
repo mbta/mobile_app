@@ -10,8 +10,6 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.addAll
-import kotlinx.serialization.json.buildJsonArray
 
 public object StopLayerGenerator {
     internal val maxTransferLayers = 3
@@ -168,9 +166,7 @@ public object StopLayerGenerator {
                         if (!state.tripStops.isNullOrEmpty())
                             Exp.`in`(
                                 Exp.get(StopFeaturesBuilder.propIdKey),
-                                Exp.array(
-                                    value = Exp.Bare(buildJsonArray { addAll(state.tripStops) })
-                                ),
+                                Exp.array(contents = state.tripStops.map(::Exp)),
                             )
                         else if (state.stopFilter != null)
                             Exp.`in`(
