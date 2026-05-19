@@ -7,33 +7,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mbta.tid.mbta_app.android.pages.NearbyTransit
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.flow.debounce
 import org.maplibre.spatialk.geojson.Position
 
 @Composable
 fun managedTargetLocation(nearbyTransit: NearbyTransit, reset: () -> Unit = {}): State<Position?> {
-    var position = remember { mutableStateOf<Position?>(null) }
-    LaunchedEffect(nearbyTransit.locationDataManager) {
-        nearbyTransit.locationDataManager.currentLocation.collect { location ->
-            if (
-                nearbyTransit.viewportProvider.isFollowingPuck &&
-                    !nearbyTransit.viewportProvider.isManuallyCentering
-            ) {
-                position.value = location?.let { Position(it.longitude, it.latitude) }
-            }
+    val position = remember { mutableStateOf<Position?>(null) }
+
+    val location by nearbyTransit.locationDataManager.currentLocation.collectAsStateWithLifecycle()
+    LaunchedEffect(location) {
+        if (
+            nearbyTransit.viewportProvider.isFollowingPuck &&
+                !nearbyTransit.viewportProvider.isManuallyCentering
+        ) {
+            position.value = location?.let { Position(it.longitude, it.latitude) }
         }
     }
-    LaunchedEffect(nearbyTransit.viewportProvider) {
-        nearbyTransit.viewportProvider.cameraStateFlow.debounce(0.5.seconds).collect {
-            // since this LaunchedEffect is cancelled when not on the page
-            // we don't need to check
+
+    val cameraState by
+        nearbyTransit.viewportProvider.cameraStateFlowDebounced.collectAsStateWithLifecycle(null)
+    LaunchedEffect(cameraState) {
+        cameraState?.let {
             if (!nearbyTransit.viewportProvider.isFollowingPuck) {
                 position.value = it.center.toPosition()
             }
         }
     }
+
     LaunchedEffect(nearbyTransit.viewportProvider.isManuallyCentering) {
         if (nearbyTransit.viewportProvider.isManuallyCentering) {
             reset()
