@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.viewModel
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,57 +76,55 @@ public class ErrorBannerViewModel(
 
         var clearedError: ClearedDataError? by remember { mutableStateOf(null) }
 
-        LaunchedEffect(Unit) {
-            errorRepository.subscribeToNetworkStatusChanges()
-            errorRepository.state.collect { newErrorState ->
-                val previousErrorState = errorState
-                val previousClearedError = clearedError
-                if (previousErrorState is ErrorBannerState.DataError && newErrorState == null) {
-                    clearedError =
-                        ClearedDataError(
-                            previousErrorState.messages,
-                            previousErrorState.details,
-                            EasternTimeInstant.now(clock),
-                        )
-                } else if (
-                    previousErrorState == null &&
-                        newErrorState is ErrorBannerState.DataError &&
-                        previousClearedError != null
+        LaunchedEffect(Unit) { errorRepository.subscribeToNetworkStatusChanges() }
+
+        val errorRepoState by errorRepository.state.collectAsState()
+        LaunchedEffect(errorRepoState) {
+            val newErrorState = errorRepoState
+            val previousErrorState = errorState
+            val previousClearedError = clearedError
+            if (previousErrorState is ErrorBannerState.DataError && newErrorState == null) {
+                clearedError =
+                    ClearedDataError(
+                        previousErrorState.messages,
+                        previousErrorState.details,
+                        EasternTimeInstant.now(clock),
+                    )
+            } else if (
+                previousErrorState == null &&
+                    newErrorState is ErrorBannerState.DataError &&
+                    previousClearedError != null
+            ) {
+                // data error was cleared and then came back instantly, that’s not good
+                val oldKeys = previousClearedError.keys
+                val newKeys = newErrorState.messages
+                val commonKeys = oldKeys intersect newKeys
+                if (
+                    EasternTimeInstant.now(clock) - previousClearedError.clearedAt < 1.minutes &&
+                        commonKeys.isNotEmpty()
                 ) {
-                    // data error was cleared and then came back instantly, that’s not good
-                    val oldKeys = previousClearedError.keys
-                    val newKeys = newErrorState.messages
-                    val commonKeys = oldKeys intersect newKeys
-                    if (
-                        EasternTimeInstant.now(clock) - previousClearedError.clearedAt <
-                            1.minutes && commonKeys.isNotEmpty()
-                    ) {
-                        sentryRepository.captureMessage(
-                            "Recurring DataError ${commonKeys.sorted()}"
-                        ) {
-                            addBreadcrumb(
-                                Breadcrumb(
-                                    SentryLevel.ERROR,
-                                    type = "error",
-                                    message = "Recurring DataError",
-                                    category = null,
-                                    mutableMapOf(
-                                        "previousClearedError.keys" to previousClearedError.keys,
-                                        "previousClearedError.details" to
-                                            previousClearedError.details,
-                                        "previousClearedError.clearedAt" to
-                                            previousClearedError.clearedAt,
-                                        "newErrorState.messages" to newErrorState.messages,
-                                        "newErrorState.details" to newErrorState.details,
-                                    ),
-                                )
+                    sentryRepository.captureMessage("Recurring DataError ${commonKeys.sorted()}") {
+                        addBreadcrumb(
+                            Breadcrumb(
+                                SentryLevel.ERROR,
+                                type = "error",
+                                message = "Recurring DataError",
+                                category = null,
+                                mutableMapOf(
+                                    "previousClearedError.keys" to previousClearedError.keys,
+                                    "previousClearedError.details" to previousClearedError.details,
+                                    "previousClearedError.clearedAt" to
+                                        previousClearedError.clearedAt,
+                                    "newErrorState.messages" to newErrorState.messages,
+                                    "newErrorState.details" to newErrorState.details,
+                                ),
                             )
-                        }
+                        )
                     }
-                    clearedError = null
                 }
-                errorState = newErrorState
+                clearedError = null
             }
+            errorState = newErrorState
         }
 
         EventSink(eventHandlingTimeout = 1.seconds, sentryRepository = sentryRepository) { event ->

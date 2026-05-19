@@ -32,11 +32,14 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.utils.ViewportManager
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
+import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -51,6 +54,8 @@ interface IViewportProvider {
     var isAnimating: Boolean
 
     var cameraStateFlow: Flow<CameraState>
+
+    var cameraStateFlowDebounced: Flow<CameraState>
 
     fun getViewportImmediate(): MapViewportState
 
@@ -111,6 +116,8 @@ class ViewportProvider(
         _cameraState.asStateFlow().distinctUntilChanged { old, new ->
             old.center.isRoughlyEqualTo(new.center)
         }
+    @OptIn(FlowPreview::class)
+    override var cameraStateFlowDebounced = cameraStateFlow.debounce(0.5.seconds)
 
     private var lastEdgeInsets: EdgeInsets = EdgeInsets(0.0, 0.0, 0.0, 0.0)
 
