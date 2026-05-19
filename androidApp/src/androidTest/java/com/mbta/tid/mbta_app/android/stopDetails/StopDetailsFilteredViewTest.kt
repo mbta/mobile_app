@@ -19,6 +19,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
+import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.WheelchairBoardingStatus
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
@@ -28,6 +29,9 @@ import com.mbta.tid.mbta_app.repositories.ISettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
+import com.mbta.tid.mbta_app.viewModel.MockStopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel
+import com.mbta.tid.mbta_app.viewModel.StopDetailsViewModel.RouteData
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -37,7 +41,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
 
-class StopDetailsFilteredPickerViewTest {
+class StopDetailsFilteredViewTest {
     val builder = ObjectCollectionBuilder()
     val now = EasternTimeInstant.now()
     val route =
@@ -144,6 +148,7 @@ class StopDetailsFilteredPickerViewTest {
     @Before
     fun setUp() {
         loadKoinMocks(builder) { settings = settingsRepository }
+
         settings.clear()
     }
 
@@ -166,11 +171,10 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = stop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -182,6 +186,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
@@ -211,11 +224,10 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = stop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -227,6 +239,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
@@ -265,11 +286,10 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = stop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -281,6 +301,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
@@ -308,11 +337,10 @@ class StopDetailsFilteredPickerViewTest {
         val routeStopData = routeCardData.single().stopData.single()
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = inaccessibleStop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -324,6 +352,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
@@ -353,11 +390,10 @@ class StopDetailsFilteredPickerViewTest {
         var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = stop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -371,6 +407,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
@@ -417,11 +462,10 @@ class StopDetailsFilteredPickerViewTest {
         var updatedFavorites: Pair<Map<RouteStopDirection, FavoriteSettings?>, Int>? = null
 
         composeTestRule.setContent {
-            StopDetailsFilteredPickerView(
+            StopDetailsFilteredView(
                 stopId = stop.id,
                 stopFilter = filterState,
                 tripFilter = null,
-                routeStopData = routeStopData,
                 allAlerts = null,
                 now = now,
                 errorBannerViewModel = koinInject(),
@@ -435,6 +479,15 @@ class StopDetailsFilteredPickerViewTest {
                 openModal = {},
                 openSheetRoute = {},
                 navCallbacks = NavigationCallbacks.empty,
+                stopDetailsViewModel =
+                    MockStopDetailsViewModel(
+                        StopDetailsViewModel.State(
+                            RouteData.Filtered(
+                                StopDetailsPageFilters(stop.id, filterState, null),
+                                routeStopData,
+                            )
+                        )
+                    ),
             )
         }
 
