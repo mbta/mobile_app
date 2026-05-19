@@ -27,11 +27,17 @@ final class NearbyTransitViewTests: XCTestCase {
 
         init(_ expectation: XCTestExpectation, _ closure: @escaping (CLLocationCoordinate2D) -> Void = { _ in }) {
             self.expectation = expectation
+            expectation.assertForOverFulfill = false
             self.closure = closure
             super.init()
         }
 
-        override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+        override func getNearbyStops(
+            global _: GlobalResponse,
+            location: CLLocationCoordinate2D,
+            alerts _: AlertsStreamDataResponse?,
+            atTime _: EasternTimeInstant
+        ) {
             debugPrint("ViewModel getting nearby")
             closure(location)
             expectation.fulfill()
@@ -517,5 +523,51 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNil(try? sut.inspect().find(LoadingCard<Text>.self))
         XCTAssertNotNil(try sut.inspect().find(text: "No nearby stops"))
         XCTAssertNotNil(try sut.inspect().find(text: "You’re outside the MBTA service area."))
+    }
+
+    @MainActor func testFilterChangesWithAlerts() throws {
+        let objects = TestData.clone()
+
+        let harvardNorthbound = objects.getStop(id: "70068")
+        let centralNorthbound = objects.getStop(id: "70070")
+        let alert = objects.alert { alert in
+            alert.activePeriod(start: .init(instant: .companion.DISTANT_PAST), end: nil)
+            alert.effect = .suspension
+            alert.informedEntity(activities: [.board, .exit, .ride], stop: harvardNorthbound.id)
+        }
+
+        let repositories = MockRepositories()
+        repositories.useObjects(objects: objects)
+        repositories.alerts = MockAlertsRepository()
+        repositories.nearby = MockNearbyRepository(response: .init(stopIds: [
+            harvardNorthbound.id,
+            centralNorthbound.id,
+        ]))
+        loadKoinMocks(repositories: repositories)
+
+        let nearbyVM = NearbyViewModel()
+        nearbyVM.alerts = .init(alerts: [:])
+
+        let sut = NearbyTransitView(
+            location: .constant(mockLocation),
+            setIsReturningFromBackground: { _ in },
+            nearbyVM: nearbyVM,
+            noNearbyStops: noNearbyStops
+        )
+
+        let expBefore = sut.inspection.inspect(after: 1) { view in
+            XCTAssertNotNil(try view.find(text: "Harvard"))
+            XCTAssertThrowsError(try view.find(text: "Central"))
+
+            nearbyVM.alerts = .init(alerts: [alert.id: alert])
+        }
+
+        let expAfter = sut.inspection.inspect(after: 2) { view in
+            XCTAssertNotNil(try view.find(text: "Central"))
+        }
+
+        ViewHosting.host(view: sut.withFixedSettings([:]))
+
+        wait(for: [expBefore, expAfter], timeout: 3)
     }
 }

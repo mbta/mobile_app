@@ -16,6 +16,7 @@ class NearbyViewModel: ObservableObject {
     struct NearbyTransitState: Equatable {
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
+        var nearbyResponse: NearbyResponse?
         var stopIds: [String]?
     }
 
@@ -192,7 +193,12 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D) {
+    func getNearbyStops(
+        global: GlobalResponse,
+        location: CLLocationCoordinate2D,
+        alerts: AlertsStreamDataResponse?,
+        atTime: EasternTimeInstant
+    ) {
         guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
             return
         }
@@ -206,15 +212,25 @@ class NearbyViewModel: ObservableObject {
             }
             nearbyState.loading = true
 
-            let stopIds = nearbyRepository.getStopIdsNearby(
+            nearbyState.stopIds = nil
+            let nearbyResponse = nearbyRepository.getStopIdsNearby(
                 global: global,
                 location: location.positionKt
             )
+            nearbyState.nearbyResponse = nearbyResponse
             lastLoadedLocation = location
-            nearbyState.stopIds = stopIds
+            nearbyState.stopIds = nearbyResponse.filter(globalData: global, alerts: alerts, atTime: atTime)
             nearbyState.loadedLocation = location
             nearbyState.loading = false
             isTargeting = false
+        }
+    }
+
+    func filterNearbyStops(global: GlobalResponse, alerts: AlertsStreamDataResponse?, atTime: EasternTimeInstant) {
+        Task { @MainActor [weak self] in
+            // wait for any getNearbyStops calls to have finished
+            let _ = await fetchNearbyTask?.result
+            nearbyState.stopIds = nearbyState.nearbyResponse?.filter(globalData: global, alerts: alerts, atTime: atTime)
         }
     }
 

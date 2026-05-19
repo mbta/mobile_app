@@ -211,8 +211,7 @@ class MapAndSheetPageTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder),
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
                     )
                 settings = MockSettingsRepository(mapOf(Settings.HideMaps to hideMaps))
             },

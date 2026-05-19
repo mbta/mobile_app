@@ -60,10 +60,16 @@ struct NearbyTransitView: View {
             didAppear?(self)
         }
         .onChange(of: globalData) { globalData in
-            getNearby(location: location, globalData: globalData)
+            getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         }
         .onChange(of: location) { newLocation in
-            getNearby(location: newLocation, globalData: globalData)
+            getNearby(location: newLocation, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
+        }
+        .onChange(of: nearbyVM.alerts) { alerts in
+            filterNearby(globalData: globalData, alerts: alerts, atTime: now)
+        }
+        .onChange(of: now) { now in
+            filterNearby(globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         }
         .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
             let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
@@ -179,12 +185,17 @@ struct NearbyTransitView: View {
     var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
-        getNearby(location: location, globalData: globalData)
+        getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         joinPredictions(nearbyVM.nearbyState.stopIds)
         getSchedule()
     }
 
-    func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
+    func getNearby(
+        location: CLLocationCoordinate2D?,
+        globalData: GlobalResponse?,
+        alerts: AlertsStreamDataResponse?,
+        atTime: Date
+    ) {
         self.location = location
         self.globalData = globalData
         guard let globalData else { return }
@@ -194,7 +205,25 @@ struct NearbyTransitView: View {
             scheduleResponse = nil
             return
         }
-        nearbyVM.getNearbyStops(global: globalData, location: location)
+        nearbyVM.getNearbyStops(
+            global: globalData,
+            location: location,
+            alerts: alerts,
+            atTime: atTime.toEasternInstant()
+        )
+    }
+
+    func filterNearby(
+        globalData: GlobalResponse?,
+        alerts: AlertsStreamDataResponse?,
+        atTime: Date
+    ) {
+        guard let globalData else { return }
+        nearbyVM.filterNearbyStops(
+            global: globalData,
+            alerts: alerts,
+            atTime: atTime.toEasternInstant()
+        )
     }
 
     func getSchedule() {

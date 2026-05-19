@@ -1,6 +1,9 @@
 package com.mbta.tid.mbta_app.android.nearbyTransit
 
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
@@ -10,19 +13,23 @@ import androidx.compose.ui.test.performClick
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
+import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockNearbyRepository
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.buildFavorites
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import org.junit.Rule
 import org.junit.Test
 import org.koin.compose.koinInject
@@ -170,8 +177,7 @@ class NearbyTransitViewTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder),
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
                     )
             },
         )
@@ -212,8 +218,7 @@ class NearbyTransitViewTest : KoinTest {
             repositoryOverrides = {
                 nearby =
                     MockNearbyRepository(
-                        stopIds = listOf(sampleStop.id, greenLineStop.id),
-                        response = NearbyResponse(builder),
+                        response = NearbyResponse(listOf(sampleStop.id, greenLineStop.id))
                     )
                 settings = MockSettingsRepository(settings = mapOf())
                 favorites =
@@ -267,5 +272,61 @@ class NearbyTransitViewTest : KoinTest {
             hasText("This would be the no nearby stops view")
         )
         composeTestRule.onNodeWithText("This would be the no nearby stops view").assertIsDisplayed()
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun testFilterChangesWithAlerts() {
+        val objects = TestData.clone()
+        val harvardNorthbound = objects.getStop("70068")
+        val centralNorthbound = objects.getStop("70070")
+        val alert =
+            objects.alert {
+                activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                effect = Alert.Effect.Suspension
+                informedEntity(
+                    activities =
+                        listOf(
+                            Alert.InformedEntity.Activity.Board,
+                            Alert.InformedEntity.Activity.Exit,
+                            Alert.InformedEntity.Activity.Ride,
+                        ),
+                    stop = harvardNorthbound.id,
+                )
+            }
+        loadKoinMocks(
+            objects,
+            repositoryOverrides = {
+                alerts = MockAlertsRepository()
+                nearby =
+                    MockNearbyRepository(
+                        response =
+                            NearbyResponse(listOf(harvardNorthbound.id, centralNorthbound.id))
+                    )
+            },
+        )
+
+        var alerts by mutableStateOf(AlertsStreamDataResponse(emptyMap()))
+
+        composeTestRule.setContent {
+            NearbyTransitView(
+                alertData = alerts,
+                globalResponse = GlobalResponse(objects),
+                targetLocation = harvardNorthbound.position,
+                setLastLocation = {},
+                setIsTargeting = {},
+                onOpenStopDetails = { _, _ -> },
+                noNearbyStopsView = {},
+                errorBannerViewModel = koinInject(),
+            )
+        }
+
+        composeTestRule.waitUntilExactlyOneExistsDefaultTimeout(hasText("Harvard"))
+        composeTestRule.onNodeWithText("Harvard").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Central").assertDoesNotExist()
+
+        alerts = AlertsStreamDataResponse(mapOf(alert.id to alert))
+
+        composeTestRule.onNodeWithText("Central").assertIsDisplayed()
     }
 }
