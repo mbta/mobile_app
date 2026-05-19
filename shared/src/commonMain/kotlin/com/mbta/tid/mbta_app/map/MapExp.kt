@@ -5,6 +5,8 @@ import com.mbta.tid.mbta_app.map.style.Exp
 import com.mbta.tid.mbta_app.map.style.Interpolation
 import com.mbta.tid.mbta_app.map.style.LetVariable
 import com.mbta.tid.mbta_app.model.MapStopRoute
+import com.mbta.tid.mbta_app.model.Route
+import com.mbta.tid.mbta_app.repositories.Settings
 
 internal object MapExp {
     // Get the array of MapStopRoute string values from a stop feature
@@ -26,7 +28,7 @@ internal object MapExp {
             singleRouteTypeExp,
             Exp.eq(
                 Exp(1),
-                Exp.length(Exp.get(topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsKey))),
+                Exp.length(Exp.get(topRouteExp, Exp.get(StopFeaturesBuilder.propRouteIdsByTypeKey))),
             ),
         )
 
@@ -81,28 +83,60 @@ internal object MapExp {
     // MapBox requires the value at the base of every case in this expression to be a literal length
     // 2 array of Doubles, since that's the type that iconOffset expects. This means that we can't
     // use expressions for each Double, which is why this function is so convoluted.
-    fun offsetAlertExp(closeZoom: Boolean, index: Int): Exp<List<Number>> {
+    fun offsetAlertExp(
+        closeZoom: Boolean,
+        index: Int,
+        settings: Map<Settings, Boolean>,
+    ): Exp<List<Number>> {
+        val shiftScale =
+            if (closeZoom || settings[Settings.ShiftingScaleWithZoom] != true) 1.0
+            else 0.5 // TODO figure out why 1/18 doesn’t work
         val doubleRouteHeight = if (closeZoom) 13 else 8
         val tripleRouteHeight = if (closeZoom) 26 else 16
         return Exp.step(
             Exp.length(routesExp),
             // At stops only serving one type of route, the height doesn't need to be offset at all
-            offsetAlertPairExp(closeZoom = closeZoom, height = 0),
+            offsetAlertPairExp(closeZoom = closeZoom, height = 0, shiftScale, settings = settings),
             // At stops serving two different types of route, position the first upwards and the
             // second downwards. The third value is unused, so is set to 0.
             Exp(2) to
                 listOf(
-                    offsetAlertPairExp(closeZoom = closeZoom, height = -doubleRouteHeight),
-                    offsetAlertPairExp(closeZoom = closeZoom, height = doubleRouteHeight),
-                    xyExp(0, 0),
+                    offsetAlertPairExp(
+                        closeZoom = closeZoom,
+                        height = -doubleRouteHeight,
+                        shiftScale,
+                        settings = settings,
+                    ),
+                    offsetAlertPairExp(
+                        closeZoom = closeZoom,
+                        height = doubleRouteHeight,
+                        shiftScale,
+                        settings = settings,
+                    ),
+                    xyExp(0, 0, shiftScale, settings),
                 )[index],
             // At stops serving 3 routes, the first and third are moved up and down, and the center
             // one remains at the same height.
             Exp(3) to
                 listOf(
-                    offsetAlertPairExp(closeZoom = closeZoom, height = -tripleRouteHeight),
-                    offsetAlertPairExp(closeZoom = closeZoom, height = 0),
-                    offsetAlertPairExp(closeZoom = closeZoom, height = tripleRouteHeight),
+                    offsetAlertPairExp(
+                        closeZoom = closeZoom,
+                        height = -tripleRouteHeight,
+                        shiftScale,
+                        settings = settings,
+                    ),
+                    offsetAlertPairExp(
+                        closeZoom = closeZoom,
+                        height = 0,
+                        shiftScale,
+                        settings = settings,
+                    ),
+                    offsetAlertPairExp(
+                        closeZoom = closeZoom,
+                        height = tripleRouteHeight,
+                        shiftScale,
+                        settings = settings,
+                    ),
                 )[index],
         )
     }
@@ -110,7 +144,12 @@ internal object MapExp {
     // The provided height is determined by the position in the route type array, this function
     // determines the width to offset the alert icon depending on the width of the type of icon that
     // the stop is being displayed with.
-    fun offsetAlertPairExp(closeZoom: Boolean, height: Int): Exp<List<Number>> {
+    fun offsetAlertPairExp(
+        closeZoom: Boolean,
+        height: Int,
+        shiftScale: Double,
+        settings: Map<Settings, Boolean>,
+    ): Exp<List<Number>> {
         val pillWidth = 26
         val railStopWidth = if (closeZoom) pillWidth else 12
         val busStopWidth = if (closeZoom) 18 else 12
@@ -128,42 +167,64 @@ internal object MapExp {
                 branchedRouteExp to
                     Exp.case(
                         Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
-                            xyExp(branchTerminalWidth, height),
-                        xyExp(branchStopWidth, height),
+                            xyExp(branchTerminalWidth, height, shiftScale, settings),
+                        xyExp(branchStopWidth, height, shiftScale, settings),
                     ),
                 // Ferry terminals have a special larger icon at the wide zoom level
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey),
-                ) to xyExp(terminalFerryWidth, height),
+                ) to xyExp(terminalFerryWidth, height, shiftScale, settings),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
                 // pole rectangle at the bottom
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
-                    xyExp(busStopWidth, height - (if (closeZoom) 2 else 0)),
+                    xyExp(busStopWidth, height - (if (closeZoom) 2 else 0), shiftScale, settings),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
                 Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
-                    xyExp(terminalRailStopWidth, height),
+                    xyExp(terminalRailStopWidth, height, shiftScale, settings),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
-                fallback = xyExp(railStopWidth, height),
+                fallback = xyExp(railStopWidth, height, shiftScale, settings),
             ),
             // If the stop is a transfer stop, all routes are displayed with a basic pill and dot
-            Exp(2) to xyExp(railStopWidth, height),
+            Exp(2) to xyExp(railStopWidth, height, shiftScale, settings),
         )
     }
 
-    fun offsetTransferExp(closeZoom: Boolean, index: Int): Exp<List<Number>> {
+    fun offsetTransferExp(
+        closeZoom: Boolean,
+        index: Int,
+        settings: Map<Settings, Boolean>,
+    ): Exp<List<Number>> {
+        val shiftScale =
+            if (closeZoom || settings[Settings.ShiftingScaleWithZoom] != true) 1.0
+            else 0.5 // TODO figure out why 1/40 doesn’t work
         val doubleRouteOffset = if (closeZoom) 13 else 8
         val tripleRouteOffset = if (closeZoom) 26 else 16
         return Exp.step(
             Exp.length(routesExp),
-            xyExp(0, 0),
-            Exp(2) to xyExp(0, listOf(-doubleRouteOffset, doubleRouteOffset, 0)[index]),
-            Exp(3) to xyExp(0, listOf(-tripleRouteOffset, 0, tripleRouteOffset)[index]),
+            xyExp(0, 0, shiftScale, settings),
+            Exp(2) to
+                xyExp(
+                    0,
+                    listOf(-doubleRouteOffset, doubleRouteOffset, 0)[index],
+                    shiftScale,
+                    settings,
+                ),
+            Exp(3) to
+                xyExp(
+                    0,
+                    listOf(-tripleRouteOffset, 0, tripleRouteOffset)[index],
+                    shiftScale,
+                    settings,
+                ),
         )
     }
 
-    fun offsetPinExp(closeZoom: Boolean): Exp<List<Number>> {
+    fun offsetPinExp(closeZoom: Boolean, settings: Map<Settings, Boolean>): Exp<List<Number>> {
+        val shiftScale =
+            if (closeZoom || settings[Settings.ShiftingScaleWithZoom] != true) 1.0
+            else 0.5 // TODO figure out why 1/40 doesn’t work
         val singleRouteOffset = if (closeZoom) 38 else 33
         val doubleRouteOffset = if (closeZoom) 52 else 42
         val tripleRouteOffset = if (closeZoom) 65 else 50
@@ -174,48 +235,55 @@ internal object MapExp {
                 Exp.all(
                     Exp.eq(topRouteExp, Exp(MapStopRoute.FERRY.name)),
                     Exp.get(StopFeaturesBuilder.propIsTerminalKey),
-                ) to xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
+                ) to xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2), shiftScale, settings),
                 // Buses have an extra small dot at wide zoom, and at close zoom, the height is
                 // slightly repositioned to center the alert on the tombstone, ignoring the small
                 // pole rectangle at the bottom
                 Exp.eq(topRouteExp, Exp(MapStopRoute.BUS.name)) to
-                    xyExp(0, -singleRouteOffset - (if (closeZoom) 2 else 0)),
+                    xyExp(0, -singleRouteOffset - (if (closeZoom) 2 else 0), shiftScale, settings),
                 // Rail terminals at wide zoom have a special pill icon rather than the usual dot
                 Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
-                    xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2)),
+                    xyExp(0, -singleRouteOffset - (if (closeZoom) 0 else 2), shiftScale, settings),
                 // Regular rail stops, have a basic pill at close zoom and a dot at wide
-                fallback = xyExp(0, -singleRouteOffset),
+                fallback = xyExp(0, -singleRouteOffset, shiftScale, settings),
             ),
-            Exp(2) to xyExp(0, -doubleRouteOffset),
-            Exp(3) to xyExp(0, -tripleRouteOffset),
+            Exp(2) to xyExp(0, -doubleRouteOffset, shiftScale, settings),
+            Exp(3) to xyExp(0, -tripleRouteOffset, shiftScale, settings),
         )
     }
 
     // Similar to offsetAlertExp, the labels are set to different height and width offsets based on
     // the type of icon that they're next to. Text offsets are measured in em.
-    val labelOffsetExp =
-        Exp.interpolate(
+    // TODO figure out if shiftScale = 1.0/13 actually works
+    fun labelOffsetExp(settings: Map<Settings, Boolean>): Exp<List<Number>> {
+        val shiftScale = 1.0 / 13
+        return Exp.interpolate(
             Interpolation.Exponential(1.5),
             Exp.zoom(),
             Exp(MapDefaults.midZoomThreshold) to
                 Exp.step(
                     Exp.length(Exp.get(StopFeaturesBuilder.propMapRoutesKey)),
                     Exp.case(
-                        branchedRouteExp to xyExp(1.15, 0.75),
-                        Exp.get(StopFeaturesBuilder.propIsTerminalKey) to xyExp(1, 0.75),
-                        fallback = xyExp(0.75, 0.5),
+                        branchedRouteExp to xyExp(1.15, 0.75, shiftScale * 0.5, settings),
+                        Exp.get(StopFeaturesBuilder.propIsTerminalKey) to
+                            xyExp(1, 0.75, shiftScale * 0.5, settings),
+                        fallback = xyExp(0.75, 0.5, shiftScale * 0.5, settings),
                     ),
-                    Exp(2) to xyExp(0.5, 1.25),
-                    Exp(3) to xyExp(0.5, 1.5),
+                    Exp(2) to xyExp(0.5, 1.25, shiftScale * 0.5, settings),
+                    Exp(3) to xyExp(0.5, 1.5, shiftScale * 0.5, settings),
                 ),
             Exp(MapDefaults.closeZoomThreshold) to
                 Exp.step(
                     Exp.length(Exp.get(StopFeaturesBuilder.propMapRoutesKey)),
-                    Exp.case(branchedRouteExp to xyExp(2.5, 1.5), xyExp(2, 1.5)),
-                    Exp(2) to xyExp(2, 2),
-                    Exp(3) to xyExp(2, 2.5),
+                    Exp.case(
+                        branchedRouteExp to xyExp(2.5, 1.5, shiftScale, settings),
+                        xyExp(2, 1.5, shiftScale, settings),
+                    ),
+                    Exp(2) to xyExp(2, 2, shiftScale, settings),
+                    Exp(3) to xyExp(2, 2.5, shiftScale, settings),
                 ),
         )
+    }
 
     // The modeResize array must contain 3 entries for [BUS, COMMUTER, fallback]
     fun withMultipliers(
@@ -233,9 +301,71 @@ internal object MapExp {
         )
     }
 
-    // Mapbox only accepts iconOffset values if they're wrapped in this array literal expression
-    fun xyExp(x: Number, y: Number): Exp<List<Number>> {
-        return Exp.array(ArrayType.Number, 2, listOf(Exp(x), Exp(y)))
+    /**
+     * Hardcoding offsets based on route properties to minimize the occurrences of overlapping rail
+     * lines when drawn on the map
+     */
+    fun lineShiftEast(
+        scale: Double,
+        routeIds: Exp<List<String>>,
+        mapRoutes: Exp<List<String>>,
+        settings: Map<Settings, Boolean>,
+    ): Exp<Number> {
+        if (settings[Settings.ShiftingDisabled] == true) return Exp(0.0)
+        val maxLineWidth = 6.0
+        val greenOverlappingCR = setOf(Route.Id("CR-Lowell"), Route.Id("CR-Fitchburg"))
+        val redOverlappingCR =
+            setOf(
+                Route.Id("CR-Greenbush"),
+                Route.Id("CR-Kingston"),
+                Route.Id("CR-Middleborough"),
+                Route.Id("CR-NewBedford"),
+            )
+
+        val offset =
+            Exp.case(
+                // These CR routes overlap with GL, GL is offset below, so do nothing
+                Exp.any(
+                    *greenOverlappingCR.map { Exp.`in`(Exp(it.idText), routeIds) }.toTypedArray()
+                ) to Exp(0.0),
+                // These CR routes overlap with RL. RL is offset below, shift West
+                Exp.any(
+                    *redOverlappingCR.map { Exp.`in`(Exp(it.idText), routeIds) }.toTypedArray()
+                ) to Exp(maxLineWidth * 1.5 * scale),
+                // Some CR routes overlap with OL and should shift East.
+                // Shift the rest east too so they scale proportionally
+                Exp.`in`(Exp(MapStopRoute.COMMUTER.name), mapRoutes) to Exp(-maxLineWidth * scale),
+                // Account for overlapping North Station - Haymarket
+                // Offset to the East
+                Exp.any(
+                    *listOf("Green-B", "Green-C", "Green-D", "Green-E", "line-Green")
+                        .map { Exp.`in`(Exp(it), routeIds) }
+                        .toTypedArray()
+                ) to Exp(maxLineWidth * scale),
+                fallback = Exp(0.0),
+            )
+
+        return offset
+    }
+
+    fun xyExp(
+        x: Number,
+        y: Number,
+        shiftScale: Double,
+        settings: Map<Settings, Boolean>,
+    ): Exp<List<Number>> {
+        if (
+            settings[Settings.ShiftingDisabled] == true ||
+                settings[Settings.ShiftingIncludeStops] != true
+        )
+            return Exp.array(ArrayType.Number, 2, listOf(Exp(x), Exp(y)))
+        val routeIds = Exp.get(StopFeaturesBuilder.propRouteIdsKey)
+        val mapRoutes = Exp.get(StopFeaturesBuilder.propMapRoutesKey)
+        return Exp.array(
+            ArrayType.Number,
+            2,
+            listOf(lineShiftEast(shiftScale, routeIds, mapRoutes, settings), Exp(y)),
+        )
     }
 
     // For the separate bus only stop and alert layers, this takes any arbitrary

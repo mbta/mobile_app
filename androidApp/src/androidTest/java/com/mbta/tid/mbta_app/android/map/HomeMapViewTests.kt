@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.repositories.MockRailRouteShapeRepository
 import com.mbta.tid.mbta_app.repositories.MockSentryRepository
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.MockStopRepository
 import com.mbta.tid.mbta_app.repositories.MockTripRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -63,6 +64,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -105,6 +107,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -153,6 +156,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -201,6 +205,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -241,6 +246,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -282,6 +288,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -323,6 +330,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -417,6 +425,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -462,6 +471,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
@@ -504,6 +514,7 @@ class HomeMapViewTests {
                 MockGlobalRepository(),
                 MockRailRouteShapeRepository(),
                 MockSentryRepository(),
+                MockSettingsRepository(),
                 MockStopRepository(),
                 MockTripRepository(),
                 Clock.System,
