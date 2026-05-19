@@ -27,7 +27,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.R
-import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.routeCard.WorldCupBlurb
 import com.mbta.tid.mbta_app.android.component.routeSlashIcon
 import com.mbta.tid.mbta_app.android.state.getGlobalData
@@ -192,16 +190,6 @@ fun StopDetailsFilteredDeparturesView(
         )
     }
 
-    DebugView {
-        Column(
-            Modifier.align(Alignment.CenterHorizontally),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text("stop id: $stopId")
-            Text("trip id: ${tripFilter?.tripId ?: "null"}")
-            Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
-        }
-    }
     Column(Modifier.navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (!isAllServiceDisrupted && tileData.isNotEmpty()) {
             DepartureTiles(
