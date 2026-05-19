@@ -57,7 +57,7 @@ struct RouteCardList<EmptyView: View>: View {
                 }
                 .padding(.vertical, 4)
                 .padding(.horizontal, 16)
-                .loadingPlaceholder()
+                .loadingPlaceholder(withShimmer: false)
             }
             .enableInjection()
         }

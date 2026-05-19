@@ -10,7 +10,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 @Composable
 fun LoadingRouteCard() {
     val placeholderRouteData = LoadingPlaceholders.nearbyRoute()
-    Column(modifier = Modifier.loadingShimmer()) {
+    Column(modifier = Modifier.loadingShimmer(withShimmer = false)) {
         RouteCard(
             placeholderRouteData,
             null,
