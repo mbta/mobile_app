@@ -89,11 +89,16 @@ struct StopDetailsFilteredView: View {
         direction: stopFilter.directionId
     ) }
     var stop: Stop? { global?.getStop(stopId: stopId) }
-    var stopData: RouteCardData.RouteStopData? {
+
+    var lineOrRoute: LineOrRoute? { global?.getLineOrRoute(lineOrRouteId: stopFilter.routeId) }
+
+    var realtimeStopData: RouteCardData.RouteStopData? {
         if case let .filtered(data) = onEnum(of: routeData), routeData?.filters.stopId == stopId,
-           routeData?.filters.stopFilter == stopFilter {
+           routeData?.filters.stopFilter?.routeId == stopFilter.routeId {
             data.stopData
-        } else { nil }
+        } else {
+            nil
+        }
     }
 
     var tripPageFilter: TripDetailsPageFilter? {
@@ -104,33 +109,70 @@ struct StopDetailsFilteredView: View {
         }
     }
 
+    var leaf: RouteCardData.Leaf? {
+        realtimeStopData?.data
+            .first {
+                $0.stop.id == stopId && $0.lineOrRoute.id == stopFilter.routeId && $0.directionId == stopFilter
+                    .directionId
+            }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
-            ZStack {
-                Color.fill2.ignoresSafeArea(.all)
-                header
-            }
-            .fixedSize(horizontal: false, vertical: true)
+            if let lineOrRoute, let global, let stop {
+                let allPatternsForStop: [RoutePattern] = global.getPatternsFor(stopId: stopId, lineOrRoute: lineOrRoute)
 
-            if let stopData {
-                StopDetailsFilteredPickerView(
-                    stopId: stopId,
-                    stopFilter: stopFilter,
-                    tripFilter: tripFilter,
-                    setStopFilter: setStopFilter,
-                    setTripFilter: setTripFilter,
-                    stopData: stopData,
-                    alertSummaries: alertSummaries,
-                    favorite: isFavorite,
-                    now: now,
-                    errorBannerVM: errorBannerVM,
-                    nearbyVM: nearbyVM,
-                    mapVM: mapVM,
-                    stopDetailsVM: stopDetailsVM,
-                    viewportProvider: .init()
+                let directions: [Direction] = lineOrRoute.directions(
+                    globalData: global,
+                    stop: stop,
+                    patterns: allPatternsForStop.filter { pattern in
+                        pattern.isTypical()
+                    }
                 )
+
+                let availableDirections = directions.filter {
+                    !stop.isLastStopForAllPatterns(directionId: $0.id, patterns: allPatternsForStop, global: global)
+                }
+
+                VStack(spacing: 0) {
+                    ZStack {
+                        Color.fill2.ignoresSafeArea(.all)
+                        header(
+                            lineOrRoute: lineOrRoute,
+                            directions: directions,
+                            availableDirections: availableDirections
+                        )
+                    }
+                    .fixedSize(horizontal: false, vertical: true)
+
+                    ZStack(alignment: .top) {
+                        Color(hex: lineOrRoute.backgroundColor).ignoresSafeArea(.all)
+                        Rectangle()
+                            .fill(Color.halo)
+                            .frame(height: 2)
+                            .frame(maxWidth: .infinity)
+
+                        ScrollView(.vertical, showsIndicators: false) {
+                            VStack(spacing: 16) {
+                                DirectionPicker(
+                                    availableDirections: availableDirections.map(\.id),
+                                    directions: directions,
+                                    route: lineOrRoute.sortRoute,
+                                    filter: stopFilter,
+                                    setFilter: { setStopFilter($0) }
+                                )
+                                .fixedSize(horizontal: false, vertical: true)
+                                .padding([.horizontal, .top], 16)
+                                .padding(.bottom, 6)
+                                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+
+                                departures(directions: directions)
+                            }
+                        }
+                    }
+                }
             } else {
-                loadingBody()
+                loadingDepartures()
             }
         }
         .task {
@@ -153,18 +195,69 @@ struct StopDetailsFilteredView: View {
     }
 
     @ViewBuilder
-    var header: some View {
-        let line: Line? = switch onEnum(of: stopData?.lineOrRoute) {
+    func departures(directions: [Direction]) -> some View {
+        if let leaf {
+            StopDetailsFilteredDepartureDetails(
+                stopId: stopId,
+                stopFilter: stopFilter,
+                tripFilter: tripFilter,
+                setStopFilter: setStopFilter,
+                setTripFilter: setTripFilter,
+                leaf: leaf,
+                alertSummaries: alertSummaries,
+                selectedDirection: directions[Int(stopFilter.directionId)],
+                favorite: isFavorite,
+                now: now.toEasternInstant(),
+                errorBannerVM: errorBannerVM,
+                nearbyVM: nearbyVM,
+                mapVM: mapVM,
+                stopDetailsVM: stopDetailsVM,
+                viewportProvider: .init()
+            )
+        } else {
+            loadingDepartures()
+        }
+    }
+
+    func loadingDepartures() -> some View {
+        let routeData = LoadingPlaceholders.shared.routeCardData(
+            routeId: stopFilter.routeId,
+            trips: 10,
+            context: .stopDetailsFiltered,
+            now: nowInstant
+        )
+
+        return StopDetailsFilteredDepartureDetails(
+            stopId: stopId,
+            stopFilter: stopFilter,
+            tripFilter: tripFilter,
+            setStopFilter: setStopFilter,
+            setTripFilter: setTripFilter,
+            leaf: routeData.stopData.first!.data.first!,
+            alertSummaries: alertSummaries,
+            selectedDirection: routeData.stopData.first!.directions[Int(stopFilter.directionId)],
+            favorite: isFavorite,
+            now: now.toEasternInstant(),
+            errorBannerVM: errorBannerVM,
+            nearbyVM: nearbyVM,
+            mapVM: mapVM,
+            stopDetailsVM: stopDetailsVM,
+            viewportProvider: .init()
+        ).loadingPlaceholder()
+    }
+
+    @ViewBuilder
+    func header(lineOrRoute: LineOrRoute, directions _: [Direction], availableDirections: [Direction]) -> some View {
+        let line: Line? = switch onEnum(of: lineOrRoute) {
         case let .line(line): line.line
         default: nil
         }
         VStack(spacing: 0) {
-            if let stopData, let routeStopDirection, inSaveFavoritesFlow {
+            if let stop, let routeStopDirection, inSaveFavoritesFlow {
                 SaveFavoritesFlow(
-                    lineOrRoute: stopData.lineOrRoute,
-                    stop: stopData.stop,
-                    directions: stopData.directions
-                        .filter { stopData.availableDirections.contains(KotlinInt(value: $0.id)) },
+                    lineOrRoute: lineOrRoute,
+                    stop: stop,
+                    directions: availableDirections,
                     selectedDirection: routeStopDirection.direction,
                     context: .stopDetails,
                     global: global,
@@ -184,7 +277,7 @@ struct StopDetailsFilteredView: View {
 
             VStack(spacing: 0) {
                 StopDetailsFilteredHeader(
-                    route: stopData?.lineOrRoute.sortRoute,
+                    route: lineOrRoute.sortRoute,
                     line: line,
                     stop: stop,
                     direction: stopFilter.directionId,
@@ -205,31 +298,5 @@ struct StopDetailsFilteredView: View {
             .fixedSize(horizontal: false, vertical: true)
             .dynamicTypeSize(...DynamicTypeSize.accessibility1)
         }
-    }
-
-    @ViewBuilder private func loadingBody() -> some View {
-        let routeData = LoadingPlaceholders.shared.routeCardData(
-            routeId: stopFilter.routeId,
-            trips: 10,
-            context: .stopDetailsFiltered,
-            now: nowInstant
-        )
-
-        StopDetailsFilteredPickerView(
-            stopId: stopId,
-            stopFilter: stopFilter,
-            tripFilter: tripFilter,
-            setStopFilter: setStopFilter,
-            setTripFilter: setTripFilter,
-            stopData: routeData.stopData.first!,
-            alertSummaries: [:],
-            favorite: false,
-            now: now,
-            errorBannerVM: errorBannerVM,
-            nearbyVM: nearbyVM,
-            mapVM: mapVM,
-            stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
-        ).loadingPlaceholder()
     }
 }
