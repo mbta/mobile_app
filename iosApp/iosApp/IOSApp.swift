@@ -82,6 +82,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
         let userInfo = response.notification.request.content.userInfo
         Messaging.messaging().appDidReceiveMessage(userInfo)
 
+        if let analyticsLabel = userInfo["analytics_label"] as? String {
+            AnalyticsProvider.shared.notificationClicked(analyticsLabel: analyticsLabel)
+        }
+
         if let deepLinkPath = userInfo["deep_link_path"] as? String {
             Self.notificationDeepLinkOwner.notificationDeepLink = .companion.from(url: deepLinkPath)
         }

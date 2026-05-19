@@ -121,4 +121,18 @@ class AnalyticsTest {
             ),
         )
     }
+
+    @Test
+    fun testNotificationClicked() {
+        var loggedEvent: Pair<String, Map<String, String>>? = null
+        val analytics = MockAnalytics({ event, params -> loggedEvent = Pair(event, params) })
+        analytics.notificationClicked("route=66,68;effect=suspension;type=update")
+        assertEquals(
+            loggedEvent,
+            Pair(
+                "notification_clicked",
+                mapOf("route" to "66,68", "effect" to "suspension", "type" to "update"),
+            ),
+        )
+    }
 }
