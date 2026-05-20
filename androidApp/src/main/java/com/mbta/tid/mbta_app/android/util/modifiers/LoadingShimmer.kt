@@ -9,7 +9,13 @@ import com.mbta.tid.mbta_app.android.R
 import com.valentinilk.shimmer.shimmer
 
 @Composable
-fun Modifier.loadingShimmer(): Modifier {
+fun Modifier.loading(withShimmer: Boolean = true): Modifier {
     val contentDesc = stringResource(R.string.loading)
-    return this then Modifier.shimmer().clearAndSetSemantics { contentDescription = contentDesc }
+
+    if (withShimmer) {
+        return this then
+            Modifier.shimmer().clearAndSetSemantics { contentDescription = contentDesc }
+    } else {
+        return this.clearAndSetSemantics { contentDescription = contentDesc }
+    }
 }

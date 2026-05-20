@@ -140,7 +140,7 @@ class MapAndSheetPageTest : KoinTest {
         }
     val greenLineRoute =
         builder.route {
-            id = "route_2"
+            id = "Green-B"
             type = RouteType.LIGHT_RAIL
             color = "008000"
             directionNames = listOf("Inbound", "Outbound")
@@ -156,7 +156,7 @@ class MapAndSheetPageTest : KoinTest {
             id = "pattern_3"
             directionId = 0
             name = "Green Line Pattern"
-            routeId = "route_2"
+            routeId = "Green-B"
             representativeTripId = "trip_2"
         }
     val greenLine =
@@ -178,7 +178,7 @@ class MapAndSheetPageTest : KoinTest {
     val greenLineTrip =
         builder.trip {
             id = "trip_2"
-            routeId = "route_2"
+            routeId = "Green-B"
             directionId = 0
             headsign = "Green Line Head Sign"
             routePatternId = "pattern_3"
@@ -189,7 +189,7 @@ class MapAndSheetPageTest : KoinTest {
             revenue = true
             stopId = "stop_2"
             tripId = "trip_2"
-            routeId = "route_2"
+            routeId = "Green-B"
             stopSequence = 1
             directionId = 0
             arrivalTime = now.plus(5.minutes)

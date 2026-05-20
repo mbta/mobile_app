@@ -18,7 +18,7 @@ import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.tripDetails.MissingTripCard
 import com.mbta.tid.mbta_app.android.tripDetails.MissingTripCardType
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.AlertSummary
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
@@ -189,7 +189,7 @@ fun TripDetailsView(
             )
 
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            Column(modifier = modifier.loadingShimmer()) {
+            Column(modifier = modifier.loading()) {
                 TripDetails(
                     placeholderTripInfo.trip,
                     placeholderHeaderSpec,

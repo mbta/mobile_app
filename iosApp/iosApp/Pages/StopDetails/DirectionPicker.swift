@@ -18,20 +18,17 @@ struct DirectionPicker: View {
     let updateDirectionId: (Int32) -> Void
 
     init(
-        stopData: RouteCardData.RouteStopData,
+        availableDirections: [Int32],
+        directions: [Direction],
+        route: Route,
         filter: StopDetailsFilter?,
         setFilter: @escaping (StopDetailsFilter?) -> Void
     ) {
-        availableDirections = Set(stopData.data.map(\.directionId)).sorted()
-        directions = stopData.directions
-        let route = stopData.lineOrRoute.sortRoute
+        self.availableDirections = availableDirections
+        self.directions = directions
         self.route = route
-        let line: Line? = switch onEnum(of: stopData.lineOrRoute) {
-        case let .line(line): line.line
-        default: nil
-        }
         selectedDirectionId = filter?.directionId
-        updateDirectionId = { setFilter(.init(routeId: line?.id ?? route.id, directionId: $0)) }
+        updateDirectionId = { setFilter(.init(routeId: route.id, directionId: $0)) }
     }
 
     init(
@@ -103,57 +100,20 @@ struct DirectionPicker: View {
 
 #Preview {
     let objects = ObjectCollectionBuilder()
-    let stop = objects.stop { _ in }
     let route = objects.route { route in
         route.color = "FFC72C"
         route.textColor = "000000"
     }
-    let patternOutbound = objects.routePattern(route: route) { pattern in
-        pattern.directionId = 0
-    }
-    let patternInbound = objects.routePattern(route: route) { pattern in
-        pattern.directionId = 1
-    }
-
-    let lineOrRoute = LineOrRoute.route(route)
-    let context = RouteCardData.Context.stopDetailsFiltered
-    let leaf0 = RouteCardData.Leaf(
-        lineOrRoute: lineOrRoute,
-        stop: stop,
-        directionId: 0,
-        routePatterns: [patternOutbound],
-        stopIds: [stop.id],
-        upcomingTrips: [],
-        alertsHere: [],
-        allDataLoaded: true,
-        hasSchedulesToday: true,
-        subwayServiceStartTime: nil,
-        alertsDownstream: [],
-        context: context
-    )
-    let leaf1 = RouteCardData.Leaf(
-        lineOrRoute: lineOrRoute,
-        stop: stop,
-        directionId: 1,
-        routePatterns: [patternInbound],
-        stopIds: [stop.id],
-        upcomingTrips: [],
-        alertsHere: [],
-        allDataLoaded: true,
-        hasSchedulesToday: true,
-        subwayServiceStartTime: nil,
-        alertsDownstream: [],
-        context: context
-    )
-    let stopCard = RouteCardData.RouteStopData(lineOrRoute: lineOrRoute, stop: stop, directions: [
-        .init(name: "Outbound", destination: "Out", id: 0),
-        .init(name: "Inbound", destination: "In", id: 1),
-    ], data: [leaf0, leaf1])
 
     DirectionPicker(
-        stopData: stopCard,
-        filter: .init(routeId: route.id, directionId: 0),
-        setFilter: { _ in }
+        availableDirections: [0, 1],
+        directions: [
+            .init(name: "Outbound", destination: "Out", id: 0),
+            .init(name: "Inbound", destination: "In", id: 1),
+        ],
+        route: route,
+        selectedDirectionId: 0,
+        updateDirectionId: { _ in }
     )
     .fixedSize(horizontal: false, vertical: true)
     .padding(16)
