@@ -93,7 +93,6 @@ struct TripStops: View {
     var body: some View {
         ZStack {
             Color.fill2
-                .padding(1)
                 .withRoundedBorder(color: Color.halo, width: 2)
                 .padding(.horizontal, 6)
                 .padding(
