@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mapbox.geojson.Point
 import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.ViewAnnotationAnchor
@@ -95,13 +95,13 @@ fun HomeMapView(
     navCallbacks: NavigationCallbacks,
 ) {
     val globalData = getGlobalData("HomeMapView")
-    val state by viewModel.models.collectAsState()
+    val state by viewModel.models.collectAsStateWithLifecycle()
     var isTargeting by isTargetingState
 
     val configLoadAttempted by
-        mapboxConfigManager.configLoadAttempted.collectAsState(initial = false)
+        mapboxConfigManager.configLoadAttempted.collectAsStateWithLifecycle(false)
 
-    val currentLocation by locationDataManager.currentLocation.collectAsState(initial = null)
+    val currentLocation by locationDataManager.currentLocation.collectAsStateWithLifecycle(null)
     val isDarkMode = isSystemInDarkTheme()
 
     val allowTargeting = currentNavEntry?.allowTargeting ?: true
@@ -127,7 +127,7 @@ fun HomeMapView(
             viewportProvider.cameraStateFlow.map { it.zoom }
         }
     val zoomLevel by
-        cameraZoomFlow.collectAsState(initial = ViewportProvider.Companion.Defaults.zoom)
+        cameraZoomFlow.collectAsStateWithLifecycle(ViewportProvider.Companion.Defaults.zoom)
 
     val showCurrentLocation = currentNavEntry?.showCurrentLocation ?: true
     val pulsingRingColor: Int = colorResource(R.color.key_inverse).toArgb()
@@ -138,8 +138,10 @@ fun HomeMapView(
         rotateEnabled = false
         pitchEnabled = false
     }
-    LaunchedEffect(Unit) {
-        mapState.cameraChangedEvents.collect { viewportProvider.updateCameraState(it.cameraState) }
+
+    val cameraChange by mapState.cameraChangedEvents.collectAsStateWithLifecycle(null)
+    LaunchedEffect(cameraChange) {
+        cameraChange?.let { viewportProvider.updateCameraState(it.cameraState) }
     }
     LaunchedEffect(viewportProvider, sheetPadding) {
         viewportProvider.setSheetPadding(sheetPadding, density, layoutDirection)
@@ -214,17 +216,14 @@ fun HomeMapView(
                     }
                 }
 
-                MapEffect(null) { map ->
-                    mapState.styleLoadedEvents.collect {
-                        val layerManager = MapLayerManager(map.mapboxMap, context)
-                        layerManager.loadImages()
-                        layerManager.setUpAnchorLayers()
-                        map.location.updateSettings {
-                            layerBelow = MapLayerManager.puckAnchorLayerId
-                        }
-                        viewModel.layerManagerInitialized(layerManager)
-                        viewModel.mapStyleLoaded()
-                    }
+                val styleLoad by mapState.styleLoadedEvents.collectAsStateWithLifecycle(null)
+                MapEffect(styleLoad) { map ->
+                    val layerManager = MapLayerManager(map.mapboxMap, context)
+                    layerManager.loadImages()
+                    layerManager.setUpAnchorLayers()
+                    map.location.updateSettings { layerBelow = MapLayerManager.puckAnchorLayerId }
+                    viewModel.layerManagerInitialized(layerManager)
+                    viewModel.mapStyleLoaded()
                 }
 
                 MapEffect(state.layersInitialized, showCurrentLocation) { map ->
@@ -240,15 +239,12 @@ fun HomeMapView(
                     }
                 }
 
-                LaunchedEffect(locationDataManager) {
-                    locationDataManager.currentLocation.collect { location ->
-                        if (location != null) {
-                            locationProvider.sendLocation(
-                                Point.fromLngLat(location.longitude, location.latitude)
-                            )
-                            if (viewportProvider.isFollowingPuck) {
-                                viewModel.recenter(MapViewModel.Event.RecenterType.CurrentLocation)
-                            }
+                val location by locationDataManager.currentLocation.collectAsStateWithLifecycle()
+                LaunchedEffect(location) {
+                    location?.let {
+                        locationProvider.sendLocation(Point.fromLngLat(it.longitude, it.latitude))
+                        if (viewportProvider.isFollowingPuck) {
+                            viewModel.recenter(MapViewModel.Event.RecenterType.CurrentLocation)
                         }
                     }
                 }

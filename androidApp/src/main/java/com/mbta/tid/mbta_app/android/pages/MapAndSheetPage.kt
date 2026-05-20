@@ -24,7 +24,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -186,7 +185,7 @@ fun MapAndSheetPage(
 
     val now by timer(updateInterval = 5.seconds)
 
-    val routeCardDataState by routeCardDataViewModel.models.collectAsState()
+    val routeCardDataState by routeCardDataViewModel.models.collectAsStateWithLifecycle()
     val tileScrollState = rememberScrollState()
     val scope = rememberCoroutineScope()
 
@@ -288,7 +287,7 @@ fun MapAndSheetPage(
         navControllerInitialized = navControllerInitialized || currentNavBackStackEntry != null
     }
 
-    val deepLinkState by deepLinkStateFlow.collectAsState()
+    val deepLinkState by deepLinkStateFlow.collectAsStateWithLifecycle()
     LaunchedEffect(deepLinkState, navControllerInitialized) {
         val state = deepLinkState
         if (!navControllerInitialized || state == null || state == DeepLinkState.None)
@@ -329,7 +328,7 @@ fun MapAndSheetPage(
         notificationsBetaViewModel.setSheetRoute(currentNavEntry)
     }
 
-    val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsState()
+    val filterUpdates by stopDetailsViewModel.filterUpdates.collectAsStateWithLifecycle()
     LaunchedEffect(filterUpdates) { filterUpdates?.let { updateStopDetailsFilters(it) } }
 
     val vehiclesData: List<Vehicle> =
@@ -506,7 +505,7 @@ fun MapAndSheetPage(
     }
 
     LaunchedEffect(
-        mapboxConfigManager.lastMapboxErrorTimestamp.collectAsState(initial = null).value
+        mapboxConfigManager.lastMapboxErrorTimestamp.collectAsStateWithLifecycle(null).value
     ) {
         mapboxConfigManager.loadConfig()
     }
@@ -839,11 +838,9 @@ fun MapAndSheetPage(
         outerSheetPadding ->
         val showSearchBar = remember(currentNavEntry) { currentNavEntry?.showSearchBar ?: true }
         if (hideMaps) {
-            LaunchedEffect(null) {
-                nearbyTransit.locationDataManager.currentLocation.collect { location ->
-                    nearbyTransit.viewportProvider.updateCameraState(location)
-                }
-            }
+            val location by
+                nearbyTransit.locationDataManager.currentLocation.collectAsStateWithLifecycle()
+            LaunchedEffect(location) { nearbyTransit.viewportProvider.updateCameraState(location) }
 
             Box(Modifier.fillMaxSize().background(colorResource(R.color.sheet_background))) {
                 SearchBarOverlay(
@@ -905,7 +902,8 @@ fun MapAndSheetPage(
                         }
                     },
                 ) {
-                    val searchBarHeight by nearbyTabViewModel.searchBarHeight.collectAsState()
+                    val searchBarHeight by
+                        nearbyTabViewModel.searchBarHeight.collectAsStateWithLifecycle()
                     val mapPadding =
                         remember(sheetPadding, searchBarHeight) {
                             sheetPadding.plus(
