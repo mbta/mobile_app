@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.time.Duration
@@ -654,6 +655,7 @@ internal constructor(
             staleAlerts: List<String>,
         ): List<Alert> {
             return patterns
+                .filterNot { it.typicality == Typicality.CanonicalOnly }
                 .flatMap {
                     val trip = tripsById[it.representativeTripId]
                     if (trip != null) {
