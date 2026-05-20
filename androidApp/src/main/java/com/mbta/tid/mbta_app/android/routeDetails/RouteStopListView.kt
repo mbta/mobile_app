@@ -60,7 +60,7 @@ import com.mbta.tid.mbta_app.android.util.fromHex
 import com.mbta.tid.mbta_app.android.util.labelWithModeIfBus
 import com.mbta.tid.mbta_app.android.util.manageFavorites
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.rememberSuspend
 import com.mbta.tid.mbta_app.android.util.stateJsonSaver
 import com.mbta.tid.mbta_app.model.FavoriteSettings
@@ -407,7 +407,7 @@ private fun RouteStops(
                 outlineColor = haloColor,
                 backgroundColor = colorResource(R.color.fill2),
             )
-            .then(if (loading) Modifier.loadingShimmer() else Modifier),
+            .then(if (loading) Modifier.loading() else Modifier),
         haloColor = haloColor,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,

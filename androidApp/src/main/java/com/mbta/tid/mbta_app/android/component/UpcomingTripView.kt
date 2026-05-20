@@ -39,7 +39,7 @@ import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.contentDescription
 import com.mbta.tid.mbta_app.android.util.formattedTime
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.Alert
@@ -499,7 +499,7 @@ fun UpcomingTripView(
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
                 UpcomingTripView(
                     UpcomingTripViewState.Some(TripInstantDisplay.Minutes(10, false)),
-                    modifier.loadingShimmer().placeholderIfLoading(),
+                    modifier.loading().placeholderIfLoading(),
                     routeType,
                     isFirst,
                     isOnly,

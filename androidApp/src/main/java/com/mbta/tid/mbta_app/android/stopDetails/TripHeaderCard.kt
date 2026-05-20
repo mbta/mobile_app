@@ -64,7 +64,7 @@ import com.mbta.tid.mbta_app.android.util.Typography
 import com.mbta.tid.mbta_app.android.util.containsWrappableText
 import com.mbta.tid.mbta_app.android.util.modifiers.DestinationPredictionBalance
 import com.mbta.tid.mbta_app.android.util.modifiers.haloContainer
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.android.util.modifiers.placeholderIfLoading
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
@@ -772,7 +772,7 @@ private fun TripHeaderCardPreview() {
             )
 
             CompositionLocalProvider(IsLoadingSheetContents provides true) {
-                Column(modifier = Modifier.loadingShimmer()) {
+                Column(modifier = Modifier.loading()) {
                     TripHeaderCard(
                         trip = trip,
                         spec = TripHeaderSpec.VehicleOnTrip(vehicle, davis, rlEntry, false),

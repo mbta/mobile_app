@@ -34,7 +34,7 @@ import com.mbta.tid.mbta_app.android.component.SaveFavoritesFlow
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
 import com.mbta.tid.mbta_app.android.util.fromHex
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
@@ -141,7 +141,7 @@ fun StopDetailsFilteredView(
     @Composable
     fun LoadingDepartures() {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            Column(modifier = Modifier.loadingShimmer()) {
+            Column(modifier = Modifier.loading()) {
                 val routeData =
                     LoadingPlaceholders.routeCardData(
                         stopFilter.routeId,

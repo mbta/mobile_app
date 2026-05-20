@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.ModalRoutes
 import com.mbta.tid.mbta_app.android.state.getGlobalData
 import com.mbta.tid.mbta_app.android.util.IsLoadingSheetContents
-import com.mbta.tid.mbta_app.android.util.modifiers.loadingShimmer
+import com.mbta.tid.mbta_app.android.util.modifiers.loading
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
 import com.mbta.tid.mbta_app.model.RouteCardData
@@ -98,7 +98,7 @@ fun StopDetailsUnfilteredView(
         }
     } else {
         CompositionLocalProvider(IsLoadingSheetContents provides true) {
-            Column(modifier = Modifier.loadingShimmer()) {
+            Column(modifier = Modifier.loading()) {
                 val placeholderData = LoadingPlaceholders.stopDetailsRouteCards()
                 val filterRoutes =
                     if (globalResponse != null) {
