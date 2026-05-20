@@ -651,6 +651,7 @@ internal constructor(
             routeType: RouteType?,
             targetStopWithChildren: Set<String>,
             tripsById: Map<String, Trip>,
+            staleAlerts: List<String>,
         ): List<Alert> {
             return patterns
                 .flatMap {
@@ -662,6 +663,7 @@ internal constructor(
                     }
                 }
                 .distinct()
+                .filterNot { staleAlerts.contains(it.id) }
         }
     }
 }
