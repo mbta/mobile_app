@@ -58,6 +58,7 @@ constructor(private val result: ApiResult<GlobalResponse>, private val onGet: ()
                 emptyMap(),
                 emptyMap(),
                 emptyMap(),
+                emptyList(),
             ),
         onGet: () -> Unit = {},
     ) : this(ApiResult.Ok(response), onGet)

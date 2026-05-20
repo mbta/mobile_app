@@ -31,6 +31,7 @@ internal constructor(
     @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
     internal val stops: Map<String, Stop>,
     internal val trips: Map<String, Trip>,
+    @SerialName("stop_blocklist") internal val stopBlocklist: List<String>,
 ) {
     public constructor(
         objects: ObjectCollectionBuilder
@@ -48,6 +49,7 @@ internal constructor(
         objects.routePatterns.toMap(),
         objects.stops.toMap(),
         objects.trips.toMap(),
+        emptyList(),
     )
 
     public constructor(
@@ -61,6 +63,7 @@ internal constructor(
         objects.routePatterns.toMap(),
         objects.stops.toMap(),
         objects.trips.toMap(),
+        emptyList(),
     )
 
     public fun withWorldCupService(today: LocalDate): GlobalResponse =
@@ -78,6 +81,7 @@ internal constructor(
             routePatterns = routePatterns + other.routePatterns,
             stops = stops + other.stops,
             trips = trips + other.trips,
+            stopBlocklist = stopBlocklist + other.stopBlocklist,
         )
 
     @Transient
