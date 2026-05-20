@@ -112,9 +112,7 @@ struct StopListRow<Descriptor: View, RightSideContent: View>: View {
                         internalPadding: .init(top: 0, leading: 5, bottom: 0, trailing: 0)
                     )
                     .background(Color.fill3)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .padding(1)
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.halo, lineWidth: 2))
+                    .withRoundedBorder(width: 2)
                     .padding(.top, 1)
                     .padding(.horizontal, -4)
                 }
