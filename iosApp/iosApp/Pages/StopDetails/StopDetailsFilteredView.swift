@@ -158,8 +158,11 @@ struct StopDetailsFilteredView: View {
                                     availableDirections: availableDirections.map(\.id),
                                     directions: directions,
                                     route: lineOrRoute.sortRoute,
-                                    filter: stopFilter,
-                                    setFilter: { setStopFilter($0) }
+                                    selectedDirectionId: stopFilter.directionId,
+                                    updateDirectionId: { setStopFilter(StopDetailsFilter(
+                                        routeId: stopFilter.routeId,
+                                        directionId: $0
+                                    )) }
                                 )
                                 .fixedSize(horizontal: false, vertical: true)
                                 .padding([.horizontal, .top], 16)

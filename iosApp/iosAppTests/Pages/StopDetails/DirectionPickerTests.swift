@@ -22,8 +22,8 @@ final class DirectionPickerTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
 
-        let setFilter1Exp: XCTestExpectation = .init(description: "set filter called with direction 1")
-        let setFilter0Exp: XCTestExpectation = .init(description: "set filter called with direction 0")
+        let setDirection0Exp: XCTestExpectation = .init(description: "updateDirectionId called with 1")
+        let setDirection1Exp: XCTestExpectation = .init(description: "updateDirectionId called with 0")
 
         let filter: StopDetailsFilter? = .init(
             routeId: route.id,
@@ -33,20 +33,21 @@ final class DirectionPickerTests: XCTestCase {
         let sut = DirectionPicker(availableDirections: [0, 1],
                                   directions: directions,
                                   route: route,
-                                  filter: filter, setFilter: { filter in
-                                      if filter?.directionId == 1 {
-                                          setFilter1Exp.fulfill()
+                                  selectedDirectionId: 0,
+                                  updateDirectionId: { newDirectionId in
+                                      if newDirectionId == 1 {
+                                          setDirection1Exp.fulfill()
                                       }
-                                      if filter?.directionId == 0 {
-                                          setFilter0Exp.fulfill()
+                                      if newDirectionId == 0 {
+                                          setDirection0Exp.fulfill()
                                       }
                                   })
         XCTAssertNotNil(try sut.inspect().find(text: "Selected Destination"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Other Destination"))
         try sut.inspect().find(button: "Other Destination").tap()
-        wait(for: [setFilter1Exp], timeout: 1)
+        wait(for: [setDirection1Exp], timeout: 1)
         try sut.inspect().find(button: "Selected Destination").tap()
-        wait(for: [setFilter0Exp], timeout: 1)
+        wait(for: [setDirection0Exp], timeout: 1)
     }
 
     func testFormatsNorthSouth() throws {
@@ -61,7 +62,8 @@ final class DirectionPickerTests: XCTestCase {
         let sut = DirectionPicker(availableDirections: [0, 1],
                                   directions: directions,
                                   route: route,
-                                  filter: filter, setFilter: { _ in })
+                                  selectedDirectionId: 0,
+                                  updateDirectionId: { _ in })
         XCTAssertNotNil(try sut.inspect().find(text: "Northbound to"))
         XCTAssertNotNil(try? sut.inspect().find(text: "Southbound to"))
     }

@@ -21,20 +21,6 @@ struct DirectionPicker: View {
         availableDirections: [Int32],
         directions: [Direction],
         route: Route,
-        filter: StopDetailsFilter?,
-        setFilter: @escaping (StopDetailsFilter?) -> Void
-    ) {
-        self.availableDirections = availableDirections
-        self.directions = directions
-        self.route = route
-        selectedDirectionId = filter?.directionId
-        updateDirectionId = { setFilter(.init(routeId: route.id, directionId: $0)) }
-    }
-
-    init(
-        availableDirections: [Int32],
-        directions: [Direction],
-        route: Route,
         selectedDirectionId: Int32?,
         updateDirectionId: @escaping (Int32) -> Void
     ) {
