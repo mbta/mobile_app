@@ -55,6 +55,7 @@ internal constructor(
     public constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
+        stopBlocklist: List<String> = emptyList(),
     ) : this(
         objects.facilities.toMap(),
         objects.lines.toMap(),
@@ -63,7 +64,7 @@ internal constructor(
         objects.routePatterns.toMap(),
         objects.stops.toMap(),
         objects.trips.toMap(),
-        emptyList(),
+        stopBlocklist,
     )
 
     public fun withWorldCupService(today: LocalDate): GlobalResponse =
