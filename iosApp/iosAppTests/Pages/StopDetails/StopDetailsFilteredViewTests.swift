@@ -253,11 +253,111 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         )
 
         let exp = sut.inspection.inspect(after: 2) { view in
-            try view.find(text: "Outbound to")
+            XCTAssertNotNil(try view.find(text: "Outbound to"))
         }
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
             .devDebugMode: false,
         ]))
         wait(for: [exp], timeout: 4)
+    }
+
+    @MainActor func testCorrectlySetsStopFilterWhenChangingDirectionAtGLStop() throws {
+        let objects = TestData.clone()
+
+        let route: Route = objects.getRoute(id: "Green-B")
+        let stop = objects.getStop(id: "place-boyls")
+
+        let directionId: Int32 = 0
+        let now = EasternTimeInstant.now()
+
+        let pattern0 = objects.getRoutePattern(id: "Green-B-812-0")
+        let pattern1 = objects.getRoutePattern(id: "Green-B-812-1")
+
+        let trip0 = objects.getTrip(id: "canonical-Green-B-C1-0")
+        let trip1 = objects.getTrip(id: "canonical-Green-B-C1-0")
+
+        let upcomingTrip0 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = trip0
+            prediction.departureTime = now.plus(minutes: 2)
+        })
+
+        let upcomingTrip1 = objects.upcomingTrip(prediction: objects.prediction { prediction in
+            prediction.trip = trip1
+            prediction.departureTime = now.plus(minutes: 4)
+        })
+
+        let favoritesRepository = MockFavoritesRepository()
+
+        let stopData: RouteCardData.RouteStopData = .init(route: route, stop: stop, data: [RouteCardData.Leaf(
+            lineOrRoute: LineOrRoute.Route(route: route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [upcomingTrip0],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .stopDetailsFiltered
+        ), RouteCardData.Leaf(
+            lineOrRoute: LineOrRoute.Route(route: route),
+            stop: stop,
+            directionId: 1,
+            routePatterns: [],
+            stopIds: Set([stop.id]),
+            upcomingTrips: [upcomingTrip1],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .stopDetailsFiltered
+        )],
+        globalData: GlobalResponse(objects: objects))
+
+        let routeData = StopDetailsViewModel.RouteDataFiltered(
+            filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.lineId!, directionId: 0),
+                                tripFilter: nil),
+            stopData: stopData
+        )
+
+        let stopDetailsVM = MockStopDetailsViewModel(initialState: .init(routeData: routeData,
+                                                                         alertSummaries: [:],
+                                                                         awaitingPredictionsAfterBackground: false))
+
+        let setStopFilterExp = XCTestExpectation(description: "setStopFilter called for GL direction 1")
+
+        let sut = StopDetailsFilteredView(
+            stopId: stop.id,
+            stopFilter: .init(routeId: route.lineId!, directionId: directionId),
+            tripFilter: nil,
+            routeData: nil,
+            favorites: .init(routeStopDirection: [:]),
+            global: .init(objects: objects),
+            now: Date.now,
+            onUpdateFavorites: {},
+            setStopFilter: { filter in if filter?.directionId == 1, filter?.routeId.idText == "line-Green" {
+                setStopFilterExp.fulfill()
+            } else {
+                XCTFail("setStopFilter called with wrong params \(filter?.directionId) \(filter?.routeId)")
+            }
+            },
+            setTripFilter: { _ in },
+            navCallbacks: .companion.empty,
+            errorBannerVM: MockErrorBannerViewModel(),
+            nearbyVM: .init(),
+            mapVM: MockMapViewModel(),
+            stopDetailsVM: stopDetailsVM,
+        )
+
+        let exp = sut.inspection.inspect(after: 2) { view in
+            try view.find(button: "Eastbound to").tap()
+        }
+        ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([
+            .devDebugMode: false,
+        ]))
+        wait(for: [exp, setStopFilterExp], timeout: 4)
     }
 }

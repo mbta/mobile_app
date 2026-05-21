@@ -167,7 +167,7 @@ struct NearbyTransitView: View {
                         pushNavEntry: { _ in },
                         showStopHeader: true
                     )
-                    .loadingPlaceholder()
+                    .loadingPlaceholder(withShimmer: false)
                 }
             }
             .padding(.vertical, 4)
