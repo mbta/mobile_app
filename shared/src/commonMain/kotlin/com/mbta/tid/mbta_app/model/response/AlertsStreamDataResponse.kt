@@ -2,14 +2,10 @@ package com.mbta.tid.mbta_app.model.response
 
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-public data class AlertsStreamDataResponse(
-    internal val alerts: Map<String, Alert>,
-    @SerialName("stale_alerts") internal val staleAlerts: List<String> = emptyList(),
-) {
+public data class AlertsStreamDataResponse(internal val alerts: Map<String, Alert>) {
     public constructor(objects: ObjectCollectionBuilder) : this(objects.alerts.toMap())
 
     public fun getAlert(alertId: String): Alert? = alerts[alertId]
@@ -18,15 +14,14 @@ public data class AlertsStreamDataResponse(
 
     internal fun injectFacilities(globalResponse: GlobalResponse?): AlertsStreamDataResponse =
         globalResponse?.let { global ->
-            this.copy(
-                alerts =
-                    alerts.mapValues { (_, alert) ->
-                        val facilities =
-                            alert.informedEntity
-                                .mapNotNull { entity -> global.getFacility(entity.facility) }
-                                .associateBy { it.id }
-                        if (facilities.isEmpty()) alert else alert.copy(facilities = facilities)
-                    }
+            AlertsStreamDataResponse(
+                alerts.mapValues { (_, alert) ->
+                    val facilities =
+                        alert.informedEntity
+                            .mapNotNull { entity -> global.getFacility(entity.facility) }
+                            .associateBy { it.id }
+                    if (facilities.isEmpty()) alert else alert.copy(facilities = facilities)
+                }
             )
         } ?: this
 

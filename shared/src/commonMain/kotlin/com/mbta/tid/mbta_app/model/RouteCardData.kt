@@ -980,7 +980,6 @@ public data class RouteCardData(
                             routeType,
                             leafBuilder.stopIds.orEmpty(),
                             globalData.trips,
-                            alerts?.staleAlerts ?: emptyList(),
                         ) +
                             if (isGL)
                                 Alert.applicableAlerts(
