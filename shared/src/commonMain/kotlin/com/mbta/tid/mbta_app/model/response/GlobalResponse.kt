@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.kdTree.KdTree
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Facility
@@ -52,6 +53,7 @@ internal constructor(
         emptyList(),
     )
 
+    @DefaultArgumentInterop.Enabled
     public constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
