@@ -120,59 +120,10 @@ struct StopDetailsFilteredView: View {
     var body: some View {
         VStack(spacing: 0) {
             if let lineOrRoute, let global, let stop {
-                let allPatternsForStop: [RoutePattern] = global.getPatternsFor(stopId: stopId, lineOrRoute: lineOrRoute)
+                loaded(lineOrRoute: lineOrRoute, stop: stop, global: global)
 
-                let directions: [Direction] = lineOrRoute.directions(
-                    globalData: global,
-                    stop: stop,
-                    patterns: allPatternsForStop.filter { pattern in
-                        pattern.isTypical()
-                    }
-                )
-
-                let availableDirections = directions.filter {
-                    !stop.isLastStopForAllPatterns(directionId: $0.id, patterns: allPatternsForStop, global: global)
-                }
-
-                VStack(spacing: 0) {
-                    ZStack {
-                        Color.fill2.ignoresSafeArea(.all)
-                        header(
-                            lineOrRoute: lineOrRoute,
-                            directions: directions,
-                            availableDirections: availableDirections
-                        )
-                    }
-                    .fixedSize(horizontal: false, vertical: true)
-
-                    ZStack(alignment: .top) {
-                        Color(hex: lineOrRoute.backgroundColor).ignoresSafeArea(.all)
-                        Rectangle()
-                            .fill(Color.halo)
-                            .frame(height: 2)
-                            .frame(maxWidth: .infinity)
-
-                        ScrollView(.vertical, showsIndicators: false) {
-                            VStack(spacing: 16) {
-                                DirectionPicker(
-                                    availableDirections: availableDirections.map(\.id),
-                                    directions: directions,
-                                    route: lineOrRoute.sortRoute,
-                                    filter: stopFilter,
-                                    setFilter: { setStopFilter($0) }
-                                )
-                                .fixedSize(horizontal: false, vertical: true)
-                                .padding([.horizontal, .top], 16)
-                                .padding(.bottom, 6)
-                                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-
-                                departures(directions: directions)
-                            }
-                        }
-                    }
-                }
             } else {
-                loadingDepartures()
+                loading()
             }
         }
         .task {
@@ -192,6 +143,61 @@ struct StopDetailsFilteredView: View {
         .accessibilityHidden(inSaveFavoritesFlow)
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
+    }
+
+    @ViewBuilder
+    func loaded(lineOrRoute: LineOrRoute, stop: Stop, global: GlobalResponse) -> some View {
+        let allPatternsForStop: [RoutePattern] = global.getPatternsFor(stopId: stopId, lineOrRoute: lineOrRoute)
+
+        let directions: [Direction] = lineOrRoute.directions(
+            globalData: global,
+            stop: stop,
+            patterns: allPatternsForStop.filter { pattern in
+                pattern.isTypical()
+            }
+        )
+
+        let availableDirections = directions.filter {
+            !stop.isLastStopForAllPatterns(directionId: $0.id, patterns: allPatternsForStop, global: global)
+        }
+
+        VStack(spacing: 0) {
+            ZStack {
+                Color.fill2.ignoresSafeArea(.all)
+                header(
+                    lineOrRoute: lineOrRoute,
+                    directions: directions,
+                    availableDirections: availableDirections
+                )
+            }
+            .fixedSize(horizontal: false, vertical: true)
+
+            ZStack(alignment: .top) {
+                Color(hex: lineOrRoute.backgroundColor).ignoresSafeArea(.all)
+                Rectangle()
+                    .fill(Color.halo)
+                    .frame(height: 2)
+                    .frame(maxWidth: .infinity)
+
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        DirectionPicker(
+                            availableDirections: availableDirections.map(\.id),
+                            directions: directions,
+                            route: lineOrRoute.sortRoute,
+                            filter: stopFilter,
+                            setFilter: { setStopFilter($0) }
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding([.horizontal, .top], 16)
+                        .padding(.bottom, 6)
+                        .dynamicTypeSize(...DynamicTypeSize.accessibility1)
+
+                        departures(directions: directions)
+                    }
+                }
+            }
+        }
     }
 
     @ViewBuilder
@@ -217,6 +223,22 @@ struct StopDetailsFilteredView: View {
         } else {
             loadingDepartures()
         }
+    }
+
+    @ViewBuilder
+    func loading() -> some View {
+        let routeData = LoadingPlaceholders.shared.routeCardData(
+            routeId: stopFilter.routeId,
+            trips: 10,
+            context: .stopDetailsFiltered,
+            now: nowInstant
+        )
+
+        return loaded(
+            lineOrRoute: routeData.lineOrRoute,
+            stop: routeData.stopData.first!.stop,
+            global: GlobalResponse(objects: ObjectCollectionBuilder())
+        ).loadingPlaceholder()
     }
 
     func loadingDepartures() -> some View {
