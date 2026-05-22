@@ -178,6 +178,52 @@ internal class NearbyRepositoryTest {
     }
 
     @Test
+    fun `filters stops that are in the blocklist`() {
+        val objects = ObjectCollectionBuilder()
+        val route = objects.route { type = RouteType.HEAVY_RAIL }
+
+        val blockedStation =
+            objects.stop {
+                id = "station"
+                position = pointAtDistance(0.01)
+                childStopIds = listOf("stop1", "stop1Node")
+            }
+
+        val stop1 =
+            objects.stop {
+                id = "stop1"
+                position = pointAtDistance(0.01)
+                vehicleType = RouteType.HEAVY_RAIL
+                parentStationId = "station"
+            }
+
+        val goodStop =
+            objects.stop {
+                id = "stop2"
+                position = pointAtDistance(0.02)
+                vehicleType = RouteType.HEAVY_RAIL
+            }
+
+        val patternIdsByStop: Map<String, List<String>> =
+            mapOf(
+                stop1.id to listOf(objects.routePattern(route).id),
+                goodStop.id to listOf(objects.routePattern(route).id),
+            )
+
+        val globalData = GlobalResponse(objects, patternIdsByStop, listOf(blockedStation.id))
+
+        val repo = NearbyRepository()
+        val stopIdsExcludingRedundant = runBlocking {
+            repo.getStopIdsNearby(
+                globalData,
+                Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
+            )
+        }
+
+        assertEquals(listOf(goodStop.id), stopIdsExcludingRedundant)
+    }
+
+    @Test
     fun `falls back to larger radius`() {
         val objects = ObjectCollectionBuilder()
         val patternIdsByStop = mutableMapOf<String, MutableList<String>>()

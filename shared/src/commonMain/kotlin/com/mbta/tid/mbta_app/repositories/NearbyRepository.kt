@@ -56,6 +56,11 @@ public class NearbyRepository : KoinComponent, INearbyRepository {
                         else stopSiblings.filter { it.vehicleType == RouteType.COMMUTER_RAIL }
                     selectedStops.map { it.id }
                 }
+                .filterNot {
+                    global.getStop(it)?.resolveParent(global)?.id?.let { stopId ->
+                        global.stopBlocklist.contains(stopId)
+                    } ?: false
+                }
                 .toList()
 
         return filterStopsWithRedundantPatterns(allNearbyStops, global)

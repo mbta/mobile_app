@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model.response
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.kdTree.KdTree
 import com.mbta.tid.mbta_app.model.Alert
 import com.mbta.tid.mbta_app.model.Facility
@@ -31,6 +32,7 @@ internal constructor(
     @SerialName("route_patterns") internal val routePatterns: Map<String, RoutePattern>,
     internal val stops: Map<String, Stop>,
     internal val trips: Map<String, Trip>,
+    @SerialName("stop_blocklist") internal val stopBlocklist: List<String> = emptyList(),
 ) {
     public constructor(
         objects: ObjectCollectionBuilder
@@ -48,11 +50,14 @@ internal constructor(
         objects.routePatterns.toMap(),
         objects.stops.toMap(),
         objects.trips.toMap(),
+        emptyList(),
     )
 
+    @DefaultArgumentInterop.Enabled
     public constructor(
         objects: ObjectCollectionBuilder,
         patternIdsByStop: Map<String, List<String>>,
+        stopBlocklist: List<String> = emptyList(),
     ) : this(
         objects.facilities.toMap(),
         objects.lines.toMap(),
@@ -61,6 +66,7 @@ internal constructor(
         objects.routePatterns.toMap(),
         objects.stops.toMap(),
         objects.trips.toMap(),
+        stopBlocklist,
     )
 
     public fun withWorldCupService(today: LocalDate): GlobalResponse =
@@ -78,6 +84,7 @@ internal constructor(
             routePatterns = routePatterns + other.routePatterns,
             stops = stops + other.stops,
             trips = trips + other.trips,
+            stopBlocklist = stopBlocklist + other.stopBlocklist,
         )
 
     @Transient
