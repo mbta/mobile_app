@@ -214,14 +214,14 @@ internal class NearbyRepositoryTest {
         val globalData = GlobalResponse(objects, patternIdsByStop, listOf(blockedStation.id))
 
         val repo = NearbyRepository()
-        val stopIdsExcludingRedundant = runBlocking {
+        val response = runBlocking {
             repo.getStopIdsNearby(
                 globalData,
                 Position(latitude = searchPoint.latitude, longitude = searchPoint.longitude),
             )
         }
 
-        assertEquals(listOf(goodStop.id), stopIdsExcludingRedundant)
+        assertEquals(NearbyResponse(listOf(goodStop.id)), response)
     }
 
     @Test
