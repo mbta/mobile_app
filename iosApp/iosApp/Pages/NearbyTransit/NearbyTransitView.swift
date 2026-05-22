@@ -75,7 +75,7 @@ struct NearbyTransitView: View {
             let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
             let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
             if oldSet != newSet {
-                getSchedule()
+                getSchedule(newNearbyStops)
                 joinPredictions(newNearbyStops)
                 scrollToTop()
             }
@@ -89,6 +89,7 @@ struct NearbyTransitView: View {
             now: now,
         )) { newParams in
             DispatchQueue.main.async {
+                // KB: Potential problem? - state.stopIds might not match the loaded schedules & predictions
                 nearbyVM.loadRouteCardData(
                     state: newParams.state,
                     global: newParams.global,
@@ -187,7 +188,7 @@ struct NearbyTransitView: View {
     private func loadEverything() {
         getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         joinPredictions(nearbyVM.nearbyState.stopIds)
-        getSchedule()
+        getSchedule(nearbyVM.nearbyState.stopIds)
     }
 
     func getNearby(
@@ -226,9 +227,9 @@ struct NearbyTransitView: View {
         )
     }
 
-    func getSchedule() {
+    func getSchedule(_ stopIds: [String]?) {
         Task {
-            guard let stopIds = nearbyVM.nearbyState.stopIds else {
+            guard let stopIds = stopIds ?? nearbyVM.nearbyState.stopIds else {
                 scheduleResponse = nil
                 return
             }
