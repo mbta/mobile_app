@@ -1,6 +1,8 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -49,9 +51,12 @@ internal constructor(
             parentToAllStops: Map<Stop, Set<String>>,
             globalData: GlobalResponse,
             context: RouteCardData.Context,
+            alerts: AlertsStreamDataResponse?,
+            atTime: EasternTimeInstant,
             favorites: Set<RouteStopDirection>? = null,
         ): Map<LineOrRoute, Map<Stop, PatternsForStop>> {
             val usedPatternIds = mutableSetOf<String>()
+            val majorAlertUsedPatternIds = mutableSetOf<String>()
             val patternsGrouped = mutableMapOf<LineOrRoute, MutableMap<Stop, PatternsForStop>>()
 
             val inFavorites = context == RouteCardData.Context.Favorites
@@ -63,18 +68,38 @@ internal constructor(
 
             globalData.run {
                 parentToAllStops.forEach { (parentStop, allStopsForParent) ->
-                    val patternsByRouteOrLine =
-                        patternsByRouteOrLine(allStopsForParent, globalData)
-                            // filter out a route if we've already seen all of its patterns
-                            .filterNot { (_key, routePatterns) ->
-                                usedPatternIds.containsAll(routePatterns.map { it.id }.toSet())
-                            }
+                    val patternsByRouteOrLine = patternsByRouteOrLine(allStopsForParent, globalData)
                     for ((lineOrRoute, routePatterns) in patternsByRouteOrLine) {
                         if (skipNonFavorite(lineOrRoute, parentStop)) continue
 
+                        val directions = routePatterns.map { it.directionId }.distinct()
+                        val hasMajorAlert =
+                            directions.associateWith { directionId ->
+                                if (alerts != null)
+                                    Alert.applicableAlerts(
+                                            alerts.alerts.values,
+                                            directionId,
+                                            lineOrRoute.allRoutes.map { it.id },
+                                            routeType = lineOrRoute.type,
+                                            stopIds = allStopsForParent,
+                                            tripId = null,
+                                        )
+                                        .any { it.significance(atTime) == AlertSignificance.Major }
+                                else false
+                            }
+
                         val routeStops = patternsGrouped.getOrPut(lineOrRoute) { mutableMapOf() }
                         val patternsNotSeenAtEarlierStops =
-                            routePatterns.map { it.id }.toSet().minus(usedPatternIds)
+                            routePatterns
+                                .filterNot {
+                                    it.id in usedPatternIds ||
+                                        (hasMajorAlert[it.directionId] == true &&
+                                            it.id in majorAlertUsedPatternIds)
+                                }
+                                .map { it.id }
+                                .toSet()
+
+                        if (patternsNotSeenAtEarlierStops.isEmpty()) continue
 
                         fun skipNonFavorite(pattern: RoutePattern): Boolean =
                             inFavorites &&
@@ -91,7 +116,13 @@ internal constructor(
                         }
                         // We need stops from the same route pattern to show up for favorites
                         if (!inFavorites) {
-                            usedPatternIds.addAll(routePatterns.map { it.id })
+                            for (routePattern in routePatterns) {
+                                val patternIdCollection =
+                                    if (hasMajorAlert[routePattern.directionId] == true)
+                                        majorAlertUsedPatternIds
+                                    else usedPatternIds
+                                patternIdCollection.add(routePattern.id)
+                            }
                         }
                     }
                 }

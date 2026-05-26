@@ -1,9 +1,6 @@
 package com.mbta.tid.mbta_app.repositories
 
-import com.mbta.tid.mbta_app.model.RouteCardData
-import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteType
-import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import org.koin.core.component.KoinComponent
@@ -17,11 +14,11 @@ public interface INearbyRepository {
      * [LocationType.STOP]. Omits stops that serves route pattern that are all served by closer
      * stops.
      */
-    public fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String>
+    public fun getStopIdsNearby(global: GlobalResponse, location: Position): NearbyResponse
 }
 
 public class NearbyRepository : KoinComponent, INearbyRepository {
-    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> {
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): NearbyResponse {
         val searchPosition = Position(latitude = location.latitude, longitude = location.longitude)
 
         var radius = 0.5.miles
@@ -63,47 +60,16 @@ public class NearbyRepository : KoinComponent, INearbyRepository {
                 }
                 .toList()
 
-        return filterStopsWithRedundantPatterns(allNearbyStops, global)
-    }
-
-    /**
-     * Filter the given list of stopIds to the stops that don't have service redundant to earlier
-     * stops in the list; each stop must serve at least one route pattern that is not seen by any
-     * earlier stop.
-     */
-    private fun filterStopsWithRedundantPatterns(
-        stopIds: List<String>,
-        globalData: GlobalResponse,
-    ): List<String> {
-        val originalStopIdSet = stopIds.toSet()
-        val originalStopOrder = stopIds.mapIndexed { index, id -> Pair(id, index) }.toMap()
-
-        val parentToAllStops = Stop.resolvedParentToAllStops(stopIds, globalData)
-
-        return RoutePattern.patternsGroupedByLineOrRouteAndStop(
-                parentToAllStops,
-                globalData,
-                context = RouteCardData.Context.NearbyTransit,
-            )
-            .flatMap {
-                it.value.keys.flatMap { stop ->
-                    stop.childStopIds.toSet().plus(stop.id).intersect(originalStopIdSet)
-                }
-            }
-            .distinct()
-            .sortedBy { originalStopOrder[it] }
+        return NearbyResponse(allNearbyStops)
     }
 }
 
-public class MockNearbyRepository(
-    private val response: NearbyResponse,
-    private val stopIds: List<String> = response.stopIds,
-) : INearbyRepository {
-    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
-        stopIds
+public class MockNearbyRepository(private val response: NearbyResponse) : INearbyRepository {
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): NearbyResponse =
+        response
 }
 
 internal class IdleNearbyRepository : INearbyRepository {
-    override fun getStopIdsNearby(global: GlobalResponse, location: Position): List<String> =
-        emptyList()
+    override fun getStopIdsNearby(global: GlobalResponse, location: Position): NearbyResponse =
+        NearbyResponse(emptyList())
 }

@@ -56,7 +56,12 @@ final class NearbyTransitPageTests: XCTestCase {
                 super.init()
             }
 
-            override func getNearbyStops(global _: GlobalResponse, location: CLLocationCoordinate2D) {
+            override func getNearbyStops(
+                global _: GlobalResponse,
+                location: CLLocationCoordinate2D,
+                alerts _: AlertsStreamDataResponse?,
+                atTime _: EasternTimeInstant
+            ) {
                 debugPrint("ViewModel getting nearby")
                 closure(location)
                 expectation.fulfill()
@@ -111,7 +116,12 @@ final class NearbyTransitPageTests: XCTestCase {
                 super.init(navigationStack: navigationStack)
             }
 
-            override func getNearbyStops(global _: GlobalResponse, location _: CLLocationCoordinate2D) {
+            override func getNearbyStops(
+                global _: GlobalResponse,
+                location _: CLLocationCoordinate2D,
+                alerts _: AlertsStreamDataResponse?,
+                atTime _: EasternTimeInstant
+            ) {
                 expectation.fulfill()
             }
         }

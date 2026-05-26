@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
@@ -19,7 +20,7 @@ class MapAndSheetViewModelTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun testNearbyStopIds() {
+    fun testNearbyResponse() {
         val objects = ObjectCollectionBuilder()
 
         val route = objects.route()
@@ -33,8 +34,8 @@ class MapAndSheetViewModelTest {
         val position1 = Position(0.0, 0.0)
         val position2 = Position(1.0, 1.0)
 
-        val response1 = listOf(stop1.id)
-        val response2 = listOf(stop2.id)
+        val response1 = NearbyResponse(listOf(stop1.id))
+        val response2 = NearbyResponse(listOf(stop2.id))
         assertNotEquals(response1, response2, "not actually testing anything")
 
         val nearbyRepository =
@@ -42,7 +43,7 @@ class MapAndSheetViewModelTest {
                 override fun getStopIdsNearby(
                     global: GlobalResponse,
                     location: Position,
-                ): List<String> {
+                ): NearbyResponse {
                     return if (location === position1) {
                         response1
                     } else {
@@ -65,11 +66,11 @@ class MapAndSheetViewModelTest {
             }
         }
 
-        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyStopIds != null }
-        assertEquals(response1, nearbyVM.nearbyStopIds)
+        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyResponse != null }
+        assertEquals(response1, nearbyVM.nearbyResponse)
 
         position = position2
-        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyStopIds != response1 }
-        assertEquals(response2, nearbyVM.nearbyStopIds)
+        composeTestRule.waitUntilDefaultTimeout { nearbyVM.nearbyResponse != response1 }
+        assertEquals(response2, nearbyVM.nearbyResponse)
     }
 }
