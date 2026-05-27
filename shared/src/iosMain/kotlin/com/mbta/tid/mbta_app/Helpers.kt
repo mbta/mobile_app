@@ -11,7 +11,7 @@ import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
-import com.mbta.tid.mbta_app.endToEnd.endToEndModule
+import com.mbta.tid.mbta_app.endToEnd.endToEndMockData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -74,8 +74,16 @@ public fun loadKoinMocks(repositories: IRepositories) {
 Load the Koin mock repositories using the provided objects
  */
 public fun loadKoinMocks(objects: ObjectCollectionBuilder) {
+    loadKoinMocks(objects, null, null)
+}
+
+public fun loadKoinMocks(
+    objects: ObjectCollectionBuilder,
+    selectedTripId: String?,
+    selectedVehicleId: String?,
+) {
     val repositories = MockRepositories()
-    repositories.useObjects(objects)
+    repositories.useObjects(objects, selectedTripId, selectedVehicleId)
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 
@@ -111,9 +119,19 @@ public fun startKoinIOSTestApp() {
 public fun startKoinE2E() {
     startKoin {
         modules(
-            endToEndModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+            platformModule() +
+                viewModelModule() +
+                module {
+                    single<Analytics> { MockAnalytics() }
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        Dispatchers.Default
+                    }
+                    single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
+                }
         )
     }
+    val (objects, tripId, vehicleId) = endToEndMockData()
+    loadKoinMocks(objects, tripId, vehicleId)
 }
 
 // rather than having 2^n variants of copy via SKIE, define the exact one we need

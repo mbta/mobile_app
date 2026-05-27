@@ -472,6 +472,8 @@ private constructor(
 
     public fun getStop(id: String): Stop = stops.getValue(id)
 
+    public fun getStopSafe(id: String): Stop? = stops.get(id)
+
     public inner class VehicleBuilder : ObjectBuilder<Vehicle> {
         public var id: String = objectId()
         public var bearing: Double? = 0.0

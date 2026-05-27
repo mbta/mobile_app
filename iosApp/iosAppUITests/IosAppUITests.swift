@@ -6,11 +6,18 @@
 //  Copyright © 2023 orgName. All rights reserved.
 //
 
+import CoreLocation
 import XCTest
 
 final class IosAppUITests: XCTestCase {
     override func setUp() {
         executionTimeAllowance = 180
+        // Continues even if one audit fails to show all issues
+        continueAfterFailure = true
+    }
+
+    override func tearDown() {
+        continueAfterFailure = false
     }
 
     func testLaunchPerformance() throws {
@@ -31,5 +38,25 @@ final class IosAppUITests: XCTestCase {
         app.launch()
         XCTAssertNotNil(app.otherElements["About this map"].label)
         print(app.debugDescription)
+    }
+
+    func testAccessibilityNearbyToTripDetails() {
+        XCUIDevice.shared.location = XCUILocation(location: CLLocation(latitude: 42.356395, longitude: -71.062424))
+
+        let app = XCUIApplication()
+        app.launchArguments = ["--e2e-mocks"]
+        app.launch()
+
+        defaultAccessibilityAudit(app)
+        app.staticTexts["10 min"].tap()
+
+        defaultAccessibilityAudit(app)
+        app.staticTexts["Follow"].tap()
+
+        defaultAccessibilityAudit(app)
+    }
+
+    func defaultAccessibilityAudit(_ app: XCUIApplication) {
+        try? app.performAccessibilityAudit(for: [.elementDetection, .hitRegion, .sufficientElementDescription, .trait])
     }
 }
