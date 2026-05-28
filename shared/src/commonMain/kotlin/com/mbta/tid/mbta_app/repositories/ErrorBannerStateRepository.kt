@@ -9,6 +9,8 @@ import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import okio.ArrayIndexOutOfBoundsException
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -42,6 +44,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
     private var sheetRoute: SheetRoutes? = null
     private var predictionsStale: ErrorBannerState.StalePredictions? = null
     private val dataErrors = mutableMapOf<String, ErrorBannerState.DataError>()
+    private val mutex = Mutex()
 
     protected open fun updateState() {
         flow.value =
@@ -80,8 +83,8 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
-    public fun setSheetRoute(sheetRoute: SheetRoutes?) {
-        this.sheetRoute = sheetRoute
+    public suspend fun setSheetRoute(sheetRoute: SheetRoutes?) {
+        mutex.withLock { this.sheetRoute = sheetRoute }
     }
 
     private fun setNetworkStatus(newStatus: NetworkStatus) {
@@ -89,20 +92,22 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
-    public fun setDataError(key: String, details: String, action: () -> Unit) {
-        dataErrors[key] = ErrorBannerState.DataError(setOf(key), setOf(details), action)
+    public suspend fun setDataError(key: String, details: String, action: () -> Unit) {
+        mutex.withLock {
+            dataErrors[key] = ErrorBannerState.DataError(setOf(key), setOf(details), action)
+        }
         updateState()
     }
 
-    public fun clearDataError(key: String) {
-        dataErrors.remove(key)
+    public suspend fun clearDataError(key: String) {
+        mutex.withLock { dataErrors.remove(key) }
         updateState()
     }
 
-    public fun clearState() {
+    public suspend fun clearState() {
         predictionsStale = null
         try {
-            dataErrors.clear()
+            mutex.withLock { dataErrors.clear() }
         } catch (e: ArrayIndexOutOfBoundsException) {
             // ignore race condition if clearing multiple times
         }

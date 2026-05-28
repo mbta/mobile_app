@@ -25,6 +25,7 @@ struct ProductionAppView: View {
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
+    private static let errorDataKey = "socket"
 
     init() {
         Self.initSentry()
@@ -67,15 +68,26 @@ struct ProductionAppView: View {
         errorBannerRepository: IErrorBannerStateRepository
     ) {
         socket.onError { error, response in
-            errorBannerRepository.setDataError(key: "socket", details: "\(error) \(response)", action: {
-                socket.attach()
-            })
+            Task {
+                try await errorBannerRepository.setDataError(
+                    key: errorDataKey,
+                    details: "\(error) \(response)",
+                    action: {
+                        socket.attach()
+                    }
+                )
+            }
             Logger().debug("socket error: \(error) \(response)")
             Sentry.shared.addBreadcrumb(breadcrumb: .init(level: .info,
                                                           type: nil,
                                                           message: "socket error",
                                                           category: "socket",
                                                           data: ["error": error, "response": response]))
+        }
+        socket.onAttach {
+            Task {
+                try await errorBannerRepository.clearDataError(key: errorDataKey)
+            }
         }
     }
 

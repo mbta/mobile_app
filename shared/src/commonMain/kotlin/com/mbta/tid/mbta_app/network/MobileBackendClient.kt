@@ -45,7 +45,7 @@ internal class MobileBackendClient(
                 retryOnException(retryOnTimeout = true)
                 retryOnServerErrors()
                 maxRetries = 3
-                constantDelay(1)
+                constantDelay(100)
             }
             install(HttpTimeout) { requestTimeoutMillis = 8000 }
             defaultRequest {
