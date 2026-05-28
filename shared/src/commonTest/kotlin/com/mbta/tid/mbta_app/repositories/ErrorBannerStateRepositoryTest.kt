@@ -20,6 +20,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.koin.core.context.startKoin
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
@@ -65,7 +66,7 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
-    fun `data errors override stale predictions`() {
+    fun `data errors override stale predictions`() = runTest {
         val repo = ErrorBannerStateRepository()
 
         repo.setSheetRoute(SheetRoutes.NearbyTransit)
@@ -85,7 +86,7 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
-    fun `several data errors can exist at once`() {
+    fun `several data errors can exist at once`() = runTest {
         val repo = ErrorBannerStateRepository()
         val actionsCalled = mutableSetOf<String>()
 

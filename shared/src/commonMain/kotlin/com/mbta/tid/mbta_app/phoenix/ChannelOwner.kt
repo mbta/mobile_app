@@ -20,7 +20,7 @@ internal class ChannelOwner<MessageData : Any>(
     dispatcher: CoroutineDispatcher,
     errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
-    private val owner =
+    internal val owner =
         AsymmetricChannelOwner<MessageData, MessageData>(
             socket,
             dispatcher,
@@ -48,7 +48,7 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
     private val errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
     internal var channel: PhoenixChannel? = null
-    private var lastMessageTimestamp: EasternTimeInstant? = null
+    internal var lastMessageTimestamp: EasternTimeInstant? = null
     private val gracePeriod = 30.seconds
     private val shouldShowError: Boolean
         get() {
