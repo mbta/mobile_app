@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "87EF3CC0-AC4A-4B99-A268-13EED596DD33",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:iosApp.xcodeproj",
+        "identifier" : "C6FCE5742C7A4D59A165E213",
+        "name" : "iosAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

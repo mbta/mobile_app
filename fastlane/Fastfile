@@ -215,11 +215,15 @@ platform :ios do
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
       device: 'iPhone 16 (26.2)',
-      testplan: 'iosAppRetries',
+      testplan: 'TmpJustUITests',
+      output_types: 'xcresult,html',
       output_directory: options[:output_directory],
       include_simulator_logs: true,
-      xcodebuild_formatter: options[:xcodebuild_formatter],
-      number_of_retries: 3
+      xcodebuild_formatter: '',
+      number_of_retries: 3,
+      output_style: 'raw',
+      max_concurrent_simulators: 1,
+      disable_concurrent_testing: true
     )
   end
 
