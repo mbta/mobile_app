@@ -48,10 +48,23 @@ final class IosAppUITests: XCTestCase {
         app.launch()
 
         defaultAccessibilityAudit(app)
+
+        let prediction = app.staticTexts["10 min"]
+        if prediction.waitForExistence(timeout: 10) {
+            prediction.tap()
+        } else {
+            XCTFail("prediction did not display")
+        }
         app.staticTexts["10 min"].tap()
 
         defaultAccessibilityAudit(app)
-        app.staticTexts["Follow"].tap()
+
+        let follow = app.staticTexts["Follow"]
+        if follow.waitForExistence(timeout: 10) {
+            follow.tap()
+        } else {
+            XCTFail("Follow button did not display")
+        }
 
         defaultAccessibilityAudit(app)
     }
