@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.android.notification
 
 import android.Manifest
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -73,8 +72,6 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
             defaultSoundUri,
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build(),
         )
-
-        channel.lockscreenVisibility = Notification.VISIBILITY_PRIVATE
 
         notificationManager.createNotificationChannel(channel)
 
