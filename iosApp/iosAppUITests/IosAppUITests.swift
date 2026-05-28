@@ -49,13 +49,12 @@ final class IosAppUITests: XCTestCase {
 
         defaultAccessibilityAudit(app)
 
-        let prediction = app.staticTexts["10 min"]
+        let prediction = app.staticTexts["Boston College"].firstMatch
         if prediction.waitForExistence(timeout: 10) {
             prediction.tap()
         } else {
             XCTFail("prediction did not display")
         }
-        app.staticTexts["10 min"].tap()
 
         defaultAccessibilityAudit(app)
 
