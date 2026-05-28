@@ -218,7 +218,8 @@ platform :ios do
       testplan: 'TempJustUITests',
       output_directory: options[:output_directory],
       include_simulator_logs: true,
-      xcodebuild_formatter: '',
+      xcodebuild_formatter: options[:xcodebuild_formatter],
+      result_bundle: true,
       number_of_retries: 3
     )
   end
