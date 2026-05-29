@@ -7,8 +7,6 @@ import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.network.receiveAll
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
-import com.mbta.tid.mbta_app.utils.EasternTimeInstant
-import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -48,13 +46,6 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
     private val errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
     internal var channel: PhoenixChannel? = null
-    internal var lastMessageTimestamp: EasternTimeInstant? = null
-    private val gracePeriod = 30.seconds
-    private val shouldShowError: Boolean
-        get() {
-            val now = EasternTimeInstant.now()
-            return lastMessageTimestamp?.let { (now - it) >= gracePeriod } ?: true
-        }
 
     private val connectLock = Mutex()
 
@@ -97,22 +88,19 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
                 errorBannerStateRepository.clearDataError(errorKey)
             }
             handleResult(result)
-            lastMessageTimestamp = EasternTimeInstant.now()
         }
 
         fun handleJoinErrorAndBanner(result: ApiResult.Error<JoinData>) {
-            if (shouldShowError) {
-                CoroutineScope(dispatcher).launch {
-                    errorBannerStateRepository.setDataError(errorKey, result.message) {
-                        connect(
-                            spec,
-                            parseJoinMessage,
-                            parseMessage,
-                            handleJoinResult,
-                            handleResult,
-                            errorKey,
-                        )
-                    }
+            CoroutineScope(dispatcher).launch {
+                errorBannerStateRepository.setDataError(errorKey, result.message) {
+                    connect(
+                        spec,
+                        parseJoinMessage,
+                        parseMessage,
+                        handleJoinResult,
+                        handleResult,
+                        errorKey,
+                    )
                 }
             }
             handleJoinResult(result)
