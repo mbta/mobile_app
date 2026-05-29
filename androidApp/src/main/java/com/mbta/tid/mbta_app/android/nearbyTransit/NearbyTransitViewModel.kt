@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.model.response.NearbyResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.maplibre.spatialk.geojson.Position
@@ -21,10 +21,8 @@ import org.maplibre.spatialk.geojson.Position
 class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
     KoinComponent, ViewModel() {
     var loading by mutableStateOf(false)
-    var nearbyStopIds by mutableStateOf<List<String>?>(null)
+    var nearbyResponse by mutableStateOf<NearbyResponse?>(null)
     var routeCardData by mutableStateOf<List<RouteCardData>?>(null)
-
-    private var fetchNearbyTask: Job? = null
 
     fun getNearby(
         globalResponse: GlobalResponse,
@@ -32,18 +30,15 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
         setLastLocation: (Position) -> Unit,
         setIsTargeting: (Boolean) -> Unit,
     ) {
-        CoroutineScope(Dispatchers.IO).launch {
-            if (loading) {
-                fetchNearbyTask?.cancel()
-            }
-            val stopIds = nearbyRepository.getStopIdsNearby(globalResponse, location)
-            nearbyStopIds = stopIds
+        CoroutineScope(Dispatchers.Default).launch {
+            nearbyResponse = nearbyRepository.getStopIdsNearby(globalResponse, location)
             setLastLocation(location)
             setIsTargeting(false)
         }
     }
 
     fun loadRouteCardData(
+        stopIds: List<String>?,
         global: GlobalResponse?,
         location: Position?,
         schedules: ScheduleResponse?,
@@ -51,7 +46,6 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
         alerts: AlertsStreamDataResponse?,
         now: EasternTimeInstant,
     ) {
-        val stopIds = nearbyStopIds
         if (global == null || location == null || stopIds == null) {
             return
         }
@@ -72,11 +66,6 @@ class NearbyTransitViewModel(private val nearbyRepository: INearbyRepository) :
 
     fun reset() {
         loading = false
-        nearbyStopIds = null
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        fetchNearbyTask?.cancel()
+        nearbyResponse = null
     }
 }

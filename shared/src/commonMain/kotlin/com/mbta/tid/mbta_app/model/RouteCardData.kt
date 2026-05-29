@@ -647,7 +647,7 @@ public data class RouteCardData(
                 val allDataLoaded = schedules != null
 
                 ListBuilder(allDataLoaded, context, now)
-                    .addStaticStopsData(stopIds, globalData, context, favorites)
+                    .addStaticStopsData(stopIds, globalData, context, alerts, favorites)
                     .addUpcomingTrips(schedules, predictions, now, globalData, alerts)
                     .filterIrrelevantData(now, cutoffTime, context, globalData)
                     .addAlerts(
@@ -685,7 +685,7 @@ public data class RouteCardData(
                 if (globalData == null) return@withContext null
 
                 ListBuilder(true, context, now)
-                    .addStaticStopsData(stopIds, globalData, context, favorites)
+                    .addStaticStopsData(stopIds, globalData, context, alerts = null, favorites)
                     // We don't need alerts here, this is just to satisfy the null check
                     .addAlerts(
                         alerts = AlertsStreamDataResponse(emptyMap()),
@@ -766,6 +766,7 @@ public data class RouteCardData(
             stopIds: List<String>,
             globalData: GlobalResponse,
             context: Context,
+            alerts: AlertsStreamDataResponse?,
             favorites: Set<RouteStopDirection>?,
         ): ListBuilder {
 
@@ -776,6 +777,8 @@ public data class RouteCardData(
                     parentToAllStops,
                     globalData,
                     context,
+                    alerts,
+                    atTime = now,
                     favorites,
                 )
 

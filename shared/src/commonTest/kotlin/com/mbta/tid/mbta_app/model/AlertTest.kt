@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
+import com.mbta.tid.mbta_app.model.RoutePattern.Typicality
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
@@ -973,6 +974,73 @@ class AlertTest {
                 tripsById = global.trips,
             )
         assertEquals(listOf(alewifeShuttleAlert), northboundDownstreamAlerts)
+    }
+
+    @Test
+    fun `alertsDownstreamForPatterns excludes alert for stop on canonical-only pattern`() {
+        val objects = ObjectCollectionBuilder()
+
+        val route = objects.route()
+        val target = objects.stop { id = "target" }
+        val canonicalOnlyDownstream = objects.stop { id = "longterm closure" }
+        val stillDownstream = objects.stop { id = "still downstream" }
+
+        val routePatternCanonicalOnly =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Still Downstream"
+                    stopIds = listOf(target.id, canonicalOnlyDownstream.id, stillDownstream.id)
+                }
+                typicality = Typicality.CanonicalOnly
+            }
+        val routePatternTypical =
+            objects.routePattern(route) {
+                directionId = 0
+                representativeTrip {
+                    directionId = 0
+                    headsign = "Still Downstream"
+                    stopIds = listOf(target.id, stillDownstream.id)
+                }
+            }
+
+        val time = EasternTimeInstant.now()
+
+        val canonicalOnlyStopAlert =
+            objects.alert {
+                id = "alert_id"
+                effect = Alert.Effect.StopClosure
+                activePeriod(time - 10.seconds, null)
+                informedEntity(
+                    listOf(Alert.InformedEntity.Activity.Board, Alert.InformedEntity.Activity.Exit),
+                    route = route.id.idText,
+                    stop = canonicalOnlyDownstream.id,
+                )
+            }
+
+        val global =
+            GlobalResponse(
+                objects,
+                mapOf(
+                    Pair(target.id, listOf(routePatternTypical.id, routePatternCanonicalOnly.id)),
+                    Pair(canonicalOnlyDownstream.id, listOf(routePatternCanonicalOnly.id)),
+                    Pair(
+                        stillDownstream.id,
+                        listOf(routePatternTypical.id, routePatternCanonicalOnly.id),
+                    ),
+                ),
+            )
+        val downstreamAlerts =
+            Alert.alertsDownstreamForPatterns(
+                alerts = listOf(canonicalOnlyStopAlert),
+                patterns = listOf(routePatternTypical, routePatternCanonicalOnly),
+                RouteType.HEAVY_RAIL,
+                targetStopWithChildren = setOf(target.id),
+                tripsById = global.trips,
+            )
+
+        assertEquals(listOf(), downstreamAlerts)
     }
 
     @Test

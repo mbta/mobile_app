@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.model
 
 import com.mbta.tid.mbta_app.model.RoutePattern.PatternsForStop
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -52,6 +53,8 @@ internal class RoutePatternTest {
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
                 global,
                 RouteCardData.Context.NearbyTransit,
+                alerts = null,
+                atTime = EasternTimeInstant.now(),
             ),
         )
     }
@@ -85,6 +88,8 @@ internal class RoutePatternTest {
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
                 global,
                 RouteCardData.Context.Favorites,
+                alerts = null,
+                atTime = EasternTimeInstant.now(),
             ),
         )
     }
@@ -113,6 +118,8 @@ internal class RoutePatternTest {
                 Stop.resolvedParentToAllStops(listOf(stop1.id, stop2.id, stop3.id), global),
                 global,
                 RouteCardData.Context.Favorites,
+                alerts = null,
+                atTime = EasternTimeInstant.now(),
                 setOf(
                     RouteStopDirection(route.id, stop1.id, rp1.directionId),
                     RouteStopDirection(route.id, stop3.id, rp2.directionId),

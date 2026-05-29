@@ -80,7 +80,6 @@ struct ContentView: View {
             Task { await contentVM.loadPendingFeaturePromosAndTabPreferences() }
             Task { await contentVM.loadOnboardingScreens() }
             Task {
-                try? await Task.sleep(for: .milliseconds(100))
                 if let notificationDeepLink = notificationDeepLinkOwner.notificationDeepLink {
                     handleDeepLink(deepLinkState: notificationDeepLink)
                     notificationDeepLinkOwner.notificationDeepLink = nil
@@ -116,10 +115,14 @@ struct ContentView: View {
             favoritesVM.clearStaleFavorites(fcmToken: fcmTokenContainer.token)
         }
         .onChange(of: contentVM.defaultTab) { newTab in
-            selectedTab = switch newTab {
-            case .favorites: .favorites
-            case .nearby: .nearby
-            case nil: nil
+            // if we aren't on an entrypoint, then the default tab may have loaded after
+            // we navigated via deeplink. Don't navigate away from the deeplinked location
+            if nearbyVM.navigationStack.lastSafe().isEntrypoint {
+                selectedTab = switch newTab {
+                case .favorites: .favorites
+                case .nearby: .nearby
+                case nil: nil
+                }
             }
         }
         .onChange(of: selectedTab) { nextTab in

@@ -60,16 +60,22 @@ struct NearbyTransitView: View {
             didAppear?(self)
         }
         .onChange(of: globalData) { globalData in
-            getNearby(location: location, globalData: globalData)
+            getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         }
         .onChange(of: location) { newLocation in
-            getNearby(location: newLocation, globalData: globalData)
+            getNearby(location: newLocation, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
+        }
+        .onChange(of: nearbyVM.alerts) { alerts in
+            filterNearby(globalData: globalData, alerts: alerts, atTime: now)
+        }
+        .onChange(of: now) { now in
+            filterNearby(globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         }
         .onChange(of: nearbyVM.nearbyState.stopIds) { [oldValue = nearbyVM.nearbyState.stopIds] newNearbyStops in
             let oldSet = oldValue != nil ? Set(oldValue ?? []) : nil
             let newSet = newNearbyStops != nil ? Set(newNearbyStops ?? []) : nil
             if oldSet != newSet {
-                getSchedule()
+                getSchedule(newNearbyStops)
                 joinPredictions(newNearbyStops)
                 scrollToTop()
             }
@@ -83,6 +89,7 @@ struct NearbyTransitView: View {
             now: now,
         )) { newParams in
             DispatchQueue.main.async {
+                // KB: Potential problem? - state.stopIds might not match the loaded schedules & predictions
                 nearbyVM.loadRouteCardData(
                     state: newParams.state,
                     global: newParams.global,
@@ -167,7 +174,7 @@ struct NearbyTransitView: View {
                         pushNavEntry: { _ in },
                         showStopHeader: true
                     )
-                    .loadingPlaceholder()
+                    .loadingPlaceholder(withShimmer: false)
                 }
             }
             .padding(.vertical, 4)
@@ -179,12 +186,17 @@ struct NearbyTransitView: View {
     var didLoadData: ((Self) -> Void)?
 
     private func loadEverything() {
-        getNearby(location: location, globalData: globalData)
+        getNearby(location: location, globalData: globalData, alerts: nearbyVM.alerts, atTime: now)
         joinPredictions(nearbyVM.nearbyState.stopIds)
-        getSchedule()
+        getSchedule(nearbyVM.nearbyState.stopIds)
     }
 
-    func getNearby(location: CLLocationCoordinate2D?, globalData: GlobalResponse?) {
+    func getNearby(
+        location: CLLocationCoordinate2D?,
+        globalData: GlobalResponse?,
+        alerts: AlertsStreamDataResponse?,
+        atTime: Date
+    ) {
         self.location = location
         self.globalData = globalData
         guard let globalData else { return }
@@ -194,12 +206,30 @@ struct NearbyTransitView: View {
             scheduleResponse = nil
             return
         }
-        nearbyVM.getNearbyStops(global: globalData, location: location)
+        nearbyVM.getNearbyStops(
+            global: globalData,
+            location: location,
+            alerts: alerts,
+            atTime: atTime.toEasternInstant()
+        )
     }
 
-    func getSchedule() {
+    func filterNearby(
+        globalData: GlobalResponse?,
+        alerts: AlertsStreamDataResponse?,
+        atTime: Date
+    ) {
+        guard let globalData else { return }
+        nearbyVM.filterNearbyStops(
+            global: globalData,
+            alerts: alerts,
+            atTime: atTime.toEasternInstant()
+        )
+    }
+
+    func getSchedule(_ stopIds: [String]?) {
         Task {
-            guard let stopIds = nearbyVM.nearbyState.stopIds else {
+            guard let stopIds = stopIds ?? nearbyVM.nearbyState.stopIds else {
                 scheduleResponse = nil
                 return
             }

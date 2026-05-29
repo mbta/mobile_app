@@ -16,6 +16,7 @@ class NearbyViewModel: ObservableObject {
     struct NearbyTransitState: Equatable {
         var loadedLocation: CLLocationCoordinate2D?
         var loading: Bool = false
+        var nearbyResponse: NearbyResponse?
         var stopIds: [String]?
     }
 
@@ -48,6 +49,7 @@ class NearbyViewModel: ObservableObject {
     private let nearbyRepository: INearbyRepository
     private let visitHistoryUsecase: VisitHistoryUsecase
     private var fetchNearbyTask: Task<Void, Never>?
+    private var loadRouteCardDataTask: Task<Void, Error>?
     private var analytics: Analytics
 
     init(
@@ -192,7 +194,12 @@ class NearbyViewModel: ObservableObject {
         _ = navigationStack.popLast()
     }
 
-    func getNearbyStops(global: GlobalResponse, location: CLLocationCoordinate2D) {
+    func getNearbyStops(
+        global: GlobalResponse,
+        location: CLLocationCoordinate2D,
+        alerts: AlertsStreamDataResponse?,
+        atTime: EasternTimeInstant
+    ) {
         guard !location.isRoughlyEqualTo(nearbyState.loadedLocation) else {
             return
         }
@@ -206,15 +213,29 @@ class NearbyViewModel: ObservableObject {
             }
             nearbyState.loading = true
 
-            let stopIds = nearbyRepository.getStopIdsNearby(
+            nearbyState.stopIds = nil
+            let nearbyResponse = nearbyRepository.getStopIdsNearby(
                 global: global,
                 location: location.positionKt
             )
+            nearbyState.nearbyResponse = nearbyResponse
             lastLoadedLocation = location
-            nearbyState.stopIds = stopIds
+            nearbyState.stopIds = nearbyResponse.filter(globalData: global, alerts: alerts, atTime: atTime)
             nearbyState.loadedLocation = location
             nearbyState.loading = false
             isTargeting = false
+        }
+    }
+
+    func filterNearbyStops(global: GlobalResponse, alerts: AlertsStreamDataResponse?, atTime: EasternTimeInstant) {
+        Task { @MainActor [weak self] in
+            // wait for any getNearbyStops calls to have finished
+            let _ = await self?.fetchNearbyTask?.result
+            self?.nearbyState.stopIds = self?.nearbyState.nearbyResponse?.filter(
+                globalData: global,
+                alerts: alerts,
+                atTime: atTime
+            )
         }
     }
 
@@ -226,9 +247,13 @@ class NearbyViewModel: ObservableObject {
         alerts: AlertsStreamDataResponse?,
         now: Date,
     ) {
-        Task {
+        if let loadRouteCardDataTask, !loadRouteCardDataTask.isCancelled {
+            loadRouteCardDataTask.cancel()
+        }
+
+        loadRouteCardDataTask = Task { [weak self] in
             guard let global, let stopIds = state.stopIds, let location = state.loadedLocation else {
-                Task { @MainActor in routeCardData = nil }
+                Task { @MainActor in self?.routeCardData = nil }
                 return
             }
             let cardData = try await RouteCardData.companion.routeCardsForStopList(
@@ -241,7 +266,9 @@ class NearbyViewModel: ObservableObject {
                 now: now.toEasternInstant(),
                 context: .nearbyTransit
             )
-            Task { @MainActor in routeCardData = cardData }
+            Task { @MainActor in
+                self?.routeCardData = cardData
+            }
         }
     }
 

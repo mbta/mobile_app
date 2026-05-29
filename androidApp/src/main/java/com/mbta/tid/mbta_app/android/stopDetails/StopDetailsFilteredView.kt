@@ -39,6 +39,7 @@ import com.mbta.tid.mbta_app.model.Direction
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LoadingPlaceholders
+import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RoutePattern
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -170,7 +171,8 @@ fun StopDetailsFilteredView(
         }
     }
 
-    return if (global != null && lineOrRoute != null && stop != null) {
+    @Composable
+    fun Loaded(lineOrRoute: LineOrRoute, stop: Stop, global: GlobalResponse) {
         val routeHex: String = lineOrRoute.backgroundColor
 
         val routeColor: Color = Color.fromHex(routeHex)
@@ -226,7 +228,27 @@ fun StopDetailsFilteredView(
                 }
             }
         }
+    }
+
+    return if (global != null && lineOrRoute != null && stop != null) {
+        Loaded(lineOrRoute, stop, global)
     } else {
-        Column() { LoadingDepartures() }
+        val routeData =
+            LoadingPlaceholders.routeCardData(
+                stopFilter.routeId,
+                10,
+                RouteCardData.Context.StopDetailsFiltered,
+                now,
+            )
+
+        CompositionLocalProvider(IsLoadingSheetContents provides true) {
+            Column(modifier = Modifier.loading()) {
+                Loaded(
+                    routeData.lineOrRoute,
+                    routeData.stopData.first().stop,
+                    GlobalResponse(ObjectCollectionBuilder("StopDetailFilteredViewLoading")),
+                )
+            }
+        }
     }
 }

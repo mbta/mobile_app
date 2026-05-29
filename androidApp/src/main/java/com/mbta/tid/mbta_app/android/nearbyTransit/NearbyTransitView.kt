@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,13 +44,18 @@ fun NearbyTransitView(
     nearbyVM: NearbyTransitViewModel = koinViewModel(),
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
+    val now by timer(updateInterval = 5.seconds)
     LaunchedEffect(targetLocation, globalResponse) {
         if (globalResponse != null && targetLocation != null) {
             nearbyVM.getNearby(globalResponse, targetLocation, setLastLocation, setIsTargeting)
         }
     }
-    val now by timer(updateInterval = 5.seconds)
-    val stopIds = nearbyVM.nearbyStopIds
+    val stopIds =
+        remember(nearbyVM.nearbyResponse, globalResponse, alertData, now) {
+            if (globalResponse != null)
+                nearbyVM.nearbyResponse?.filter(globalResponse, alertData, now)
+            else null
+        }
     val schedules = getSchedule(stopIds, "NearbyTransitView.getSchedule")
     val predictionsVM =
         subscribeToPredictions(
@@ -90,6 +96,7 @@ fun NearbyTransitView(
             now,
         ) {
             nearbyVM.loadRouteCardData(
+                stopIds,
                 globalResponse,
                 targetLocation,
                 schedules,

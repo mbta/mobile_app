@@ -80,7 +80,13 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context, null)
+                    .addStaticStopsData(
+                        nearby.stopIds,
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .data,
             )
         }
@@ -173,7 +179,13 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context, null)
+                    .addStaticStopsData(
+                        nearby.stopIds,
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .data,
             )
         }
@@ -252,7 +264,13 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context, null)
+                .addStaticStopsData(
+                    nearby.stopIds,
+                    global,
+                    context,
+                    alerts = null,
+                    favorites = null,
+                )
                 .data,
         )
     }
@@ -387,6 +405,7 @@ class RouteCardDataTest {
                         listOf(stop1.id, stop2.id, stop3.id),
                         global,
                         context,
+                        alerts = null,
                         favorites,
                     )
                     .data,
@@ -543,6 +562,7 @@ class RouteCardDataTest {
                         listOf(stop1.id, stop2.id, stop3.id),
                         global,
                         context,
+                        alerts = null,
                         favorites,
                     )
                     .data,
@@ -635,7 +655,13 @@ class RouteCardDataTest {
                         ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context, null)
+                    .addStaticStopsData(
+                        nearby.stopIds,
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .data,
             )
         }
@@ -744,7 +770,13 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context, null)
+                .addStaticStopsData(
+                    nearby.stopIds,
+                    global,
+                    context,
+                    alerts = null,
+                    favorites = null,
+                )
                 .data,
         )
     }
@@ -815,7 +847,13 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context, null)
+                .addStaticStopsData(
+                    nearby.stopIds,
+                    global,
+                    context,
+                    alerts = null,
+                    favorites = null,
+                )
                 .data,
         )
     }
@@ -925,7 +963,13 @@ class RouteCardDataTest {
                         ),
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context, null)
+                    .addStaticStopsData(
+                        nearby.stopIds,
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .data,
             )
         }
@@ -1060,7 +1104,13 @@ class RouteCardDataTest {
                     )
             ),
             RouteCardData.ListBuilder(false, context, now)
-                .addStaticStopsData(nearby.stopIds, global, context, null)
+                .addStaticStopsData(
+                    nearby.stopIds,
+                    global,
+                    context,
+                    alerts = null,
+                    favorites = null,
+                )
                 .data,
         )
     }
@@ -1264,7 +1314,13 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(false, context, now)
-                    .addStaticStopsData(nearby.stopIds, global, context, null)
+                    .addStaticStopsData(
+                        nearby.stopIds,
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .data,
             )
         }
@@ -1412,7 +1468,13 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, time)
-                    .addStaticStopsData(listOf(stop1.id, stop2.id), global, context, null)
+                    .addStaticStopsData(
+                        listOf(stop1.id, stop2.id),
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .addUpcomingTrips(
                         null,
                         PredictionsStreamDataResponse(objects),
@@ -1558,7 +1620,13 @@ class RouteCardDataTest {
                         )
                 ),
                 RouteCardData.ListBuilder(true, context, now)
-                    .addStaticStopsData(listOf(stop1.id, stop2.id, stop3.id), global, context, null)
+                    .addStaticStopsData(
+                        listOf(stop1.id, stop2.id, stop3.id),
+                        global,
+                        context,
+                        alerts = null,
+                        favorites = null,
+                    )
                     .addUpcomingTrips(
                         ScheduleResponse(objects),
                         PredictionsStreamDataResponse(objects),
@@ -1671,6 +1739,7 @@ class RouteCardDataTest {
                     listOf(platform.id),
                     globalData,
                     context,
+                    alerts = null,
                     favorites = emptySet(),
                 )
                 .addUpcomingTrips(
