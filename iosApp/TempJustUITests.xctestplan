@@ -1,7 +1,7 @@
 {
   "configurations" : [
     {
-      "id" : "87EF3CC0-AC4A-4B99-A268-13EED596DD33",
+      "id" : "1E65688F-8062-40FB-AFFA-4F29B761D5C1",
       "name" : "Configuration 1",
       "options" : {
 
@@ -13,6 +13,12 @@
   },
   "testTargets" : [
     {
+      "skippedTests" : [
+        "IosAppUITests\/testLaunchPerformance()",
+        "IosAppUITests\/testMapShown()",
+        "IosAppUITestsLaunchTests",
+        "IosAppUITestsLaunchTests\/testLaunch()"
+      ],
       "target" : {
         "containerPath" : "container:iosApp.xcodeproj",
         "identifier" : "C6FCE5742C7A4D59A165E213",
