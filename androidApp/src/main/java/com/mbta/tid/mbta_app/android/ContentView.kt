@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -59,6 +60,7 @@ import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.maplibre.spatialk.geojson.Position
@@ -131,6 +133,7 @@ fun ContentView(
     val scaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = rememberStandardBottomSheetState())
     var navBarVisible by remember { mutableStateOf(true) }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         mapViewModel.setViewportManager(viewportProvider)
@@ -139,8 +142,11 @@ fun ContentView(
 
     LaunchedEffect(null) {
         socket.onError { error, response ->
-            errorBannerRepository.setDataError("socket", "$error $response") { socket.attach() }
+            scope.launch {
+                errorBannerRepository.setDataError("socket", "$error $response") { socket.attach() }
+            }
         }
+        socket.onAttach { scope.launch { errorBannerRepository.clearDataError("socket") } }
     }
 
     LifecycleResumeEffect(null) {

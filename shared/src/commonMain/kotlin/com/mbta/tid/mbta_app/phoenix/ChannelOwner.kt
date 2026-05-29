@@ -18,7 +18,7 @@ internal class ChannelOwner<MessageData : Any>(
     dispatcher: CoroutineDispatcher,
     errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
-    private val owner =
+    internal val owner =
         AsymmetricChannelOwner<MessageData, MessageData>(
             socket,
             dispatcher,
@@ -46,6 +46,7 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
     private val errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
     internal var channel: PhoenixChannel? = null
+
     private val connectLock = Mutex()
 
     fun connect(
@@ -76,25 +77,31 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
         }
 
         fun handleJoinResultAndBanner(result: ApiResult.Ok<JoinData>) {
-            errorBannerStateRepository.clearDataError(errorKey)
+            CoroutineScope(dispatcher).launch {
+                errorBannerStateRepository.clearDataError(errorKey)
+            }
             handleJoinResult(result)
         }
 
         fun handleResultAndBanner(result: ApiResult.Ok<MessageData>) {
-            errorBannerStateRepository.clearDataError(errorKey)
+            CoroutineScope(dispatcher).launch {
+                errorBannerStateRepository.clearDataError(errorKey)
+            }
             handleResult(result)
         }
 
         fun handleJoinErrorAndBanner(result: ApiResult.Error<JoinData>) {
-            errorBannerStateRepository.setDataError(errorKey, result.message) {
-                connect(
-                    spec,
-                    parseJoinMessage,
-                    parseMessage,
-                    handleJoinResult,
-                    handleResult,
-                    errorKey,
-                )
+            CoroutineScope(dispatcher).launch {
+                errorBannerStateRepository.setDataError(errorKey, result.message) {
+                    connect(
+                        spec,
+                        parseJoinMessage,
+                        parseMessage,
+                        handleJoinResult,
+                        handleResult,
+                        errorKey,
+                    )
+                }
             }
             handleJoinResult(result)
         }

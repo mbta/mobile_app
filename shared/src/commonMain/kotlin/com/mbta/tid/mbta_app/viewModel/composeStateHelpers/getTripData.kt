@@ -116,7 +116,9 @@ internal fun getTripData(
             {
                 tripLoading = false
                 if (trip == null && vehicle != null) {
-                    errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
+                    CoroutineScope(coroutineDispatcher).launch {
+                        errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
+                    }
                 }
             },
         ) {
@@ -128,11 +130,16 @@ internal fun getTripData(
             params,
             {
                 if (trip == null && vehicle != null) {
-                    errorBannerRepository.clearDataError(fetchTripSchedulesErrorKey(errorKey))
+                    CoroutineScope(coroutineDispatcher).launch {
+                        errorBannerRepository.clearDataError(fetchTripSchedulesErrorKey(errorKey))
+                    }
                 }
             },
         ) {
             tripSchedules = it
+            CoroutineScope(coroutineDispatcher).launch {
+                errorBannerRepository.clearDataError(fetchTripErrorKey(errorKey))
+            }
         }
     }
 

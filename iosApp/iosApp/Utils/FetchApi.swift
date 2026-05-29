@@ -30,9 +30,13 @@ func fetchApi<T>(
     }
     switch onEnum(of: result) {
     case let .ok(result):
-        errorBannerRepo.clearDataError(key: errorKey)
+        try? await errorBannerRepo.clearDataError(key: errorKey)
         await onSuccess(result.data)
     case let .error(error):
-        errorBannerRepo.setDataError(key: errorKey, details: error.description(), action: onRefreshAfterError)
+        try? await errorBannerRepo.setDataError(
+            key: errorKey,
+            details: error.description(),
+            action: onRefreshAfterError
+        )
     }
 }
