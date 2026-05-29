@@ -32,7 +32,9 @@ struct ProductionAppView: View {
             HelpersKt.startKoinIOSTestApp()
             self.init(socket: MockSocket())
         } else if CommandLine.arguments.contains("--e2e-mocks") {
-            HelpersKt.startKoinE2E()
+            let settings = CommandLine.arguments
+                .contains("--skip-map") ? [Settings.hideMaps: KotlinBoolean(bool: true)] : [:]
+            HelpersKt.startKoinE2E(settings: settings)
             self.init(socket: MockSocket())
         } else {
             let socket = Self.initSocket()

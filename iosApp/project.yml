@@ -312,7 +312,6 @@ fileGroups:
   - 10 Park Plaza.gpx
   - iosApp.xctestplan
   - iosAppRetries.xctestplan
-  - TempJustUITests.xctestplan
   - PrivacyInfo.xcprivacy
   - project.yml
 schemes:
@@ -345,7 +344,6 @@ schemeTemplates:
         - path: iosApp.xctestplan
           defaultPlan: true
         - path: iosAppRetries.xctestplan
-        - path: TempJustUITests.xctestplan
 
     profile:
       config: ${scheme_name}Release

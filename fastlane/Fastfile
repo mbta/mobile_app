@@ -215,7 +215,7 @@ platform :ios do
       workspace: 'iosApp/iosApp.xcworkspace',
       scheme: 'Staging',
       device: 'iPhone 16 (26.2)',
-      testplan: 'TempJustUITests',
+      testplan: 'iosAppRetries',
       output_directory: options[:output_directory],
       include_simulator_logs: true,
       xcodebuild_formatter: options[:xcodebuild_formatter],

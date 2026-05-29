@@ -46,22 +46,20 @@ final class IosAppUITests: XCTestCase {
         addLocationPermissionPromptHandler()
 
         let app = XCUIApplication()
-        app.launchArguments = ["--e2e-mocks"]
+        app.launchArguments = ["--e2e-mocks", "--skip-map"]
         app.launch()
-
-        defaultAccessibilityAudit(app)
 
         let prediction = app.staticTexts["Boston College"].firstMatch
         if prediction.waitForExistence(timeout: 10) {
+            defaultAccessibilityAudit(app)
             prediction.tap()
         } else {
             XCTFail("prediction did not display")
         }
 
-        defaultAccessibilityAudit(app)
-
         let follow = app.staticTexts["Follow"]
         if follow.waitForExistence(timeout: 10) {
+            defaultAccessibilityAudit(app)
             follow.tap()
         } else {
             XCTFail("Follow button did not display")
