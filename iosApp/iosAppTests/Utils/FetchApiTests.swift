@@ -25,7 +25,7 @@ final class FetchApiTests: XCTestCase {
 
     func testCallsSuccessAndClearsError() async throws {
         let errorBannerRepo = ErrorBannerStateRepository()
-        errorBannerRepo.setDataError(key: "a", details: "", action: {})
+        try? await errorBannerRepo.setDataError(key: "a", details: "", action: {})
         XCTAssertNotNil(errorBannerRepo.state.value)
         let expSuccess = expectation(description: "calls onSuccess")
         await fetchApi(
