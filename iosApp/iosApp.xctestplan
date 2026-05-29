@@ -50,7 +50,6 @@
       }
     },
     {
-      "parallelizable" : true,
       "skippedTests" : [
         "IosAppUITests\/testMapShown()",
         "IosAppUITestsLaunchTests\/testLaunch()"

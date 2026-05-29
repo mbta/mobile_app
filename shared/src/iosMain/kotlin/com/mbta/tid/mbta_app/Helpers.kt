@@ -5,15 +5,18 @@ package com.mbta.tid.mbta_app
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.dependencyInjection.IRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.MockRepositories
 import com.mbta.tid.mbta_app.dependencyInjection.appModule
 import com.mbta.tid.mbta_app.dependencyInjection.repositoriesModule
-import com.mbta.tid.mbta_app.endToEnd.endToEndModule
+import com.mbta.tid.mbta_app.endToEnd.endToEndMockData
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
+import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.viewModelModule
 import kotlin.experimental.ExperimentalObjCName
@@ -73,9 +76,23 @@ public fun loadKoinMocks(repositories: IRepositories) {
 /*
 Load the Koin mock repositories using the provided objects
  */
-public fun loadKoinMocks(objects: ObjectCollectionBuilder) {
+@DefaultArgumentInterop.Enabled
+public fun loadKoinMocks(
+    objects: ObjectCollectionBuilder,
+    settings: Map<Settings, Boolean> = emptyMap(),
+) {
+    loadKoinMocks(objects, settings, null, null)
+}
+
+public fun loadKoinMocks(
+    objects: ObjectCollectionBuilder,
+    settings: Map<Settings, Boolean> = emptyMap(),
+    selectedTripId: String?,
+    selectedVehicleId: String?,
+) {
     val repositories = MockRepositories()
-    repositories.useObjects(objects)
+    repositories.useObjects(objects, selectedTripId, selectedVehicleId)
+    repositories.settings = MockSettingsRepository(settings)
     loadKoinModules(listOf(repositoriesModule(repositories)))
 }
 
@@ -108,12 +125,22 @@ public fun startKoinIOSTestApp() {
     loadDefaultRepoModules()
 }
 
-public fun startKoinE2E() {
+public fun startKoinE2E(settings: Map<Settings, Boolean> = emptyMap()) {
     startKoin {
         modules(
-            endToEndModule() + viewModelModule() + module { single<Analytics> { MockAnalytics() } }
+            platformModule() +
+                viewModelModule() +
+                module {
+                    single<Analytics> { MockAnalytics() }
+                    single<CoroutineDispatcher>(named("coroutineDispatcherDefault")) {
+                        Dispatchers.Default
+                    }
+                    single<CoroutineDispatcher>(named("coroutineDispatcherIO")) { Dispatchers.IO }
+                }
         )
     }
+    val (objects, tripId, vehicleId) = endToEndMockData()
+    loadKoinMocks(objects, settings, tripId, vehicleId)
 }
 
 // rather than having 2^n variants of copy via SKIE, define the exact one we need

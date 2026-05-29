@@ -15,6 +15,8 @@ struct StarButton: View {
     let color: Color
     let action: () -> Void
 
+    @ScaledMetric private var tapTargetSize: CGFloat = 32
+
     var body: some View {
         Button(
             action: action,
@@ -24,6 +26,7 @@ struct StarButton: View {
         .accessibilityAddTraits(starred ? [.isSelected] : [])
         .preventScrollTaps()
         .enableInjection()
+        .frame(width: tapTargetSize, height: tapTargetSize)
     }
 }
 

@@ -62,9 +62,11 @@ public class MockStopRepository(private val objects: ObjectCollectionBuilder? = 
                     )
                 },
                 childStops =
-                    objects.getStop(stopId).childStopIds.associateWith { childId ->
-                        objects.getStop(childId)
-                    },
+                    objects
+                        .getStop(stopId)
+                        .childStopIds
+                        .mapNotNull { childId -> objects.getStopSafe(childId) }
+                        .associateBy { it.id },
             )
         )
     }

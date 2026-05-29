@@ -1,5 +1,6 @@
 package com.mbta.tid.mbta_app.dependencyInjection
 
+import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
 import com.mbta.tid.mbta_app.cache.MockKeyedCache
 import com.mbta.tid.mbta_app.cache.ScheduleCache
 import com.mbta.tid.mbta_app.model.AppVersion
@@ -218,7 +219,12 @@ public class MockRepositories : IRepositories {
     override var vehicles: IVehiclesRepository = MockVehiclesRepository()
     override var visitHistory: IVisitHistoryRepository = VisitHistoryRepository()
 
-    public fun useObjects(objects: ObjectCollectionBuilder) {
+    @DefaultArgumentInterop.Enabled
+    public fun useObjects(
+        objects: ObjectCollectionBuilder,
+        selectedTripId: String? = null,
+        selectedVehicleId: String? = null,
+    ) {
         alerts = MockAlertsRepository(AlertsStreamDataResponse(objects))
         global = MockGlobalRepository(GlobalResponse(objects))
         nearby = MockNearbyRepository(NearbyResponse(objects))
@@ -229,9 +235,16 @@ public class MockRepositories : IRepositories {
         stop = MockStopRepository(objects)
         trip =
             MockTripRepository(
-                TripSchedulesResponse.Schedules(objects.schedules.values.toList()),
+                TripSchedulesResponse.Schedules(
+                    objects.schedules.values
+                        .filter {
+                            selectedTripId?.let { selected -> it.tripId == selected } ?: true
+                        }
+                        .toList()
+                ),
                 TripResponse(
-                    objects.trips.values.singleOrNull() ?: ObjectCollectionBuilder.Single.trip()
+                    selectedTripId?.let { objects.getTrip(it) }
+                        ?: ObjectCollectionBuilder.Single.trip()
                 ),
             )
         tripPredictions =
@@ -239,7 +252,9 @@ public class MockRepositories : IRepositories {
         vehicle =
             MockVehicleRepository(
                 outcome =
-                    ApiResult.Ok(VehicleStreamDataResponse(objects.vehicles.values.singleOrNull()))
+                    ApiResult.Ok(
+                        VehicleStreamDataResponse(selectedVehicleId?.let { objects.getVehicle(it) })
+                    )
             )
         vehicles = MockVehiclesRepository(objects)
     }

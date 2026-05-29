@@ -72,6 +72,7 @@ class MBTAGoMessagingService : FirebaseMessagingService() {
             defaultSoundUri,
             AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION_EVENT).build(),
         )
+
         notificationManager.createNotificationChannel(channel)
 
         notificationManager.notify(Random.nextInt(), notificationBuilder.build())

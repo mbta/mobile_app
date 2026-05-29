@@ -344,6 +344,7 @@ schemeTemplates:
         - path: iosApp.xctestplan
           defaultPlan: true
         - path: iosAppRetries.xctestplan
+
     profile:
       config: ${scheme_name}Release
     analyze:
