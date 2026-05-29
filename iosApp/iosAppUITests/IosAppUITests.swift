@@ -49,6 +49,7 @@ final class IosAppUITests: XCTestCase {
         let app = XCUIApplication()
         app.launchArguments = ["--e2e-mocks", "--skip-map"]
         app.launch()
+        app.tap() // trigger handling permission prompts
 
         let prediction = app.staticTexts["Boston College"].firstMatch
         if prediction.waitForExistence(timeout: 10) {
