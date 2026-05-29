@@ -20,18 +20,6 @@
   "testTargets" : [
     {
       "skippedTests" : [
-        "FavoritesModifierTests\/testLoadsFromRepo()",
-        "HomeMapViewTests\/testFollowsPuckWhenUserLocationIsKnown()",
-        "OnboardingPageTests\/testFlow()"
-      ],
-      "target" : {
-        "containerPath" : "container:iosApp.xcodeproj",
-        "identifier" : "EDDC9037D014CD9DDCA653AC",
-        "name" : "iosAppTests"
-      }
-    },
-    {
-      "skippedTests" : [
         "EndToEndOpenStopDetailsTest\/testOpenStopDetails()",
         "HomeMapViewUITests\/testRecentersToUserLocation()",
         "IosAppUITests\/testMapShown()"
