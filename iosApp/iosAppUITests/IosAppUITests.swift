@@ -43,7 +43,8 @@ final class IosAppUITests: XCTestCase {
     func testAccessibilityNearbyToTripDetails() {
         XCUIDevice.shared.location = XCUILocation(location: CLLocation(latitude: 42.356395, longitude: -71.062424))
 
-        addPermissionPromptHandler()
+        addNotificationsPermissionPromptHandler()
+        addLocationPermissionPromptHandler()
 
         let app = XCUIApplication()
         app.launchArguments = ["--e2e-mocks", "--skip-map"]
@@ -72,21 +73,24 @@ final class IosAppUITests: XCTestCase {
         try? app.performAccessibilityAudit(for: [.elementDetection, .hitRegion, .sufficientElementDescription, .trait])
     }
 
-    func addPermissionPromptHandler() {
-        let monitor = addUIInterruptionMonitor(withDescription: "Permission Alert") { alert -> Bool in
-            var tapped = false
+    func addNotificationsPermissionPromptHandler() {
+        addUIInterruptionMonitor(withDescription: "Push Notifications Alert") { alert -> Bool in
+            if alert.buttons["Allow"].exists {
+                alert.buttons["Allow"].tap()
+                return true
+            }
+            return false
+        }
+    }
+
+    func addLocationPermissionPromptHandler() {
+        let monitor = addUIInterruptionMonitor(withDescription: "Location Permission Alert") { alert -> Bool in
             let allowLocationButton = alert.buttons["Allow Once"]
             if allowLocationButton.exists {
                 allowLocationButton.tap()
-                tapped = true
+                return true
             }
-
-            let allowOtherButton = alert.buttons["Allow"]
-            if allowOtherButton.exists {
-                allowOtherButton.tap()
-                tapped = true
-            }
-            return tapped
+            return false
         }
     }
 }
