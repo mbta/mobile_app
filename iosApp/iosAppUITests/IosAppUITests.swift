@@ -67,7 +67,12 @@ final class IosAppUITests: XCTestCase {
             XCTFail("Follow button did not display")
         }
 
-        defaultAccessibilityAudit(app)
+        let live = app.staticTexts["Live"]
+        if live.waitForExistence(timeout: 10) {
+            defaultAccessibilityAudit(app)
+        } else {
+            XCTFail("Trip details did not display")
+        }
     }
 
     func defaultAccessibilityAudit(_ app: XCUIApplication) {
