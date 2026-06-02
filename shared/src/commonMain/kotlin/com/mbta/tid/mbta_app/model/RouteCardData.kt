@@ -402,12 +402,22 @@ public data class RouteCardData(
                 )
             }
 
+            val maxRowsToShow =
+                if (context == Context.StopDetailsFiltered) {
+                    // We want to show every upcoming trip, plus a row for any headsign with a
+                    // disruption or unavailable predictions. This comfortably overestimates the #
+                    // of
+                    // rows to show.
+                    upcomingTrips.size + dataByHeadsign.size
+                } else {
+                    BRANCHING_LEAF_ROWS
+                }
             val disruptedHeadsignBranches =
                 disruptedHeadsigns
                     .sortedBy {
                         it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
                     }
-                    .take(BRANCHING_LEAF_ROWS)
+                    .take(maxRowsToShow)
                     .map { (headsign, groupedData) ->
                         val route =
                             if (shouldIncludeRoute)
@@ -421,8 +431,7 @@ public data class RouteCardData(
                             UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute),
                         )
                     }
-
-            var remainingRowsToShow = max(1, BRANCHING_LEAF_ROWS - disruptedHeadsignBranches.size)
+            var remainingRowsToShow = max(1, maxRowsToShow - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
                 formattedTrips.take(remainingRowsToShow).map { formatted ->
@@ -441,6 +450,8 @@ public data class RouteCardData(
             val predictionsUnavailableBranches =
                 if (remainingRowsToShow > 0) {
                     nonDisruptedHeadsigns
+                        // count as predictions unavailable only if there are no predictions
+                        .filter { upcomingTripBranches.none { row -> row.headsign == it.key } }
                         .sortedBy {
                             it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
                         }

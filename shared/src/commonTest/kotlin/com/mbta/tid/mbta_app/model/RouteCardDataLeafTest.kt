@@ -11,6 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.atTime
 
@@ -1384,6 +1385,130 @@ class RouteCardDataLeafTest {
                         subwayServiceStartTime = null,
                         emptyList(),
                         anyEnumValueExcept(RouteCardData.Context.StopDetailsFiltered),
+                    )
+                    .format(now, RedLine.global),
+            )
+        }
+
+    @Test
+    fun `formats Red Line southbound as branching all upcoming trips with Braintree suspension stop details`() =
+        runBlocking {
+
+            // ⚠ Southbound to Ashmont 3 min, 12 min, 15 min
+            val objects = RedLine.objects()
+            val now = EasternTimeInstant.now()
+
+            val prediction1 =
+                objects.prediction {
+                    arrivalTime = now + 3.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+
+            val prediction2 =
+                objects.prediction {
+                    arrivalTime = now + 12.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+
+            val prediction3 =
+                objects.prediction {
+                    arrivalTime = now + 15.minutes
+                    departureTime = arrivalTime
+                    trip = objects.trip(RedLine.ashmontSouth)
+                    stopId = RedLine.jfkUmass.south1.id
+                }
+
+            val alert =
+                objects.alert {
+                    effect = Alert.Effect.Suspension
+                    activePeriod(EasternTimeInstant(Instant.DISTANT_PAST), null)
+                    informedEntity =
+                        RedLine.stopsBraintreeBranchSouth
+                            .map {
+                                Alert.InformedEntity(
+                                    activities = listOf(Alert.InformedEntity.Activity.Board),
+                                    directionId = 0,
+                                    route = RedLine.route.id,
+                                    routeType = RouteType.HEAVY_RAIL,
+                                    stop = it,
+                                    trip = null,
+                                )
+                            }
+                            .toMutableList()
+                }
+
+            val mapStopRoute = MapStopRoute.matching(RedLine.route)
+
+            assertEquals(
+                LeafFormat.Branched(
+                    listOf(
+                        LeafFormat.Branched.BranchRow(
+                            null,
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction1),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(3, false),
+                                    lastTrip = false,
+                                ),
+                                null,
+                            ),
+                        ),
+                        LeafFormat.Branched.BranchRow(
+                            null,
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction2),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(12, false),
+                                    lastTrip = false,
+                                ),
+                                null,
+                            ),
+                        ),
+                        LeafFormat.Branched.BranchRow(
+                            null,
+                            "Ashmont",
+                            UpcomingFormat.Some(
+                                UpcomingFormat.Some.FormattedTrip(
+                                    objects.upcomingTrip(prediction3),
+                                    RouteType.HEAVY_RAIL,
+                                    TripInstantDisplay.Minutes(15, false),
+                                    lastTrip = false,
+                                ),
+                                null,
+                            ),
+                        ),
+                        LeafFormat.Branched.BranchRow(
+                            null,
+                            "Braintree",
+                            UpcomingFormat.Disruption(alert, mapStopRoute),
+                        ),
+                    )
+                ),
+                RouteCardData.Leaf(
+                        RedLine.lineOrRoute,
+                        RedLine.jfkUmass.itself,
+                        0,
+                        listOf(RedLine.ashmontSouth, RedLine.braintreeSouth),
+                        setOf(RedLine.jfkUmass.south1.id, RedLine.jfkUmass.south2.id),
+                        listOf(
+                            objects.upcomingTrip(prediction1),
+                            objects.upcomingTrip(prediction2),
+                            objects.upcomingTrip(prediction3),
+                        ),
+                        listOf(alert),
+                        allDataLoaded = true,
+                        hasSchedulesToday = true,
+                        subwayServiceStartTime = null,
+                        emptyList(),
+                        RouteCardData.Context.StopDetailsFiltered,
                     )
                     .format(now, RedLine.global),
             )
