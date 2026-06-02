@@ -431,10 +431,10 @@ public data class RouteCardData(
                             UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute),
                         )
                     }
-            var remainingBranchesToShow = max(1, maxRowsToShow - disruptedHeadsignBranches.size)
+            var remainingRowsToShow = max(1, maxRowsToShow - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
-                formattedTrips.take(remainingBranchesToShow).map { formatted ->
+                formattedTrips.take(remainingRowsToShow).map { formatted ->
                     val upcomingTrip = formatted.trip
                     val route =
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
@@ -445,10 +445,10 @@ public data class RouteCardData(
                     )
                 }
 
-            remainingBranchesToShow = max(0, remainingBranchesToShow - upcomingTripBranches.size)
+            remainingRowsToShow = max(0, remainingRowsToShow - upcomingTripBranches.size)
 
             val predictionsUnavailableBranches =
-                if (remainingBranchesToShow > 0) {
+                if (remainingRowsToShow > 0) {
                     nonDisruptedHeadsigns
                         // count as predictions unavailable only if there are no predictionsß
                         .filter { upcomingTripBranches.none { row -> row.headsign == it.key } }
@@ -480,7 +480,7 @@ public data class RouteCardData(
                                 null
                             }
                         }
-                        .take(remainingBranchesToShow)
+                        .take(remainingRowsToShow)
                 } else {
                     emptyList()
                 }
