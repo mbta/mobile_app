@@ -6,7 +6,7 @@ public enum class AppVariant(
     public val darkMapStyle: String,
 ) {
     DevOrange(
-        "mobile-app-backend.mbtace.com",
+        "mobile-app-backend-dev-orange.mbtace.com",
         "mapbox://styles/mbtamobileapp/cm02vf0cf00cu01pnfgnu5onh",
         "mapbox://styles/mbtamobileapp/cm02vgvsp003c01ombyewgu70",
     ),
