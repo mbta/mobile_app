@@ -402,12 +402,22 @@ public data class RouteCardData(
                 )
             }
 
+            val maxRowsToShow =
+                if (context == Context.StopDetailsFiltered) {
+                    // We want to show every upcoming trip, plus a row for any headsign with a
+                    // disruption or unavailable predictions. This comfortably overestimates the #
+                    // of
+                    // rows to show.
+                    upcomingTrips.size + dataByHeadsign.size
+                } else {
+                    BRANCHING_LEAF_ROWS
+                }
             val disruptedHeadsignBranches =
                 disruptedHeadsigns
                     .sortedBy {
                         it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
                     }
-                    .take(BRANCHING_LEAF_ROWS)
+                    .take(maxRowsToShow)
                     .map { (headsign, groupedData) ->
                         val route =
                             if (shouldIncludeRoute)
@@ -421,11 +431,10 @@ public data class RouteCardData(
                             UpcomingFormat.Disruption(groupedData.majorAlert!!, mapStopRoute),
                         )
                     }
-
-            var remainingRowsToShow = max(1, BRANCHING_LEAF_ROWS - disruptedHeadsignBranches.size)
+            var remainingBranchesToShow = max(1, maxRowsToShow - disruptedHeadsignBranches.size)
 
             val upcomingTripBranches =
-                formattedTrips.take(remainingRowsToShow).map { formatted ->
+                formattedTrips.take(remainingBranchesToShow).map { formatted ->
                     val upcomingTrip = formatted.trip
                     val route =
                         if (shouldIncludeRoute) globalData?.getRoute(upcomingTrip.routeId) else null
@@ -436,11 +445,13 @@ public data class RouteCardData(
                     )
                 }
 
-            remainingRowsToShow = max(0, remainingRowsToShow - upcomingTripBranches.size)
+            remainingBranchesToShow = max(0, remainingBranchesToShow - upcomingTripBranches.size)
 
             val predictionsUnavailableBranches =
-                if (remainingRowsToShow > 0) {
+                if (remainingBranchesToShow > 0) {
                     nonDisruptedHeadsigns
+                        // count as predictions unavailable only if there are no predictionsß
+                        .filter { upcomingTripBranches.none { row -> row.headsign == it.key } }
                         .sortedBy {
                             it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
                         }
@@ -469,7 +480,7 @@ public data class RouteCardData(
                                 null
                             }
                         }
-                        .take(remainingRowsToShow)
+                        .take(remainingBranchesToShow)
                 } else {
                     emptyList()
                 }
