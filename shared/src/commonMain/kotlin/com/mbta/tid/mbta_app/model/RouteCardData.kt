@@ -450,7 +450,7 @@ public data class RouteCardData(
             val predictionsUnavailableBranches =
                 if (remainingRowsToShow > 0) {
                     nonDisruptedHeadsigns
-                        // count as predictions unavailable only if there are no predictionsß
+                        // count as predictions unavailable only if there are no predictions
                         .filter { upcomingTripBranches.none { row -> row.headsign == it.key } }
                         .sortedBy {
                             it.value.routePatterns.minOfOrNull { pattern -> pattern.sortOrder }
