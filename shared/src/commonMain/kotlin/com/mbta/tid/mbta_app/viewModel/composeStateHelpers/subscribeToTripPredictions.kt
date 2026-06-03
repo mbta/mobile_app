@@ -54,7 +54,9 @@ internal fun subscribeToTripPredictions(
     fun onReceive(message: ApiResult<PredictionsStreamDataResponse>) {
         onAnyMessageReceived()
         when (message) {
-            is ApiResult.Ok -> predictions = message.data
+            is ApiResult.Ok -> {
+                predictions = message.data
+            }
             is ApiResult.Error ->
                 println("Trip predictions stream failed to join: ${message.message}")
         }
@@ -75,8 +77,9 @@ internal fun subscribeToTripPredictions(
         }
     }
 
-    LaunchedEffect(tripId) { predictions = null }
     DisposableEffect(tripId, active) {
+        predictions = null
+
         connect(tripId, active, ::onReceive)
         onDispose { tripPredictionsRepository.disconnect() }
     }
