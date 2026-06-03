@@ -73,7 +73,6 @@ class TripDetailsViewTest {
             trip,
             TripSchedulesResponse.Schedules(listOf(schedule)),
             PredictionsStreamDataResponse(objects),
-            true,
             vehicle,
         )
 
@@ -283,7 +282,7 @@ class TripDetailsViewTest {
                 onLogEvent = { event, properties -> loggedEvents.add(event to properties) }
             )
 
-        val unavailableTripData = TripData(tripFilter, null, null, null, true, vehicle)
+        val unavailableTripData = TripData(tripFilter, null, null, null, vehicle)
 
         val tripVMState = TripDetailsViewModel.State(unavailableTripData, null)
         val viewModel = MockTripDetailsViewModel(tripVMState)
