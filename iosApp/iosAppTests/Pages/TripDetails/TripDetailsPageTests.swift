@@ -59,7 +59,6 @@ final class TripDetailsPageTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(

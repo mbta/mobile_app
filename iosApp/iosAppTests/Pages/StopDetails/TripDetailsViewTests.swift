@@ -62,7 +62,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -148,7 +147,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: nil
             ),
             stopList: .init(trip: trip, stops: [
@@ -236,7 +234,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -319,7 +316,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -408,7 +404,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -495,7 +490,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -577,7 +571,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: trip,
                 tripSchedules: TripSchedulesResponse.Schedules(schedules: [schedule]),
                 tripPredictions: .init(objects: objects),
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
@@ -659,7 +652,6 @@ final class TripDetailsViewTests: XCTestCase {
                 trip: nil,
                 tripSchedules: nil,
                 tripPredictions: nil,
-                tripPredictionsLoaded: true,
                 vehicle: vehicle
             ),
             stopList: .init(trip: trip, stops: [.init(
