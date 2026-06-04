@@ -10,6 +10,7 @@ import androidx.lifecycle.testing.TestLifecycleOwner
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.model.response.AlertsStreamUpdateResponse
 import com.mbta.tid.mbta_app.repositories.MockAlertsRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import com.mbta.tid.mbta_app.usecases.AlertsUsecase
@@ -32,7 +33,8 @@ class SubscribeToAlertsTest {
 
         var connectCount = 0
         val alertsStreamDataResponse = AlertsStreamDataResponse(builder)
-        val alertsRepo = MockAlertsRepository(alertsStreamDataResponse, { connectCount += 1 })
+        val alertsRepo =
+            MockAlertsRepository(AlertsStreamUpdateResponse(builder), { connectCount += 1 })
         val alertsUsecase = AlertsUsecase(alertsRepo, MockGlobalRepository())
 
         var actualData: AlertsStreamDataResponse? = null
@@ -56,7 +58,7 @@ class SubscribeToAlertsTest {
             description = "Description 1"
         }
 
-        val alertsStreamDataResponse = AlertsStreamDataResponse(builder)
+        val alertsStreamDataResponse = AlertsStreamUpdateResponse(builder)
         val alertsRepo =
             MockAlertsRepository(
                 alertsStreamDataResponse,
