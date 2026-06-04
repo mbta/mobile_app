@@ -200,6 +200,33 @@ class TripDetailsStopListTest {
     }
 
     @Test
+    fun `fromPieces doesn't include disruption on different route when no schedules or predictions`() =
+        test {
+            objects.route { id = "Red" }
+            val trip = trip {
+                routeId = "Red"
+                directionId = 1
+                stopIds = listOf("A", "B", "C")
+            }
+            val sched1 = schedule("A", 10)
+            val sched2 = schedule("B", 20)
+            val sched3 = schedule("C", 30)
+
+            val alertOtherRoute =
+                alert(Alert.Effect.Suspension) {
+                    informedEntity(directionId = 1, route = "Silver", stop = "A")
+                }
+            assertEquals(
+                stopListOf(entry("A", 997, disruption = null), entry("B", 998), entry("C", 999)),
+                fromPieces(
+                    schedulesResponseOf(sched1.stopId, sched2.stopId, sched3.stopId),
+                    null,
+                    trip = trip,
+                ),
+            )
+        }
+
+    @Test
     fun `fromPieces returns null with unavailable schedules and no predictions`() = test {
         val trip = trip {}
         assertEquals(

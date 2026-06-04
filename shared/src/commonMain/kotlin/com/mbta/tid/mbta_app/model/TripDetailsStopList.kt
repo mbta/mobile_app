@@ -206,14 +206,13 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                 val routeId =
                     tripPredictions?.trips?.values?.singleOrNull()?.routeId
                         ?: tripSchedules?.routeId()
+                        ?: trip.routeId
                 val route = globalData.routes[routeId]
 
                 var predictions = emptyList<Prediction>()
                 if (tripPredictions != null) {
                     val tripPredictionsWithCorrectRoute =
-                        tripPredictions.predictions.values.filter {
-                            routeId == null || it.routeId == routeId
-                        }
+                        tripPredictions.predictions.values.filter { it.routeId == routeId }
                     predictions =
                         deduplicatePredictionsByStopSequence(
                             tripPredictionsWithCorrectRoute,
@@ -482,6 +481,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             directionId: Int,
         ): UpcomingFormat.Disruption? {
             val entryTime = (entry.prediction ?: entry.schedule)?.stopTime ?: fallbackTime
+            // route ID & entryRouteType are nil, which is messing with alert matching I think
             val entryRouteType = route?.type
 
             val alert =
