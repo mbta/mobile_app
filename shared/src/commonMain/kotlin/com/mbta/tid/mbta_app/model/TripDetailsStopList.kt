@@ -489,15 +489,13 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             val alert =
                 alertsData?.alerts?.values?.find { alert ->
                     (entryTime?.let { alert.isActive(it) } ?: true) &&
-                        alert.anyInformedEntity {
-                            it.appliesTo(
-                                directionId = Alert.InformedEntity.Matcher.Data(directionId),
-                                routeId = Alert.InformedEntity.Matcher.Data(route.id),
-                                routeType = Alert.InformedEntity.Matcher.Data(entryRouteType),
-                                stopId = Alert.InformedEntity.Matcher.Data(entry.stopId),
-                                tripId = Alert.InformedEntity.Matcher.Data(tripId),
-                            )
-                        } &&
+                        alert.anyInformedEntityMatches(
+                            directionId = Matcher.Data(directionId),
+                            routeId = Matcher.Data(route.id),
+                            routeType = Matcher.Data(entryRouteType),
+                            stopId = Matcher.Data(entry.stopId),
+                            tripId = Matcher.Data(tripId),
+                        ) &&
                         // there's no UI yet for secondary alerts in trip details
                         (entryTime?.let { alert.significance(it) }
                             ?: alert.intrinsicSignificance) >= AlertSignificance.Major

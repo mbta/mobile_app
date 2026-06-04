@@ -1109,7 +1109,7 @@ class AlertTest {
     }
 
     @Test
-    fun `anyInformedEntitySatisfies checkRoute`() {
+    fun `anyInformedEntityMatches route`() {
         val objects = ObjectCollectionBuilder()
 
         val alert = objects.alert {
@@ -1119,9 +1119,17 @@ class AlertTest {
             )
         }
 
-        assertTrue(alert.anyInformedEntitySatisfies { checkRoute(Route.Id("1"), RouteType.BUS) })
+        assertTrue(
+            alert.anyInformedEntityMatches(
+                routeId = Matcher.Data(Route.Id("1")),
+                routeType = Matcher.Data(RouteType.BUS),
+            )
+        )
         assertFalse(
-            alert.anyInformedEntitySatisfies { checkRoute(Route.Id("CR"), RouteType.COMMUTER_RAIL) }
+            alert.anyInformedEntityMatches(
+                routeId = Matcher.Data(Route.Id("CR")),
+                routeType = Matcher.Data(RouteType.COMMUTER_RAIL),
+            )
         )
     }
 }

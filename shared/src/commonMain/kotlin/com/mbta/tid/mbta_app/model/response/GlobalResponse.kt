@@ -7,6 +7,7 @@ import com.mbta.tid.mbta_app.model.Facility
 import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
+import com.mbta.tid.mbta_app.model.Matcher
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RoutePattern
@@ -206,8 +207,11 @@ internal constructor(
 
     public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
         if (alert == null || routes == null) return null
-        val routeEntities = routes.flatMap { route ->
-            alert.matchingEntities { entity -> entity.satisfies { checkRoute(route) } }
+        val routeEntities = alert.matchingEntities { entity ->
+            entity.matches(
+                routeId = Matcher.AnyOf(routes.map { it.id }),
+                routeType = Matcher.AnyOf(routes.map { it.type }),
+            )
         }
         val parentStops = routeEntities.mapNotNull {
             this.stops[it.stop]?.resolveParent(this.stops)

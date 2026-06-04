@@ -1,7 +1,6 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.model.Alert.InformedEntity.Matcher
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -163,8 +162,7 @@ public data class RouteCardData(
         private fun majorAlertAffectingAllTrips(atTime: EasternTimeInstant) =
             alertsHere.firstOrNull {
                 it.significance(atTime) >= AlertSignificance.Major &&
-                    (it.informedEntity.isEmpty() ||
-                        it.anyInformedEntitySatisfies { checkNullTrip() })
+                    (it.informedEntity.isEmpty() || it.anyInformedEntity { it.trip == null })
             }
 
         /**
@@ -179,20 +177,20 @@ public data class RouteCardData(
                 (it.significance(atTime) < AlertSignificance.Major &&
                     it.significance(atTime) >= AlertSignificance.Secondary) ||
                     (it.significance(atTime) == AlertSignificance.Major &&
-                        !it.anyInformedEntitySatisfies { checkNullTrip() })
+                        !it.anyInformedEntity { it.trip == null })
             } ?: alertsDownstream.firstOrNull()
 
         public fun alertsHere(tripId: String? = null): List<Alert> = alertsHere.filter { alert ->
-            alert.anyInformedEntitySatisfies {
-                checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
-            }
+            alert.anyInformedEntityMatches(
+                tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard()
+            )
         }
 
         public fun alertsDownstream(tripId: String? = null): List<Alert> =
             alertsDownstream.filter { alert ->
-                alert.anyInformedEntitySatisfies {
-                    checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
-                }
+                alert.anyInformedEntityMatches(
+                    tripId = tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard()
+                )
             }
 
         private data class PotentialService(
