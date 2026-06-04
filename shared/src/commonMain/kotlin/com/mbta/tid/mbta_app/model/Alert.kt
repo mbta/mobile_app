@@ -27,6 +27,7 @@ internal constructor(
     @SerialName("informed_entity") val informedEntity: List<InformedEntity>,
     val lifecycle: Lifecycle,
     val severity: Int,
+    val summaries: List<AlertSummaryEntity>? = null,
     @SerialName("updated_at") val updatedAt: EasternTimeInstant,
     // This field is not parsed from the Alert object from the backend, it is injected from
     // global data in the AlertsUsecase if any informed entities apply to a facility.
