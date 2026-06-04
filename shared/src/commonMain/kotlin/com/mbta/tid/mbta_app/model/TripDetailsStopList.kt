@@ -481,7 +481,6 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             directionId: Int,
         ): UpcomingFormat.Disruption? {
             val entryTime = (entry.prediction ?: entry.schedule)?.stopTime ?: fallbackTime
-            // route ID & entryRouteType are nil, which is messing with alert matching I think
             val entryRouteType = route?.type
 
             val alert =
