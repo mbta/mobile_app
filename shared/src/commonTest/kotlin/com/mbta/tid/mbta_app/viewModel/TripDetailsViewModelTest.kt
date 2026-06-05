@@ -181,7 +181,7 @@ class TripDetailsViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             awaitItemSatisfying {
-                it.tripData?.tripFilter == filters && it.tripData.tripPredictionsLoaded
+                it.tripData?.tripFilter == filters && it.tripData.tripPredictions != null
             }
             assertTrue(predictionsLoaded)
             cancelAndIgnoreRemainingEvents()
@@ -345,7 +345,7 @@ class TripDetailsViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(
-                TripData(filters, null, null, null, true, vehicle),
+                TripData(filters, null, null, null, vehicle),
                 awaitItemSatisfying { it.tripData != null }.tripData,
             )
         }

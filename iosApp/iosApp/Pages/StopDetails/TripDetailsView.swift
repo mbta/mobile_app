@@ -116,7 +116,6 @@ struct TripDetailsView: View {
                let tripData = tripDetailsVMState?.tripData,
                let trip = tripData.trip,
                tripData.tripFilter == tripFilter,
-               tripData.tripPredictionsLoaded,
                let global,
                let route = global.getRoute(routeId: trip.routeId) {
                 let terminalStop = getParentFor(trip.stopIds?.first)

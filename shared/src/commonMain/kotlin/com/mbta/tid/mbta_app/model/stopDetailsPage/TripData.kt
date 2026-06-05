@@ -13,7 +13,6 @@ public data class TripData(
     val trip: Trip?,
     val tripSchedules: TripSchedulesResponse?,
     val tripPredictions: PredictionsStreamDataResponse?,
-    val tripPredictionsLoaded: Boolean = false,
     val vehicle: Vehicle?,
 ) {
     public val vehicleOnOtherTrip: Boolean =

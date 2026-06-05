@@ -28,7 +28,7 @@ public fun getTripDetailsStopList(
                     tripData != null &&
                     tripData.trip != null &&
                     tripData.tripFilter == tripFilter &&
-                    tripData.tripPredictionsLoaded &&
+                    tripData.tripPredictions != null &&
                     globalResponse != null
             ) {
                 TripDetailsStopList.fromPieces(
