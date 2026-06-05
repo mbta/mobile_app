@@ -300,16 +300,25 @@ internal constructor(
             @SerialName("using_wheelchair") UsingWheelchair,
         }
 
+        internal sealed class Matcher<out T> {
+            data class Data<T>(val value: T) : Matcher<T>()
+
+            data object Wildcard : Matcher<Nothing>()
+        }
+
         internal fun appliesTo(
-            directionId: Int? = null,
-            facilityId: String? = null,
-            routeId: Route.Id? = null,
-            routeType: RouteType? = null,
-            stopId: String? = null,
-            tripId: String? = null,
+            directionId: Matcher<Int> = Matcher.Wildcard,
+            facilityId: Matcher<String> = Matcher.Wildcard,
+            routeId: Matcher<Route.Id> = Matcher.Wildcard,
+            routeType: Matcher<RouteType> = Matcher.Wildcard,
+            stopId: Matcher<String> = Matcher.Wildcard,
+            tripId: Matcher<String> = Matcher.Wildcard,
         ): Boolean {
-            fun <T> matches(expected: T?, actual: T?) =
-                expected == null || actual == null || expected == actual
+            fun <T> matches(expected: Matcher<T>, actual: T?): Boolean =
+                when (expected) {
+                    is Matcher.Data -> actual == null || expected.value == actual
+                    Matcher.Wildcard -> true
+                }
 
             return matches(directionId, this.directionId) &&
                 matches(facilityId, this.facility) &&
@@ -571,7 +580,9 @@ internal constructor(
                     it.effect == Effect.ElevatorClosure &&
                         it.anyInformedEntity { entity ->
                             entity.activities.contains(InformedEntity.Activity.UsingWheelchair) &&
-                                stopIds.any { stopId -> entity.appliesTo(stopId = stopId) }
+                                stopIds.any { stopId ->
+                                    entity.appliesTo(stopId = InformedEntity.Matcher.Data(stopId))
+                                }
                         }
                 }
                 .distinct()

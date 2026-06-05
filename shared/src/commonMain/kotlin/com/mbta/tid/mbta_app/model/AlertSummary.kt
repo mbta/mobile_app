@@ -461,10 +461,10 @@ public sealed class AlertSummary {
 
         private fun matchesWholeRoute(alert: Alert, routeId: Route.Id, directionId: Int): Boolean =
             alert.anyInformedEntity {
-                it.appliesTo(directionId = directionId, routeId = routeId) &&
-                    it.trip == null &&
-                    it.stop == null &&
-                    it.facility == null
+                it.appliesTo(
+                    directionId = Alert.InformedEntity.Matcher.Data(directionId),
+                    routeId = Alert.InformedEntity.Matcher.Data(routeId),
+                ) && it.trip == null && it.stop == null && it.facility == null
             }
 
         private fun matchesAllStopsOnPatterns(

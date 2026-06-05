@@ -42,7 +42,14 @@ public class AlertAssociatedStop internal constructor(internal val stop: Stop) {
                 if (greenRoutes.contains(pattern.routeId) && !pattern.isTypical()) continue
                 relevantAlerts =
                     nullStopAlerts.filter { alert ->
-                        alert.anyInformedEntity { entityMatcher(it, null, pattern, route) }
+                        alert.anyInformedEntity {
+                            it.appliesTo(
+                                stopId = Alert.InformedEntity.Matcher.Data(stop.id),
+                                routeId = Alert.InformedEntity.Matcher.Data(pattern.routeId),
+                                routeType = Alert.InformedEntity.Matcher.Data(route.type),
+                                directionId = Alert.InformedEntity.Matcher.Data(pattern.directionId),
+                            )
+                        }
                     } + relevantAlerts
             }
 
@@ -88,20 +95,6 @@ public enum class StopAlertState {
     AllClear,
 }
 
-private fun entityMatcher(
-    entity: Alert.InformedEntity,
-    stop: Stop?,
-    pattern: RoutePattern,
-    route: Route?,
-): Boolean {
-    return entity.appliesTo(
-        stopId = stop?.id,
-        routeId = pattern.routeId,
-        routeType = route?.type,
-        directionId = pattern.directionId,
-    )
-}
-
 private fun getServiceAlerts(alerts: List<Alert>, atTime: EasternTimeInstant): List<Alert> {
     // In practice, AlertAssociatedStop is only used for the map, where only Major alerts are shown.
     return alerts.filter { alert ->
@@ -143,7 +136,8 @@ private fun getAlertStateByRoute(
 
             val patternStates =
                 (patterns ?: emptyList()).map {
-                    val route = global.routes[it.routeId]
+                    val route = global.routes[it.routeId] ?: return@mapNotNull null
+
                     statesForPattern(it, stop, route, serviceAlerts)
                 }
 
@@ -185,13 +179,20 @@ private fun stopState(
 private fun statesForPattern(
     pattern: RoutePattern,
     stop: Stop,
-    route: Route?,
+    route: Route,
     serviceAlerts: List<Alert>,
 ): StopAlertState {
 
     val matchingAlert =
         serviceAlerts.find { alert ->
-            alert.anyInformedEntity { entityMatcher(it, stop, pattern, route) }
+            alert.anyInformedEntity {
+                it.appliesTo(
+                    stopId = Alert.InformedEntity.Matcher.Data(stop.id),
+                    routeId = Alert.InformedEntity.Matcher.Data(pattern.routeId),
+                    routeType = Alert.InformedEntity.Matcher.Data(route.type),
+                    directionId = Alert.InformedEntity.Matcher.Data(pattern.directionId),
+                )
+            }
         } ?: return StopAlertState.Normal
     if (matchingAlert.effect == Alert.Effect.Shuttle) {
         return StopAlertState.Shuttle
