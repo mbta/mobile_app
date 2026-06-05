@@ -9,15 +9,17 @@ on:
         default: false
         type: boolean
 
+permissions: {}
+
 jobs:
   test-android:
     name: Test for Android
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: ${{ !inputs.skip-everything }}
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
@@ -27,7 +29,7 @@ jobs:
       - name: shared checks & unit tests
         run: ./gradlew shared:check --exclude-task shared:jvmTest
         if: ${{ !inputs.skip-everything }}
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: android-shared-reports
@@ -35,7 +37,7 @@ jobs:
       - name: android checks & unit tests
         run: ./gradlew androidApp:check
         if: ${{ !inputs.skip-everything }}
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: android-android-reports
@@ -43,8 +45,6 @@ jobs:
   emulator-test-android:
     name: Run Android instrumented tests in emulator
     runs-on: mobile_app_runner
-    permissions:
-      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -56,8 +56,10 @@ jobs:
           #   target: default
           #   arch: x86_64
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: ${{ !inputs.skip-everything }}
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
@@ -70,7 +72,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
         if: ${{ !inputs.skip-everything }}
       - name: run tests
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@e89f39f1abbbd05b1113a29cf4db69e7540cae5a # v2.37.0
         if: ${{ !inputs.skip-everything }}
         timeout-minutes: 30
         with:
@@ -80,7 +82,7 @@ jobs:
           force-avd-creation: false
           disable-animations: true
           script: ./bin/android-instrumented-test-ci.sh
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure() && !inputs.skip-everything
         with:
           name: android-connected-reports-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
