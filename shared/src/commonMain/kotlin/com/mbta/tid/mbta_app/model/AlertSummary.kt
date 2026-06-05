@@ -429,14 +429,15 @@ public sealed class AlertSummary {
                         } else emptyList()
                     )
                     .mapNotNull { (pattern, stopIds) ->
+                        val routeType = routes.firstOrNull()?.type ?: return@mapNotNull null
                         val stopIdsOnPattern =
                             stopIds
                                 ?.filter { stopOnTrip ->
                                     alert.anyInformedEntitySatisfies {
                                         // `affectedStops` only includes parent stops, here we check
                                         // if the child stops on each pattern are affected
-                                        checkStop(stopOnTrip)
-                                        checkRoute(pattern.routeId, routes.firstOrNull()?.type)
+                                        checkStop(Alert.InformedEntity.Matcher.Data(stopOnTrip))
+                                        checkRoute(pattern.routeId, routeType)
                                     }
                                 }
                                 ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }

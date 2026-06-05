@@ -202,8 +202,8 @@ internal constructor(
             .distinct()
     }
 
-    public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>?): List<Stop>? {
-        if (alert == null || routes == null) return null
+    public fun getAlertAffectedStops(alert: Alert?, routes: List<Route>): List<Stop>? {
+        if (alert == null) return null
         val routeEntities =
             routes.flatMap { route ->
                 alert.matchingEntities { entity -> entity.satisfies { checkRoute(route) } }

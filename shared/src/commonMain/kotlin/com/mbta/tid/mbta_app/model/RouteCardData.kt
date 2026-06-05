@@ -1,6 +1,7 @@
 package com.mbta.tid.mbta_app.model
 
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
+import com.mbta.tid.mbta_app.model.Alert.InformedEntity.Matcher
 import com.mbta.tid.mbta_app.model.UpcomingFormat.NoTripsFormat
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -197,12 +198,16 @@ public data class RouteCardData(
 
         public fun alertsHere(tripId: String? = null): List<Alert> =
             alertsHere.filter { alert ->
-                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+                alert.anyInformedEntitySatisfies {
+                    checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
+                }
             }
 
         public fun alertsDownstream(tripId: String? = null): List<Alert> =
             alertsDownstream.filter { alert ->
-                (tripId == null || alert.anyInformedEntitySatisfies { checkTrip(tripId) })
+                alert.anyInformedEntitySatisfies {
+                    checkTrip(tripId?.let { Matcher.Data(it) } ?: Matcher.Wildcard)
+                }
             }
 
         private data class PotentialService(
@@ -967,8 +972,9 @@ public data class RouteCardData(
                                     }
                             is Route.Id -> listOf(path.routeOrLineId)
                         }
-                    val routeType: RouteType? =
+                    val routeType: RouteType =
                         routes.firstOrNull()?.let { globalData.getRoute(it)?.type }
+                            ?: return@forEachLeaf
                     val isCRCore = globalData.getStop(path.stopId)?.isCRCore ?: false
                     val applicableAlerts =
                         Alert.applicableAlerts(
