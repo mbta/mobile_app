@@ -27,6 +27,7 @@ extension SharedString {
                 "Commuter Rail and Ferry Tickets",
                 comment: "Label for a More page link to the MBTA mTicket app"
             )
+        case .crash: "Crash"
         case .debugMode:
             NSLocalizedString(
                 "Debug Mode",

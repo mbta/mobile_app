@@ -4,6 +4,7 @@ public enum class SharedString {
     BetaEarlyAccessNote,
     BetaSection,
     CommuterRailAndFerryTickets,
+    Crash,
     DebugMode,
     FareInformation,
     FavoritesByStop,
