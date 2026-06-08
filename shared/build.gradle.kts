@@ -13,12 +13,10 @@ import org.cyclonedx.model.License
 import org.cyclonedx.model.LicenseChoice
 import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 
 plugins {
     alias(libs.plugins.androidLibrary)
     alias(libs.plugins.compose)
-    alias(libs.plugins.kotlinCocoapods)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.mokkery)
     alias(libs.plugins.sentry.kmp)
@@ -50,36 +48,17 @@ kotlin {
     }
 
     if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
-        iosX64()
-        iosArm64()
-        iosSimulatorArm64()
+        listOf(iosX64(), iosArm64(), iosSimulatorArm64()).forEach { iosTarget ->
+            iosTarget.binaries.framework {
+                baseName = "Shared"
+                isStatic = true
+                binaryOption("bundleId", "com.mbta.tid.mobileapp")
+                export(libs.sentry.kmp)
+            }
+        }
     }
 
     jvm { mainRun { mainClass.set("com.mbta.tid.mbta_app.ProjectUtilsKt") } }
-
-    cocoapods {
-        summary = "Common library for the MBTA mobile app"
-        homepage = "https://github.com/mbta/mobile_app"
-        license = "MIT"
-        version = "1.0"
-        ios.deploymentTarget = "15.0"
-        podfile = project.file("../iosApp/Podfile")
-
-        framework {
-            baseName = "Shared"
-            binaryOption("bundleId", "com.mbta.tid.mobileapp")
-            export(libs.sentry.kmp)
-        }
-
-        xcodeConfigurationToNativeBuildType["LocalDebug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["LocalRelease"] = NativeBuildType.RELEASE
-        xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["DevOrangeRelease"] = NativeBuildType.RELEASE
-        xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["StagingRelease"] = NativeBuildType.RELEASE
-        xcodeConfigurationToNativeBuildType["ProdDebug"] = NativeBuildType.DEBUG
-        xcodeConfigurationToNativeBuildType["ProdRelease"] = NativeBuildType.RELEASE
-    }
 
     sourceSets {
         val commonMain by getting {
@@ -282,11 +261,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIos") {
     outputPath = layout.buildDirectory.file("boms/bom-ios.xml")
     transform = {
         components = components.filterNot {
-            setOf(
-                    "pkg:maven/MBTA_App/shared@unspecified?type=jar",
-                    "pkg:swift/iosApp.xcworkspace@latest",
-                    "pkg:swift/iosApp@latest",
-                )
+            setOf("pkg:maven/MBTA_App/shared@unspecified?type=jar", "pkg:swift/iosApp@latest")
                 .contains(it.purl)
         }
         // the hardcoded stdlib bom doesn't handle this
@@ -326,18 +301,11 @@ apply
 }
 
 tasks.register<CachedExecTask>("bomIosMerged") {
-    dependsOn(
-        "bomIosKotlinDeps",
-        "bomIosKotlinStdlib",
-        "bomIosCocoapods",
-        "bomIosSwiftPM",
-        "bomCycloneDxCliDownload",
-    )
+    dependsOn("bomIosKotlinDeps", "bomIosKotlinStdlib", "bomIosSwiftPM", "bomCycloneDxCliDownload")
     inputFiles =
         layout.buildDirectory.files(
             "boms/bom-ios-kotlin-deps.xml",
             "boms/bom-ios-kotlin-stdlib.xml",
-            "boms/bom-ios-cocoapods.xml",
             "boms/bom-ios-swiftpm.json",
         )
     outputFile = layout.buildDirectory.file("boms/bom-ios-merged.xml")
@@ -348,7 +316,6 @@ tasks.register<CachedExecTask>("bomIosMerged") {
         "--input-files",
         "bom-ios-kotlin-deps.xml",
         "bom-ios-kotlin-stdlib.xml",
-        "bom-ios-cocoapods.xml",
         "bom-ios-swiftpm.json",
         "--output-file",
         "bom-ios-merged.xml",
@@ -387,44 +354,6 @@ tasks.register<Copy>("bomIosKotlinStdlib") {
     mustRunAfter("bomCodegenAndroid")
     from(layout.projectDirectory.file("src/iosMain/xml/bom-ios-kotlin-stdlib.xml"))
     into(layout.buildDirectory.dir("boms"))
-}
-
-tasks.register<CycloneDxBomTransformTask>("bomIosCocoapods") {
-    dependsOn("bomIosCocoapodsRaw")
-    mustRunAfter("bomIosKotlinDeps", "bomIosKotlinStdlib")
-    inputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
-    outputPath = layout.buildDirectory.file("boms/bom-ios-cocoapods.xml")
-    transform = {
-        components = components.filter {
-            it.purl != "pkg:cocoapods/shared@1.0?file_name=..%2Fshared%2F"
-        }
-        // cyclonedx-cocoapods doesn't embed licenses
-        for (component in components) {
-            // this is all very manual, so make sure it doesn't start silently failing
-            check(component.name.startsWith("Sentry"))
-            component.licenses.licenses
-                .single()
-                .setLicenseText(
-                    AttachmentText().apply {
-                        text =
-                            layout.projectDirectory
-                                .file("../iosApp/Pods/Sentry/LICENSE.md")
-                                .asFile
-                                .readText()
-                    }
-                )
-        }
-    }
-}
-
-tasks.register<CachedExecTask>("bomIosCocoapodsRaw") {
-    inputFiles = layout.projectDirectory.files("../iosApp/Podfile.lock")
-    outputFile = layout.buildDirectory.file("boms/bom-ios-cocoapods-raw.xml")
-    workingDir = provider { layout.projectDirectory.dir("../iosApp") }
-    commandLine("bundle", "exec", "cyclonedx-cocoapods", "-o", outputFile.get().toString())
-    onError = { error ->
-        throw IllegalStateException("\nerror: BOM generation failed, see Gotchas in README", error)
-    }
 }
 
 tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
@@ -509,7 +438,7 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
 tasks.register<CachedExecTask>("bomIosSwiftPMRaw") {
     inputFiles =
         layout.projectDirectory.files(
-            "../iosApp/iosApp.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+            "../iosApp/iosApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
         )
     outputFile = layout.buildDirectory.file("boms/bom-ios-swiftpm-raw.json")
     workingDir = provider { layout.projectDirectory.dir("../iosApp") }
@@ -520,7 +449,7 @@ tasks.register<CachedExecTask>("bomIosSwiftPMRaw") {
         "swift",
         "-o",
         outputFile.get().toString(),
-        "iosApp.xcworkspace",
+        "iosApp.xcodeproj",
     )
 }
 
@@ -535,4 +464,31 @@ mokkery {
     ignoreFinalMembers.set(true)
 }
 
-sentryKmp { autoInstall.commonMain.enabled = false }
+sentryKmp {
+    autoInstall.commonMain.enabled = false
+    linker.xcodeprojPath = projectDir.resolve("../iosApp/iosApp.xcodeproj").toString()
+
+    val semverRegex = Regex("\\d+.\\d+.\\d+")
+    val declaredSentryCocoaSpec = autoInstall.cocoapods.sentryCocoaVersion.get()
+    val expectedSentryCocoaVersion =
+        checkNotNull(semverRegex.find(declaredSentryCocoaSpec)) {
+                "\"$declaredSentryCocoaSpec\" does not contain a version"
+            }
+            .value
+    val actualSentryCocoaVersion = run {
+        val projectYmlLines = projectDir.resolve("../iosApp/project.yml").readLines()
+        val sentryCocoaVersionLine =
+            projectYmlLines
+                .dropWhile { !it.contains("https://github.com/getsentry/sentry-cocoa.git") }[1]
+        check(sentryCocoaVersionLine.contains("exactVersion:")) {
+            "\"$sentryCocoaVersionLine\" does not contain \"exactVersion\""
+        }
+        checkNotNull(semverRegex.find(sentryCocoaVersionLine)) {
+                "\"$sentryCocoaVersionLine\" does not contain a version"
+            }
+            .value
+    }
+    check(expectedSentryCocoaVersion == actualSentryCocoaVersion) {
+        "sentry-kmp’s sentry-cocoa version $expectedSentryCocoaVersion does not match project.yml’s sentry-cocoa version $actualSentryCocoaVersion"
+    }
+}

@@ -48,8 +48,6 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 #### Gotchas
 
 - Be sure to install the Android SDK Command-line Tools via Android Studio > Settings Android SDK > SDK Tool Tabs > Android SDK Command Line Tools.
-- If you're seeing the error "undefined method 'map' for nil:NilClass" when running pod installs locally, you likely need to run `bundle exec gem uninstall ffi` then `bundle install` to get a cocoapods requirement to be installed properly on M1 Macs.
-- If an Xcode build fails because of CocoaPods, try `bin/fix-cocoapods.sh`.
 - If some piece of BOM generation fails in Xcode, try quitting Xcode and then running `open /Applications/Xcode.app` from a terminal with a good `PATH`.
 - If iOS asset conversion fails in Android Studio, try quitting Android Studio and then running `open /Applications/Android\ Studio.app` from a terminal with a good `PATH`.
 - If some piece of BOM generation still fails in Xcode even when Xcode was launched with a good `PATH`, try running `./gradlew :shared:bomCodegenIos` manually from a terminal with a good `PATH`.
@@ -82,14 +80,12 @@ section of the Inject readme. The build setting configurations are already set u
 - Select `open project` from the top bar menu and select the `iosApp` directory
 - Once you launch the app you should see `💉 InjectionIII connected` in the logs
 
-The shared library dependency is managed using Cocoapods. To install the dependency and build the
+The shared library dependency is managed using Xcode build scripts. To install the dependency and build the
 ios app:
 
-- Run a gradle sync of the project from Android Studio, or you may run
-  `./gradlew :shared:generateDummyFramework` from the root directory
-- `bundle install` to install cocoapods and fastlane
-- `bin/generate-xcodeproj.sh` to generate the Xcode project and then integrate CocoaPods with it
-- Open the project from `/iosApp/iosApp.xcworkspace` in Xcode (not `iosApp.xcodeproj`).
+- Run a gradle sync of the project from Android Studio
+- `bin/generate-xcodeproj.sh` to generate the Xcode project
+- Open the project from `/iosApp/iosApp.xcodeproj` in Xcode.
 - Populate any configuration needed in your the .envrc file. These will be read by a build phase
   script and set as info.plist values so that they can be read by the application.
 
