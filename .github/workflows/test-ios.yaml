@@ -31,14 +31,6 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         with:
           for: ios-test
-      - name: Install CocoaPods dependencies
-        if: ${{ !inputs.skip-everything }}
-        run: |
-          ./gradlew :shared:generateDummyFramework
-          pushd iosApp
-          bundle exec pod install
-          popd
-          bundle exec ./gradlew :shared:podInstallSyntheticIos
       - name: shared checks & unit tests
         if: ${{ !inputs.skip-everything }}
         run: ./gradlew shared:iosSimulatorArm64Test

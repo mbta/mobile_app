@@ -2,8 +2,6 @@ disabled_rules:
   # SwiftFormat disagrees with SwiftLint about some formatting choices
   - statement_position
   - trailing_comma
-excluded:
-  - Pods
 
 identifier_name:
   excluded:
