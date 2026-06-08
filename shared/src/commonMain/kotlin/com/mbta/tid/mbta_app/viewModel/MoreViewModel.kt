@@ -9,6 +9,9 @@ import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.SharedString
+import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.SentryLevel
+import io.sentry.kotlin.multiplatform.protocol.Breadcrumb
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -113,9 +116,19 @@ public class MoreViewModel(
                         MoreItem.Action(
                             label = SharedString.ForceNotificationsBeta,
                             action = {
+                                Sentry.addBreadcrumb(
+                                    Breadcrumb(level = SentryLevel.WARNING, type = "Huh")
+                                )
+                                Sentry.captureMessage("Sentry SDK directly from Kotlin works")
                                 CoroutineScope(coroutineDispatcher).launch {
                                     onboardingRepository.notificationsBetaResetAndForce()
                                 }
+                            },
+                        ),
+                        MoreItem.Action(
+                            label = SharedString.Crash,
+                            action = {
+                                throw IllegalStateException("crashing from Kotlin to check Sentry")
                             },
                         ),
                         MoreItem.Toggle(

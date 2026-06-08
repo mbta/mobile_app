@@ -14,6 +14,7 @@ val SharedString.value: String
             SharedString.BetaSection -> stringResource(R.string.more_section_public_beta)
             SharedString.CommuterRailAndFerryTickets ->
                 stringResource(R.string.resources_link_mticket)
+            SharedString.Crash -> "Crash"
             SharedString.DebugMode -> stringResource(R.string.feature_flag_debug_mode)
             SharedString.FareInformation -> stringResource(R.string.resources_link_fare_info)
             SharedString.FavoritesByStop -> "Group favorites by stop"
