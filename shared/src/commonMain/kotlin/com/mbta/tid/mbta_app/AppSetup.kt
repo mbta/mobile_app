@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app
 
 import com.mbta.tid.mbta_app.utils.getSentryBeforeSend
 import io.sentry.kotlin.multiplatform.Sentry
+import io.sentry.kotlin.multiplatform.SentryLevel
 import io.sentry.kotlin.multiplatform.SentryOptions
 
 public fun initializeSentry(dsn: String, environment: String) {
@@ -11,6 +12,9 @@ public fun initializeSentry(dsn: String, environment: String) {
         it.environment = environment
         it.beforeBreadcrumb = { breadcrumb -> breadcrumb }
         it.beforeSend = beforeSend::processEvent
+        it.debug = true
+        it.diagnosticLevel = SentryLevel.DEBUG
+        it.logs.enabled = true
     }
     Sentry.init(configuration)
 }
