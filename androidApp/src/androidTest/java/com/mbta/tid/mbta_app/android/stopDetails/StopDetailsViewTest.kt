@@ -270,6 +270,7 @@ class StopDetailsViewTest {
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
                 header = "Elevator alert header"
+                informedEntity()
             }
 
         val global = GlobalResponse(builder)
@@ -357,6 +358,7 @@ class StopDetailsViewTest {
             builder.alert {
                 effect = Alert.Effect.ElevatorClosure
                 header = "Elevator alert header"
+                informedEntity()
             }
 
         val global = GlobalResponse(builder)

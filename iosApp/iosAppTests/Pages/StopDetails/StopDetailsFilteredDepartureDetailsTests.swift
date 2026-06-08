@@ -450,6 +450,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 start: now.minus(hours: 3 * 24),
                 end: now.plus(hours: 3 * 24)
             )
+            alert.informedEntity(stop: stop.id)
         }
 
         // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
@@ -510,6 +511,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
                 start: now.minus(hours: 3 * 24),
                 end: now.plus(hours: 3 * 24)
             )
+            alert.informedEntity(stop: stop.id)
         }
 
         // in practice any trips should be skipped but for major alerts we want to hide trips if they somehow aren't
@@ -569,6 +571,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let alert = objects.alert { alert in
             alert.effect = .suspension
             alert.header = "Fuchsia Line suspended from Here to There"
+            alert.informedEntity(stop: stop.id)
         }
         let trip = objects.upcomingTrip(prediction: objects.prediction { prediction in
             prediction.trip = objects.trip { _ in }

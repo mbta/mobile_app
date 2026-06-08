@@ -5736,7 +5736,7 @@ class RouteCardDataTest {
                             parkElevatorAlert,
                         ),
                     patterns = listOf(routePatternAshmont, routePatternBraintree),
-                    null,
+                    route.type,
                     targetStopWithChildren = setOf(park.id),
                     tripsById = global.trips,
                 )

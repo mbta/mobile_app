@@ -101,7 +101,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
             remember(alerts, filter, patterns, now, global, route) {
                 val alerts = alerts
                 val filter = filter
-                if (alerts != null && filter != null) {
+                if (alerts != null && filter != null && route != null) {
                     val activeRelevantAlerts =
                         alerts.alerts.values.filter {
                             (it.isActive(time = now) || it.willBeActiveSoon(time = now)) &&
@@ -111,8 +111,8 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
                     Alert.applicableAlerts(
                             activeRelevantAlerts,
                             filter.directionId,
-                            listOfNotNull(route?.id),
-                            route?.type,
+                            listOf(route.id),
+                            route.type,
                             null,
                             filter.tripId,
                         )
