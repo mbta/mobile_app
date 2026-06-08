@@ -3,7 +3,6 @@ name: iosApp
 options:
   bundleIdPrefix: com.mbta.tid
   defaultConfig: ProdRelease
-  postGenCommand: bundle exec pod install
 attributes:
   LastSwiftUpdateCheck: 1510
   LastUpgradeCheck: 1130
@@ -101,6 +100,9 @@ packages:
   Reachability:
     url: https://github.com/ashleymills/Reachability.swift
     from: 5.2.4
+  Sentry:
+    url: https://github.com/getsentry/sentry-cocoa.git
+    exactVersion: 8.58.2
   swift-collections:
     url: https://github.com/apple/swift-collections.git
     from: 1.2.1
@@ -131,6 +133,7 @@ targets:
       - package: Lottie
       - package: MapboxMaps
       - package: Reachability
+      - package: Sentry
       - package: swift-collections
         product: Collections
       - package: SwiftPhoenixClient
@@ -183,6 +186,15 @@ targets:
           CODE_SIGN_ENTITLEMENTS: iosApp/iosApp-prod.entitlements
           PRODUCT_BUNDLE_IDENTIFIER: com.mbta.tid.mbtaapp
     preBuildScripts:
+      - name: Build Kotlin
+        script: |
+          if [ "YES" = "$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED" ]; then
+              echo "Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \"YES\""
+              exit 0
+          fi
+          cd "$SRCROOT/.."
+          ./gradlew :shared:embedAndSignAppleFrameworkForXcode
+        basedOnDependencyAnalysis: false
       - name: Automatic Injection Code
         script: |
           #!/bin/bash
