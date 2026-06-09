@@ -25,6 +25,14 @@ updates:
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
       - dependency-name: "com.android.library"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
+  - package-ecosystem: pre-commit
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    rebase-strategy: disabled
+    cooldown:
+      default-days: 7
   - package-ecosystem: swift
     directory: /iosApp
     schedule:
