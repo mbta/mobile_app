@@ -20,7 +20,7 @@ runs:
       id: settings
       shell: bash
       run: |
-        case ${{ inputs.for }} in
+        case ${INPUTS_FOR} in
           pre-commit)
             tools="java ruby"
             ;;
@@ -43,7 +43,7 @@ runs:
             tools="ruby"
             ;;
           *)
-            echo "::error::Unknown setup for: ${{ inputs.for }}"
+            echo "::error::Unknown setup for: ${INPUTS_FOR}"
             false
             ;;
         esac
@@ -51,6 +51,8 @@ runs:
         for tool in $tools; do
           echo "$tool=true" >> "$GITHUB_OUTPUT"
         done
+      env:
+        INPUTS_FOR: ${{ inputs.for }}
     - name: Read asdf versions
       if: steps.settings.outputs.java == 'true'
       id: asdf
@@ -61,18 +63,20 @@ runs:
       id: java-spec
       shell: bash
       run: |
-        DISTRIBUTION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f1`)
-        VERSION=(`echo ${{steps.asdf.outputs.java}} | cut -d - -f2`)
+        DISTRIBUTION=(`echo ${STEPS_ASDF_OUTPUTS_JAVA} | cut -d - -f1`)
+        VERSION=(`echo ${STEPS_ASDF_OUTPUTS_JAVA} | cut -d - -f2`)
         echo "java-distribution=$DISTRIBUTION" >> "$GITHUB_OUTPUT"
         echo "java-version=$VERSION" >> "$GITHUB_OUTPUT"
+      env:
+        STEPS_ASDF_OUTPUTS_JAVA: ${{steps.asdf.outputs.java}}
     - name: Set up Java
       if: steps.settings.outputs.java == 'true'
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
       with:
         distribution: ${{steps.java-spec.outputs.java-distribution}}
         java-version: ${{steps.java-spec.outputs.java-version}}
         cache: gradle
-    - uses: actions/cache@v4
+    - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       if: steps.settings.outputs.kotlin-cache == 'true'
       with:
         path: ~/.konan
@@ -83,13 +87,13 @@ runs:
       shell: bash
     - name: Configure AWS Credentials
       if: inputs.aws-role != ''
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: us-east-1
     - name: Fetch AWS secrets for Android
       if: steps.settings.outputs.aws-secrets-android == 'true' && inputs.aws-role != ''
-      uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
       with:
         secret-ids: |
           mobile-app-android-upload-key-passphrase
@@ -101,20 +105,20 @@ runs:
         aws secretsmanager get-secret-value --secret-id mobile-app-android-upload-key --output json | jq -r '.SecretBinary' | base64 --decode > upload-keystore.jks
     - name: Configure GCP Credentials
       if: inputs.gcp-provider != '' && inputs.gcp-service-account != ''
-      uses: google-github-actions/auth@v2
+      uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
       with:
         create_credentials_file: true
         workload_identity_provider: ${{ inputs.gcp-provider }}
         service_account: ${{ inputs.gcp-service-account }}
     - name: Configure AWS Credentials
       if: inputs.aws-role != ''
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b # v6.2.0
       with:
         role-to-assume: ${{ inputs.aws-role }}
         aws-region: us-east-1
     - name: Set up Ruby
       if: steps.settings.outputs.ruby == 'true'
-      uses: ruby/setup-ruby@v1
+      uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
       with:
         bundler-cache: true
     - name: Configure Xcode version
@@ -138,7 +142,7 @@ runs:
         rm -r ${OUT}
     - name: Cache CocoaPods dependencies
       if: steps.settings.outputs.xcode == 'true'
-      uses: actions/cache@v4
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
       with:
         path: iosApp/Pods
         key: cocoapods-${{ hashFiles('iosApp/Podfile.lock') }}

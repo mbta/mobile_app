@@ -40,13 +40,15 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
         with:
           for: ios-build
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
@@ -78,16 +80,17 @@ jobs:
           SENTRY_ENVIRONMENT: ${{ inputs.sentry-environment }}
       - name: Build iOS app
         run: |
-          bundle exec fastlane ios build scheme:${{ inputs.scheme }}
+          bundle exec fastlane ios build scheme:${INPUTS_SCHEME}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-      - uses: actions/upload-artifact@v7
+          INPUTS_SCHEME: ${{ inputs.scheme }}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ failure() }}
         with:
           name: ios-build-log
           path: ~/Library/Logs/gym/iosApp-*.log
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ inputs.deploy }}
         with:
           name: ios-ipa
@@ -103,8 +106,10 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/download-artifact@v8
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ios-ipa
           path: iosApp/build
@@ -113,7 +118,7 @@ jobs:
           for: ios-deploy
           aws-role: ${{ secrets.AWS_ROLE_ARN }}
       - name: Fetch AWS secrets
-        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        uses: aws-actions/aws-secretsmanager-get-secrets@2cb1a461cbd4865ac4299648312e4704c646cd53 # v3.0.1
         with:
           secret-ids: |
             APP_STORE_CONNECT_API_KEY_ID, mobile-app-ios-app-store-connect-api-key-id
@@ -121,4 +126,6 @@ jobs:
             APP_STORE_CONNECT_API_KEY_P8, mobile-app-ios-app-store-connect-api-key-p8
       - name: Upload to App Store
         run: |
-          bundle exec fastlane ios internal scheme:${{ inputs.scheme }}
+          bundle exec fastlane ios internal scheme:${INPUTS_SCHEME}
+        env:
+          INPUTS_SCHEME: ${{ inputs.scheme }}
