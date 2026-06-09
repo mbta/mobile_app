@@ -3,10 +3,6 @@ name: GitHub Actions Security Analysis with zizmor 🌈
 on:
   workflow_call:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 permissions: {}
 
 jobs:
