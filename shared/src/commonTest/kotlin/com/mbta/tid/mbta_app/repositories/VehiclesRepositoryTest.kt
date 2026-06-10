@@ -39,9 +39,15 @@ class VehiclesRepositoryTest : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val vehiclesRepo =
-            VehiclesRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
+            VehiclesRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
@@ -59,8 +65,9 @@ class VehiclesRepositoryTest : KoinTest {
     @Test
     fun testChannelClearedOnLeave() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val vehiclesRepo = VehiclesRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         every { socket.getChannel(any(), any()) } returns mock<PhoenixChannel>(MockMode.autofill)
         vehiclesRepo.channel =
             socket.getChannel(
@@ -78,9 +85,15 @@ class VehiclesRepositoryTest : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val vehiclesRepo =
-            VehiclesRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
+            VehiclesRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
         every { push.receive(any(), any()) } returns push
         every { socket.getChannel(any(), any()) } returns channel
@@ -109,8 +122,9 @@ class VehiclesRepositoryTest : KoinTest {
             }
         }
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val vehiclesRepo = VehiclesRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = MockPush()
         every { socket.getChannel(any(), any()) } returns channel
@@ -129,8 +143,9 @@ class VehiclesRepositoryTest : KoinTest {
     @Test
     fun testSetsErrorWhenErrorReceived() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val vehiclesRepo = VehiclesRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val vehiclesRepo = VehiclesRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
