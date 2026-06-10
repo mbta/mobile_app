@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class OnboardingPageTests: XCTestCase {
-    @MainActor func testFlow() async throws {
+    @MainActor func testFlow() async {
         let onboardingRepository = MockOnboardingRepository()
         let finishExp = expectation(description: "calls onFinish")
         let stepChannel = PassthroughSubject<Void, Never>()

@@ -6,9 +6,8 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-@testable import iosApp
-
 import Combine
+@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
@@ -75,7 +74,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     @MainActor
-    func testFavoritingOnlyDirectionPresentsDialogWhenNonBus() throws {
+    func testFavoritingOnlyDirectionPresentsDialogWhenNonBus() {
         var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
 
         let sut = SaveFavoritesFlow(
@@ -100,7 +99,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testFavoritingOnlyDirectionSkipsDialogWhenBus() throws {
+    func testFavoritingOnlyDirectionSkipsDialogWhenBus() {
         var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onCloseExp = XCTestExpectation(description: "On close called")
 
@@ -127,7 +126,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
     }
 
-    func testUnfavoritingOnlyDirectionUpdatesFavoritesWithoutDialog() throws {
+    func testUnfavoritingOnlyDirectionUpdatesFavoritesWithoutDialog() {
         var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onCloseExp = XCTestExpectation(description: "On close called")
 
@@ -155,7 +154,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     @MainActor
-    func testFavoritingWhenOnlyDirectionIsOppositePresentsDialog() throws {
+    func testFavoritingWhenOnlyDirectionIsOppositePresentsDialog() {
         let sut = SaveFavoritesFlow(
             lineOrRoute: line,
             stop: stop,
@@ -206,7 +205,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         try XCTAssertNotNil(sut.inspect().find(text: "This stop is drop-off only"))
     }
 
-    func testFavoritingDisplaysToast() throws {
+    func testFavoritingDisplaysToast() {
         var updateFavoritesCalledFor: [RouteStopDirection: FavoriteSettings?] = [:]
         let onToastExp = XCTestExpectation(description: "Toast displayed with expected text")
 
@@ -240,7 +239,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
         XCTAssertEqual(updateFavoritesCalledFor, [.init(route: route.id, stop: stop.id, direction: 0): .init()])
     }
 
-    func testOpensSavePageWhenNotificationsFlagIsOnForSingleDirection() throws {
+    func testOpensSavePageWhenNotificationsFlagIsOnForSingleDirection() {
         let onCloseExp = XCTestExpectation(description: "On close called")
         let onPushNavExp = XCTestExpectation(description: "Navigation pushed")
         var pushedNav: SheetNavigationStackEntry?
@@ -275,7 +274,7 @@ final class SaveFavoritesFlowTest: XCTestCase {
     }
 
     @MainActor
-    func testOpensSavePageWhenNotificationsFlagIsOnForMultiDirection() throws {
+    func testOpensSavePageWhenNotificationsFlagIsOnForMultiDirection() {
         let onCloseExp = XCTestExpectation(description: "On close called")
         let onPushNavExp = XCTestExpectation(description: "Navigation pushed")
         var pushedNav: SheetNavigationStackEntry?

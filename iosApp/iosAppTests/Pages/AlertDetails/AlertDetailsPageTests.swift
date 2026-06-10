@@ -14,7 +14,7 @@ import ViewInspector
 import XCTest
 
 final class AlertDetailsPageTests: XCTestCase {
-    @MainActor func testAlertDetailsPageParentStopResolution() throws {
+    @MainActor func testAlertDetailsPageParentStopResolution() {
         let objects = ObjectCollectionBuilder()
 
         let stop1 = objects.stop { stop in

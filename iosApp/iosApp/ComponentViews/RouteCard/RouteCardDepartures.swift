@@ -57,8 +57,6 @@ struct RouteCardDepartures: View {
                     if index < stopData.data.count - 1 {
                         HaloSeparator()
                     }
-                } else {
-                    EmptyView()
                 }
             }
         }

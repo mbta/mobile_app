@@ -18,7 +18,7 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testUpdatesSubscriptions() throws {
+    func testUpdatesSubscriptions() {
         let updateExp = expectation(description: "subscriptions updated")
 
         let objects = ObjectCollectionBuilder()
@@ -65,7 +65,7 @@ final class FcmSubscriptionModifierTests: XCTestCase {
         wait(for: [updateExp], timeout: 1)
     }
 
-    func testDoesNothingWithNoToken() throws {
+    func testDoesNothingWithNoToken() {
         let updateExp = expectation(description: "subscriptions updated")
         updateExp.isInverted = true
 

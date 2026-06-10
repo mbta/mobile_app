@@ -64,7 +64,7 @@ final class NearbyTransitViewTests: XCTestCase {
         }
     }
 
-    func testLoading() throws {
+    func testLoading() {
         let getNearbyExpectation = expectation(description: "getNearby")
 
         var sut = NearbyTransitView(
@@ -91,7 +91,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
     var mockLocation = CLLocationCoordinate2D(latitude: 12.34, longitude: -56.78)
 
-    func testSchedulesFetchedOnAppear() throws {
+    func testSchedulesFetchedOnAppear() {
         let objects = ObjectCollectionBuilder()
         objects.route { _ in }
         objects.stop { _ in }
@@ -117,7 +117,7 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testWithPredictions() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+        NSTimeZone.default = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
         let now = EasternTimeInstant.now()
         let distantMinutes = 10
         let objects = TestData.clone()
@@ -258,7 +258,7 @@ final class NearbyTransitViewTests: XCTestCase {
         wait(for: [reorderedJoinExp], timeout: 2)
     }
 
-    func testFetchesPredictionsWhenNoStops() throws {
+    func testFetchesPredictionsWhenNoStops() {
         let joinsPredictionsExpectation = expectation(description: "joins predictions")
 
         let objects = ObjectCollectionBuilder()
@@ -300,7 +300,7 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testLoadsRouteCardDataOnPredictionChange() throws {
-        NSTimeZone.default = TimeZone(identifier: "America/New_York")!
+        NSTimeZone.default = try XCTUnwrap(TimeZone(identifier: "America/New_York"))
         let loadRouteCardExp = XCTestExpectation(description: "loadRouteCard called")
 
         let objects = TestData.clone()
@@ -525,7 +525,7 @@ final class NearbyTransitViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: "You’re outside the MBTA service area."))
     }
 
-    @MainActor func testFilterChangesWithAlerts() throws {
+    @MainActor func testFilterChangesWithAlerts() {
         let objects = TestData.clone()
 
         let harvardNorthbound = objects.getStop(id: "70068")

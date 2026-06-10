@@ -19,7 +19,7 @@ final class NotificationsBetaModifierTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysToast() throws {
+    func testDisplaysToast() {
         let toastDisplayedExp = expectation(description: "toast displayed")
 
         let viewModel = MockNotificationsBetaViewModel(initialState: .init(showBetaToast: true, showBetaDialog: false))
@@ -43,7 +43,7 @@ final class NotificationsBetaModifierTests: XCTestCase {
     }
 
     @MainActor
-    func testSetsVMState() throws {
+    func testSetsVMState() {
         let instanceIdSetExp = expectation(description: "set instance id")
         instanceIdSetExp.expectedFulfillmentCount = 2
         let sheetRouteSetExp = expectation(description: "set sheet route")

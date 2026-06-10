@@ -6,9 +6,8 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
-@testable import iosApp
-
 import Combine
+@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
@@ -19,7 +18,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    @MainActor func testSaveEnhancedFavoriteTriggersSaveFlow() throws {
+    @MainActor func testSaveEnhancedFavoriteTriggersSaveFlow() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
@@ -62,7 +61,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         wait(for: [tapButtonExp, confirmationDialogExp], timeout: 4)
     }
 
-    @MainActor func testShowsDataWhenStopAndRouteMatchFilterButDirectionDoesnt() throws {
+    @MainActor func testShowsDataWhenStopAndRouteMatchFilterButDirectionDoesnt() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route()
@@ -177,7 +176,7 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         wait(for: [exp], timeout: 4)
     }
 
-    @MainActor func testCanSeeDirectionLabelsBeforeRealtimeDataLoads() throws {
+    @MainActor func testCanSeeDirectionLabelsBeforeRealtimeDataLoads() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let otherStop = objects.stop { _ in }
@@ -317,9 +316,12 @@ final class StopDetailsFilteredViewTests: XCTestCase {
         )],
         globalData: GlobalResponse(objects: objects))
 
-        let routeData = StopDetailsViewModel.RouteDataFiltered(
-            filteredWith: .init(stopId: stop.id, stopFilter: .init(routeId: route.lineId!, directionId: 0),
-                                tripFilter: nil),
+        let routeData = try StopDetailsViewModel.RouteDataFiltered(
+            filteredWith: .init(
+                stopId: stop.id,
+                stopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: 0),
+                tripFilter: nil
+            ),
             stopData: stopData
         )
 
@@ -329,9 +331,9 @@ final class StopDetailsFilteredViewTests: XCTestCase {
 
         let setStopFilterExp = XCTestExpectation(description: "setStopFilter called for GL direction 1")
 
-        let sut = StopDetailsFilteredView(
+        let sut = try StopDetailsFilteredView(
             stopId: stop.id,
-            stopFilter: .init(routeId: route.lineId!, directionId: directionId),
+            stopFilter: .init(routeId: XCTUnwrap(route.lineId), directionId: directionId),
             tripFilter: nil,
             routeData: nil,
             favorites: .init(routeStopDirection: [:]),

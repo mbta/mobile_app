@@ -9,8 +9,8 @@
 import Shared
 import SwiftUI
 
-// A subset of route attributes only for displaying as UI accents,
-// this is split out to allow defaults for when a route may not exist
+/// A subset of route attributes only for displaying as UI accents,
+/// this is split out to allow defaults for when a route may not exist
 struct TripRouteAccents: Hashable {
     let color: Color
     let textColor: Color

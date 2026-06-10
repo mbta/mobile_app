@@ -41,8 +41,8 @@ final class StopDetailsFilterPillsTests: XCTestCase {
         )
 
         let pills = try sut.inspect().findAll(RoutePill.self)
-        XCTAssertTrue(try pills.first!.actualView().isActive)
-        XCTAssertFalse(try pills.last!.actualView().isActive)
+        XCTAssertTrue(try XCTUnwrap(try pills.first?.actualView().isActive))
+        XCTAssertFalse(try XCTUnwrap(try pills.last?.actualView().isActive))
     }
 
     func testRoutePillTap() throws {

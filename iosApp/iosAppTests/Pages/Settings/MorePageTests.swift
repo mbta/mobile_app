@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class MorePageTests: XCTestCase {
-    @MainActor func testLoadsState() async throws {
+    @MainActor func testLoadsState() async {
         let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertTrue(try view.find(text: "Debug Mode").parent().parent().find(ViewType.Toggle.self).isOn())
@@ -27,7 +27,7 @@ final class MorePageTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 2)
     }
 
-    @MainActor func testSavesState() async throws {
+    @MainActor func testSavesState() async {
         let savedExp = expectation(description: "saved state")
 
         let settingsRepository = MockSettingsRepository(
@@ -48,7 +48,7 @@ final class MorePageTests: XCTestCase {
         await fulfillment(of: [tapExp, savedExp], timeout: 5)
     }
 
-    @MainActor func testAccessibilityToggleUpdatesSubscriptions() async throws {
+    @MainActor func testAccessibilityToggleUpdatesSubscriptions() async {
         let savedExp = expectation(description: "saved state")
         let updateExp = expectation(description: "updated subscription accessibility")
 
@@ -86,7 +86,7 @@ final class MorePageTests: XCTestCase {
         await fulfillment(of: [tapExp, savedExp, updateExp], timeout: 5)
     }
 
-    @MainActor func testLinksExist() async throws {
+    @MainActor func testLinksExist() async {
         let sut = MorePage(highlight: nil)
         let exp = sut.inspection.inspect(after: 2) { view in
             try XCTAssertNotNil(view.find(text: "Send App Feedback"))

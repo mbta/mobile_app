@@ -20,7 +20,7 @@ final class MapHttpInterceptorTests: XCTestCase {
                                          sdkInformation: .init(name: "name", version: "v", packageName: nil),
                                          body: nil)
 
-    func testOnRequest() throws {
+    func testOnRequest() {
         var requestUnchanged = false
         let interceptor = MapHttpInterceptor(updateLastErrorTimestamp: {})
         interceptor.onRequest(for: fakeRequest) { requstOrResponse in
@@ -32,7 +32,7 @@ final class MapHttpInterceptorTests: XCTestCase {
         XCTAssertTrue(requestUnchanged)
     }
 
-    func testOnResponse200DoesNothing() throws {
+    func testOnResponse200DoesNothing() {
         let fake200Response: HttpResponse = .init(identifier: 1, request: fakeRequest,
                                                   result: .success(.init(headers: [:], code: 200, data: .init())))
         var responseUnchanged = false
@@ -49,7 +49,7 @@ final class MapHttpInterceptorTests: XCTestCase {
         XCTAssertFalse(updateLastErrorCalled)
     }
 
-    func testOnResponse401UpdatesLastError() throws {
+    func testOnResponse401UpdatesLastError() {
         let fake401Response: HttpResponse = .init(identifier: 1, request: fakeRequest,
                                                   result: .success(.init(headers: [:], code: 401, data: .init())))
         var responseUnchanged = false
@@ -66,7 +66,7 @@ final class MapHttpInterceptorTests: XCTestCase {
         XCTAssertTrue(updateLastErrorCalled)
     }
 
-    func testOnRequestCancelledDoesNothing() throws {
+    func testOnRequestCancelledDoesNothing() {
         let fakeErrorResponse: HttpResponse = .init(identifier: 1, request: fakeRequest,
                                                     result: .failure(.init(type: .requestCancelled,
                                                                            message: "Cancelled")))

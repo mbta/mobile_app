@@ -21,12 +21,12 @@ struct DepartureTile: View {
         case onPrediction(route: Route)
     }
 
-    // Store the size that the tile should be for text to wrap properly.
-    // In order for wrapped text not to get cut off in the horizontal ScrollView, we need to set the fixed width
-    // rather than just using `maxWidth` (see https://stackoverflow.com/a/75331082)
-    // Calculating the size based on an approach taken in
-    // https://nilcoalescing.com/blog/AdaptiveLayoutsWithViewThatFits/#expandable-text-with-line-limit
-    // the ideal width is measured on the background in the initial render, then used on subsequent renders.
+    /// Store the size that the tile should be for text to wrap properly.
+    /// In order for wrapped text not to get cut off in the horizontal ScrollView, we need to set the fixed width
+    /// rather than just using `maxWidth` (see https://stackoverflow.com/a/75331082)
+    /// Calculating the size based on an approach taken in
+    /// https://nilcoalescing.com/blog/AdaptiveLayoutsWithViewThatFits/#expandable-text-with-line-limit
+    /// the ideal width is measured on the background in the initial render, then used on subsequent renders.
     @State var computedMultilineWidth: CGFloat? = nil
 
     let maxTileWidth: CGFloat = 195.0

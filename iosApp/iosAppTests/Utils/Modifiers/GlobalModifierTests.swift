@@ -18,7 +18,7 @@ final class GlobalModifierTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testLoadsFromRepo() throws {
+    func testLoadsFromRepo() {
         let repoExp = expectation(description: "favorites loaded from repo")
         let setExp = expectation(description: "favorites binding was set")
 

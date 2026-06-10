@@ -11,7 +11,7 @@ import Combine
 import Shared
 import SwiftUI
 
-/*
+/**
  Functions for handling interactions with the map, like prop change, navigation, and tapping.
  */
 extension HomeMapView {

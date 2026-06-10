@@ -19,7 +19,7 @@ final class FavoritesModifierTests: XCTestCase {
     }
 
     @MainActor
-    func testLoadsFromRepo() throws {
+    func testLoadsFromRepo() {
         let repoExp = expectation(description: "favorites loaded from repo")
         let setExp = expectation(description: "favorites binding was set")
 
@@ -54,7 +54,7 @@ final class FavoritesModifierTests: XCTestCase {
     }
 
     @MainActor
-    func testSetsPreviouslyLoadedValueWhileFetching() throws {
+    func testSetsPreviouslyLoadedValueWhileFetching() {
         let setExp = expectation(description: "favorites binding set to previously loaded value")
 
         let previouslyLoaded = buildFavorites {

@@ -37,7 +37,7 @@ final class SearchResultViewTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().view(SearchResultsView.self).find(LoadingResultsView.self))
     }
 
-    @MainActor func testQuerySet() throws {
+    @MainActor func testQuerySet() {
         let setQueryExp = expectation(description: "setQuery")
         let searchVM = MockSearchViewModel()
         searchVM.onSetQuery = { _ in setQueryExp.fulfill() }

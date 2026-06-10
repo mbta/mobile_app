@@ -17,20 +17,6 @@ struct DirectionPicker: View {
     let selectedDirectionId: Int32?
     let updateDirectionId: (Int32) -> Void
 
-    init(
-        availableDirections: [Int32],
-        directions: [Direction],
-        route: Route,
-        selectedDirectionId: Int32?,
-        updateDirectionId: @escaping (Int32) -> Void
-    ) {
-        self.availableDirections = availableDirections
-        self.directions = directions
-        self.route = route
-        self.selectedDirectionId = selectedDirectionId
-        self.updateDirectionId = updateDirectionId
-    }
-
     var body: some View {
         if availableDirections.count > 1 {
             HStack(alignment: .center, spacing: 2) {

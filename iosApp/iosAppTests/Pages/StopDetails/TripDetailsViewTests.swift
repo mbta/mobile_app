@@ -18,7 +18,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysVehicleCard() throws {
+    func testDisplaysVehicleCard() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -100,7 +100,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysScheduleCard() throws {
+    func testDisplaysScheduleCard() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -190,7 +190,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysStopList() throws {
+    func testDisplaysStopList() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -271,7 +271,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testTappingDownstreamStopAppendsToNavStack() throws {
+    func testTappingDownstreamStopAppendsToNavStack() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -360,7 +360,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysFollowButton() throws {
+    func testDisplaysFollowButton() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -446,7 +446,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDoesntDisplayFollowButtonOnTripDetails() throws {
+    func testDoesntDisplayFollowButtonOnTripDetails() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -527,7 +527,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysTripCompleteCard() throws {
+    func testDisplaysTripCompleteCard() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }
@@ -608,7 +608,7 @@ final class TripDetailsViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysTripNotAvailableCard() throws {
+    func testDisplaysTripNotAvailableCard() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { _ in }

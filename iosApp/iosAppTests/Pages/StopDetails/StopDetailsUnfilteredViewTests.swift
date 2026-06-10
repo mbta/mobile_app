@@ -109,27 +109,27 @@ import XCTest
     @MainActor
     func testGroupsByDirection() async throws {
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
-            stopIds: [stop!.id] + stop!.childStopIds,
-            globalData: globalResponse!,
+            stopIds: [XCTUnwrap(stop?.id)] + stop!.childStopIds,
+            globalData: XCTUnwrap(globalResponse),
             sortByDistanceFrom: nil,
             schedules: nil,
-            predictions: .init(objects: builder!),
+            predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
-            now: now!,
+            now: XCTUnwrap(now),
             context: .stopDetailsUnfiltered
         )!
 
         let nearbyVM = NearbyViewModel()
 
-        let sut = StopDetailsUnfilteredView(
-            stopId: stop!.id,
+        let sut = try StopDetailsUnfilteredView(
+            stopId: XCTUnwrap(stop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id), stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
-            global: .init(objects: builder!),
-            now: now!,
+            global: .init(objects: XCTUnwrap(builder)),
+            now: XCTUnwrap(now),
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
@@ -149,27 +149,27 @@ import XCTest
 
     func testInaccessibleByDirection() async throws {
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
-            stopIds: [inaccessibleStop!.id] + inaccessibleStop!.childStopIds,
-            globalData: globalResponse!,
+            stopIds: [XCTUnwrap(inaccessibleStop?.id)] + inaccessibleStop!.childStopIds,
+            globalData: XCTUnwrap(globalResponse),
             sortByDistanceFrom: nil,
             schedules: nil,
-            predictions: .init(objects: builder!),
+            predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [:]),
-            now: now!,
+            now: XCTUnwrap(now),
             context: .stopDetailsUnfiltered
         )!
 
         let nearbyVM = NearbyViewModel()
 
-        let sut = StopDetailsUnfilteredView(
-            stopId: inaccessibleStop!.id,
+        let sut = try StopDetailsUnfilteredView(
+            stopId: XCTUnwrap(inaccessibleStop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: inaccessibleStop!.id, stopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(inaccessibleStop?.id), stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
-            global: .init(objects: builder!),
-            now: now!,
+            global: .init(objects: XCTUnwrap(builder)),
+            now: XCTUnwrap(now),
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
@@ -184,7 +184,7 @@ import XCTest
     }
 
     func testShowsElevatorAlertsWhenGroupedByDirection() async throws {
-        let alert = builder!.clone().alert { alert in
+        let alert = try XCTUnwrap(builder?.clone().alert { alert in
             alert.header = "Elevator alert"
             alert.activePeriod(start: Date(timeIntervalSince1970: 0).toEasternInstant(), end: nil)
             alert.effect = .elevatorClosure
@@ -197,30 +197,30 @@ import XCTest
                 stop: self.stop!.id,
                 trip: nil
             )
-        }
+        })
 
         let routeCardData = try await RouteCardData.companion.routeCardsForStopList(
-            stopIds: [stop!.id] + stop!.childStopIds,
-            globalData: globalResponse!,
+            stopIds: [XCTUnwrap(stop?.id)] + stop!.childStopIds,
+            globalData: XCTUnwrap(globalResponse),
             sortByDistanceFrom: nil,
             schedules: nil,
-            predictions: .init(objects: builder!),
+            predictions: .init(objects: XCTUnwrap(builder)),
             alerts: .init(alerts: [alert.id: alert]),
-            now: now!,
+            now: XCTUnwrap(now),
             context: .stopDetailsUnfiltered
         )!
 
         let nearbyVM = NearbyViewModel()
 
-        let unfilteredView = StopDetailsUnfilteredView(
-            stopId: stop!.id,
+        let unfilteredView = try StopDetailsUnfilteredView(
+            stopId: XCTUnwrap(stop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
-                filteredWith: .init(stopId: stop!.id, stopFilter: nil, tripFilter: nil),
+                filteredWith: .init(stopId: XCTUnwrap(stop?.id), stopFilter: nil, tripFilter: nil),
                 routeCards: routeCardData
             ),
             favorites: .init(routeStopDirection: [:]),
-            global: .init(objects: builder!),
-            now: now!,
+            global: .init(objects: XCTUnwrap(builder)),
+            now: XCTUnwrap(now),
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
