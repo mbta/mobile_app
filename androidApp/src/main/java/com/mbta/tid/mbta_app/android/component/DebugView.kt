@@ -68,12 +68,14 @@ fun DebugView(
 
             debugState?.channelUpdates?.let {
                 Text("channel connections:")
-                it.forEach { (key, value) ->
-                    val trimmedKey = if (key.length > 25) "${key.substring(0, 25)}..." else key
-                    val duration =
-                        (now - value).absoluteValue.toString(DurationUnit.SECONDS, decimals = 0)
-                    Text("$trimmedKey last updated $duration ago")
-                }
+                it.entries
+                    .sortedBy { it.key }
+                    .forEach { (key, value) ->
+                        val trimmedKey = if (key.length > 25) "${key.substring(0, 25)}..." else key
+                        val duration =
+                            (now - value).absoluteValue.toString(DurationUnit.SECONDS, decimals = 0)
+                        Text("$trimmedKey last updated $duration ago")
+                    }
             }
         }
     }
