@@ -10,6 +10,8 @@ This project uses [Kotlin Multiplatform Mobile (KMM)](https://kotlinlang.org/doc
 
 ### Prerequisites
 
+Install libyaml, `brew install libyaml`. It is needed to install ruby
+
 Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
