@@ -28,8 +28,8 @@ class NotificationPermissionManager: INotificationPermissionManager {
         }
     }
 
-    /// Note: The first time we make this authorization request, the system prompts the user to grant or deny the request
-    /// and records that response. Subsequent authorization requests do not prompt the user.
+    /// Note: The first time we make this authorization request, the system prompts the user to grant or deny the
+    /// request and records that response. Subsequent authorization requests do not prompt the user.
     /// Returns true if  granted, false if not
     @MainActor
     func requestPermission() async -> Bool {
