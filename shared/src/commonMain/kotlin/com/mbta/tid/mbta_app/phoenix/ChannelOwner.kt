@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.network.receiveAll
+import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -16,12 +17,14 @@ import kotlinx.coroutines.sync.withLock
 internal class ChannelOwner<MessageData : Any>(
     socket: PhoenixSocket,
     dispatcher: CoroutineDispatcher,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
     internal val owner =
         AsymmetricChannelOwner<MessageData, MessageData>(
             socket,
             dispatcher,
+            debugRepository,
             errorBannerStateRepository,
         )
     internal var channel: PhoenixChannel?
@@ -43,6 +46,7 @@ internal class ChannelOwner<MessageData : Any>(
 internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
     private val socket: PhoenixSocket,
     private val dispatcher: CoroutineDispatcher,
+    private val debugRepository: IDebugRepository,
     private val errorBannerStateRepository: IErrorBannerStateRepository,
 ) {
     internal var channel: PhoenixChannel? = null
@@ -66,6 +70,9 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
             val errorMessage =
                 if (rawPayload != null) {
                     try {
+                        CoroutineScope(dispatcher).launch {
+                            debugRepository.setChannelSuccess(spec.topic)
+                        }
                         return ApiResult.Ok(parse(rawPayload))
                     } catch (e: IllegalArgumentException) {
                         "Failed to parse ${message.subject} channel message: ${e.message}"
@@ -119,9 +126,17 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
                 }
                 channel.onFailure {
                     handleResult(ApiResult.Error(message = "${SocketError.FAILURE} - $it"))
+                    CoroutineScope(dispatcher).launch {
+                        debugRepository.clearChannelStatus(spec.topic)
+                    }
                 }
 
-                channel.onDetach { message -> println("leaving channel ${message.subject}") }
+                channel.onDetach { message ->
+                    println("leaving channel ${message.subject}")
+                    CoroutineScope(dispatcher).launch {
+                        debugRepository.clearChannelStatus(spec.topic)
+                    }
+                }
                 channel
                     .attach()
                     .receiveAll(

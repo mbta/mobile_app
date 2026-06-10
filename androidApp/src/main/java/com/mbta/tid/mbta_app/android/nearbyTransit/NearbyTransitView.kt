@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.android.R
+import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.SheetHeader
 import com.mbta.tid.mbta_app.android.component.routeCard.RouteCardList
@@ -86,6 +87,7 @@ fun NearbyTransitView(
                 ),
         )
         ErrorBanner(errorBannerViewModel)
+        DebugView {}
         LaunchedEffect(
             stopIds,
             globalResponse,

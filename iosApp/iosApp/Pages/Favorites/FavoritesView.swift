@@ -65,6 +65,7 @@ struct FavoritesView: View {
             }
 
             ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
+            DebugView { EmptyView() }
             RouteCardList(
                 routeCardData: favoritesVMState.routeCardData,
                 emptyView: {

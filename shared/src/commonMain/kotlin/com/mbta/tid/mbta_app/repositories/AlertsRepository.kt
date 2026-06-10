@@ -18,11 +18,17 @@ public interface IAlertsRepository {
 
 internal class AlertsRepository(
     socket: PhoenixSocket,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
     ioDispatcher: CoroutineDispatcher,
 ) : IAlertsRepository, KoinComponent {
     private val channelOwner =
-        ChannelOwner<AlertsStreamDataResponse>(socket, ioDispatcher, errorBannerStateRepository)
+        ChannelOwner<AlertsStreamDataResponse>(
+            socket,
+            ioDispatcher,
+            debugRepository,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(onReceive: (ApiResult<AlertsStreamDataResponse>) -> Unit) {

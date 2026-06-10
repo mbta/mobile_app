@@ -31,6 +31,7 @@ public interface IPredictionsRepository {
 
 internal class PredictionsRepository(
     socket: PhoenixSocket,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
     ioDispatcher: CoroutineDispatcher,
 ) : IPredictionsRepository, KoinComponent {
@@ -38,6 +39,7 @@ internal class PredictionsRepository(
         AsymmetricChannelOwner<PredictionsByStopJoinResponse, PredictionsByStopMessageResponse>(
             socket,
             ioDispatcher,
+            debugRepository,
             errorBannerStateRepository,
         )
     internal var channel: PhoenixChannel? by channelOwner::channel

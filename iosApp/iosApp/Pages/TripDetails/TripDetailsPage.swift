@@ -59,7 +59,7 @@ struct TripDetailsPage: View {
                 TripDetailsHeader(route: route, direction: direction, navCallbacks: navCallbacks)
                 ErrorBanner(errorBannerVM, padding: [.init(.bottom, 8), .init(.horizontal, 14)])
                 DebugView {
-                    VStack {
+                    VStack(alignment: .leading) {
                         Text(verbatim: "trip id: \(filter.tripId)")
                         Text(verbatim: "vehicle id: \(filter.vehicleId ?? "nil")")
                     }

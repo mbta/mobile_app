@@ -29,11 +29,17 @@ public interface IVehiclesRepository {
 
 internal class VehiclesRepository(
     socket: PhoenixSocket,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
     ioDispatcher: CoroutineDispatcher,
 ) : IVehiclesRepository, KoinComponent {
     var channelOwner =
-        ChannelOwner<VehiclesStreamDataResponse>(socket, ioDispatcher, errorBannerStateRepository)
+        ChannelOwner<VehiclesStreamDataResponse>(
+            socket,
+            ioDispatcher,
+            debugRepository,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(
