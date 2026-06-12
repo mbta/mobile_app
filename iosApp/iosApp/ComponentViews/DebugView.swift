@@ -13,73 +13,64 @@ struct DebugView<Content: View>: View {
     @ObserveInjection var inject
 
     let content: () -> Content
+    var details: (() -> Content)?
 
     @EnvironmentObject var settingsCache: SettingsCache
+    @State var detailsPresented = false
 
     var body: some View {
         if settingsCache.get(.devDebugMode) {
             ZStack {
                 Rectangle()
                     .strokeBorder(Color(.text), style: .init(lineWidth: 2, dash: [10]))
-                VStack(alignment: .leading) {
-                    content()
-                        .font(Typography.footnote)
+                HStack(alignment: .center, spacing: 8) {
+                    VStack(alignment: .leading) {
+                        content()
+                            .font(Typography.footnote)
+                    }
+                    if details != nil {
+                        Spacer()
+                        Button {
+                            detailsPresented = true
+                        }
+                        label: {
+                            Image(systemName: "info.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 16)
+                        }
+                    }
                 }.padding(8)
             }
             .frame(maxWidth: .infinity)
             .background(Color.fill3)
             .padding(4)
             .fixedSize(horizontal: false, vertical: true)
-            .enableInjection()
-        }
-    }
-}
-
-struct AccordionDebugView<Content: View>: View {
-    @ObserveInjection var inject
-
-    let header: () -> Content
-    let content: () -> Content
-    @State var expanded = false
-
-    @EnvironmentObject var settingsCache: SettingsCache
-
-    var body: some View {
-        if settingsCache.get(.devDebugMode) {
-            ZStack {
-                Rectangle()
-                    .strokeBorder(Color(.text), style: .init(lineWidth: 2, dash: [10]))
-                DisclosureGroup(
-                    isExpanded: $expanded,
-                    content: {
-                        VStack(alignment: .leading) {
-                            content()
-                                .font(Typography.footnote)
-                        }
-                        .padding(8)
-                        .frame(maxWidth: .infinity)
-                    },
-                    label: {
-                        HStack(alignment: .center, spacing: 8) {
+            .sheet(
+                isPresented: $detailsPresented,
+                content: {
+                    NavigationStack {
+                        ScrollView {
                             VStack(alignment: .leading) {
-                                header()
-                                    .font(Typography.footnote)
+                                if let details {
+                                    details()
+                                        .font(Typography.footnote)
+                                        .frame(alignment: .leading)
+                                }
                             }
-                            Spacer()
-                            Image(.faChevronRight)
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 16)
-                                .rotationEffect(.degrees(expanded ? 90 : 0))
-                        }.padding(8)
+                            .padding(16)
+                        }
+                        .navigationTitle("Debug Details")
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") {
+                                    detailsPresented = false
+                                }
+                            }
+                        }
                     }
-                )
-                .disclosureGroupStyle(PlainDisclosureGroupStyle())
-            }
-            .frame(maxWidth: .infinity)
-            .background(Color.fill3)
-            .padding(4)
-            .fixedSize(horizontal: false, vertical: true)
+                }
+            )
             .enableInjection()
         }
     }

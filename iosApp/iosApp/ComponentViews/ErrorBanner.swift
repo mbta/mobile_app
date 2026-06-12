@@ -60,13 +60,13 @@ struct ErrorBanner: View {
                 VStack {
                     Text("Error loading data", comment: "Displayed when loading necessary information fails")
 
-                    AccordionDebugView(
-                        header: {
+                    DebugView(
+                        content: {
                             ForEach(state.messages.sorted(), id: \.self) { errorName in
                                 Text(errorName)
                             }
                         },
-                        content: {
+                        details: {
                             ForEach(state.details.sorted(), id: \.self) { detailsName in
                                 Text(detailsName)
                             }
