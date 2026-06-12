@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.repositories.ErrorKey
+import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 
@@ -30,7 +31,10 @@ fun RouteDetailsView(
     openModal: (ModalRoutes) -> Unit,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
-    val globalData = getGlobalData(ErrorKey(setOf(), "RouteDetailsView"))
+    val globalData =
+        getGlobalData(
+            ErrorKey(setOf(SheetRoutes.EditFavorites::class), "RouteDetailsView")
+        )
     val lineOrRoute = globalData?.getLineOrRoute(selectionId)
     if (lineOrRoute == null) {
         LoadingRouteStopListView(context, errorBannerViewModel)

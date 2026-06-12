@@ -58,8 +58,14 @@ class StopPredictionsFetcher(
     )
 
     private var currentStopIds: List<String>? = null
-    val errorKey = ErrorKey(setOf(), "PredictionsViewModel.subscribeToPredictions")
 
+    // TODO: This is only used from Nearby, and I suspect this helper will entirely go away
+    // as part of the nearby VM refactor
+    val errorKey =
+        ErrorKey(
+            setOf(SheetRoutes.NearbyTransit::class),
+            "PredictionsViewModel.subscribeToPredictions",
+        )
     fun connect(stopIds: List<String>?) {
         currentStopIds = stopIds
         if (stopIds != null) {
@@ -78,6 +84,7 @@ class StopPredictionsFetcher(
                 onJoinResponse(message.data)
                 checkPredictionsStale(message.data)
             }
+
             is ApiResult.Error -> {
                 Log.e(
                     "PredictionsViewModel",
@@ -93,6 +100,7 @@ class StopPredictionsFetcher(
                 val latestPredictions = onPushMessage(message.data)
                 latestPredictions?.let { checkPredictionsStale(it) }
             }
+
             is ApiResult.Error -> {
                 Log.e(
                     "PredictionsViewModel",

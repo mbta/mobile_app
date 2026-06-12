@@ -58,7 +58,9 @@ fun TripDetailsView(
     analytics: Analytics = koinInject(),
 ) {
     val globalResponse: GlobalResponse? =
-        getGlobalData(errorKey = ErrorKey(setOf(), "TripDetailsView"))
+        getGlobalData(
+            ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsView")
+        )
     val state by tripDetailsVM.models.collectAsState()
     val tripData: TripData? = state.tripData
     val stopList = state.stopList

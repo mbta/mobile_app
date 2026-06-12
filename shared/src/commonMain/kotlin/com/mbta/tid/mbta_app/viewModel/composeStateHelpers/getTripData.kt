@@ -86,7 +86,6 @@ internal fun getTripData(
     vehicleRepository: IVehicleRepository = koinInject(),
 ): TripData? {
     val errorKey = errorKey.withSuffix("getTripData")
-
     var trip: Trip? by remember { mutableStateOf(null) }
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }
     var tripPredictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }
@@ -97,7 +96,7 @@ internal fun getTripData(
 
     val params =
         remember(errorKey, coroutineDispatcher, errorBannerRepository, tripRepository) {
-            FetchParams(errorKey, coroutineDispatcher, errorBannerRepository, tripRepository)
+            FetchParams(errorKey.copy(), coroutineDispatcher, errorBannerRepository, tripRepository)
         }
 
     fun clearAll() {

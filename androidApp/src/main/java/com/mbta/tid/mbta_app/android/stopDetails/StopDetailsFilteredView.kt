@@ -77,7 +77,13 @@ fun StopDetailsFilteredView(
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
     val state by stopDetailsViewModel.models.collectAsState()
-    val global: GlobalResponse? = getGlobalData(ErrorKey(setOf(), "StopDetailsFilteredView"))
+    val global: GlobalResponse? =
+        getGlobalData(
+            ErrorKey(
+                setOf(SheetRoutes.StopDetails::class),
+                "StopDetailsFilteredView",
+            )
+        )
 
     val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(stopFilter.routeId)
 

@@ -103,6 +103,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
     }
 
     public suspend fun setSheetRoute(sheetRoute: SheetRoutes?) {
+        // TODO: get rid of existing errors for other routes
         mutex.withLock { this.sheetRoute = sheetRoute }
     }
 
@@ -113,6 +114,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     public suspend fun setDataError(key: ErrorKey, details: String, action: () -> Unit) {
         mutex.withLock {
+            // TODO: ignore error if it is for a page that is different from the one currently set
             dataErrors[key] = ErrorBannerState.DataError(setOf(key.id), setOf(details), action)
         }
         updateState()

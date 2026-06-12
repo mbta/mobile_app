@@ -70,6 +70,7 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
 @Composable
 fun subscribeToVehicles(
     routeDirection: RouteDirection?,
+    errorKey: ErrorKey,
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     vehiclesRepository: IVehiclesRepository = koinInject(),
 ): List<Vehicle> {
@@ -83,10 +84,7 @@ fun subscribeToVehicles(
 
     LifecycleResumeEffect(routeDirection) {
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.connectToVehicles(
-                routeDirection,
-                ErrorKey(setOf(), "VehiclesViewModel.subscribeToVehicles"),
-            )
+            viewModel.connectToVehicles(routeDirection, errorKey)
         }
         onPauseOrDispose { viewModel.disconnect() }
     }
