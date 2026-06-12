@@ -61,7 +61,10 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                         stringResource(R.string.error_loading_data),
                         style = Typography.subheadline,
                     )
-                    DebugView { Text(errorState.messages.joinToString()) }
+                    AccordionDebugView(
+                        header = { Text(errorState.messages.joinToString()) },
+                        content = { Text(errorState.details.joinToString()) },
+                    )
                 },
                 button = {
                     RefreshButton(label = stringResource(R.string.reload_data)) {
