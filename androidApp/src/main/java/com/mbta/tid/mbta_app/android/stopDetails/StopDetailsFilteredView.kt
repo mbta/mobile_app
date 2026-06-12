@@ -126,16 +126,18 @@ fun StopDetailsFilteredView(
             )
 
             ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 16.dp))
-            DebugView {
-                Column(
-                    Modifier.align(Alignment.CenterHorizontally),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text("stop id: $stopId")
-                    Text("trip id: ${tripFilter?.tripId ?: "null"}")
-                    Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
+            DebugView(
+                content = {
+                    Column(
+                        Modifier.align(Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text("stop id: $stopId")
+                        Text("trip id: ${tripFilter?.tripId ?: "null"}")
+                        Text("vehicle id: ${tripFilter?.vehicleId ?: "null"}")
+                    }
                 }
-            }
+            )
         }
     }
 

@@ -61,9 +61,9 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                         stringResource(R.string.error_loading_data),
                         style = Typography.subheadline,
                     )
-                    AccordionDebugView(
-                        header = { Text(errorState.messages.joinToString()) },
-                        content = { Text(errorState.details.joinToString()) },
+                    DebugView(
+                        content = { Text(errorState.messages.joinToString()) },
+                        details = { Text(errorState.details.joinToString()) },
                     )
                 },
                 button = {
