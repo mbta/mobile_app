@@ -10,6 +10,8 @@ This project uses [Kotlin Multiplatform Mobile (KMM)](https://kotlinlang.org/doc
 
 ### Prerequisites
 
+Run this homebrew install command before installing the rest of the tools  `brew install readline libyaml`
+
 Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
 
 Install [direnv](https://direnv.net/) if you don't already have it, copy `.envrc.example` to `.envrc`, populate any required values, then run `direnv allow`.
@@ -54,6 +56,8 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 - If `./gradlew :shared:bomCodegenIos` fails in a terminal with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try `./gradlew :shared:bomCodegenIos` again.
 - If Android Studio can't find `rsvg-convert` even when Android Studio was launched with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try the build again.
 - If your Gradle dependency tree has problems you need to visualize, try `./gradlew :shared:dependencies --configuration iosMainImplementationDependenciesMetadata` or `./gradlew :shared:dependencies --configuration releaseRuntimeClasspath` or `./gradlew :androidApp:dependencies --configuration stagingReleaseRuntimeClasspath`. Gradle sometimes just lies about what dependencies it’ll use, though.
+- If you run into an error that looks like `PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target`. Check out the [issue documentation](https://app.notion.com/p/mbta-downtown-crossing/PKIX-Issues-when-building-Java-projects-25ef5d8d11ea80bd81cbd88bf531ac71) on how to solve it
+- If an Xcode build fails because it can't locate Java Runtime, try defining `$JAVA_HOME` in the .envrc file, if you're using asdf you can add `export JAVA_HOME=$(asdf where java)` at the end of the .envrc file
 
 ## Running Locally
 
@@ -165,7 +169,7 @@ Run within Android Studio, or by running the commands `./gradlew androidApp:chec
 ### Editing Code
 
 - Create each new feature in its own branch named with the following naming format: initials-description (for example, Jane Smith writing a search function might create a branch called js-search-function).
-- This repo uses [pre-commit hooks](https://pre-commit.com/), which will automatically run and update files before committing. Install with `brew install pre-commit` and set up the git hook scripts by running `pre-commit install`.
+- This repo uses [pre-commit hooks](https://pre-commit.com/), which will automatically run and update files before committing. Install with `brew install pre-commit` and set up the git hook scripts by running `pre-commit install`. Code formatting happens at the pre-commit stage.
 - Use meaningfully descriptive commit messages to help reviewers understand the changes. Consider following [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0-beta.2/) guidelines.
 
 ### Code Review
