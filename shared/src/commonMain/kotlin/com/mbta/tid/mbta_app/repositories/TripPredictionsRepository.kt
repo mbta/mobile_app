@@ -29,6 +29,7 @@ public interface ITripPredictionsRepository {
 
 internal class TripPredictionsRepository(
     socket: PhoenixSocket,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
     ioDispatcher: CoroutineDispatcher,
 ) : ITripPredictionsRepository, KoinComponent {
@@ -36,6 +37,7 @@ internal class TripPredictionsRepository(
         ChannelOwner<PredictionsStreamDataResponse>(
             socket,
             ioDispatcher,
+            debugRepository,
             errorBannerStateRepository,
         )
     internal var channel: PhoenixChannel? by channelOwner::channel

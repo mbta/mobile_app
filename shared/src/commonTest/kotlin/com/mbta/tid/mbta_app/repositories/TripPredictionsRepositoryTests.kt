@@ -23,10 +23,12 @@ class TripPredictionsRepositoryTests {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val tripPredictionsRepo =
             TripPredictionsRepository(
                 socket,
+                debugRepo,
                 errorBannerRepo,
                 StandardTestDispatcher(testScheduler),
             )
