@@ -429,14 +429,15 @@ public sealed class AlertSummary {
                         } else emptyList()
                     )
                     .mapNotNull { (pattern, stopIds) ->
+                        val routeType = routes.firstOrNull()?.type ?: return@mapNotNull null
                         val stopIdsOnPattern =
                             stopIds
                                 ?.filter { stopOnTrip ->
                                     alert.anyInformedEntitySatisfies {
                                         // `affectedStops` only includes parent stops, here we check
                                         // if the child stops on each pattern are affected
-                                        checkStop(stopOnTrip)
-                                        checkRoute(pattern.routeId, routes.firstOrNull()?.type)
+                                        checkStop(Alert.InformedEntity.Matcher.Data(stopOnTrip))
+                                        checkRoute(pattern.routeId, routeType)
                                     }
                                 }
                                 ?.mapNotNull { global.stops[it]?.resolveParent(global)?.id }
@@ -461,10 +462,10 @@ public sealed class AlertSummary {
 
         private fun matchesWholeRoute(alert: Alert, routeId: Route.Id, directionId: Int): Boolean =
             alert.anyInformedEntity {
-                it.appliesTo(directionId = directionId, routeId = routeId) &&
-                    it.trip == null &&
-                    it.stop == null &&
-                    it.facility == null
+                it.appliesTo(
+                    directionId = Alert.InformedEntity.Matcher.Data(directionId),
+                    routeId = Alert.InformedEntity.Matcher.Data(routeId),
+                ) && it.trip == null && it.stop == null && it.facility == null
             }
 
         private fun matchesAllStopsOnPatterns(

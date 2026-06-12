@@ -167,16 +167,18 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces returns empty list with no data`() = test {
-        val trip = trip {}
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
         assertEquals(TripDetailsStopList(trip, stops = emptyList()), fromPieces(null, null))
     }
 
     @Test
     fun `fromPieces returns schedules when there are no predictions`() = test {
-        trip {}
-        val sched1 = schedule("A", 10)
-        val sched2 = schedule("B", 20)
-        val sched3 = schedule("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val sched1 = schedule("A", 10, routeId = route.id)
+        val sched2 = schedule("B", 20, routeId = route.id)
+        val sched3 = schedule("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, schedule = sched1),
@@ -189,10 +191,11 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces returns null with scheduled IDs and no predictions`() = test {
-        trip {}
-        val sched1 = schedule("A", 10)
-        val sched2 = schedule("B", 20)
-        val sched3 = schedule("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val sched1 = schedule("A", 10, routeId = route.id)
+        val sched2 = schedule("B", 20, routeId = route.id)
+        val sched3 = schedule("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(entry("A", 997), entry("B", 998), entry("C", 999)),
             fromPieces(schedulesResponseOf(sched1.stopId, sched2.stopId, sched3.stopId), null),
@@ -228,7 +231,8 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces returns null with unavailable schedules and no predictions`() = test {
-        val trip = trip {}
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
         assertEquals(
             TripDetailsStopList(trip, stops = emptyList()),
             fromPieces(TripSchedulesResponse.Unknown, null),
@@ -237,10 +241,11 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces preserves predictions with no schedules`() = test {
-        trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
@@ -253,13 +258,14 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces matches full set of predictions to full set of schedules`() = test {
-        trip {}
-        val sched1 = schedule("A", 10)
-        val sched2 = schedule("B", 20)
-        val sched3 = schedule("C", 30)
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val sched1 = schedule("A", 10, routeId = route.id)
+        val sched2 = schedule("B", 20, routeId = route.id)
+        val sched3 = schedule("C", 30, routeId = route.id)
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, schedule = sched1, prediction = pred1),
@@ -272,10 +278,11 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces aligns scheduled stop IDs with existing predictions`() = test {
-        trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
@@ -288,9 +295,10 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces extrapolates stop sequences before current predictions`() = test {
-        trip {}
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10),
@@ -304,9 +312,10 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces extrapolates stop sequences after current predictions`() = test {
         // this case is rare
-        trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
@@ -319,13 +328,14 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces accepts sibling stops with full schedules`() = test {
-        trip {}
-        val sched1 = schedule("A1", 10)
-        val sched2 = schedule("B1", 20)
-        val sched3 = schedule("C1", 30)
-        val pred1 = prediction("A2", 10)
-        val pred2 = prediction("B2", 20)
-        val pred3 = prediction("C2", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val sched1 = schedule("A1", 10, routeId = route.id)
+        val sched2 = schedule("B1", 20, routeId = route.id)
+        val sched3 = schedule("C1", 30, routeId = route.id)
+        val pred1 = prediction("A2", 10, routeId = route.id)
+        val pred2 = prediction("B2", 20, routeId = route.id)
+        val pred3 = prediction("C2", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A2", 10, schedule = sched1, prediction = pred1),
@@ -338,13 +348,14 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces accepts sibling stops with stop IDs`() = test {
-        trip {}
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
         stop("A1")
         stop("B1")
         stop("C1")
-        val pred1 = prediction("A2", 10)
-        val pred2 = prediction("B2", 20)
-        val pred3 = prediction("C2", 30)
+        val pred1 = prediction("A2", 10, routeId = route.id)
+        val pred2 = prediction("B2", 20, routeId = route.id)
+        val pred3 = prediction("C2", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A2", 10, prediction = pred1),
@@ -358,11 +369,12 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces resolves duplicate predictions towards schedule`() = test {
         // this case is rare
-        trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3a = prediction("C1", 30)
-        val pred3b = prediction("C2", 30)
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3a = prediction("C1", 30, routeId = route.id)
+        val pred3b = prediction("C2", 30, routeId = route.id)
         assertEquals(
             stopListOf(
                 entry("A", 10, prediction = pred1),
@@ -384,6 +396,7 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces can deduplicate predictions by stop sequence from real data`() = runBlocking {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route {}
 
         val p1 =
             objects.prediction {
@@ -391,6 +404,7 @@ class TripDetailsStopListTest {
                 departureTime = EasternTimeInstant(2024, Month.MAY, 10, 15, 32, 12)
                 stopSequence = 600
                 stopId = "70200"
+                routeId = route.id.idText
             }
         val p2 =
             objects.prediction {
@@ -398,6 +412,7 @@ class TripDetailsStopListTest {
                 departureTime = null
                 stopSequence = 600
                 stopId = "71199"
+                routeId = route.id.idText
             }
         val p3 =
             objects.prediction {
@@ -405,6 +420,7 @@ class TripDetailsStopListTest {
                 departureTime = null
                 stopSequence = 610
                 stopId = "70201"
+                routeId = route.id.idText
             }
 
         val predictions = PredictionsStreamDataResponse(objects)
@@ -435,7 +451,7 @@ class TripDetailsStopListTest {
                 parentStationId = "place-pktrm"
             }
 
-        val trip = objects.trip {}
+        val trip = objects.trip { routeId = route.id.idText }
 
         val alertsData = AlertsStreamDataResponse(objects)
         val globalData = GlobalResponse(objects, emptyMap())
@@ -499,6 +515,7 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces handles happy path with schedules and vehicles`() = runBlocking {
         val objects = ObjectCollectionBuilder()
+        val route = objects.route {}
 
         val vehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.InTransitTo }
         val outOfDateVehicle = objects.vehicle { currentStatus = Vehicle.CurrentStatus.StoppedAt }
@@ -508,6 +525,7 @@ class TripDetailsStopListTest {
             objects.schedule {
                 stopId = stop1.id
                 stopSequence = 1
+                routeId = route.id.idText
             }
         val prediction1 = objects.prediction(schedule1) { vehicleId = outOfDateVehicle.id }
 
@@ -516,6 +534,7 @@ class TripDetailsStopListTest {
             objects.schedule {
                 stopId = stop2.id
                 stopSequence = 2
+                routeId = route.id.idText
             }
         val prediction2 = objects.prediction(schedule2) { vehicleId = outOfDateVehicle.id }
 
@@ -524,10 +543,11 @@ class TripDetailsStopListTest {
             objects.schedule {
                 stopId = stop3.id
                 stopSequence = 3
+                routeId = route.id.idText
             }
         val prediction3 = objects.prediction(schedule3) { vehicleId = outOfDateVehicle.id }
 
-        val trip = objects.trip {}
+        val trip = objects.trip { routeId = route.id.idText }
         val schedules = TripSchedulesResponse.Schedules(listOf(schedule1, schedule2, schedule3))
         val predictions = PredictionsStreamDataResponse(objects)
         val alertsData = AlertsStreamDataResponse(objects)
@@ -737,11 +757,12 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces discards stops vehicle has passed`() = test {
-        trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
-        val trip = objects.trip {}
+        val route = objects.route {}
+        trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
+        val trip = objects.trip { routeId = route.id.idText }
         val vehicle =
             objects.vehicle {
                 currentStatus = Vehicle.CurrentStatus.InTransitTo
@@ -761,10 +782,11 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces discards stops vehicle is currently at`() = test {
-        val trip = trip {}
-        val pred1 = prediction("A", 10)
-        prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
 
         val vehicle =
             objects.vehicle {
@@ -783,10 +805,11 @@ class TripDetailsStopListTest {
 
     @Test
     fun `fromPieces checks trip before discarding past stops`() = test {
-        val trip = trip {}
-        val pred1 = prediction("A", 10)
-        val pred2 = prediction("B", 20)
-        val pred3 = prediction("C", 30)
+        val route = objects.route {}
+        val trip = trip { routeId = route.id.idText }
+        val pred1 = prediction("A", 10, routeId = route.id)
+        val pred2 = prediction("B", 20, routeId = route.id)
+        val pred3 = prediction("C", 30, routeId = route.id)
 
         val vehicle =
             objects.vehicle {
@@ -835,6 +858,9 @@ class TripDetailsStopListTest {
     @Test
     fun `fromPieces does not crash on multi-route trips`() = test {
         val now = EasternTimeInstant.now()
+        val route1 = objects.route { id = "1" }
+        val route2 = objects.route { id = "2" }
+
         trip { routeId = "1" }
         val pred1 = prediction("A", 10, routeId = Route.Id("1"), time = now + 1.minutes)
         val pred2 = prediction("A", 10, routeId = Route.Id("2"), time = now + 1.minutes)

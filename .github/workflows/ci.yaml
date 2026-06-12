@@ -9,6 +9,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions: {}
+
 jobs:
   check-changes:
     name: Check which platforms were changed
@@ -17,8 +19,10 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: dorny/paths-filter@v4
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
         id: changes
         with:
           # exclude rather than include to avoid problems caused by not including enough
@@ -36,6 +40,8 @@ jobs:
     permissions:
       contents: read
     uses: ./.github/workflows/pre-commit.yaml
+  zizmor:
+    uses: ./.github/workflows/zizmor.yaml
   test-android:
     name: Test for Android
     permissions:

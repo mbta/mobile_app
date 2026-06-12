@@ -53,8 +53,10 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: ${{ !inputs.skip-everything }}
+        with:
+          persist-credentials: false
       - uses: ./.github/actions/setup
         if: ${{ !inputs.skip-everything }}
         with:
@@ -67,10 +69,13 @@ jobs:
         if: ${{ !inputs.skip-everything }}
         run: |
           # https://stackoverflow.com/a/12487455
-          buildType="${{ inputs.build-type }}"
+          buildType="${INPUTS_BUILD_TYPE}"
           echo "build-type=${buildType,}" | tee -a "$GITHUB_OUTPUT"
-          flavor="${{ inputs.flavor }}"
+          flavor="${INPUTS_FLAVOR}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
+        env:
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
+          INPUTS_FLAVOR: ${{ inputs.flavor }}
       - name: Build Android app
         if: ${{ !inputs.skip-everything }}
         env:
@@ -83,14 +88,16 @@ jobs:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_DSN_ANDROID: ${{ secrets.SENTRY_DSN_ANDROID }}
           SENTRY_ENVIRONMENT: ${{ inputs.sentry-environment }}
+          INPUTS_FLAVOR: ${{ inputs.flavor }}
+          INPUTS_BUILD_TYPE: ${{ inputs.build-type }}
         run: |
-          bundle exec fastlane android build flavor:${{ inputs.flavor }} build_type:${{ inputs.build-type }}
-      - uses: actions/upload-artifact@v7
+          bundle exec fastlane android build flavor:${INPUTS_FLAVOR} build_type:${INPUTS_BUILD_TYPE}
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-apk
           path: androidApp/build/outputs/apk/${{ steps.lowercase.outputs.flavor }}/${{ steps.lowercase.outputs.build-type }}/androidApp-${{ steps.lowercase.outputs.flavor }}-${{ steps.lowercase.outputs.build-type }}.apk
-      - uses: actions/upload-artifact@v7
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: ${{ inputs.deploy && !inputs.skip-everything }}
         with:
           name: android-aab
@@ -106,13 +113,17 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          persist-credentials: false
       - name: Lowercase build parameters
         id: lowercase
         run: |
-          flavor="${{ inputs.flavor }}"
+          flavor="${INPUTS_FLAVOR}"
           echo "flavor=${flavor,}" | tee -a "$GITHUB_OUTPUT"
-      - uses: actions/download-artifact@v8
+        env:
+          INPUTS_FLAVOR: ${{ inputs.flavor }}
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: android-aab
           path: androidApp/build/outputs/bundle/${{ steps.lowercase.outputs.flavor }}Release
@@ -123,4 +134,6 @@ jobs:
           gcp-service-account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
       - name: Upload to Google Play
         run: |
-          bundle exec fastlane android internal flavor:${{ inputs.flavor }}
+          bundle exec fastlane android internal flavor:${INPUTS_FLAVOR}
+        env:
+          INPUTS_FLAVOR: ${{ inputs.flavor }}

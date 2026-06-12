@@ -236,7 +236,8 @@ class TripDetailsViewModelTest : KoinTest {
     fun testEmitsSelectedVehicleAndTripStops() = runTest {
         val objects = TestData.clone()
         val stopIds = (1..5).map { objects.stop().id }
-        val trip = objects.trip {}
+        val route = objects.route {}
+        val trip = objects.trip { routeId = route.id.idText }
         val vehicle =
             objects.vehicle {
                 this.tripId = trip.id
@@ -252,6 +253,7 @@ class TripDetailsViewModelTest : KoinTest {
                                 this.trip = trip
                                 this.stopId = stopId
                                 this.stopSequence = index
+                                this.routeId = route.id.idText
                             }
                         }
                     ),

@@ -207,7 +207,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                     tripPredictions?.trips?.values?.singleOrNull()?.routeId
                         ?: tripSchedules?.routeId()
                         ?: trip.routeId
-                val route = globalData.routes[routeId]
+                val route = globalData.routes[routeId] ?: return@withContext null
 
                 var predictions = emptyList<Prediction>()
                 if (tripPredictions != null) {
@@ -476,23 +476,23 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
             entry: WorkingEntry,
             fallbackTime: EasternTimeInstant?,
             alertsData: AlertsStreamDataResponse?,
-            route: Route?,
+            route: Route,
             tripId: String,
             directionId: Int,
         ): UpcomingFormat.Disruption? {
             val entryTime = (entry.prediction ?: entry.schedule)?.stopTime ?: fallbackTime
-            val entryRouteType = route?.type
+            val entryRouteType = route.type
 
             val alert =
                 alertsData?.alerts?.values?.find { alert ->
                     (entryTime?.let { alert.isActive(it) } ?: true) &&
                         alert.anyInformedEntity {
                             it.appliesTo(
-                                directionId = directionId,
-                                routeId = route?.id,
-                                routeType = entryRouteType,
-                                stopId = entry.stopId,
-                                tripId = tripId,
+                                directionId = Alert.InformedEntity.Matcher.Data(directionId),
+                                routeId = Alert.InformedEntity.Matcher.Data(route.id),
+                                routeType = Alert.InformedEntity.Matcher.Data(entryRouteType),
+                                stopId = Alert.InformedEntity.Matcher.Data(entry.stopId),
+                                tripId = Alert.InformedEntity.Matcher.Data(tripId),
                             )
                         } &&
                         // there's no UI yet for secondary alerts in trip details
@@ -500,7 +500,7 @@ constructor(val trip: Trip, val stops: List<Entry>, val startTerminalEntry: Entr
                             ?: alert.intrinsicSignificance) >= AlertSignificance.Major
                 }
             if (alert == null) return null
-            return UpcomingFormat.Disruption(alert, route?.let { MapStopRoute.matching(it) })
+            return UpcomingFormat.Disruption(alert, MapStopRoute.matching(route))
         }
     }
 }
