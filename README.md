@@ -10,7 +10,7 @@ This project uses [Kotlin Multiplatform Mobile (KMM)](https://kotlinlang.org/doc
 
 ### Prerequisites
 
-Run this homebrew install command before installing the rest of the tools  `brew install readline libyaml`
+Run this homebrew install command before installing the rest of the tools  `brew install readline libyaml`.
 
 Install the tools specified in `.tool-versions`. You can use [asdf](https://asdf-vm.com/) to help manage the required versions.
 
@@ -56,8 +56,8 @@ The recommendation for KMM projects is to use Android Studio for editing & runni
 - If `./gradlew :shared:bomCodegenIos` fails in a terminal with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try `./gradlew :shared:bomCodegenIos` again.
 - If Android Studio can't find `rsvg-convert` even when Android Studio was launched with a good `PATH`, try `./gradlew --stop` to stop any daemons that have persisted a bad `PATH` and then try the build again.
 - If your Gradle dependency tree has problems you need to visualize, try `./gradlew :shared:dependencies --configuration iosMainImplementationDependenciesMetadata` or `./gradlew :shared:dependencies --configuration releaseRuntimeClasspath` or `./gradlew :androidApp:dependencies --configuration stagingReleaseRuntimeClasspath`. Gradle sometimes just lies about what dependencies it’ll use, though.
-- If you run into an error that looks like `PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target`. Check out the [issue documentation](https://app.notion.com/p/mbta-downtown-crossing/PKIX-Issues-when-building-Java-projects-25ef5d8d11ea80bd81cbd88bf531ac71) on how to solve it
-- If an Xcode build fails because it can't locate Java Runtime, try defining `$JAVA_HOME` in the .envrc file, if you're using asdf you can add `export JAVA_HOME=$(asdf where java)` at the end of the .envrc file
+- For MBTA employees with Zscaler, if you run into an error that looks like `PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target`. Check out the [issue documentation](https://app.notion.com/p/mbta-downtown-crossing/PKIX-Issues-when-building-Java-projects-25ef5d8d11ea80bd81cbd88bf531ac71) on how to solve it.
+- If an Xcode build fails because it can't locate Java Runtime, try defining `$JAVA_HOME` in the .envrc file, if you're using asdf you can add `export JAVA_HOME=$(asdf where java)` at the end of the .envrc file.
 
 ## Running Locally
 
