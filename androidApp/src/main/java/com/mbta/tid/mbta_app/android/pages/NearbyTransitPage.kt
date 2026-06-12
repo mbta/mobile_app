@@ -3,21 +3,21 @@ package com.mbta.tid.mbta_app.android.pages
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitView
-import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.nearbyTransit.NoNearbyStopsView
 import com.mbta.tid.mbta_app.android.util.managedTargetLocation
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
+import com.mbta.tid.mbta_app.viewModel.INearbyViewModel
 
 @Composable
 fun NearbyTransitPage(
     nearbyTransit: NearbyTransit,
     onOpenStopDetails: (String, StopDetailsFilter?) -> Unit,
     openSearch: () -> Unit,
-    nearbyViewModel: NearbyTransitViewModel,
+    nearbyViewModel: INearbyViewModel,
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
-    val targetLocation by managedTargetLocation(nearbyTransit) { nearbyViewModel.reset() }
+    val targetLocation by managedTargetLocation(nearbyTransit)
 
     NearbyTransitView(
         alertData = nearbyTransit.alertData,
@@ -29,6 +29,7 @@ fun NearbyTransitPage(
         noNearbyStopsView = {
             NoNearbyStopsView(openSearch, nearbyTransit.viewportProvider::panToDefaultCenter)
         },
+        nearbyViewModel = nearbyViewModel,
         errorBannerViewModel = errorBannerViewModel,
     )
 }

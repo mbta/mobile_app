@@ -7,7 +7,6 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.analytics.AnalyticsProvider
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.map.MapboxConfigManager
-import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.phoenix.wrapped
 import com.mbta.tid.mbta_app.android.util.IInstanceIdCache
 import com.mbta.tid.mbta_app.android.util.InstanceIdCache
@@ -52,7 +51,6 @@ class MainApplication : Application() {
             single { SettingsCache(get()) }
             single { InstanceIdCache() }.bind(IInstanceIdCache::class)
             viewModelOf(::ContentViewModel)
-            viewModelOf(::NearbyTransitViewModel)
         }
     }
 }
