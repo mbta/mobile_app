@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
@@ -173,6 +174,82 @@ class NearbyTransitViewTest : KoinTest {
 
     val globalResponse = GlobalResponse(builder)
 
+    fun routeCardData(stop: Stop = sampleStop): RouteCardData =
+        RouteCardData(
+            LineOrRoute.Route(route),
+            listOf(
+                RouteCardData.RouteStopData(
+                    LineOrRoute.Route(route),
+                    stop,
+                    directions = listOf(Direction(0, route), Direction(1, route)),
+                    data =
+                        listOf(
+                            RouteCardData.Leaf(
+                                LineOrRoute.Route(route),
+                                stop,
+                                0,
+                                listOf(routePatternOne),
+                                setOf(stop.id),
+                                listOf(UpcomingTrip(trip, prediction = prediction)),
+                                emptyList(),
+                                true,
+                                hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
+                                emptyList(),
+                                RouteCardData.Context.NearbyTransit,
+                            ),
+                            RouteCardData.Leaf(
+                                LineOrRoute.Route(route),
+                                stop,
+                                1,
+                                listOf(routePatternTwo),
+                                setOf(sampleStop.id),
+                                emptyList(),
+                                emptyList(),
+                                true,
+                                hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
+                                emptyList(),
+                                RouteCardData.Context.NearbyTransit,
+                            ),
+                        ),
+                )
+            ),
+            now,
+        )
+
+    fun glRouteCardData() =
+        RouteCardData(
+            LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+            listOf(
+                RouteCardData.RouteStopData(
+                    LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                    greenLineStop,
+                    directions = listOf(Direction(0, greenLineRoute)),
+                    data =
+                        listOf(
+                            RouteCardData.Leaf(
+                                LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                                greenLineStop,
+                                0,
+                                listOf(greenLineRoutePatternOne),
+                                setOf(greenLineStop.id),
+                                listOf(
+                                    UpcomingTrip(greenLineTrip, prediction = greenLinePrediction)
+                                ),
+                                emptyList(),
+                                true,
+                                hasSchedulesToday = true,
+                                subwayServiceStartTime = null,
+                                emptyList(),
+                                RouteCardData.Context.NearbyTransit,
+                            )
+                        ),
+                )
+            ),
+            now,
+        )
+
     @get:Rule val composeTestRule = createComposeRule()
 
     @OptIn(ExperimentalTestApi::class)
@@ -191,83 +268,7 @@ class NearbyTransitViewTest : KoinTest {
             MockNearbyViewModel(
                 NearbyViewModel.State(
                     false,
-                    listOf(
-                        RouteCardData(
-                            LineOrRoute.Route(route),
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    LineOrRoute.Route(route),
-                                    sampleStop,
-                                    directions = listOf(Direction(0, route), Direction(1, route)),
-                                    data =
-                                        listOf(
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                sampleStop,
-                                                0,
-                                                listOf(routePatternOne),
-                                                setOf(sampleStop.id),
-                                                listOf(UpcomingTrip(trip, prediction = prediction)),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                sampleStop,
-                                                1,
-                                                listOf(routePatternTwo),
-                                                setOf(sampleStop.id),
-                                                emptyList(),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                        ),
-                                )
-                            ),
-                            now,
-                        ),
-                        RouteCardData(
-                            LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
-                                    greenLineStop,
-                                    directions = listOf(Direction(0, greenLineRoute)),
-                                    data =
-                                        listOf(
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
-                                                greenLineStop,
-                                                0,
-                                                listOf(greenLineRoutePatternOne),
-                                                setOf(greenLineStop.id),
-                                                listOf(
-                                                    UpcomingTrip(
-                                                        greenLineTrip,
-                                                        prediction = greenLinePrediction,
-                                                    )
-                                                ),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            )
-                                        ),
-                                )
-                            ),
-                            now,
-                        ),
-                    ),
+                    listOf(routeCardData(), glRouteCardData()),
                     loadedLocation = Position(0.0, 0.0),
                 )
             )
@@ -325,50 +326,7 @@ class NearbyTransitViewTest : KoinTest {
             MockNearbyViewModel(
                 NearbyViewModel.State(
                     false,
-                    listOf(
-                        RouteCardData(
-                            LineOrRoute.Route(route),
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    LineOrRoute.Route(route),
-                                    sampleStop,
-                                    directions = listOf(Direction(0, route), Direction(1, route)),
-                                    data =
-                                        listOf(
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                sampleStop,
-                                                0,
-                                                listOf(routePatternOne),
-                                                setOf(sampleStop.id),
-                                                listOf(UpcomingTrip(trip, prediction = prediction)),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                sampleStop,
-                                                1,
-                                                listOf(routePatternTwo),
-                                                setOf(sampleStop.id),
-                                                emptyList(),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                        ),
-                                )
-                            ),
-                            now,
-                        )
-                    ),
+                    listOf(routeCardData()),
                     loadedLocation = Position(0.0, 0.0),
                 )
             )
@@ -455,50 +413,7 @@ class NearbyTransitViewTest : KoinTest {
             MockNearbyViewModel(
                 NearbyViewModel.State(
                     false,
-                    listOf(
-                        RouteCardData(
-                            LineOrRoute.Route(route),
-                            listOf(
-                                RouteCardData.RouteStopData(
-                                    LineOrRoute.Route(route),
-                                    harvardNorthbound,
-                                    directions = listOf(Direction(0, route), Direction(1, route)),
-                                    data =
-                                        listOf(
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                harvardNorthbound,
-                                                0,
-                                                listOf(routePatternOne),
-                                                setOf(harvardNorthbound.id),
-                                                listOf(UpcomingTrip(trip, prediction = prediction)),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                            RouteCardData.Leaf(
-                                                LineOrRoute.Route(route),
-                                                harvardNorthbound,
-                                                1,
-                                                listOf(routePatternTwo),
-                                                setOf(harvardNorthbound.id),
-                                                emptyList(),
-                                                emptyList(),
-                                                true,
-                                                hasSchedulesToday = true,
-                                                subwayServiceStartTime = null,
-                                                emptyList(),
-                                                RouteCardData.Context.NearbyTransit,
-                                            ),
-                                        ),
-                                )
-                            ),
-                            now,
-                        )
-                    ),
+                    listOf(routeCardData(harvardNorthbound)),
                     loadedLocation = Position(0.0, 0.0),
                 )
             )

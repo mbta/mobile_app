@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import co.touchlab.skie.configuration.annotations.DefaultArgumentInterop
-import com.mbta.tid.mbta_app.analytics.Analytics
 import com.mbta.tid.mbta_app.model.FavoriteSettings
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
@@ -46,7 +45,6 @@ public class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val sentryRepository: ISentryRepository,
     private val coroutineDispatcher: CoroutineDispatcher,
-    private val analytics: Analytics,
 ) : MoleculeViewModel<NearbyViewModel.Event, NearbyViewModel.State>(), INearbyViewModel {
 
     public sealed class Context {
@@ -88,7 +86,7 @@ public class NearbyViewModel(
         val predictions =
             subscribeToPredictions(
                 stopIds,
-                SheetRoutes.Favorites,
+                SheetRoutes.NearbyTransit,
                 active,
                 errorKey,
                 onAnyMessageReceived = { awaitingPredictionsAfterBackground = false },
@@ -104,6 +102,8 @@ public class NearbyViewModel(
                 }
             }
         }
+
+        LaunchedEffect(location) { routeCardData = null }
 
         LaunchedEffect(globalData, location) {
             val resolvedLocation = location
