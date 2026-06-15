@@ -90,7 +90,7 @@ fun StopDetailsUnfilteredRoutesView(
                 navCallbacks = navCallbacks,
                 buttonColors = ButtonDefaults.contrastTranslucent(),
             )
-            DebugView { Text("stop id: ${stop.id}") }
+            DebugView(content = { Text("stop id: ${stop.id}") })
             if (multiRoute) {
                 Box(Modifier.height(56.dp).fillMaxWidth()) {
                     StopDetailsFilterPills(

@@ -76,7 +76,33 @@ fun NearbyTransitView(
                 ),
         )
         ErrorBanner(errorBannerViewModel)
+<<<<<<< es-nearby-vm
         DebugView {}
+=======
+        DebugView(content = {})
+        LaunchedEffect(
+            stopIds,
+            globalResponse,
+            targetLocation,
+            schedules,
+            predictions,
+            alertData,
+            now,
+        ) {
+            nearbyVM.loadRouteCardData(
+                stopIds,
+                globalResponse,
+                targetLocation,
+                schedules,
+                predictions,
+                alertData,
+                now,
+            )
+        }
+
+        val routeCardData = nearbyVM.routeCardData
+
+>>>>>>> main
         RouteCardList(
             routeCardData = state.routeCardData,
             emptyView = {

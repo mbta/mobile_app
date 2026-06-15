@@ -106,12 +106,14 @@ fun TripDetailsPage(
             }
         }
         ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 8.dp))
-        DebugView {
-            Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
-                Text("trip id: ${filter.tripId}")
-                Text("vehicle id: ${filter.vehicleId ?: "null"}")
+        DebugView(
+            content = {
+                Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
+                    Text("trip id: ${filter.tripId}")
+                    Text("vehicle id: ${filter.vehicleId ?: "null"}")
+                }
             }
-        }
+        )
         ScrollSeparatorColumn {
             TripDetailsView(
                 filter,
