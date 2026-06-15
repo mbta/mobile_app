@@ -14,10 +14,12 @@ import com.mbta.tid.mbta_app.model.StopDetailsPageFilters
 import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.hasContext
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
@@ -102,7 +104,7 @@ public class StopDetailsViewModel(
 
         var active: Boolean by remember { mutableStateOf(true) }
 
-        val errorKey = "StopDetailsViewModel"
+        val errorKey = ErrorKey(KeyType.Permanent, "StopDetailsViewModel")
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val stopIds =

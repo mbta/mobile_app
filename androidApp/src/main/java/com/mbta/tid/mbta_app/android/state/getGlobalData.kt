@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mbta.tid.mbta_app.android.util.fetchApi
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineScope
@@ -19,7 +20,7 @@ class GlobalDataViewModel(
     private val globalRepository: IGlobalRepository,
     private val errorBannerRepository: IErrorBannerStateRepository,
 ) : ViewModel() {
-    fun getGlobalData(errorKey: String) {
+    fun getGlobalData(errorKey: ErrorKey) {
         CoroutineScope(Dispatchers.IO).launch {
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
@@ -44,14 +45,14 @@ class GlobalDataViewModel(
 
 @Composable
 fun getGlobalData(
-    errorKey: String,
+    errorKey: ErrorKey,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
 ): GlobalResponse? {
     val viewModel: GlobalDataViewModel =
         viewModel(factory = GlobalDataViewModel.Factory(globalRepository, errorBannerRepository))
 
-    LaunchedEffect(Unit) { viewModel.getGlobalData("$errorKey.getGlobalData") }
+    LaunchedEffect(Unit) { viewModel.getGlobalData(errorKey.withSuffix("getGlobalData")) }
 
     return globalRepository.state.collectAsState().value
 }

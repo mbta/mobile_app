@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.TripSchedulesResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
@@ -22,7 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-private fun fetchTripErrorKey(prefix: String) = "${prefix}.fetchTrip"
+private fun fetchTripErrorKey(errorKey: ErrorKey) = errorKey.withSuffix("fetchTrip")
 
 private fun fetchTrip(
     tripId: String,
@@ -42,7 +43,8 @@ private fun fetchTrip(
     }
 }
 
-private fun fetchTripSchedulesErrorKey(prefix: String) = "${prefix}.fetchTripSchedules"
+private fun fetchTripSchedulesErrorKey(errorKey: ErrorKey) =
+    errorKey.withSuffix("fetchTripSchedules")
 
 private fun fetchTripSchedules(
     tripId: String,
@@ -65,7 +67,7 @@ private fun fetchTripSchedules(
 }
 
 private data class FetchParams(
-    val errorKey: String,
+    val errorKey: ErrorKey,
     val coroutineDispatcher: CoroutineDispatcher,
     val errorBannerRepository: IErrorBannerStateRepository,
     val tripRepository: ITripRepository,
@@ -77,14 +79,14 @@ internal fun getTripData(
     active: Boolean,
     context: TripDetailsViewModel.Context?,
     onPredictionMessageReceived: () -> Unit,
-    errorKey: String,
+    errorKey: ErrorKey,
     coroutineDispatcher: CoroutineDispatcher,
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     tripPredictionsRepository: ITripPredictionsRepository = koinInject(),
     tripRepository: ITripRepository = koinInject(),
     vehicleRepository: IVehicleRepository = koinInject(),
 ): TripData? {
-    val errorKey = "$errorKey.getTripData"
+    val errorKey = errorKey.withSuffix("getTripData")
 
     var trip: Trip? by remember { mutableStateOf(null) }
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }

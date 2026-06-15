@@ -17,7 +17,7 @@ import org.koin.core.component.KoinComponent
 public interface IPredictionsRepository {
     public fun connect(
         stopIds: List<String>,
-        errorKey: String,
+        errorKey: ErrorKey,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     )
@@ -52,7 +52,7 @@ internal class PredictionsRepository(
 
     override fun connect(
         stopIds: List<String>,
-        errorKey: String,
+        errorKey: ErrorKey,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {
@@ -107,7 +107,7 @@ constructor(
 
     override fun connect(
         stopIds: List<String>,
-        errorKey: String,
+        errorKey: ErrorKey,
         onJoin: (ApiResult<PredictionsByStopJoinResponse>) -> Unit,
         onMessage: (ApiResult<PredictionsByStopMessageResponse>) -> Unit,
     ) {

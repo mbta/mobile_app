@@ -10,6 +10,7 @@ import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -20,13 +21,14 @@ import kotlin.time.Duration.Companion.seconds
 import kotlin.time.ExperimentalTime
 import org.koin.compose.koinInject
 
-internal fun tripPredictionsErrorKey(prefix: String) = "$prefix.subscribeToTripPredictions"
+internal fun tripPredictionsErrorKey(errorKey: ErrorKey) =
+    errorKey.withSuffix("subscribeToTripPredictions")
 
 @OptIn(ExperimentalTime::class)
 @Composable
 internal fun subscribeToTripPredictions(
     tripFilter: TripDetailsPageFilter?,
-    errorKey: String,
+    errorKey: ErrorKey,
     active: Boolean,
     context: TripDetailsViewModel.Context?,
     onAnyMessageReceived: () -> Unit = {},

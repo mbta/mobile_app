@@ -60,8 +60,10 @@ import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteDetailsStopList
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockFavoritesRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
@@ -96,7 +98,7 @@ fun SaveFavoritePage(
 ) {
     val resources = LocalResources.current
 
-    val global = getGlobalData("SaveFavoritePage")
+    val global = getGlobalData(ErrorKey(KeyType.Permanent, "SaveFavoritePage"))
     val lineOrRoute = global?.getLineOrRoute(routeId)
     val stop = global?.getStop(stopId)
 

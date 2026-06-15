@@ -6,6 +6,7 @@ import com.mbta.tid.mbta_app.network.PhoenixChannel
 import com.mbta.tid.mbta_app.network.PhoenixMessage
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.network.receiveAll
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IDebugRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -37,7 +38,7 @@ internal class ChannelOwner<MessageData : Any>(
         spec: ChannelSpec,
         parseMessage: (String) -> MessageData,
         handleResult: (ApiResult<MessageData>) -> Unit,
-        errorKey: String,
+        errorKey: ErrorKey,
     ) = owner.connect(spec, parseMessage, parseMessage, handleResult, handleResult, errorKey)
 
     fun disconnect() = owner.disconnect()
@@ -59,7 +60,7 @@ internal class AsymmetricChannelOwner<JoinData : Any, MessageData : Any>(
         parseMessage: (String) -> MessageData,
         handleJoinResult: (ApiResult<JoinData>) -> Unit,
         handleResult: (ApiResult<MessageData>) -> Unit,
-        errorKey: String,
+        errorKey: ErrorKey,
     ) {
         fun <Data : Any> parseResult(
             message: PhoenixMessage,

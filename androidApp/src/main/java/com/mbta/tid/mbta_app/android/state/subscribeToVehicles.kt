@@ -13,7 +13,9 @@ import com.mbta.tid.mbta_app.model.StopDetailsUtils
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +35,7 @@ class VehiclesViewModel(private val vehiclesRepository: IVehiclesRepository) : V
         vehiclesRepository.disconnect()
     }
 
-    fun connectToVehicles(routeDirection: RouteDirection?, errorKey: String) {
+    fun connectToVehicles(routeDirection: RouteDirection?, errorKey: ErrorKey) {
         disconnect()
 
         if (routeDirection != null) {
@@ -82,7 +84,10 @@ fun subscribeToVehicles(
 
     LifecycleResumeEffect(routeDirection) {
         CoroutineScope(Dispatchers.IO).launch {
-            viewModel.connectToVehicles(routeDirection, "VehiclesViewModel.subscribeToVehicles")
+            viewModel.connectToVehicles(
+                routeDirection,
+                ErrorKey(KeyType.Permanent, "VehiclesViewModel.subscribeToVehicles"),
+            )
         }
         onPauseOrDispose { viewModel.disconnect() }
     }

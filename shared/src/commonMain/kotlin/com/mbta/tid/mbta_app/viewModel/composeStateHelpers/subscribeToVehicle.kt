@@ -9,6 +9,7 @@ import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehicleStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
 import org.koin.compose.koinInject
@@ -16,13 +17,13 @@ import org.koin.compose.koinInject
 @Composable
 internal fun subscribeToVehicle(
     vehicleId: String?,
-    errorKey: String,
+    errorKey: ErrorKey,
     active: Boolean,
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     vehicleRepository: IVehicleRepository = koinInject(),
 ): Vehicle? {
     var vehicle: Vehicle? by remember { mutableStateOf(null) }
-    val errorKey = "$errorKey.subscribeToVehicle"
+    val errorKey = errorKey.withSuffix("subscribeToVehicle")
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
         vehicleRepository.disconnect()

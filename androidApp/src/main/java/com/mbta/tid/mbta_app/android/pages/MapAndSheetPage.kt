@@ -96,6 +96,8 @@ import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
+import com.mbta.tid.mbta_app.repositories.ErrorKey
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.DeepLinkState
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -660,7 +662,7 @@ fun MapAndSheetPage(
             analytics.track(AnalyticsScreen.TripDetails)
         }
 
-        val global = getGlobalData("TripDetailsSheetContents")
+        val global = getGlobalData(ErrorKey(KeyType.Permanent, "TripDetailsSheetContents"))
         val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
         val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
 

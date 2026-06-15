@@ -19,6 +19,8 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
@@ -37,7 +39,7 @@ fun StopDetailsUnfilteredView(
     errorBannerViewModel: IErrorBannerViewModel,
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
-    val globalResponse = getGlobalData("StopDetailsUnfilteredView")
+    val globalResponse = getGlobalData(ErrorKey(KeyType.Permanent, "StopDetailsUnfilteredView"))
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()

@@ -5,6 +5,7 @@ import com.mbta.tid.mbta_app.model.ErrorBannerState
 import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
+import kotlin.reflect.KClass
 import kotlin.time.Duration.Companion.minutes
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,6 +20,25 @@ internal sealed class NetworkStatus {
     data object Connected : NetworkStatus()
 
     data object Disconnected : NetworkStatus()
+}
+
+/**
+ * Represent the type of the error. [KeyType.Permanent] represents an error that should persist in
+ * the banner and can be retried until it is successful. [KeyType.PageSpecific] represents an error
+ * that should no longer be retried once the user has navigated to a [SheetRoutes] of a different
+ * type.
+ */
+public sealed class KeyType {
+
+    public data object Permanent : KeyType()
+
+    public data class PageSpecific(val sheet: KClass<out SheetRoutes>?) : KeyType()
+}
+
+public data class ErrorKey(public val type: KeyType, public val id: String) {
+    public fun withSuffix(suffix: String): ErrorKey {
+        return this.copy(id = "$id$suffix")
+    }
 }
 
 public abstract class IErrorBannerStateRepository
@@ -43,7 +63,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     private var sheetRoute: SheetRoutes? = null
     private var predictionsStale: ErrorBannerState.StalePredictions? = null
-    private val dataErrors = mutableMapOf<String, ErrorBannerState.DataError>()
+    private val dataErrors = mutableMapOf<ErrorKey, ErrorBannerState.DataError>()
     private val mutex = Mutex()
 
     protected open fun updateState() {
@@ -53,7 +73,7 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
                 dataErrors.isNotEmpty() ->
                     // encapsulate all the different error actions within one error
                     ErrorBannerState.DataError(
-                        messages = dataErrors.keys,
+                        messages = dataErrors.keys.map { it.id }.toSet(),
                         details = dataErrors.values.flatMap { it.details }.toSet(),
                         action = { dataErrors.values.forEach { it.action() } },
                     )
@@ -92,14 +112,14 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
-    public suspend fun setDataError(key: String, details: String, action: () -> Unit) {
+    public suspend fun setDataError(key: ErrorKey, details: String, action: () -> Unit) {
         mutex.withLock {
-            dataErrors[key] = ErrorBannerState.DataError(setOf(key), setOf(details), action)
+            dataErrors[key] = ErrorBannerState.DataError(setOf(key.id), setOf(details), action)
         }
         updateState()
     }
 
-    public suspend fun clearDataError(key: String) {
+    public suspend fun clearDataError(key: ErrorKey) {
         mutex.withLock { dataErrors.remove(key) }
         updateState()
     }

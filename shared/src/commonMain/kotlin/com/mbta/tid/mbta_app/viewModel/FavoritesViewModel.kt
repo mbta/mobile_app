@@ -13,9 +13,11 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IOnboardingRepository
 import com.mbta.tid.mbta_app.repositories.IPinnedRoutesRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.usecases.FavoritesUsecases
@@ -143,7 +145,7 @@ public class FavoritesViewModel(
 
         var active: Boolean by remember { mutableStateOf(false) }
 
-        val errorKey = "FavoritesViewModel"
+        val errorKey = ErrorKey(KeyType.Permanent, "FavoritesViewModel")
         val globalData = getGlobalData(errorKey)
         val stopIds =
             remember(favorites, globalData) {

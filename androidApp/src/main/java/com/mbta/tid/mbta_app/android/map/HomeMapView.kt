@@ -70,6 +70,8 @@ import com.mbta.tid.mbta_app.android.util.toPoint
 import com.mbta.tid.mbta_app.android.util.typeText
 import com.mbta.tid.mbta_app.map.StopLayerGenerator
 import com.mbta.tid.mbta_app.model.Vehicle
+import com.mbta.tid.mbta_app.repositories.ErrorKey
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
@@ -94,7 +96,7 @@ fun HomeMapView(
     mapboxConfigManager: IMapboxConfigManager = koinInject(),
     navCallbacks: NavigationCallbacks,
 ) {
-    val globalData = getGlobalData("HomeMapView")
+    val globalData = getGlobalData(ErrorKey(KeyType.Permanent, "HomeMapView"))
     val state by viewModel.models.collectAsStateWithLifecycle()
     var isTargeting by isTargetingState
 

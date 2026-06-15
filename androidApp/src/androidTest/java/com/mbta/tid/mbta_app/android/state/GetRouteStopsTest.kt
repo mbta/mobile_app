@@ -10,7 +10,9 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.RouteStopsResult
@@ -53,7 +55,13 @@ class GetRouteStopsTest {
         var directionId by mutableIntStateOf(0)
         var actualRouteStops: RouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
-            actualRouteStops = getRouteStops(route.id, directionId, "errorKey", routeStopsRepo)
+            actualRouteStops =
+                getRouteStops(
+                    route.id,
+                    directionId,
+                    ErrorKey(KeyType.Permanent, "errorKey"),
+                    routeStopsRepo,
+                )
         }
 
         composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
@@ -83,7 +91,13 @@ class GetRouteStopsTest {
 
         var directionId by mutableIntStateOf(0)
         composeTestRule.setContent {
-            actualRouteStops = getRouteStops(Route.Id(""), directionId, "errorKey", routeStopsRepo)
+            actualRouteStops =
+                getRouteStops(
+                    Route.Id(""),
+                    directionId,
+                    ErrorKey(KeyType.Permanent, "errorKey"),
+                    routeStopsRepo,
+                )
         }
 
         sync.send(Unit)
@@ -106,7 +120,13 @@ class GetRouteStopsTest {
         val errorRepo = MockErrorBannerStateRepository()
 
         composeTestRule.setContent {
-            getRouteStops(Route.Id(""), 0, "errorKey", schedulesRepo, errorRepo)
+            getRouteStops(
+                Route.Id(""),
+                0,
+                ErrorKey(KeyType.Permanent, "errorKey"),
+                schedulesRepo,
+                errorRepo,
+            )
         }
 
         composeTestRule.waitUntilDefaultTimeout {

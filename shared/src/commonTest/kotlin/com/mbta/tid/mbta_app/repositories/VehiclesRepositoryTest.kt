@@ -56,7 +56,7 @@ class VehiclesRepositoryTest : KoinTest {
             routeId = Route.Id("Red"),
             directionId = 0,
             onReceive = { /* no-op */ },
-            errorKey = "testChannelSetOnRun",
+            errorKey = ErrorKey(KeyType.Permanent, "testChannelSetOnRun"),
         )
         advanceUntilIdle()
         assertNotNull(vehiclesRepo.channel)
@@ -102,7 +102,7 @@ class VehiclesRepositoryTest : KoinTest {
             routeId = Route.Id("Test"),
             directionId = 0,
             onReceive = {},
-            errorKey = "testChannelClearedBeforeJoin",
+            errorKey = ErrorKey(KeyType.Permanent, "testChannelClearedBeforeJoin"),
         )
         advanceUntilIdle()
         verify { channel.detach() }
@@ -136,7 +136,7 @@ class VehiclesRepositoryTest : KoinTest {
             onReceive = { outcome ->
                 assertEquals(VehiclesStreamDataResponse(emptyMap()), outcome.dataOrThrow())
             },
-            errorKey = "testSetsVehiclesOnJoinResponse",
+            errorKey = ErrorKey(KeyType.Permanent, "testSetsVehiclesOnJoinResponse"),
         )
     }
 
@@ -177,7 +177,7 @@ class VehiclesRepositoryTest : KoinTest {
                 assertIs<ApiResult.Error<*>>(outcome)
                 assertContains(outcome.message, SocketError.FAILURE)
             },
-            errorKey = "testSetsErrorWhenErrorReceived",
+            errorKey = ErrorKey(KeyType.Permanent, "testSetsErrorWhenErrorReceived"),
         )
     }
 }
