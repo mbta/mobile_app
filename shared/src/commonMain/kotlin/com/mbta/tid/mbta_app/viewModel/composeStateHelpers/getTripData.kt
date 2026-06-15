@@ -22,7 +22,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
-
 private fun fetchTripErrorKey(errorKey: ErrorKey) = errorKey.withSuffix("fetchTrip")
 
 private fun fetchTrip(

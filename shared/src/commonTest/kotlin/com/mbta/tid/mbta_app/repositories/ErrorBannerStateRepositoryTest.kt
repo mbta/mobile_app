@@ -75,7 +75,6 @@ class ErrorBannerStateRepositoryTest {
             1,
             SheetRoutes.NearbyTransit,
         ) {}
-
         repo.setDataError(ErrorKey(setOf(), "global"), "") {}
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)

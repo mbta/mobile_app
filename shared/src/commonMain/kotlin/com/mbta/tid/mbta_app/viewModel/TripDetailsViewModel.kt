@@ -18,6 +18,7 @@ import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
 import com.mbta.tid.mbta_app.repositories.ITripRepository
 import com.mbta.tid.mbta_app.repositories.IVehicleRepository
+import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripData
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getTripDetailsStopList
@@ -87,7 +88,6 @@ public class TripDetailsViewModel(
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var active: Boolean by remember { mutableStateOf(true) }
-
         val errorKey = ErrorKey(setOf(), "TripDetailsViewModel")
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
