@@ -83,7 +83,7 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
-        .global($globalData, errorKey: "FavoritesView")
+        .global($globalData, errorKey: ErrorKey(type: KeyType.Permanent(), id: "FavoritesView"))
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)

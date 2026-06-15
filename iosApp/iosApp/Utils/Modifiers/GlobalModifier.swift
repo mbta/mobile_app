@@ -12,7 +12,7 @@ import SwiftUI
 struct GlobalModifier: ViewModifier {
     var globalRepository: IGlobalRepository = RepositoryDI().global
     @Binding var global: GlobalResponse?
-    let errorKey: String
+    let errorKey: ErrorKey
 
     @MainActor
     func activateGlobalListener() async {
@@ -27,7 +27,7 @@ struct GlobalModifier: ViewModifier {
         }
         Task {
             await fetchApi(
-                errorKey: "\(errorKey).loadGlobal",
+                errorKey: errorKey.withSuffix(suffix: "loadGlobal"),
                 getData: { try await globalRepository.getGlobalData() },
                 onRefreshAfterError: loadGlobal
             )
@@ -41,7 +41,7 @@ struct GlobalModifier: ViewModifier {
 }
 
 public extension View {
-    func global(_ global: Binding<GlobalResponse?>, errorKey: String) -> some View {
+    func global(_ global: Binding<GlobalResponse?>, errorKey: ErrorKey) -> some View {
         modifier(GlobalModifier(global: global, errorKey: errorKey))
     }
 }

@@ -125,7 +125,7 @@ struct RoutePickerView: View {
                 }
             }.ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .global($globalData, errorKey: "RoutePickerView")
+        .global($globalData, errorKey: ErrorKey(type: KeyType.Permanent(), id: "RoutePickerView"))
         .onAppear {
             searchRoutesViewModel.setPath(path: path)
         }
