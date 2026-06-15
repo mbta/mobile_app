@@ -153,7 +153,7 @@ fun FavoritesView(
         }
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
-        DebugView {}
+        DebugView(content = {})
         RouteCardList(
             routeCardData = routeCardData,
             emptyView = {
