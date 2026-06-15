@@ -51,17 +51,17 @@ struct DebugView<Content: View>: View {
                     .multilineTextAlignment(.leading)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .font(Typography.footnote)
-                }
-                if details != nil {
-                    Spacer()
-                    Button {
-                        detailsPresented = true
-                    }
-                    label: {
-                        Image(systemName: "info.circle")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 16)
+                    if details != nil {
+                        Spacer()
+                        Button {
+                            detailsPresented = true
+                        }
+                        label: {
+                            Image(systemName: "info.circle")
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 16)
+                        }
                     }
                 }
                 .padding(8)

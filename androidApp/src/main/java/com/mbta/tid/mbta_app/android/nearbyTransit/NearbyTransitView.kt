@@ -87,7 +87,7 @@ fun NearbyTransitView(
                 ),
         )
         ErrorBanner(errorBannerViewModel)
-        DebugView {}
+        DebugView(content = {})
         LaunchedEffect(
             stopIds,
             globalResponse,
