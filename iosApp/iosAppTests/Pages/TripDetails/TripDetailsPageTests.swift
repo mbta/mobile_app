@@ -42,7 +42,7 @@ final class TripDetailsPageTests: XCTestCase {
             prediction.vehicleId = vehicle.id
         }
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
         let filter = TripDetailsPageFilter(
@@ -105,7 +105,7 @@ final class TripDetailsPageTests: XCTestCase {
 
     @MainActor
     func testClose() throws {
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         let closeExp = expectation(description: "Page closed")
         let sut = TripDetailsPage(
             filter: .init(

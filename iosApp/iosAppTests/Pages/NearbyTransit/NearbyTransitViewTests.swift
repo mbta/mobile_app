@@ -21,7 +21,7 @@ final class NearbyTransitViewTests: XCTestCase {
     private let noNearbyStops = { NoNearbyStopsView(onOpenSearch: {}, onPanToDefaultCenter: {}) }
     private var cancellables = Set<AnyCancellable>()
 
-    class FakeNearbyVM: NearbyViewModel {
+    class FakeNearbyVM: iosApp.NearbyViewModel {
         let expectation: XCTestExpectation
         let closure: (CLLocationCoordinate2D) -> Void
 
@@ -105,7 +105,7 @@ final class NearbyTransitViewTests: XCTestCase {
             location: .constant(mockLocation),
             setIsReturningFromBackground: { _ in },
             globalData: .init(objects: objects),
-            nearbyVM: NearbyViewModel(),
+            nearbyVM: iosApp.NearbyViewModel(),
             scheduleResponse: .init(objects: objects),
             now: Date.now,
             predictionsByStop: .init(objects: objects),
@@ -134,7 +134,7 @@ final class NearbyTransitViewTests: XCTestCase {
             prediction.tripId = "68596786"
         }
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.routeCardData = [.init(lineOrRoute: route,
                                         stopData: [.init(lineOrRoute: route,
                                                          stop: stop,
@@ -182,7 +182,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let davisExp = expectation(description: "joins predictions for Davis")
         let alewifeExp = expectation(description: "joins predictions for Alewife")
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: ["place-davis"])
         nearbyVM.routeCardData = []
 
@@ -223,7 +223,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let reorderedJoinExp = expectation(description: "Doesn't rejoin on reorder")
         reorderedJoinExp.isInverted = true
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation,
                                      loading: false,
                                      stopIds: ["place-davis", "place-alfcl"])
@@ -263,7 +263,7 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let objects = ObjectCollectionBuilder()
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(objects: objects)
 
         var sut = NearbyTransitView(
@@ -305,10 +305,10 @@ final class NearbyTransitViewTests: XCTestCase {
 
         let objects = TestData.clone()
 
-        class MockNearbyVM: NearbyViewModel {
+        class MockNearbyVM: iosApp.NearbyViewModel {
             var onLoadRouteCard: () -> Void = {}
 
-            override func loadRouteCardData(state _: NearbyViewModel.NearbyTransitState,
+            override func loadRouteCardData(state _: iosApp.NearbyViewModel.NearbyTransitState,
                                             global _: GlobalResponse?,
                                             schedules _: ScheduleResponse?,
                                             predictions _: PredictionsByStopJoinResponse?,
@@ -372,7 +372,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
@@ -401,7 +401,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onDisconnect: { leaveExpectation.fulfill() }
         )
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
@@ -432,7 +432,7 @@ final class NearbyTransitViewTests: XCTestCase {
             onConnectV2: { _ in joinExpectation.fulfill() },
             onDisconnect: { leaveExpectation.fulfill() }
         )
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
@@ -460,7 +460,7 @@ final class NearbyTransitViewTests: XCTestCase {
         let now = EasternTimeInstant.now()
 
         let objects = TestData.clone()
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
 
         let route: LineOrRoute = .route(TestData.getRoute(id: "67"))
@@ -507,7 +507,7 @@ final class NearbyTransitViewTests: XCTestCase {
     }
 
     @MainActor func testEmptyFallback() throws {
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.routeCardData = []
         nearbyVM.nearbyState = .init(loadedLocation: mockLocation, loading: false, stopIds: [])
         let sut = NearbyTransitView(
@@ -545,7 +545,7 @@ final class NearbyTransitViewTests: XCTestCase {
         ]))
         loadKoinMocks(repositories: repositories)
 
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.alerts = .init(alerts: [:])
 
         let sut = NearbyTransitView(

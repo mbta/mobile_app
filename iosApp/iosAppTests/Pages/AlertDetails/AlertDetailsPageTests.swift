@@ -89,7 +89,7 @@ final class AlertDetailsPageTests: XCTestCase {
             )
         }
 
-        let nearbyVM: NearbyViewModel = .init()
+        let nearbyVM: iosApp.NearbyViewModel = .init()
         nearbyVM.alerts = .init(alerts: [alert.id: alert])
 
         let globalDataLoaded = PassthroughSubject<Void, Never>()

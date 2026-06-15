@@ -173,7 +173,7 @@ final class FavoritesViewTests: XCTestCase {
             loadedLocation: nil
         ))
 
-        let nearbyVM: NearbyViewModel = .init()
+        let nearbyVM: iosApp.NearbyViewModel = .init()
         let sut = FavoritesView(
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,

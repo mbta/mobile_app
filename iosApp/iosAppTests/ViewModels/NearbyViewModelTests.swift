@@ -13,20 +13,20 @@ import XCTest
 
 final class NearbyViewModelTests: XCTestCase {
     func testIsNearbyVisibleWhenNoStack() {
-        XCTAssert(NearbyViewModel(navigationStack: []).isNearbyVisible())
+        XCTAssert(iosApp.NearbyViewModel(navigationStack: []).isNearbyVisible())
     }
 
     func testIsNearbyVisibleFalseWhenStack() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
-        XCTAssertFalse(NearbyViewModel(navigationStack: [
+        XCTAssertFalse(iosApp.NearbyViewModel(navigationStack: [
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ]).isNearbyVisible())
     }
 
     func testGoBackOnEmptyStack() {
         // This should succeed unless there's a fatal error thrown
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [])
+        let nearbyVM: iosApp.NearbyViewModel = .init(navigationStack: [])
         nearbyVM.goBack()
     }
 
@@ -37,7 +37,7 @@ final class NearbyViewModelTests: XCTestCase {
         let entry0: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
         let entry1: SheetNavigationStackEntry = .stopDetails(stopId: "other", stopFilter: nil, tripFilter: nil)
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [entry0])
+        let nearbyVM: iosApp.NearbyViewModel = .init(navigationStack: [entry0])
 
         nearbyVM.appendNavEntry(entry1)
         XCTAssertEqual([entry0, entry1], nearbyVM.navigationStack)
@@ -50,7 +50,7 @@ final class NearbyViewModelTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+        let nearbyVM: iosApp.NearbyViewModel = .init(navigationStack: [
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 
@@ -78,7 +78,7 @@ final class NearbyViewModelTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+        let nearbyVM: iosApp.NearbyViewModel = .init(navigationStack: [
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 
@@ -93,7 +93,7 @@ final class NearbyViewModelTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init(navigationStack: [
+        let nearbyVM: iosApp.NearbyViewModel = .init(navigationStack: [
             .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil),
         ])
 

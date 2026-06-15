@@ -68,7 +68,7 @@ final class ContentViewTests: XCTestCase {
         joinAlertsExp.expectedFulfillmentCount = 1
         joinAlertsExp.assertForOverFulfill = true
 
-        let fakeNearbyVM: NearbyViewModel = .init(
+        let fakeNearbyVM: iosApp.NearbyViewModel = .init(
             alertsUsecase: AlertsUsecase(
                 alertsRepository: CallbackAlertsRepository(connectExp: joinAlertsExp),
                 globalRepository: MockGlobalRepository()
@@ -87,7 +87,7 @@ final class ContentViewTests: XCTestCase {
 
     func testLeavesAlertsAfterBackgrounding() throws {
         let leavesAlertsExp = expectation(description: "Alerts channel left")
-        let fakeNearbyVM: NearbyViewModel = .init(
+        let fakeNearbyVM: iosApp.NearbyViewModel = .init(
             alertsUsecase: AlertsUsecase(
                 alertsRepository: CallbackAlertsRepository(disconnectExp: leavesAlertsExp),
                 globalRepository: MockGlobalRepository()

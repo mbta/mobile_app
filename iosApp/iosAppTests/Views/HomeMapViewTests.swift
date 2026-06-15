@@ -178,7 +178,7 @@ final class HomeMapViewTests: XCTestCase {
             at: EasternTimeInstant.now()
         )]
         let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
-        let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
+        let nearbyVM: iosApp.NearbyViewModel = .init(routeCardData: routeCardData)
 
         let initialNav: SheetNavigationStackEntry = try .stopDetails(
             stopId: stop.id,

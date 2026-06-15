@@ -14,9 +14,13 @@ import com.mbta.tid.mbta_app.analytics.MockAnalytics
 import com.mbta.tid.mbta_app.android.loadKoinMocks
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.model.Alert
+import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -27,6 +31,8 @@ import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.utils.TestData
 import com.mbta.tid.mbta_app.utils.buildFavorites
+import com.mbta.tid.mbta_app.viewModel.MockNearbyViewModel
+import com.mbta.tid.mbta_app.viewModel.NearbyViewModel
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
@@ -181,6 +187,90 @@ class NearbyTransitViewTest : KoinTest {
                     )
             },
         )
+        val nearbyVM =
+            MockNearbyViewModel(
+                NearbyViewModel.State(
+                    false,
+                    listOf(
+                        RouteCardData(
+                            LineOrRoute.Route(route),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Route(route),
+                                    sampleStop,
+                                    directions = listOf(Direction(0, route), Direction(1, route)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                0,
+                                                listOf(routePatternOne),
+                                                setOf(sampleStop.id),
+                                                listOf(UpcomingTrip(trip, prediction = prediction)),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                1,
+                                                listOf(routePatternTwo),
+                                                setOf(sampleStop.id),
+                                                emptyList(),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                        ),
+                                )
+                            ),
+                            now,
+                        ),
+                        RouteCardData(
+                            LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                                    greenLineStop,
+                                    directions = listOf(Direction(0, greenLineRoute)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                                                greenLineStop,
+                                                0,
+                                                listOf(greenLineRoutePatternOne),
+                                                setOf(greenLineStop.id),
+                                                listOf(
+                                                    UpcomingTrip(
+                                                        greenLineTrip,
+                                                        prediction = greenLinePrediction,
+                                                    )
+                                                ),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            )
+                                        ),
+                                )
+                            ),
+                            now,
+                        ),
+                    ),
+                    loadedLocation = Position(0.0, 0.0),
+                )
+            )
 
         composeTestRule.setContent {
             NearbyTransitView(
@@ -191,6 +281,7 @@ class NearbyTransitViewTest : KoinTest {
                 setIsTargeting = {},
                 onOpenStopDetails = { _, _ -> },
                 noNearbyStopsView = {},
+                nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -230,6 +321,58 @@ class NearbyTransitViewTest : KoinTest {
             },
         )
 
+        val nearbyVM =
+            MockNearbyViewModel(
+                NearbyViewModel.State(
+                    false,
+                    listOf(
+                        RouteCardData(
+                            LineOrRoute.Route(route),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Route(route),
+                                    sampleStop,
+                                    directions = listOf(Direction(0, route), Direction(1, route)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                0,
+                                                listOf(routePatternOne),
+                                                setOf(sampleStop.id),
+                                                listOf(UpcomingTrip(trip, prediction = prediction)),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                1,
+                                                listOf(routePatternTwo),
+                                                setOf(sampleStop.id),
+                                                emptyList(),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                        ),
+                                )
+                            ),
+                            now,
+                        )
+                    ),
+                    loadedLocation = Position(0.0, 0.0),
+                )
+            )
+
         composeTestRule.setContent {
             NearbyTransitView(
                 alertData = AlertsStreamDataResponse(emptyMap()),
@@ -239,6 +382,7 @@ class NearbyTransitViewTest : KoinTest {
                 setIsTargeting = {},
                 onOpenStopDetails = { _, _ -> },
                 noNearbyStopsView = {},
+                nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -263,6 +407,7 @@ class NearbyTransitViewTest : KoinTest {
                 setIsTargeting = {},
                 onOpenStopDetails = { _, _ -> },
                 noNearbyStopsView = { Text("This would be the no nearby stops view") },
+                nearbyViewModel = koinInject(),
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -276,7 +421,7 @@ class NearbyTransitViewTest : KoinTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
-    fun testFilterChangesWithAlerts() {
+    fun testAlertsSetOnChange() {
         val objects = TestData.clone()
         val harvardNorthbound = objects.getStop("70068")
         val centralNorthbound = objects.getStop("70070")
@@ -306,6 +451,67 @@ class NearbyTransitViewTest : KoinTest {
             },
         )
 
+        val nearbyVM =
+            MockNearbyViewModel(
+                NearbyViewModel.State(
+                    false,
+                    listOf(
+                        RouteCardData(
+                            LineOrRoute.Route(route),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Route(route),
+                                    harvardNorthbound,
+                                    directions = listOf(Direction(0, route), Direction(1, route)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                harvardNorthbound,
+                                                0,
+                                                listOf(routePatternOne),
+                                                setOf(harvardNorthbound.id),
+                                                listOf(UpcomingTrip(trip, prediction = prediction)),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                harvardNorthbound,
+                                                1,
+                                                listOf(routePatternTwo),
+                                                setOf(harvardNorthbound.id),
+                                                emptyList(),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                        ),
+                                )
+                            ),
+                            now,
+                        )
+                    ),
+                    loadedLocation = Position(0.0, 0.0),
+                )
+            )
+
+        var setAlertCount = 0
+        nearbyVM.onSetAlerts = { newAlerts ->
+            if (setAlertCount == 0) {
+                setAlertCount = 1
+            } else {
+                assertEquals(alert, newAlerts?.getAlert(alert.id))
+            }
+        }
+
         var alerts by mutableStateOf(AlertsStreamDataResponse(emptyMap()))
 
         composeTestRule.setContent {
@@ -317,6 +523,7 @@ class NearbyTransitViewTest : KoinTest {
                 setIsTargeting = {},
                 onOpenStopDetails = { _, _ -> },
                 noNearbyStopsView = {},
+                nearbyViewModel = nearbyVM,
                 errorBannerViewModel = koinInject(),
             )
         }
@@ -327,6 +534,6 @@ class NearbyTransitViewTest : KoinTest {
 
         alerts = AlertsStreamDataResponse(mapOf(alert.id to alert))
 
-        composeTestRule.onNodeWithText("Central").assertIsDisplayed()
+        composeTestRule.waitForIdle()
     }
 }
