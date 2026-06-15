@@ -10,7 +10,7 @@
 import Shared
 import SwiftUI
 
-/*
+/**
  Functions for manipulating the layers displayed on the map.
  */
 extension HomeMapView {

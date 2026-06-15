@@ -15,12 +15,12 @@ final class SocketTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testDecodeMessageWithObjectEvent() {
+    func testDecodeMessageWithObjectEvent() throws {
         let body: [Any] = ["join_ref", "ref", "topic", "event", ["user_id": "abc123"]]
         let data = Defaults.encode(body)
         let jsonParts = decodeWithRawMessage(data: data) as? [Any]
 
-        let message = Message(json: jsonParts!)
+        let message = try Message(json: XCTUnwrap(jsonParts))
         XCTAssertEqual(message?.joinRef, "join_ref")
         XCTAssertEqual(message?.ref, "ref")
         XCTAssertEqual(message?.topic, "topic")
@@ -31,12 +31,12 @@ final class SocketTests: XCTestCase {
         XCTAssertEqual(payload?["jsonPayload"] as? String, "{\"user_id\":\"abc123\"}")
     }
 
-    func testDecodeMessageWithResponseBody() {
+    func testDecodeMessageWithResponseBody() throws {
         let body: [Any] = ["join_ref", "ref", "topic", "event", ["status": "ok", "response": ["user_id": "abc123"]]]
         let data = Defaults.encode(body)
         let jsonParts = decodeWithRawMessage(data: data) as? [Any]
 
-        let message = Message(json: jsonParts!)
+        let message = try Message(json: XCTUnwrap(jsonParts))
         XCTAssertEqual(message?.joinRef, "join_ref")
         XCTAssertEqual(message?.ref, "ref")
         XCTAssertEqual(message?.topic, "topic")

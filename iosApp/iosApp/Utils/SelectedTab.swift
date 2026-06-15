@@ -19,7 +19,7 @@ enum SelectedTab: Hashable {
         lhs.hashValue == rhs.hashValue
     }
 
-    // Implement hashable to ignore the highlighted more category
+    /// Implement hashable to ignore the highlighted more category
     func hash(into hasher: inout Hasher) {
         let hashString = switch self {
         case .favorites: "favorites"

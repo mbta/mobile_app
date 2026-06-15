@@ -14,7 +14,7 @@ import ViewInspector
 import XCTest
 
 final class RouteStopListViewTests: XCTestCase {
-    @MainActor func testDisplaysEverything() throws {
+    @MainActor func testDisplaysEverything() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { $0.name = "Stop 1" }
         let stop2 = objects.stop { $0.name = "Stop 2" }
@@ -107,7 +107,7 @@ final class RouteStopListViewTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    @MainActor func testSelectsWithinLine() throws {
+    @MainActor func testSelectsWithinLine() {
         let objects = ObjectCollectionBuilder()
         let line = objects.line()
         let route1 = objects.route { route in
@@ -170,7 +170,7 @@ final class RouteStopListViewTests: XCTestCase {
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 
-    @MainActor func testCollapsesNonTypicalStops() throws {
+    @MainActor func testCollapsesNonTypicalStops() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { $0.name = "Stop 1" }
         let stop2 = objects.stop { $0.name = "Stop 2" }
@@ -243,7 +243,7 @@ final class RouteStopListViewTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    @MainActor func testDoesntCollapseWhenOnlyNonTypical() throws {
+    @MainActor func testDoesntCollapseWhenOnlyNonTypical() {
         let objects = ObjectCollectionBuilder()
         let stop1 = objects.stop { $0.name = "Stop 1" }
         let stop2 = objects.stop { $0.name = "Stop 2" }

@@ -15,7 +15,7 @@ import XCTest
 
 final class ErrorBannerTests: XCTestCase {
     @MainActor
-    func testRespondsToState() throws {
+    func testRespondsToState() {
         let repo = MockErrorBannerStateRepository(state: nil)
         let errorBannerVM = ErrorBannerViewModel(
             errorRepository: repo,
@@ -53,7 +53,7 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [callsAction], timeout: 1)
     }
 
-    @MainActor func testWhenNetworkError() throws {
+    @MainActor func testWhenNetworkError() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
                                                                            errorState: .NetworkError())))
 
@@ -66,7 +66,7 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [showedError], timeout: 1)
     }
 
-    @MainActor func testWhenDataError() throws {
+    @MainActor func testWhenDataError() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: false,
                                                                            errorState: .DataError(messages: [],
                                                                                                   details: [],
@@ -81,7 +81,7 @@ final class ErrorBannerTests: XCTestCase {
         wait(for: [showedError], timeout: 1)
     }
 
-    @MainActor func testLoadingWhenPredictionsStale() throws {
+    @MainActor func testLoadingWhenPredictionsStale() {
         let sut = ErrorBanner(MockErrorBannerViewModel(initialState: .init(loadingWhenPredictionsStale: true,
                                                                            errorState: .StalePredictions(
                                                                                lastUpdated: Date.distantPast

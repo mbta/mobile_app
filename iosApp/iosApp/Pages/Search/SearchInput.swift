@@ -14,9 +14,9 @@ struct SearchInput: View {
     var hint: String
     var onClear: (() -> Void)?
 
-    // Don't update this FocusState isFocused directly, only toggle through searchObserver.isFocused,
-    // otherwise it's possible for the update in searchObserver to get skipped. It's also not
-    // possible to test state variable changes, while testing this will stay set to false.
+    /// Don't update this FocusState isFocused directly, only toggle through searchObserver.isFocused,
+    /// otherwise it's possible for the update in searchObserver to get skipped. It's also not
+    /// possible to test state variable changes, while testing this will stay set to false.
     @FocusState var isFocused: Bool
 
     @ScaledMetric var searchIconSize: CGFloat = 16

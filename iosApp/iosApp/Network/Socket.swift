@@ -67,7 +67,7 @@ class PhoenixTransportMock: PhoenixTransport {
     func send(data _: Data) {}
 }
 
-/*
+/**
  Return the decoded message in the expected [Any?] format:
  [joinReference, messageReference, topic, eventName, eventPayload]
 

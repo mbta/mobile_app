@@ -63,7 +63,7 @@ extension LocationDataManager: CLLocationManagerDelegate {
     }
 }
 
-// https://developer.apple.com/videos/play/wwdc2018/417/
+/// https://developer.apple.com/videos/play/wwdc2018/417/
 public protocol LocationFetcher: AnyObject {
     var locationFetcherDelegate: LocationFetcherDelegate? { get set }
     var authorizationStatus: CLAuthorizationStatus { get }

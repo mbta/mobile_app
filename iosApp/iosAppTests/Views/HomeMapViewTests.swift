@@ -45,7 +45,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    @MainActor func testAppears() throws {
+    @MainActor func testAppears() {
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let sheetHeight: Binding<CGFloat> = .constant(100)
 
@@ -67,7 +67,7 @@ final class HomeMapViewTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testNoLocationDefaultCenter() throws {
+    func testNoLocationDefaultCenter() {
         let locationDataManager: LocationDataManager = .init(locationFetcher: MockLocationFetcher())
         let sut = HomeMapView(
             contentVM: .init(),
@@ -82,8 +82,8 @@ final class HomeMapViewTests: XCTestCase {
         XCTAssertEqual(sut.viewportProvider.viewport.camera?.center, ViewportProvider.Defaults.center)
     }
 
-    // Test is ignored in the test plan
-    func testFollowsPuckWhenUserLocationIsKnown() throws {
+    /// Test is ignored in the test plan
+    func testFollowsPuckWhenUserLocationIsKnown() {
         let locationFetcher = MockLocationFetcher()
         locationFetcher.authorizationStatus = .authorizedAlways
 
@@ -180,9 +180,9 @@ final class HomeMapViewTests: XCTestCase {
         let routeCardDataVM = MockRouteCardDataViewModel(initialState: .init(data: routeCardData))
         let nearbyVM: NearbyViewModel = .init(routeCardData: routeCardData)
 
-        let initialNav: SheetNavigationStackEntry = .stopDetails(
+        let initialNav: SheetNavigationStackEntry = try .stopDetails(
             stopId: stop.id,
-            stopFilter: .init(routeId: vehicle.routeId!, directionId: vehicle.directionId),
+            stopFilter: .init(routeId: XCTUnwrap(vehicle.routeId), directionId: vehicle.directionId),
             tripFilter: nil
         )
         nearbyVM.navigationStack = [initialNav]
@@ -223,7 +223,7 @@ final class HomeMapViewTests: XCTestCase {
         }
     }
 
-    func testUpdatesViewportOnCameraChangeBeforeLayersLoad() throws {
+    func testUpdatesViewportOnCameraChangeBeforeLayersLoad() {
         let updateCameraExpectation = XCTestExpectation(description: "updateCameraState called")
 
         class FakeViewportProvider: ViewportProvider {

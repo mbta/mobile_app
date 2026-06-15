@@ -93,7 +93,7 @@ final class EditFavoritesPageTests: XCTestCase {
         XCTAssertEqual(expectedRsd, editRsd)
     }
 
-    @MainActor func testNotificationIcon() throws {
+    @MainActor func testNotificationIcon() {
         let objects = TestData.clone()
 
         let route: Route = objects.getRoute(id: "Red")
@@ -144,7 +144,7 @@ final class EditFavoritesPageTests: XCTestCase {
         XCTAssertNotNil(try? sut.inspect().find(imageName: "fa-bell-filled"))
     }
 
-    @MainActor func testDeleteFavorite() throws {
+    @MainActor func testDeleteFavorite() {
         let objects = TestData.clone()
         let globalData = GlobalResponse(objects: objects)
 
@@ -228,7 +228,7 @@ final class EditFavoritesPageTests: XCTestCase {
         wait(for: [exp, updateFavoritesExp], timeout: 3)
     }
 
-    @MainActor func testUndoToast() throws {
+    @MainActor func testUndoToast() {
         let objects = TestData.clone()
         let globalData = GlobalResponse(objects: objects)
 

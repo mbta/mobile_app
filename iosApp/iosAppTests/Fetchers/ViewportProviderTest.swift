@@ -16,14 +16,14 @@ final class ViewportProviderTest: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testDefaultViewport() throws {
+    func testDefaultViewport() {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
         XCTAssertEqual(provider.viewport.camera?.center, ViewportProvider.Defaults.center)
         XCTAssertEqual(provider.viewport.camera?.zoom, ViewportProvider.Defaults.zoom)
     }
 
-    func testFollowViewport() async throws {
+    func testFollowViewport() async {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
         await provider.follow()
@@ -31,14 +31,14 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertNotNil(provider.viewport.followPuck)
     }
 
-    func testUpdateViewport() throws {
+    func testUpdateViewport() {
         let provider = ViewportProvider()
         XCTAssertNotNil(provider.viewport.camera)
         provider.viewport = .camera(center: .init(latitude: 0, longitude: 0))
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
 
-    func testAnimateToPreservesZoomIfNotGiven() async throws {
+    func testAnimateToPreservesZoomIfNotGiven() async {
         let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
 
         await provider.animateTo(coordinates: .init(latitude: 1, longitude: 1))
@@ -46,7 +46,7 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.zoom, 14.0)
     }
 
-    func testAnimateToSetsZoom() async throws {
+    func testAnimateToSetsZoom() async {
         let provider = ViewportProvider(viewport: .camera(center: .init(latitude: 0, longitude: 0), zoom: 14.0))
 
         await provider.animateTo(coordinates: .init(latitude: 1, longitude: 1), zoom: 17.0)
@@ -86,7 +86,7 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.zoom, newZoom)
     }
 
-    func testUpdateCameraLocationFromCoordinate() throws {
+    func testUpdateCameraLocationFromCoordinate() {
         let updatedExp = expectation(description: "updated camera")
         let startCenter: CLLocationCoordinate2D = .init(latitude: 0, longitude: 0)
         let provider = ViewportProvider(viewport: .camera(center: startCenter, zoom: 16.0))
@@ -126,7 +126,7 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertEqual(provider.viewport.camera?.center, .init(latitude: 0, longitude: 0))
     }
 
-    func testSetIsManuallyCentering() throws {
+    func testSetIsManuallyCentering() {
         let provider = ViewportProvider()
 
         XCTAssertFalse(provider.isManuallyCentering)
@@ -142,7 +142,7 @@ final class ViewportProviderTest: XCTestCase {
 
         let viewport = ViewportProvider.viewportAround(center: center, inView: [point1, point2])
 
-        if case let .multiPoint(points) = viewport.overview!.geometry.geometry {
+        if case let .multiPoint(points) = try XCTUnwrap(viewport.overview?.geometry.geometry) {
             XCTAssertEqual(
                 points,
                 MultiPoint([
@@ -158,7 +158,7 @@ final class ViewportProviderTest: XCTestCase {
         }
     }
 
-    func testViewportIsDefault() async throws {
+    func testViewportIsDefault() async {
         let provider = ViewportProvider()
         XCTAssert(provider.isDefault())
         await provider.animateTo(coordinates: .init(latitude: 0.0, longitude: 0.0))
@@ -168,7 +168,7 @@ final class ViewportProviderTest: XCTestCase {
         XCTAssertFalse(initializedProvider.isDefault())
     }
 
-    func testViewportSaving() throws {
+    func testViewportSaving() {
         let provider = ViewportProvider()
         provider.viewport = .idle
         provider.updateCameraState(.init(

@@ -45,7 +45,7 @@ final class NearbyTransitPageTests: XCTestCase {
         XCTAssertNil(nearbyVM.routeCardData)
     }
 
-    @MainActor func testReloadsWhenLocationChanges() throws {
+    @MainActor func testReloadsWhenLocationChanges() {
         class FakeNearbyVM: NearbyViewModel {
             let expectation: XCTestExpectation
             let closure: (CLLocationCoordinate2D) -> Void
@@ -107,7 +107,7 @@ final class NearbyTransitPageTests: XCTestCase {
         wait(for: [hasAppeared, getNearbyExpectation], timeout: 10)
     }
 
-    @MainActor func testNoReloadWhenNotVisbleAndLocationChanges() throws {
+    @MainActor func testNoReloadWhenNotVisbleAndLocationChanges() {
         class FakeNearbyVM: NearbyViewModel {
             let expectation: XCTestExpectation
 

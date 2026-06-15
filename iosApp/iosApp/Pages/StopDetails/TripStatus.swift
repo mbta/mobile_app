@@ -23,8 +23,6 @@ struct TripStatus: View {
                     routeType: trip.routeType,
                     hideDisruptionIcon: true
                 ).enableInjection()
-            } else {
-                EmptyView()
             }
         case let .disruption(alert):
             UpcomingTripView(prediction: .disruption(.init(alert: alert.alert), iconName: alert.iconName))

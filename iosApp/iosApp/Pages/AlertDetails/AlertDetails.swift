@@ -20,7 +20,7 @@ struct AlertDetails: View {
     var stopId: String?
     var now: EasternTimeInstant
 
-    @ScaledMetric()
+    @ScaledMetric
     private var iconSize = 16
 
     @State var areStopsExpanded = false

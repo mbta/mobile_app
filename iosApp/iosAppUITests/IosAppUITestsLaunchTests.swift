@@ -17,7 +17,7 @@ final class IosAppUITestsLaunchTests: XCTestCase {
         continueAfterFailure = false
     }
 
-    func testLaunch() throws {
+    func testLaunch() {
         let app = XCUIApplication()
         app.activate()
         app.launch()

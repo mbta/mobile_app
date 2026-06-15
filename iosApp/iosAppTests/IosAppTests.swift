@@ -13,9 +13,9 @@ final class IosAppTests: XCTestCase {
         executionTimeAllowance = 60
     }
 
-    func testSampleGreeting() throws {}
+    func testSampleGreeting() {}
 
-    func testPerformanceExample() throws {
+    func testPerformanceExample() {
         // This is an example of a performance test case.
         measure {
             // Put the code you want to measure the time of here.

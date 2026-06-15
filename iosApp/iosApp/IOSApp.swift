@@ -95,10 +95,10 @@ class AppDelegate: NSObject, UIApplicationDelegate, UNUserNotificationCenterDele
 
 @main
 struct IOSApp: App {
-    // register app delegate for Firebase setup
+    /// register app delegate for Firebase setup
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
 
-    // When running unit tests or previews, don't mount the entire app which makes real API requests.
+    /// When running unit tests or previews, don't mount the entire app which makes real API requests.
     private let isTestOrPreview = ProcessInfo.processInfo.arguments.contains("--dummy-test-app")
         || ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != nil
 

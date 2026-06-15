@@ -6,9 +6,8 @@
 //  Copyright © 2024 MBTA. All rights reserved.
 //
 
-@testable import iosApp
-
 import Combine
+@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
@@ -74,7 +73,7 @@ final class StopDetailsViewTests: XCTestCase {
         XCTAssertNotNil(try routePills[1].find(text: "Should be second"))
     }
 
-    func testSkipsPillsIfOneRoute() throws {
+    func testSkipsPillsIfOneRoute() {
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in
             route.shortName = "57"
@@ -171,10 +170,10 @@ final class StopDetailsViewTests: XCTestCase {
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
         XCTAssertNil(try? sut.inspect().find(AlertCard.self))
-        XCTAssertNil(try? sut.inspect().find(text: alert.header!))
+        XCTAssertNil(try? sut.inspect().find(text: try XCTUnwrap(alert.header)))
     }
 
-    func testDisplaysVehicleData() throws {
+    func testDisplaysVehicleData() {
         let now = EasternTimeInstant.now()
         let objects = ObjectCollectionBuilder()
         let route = objects.route { route in

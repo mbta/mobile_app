@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class OnboardingScreenViewTests: XCTestCase {
-    @MainActor func testLocationFlow() throws {
+    @MainActor func testLocationFlow() {
         let requestExp = expectation(description: "requests location permission")
         let advanceExp = expectation(description: "calls advance()")
         let locationFetcher = MockOnboardingLocationFetcher(requestExp: requestExp)
