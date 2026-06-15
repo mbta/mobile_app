@@ -102,9 +102,24 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         updateState()
     }
 
+    /** Set the current [SheetRoutes] and clear all errors associated with other [SheetRoutes] */
     public suspend fun setSheetRoute(sheetRoute: SheetRoutes?) {
-        // TODO: get rid of existing errors for other routes
-        mutex.withLock { this.sheetRoute = sheetRoute }
+        mutex.withLock {
+            val oldSheetRoute = this.sheetRoute
+            this.sheetRoute = sheetRoute
+
+            if (oldSheetRoute == null) {
+                // sheet route set for the first time, don't clear any errors that happened
+                // before the sheet route was set yet
+                return
+            } else {
+
+                dataErrors.entries.removeAll() { (errorKey, _) ->
+                    val targetKeyType = sheetRoute?.let { it::class }
+                    errorKey.type != KeyType.PageSpecific(targetKeyType)
+                }
+            }
+        }
     }
 
     private fun setNetworkStatus(newStatus: NetworkStatus) {
@@ -114,7 +129,16 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     public suspend fun setDataError(key: ErrorKey, details: String, action: () -> Unit) {
         mutex.withLock {
-            // TODO: ignore error if it is for a page that is different from the one currently set
+            if (key.type is KeyType.PageSpecific) {
+
+                val errorSheetRoute = key.type.sheet?.let { it::class }
+                val sheetRouteClass = sheetRoute?.let { it::class }
+                if (sheetRouteClass != null && sheetRouteClass != errorSheetRoute) {
+                    // the error is for a page different than the one being presented; throw it out
+                    return@withLock
+                }
+            }
+
             dataErrors[key] = ErrorBannerState.DataError(setOf(key.id), setOf(details), action)
         }
         updateState()
