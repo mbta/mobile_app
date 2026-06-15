@@ -18,6 +18,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.mbta.tid.mbta_app.android.R
 import com.mbta.tid.mbta_app.android.component.ActionButton
 import com.mbta.tid.mbta_app.android.component.ActionButtonKind
+import com.mbta.tid.mbta_app.android.component.DebugView
 import com.mbta.tid.mbta_app.android.component.ErrorBanner
 import com.mbta.tid.mbta_app.android.component.NavTextButton
 import com.mbta.tid.mbta_app.android.component.SheetHeader
@@ -152,6 +153,7 @@ fun FavoritesView(
         }
 
         ErrorBanner(errorBannerViewModel, modifier = Modifier.padding(top = 8.dp))
+        DebugView {}
         RouteCardList(
             routeCardData = routeCardData,
             emptyView = {

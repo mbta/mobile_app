@@ -47,6 +47,7 @@ struct NearbyTransitPage: View {
                 )
                 .padding(.bottom, 16)
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
+                DebugView { EmptyView() }
                 NearbyTransitView(
                     location: $location,
                     setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },

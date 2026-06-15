@@ -42,9 +42,15 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
+            PredictionsRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
@@ -66,9 +72,15 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
+            PredictionsRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
@@ -100,9 +112,15 @@ class PredictionsRepositoryTests : KoinTest {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = mock<PhoenixPush>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(socket, errorBannerRepo, StandardTestDispatcher(testScheduler))
+            PredictionsRepository(
+                socket,
+                debugRepo,
+                errorBannerRepo,
+                StandardTestDispatcher(testScheduler),
+            )
         every { channel.attach() } returns push
 
         every { push.receive(any(), any()) } returns push
@@ -196,8 +214,10 @@ class PredictionsRepositoryTests : KoinTest {
         }
         val socket = mock<PhoenixSocket>(MockMode.autofill)
 
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val predictionsRepo =
+            PredictionsRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         val channel = mock<PhoenixChannel>(MockMode.autofill)
         val push = MockPush()
         every { socket.getChannel(any(), any()) } returns channel
@@ -299,8 +319,10 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun testV2SetsErrorWhenReceivedOnJoin() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val predictionsRepo =
+            PredictionsRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         val push = mock<PhoenixPush>(MockMode.autofill)
         every { push.receive(any(), any()) } returns push
         class MockChannel : PhoenixChannel {
@@ -345,8 +367,10 @@ class PredictionsRepositoryTests : KoinTest {
     @Test
     fun `v2 sets error when timeout on join`() {
         val socket = mock<PhoenixSocket>(MockMode.autofill)
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
-        val predictionsRepo = PredictionsRepository(socket, errorBannerRepo, Dispatchers.IO)
+        val predictionsRepo =
+            PredictionsRepository(socket, debugRepo, errorBannerRepo, Dispatchers.IO)
         val push =
             object : PhoenixPush {
                 override fun receive(
@@ -375,9 +399,15 @@ class PredictionsRepositoryTests : KoinTest {
 
     @Test
     fun `shouldForgetPredictions false when never updated`() {
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
+            PredictionsRepository(
+                mock(MockMode.autofill),
+                debugRepo,
+                errorBannerRepo,
+                Dispatchers.IO,
+            )
         predictionsRepo.lastUpdated = null
         // there will not, in practice, be ten predictions and no last updated time
         assertFalse(predictionsRepo.shouldForgetPredictions(10))
@@ -385,27 +415,45 @@ class PredictionsRepositoryTests : KoinTest {
 
     @Test
     fun `shouldForgetPredictions false when no predictions`() {
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
+            PredictionsRepository(
+                mock(MockMode.autofill),
+                debugRepo,
+                errorBannerRepo,
+                Dispatchers.IO,
+            )
         predictionsRepo.lastUpdated = EasternTimeInstant(Instant.DISTANT_PAST)
         assertFalse(predictionsRepo.shouldForgetPredictions(0))
     }
 
     @Test
     fun `shouldForgetPredictions false when within ten minutes`() {
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
+            PredictionsRepository(
+                mock(MockMode.autofill),
+                debugRepo,
+                errorBannerRepo,
+                Dispatchers.IO,
+            )
         predictionsRepo.lastUpdated = EasternTimeInstant.now() - 9.9.minutes
         assertFalse(predictionsRepo.shouldForgetPredictions(10))
     }
 
     @Test
     fun `shouldForgetPredictions true when old and nonempty`() {
+        val debugRepo = MockDebugRepository()
         val errorBannerRepo = MockErrorBannerStateRepository()
         val predictionsRepo =
-            PredictionsRepository(mock(MockMode.autofill), errorBannerRepo, Dispatchers.IO)
+            PredictionsRepository(
+                mock(MockMode.autofill),
+                debugRepo,
+                errorBannerRepo,
+                Dispatchers.IO,
+            )
         predictionsRepo.lastUpdated = EasternTimeInstant.now() - 10.1.minutes
         assertTrue(predictionsRepo.shouldForgetPredictions(10))
     }

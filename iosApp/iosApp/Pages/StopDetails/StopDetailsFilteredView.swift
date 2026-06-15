@@ -311,7 +311,7 @@ struct StopDetailsFilteredView: View {
                 )
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
                 DebugView {
-                    VStack {
+                    VStack(alignment: .leading) {
                         Text(verbatim: "stop id: \(stopId)")
                         Text(verbatim: "trip id: \(tripFilter?.tripId ?? "nil")")
                         Text(verbatim: "vehicle id: \(tripFilter?.vehicleId ?? "nil")")

@@ -22,11 +22,17 @@ public interface IVehicleRepository {
 
 internal class VehicleRepository(
     socket: PhoenixSocket,
+    debugRepository: IDebugRepository,
     errorBannerStateRepository: IErrorBannerStateRepository,
     ioDispatcher: CoroutineDispatcher,
 ) : IVehicleRepository, KoinComponent {
     private val channelOwner =
-        ChannelOwner<VehicleStreamDataResponse>(socket, ioDispatcher, errorBannerStateRepository)
+        ChannelOwner<VehicleStreamDataResponse>(
+            socket,
+            ioDispatcher,
+            debugRepository,
+            errorBannerStateRepository,
+        )
     internal var channel: PhoenixChannel? by channelOwner::channel
 
     override fun connect(

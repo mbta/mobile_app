@@ -33,19 +33,19 @@ public fun makeNativeModule(
         single<INetworkConnectivityMonitor> { networkConnectivityMonitor }
         single<PhoenixSocket> { socket }
         factory<IAlertsRepository> {
-            AlertsRepository(get(), get(), get(named("coroutineDispatcherIO")))
+            AlertsRepository(get(), get(), get(), get(named("coroutineDispatcherIO")))
         }
         factory<IPredictionsRepository> {
-            PredictionsRepository(get(), get(), get(named("coroutineDispatcherIO")))
+            PredictionsRepository(get(), get(), get(), get(named("coroutineDispatcherIO")))
         }
         factory<ITripPredictionsRepository> {
-            TripPredictionsRepository(get(), get(), get(named("coroutineDispatcherIO")))
+            TripPredictionsRepository(get(), get(), get(), get(named("coroutineDispatcherIO")))
         }
         factory<IVehicleRepository> {
-            VehicleRepository(get(), get(), get(named("coroutineDispatcherIO")))
+            VehicleRepository(get(), get(), get(), get(named("coroutineDispatcherIO")))
         }
         factory<IVehiclesRepository> {
-            VehiclesRepository(get(), get(), get(named("coroutineDispatcherIO")))
+            VehiclesRepository(get(), get(), get(), get(named("coroutineDispatcherIO")))
         }
     }
 }

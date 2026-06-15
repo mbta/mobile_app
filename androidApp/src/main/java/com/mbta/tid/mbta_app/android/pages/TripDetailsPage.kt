@@ -108,10 +108,7 @@ fun TripDetailsPage(
         ErrorBanner(errorBannerViewModel, Modifier.padding(bottom = 8.dp))
         DebugView(
             content = {
-                Column(
-                    Modifier.align(Alignment.CenterHorizontally),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
+                Column(Modifier.align(Alignment.Start), horizontalAlignment = Alignment.Start) {
                     Text("trip id: ${filter.tripId}")
                     Text("vehicle id: ${filter.vehicleId ?: "null"}")
                 }
