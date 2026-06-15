@@ -342,7 +342,7 @@ tasks.register<Download>("bomCycloneDxCliDownload") {
                 else -> throw IllegalStateException("can't download CycloneDX CLI for $it")
             }
         }
-    src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.29.1/cyclonedx-$os-$arch")
+    src("https://github.com/CycloneDX/cyclonedx-cli/releases/download/v0.32.0/cyclonedx-$os-$arch")
     dest(layout.buildDirectory.file("boms/cyclonedx-cli"))
     onlyIfModified(true)
     doLast { layout.buildDirectory.file("boms/cyclonedx-cli").get().asFile.setExecutable(true) }

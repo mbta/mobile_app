@@ -277,7 +277,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [expActive], timeout: 1)
     }
 
-    @MainActor func testSetsAlerts() throws {
+    @MainActor func testSetsAlerts() {
         let objects = ObjectCollectionBuilder()
         objects.alert { _ in }
         let alertsResponse = AlertsStreamDataResponse(objects: objects)
@@ -304,7 +304,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [appearExp, setAlertExp], timeout: 1)
     }
 
-    @MainActor func testSetsLocation() throws {
+    @MainActor func testSetsLocation() {
         let firstLocation = CLLocationCoordinate2D(latitude: 0, longitude: 0)
         let secondLocation = CLLocationCoordinate2D(latitude: 1, longitude: 1)
         let locationBinding = Binding<CLLocationCoordinate2D?>(wrappedValue: firstLocation)
@@ -333,7 +333,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [setSecondExp], timeout: 1)
     }
 
-    @MainActor func testSetsNow() throws {
+    @MainActor func testSetsNow() {
         let setFirstExp = expectation(description: "sets a time")
         var firstTime: EasternTimeInstant?
         let setSecondExp = expectation(description: "sets a different time later")
@@ -360,7 +360,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [setSecondExp], timeout: 10)
     }
 
-    @MainActor func testShowsToast() throws {
+    @MainActor func testShowsToast() {
         let setToastShownExp = expectation(description: "showToast called")
         let hideToast = expectation(description: "hideToast called")
         // Expect one hideToast when the toast is closed, and another when FavoritesView disappears
@@ -401,7 +401,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [setToastShownExp, hideToast, isFirstExposureToFavoritesSet], timeout: 2)
     }
 
-    @MainActor func testShowsNotificationHint() throws {
+    @MainActor func testShowsNotificationHint() {
         let dismissHint = expectation(description: "hint dismissed")
 
         let favoritesVM = MockFavoritesViewModel(
@@ -436,7 +436,7 @@ final class FavoritesViewTests: XCTestCase {
         wait(for: [dismissHint], timeout: 2)
     }
 
-    @MainActor func testDismissesNotificationHintWhenFavoritesEmpty() throws {
+    @MainActor func testDismissesNotificationHintWhenFavoritesEmpty() {
         let dismissHint = expectation(description: "hint dismissed")
 
         let favoritesVM = MockFavoritesViewModel(

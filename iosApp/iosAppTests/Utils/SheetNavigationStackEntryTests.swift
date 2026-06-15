@@ -11,7 +11,7 @@ import Shared
 import XCTest
 
 final class SheetNavigationStackEntryTests: XCTestCase {
-    func testLastFilterEmpty() throws {
+    func testLastFilterEmpty() {
         var stack: [SheetNavigationStackEntry] = []
 
         XCTAssertNil(stack.lastStopDetailsFilter)
@@ -21,22 +21,22 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         XCTAssertEqual(stack, [])
     }
 
-    func testNavStackEntryIdentifables() throws {
+    func testNavStackEntryIdentifables() {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         let stopEntry: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
         let nearbyEntry: SheetNavigationStackEntry = .nearby
         let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil, stop: nil)
 
-        XCTAssertEqual(stopEntry.sheetItemIdentifiable()!.id, stop.id)
-        XCTAssertEqual(nearbyEntry.sheetItemIdentifiable()!.id, "nearby")
+        XCTAssertEqual(stopEntry.sheetItemIdentifiable()?.id, stop.id)
+        XCTAssertEqual(nearbyEntry.sheetItemIdentifiable()?.id, "nearby")
         XCTAssertNil(alertEntry.sheetItemIdentifiable())
 
         XCTAssertNil(stopEntry.coverItemIdentifiable())
         XCTAssertNil(nearbyEntry.coverItemIdentifiable())
-        XCTAssertEqual(alertEntry.coverItemIdentifiable()!.id, "0")
+        XCTAssertEqual(alertEntry.coverItemIdentifiable()?.id, "0")
     }
 
-    func testNavStackLastStopId() throws {
+    func testNavStackLastStopId() {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         let stopEntry: SheetNavigationStackEntry = .stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)
         let alertEntry: SheetNavigationStackEntry = .alertDetails(alertId: "0", line: nil, routes: nil, stop: nil)
@@ -57,7 +57,7 @@ final class SheetNavigationStackEntryTests: XCTestCase {
         XCTAssertEqual(stop.id, stack.lastStopId)
     }
 
-    func testLastFilterSet() throws {
+    func testLastFilterSet() {
         let stop = ObjectCollectionBuilder.Single.shared.stop { _ in }
         var stack: [SheetNavigationStackEntry] = [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
 

@@ -6,12 +6,11 @@
 //  Copyright © 2025 MBTA. All rights reserved.
 //
 
+@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
 import XCTest
-
-@testable import iosApp
 
 final class AlertCardTests: XCTestCase {
     override func setUp() {

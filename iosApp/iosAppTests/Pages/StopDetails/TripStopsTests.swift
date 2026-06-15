@@ -348,7 +348,7 @@ final class TripStopsTests: XCTestCase {
             global: .init(objects: objects)
         ).withFixedSettings([:])
 
-        let firstRow = try sut.inspect().findAll(TripStopRow.self).first!
+        let firstRow = try XCTUnwrap(try sut.inspect().findAll(TripStopRow.self).first)
         XCTAssertNotNil(try firstRow.find(text: stop1.name))
         XCTAssert(try firstRow.actualView().firstStop)
         XCTAssertNotNil(try sut.inspect().find(text: "1 stop away"))

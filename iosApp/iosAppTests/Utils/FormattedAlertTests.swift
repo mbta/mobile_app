@@ -6,15 +6,14 @@
 //  Copyright © 2026 MBTA. All rights reserved.
 //
 
+@testable import iosApp
 import Shared
 import SwiftUI
 import ViewInspector
 import XCTest
 
-@testable import iosApp
-
 final class FormattedAlertTests: XCTestCase {
-    func testTripShuttle() throws {
+    func testTripShuttle() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripShuttleAlertSummary(
@@ -41,7 +40,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testDownstreamTripShuttle() throws {
+    func testDownstreamTripShuttle() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripShuttleAlertSummary(
@@ -68,7 +67,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThisTripShuttle() throws {
+    func testThisTripShuttle() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripShuttleAlertSummary(
@@ -86,7 +85,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testDownstreamTripShuttleRecurrence() throws {
+    func testDownstreamTripShuttleRecurrence() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripShuttleAlertSummary(
@@ -124,7 +123,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThisTripShuttleRecurrence() throws {
+    func testThisTripShuttleRecurrence() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripShuttleAlertSummary(
@@ -153,7 +152,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testTripSuspension() throws {
+    func testTripSuspension() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -181,7 +180,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThisTripSuspension() throws {
+    func testThisTripSuspension() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -200,7 +199,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testDownstreamTripSuspension() throws {
+    func testDownstreamTripSuspension() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -228,7 +227,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThisDownstreamTripSuspension() throws {
+    func testThisDownstreamTripSuspension() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -247,7 +246,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testTripStopSkipped() throws {
+    func testTripStopSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -275,7 +274,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThisTripStopSkipped() throws {
+    func testThisTripStopSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: TripSpecificAlertSummary(
@@ -295,7 +294,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testOneStopSkipped() throws {
+    func testOneStopSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: AlertSummary.Standard(
@@ -312,7 +311,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testTwoStopsSkipped() throws {
+    func testTwoStopsSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: AlertSummary.Standard(
@@ -329,7 +328,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testThreeStopsSkipped() throws {
+    func testThreeStopsSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: AlertSummary.Standard(
@@ -346,7 +345,7 @@ final class FormattedAlertTests: XCTestCase {
         )
     }
 
-    func testMultipleStopsSkipped() throws {
+    func testMultipleStopsSkipped() {
         let formatted = FormattedAlert(
             alert: nil,
             alertSummary: AlertSummary.Standard(

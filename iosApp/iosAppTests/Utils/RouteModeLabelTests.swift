@@ -13,37 +13,37 @@ import ViewInspector
 import XCTest
 
 final class RouteModeLabelTests: XCTestCase {
-    func testNameAndType() throws {
+    func testNameAndType() {
         let name = "1"
         let type = RouteType.bus
 
         XCTAssertEqual("1 bus", routeModeLabel(name: name, type: type))
     }
 
-    func testPlural() throws {
+    func testPlural() {
         let name = "Red Line"
         let type = RouteType.heavyRail
 
         XCTAssertEqual("Red Line trains", routeModeLabel(name: name, type: type, isOnly: false))
     }
 
-    func testNameOnly() throws {
+    func testNameOnly() {
         let name = "Needham Line"
 
         XCTAssertEqual("Needham Line", routeModeLabel(name: name, type: nil))
     }
 
-    func testTypeOnly() throws {
+    func testTypeOnly() {
         let type = RouteType.ferry
 
         XCTAssertEqual("ferry", routeModeLabel(name: nil, type: type))
     }
 
-    func testEmpty() throws {
+    func testEmpty() {
         XCTAssertEqual("", routeModeLabel(name: nil, type: nil))
     }
 
-    func testRoute() throws {
+    func testRoute() {
         let route = ObjectCollectionBuilder.Single.shared.route { route in
             route.longName = "Orange Line"
             route.type = .heavyRail
@@ -51,7 +51,7 @@ final class RouteModeLabelTests: XCTestCase {
         XCTAssertEqual("Orange Line train", routeModeLabel(route: route))
     }
 
-    func testLineAndRoute() throws {
+    func testLineAndRoute() {
         let line = ObjectCollectionBuilder.Single.shared.line { line in
             line.longName = "Green Line"
         }
@@ -62,7 +62,7 @@ final class RouteModeLabelTests: XCTestCase {
         XCTAssertEqual("Green Line train", routeModeLabel(line: line, route: route))
     }
 
-    func testLineOrRoute() throws {
+    func testLineOrRoute() {
         let line = ObjectCollectionBuilder.Single.shared.line { line in
             line.longName = "Silver Line"
         }

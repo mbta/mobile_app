@@ -14,8 +14,7 @@ private extension DateComponents {
         get {
             let calendar = Calendar(identifier: .iso8601)
             let beforeDayStart = calendar.startOfDay(for: .now).addingTimeInterval(-0.01)
-            let result = calendar.nextDate(after: beforeDayStart, matching: self, matchingPolicy: .strict)!
-            return result
+            return calendar.nextDate(after: beforeDayStart, matching: self, matchingPolicy: .strict)!
         }
         set {
             // in this file, we only use hour/minute/second

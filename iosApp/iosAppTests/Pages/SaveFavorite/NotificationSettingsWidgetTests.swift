@@ -93,18 +93,18 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         )
 
         try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "From" })
-            .select(date: Calendar(identifier: .iso8601).nextDate(
+            .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
                 after: .now,
                 matching: .init(hour: 7, minute: 45),
                 matchingPolicy: .strict
-            )!)
+            )))
         XCTAssertEqual(settings.windows[0].startTime, .init(hour: 7, minute: 45, second: 0))
         try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "To" })
-            .select(date: Calendar(identifier: .iso8601).nextDate(
+            .select(date: XCTUnwrap(Calendar(identifier: .iso8601).nextDate(
                 after: .now,
                 matching: .init(hour: 9, minute: 10),
                 matchingPolicy: .strict
-            )!)
+            )))
         XCTAssertEqual(settings.windows[0].endTime, .init(hour: 9, minute: 10, second: 0))
     }
 
@@ -145,11 +145,11 @@ final class NotificationSettingsWidgetTests: XCTestCase {
         let calendar = Calendar(identifier: .iso8601)
         let dayStart = calendar.startOfDay(for: .now)
         try sut.inspect().find(ViewType.DatePicker.self, where: { try $0.labelView().text().string() == "From" })
-            .select(date: calendar.nextDate(
+            .select(date: XCTUnwrap(calendar.nextDate(
                 after: dayStart,
                 matching: .init(hour: 10, minute: 45),
                 matchingPolicy: .strict
-            )!)
+            )))
         XCTAssertEqual(settings.windows[0].startTime, .init(hour: 10, minute: 45, second: 0))
         try sut.inspect().findAndCallOnChange(newValue: settings.windows[0].startTime)
         XCTAssertEqual(settings.windows[0].endTime, .init(hour: 11, minute: 45, second: 0))

@@ -78,7 +78,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         let patterns = patterns ?? [objects.routePattern(route: route) { _ in }]
         let upcomingTrips = upcomingTrips ?? []
 
-        let leaf = RouteCardData.Leaf(
+        return RouteCardData.Leaf(
             lineOrRoute: lineOrRoute,
             stop: stop,
             directionId: 0,
@@ -92,8 +92,6 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             alertsDownstream: alertsDownstream,
             context: .stopDetailsFiltered
         )
-
-        return leaf
     }
 
     func testDisplaysTrips() throws {
@@ -143,7 +141,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testShowsHeadsignAndPillsWhenBranchingLine() throws {
+    func testShowsHeadsignAndPillsWhenBranchingLine() {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
@@ -438,7 +436,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testSetsAlertSummaries() throws {
+    func testSetsAlertSummaries() {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
@@ -499,7 +497,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testShowsSuspensionFallback() throws {
+    func testShowsSuspensionFallback() {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
@@ -563,7 +561,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testShowsDownstreamAlertFallback() throws {
+    func testShowsDownstreamAlertFallback() {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
@@ -683,7 +681,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
         XCTAssertNotNil(try sut.inspect().find(AlertCard.self))
         XCTAssertNil(try? sut.inspect().find(text: "Elevator Closure"))
-        XCTAssertNotNil(try sut.inspect().find(text: alert.header!))
+        XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.header)))
         try sut.inspect().find(AlertCard.self).find(ViewType.Button.self).tap()
         XCTAssertEqual(
             nearbyVM.navigationStack.last,
@@ -727,7 +725,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
     }
 
     @MainActor
-    func testShowsSubwayDelayAlertFallback() throws {
+    func testShowsSubwayDelayAlertFallback() {
         let objects = ObjectCollectionBuilder()
         let now = EasternTimeInstant.now()
         let stop = objects.stop { _ in }
@@ -845,8 +843,8 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             now: now,
             context: .stopDetailsFiltered
         )!.first!
-        let routeStopData = routeCardData.stopData.first!
-        let leaf = routeStopData.data.first { $0.directionId == 0 }!
+        let routeStopData = try XCTUnwrap(routeCardData.stopData.first)
+        let leaf = try XCTUnwrap(routeStopData.data.first { $0.directionId == 0 })
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -883,7 +881,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 3)
     }
 
-    @MainActor func testLoadsNextTrip() throws {
+    @MainActor func testLoadsNextTrip() {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
         let route = objects.route { route in route.id = "Red" }
@@ -933,7 +931,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         wait(for: [exp], timeout: 2)
     }
 
-    func testHidesEarlyMorningCardWhenPredictionExists() throws {
+    func testHidesEarlyMorningCardWhenPredictionExists() {
         let now = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 3, minute: 30, second: 0)
         let subwayStartTime = EasternTimeInstant(year: 2025, month: .november, day: 17, hour: 9, minute: 44, second: 0)
         let objects = ObjectCollectionBuilder()

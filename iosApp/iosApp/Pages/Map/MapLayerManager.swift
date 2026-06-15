@@ -121,7 +121,7 @@ class MapLayerManager: iosApp.IMapLayerManager {
         try map.addPersistentLayer(routeAnchorLayer, layerPosition: .below(stopAnchorLayerId))
     }
 
-    /*
+    /**
      Adds persistent layers so that they are persisted even if the underlying map style changes.
 
      https://docs.mapbox.com/ios/maps/api/11.5.0/documentation/mapboxmaps/stylemanager/addpersistentlayer(_:layerposition:)

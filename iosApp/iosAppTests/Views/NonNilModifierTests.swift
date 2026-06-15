@@ -43,8 +43,8 @@ final class NonNilModifierTests: XCTestCase {
         }
 
         let modifier = try sut.inspect().find(ViewType.Text.self).modifier(NonNilAboveModifier<String, Text>.self)
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).first!.isAbsent)
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).last!.viewModifierContent())
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).first?.isAbsent))
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).last?.viewModifierContent()))
         XCTAssertThrowsError(try modifier.find(text: "not nil content"))
     }
 
@@ -54,8 +54,8 @@ final class NonNilModifierTests: XCTestCase {
             Text("not nil content")
         }
         let modifier = try sut.inspect().find(ViewType.Text.self).modifier(NonNilAboveModifier<String, Text>.self)
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).first!.text())
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).last!.viewModifierContent())
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).first?.text()))
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).last?.viewModifierContent()))
         XCTAssertNotNil(try modifier.find(text: "not nil content"))
     }
 
@@ -65,8 +65,8 @@ final class NonNilModifierTests: XCTestCase {
             Text("not nil content")
         }
         let modifier = try sut.inspect().find(ViewType.Text.self).modifier(NonNilBelowModifier<String, Text>.self)
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).first!.viewModifierContent())
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).last!.isAbsent)
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).first?.viewModifierContent()))
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).last?.isAbsent))
         XCTAssertThrowsError(try modifier.find(text: "not nil content"))
     }
 
@@ -76,8 +76,8 @@ final class NonNilModifierTests: XCTestCase {
             Text("not nil content")
         }
         let modifier = try sut.inspect().find(ViewType.Text.self).modifier(NonNilBelowModifier<String, Text>.self)
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).first!.viewModifierContent())
-        XCTAssertNotNil(try modifier.find(ViewType.VStack.self).last!.text())
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).first?.viewModifierContent()))
+        XCTAssertNotNil(try XCTUnwrap(try modifier.find(ViewType.VStack.self).last?.text()))
         XCTAssertNotNil(try modifier.find(text: "not nil content"))
     }
 }

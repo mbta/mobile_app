@@ -15,7 +15,7 @@ struct ScrollOffsetPreferenceKey: PreferenceKey {
     }
 }
 
-struct HaloScrollView<Content>: View where Content: View {
+struct HaloScrollView<Content: View>: View {
     @ObserveInjection var inject
 
     var content: Content

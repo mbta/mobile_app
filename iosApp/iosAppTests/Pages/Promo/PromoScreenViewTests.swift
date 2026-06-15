@@ -13,7 +13,7 @@ import ViewInspector
 import XCTest
 
 final class PromoScreenViewTests: XCTestCase {
-    @MainActor func testCombinedStopPromoFlow() throws {
+    @MainActor func testCombinedStopPromoFlow() {
         let advanceExp = expectation(description: "calls advance()")
         let sut = PromoScreenView(
             screen: .combinedStopAndTrip,
@@ -32,7 +32,7 @@ final class PromoScreenViewTests: XCTestCase {
         wait(for: [exp], timeout: 5)
     }
 
-    @MainActor func testEnhancedFavorites() throws {
+    @MainActor func testEnhancedFavorites() {
         let advanceExp = expectation(description: "calls advance()")
         let sut = PromoScreenView(
             screen: .enhancedFavorites,

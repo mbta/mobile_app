@@ -41,7 +41,7 @@ class NearbyViewModel: ObservableObject {
     @Published var routeCardData: [RouteCardData]?
 
     @Published var isTargeting = false
-    // Distinct from nearbyState.loadedLocation because it's also set when nearby favorites load
+    /// Distinct from nearbyState.loadedLocation because it's also set when nearby favorites load
     @Published var lastLoadedLocation: CLLocationCoordinate2D?
 
     private let alertsUsecase: AlertsUsecase
@@ -93,7 +93,7 @@ class NearbyViewModel: ObservableObject {
         navigationStack.lastSafe() == .favorites
     }
 
-    /*
+    /**
      Directly append the given entry to the stack without considering the previous entries.
      This should be done with caution as it can result in multiple entries of the same type within the stack,
      typically `pushNavEntry` should be used instead.
@@ -110,8 +110,8 @@ class NearbyViewModel: ObservableObject {
         }
     }
 
-    // Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
-    // entry directly, until then, we need a way to distinguish between entries coming from the map or not.
+    /// Adding a second bool argument here is a hack until we can remove the feature flag and set the new stop details
+    /// entry directly, until then, we need a way to distinguish between entries coming from the map or not.
     /**
      Updates the stack so that the given entry is the last entry.
      Optionally pops the previous entry to prevent the stack from building too deep. For example, when pushing

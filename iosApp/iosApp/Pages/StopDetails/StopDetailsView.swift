@@ -7,7 +7,6 @@
 //
 
 import Foundation
-
 import OrderedCollections
 import Shared
 import SwiftPhoenixClient
@@ -34,36 +33,6 @@ struct StopDetailsView: View {
     var stopDetailsVM: IStopDetailsViewModel
 
     let inspection = Inspection<Self>()
-
-    init(
-        filters: StopDetailsPageFilters,
-        routeData: StopDetailsViewModel.RouteData?,
-        favorites: Favorites,
-        global: GlobalResponse?,
-        now: Date,
-        onUpdateFavorites: @escaping () -> Void,
-        setStopFilter: @escaping (StopDetailsFilter?) -> Void,
-        setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        navCallbacks: NavigationCallbacks,
-        errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
-        mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel,
-    ) {
-        self.filters = filters
-        self.routeData = routeData
-        self.favorites = favorites
-        self.global = global
-        self.now = now
-        self.onUpdateFavorites = onUpdateFavorites
-        self.setStopFilter = setStopFilter
-        self.setTripFilter = setTripFilter
-        self.navCallbacks = navCallbacks
-        self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
-        self.mapVM = mapVM
-        self.stopDetailsVM = stopDetailsVM
-    }
 
     var body: some View {
         if let stopFilter = filters.stopFilter {

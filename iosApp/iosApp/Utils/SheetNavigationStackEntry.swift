@@ -101,7 +101,7 @@ enum SheetNavigationStackEntry: Hashable, Identifiable {
         return item.id == "" ? nil : item
     }
 
-    /*
+    /**
      Convert this SheetNavigationStackEntry into the shared SheetRoute type. SheetRoute represents only routes displayed
      in a MapSheetPage. Any other nav stack entries that are displayed as full screen modals (like alertDetails
      and more) do not have a corresponding SheetRoute, and therefore return nil.

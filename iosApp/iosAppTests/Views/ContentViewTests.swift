@@ -104,7 +104,7 @@ final class ContentViewTests: XCTestCase {
         wait(for: [leavesAlertsExp], timeout: 5)
     }
 
-    func testFetchesConfig() throws {
+    func testFetchesConfig() {
         let configFetchedExpectation = XCTestExpectation(description: "config fetched")
 
         let fakeVM = FakeContentVM(
@@ -117,7 +117,7 @@ final class ContentViewTests: XCTestCase {
         wait(for: [configFetchedExpectation], timeout: 6)
     }
 
-    @MainActor func testFetchesConfigOnMapboxError() throws {
+    @MainActor func testFetchesConfigOnMapboxError() {
         let loadConfigCallback = XCTestExpectation(description: "load config called")
         loadConfigCallback.expectedFulfillmentCount = 2
 
@@ -206,7 +206,7 @@ final class ContentViewTests: XCTestCase {
         XCTAssertThrowsError(try sut.inspect().find(NearbyTransitView.self))
     }
 
-    @MainActor func testBack() throws {
+    @MainActor func testBack() {
         let sut = ContentView(contentVM: .init())
         let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
         let tripFilter = TripDetailsFilter(
@@ -242,7 +242,7 @@ final class ContentViewTests: XCTestCase {
         wait(for: [exp1, exp2, exp3], timeout: 5)
     }
 
-    @MainActor func testBackAppearanceWhileSearching() throws {
+    @MainActor func testBackAppearanceWhileSearching() {
         let sut = ContentView(contentVM: .init())
         let stopFilter = StopDetailsFilter(routeId: Route.Id("route"), directionId: 0)
         let tripFilter = TripDetailsFilter(

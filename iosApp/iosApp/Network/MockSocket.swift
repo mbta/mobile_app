@@ -12,7 +12,7 @@ import SwiftPhoenixClient
 
 open class MockSocket: PhoenixSocket {
     public var channels: [PhoenixChannel] = []
-    // Channel.socket is weak, so we need to maintain a reference to the Socket
+    /// Channel.socket is weak, so we need to maintain a reference to the Socket
     private let socket = Socket(endPoint: "/socket", transport: { _ in PhoenixTransportMock() })
 
     public func attach() {}

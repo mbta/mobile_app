@@ -18,7 +18,7 @@ final class TripDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testDisplaysRouteHeader() throws {
+    func testDisplaysRouteHeader() {
         let now = EasternTimeInstant.now()
         let objects = TestData.clone()
         let stop = objects.getStop(id: "17863")

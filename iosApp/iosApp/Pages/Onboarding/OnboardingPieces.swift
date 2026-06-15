@@ -87,7 +87,7 @@ enum OnboardingPieces {
         @ViewBuilder let background: () -> Background
 
         private var screenHeight: CGFloat { UIScreen.current?.bounds.height ?? 852.0 }
-        // Use less padding on smaller screens
+        /// Use less padding on smaller screens
         private var bottomPadding: CGFloat { screenHeight < 812 ? 16 : 28 }
 
         var body: some View {

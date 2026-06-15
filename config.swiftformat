@@ -1,2 +1,6 @@
 --disable wrapMultilineStatementBraces
+--disable trailingCommas
+--disable redundantViewBuilder
+--disable wrapFunctionBodies
+--disable wrapPropertyBodies
 --maxwidth 120

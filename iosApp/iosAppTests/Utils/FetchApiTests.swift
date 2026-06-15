@@ -23,7 +23,7 @@ final class FetchApiTests: XCTestCase {
         }
     }
 
-    func testCallsSuccessAndClearsError() async throws {
+    func testCallsSuccessAndClearsError() async {
         let errorBannerRepo = ErrorBannerStateRepository()
         try? await errorBannerRepo.setDataError(key: "a", details: "", action: {})
         XCTAssertNotNil(errorBannerRepo.state.value)
@@ -42,7 +42,7 @@ final class FetchApiTests: XCTestCase {
         XCTAssertNil(errorBannerRepo.state.value)
     }
 
-    func testStoresApiError() async throws {
+    func testStoresApiError() async {
         let errorBannerRepo = ErrorBannerStateRepository()
         XCTAssertNil(errorBannerRepo.state.value)
         let expRefresh = expectation(description: "can refresh after error")
@@ -63,7 +63,7 @@ final class FetchApiTests: XCTestCase {
         await fulfillment(of: [expRefresh], timeout: 1)
     }
 
-    func testHandlesThrownError() async throws {
+    func testHandlesThrownError() async {
         struct AdHocError: Error {}
         let errorBannerRepo = ErrorBannerStateRepository()
         await fetchApi(

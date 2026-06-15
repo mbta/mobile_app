@@ -9,7 +9,7 @@
 import Foundation
 import SwiftUI
 
-struct SheetNavigationLink<Label>: View where Label: View {
+struct SheetNavigationLink<Label: View>: View {
     @ObserveInjection var inject
     let value: SheetNavigationStackEntry
     let action: (SheetNavigationStackEntry) -> Void

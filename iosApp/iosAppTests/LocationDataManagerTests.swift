@@ -20,7 +20,7 @@ final class LocationDataManagerTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testInit() async throws {
+    func testInit() async {
         let locationFetcher = MockLocationFetcher()
 
         XCTAssertEqual(locationFetcher.distanceFilter, 0)
@@ -51,7 +51,7 @@ final class LocationDataManagerTests: XCTestCase {
         XCTAssertEqual(manager.currentLocation, location)
     }
 
-    func testCustomDistanceFilter() async throws {
+    func testCustomDistanceFilter() {
         let locationFetcher = MockLocationFetcher()
 
         XCTAssertEqual(locationFetcher.distanceFilter, 0)
