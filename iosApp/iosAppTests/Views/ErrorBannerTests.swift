@@ -19,8 +19,7 @@ final class ErrorBannerTests: XCTestCase {
         let repo = MockErrorBannerStateRepository(state: nil)
         let errorBannerVM = ErrorBannerViewModel(
             errorRepository: repo,
-            sentryRepository: MockSentryRepository(),
-            clock: SystemClock
+            sentryRepository: MockSentryRepository()
         )
 
         let sut = ErrorBanner(errorBannerVM)
