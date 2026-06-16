@@ -102,7 +102,7 @@ struct ContentView: View {
                 notificationDeepLinkOwner.notificationDeepLink = nil
             }
         }
-        .global($globalData, errorKey: ErrorKey(type: [], id: "ContentView"))
+        .global($globalData, errorKey: ErrorKey(sheets: [], id: "ContentView"))
         .handleFcmTokenSubscriptions(
             fcmToken: fcmTokenContainer.token,
             includeAccessibility: includeAccessibility,

@@ -41,7 +41,7 @@ final class GlobalModifierTests: XCTestCase {
         )
         loadKoinMocks(repositories: mockRepos)
 
-        let sut = Text("test").global(globalBinding, errorKey: ErrorKey(type: [], id: "ErrorKey"))
+        let sut = Text("test").global(globalBinding, errorKey: ErrorKey(sheets: [], id: "ErrorKey"))
 
         ViewHosting.host(view: sut)
 

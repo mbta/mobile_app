@@ -25,7 +25,7 @@ struct ProductionAppView: View {
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
-    private static let errorDataKey = ErrorKey(type: [], id: "socket")
+    private static let errorDataKey = ErrorKey(sheets: [], id: "socket")
 
     init() {
         Self.initSentry()
