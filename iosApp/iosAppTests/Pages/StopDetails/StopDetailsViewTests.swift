@@ -244,7 +244,7 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: NearbyViewModel = .init()
+        let nearbyVM: iosApp.NearbyViewModel = .init()
 
         let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
 
@@ -276,7 +276,7 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(
+        let nearbyVM: iosApp.NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
 
@@ -308,7 +308,7 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: NearbyViewModel = .init(
+        let nearbyVM: iosApp.NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
 

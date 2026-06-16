@@ -192,7 +192,7 @@ final class StopDetailsPageTests: XCTestCase {
         loadKoinMocks(objects: objects)
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let nearbyVM: NearbyViewModel = .init(
+        let nearbyVM: iosApp.NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])
@@ -264,7 +264,7 @@ final class StopDetailsPageTests: XCTestCase {
 
         let stopFilter: StopDetailsFilter = .init(routeId: route.id, directionId: 0)
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
-        let nearbyVM: NearbyViewModel = .init(
+        let nearbyVM: iosApp.NearbyViewModel = .init(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: stopFilter, tripFilter: nil)]
         )
         nearbyVM.alerts = .init(alerts: [:])

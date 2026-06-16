@@ -39,9 +39,13 @@ import com.mbta.tid.mbta_app.android.testUtils.waitUntilDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilDoesNotExistDefaultTimeout
 import com.mbta.tid.mbta_app.android.testUtils.waitUntilExactlyOneExistsDefaultTimeout
 import com.mbta.tid.mbta_app.android.util.LocalLocationClient
+import com.mbta.tid.mbta_app.model.Direction
+import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.LocationType
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
+import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteType
+import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
@@ -54,6 +58,8 @@ import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
 import com.mbta.tid.mbta_app.viewModel.MapViewModel
+import com.mbta.tid.mbta_app.viewModel.MockNearbyViewModel
+import com.mbta.tid.mbta_app.viewModel.NearbyViewModel
 import dev.mokkery.MockMode
 import dev.mokkery.answering.calls
 import dev.mokkery.answering.returns
@@ -227,6 +233,90 @@ class MapAndSheetPageTest : KoinTest {
     @Test
     fun testMapAndSheetPageDisplaysCorrectly() {
         val mockMapVM = mock<IMapViewModel>(MockMode.autofill)
+        val nearbyVM =
+            MockNearbyViewModel(
+                NearbyViewModel.State(
+                    false,
+                    listOf(
+                        RouteCardData(
+                            LineOrRoute.Route(route),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Route(route),
+                                    sampleStop,
+                                    directions = listOf(Direction(0, route), Direction(1, route)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                0,
+                                                listOf(routePatternOne),
+                                                setOf(sampleStop.id),
+                                                listOf(UpcomingTrip(trip, prediction = prediction)),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Route(route),
+                                                sampleStop,
+                                                1,
+                                                listOf(routePatternTwo),
+                                                setOf(sampleStop.id),
+                                                emptyList(),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            ),
+                                        ),
+                                )
+                            ),
+                            now,
+                        ),
+                        RouteCardData(
+                            LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                            listOf(
+                                RouteCardData.RouteStopData(
+                                    LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                                    greenLineStop,
+                                    directions = listOf(Direction(0, greenLineRoute)),
+                                    data =
+                                        listOf(
+                                            RouteCardData.Leaf(
+                                                LineOrRoute.Line(greenLine, setOf(greenLineRoute)),
+                                                greenLineStop,
+                                                0,
+                                                listOf(greenLineRoutePatternOne),
+                                                setOf(greenLineStop.id),
+                                                listOf(
+                                                    UpcomingTrip(
+                                                        greenLineTrip,
+                                                        prediction = greenLinePrediction,
+                                                    )
+                                                ),
+                                                emptyList(),
+                                                true,
+                                                hasSchedulesToday = true,
+                                                subwayServiceStartTime = null,
+                                                emptyList(),
+                                                RouteCardData.Context.NearbyTransit,
+                                            )
+                                        ),
+                                )
+                            ),
+                            now,
+                        ),
+                    ),
+                    loadedLocation = Position(0.0, 0.0),
+                )
+            )
         val flow = MutableStateFlow(null).asStateFlow()
         every { mockMapVM.models } returns
             MutableStateFlow(MapViewModel.State(MapViewModel.LayerState.Overview, true))
@@ -254,6 +344,7 @@ class MapAndSheetPageTest : KoinTest {
                     {},
                     bottomBar = {},
                     mockMapVM,
+                    nearbyViewModel = nearbyVM,
                 )
             }
         }

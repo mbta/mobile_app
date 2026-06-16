@@ -67,7 +67,6 @@ import com.mbta.tid.mbta_app.android.map.HomeMapView
 import com.mbta.tid.mbta_app.android.map.IMapboxConfigManager
 import com.mbta.tid.mbta_app.android.modalRoute
 import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitTabViewModel
-import com.mbta.tid.mbta_app.android.nearbyTransit.NearbyTransitViewModel
 import com.mbta.tid.mbta_app.android.routeDetails.RouteDetailsView
 import com.mbta.tid.mbta_app.android.routePicker.RoutePickerView
 import com.mbta.tid.mbta_app.android.routePicker.backgroundColor
@@ -105,6 +104,7 @@ import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IFavoritesViewModel
 import com.mbta.tid.mbta_app.viewModel.IMapViewModel
+import com.mbta.tid.mbta_app.viewModel.INearbyViewModel
 import com.mbta.tid.mbta_app.viewModel.INotificationsBetaViewModel
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import com.mbta.tid.mbta_app.viewModel.IStopDetailsViewModel
@@ -119,7 +119,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.maplibre.spatialk.geojson.Position
 
@@ -154,6 +153,7 @@ fun MapAndSheetPage(
     visitHistoryUsecase: VisitHistoryUsecase = koinInject(),
     clock: Clock = koinInject(),
     favoritesViewModel: IFavoritesViewModel = koinInject(),
+    nearbyViewModel: INearbyViewModel = koinInject(),
     notificationsBetaViewModel: INotificationsBetaViewModel = koinInject(),
     routeCardDataViewModel: IRouteCardDataViewModel = koinInject(),
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
@@ -731,8 +731,6 @@ fun MapAndSheetPage(
 
     @Composable
     fun NearbyTransitSheetContents() {
-        // for ViewModel reasons, must be within the `composable` to be the same instance
-        val nearbyViewModel: NearbyTransitViewModel = koinViewModel()
         LaunchedEffect(Unit) {
             if (!navBarVisible && !searchExpanded) showNavBar()
             analytics.track(AnalyticsScreen.NearbyTransit)

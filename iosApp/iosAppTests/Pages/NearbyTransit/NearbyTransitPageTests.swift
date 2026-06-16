@@ -29,7 +29,7 @@ final class NearbyTransitPageTests: XCTestCase {
             viewport: nil,
             isManuallyCentering: false
         )
-        let nearbyVM = NearbyViewModel()
+        let nearbyVM = iosApp.NearbyViewModel()
         nearbyVM.nearbyState = .init(loadedLocation: .init(latitude: 0, longitude: 0))
         nearbyVM.routeCardData = []
 
@@ -46,7 +46,7 @@ final class NearbyTransitPageTests: XCTestCase {
     }
 
     @MainActor func testReloadsWhenLocationChanges() {
-        class FakeNearbyVM: NearbyViewModel {
+        class FakeNearbyVM: iosApp.NearbyViewModel {
             let expectation: XCTestExpectation
             let closure: (CLLocationCoordinate2D) -> Void
 
@@ -108,7 +108,7 @@ final class NearbyTransitPageTests: XCTestCase {
     }
 
     @MainActor func testNoReloadWhenNotVisbleAndLocationChanges() {
-        class FakeNearbyVM: NearbyViewModel {
+        class FakeNearbyVM: iosApp.NearbyViewModel {
             let expectation: XCTestExpectation
 
             init(_ expectation: XCTestExpectation, navigationStack: [SheetNavigationStackEntry]) {
@@ -167,7 +167,7 @@ final class NearbyTransitPageTests: XCTestCase {
                                                                         errorState: .DataError(messages: [],
                                                                                                details: [],
                                                                                                action: {}))),
-            nearbyVM: NearbyViewModel(),
+            nearbyVM: iosApp.NearbyViewModel(),
             viewportProvider: viewportProvider,
             noNearbyStops: noNearbyStops
         ).withFixedSettings([:])
