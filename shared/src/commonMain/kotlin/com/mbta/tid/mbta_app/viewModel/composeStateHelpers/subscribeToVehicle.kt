@@ -23,7 +23,7 @@ internal fun subscribeToVehicle(
     vehicleRepository: IVehicleRepository = koinInject(),
 ): Vehicle? {
     var vehicle: Vehicle? by remember { mutableStateOf(null) }
-    val errorKey = errorKey.withSuffix("subscribeToVehicle")
+    val errorKey = errorKey.withSuffix("w+")
 
     fun connect(vehicleId: String?, onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit) {
         vehicleRepository.disconnect()

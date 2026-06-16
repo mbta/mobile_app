@@ -22,7 +22,7 @@ import kotlin.time.ExperimentalTime
 import org.koin.compose.koinInject
 
 internal fun tripPredictionsErrorKey(errorKey: ErrorKey) =
-    errorKey.withSuffix("subscribeToTripPredictions")
+    errorKey.withSuffix(".subscribeToTripPredictions")
 
 @OptIn(ExperimentalTime::class)
 @Composable
