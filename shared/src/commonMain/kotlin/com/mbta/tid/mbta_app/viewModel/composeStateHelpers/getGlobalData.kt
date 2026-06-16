@@ -50,7 +50,7 @@ internal fun getGlobalData(
     val globalResponse: GlobalResponse? by globalRepository.state.collectAsState()
     LaunchedEffect(Unit) {
         fetchGlobalData(
-            errorKey.withSuffix(".getGlobalData"),
+            errorKey.withSuffix("getGlobalData"),
             errorBannerRepository,
             globalRepository,
             coroutineDispatcher,

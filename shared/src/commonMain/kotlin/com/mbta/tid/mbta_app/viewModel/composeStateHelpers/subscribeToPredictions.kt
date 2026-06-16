@@ -32,7 +32,7 @@ internal fun subscribeToPredictions(
     predictionsRepository: IPredictionsRepository = koinInject(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsStreamDataResponse? {
-    val errorKey = errorKey.withSuffix(".subscribeToPredictions")
+    val errorKey = errorKey.withSuffix("subscribeToPredictions")
     val staleTimer by timer(checkPredictionsStaleInterval)
 
     var predictions: PredictionsByStopJoinResponse? by remember { mutableStateOf(null) }

@@ -23,7 +23,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
-private fun fetchTripErrorKey(errorKey: ErrorKey) = errorKey.withSuffix(".fetchTrip")
+private fun fetchTripErrorKey(errorKey: ErrorKey) = errorKey.withSuffix("fetchTrip")
 
 private fun fetchTrip(
     tripId: String,
@@ -44,7 +44,7 @@ private fun fetchTrip(
 }
 
 private fun fetchTripSchedulesErrorKey(errorKey: ErrorKey) =
-    errorKey.withSuffix(".fetchTripSchedules")
+    errorKey.withSuffix("fetchTripSchedules")
 
 private fun fetchTripSchedules(
     tripId: String,
@@ -86,7 +86,7 @@ internal fun getTripData(
     tripRepository: ITripRepository = koinInject(),
     vehicleRepository: IVehicleRepository = koinInject(),
 ): TripData? {
-    val errorKey = errorKey.withSuffix(".getTripData")
+    val errorKey = errorKey.withSuffix("getTripData")
 
     var trip: Trip? by remember { mutableStateOf(null) }
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }

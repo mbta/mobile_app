@@ -54,7 +54,7 @@ internal fun getSchedules(
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ScheduleResponse? {
-    val errorKey = errorKey.withSuffix(".getSchedules")
+    val errorKey = errorKey.withSuffix("getSchedules")
     var result: ScheduleResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(stopIds) {

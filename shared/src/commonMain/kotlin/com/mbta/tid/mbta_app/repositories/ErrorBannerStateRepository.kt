@@ -32,7 +32,7 @@ internal sealed class NetworkStatus {
  */
 public data class ErrorKey(public val sheets: Set<KClass<out SheetRoutes>>, public val id: String) {
     public fun withSuffix(suffix: String): ErrorKey {
-        return this.copy(id = "$id$suffix")
+        return this.copy(id = "$id.$suffix")
     }
 }
 
