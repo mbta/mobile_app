@@ -100,6 +100,42 @@ class ErrorBannerStateRepositoryTest {
     }
 
     @Test
+    fun `data error discarded if for different page`() = runTest {
+        val repo = ErrorBannerStateRepository()
+        val actionsCalled = mutableSetOf<String>()
+
+        repo.setSheetRoute(SheetRoutes.Favorites)
+
+        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.StopDetails::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(null, (repo.state.value))
+
+        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.Favorites::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+    }
+
+    @Test
+    fun `setSheetRoute clears errors for other route`() = runTest {
+        val repo = ErrorBannerStateRepository()
+        val actionsCalled = mutableSetOf<String>()
+
+        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.Favorites::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+
+        repo.setSheetRoute(SheetRoutes.Favorites)
+        // because setSheetRoute wasn't called yet, we don't clear the existing error
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+        assertEquals(null, repo.state.value)
+    }
+
+    @Test
     fun `clears if predictions stop being stale`() = runBlocking {
         val repo = ErrorBannerStateRepository()
 

@@ -114,12 +114,13 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
                 return
             } else {
 
-                dataErrors.entries.removeAll() { (errorKey, _) ->
+                dataErrors.keys.removeAll() { (type, _) ->
                     val targetKeyType = sheetRoute?.let { it::class }
-                    errorKey.type != KeyType.PageSpecific(targetKeyType)
+                    type != KeyType.PageSpecific(targetKeyType)
                 }
             }
         }
+        updateState()
     }
 
     private fun setNetworkStatus(newStatus: NetworkStatus) {
@@ -131,9 +132,9 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
         mutex.withLock {
             if (key.type is KeyType.PageSpecific) {
 
-                val errorSheetRoute = key.type.sheet?.let { it::class }
+                val errorSheetRouteClass = key.type.sheet
                 val sheetRouteClass = sheetRoute?.let { it::class }
-                if (sheetRouteClass != null && sheetRouteClass != errorSheetRoute) {
+                if (sheetRouteClass != null && sheetRouteClass != errorSheetRouteClass) {
                     // the error is for a page different than the one being presented; throw it out
                     return@withLock
                 }
