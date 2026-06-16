@@ -42,7 +42,6 @@ import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
-import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import org.koin.compose.KoinContext
 import org.koin.dsl.koinApplication
@@ -171,11 +170,10 @@ class ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository(), Clock.System)
+    val dataErrorVM = ErrorBannerViewModel(dataErrorRepo, MockSentryRepository())
 
     val networkErrorRepo = MockErrorBannerStateRepository(state = ErrorBannerState.NetworkError {})
-    val networkErrorVM =
-        ErrorBannerViewModel(networkErrorRepo, MockSentryRepository(), Clock.System)
+    val networkErrorVM = ErrorBannerViewModel(networkErrorRepo, MockSentryRepository())
 
     val staleRepo =
         MockErrorBannerStateRepository(
@@ -185,8 +183,8 @@ class ErrorBannerPreviews() {
                     action = {},
                 )
         )
-    val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
-    val staleLoadingVM = ErrorBannerViewModel(staleRepo, MockSentryRepository(), Clock.System)
+    val staleVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
+    val staleLoadingVM = ErrorBannerViewModel(staleRepo, MockSentryRepository())
 
     // The preview requires Koin to contain the cache in order to render,
     // but it won't actually use the debug value set here when displayed
