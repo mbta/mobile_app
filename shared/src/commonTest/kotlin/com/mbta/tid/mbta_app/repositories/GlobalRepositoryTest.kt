@@ -13,6 +13,7 @@ import com.mbta.tid.mbta_app.model.Trip
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.network.MobileBackendClient
+import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.http.HttpHeaders
@@ -212,14 +213,15 @@ class GlobalRepositoryTest : KoinTest {
                 )
             val expectedResponse =
                 GlobalResponse(
-                    facilities = mapOf("808" to facility),
-                    lines = mapOf(Line.Id("line-Green") to line),
-                    patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
-                    routes = mapOf(Route.Id("Shuttle-AirportGovernmentCenterLocal") to route),
-                    routePatterns = mapOf("39-3-0" to routePattern),
-                    stops = mapOf("3992" to stop),
-                    trips = mapOf("62145526_2" to trip),
-                )
+                        facilities = mapOf("808" to facility),
+                        lines = mapOf(Line.Id("line-Green") to line),
+                        patternIdsByStop = mapOf("3992" to listOf("230-3-1", "230-5-1")),
+                        routes = mapOf(Route.Id("Shuttle-AirportGovernmentCenterLocal") to route),
+                        routePatterns = mapOf("39-3-0" to routePattern),
+                        stops = mapOf("3992" to stop),
+                        trips = mapOf("62145526_2" to trip),
+                    )
+                    .withWorldCupService(EasternTimeInstant.now().serviceDate)
             assertEquals(ApiResult.Ok(expectedResponse), response)
             assertEquals(expectedResponse, repo.state.value)
         }

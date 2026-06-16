@@ -70,7 +70,9 @@ internal constructor(
     )
 
     public fun withWorldCupService(today: LocalDate): GlobalResponse =
-        if (WorldCupService.isMatchDay(today)) this + WorldCupService.globalData else this
+        if (WorldCupService.isMatchDay(today) && !this.routes.containsKey(WorldCupService.route.id))
+            this + WorldCupService.globalData
+        else this
 
     private operator fun plus(other: GlobalResponse) =
         GlobalResponse(
