@@ -425,19 +425,34 @@ tasks.register<CycloneDxBomTransformTask>("bomIosSwiftPM") {
                             "/license?ref=v"
                         else "/license?ref=",
                     )
-            val apiResponse =
-                try {
-                    val gh = providers.exec { commandLine("gh", "api", licenseApiPath) }
-                    gh.standardOutput.asText.get()
-                } catch (e: ProcessExecutionException) {
+            val apiResponse = run {
+                val gh =
+                    providers.exec {
+                        commandLine("gh", "api", licenseApiPath)
+                        isIgnoreExitValue = true
+                    }
+                val result = gh.result.get()
+                if (result.exitValue != 0) {
                     throw IllegalStateException(
-                        "\nerror: `gh api $licenseApiPath` failed, ${when {
-                            DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX -> "`brew install gh`"
-                            else -> "install it"
-                        }} and try `gh auth login`",
-                        e,
+                        buildString {
+                            appendLine()
+                            append("error: `gh api ")
+                            append(licenseApiPath)
+                            append("` failed with exit code ")
+                            append(result.exitValue)
+                            appendLine(" and standard err")
+                            append(gh.standardError.asText.get())
+                            when {
+                                DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX ->
+                                    append("`brew install gh`")
+                                else -> append("install it")
+                            }
+                            append(" and try `gh auth login`")
+                        }
                     )
                 }
+                gh.standardOutput.asText.get()
+            }
             val licenseResponse = GithubLicenseResponse.decode(apiResponse)
 
             component.licenses.addLicense(
