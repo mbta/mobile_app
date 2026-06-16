@@ -106,12 +106,12 @@ class ErrorBannerStateRepositoryTest {
 
         repo.setSheetRoute(SheetRoutes.Favorites)
 
-        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.StopDetails::class), "a"), "") {
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.StopDetails::class), "a"), "") {
             actionsCalled.add("a")
         }
         assertEquals(null, (repo.state.value))
 
-        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.Favorites::class), "a"), "") {
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.Favorites::class), "a"), "") {
             actionsCalled.add("a")
         }
         assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
@@ -122,7 +122,7 @@ class ErrorBannerStateRepositoryTest {
         val repo = ErrorBannerStateRepository()
         val actionsCalled = mutableSetOf<String>()
 
-        repo.setDataError(ErrorKey(KeyType.PageSpecific(SheetRoutes.Favorites::class), "a"), "") {
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.Favorites::class), "a"), "") {
             actionsCalled.add("a")
         }
         assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))

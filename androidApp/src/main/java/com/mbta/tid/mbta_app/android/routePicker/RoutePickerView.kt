@@ -66,9 +66,7 @@ fun RoutePickerView(
     searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
     val globalData =
-        getGlobalData(
-            ErrorKey(setOf(SheetRoutes.EditFavorites::class), "RoutePickerView")
-        )
+        getGlobalData(ErrorKey(setOf(SheetRoutes.EditFavorites::class), "RoutePickerView"))
     var searchInputState by rememberSaveable { mutableStateOf("") }
     var searchInputFocused by rememberSaveable { mutableStateOf(false) }
     val searchVMState by searchRoutesViewModel.models.collectAsState()

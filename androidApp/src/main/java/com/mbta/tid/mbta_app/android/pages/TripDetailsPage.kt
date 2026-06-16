@@ -54,10 +54,7 @@ fun TripDetailsPage(
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
 ) {
     val now by timer(updateInterval = 5.seconds)
-    val global =
-        getGlobalData(
-            ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsPage")
-        )
+    val global = getGlobalData(ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsPage"))
 
     tripDetailsPageVM.koinScope = currentKoinScope()
     val tripDetailsPageState by tripDetailsPageVM.models.collectAsState()

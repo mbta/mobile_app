@@ -66,6 +66,7 @@ class StopPredictionsFetcher(
             setOf(SheetRoutes.NearbyTransit::class),
             "PredictionsViewModel.subscribeToPredictions",
         )
+
     fun connect(stopIds: List<String>?) {
         currentStopIds = stopIds
         if (stopIds != null) {

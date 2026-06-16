@@ -667,10 +667,7 @@ fun MapAndSheetPage(
 
         val global =
             getGlobalData(
-                ErrorKey(
-                    setOf(SheetRoutes.TripDetails::class),
-                    "TripDetailsSheetContents",
-                )
+                ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsSheetContents")
             )
         val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
         val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }

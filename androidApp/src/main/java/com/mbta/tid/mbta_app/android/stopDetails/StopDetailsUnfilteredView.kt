@@ -41,12 +41,7 @@ fun StopDetailsUnfilteredView(
 ) {
 
     val globalResponse =
-        getGlobalData(
-            ErrorKey(
-                setOf(SheetRoutes.StopDetails::class),
-                "StopDetailsUnfilteredView",
-            )
-        )
+        getGlobalData(ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsUnfilteredView"))
     val stop: Stop? = globalResponse?.getStop(stopId)
 
     val analytics: Analytics = koinInject()

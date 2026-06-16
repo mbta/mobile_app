@@ -32,9 +32,7 @@ fun RouteDetailsView(
     errorBannerViewModel: IErrorBannerViewModel,
 ) {
     val globalData =
-        getGlobalData(
-            ErrorKey(setOf(SheetRoutes.EditFavorites::class), "RouteDetailsView")
-        )
+        getGlobalData(ErrorKey(setOf(SheetRoutes.EditFavorites::class), "RouteDetailsView"))
     val lineOrRoute = globalData?.getLineOrRoute(selectionId)
     if (lineOrRoute == null) {
         LoadingRouteStopListView(context, errorBannerViewModel)

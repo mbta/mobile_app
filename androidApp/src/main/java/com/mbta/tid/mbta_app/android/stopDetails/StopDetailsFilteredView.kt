@@ -78,12 +78,7 @@ fun StopDetailsFilteredView(
 ) {
     val state by stopDetailsViewModel.models.collectAsState()
     val global: GlobalResponse? =
-        getGlobalData(
-            ErrorKey(
-                setOf(SheetRoutes.StopDetails::class),
-                "StopDetailsFilteredView",
-            )
-        )
+        getGlobalData(ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredView"))
 
     val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(stopFilter.routeId)
 

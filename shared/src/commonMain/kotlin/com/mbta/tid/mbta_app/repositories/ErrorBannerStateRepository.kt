@@ -23,10 +23,6 @@ internal sealed class NetworkStatus {
 }
 
 /**
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c6e56bcf (refactor: ErrorKey as set of sheets)
  * Represent an error, and the page(s) on which it occurred. If the current [SheetRoutes] matches
  * the pages for the error, then it can be shown in the banner and retried. If the error for is a
  * page that is not the current [SheetRoutes], then it should be discarded.
@@ -114,9 +110,9 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
                 return
             } else {
 
-                dataErrors.keys.removeAll() { (type, _) ->
+                dataErrors.keys.removeAll() { (sheets, _) ->
                     val targetKeyType = sheetRoute?.let { it::class }
-                    type != KeyType.PageSpecific(targetKeyType)
+                    !sheets.contains(targetKeyType)
                 }
             }
         }
@@ -130,16 +126,15 @@ internal constructor(initialState: ErrorBannerState? = null) : KoinComponent {
 
     public suspend fun setDataError(key: ErrorKey, details: String, action: () -> Unit) {
         mutex.withLock {
-            if (key.type is KeyType.PageSpecific) {
-
-                val errorSheetRouteClass = key.type.sheet
-                val sheetRouteClass = sheetRoute?.let { it::class }
-                if (sheetRouteClass != null && sheetRouteClass != errorSheetRouteClass) {
-                    // the error is for a page different than the one being presented; throw it out
-                    return@withLock
-                }
+            val sheetRouteClass = sheetRoute?.let { it::class }
+            if (
+                sheetRouteClass != null &&
+                    key.sheets.isNotEmpty() &&
+                    !key.sheets.contains(sheetRouteClass)
+            ) {
+                // the error is for a page different from the one being presented; throw it out
+                return@withLock
             }
-
             dataErrors[key] = ErrorBannerState.DataError(setOf(key.id), setOf(details), action)
         }
         updateState()

@@ -89,7 +89,11 @@ public class TripDetailsViewModel(
     override fun runLogic(): State {
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var active: Boolean by remember { mutableStateOf(true) }
-        val errorKey = ErrorKey(setOf(SheetRoutes.StopDetails::class, SheetRoutes.TripDetails::class), "TripDetailsViewModel")
+        val errorKey =
+            ErrorKey(
+                setOf(SheetRoutes.StopDetails::class, SheetRoutes.TripDetails::class),
+                "TripDetailsViewModel",
+            )
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val tripData =

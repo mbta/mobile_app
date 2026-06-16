@@ -63,9 +63,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
     @Composable
     override fun runLogic(): State {
         val global =
-            getGlobalData(
-                ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsPage")
-            )
+            getGlobalData(ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsPage"))
         val stop = global?.getStop(filter?.stopId)
 
         val tripDetailsState by tripDetailsVM.models.collectAsState()

@@ -213,7 +213,7 @@ public class MapViewModel(
                     errorBannerRepo = errorBannerRepository,
                     errorKey =
                         ErrorKey(
-                            KeyType.PageSpecific(previousNavEntry?.let { it::class }),
+                            previousNavEntry?.let { setOf(it::class) } ?: setOf(),
                             "MapViewModel.fetchRailRouteShapes",
                         ),
                     getData = { railRouteShapeRepository.getRailRouteShapes() },

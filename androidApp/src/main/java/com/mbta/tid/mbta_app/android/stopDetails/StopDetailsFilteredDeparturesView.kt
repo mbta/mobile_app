@@ -88,10 +88,7 @@ fun StopDetailsFilteredDeparturesView(
 ) {
     val global =
         getGlobalData(
-            ErrorKey(
-                setOf(SheetRoutes.StopDetails::class),
-                "StopDetailsFilteredDeparturesView",
-            )
+            ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsFilteredDeparturesView")
         )
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)
