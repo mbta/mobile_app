@@ -207,22 +207,6 @@ public class MapViewModel(
         val tripId = (layerState as? LayerState.TripSelected)?.tripFilter?.tripId
         val tripStops = (layerState as? LayerState.TripSelected)?.tripStops
 
-        fun fetchRailRouteShapes(onSuccess: (MapFriendlyRouteResponse) -> Unit) {
-            CoroutineScope(iOCoroutineDispatcher).launch {
-                fetchApi(
-                    errorBannerRepo = errorBannerRepository,
-                    errorKey =
-                        ErrorKey(
-                            previousNavEntry?.let { setOf(it::class) } ?: setOf(),
-                            "MapViewModel.fetchRailRouteShapes",
-                        ),
-                    getData = { railRouteShapeRepository.getRailRouteShapes() },
-                    onSuccess = onSuccess,
-                    onRefreshAfterError = { fetchRailRouteShapes(onSuccess) },
-                )
-            }
-        }
-
         LaunchedEffect(null) { globalRepository.getGlobalData() }
         LaunchedEffect(null) { fetchRailRouteShapes { allRailRouteShapes = it } }
         LaunchedEffect(alertCheckTimer, globalData, alerts) {
@@ -583,7 +567,6 @@ public class MapViewModel(
                 is LayerState.StopSelected -> {
                     viewportManager.stopCenter(layerState.stop)
                 }
-
                 is LayerState.TripSelected -> {
                     // there is no vehicle associated with the trip, so just center on the stop
                     // if there is one

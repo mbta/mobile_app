@@ -340,10 +340,11 @@ fun MapAndSheetPage(
                     is SheetRoutes.TripDetails -> currentNavEntry.filter.stopFilter
                     else -> null
                 },
-
-            // We re-use share the stream between stop & trip details, so we'd want errors to
-            // persist across both pages
-            errorKey = ErrorKey(setOf(), "VehiclesViewModel.subscribeToVehicles"),
+            errorKey =
+                ErrorKey(
+                    setOf(SheetRoutes.TripDetails::class, SheetRoutes.StopDetails::class),
+                    "VehiclesViewModel.subscribeToVehicles",
+                ),
         )
 
     LaunchedEffect(vehiclesData) { mapViewModel.vehiclesChanged(vehiclesData) }

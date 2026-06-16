@@ -10,9 +10,6 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
  * `errorBannerRepo` and calls `onSuccess`. If `getData` returns an `ApiResultError` or throws, sets
  * an error in `errorKey` in `errorBannerRepo` with the given `onRefreshAfterError`.
  */
-
-// TODO: question (non-blocking): Why also internal in composeStateHelpers? Can we consolidate?
-// Is this something that will go away with more VM refactors?
 suspend fun <T : Any> fetchApi(
     errorBannerRepo: IErrorBannerStateRepository,
     errorKey: ErrorKey,

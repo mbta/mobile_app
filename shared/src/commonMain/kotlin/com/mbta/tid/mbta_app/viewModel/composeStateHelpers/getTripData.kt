@@ -22,6 +22,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
+
 private fun fetchTripErrorKey(errorKey: ErrorKey) = errorKey.withSuffix("fetchTrip")
 
 private fun fetchTrip(
@@ -96,7 +97,7 @@ internal fun getTripData(
 
     val params =
         remember(errorKey, coroutineDispatcher, errorBannerRepository, tripRepository) {
-            FetchParams(errorKey.copy(), coroutineDispatcher, errorBannerRepository, tripRepository)
+            FetchParams(errorKey, coroutineDispatcher, errorBannerRepository, tripRepository)
         }
 
     fun clearAll() {
