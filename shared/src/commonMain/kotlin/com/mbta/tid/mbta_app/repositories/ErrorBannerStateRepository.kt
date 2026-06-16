@@ -24,6 +24,9 @@ internal sealed class NetworkStatus {
 
 /**
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c6e56bcf (refactor: ErrorKey as set of sheets)
  * Represent an error, and the page(s) on which it occurred. If the current [SheetRoutes] matches
  * the pages for the error, then it can be shown in the banner and retried. If the error for is a
  * page that is not the current [SheetRoutes], then it should be discarded.
