@@ -15,7 +15,6 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IVehiclesRepository
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.viewModel.IRouteCardDataViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -86,7 +85,7 @@ fun subscribeToVehicles(
         CoroutineScope(Dispatchers.IO).launch {
             viewModel.connectToVehicles(
                 routeDirection,
-                ErrorKey(KeyType.Permanent, "VehiclesViewModel.subscribeToVehicles"),
+                ErrorKey(setOf(), "VehiclesViewModel.subscribeToVehicles"),
             )
         }
         onPauseOrDispose { viewModel.disconnect() }

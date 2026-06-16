@@ -39,7 +39,7 @@ class TripPredictionsRepositoryTests {
         tripPredictionsRepo.connect(
             tripId = "Test",
             onReceive = {},
-            errorKey = ErrorKey(KeyType.Permanent, "testChannelClearedBeforeJoin"),
+            errorKey = ErrorKey(setOf(), "testChannelClearedBeforeJoin"),
         )
         advanceUntilIdle()
         verify { channel.detach() }

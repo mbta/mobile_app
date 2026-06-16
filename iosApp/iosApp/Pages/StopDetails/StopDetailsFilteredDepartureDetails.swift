@@ -193,7 +193,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
             }
         }
-        .global($global, errorKey: ErrorKey(type: KeyType.Permanent(), id: "StopDetailsFilteredDepartureDetails"))
+        .global($global, errorKey: ErrorKey(type: [], id: "StopDetailsFilteredDepartureDetails"))
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
             loadNextScheduleForStatus(noPredictionsStatus)

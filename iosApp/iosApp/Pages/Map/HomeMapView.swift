@@ -90,7 +90,7 @@ struct HomeMapView: View {
                     crosshairs
                 }
             }
-            .global($globalData, errorKey: ErrorKey(type: KeyType.Permanent(), id: "HomeMapView"))
+            .global($globalData, errorKey: ErrorKey(type: [], id: "HomeMapView"))
             .task {
                 for await state in mapVM.models {
                     mapVMState = state

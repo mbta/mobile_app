@@ -9,7 +9,6 @@ import com.mbta.tid.mbta_app.network.INetworkConnectivityMonitor
 import com.mbta.tid.mbta_app.repositories.ErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import dev.mokkery.MockMode
@@ -91,7 +90,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
 
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "FakeError"), "FakeDetails", action)
+            errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val state = awaitItem().errorState
             assertEquals(setOf("FakeError"), (state as ErrorBannerState.DataError).messages)
             assertEquals(setOf("FakeDetails"), state.details)
@@ -111,7 +110,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "FakeError"), "FakeDetails", action)
+            errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
             viewModel.clearState()
@@ -149,7 +148,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "FakeError"), "FakeDetails", action)
+            errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
             assertEquals(setOf("FakeDetails"), nextState.details)
@@ -173,7 +172,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
             viewModel.setSheetRoute(SheetRoutes.Favorites)
             advanceUntilIdle()
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "FakeError"), "FakeDetails", action)
+            errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val nextState = awaitItem().errorState
             assertEquals(setOf("FakeError"), (nextState as ErrorBannerState.DataError).messages)
             assertEquals(setOf("FakeDetails"), nextState.details)
@@ -267,7 +266,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             var nextState = awaitItem().errorState
             assertEquals(setOf("ErrorKey"), (nextState as ErrorBannerState.DataError).messages)
             assertEquals(setOf("error details"), nextState.details)
@@ -276,7 +275,7 @@ internal class ErrorBannerViewModelTest : KoinTest {
             viewModel.clearState()
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
             clock.now += 1.seconds
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             nextState = awaitItem().errorState
             assertEquals(setOf("ErrorKey"), (nextState as ErrorBannerState.DataError).messages)
             assertEquals(setOf("error details"), nextState.details)
@@ -329,12 +328,12 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             assertIs<ErrorBannerState.DataError>(awaitItem().errorState)
             viewModel.clearState()
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
             clock.now += 2.minutes
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             assertIs<ErrorBannerState.DataError>(awaitItem().errorState)
             verifyNoMoreCalls(sentryRepo)
         }
@@ -377,12 +376,12 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             assertIs<ErrorBannerState.NetworkError>(awaitItem().errorState)
             viewModel.clearState()
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
             clock.now += 1.seconds
-            errorRepo.setDataError(ErrorKey(KeyType.Permanent, "ErrorKey"), "error details") {}
+            errorRepo.setDataError(ErrorKey(setOf(), "ErrorKey"), "error details") {}
             assertIs<ErrorBannerState.NetworkError>(awaitItem().errorState)
             verifyNoMoreCalls(sentryRepo)
         }

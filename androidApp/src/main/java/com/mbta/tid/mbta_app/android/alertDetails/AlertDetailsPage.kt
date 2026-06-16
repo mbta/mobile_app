@@ -42,7 +42,6 @@ import com.mbta.tid.mbta_app.model.Line
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
-import com.mbta.tid.mbta_app.repositories.KeyType
 import kotlin.time.Duration.Companion.seconds
 
 @Composable
@@ -55,7 +54,7 @@ fun AlertDetailsPage(
     goBack: () -> Unit,
 ) {
     val alert = getAlert(alerts, alertId, goBack)
-    val globalResponse = getGlobalData(ErrorKey(KeyType.Permanent, "AlertDetailsPage"))
+    val globalResponse = getGlobalData(ErrorKey(setOf(), "AlertDetailsPage"))
     val now by timer(5.seconds)
 
     val line = globalResponse?.getLine(lineId)

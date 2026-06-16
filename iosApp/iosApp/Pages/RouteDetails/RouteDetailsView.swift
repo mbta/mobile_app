@@ -51,7 +51,7 @@ struct RouteDetailsView: View {
                 loadingBody()
             }
         }
-        .global($globalData, errorKey: ErrorKey(type: KeyType.Permanent(), id: "RouteDetailsView"))
+        .global($globalData, errorKey: ErrorKey(type: [], id: "RouteDetailsView"))
         .onChange(of: globalData) { globalData in
             lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
         }

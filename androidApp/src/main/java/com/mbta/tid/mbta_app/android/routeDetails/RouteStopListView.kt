@@ -78,7 +78,6 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.silverRoutes
 import com.mbta.tid.mbta_app.repositories.ErrorKey
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
@@ -131,7 +130,7 @@ fun RouteStopListView(
         getRouteStops(
             selectedRouteId,
             selectedDirection,
-            ErrorKey(KeyType.Permanent, "RouteDetailsView.routeStopIds"),
+            ErrorKey(setOf(), "RouteDetailsView.routeStopIds"),
         )
 
     val stopList =

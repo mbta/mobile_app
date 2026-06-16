@@ -26,7 +26,7 @@ final class FetchApiTests: XCTestCase {
     func testCallsSuccessAndClearsError() async {
         let errorBannerRepo = ErrorBannerStateRepository()
         try? await errorBannerRepo.setDataError(
-            key: ErrorKey(type: KeyType.Permanent(), id: "a"),
+            key: ErrorKey(type: [], id: "a"),
             details: "",
             action: {}
         )
@@ -34,7 +34,7 @@ final class FetchApiTests: XCTestCase {
         let expSuccess = expectation(description: "calls onSuccess")
         await fetchApi(
             errorBannerRepo,
-            errorKey: ErrorKey(type: KeyType.Permanent(), id: "a"),
+            errorKey: ErrorKey(type: [], id: "a"),
             getData: { ApiResultOk(data: Data(4)) },
             onSuccess: {
                 XCTAssertEqual($0, Data(4))
@@ -52,7 +52,7 @@ final class FetchApiTests: XCTestCase {
         let expRefresh = expectation(description: "can refresh after error")
         await fetchApi(
             errorBannerRepo,
-            errorKey: ErrorKey(type: KeyType.Permanent(), id: "a"),
+            errorKey: ErrorKey(type: [], id: "a"),
             getData: { ApiResultError<Data>(code: 418, message: "I'm a teapot") },
             onSuccess: { _ in XCTFail("called onSuccess") },
             onRefreshAfterError: { expRefresh.fulfill() }
@@ -72,7 +72,7 @@ final class FetchApiTests: XCTestCase {
         let errorBannerRepo = ErrorBannerStateRepository()
         await fetchApi(
             errorBannerRepo,
-            errorKey: ErrorKey(type: KeyType.Permanent(), id: "a"),
+            errorKey: ErrorKey(type: [], id: "a"),
             getData: { throw AdHocError() },
             onSuccess: { (_: Data) in XCTFail("called onSuccess") },
             onRefreshAfterError: { XCTFail("called onRefresh") }
@@ -86,7 +86,7 @@ final class FetchApiTests: XCTestCase {
         let task = Task {
             await fetchApi(
                 errorBannerRepo,
-                errorKey: ErrorKey(type: KeyType.Permanent(), id: "a"),
+                errorKey: ErrorKey(type: [], id: "a"),
                 getData: {
                     expFetchStarted.fulfill()
                     try await Task.sleep(for: .seconds(1))

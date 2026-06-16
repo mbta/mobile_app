@@ -99,7 +99,7 @@ struct TripDetailsPage: View {
                 global: global
             ))
         }
-        .global($global, errorKey: ErrorKey(type: KeyType.Permanent(), id: "TripDetailsPage"))
+        .global($global, errorKey: ErrorKey(type: [], id: "TripDetailsPage"))
         .task {
             while !Task.isCancelled {
                 now = Date.now.toEasternInstant()

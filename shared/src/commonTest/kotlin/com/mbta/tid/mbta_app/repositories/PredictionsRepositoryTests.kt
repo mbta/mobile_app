@@ -60,7 +60,7 @@ class PredictionsRepositoryTests : KoinTest {
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2ChannelSetOnRun"),
+            errorKey = ErrorKey(setOf(), "testV2ChannelSetOnRun"),
         )
         advanceUntilIdle()
 
@@ -90,7 +90,7 @@ class PredictionsRepositoryTests : KoinTest {
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2ChannelJoinTwiceLeavesOldChannel"),
+            errorKey = ErrorKey(setOf(), "testV2ChannelJoinTwiceLeavesOldChannel"),
         )
         advanceUntilIdle()
 
@@ -100,7 +100,7 @@ class PredictionsRepositoryTests : KoinTest {
             stopIds = listOf("3", "4"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2ChannelJoinTwiceLeavesOldChannel"),
+            errorKey = ErrorKey(setOf(), "testV2ChannelJoinTwiceLeavesOldChannel"),
         )
         advanceUntilIdle()
 
@@ -130,7 +130,7 @@ class PredictionsRepositoryTests : KoinTest {
             stopIds = listOf("1", "2"),
             onJoin = { /* no-op */ },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2ChannelClearedOnLeave"),
+            errorKey = ErrorKey(setOf(), "testV2ChannelClearedOnLeave"),
         )
         advanceUntilIdle()
 
@@ -238,7 +238,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertEquals("v_1", data.vehicles["v_1"]?.id)
             },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2SetsPredictionsOnJoinResponse"),
+            errorKey = ErrorKey(setOf(), "testV2SetsPredictionsOnJoinResponse"),
         )
     }
 
@@ -354,7 +354,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertEquals(SocketError.RECEIVED_ERROR, outcome.message)
             },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "testV2SetsErrorWhenReceivedOnJoin"),
+            errorKey = ErrorKey(setOf(), "testV2SetsErrorWhenReceivedOnJoin"),
         )
     }
 
@@ -393,7 +393,7 @@ class PredictionsRepositoryTests : KoinTest {
                 assertContains(outcome.message, SocketError.TIMEOUT)
             },
             onMessage = { /* no-op */ },
-            errorKey = ErrorKey(KeyType.Permanent, "v2 sets error when timeout on join"),
+            errorKey = ErrorKey(setOf(), "v2 sets error when timeout on join"),
         )
     }
 

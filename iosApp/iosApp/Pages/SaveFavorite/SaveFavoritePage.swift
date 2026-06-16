@@ -210,7 +210,7 @@ struct SaveFavoritePage: View {
         .frame(maxHeight: .infinity)
         .background(Color.fill2)
         .favorites($favorites)
-        .global($globalResponse, errorKey: ErrorKey(type: KeyType.Permanent(), id: "SaveFavoritePage"))
+        .global($globalResponse, errorKey: ErrorKey(type: [], id: "SaveFavoritePage"))
         .onReceive(inspection.notice) { inspection.visit(self, $0) }
         .enableInjection()
     }

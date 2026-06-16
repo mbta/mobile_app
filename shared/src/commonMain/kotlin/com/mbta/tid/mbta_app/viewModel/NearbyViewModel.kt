@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.NearbyResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.INearbyRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -80,7 +81,7 @@ public class NearbyViewModel(
 
         var active: Boolean by remember { mutableStateOf(false) }
 
-        val errorKey = "NearbyViewModel"
+        val errorKey = ErrorKey(setOf(SheetRoutes.NearbyTransit::class), "NearbyViewModel")
         val globalData = getGlobalData(errorKey)
         val schedules = getSchedules(stopIds, errorKey)
         val predictions =

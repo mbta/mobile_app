@@ -12,7 +12,6 @@ import com.mbta.tid.mbta_app.model.RouteBranchSegment
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IRouteStopsRepository
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockRouteStopsRepository
 import com.mbta.tid.mbta_app.repositories.RouteStopsResult
@@ -56,12 +55,7 @@ class GetRouteStopsTest {
         var actualRouteStops: RouteStopsResult? = expectedRouteStops1
         composeTestRule.setContent {
             actualRouteStops =
-                getRouteStops(
-                    route.id,
-                    directionId,
-                    ErrorKey(KeyType.Permanent, "errorKey"),
-                    routeStopsRepo,
-                )
+                getRouteStops(route.id, directionId, ErrorKey(setOf(), "errorKey"), routeStopsRepo)
         }
 
         composeTestRule.waitUntilDefaultTimeout { actualRouteStops != null }
@@ -95,7 +89,7 @@ class GetRouteStopsTest {
                 getRouteStops(
                     Route.Id(""),
                     directionId,
-                    ErrorKey(KeyType.Permanent, "errorKey"),
+                    ErrorKey(setOf(), "errorKey"),
                     routeStopsRepo,
                 )
         }
@@ -120,13 +114,7 @@ class GetRouteStopsTest {
         val errorRepo = MockErrorBannerStateRepository()
 
         composeTestRule.setContent {
-            getRouteStops(
-                Route.Id(""),
-                0,
-                ErrorKey(KeyType.Permanent, "errorKey"),
-                schedulesRepo,
-                errorRepo,
-            )
+            getRouteStops(Route.Id(""), 0, ErrorKey(setOf(), "errorKey"), schedulesRepo, errorRepo)
         }
 
         composeTestRule.waitUntilDefaultTimeout {

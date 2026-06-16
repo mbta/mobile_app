@@ -23,19 +23,14 @@ internal sealed class NetworkStatus {
 }
 
 /**
- * Represent the type of the error. [KeyType.Permanent] represents an error that should persist in
- * the banner and can be retried until it is successful. [KeyType.PageSpecific] represents an error
- * that should no longer be retried once the user has navigated to a [SheetRoutes] of a different
- * type.
+ * Represent an error, and the page(s) on which it occurred. If the current [SheetRoutes] matches
+ * the pages for the error, then it can be shown in the banner and retried. If the error for is a
+ * page that is not the current [SheetRoutes], then it should be discarded.
+ *
+ * An empty value for [ErrorKey.sheets] means that the error should be shown in the banner and
+ * retried across all pages.
  */
-public sealed class KeyType {
-
-    public data object Permanent : KeyType()
-
-    public data class PageSpecific(val sheet: KClass<out SheetRoutes>?) : KeyType()
-}
-
-public data class ErrorKey(public val type: KeyType, public val id: String) {
+public data class ErrorKey(public val sheets: Set<KClass<out SheetRoutes>>, public val id: String) {
     public fun withSuffix(suffix: String): ErrorKey {
         return this.copy(id = "$id$suffix")
     }

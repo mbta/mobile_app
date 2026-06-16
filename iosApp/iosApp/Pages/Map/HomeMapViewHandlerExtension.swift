@@ -68,7 +68,7 @@ extension HomeMapView {
         vehiclesRepository.connect(
             routeId: routeId,
             directionId: directionId,
-            errorKey: ErrorKey(type: KeyType.Permanent(), id: "HomeMapView.joinVehiclesChannel"),
+            errorKey: ErrorKey(type: [], id: "HomeMapView.joinVehiclesChannel"),
         ) { outcome in
             if case let .ok(result) = onEnum(of: outcome) {
                 if let routeCardData = routeCardDataState?.data {

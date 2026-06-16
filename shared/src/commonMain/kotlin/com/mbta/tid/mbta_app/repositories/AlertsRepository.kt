@@ -42,7 +42,7 @@ internal class AlertsRepository(
                 }
                 onReceive(it)
             },
-            ErrorKey(KeyType.Permanent, "AlertsRepository"),
+            ErrorKey(setOf(), "AlertsRepository"),
         )
     }
 

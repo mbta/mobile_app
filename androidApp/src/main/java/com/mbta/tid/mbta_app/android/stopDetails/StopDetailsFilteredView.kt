@@ -49,7 +49,6 @@ import com.mbta.tid.mbta_app.model.TripDetailsFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -78,8 +77,7 @@ fun StopDetailsFilteredView(
     stopDetailsViewModel: IStopDetailsViewModel = koinInject(),
 ) {
     val state by stopDetailsViewModel.models.collectAsState()
-    val global: GlobalResponse? =
-        getGlobalData(ErrorKey(KeyType.Permanent, "StopDetailsFilteredView"))
+    val global: GlobalResponse? = getGlobalData(ErrorKey(setOf(), "StopDetailsFilteredView"))
 
     val lineOrRoute: LineOrRoute? = global?.getLineOrRoute(stopFilter.routeId)
 

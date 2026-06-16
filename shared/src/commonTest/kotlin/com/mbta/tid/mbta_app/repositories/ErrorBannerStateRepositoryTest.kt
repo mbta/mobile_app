@@ -76,11 +76,11 @@ class ErrorBannerStateRepositoryTest {
             SheetRoutes.NearbyTransit,
         ) {}
 
-        repo.setDataError(ErrorKey(KeyType.Permanent, "global"), "") {}
+        repo.setDataError(ErrorKey(setOf(), "global"), "") {}
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)
 
-        repo.clearDataError(ErrorKey(KeyType.Permanent, "global"))
+        repo.clearDataError(ErrorKey(setOf(), "global"))
 
         assertIs<ErrorBannerState.StalePredictions>(repo.state.value)
     }
@@ -90,9 +90,9 @@ class ErrorBannerStateRepositoryTest {
         val repo = ErrorBannerStateRepository()
         val actionsCalled = mutableSetOf<String>()
 
-        repo.setDataError(ErrorKey(KeyType.Permanent, "a"), "") { actionsCalled.add("a") }
-        repo.setDataError(ErrorKey(KeyType.Permanent, "b"), "") { actionsCalled.add("b") }
-        repo.setDataError(ErrorKey(KeyType.Permanent, "c"), "") { actionsCalled.add("c") }
+        repo.setDataError(ErrorKey(setOf(), "a"), "") { actionsCalled.add("a") }
+        repo.setDataError(ErrorKey(setOf(), "b"), "") { actionsCalled.add("b") }
+        repo.setDataError(ErrorKey(setOf(), "c"), "") { actionsCalled.add("c") }
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)
         repo.state.value?.action?.invoke()

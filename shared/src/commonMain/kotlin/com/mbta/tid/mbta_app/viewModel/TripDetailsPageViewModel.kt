@@ -19,7 +19,6 @@ import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.discardTrackChangesAtCRCore
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.composeStateHelpers.getGlobalData
 import kotlin.jvm.JvmName
@@ -62,7 +61,7 @@ public class TripDetailsPageViewModel(private val tripDetailsVM: ITripDetailsVie
 
     @Composable
     override fun runLogic(): State {
-        val global = getGlobalData(ErrorKey(KeyType.Permanent, "TripDetailsPage"))
+        val global = getGlobalData(ErrorKey(setOf(), "TripDetailsPage"))
 
         val stop = global?.getStop(filter?.stopId)
 

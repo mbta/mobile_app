@@ -94,7 +94,7 @@ struct AlertDetailsPage: View {
             }
         }
         .background(Color.fill2)
-        .global($globalResponse, errorKey: ErrorKey(type: KeyType.Permanent(), id: "AlertDetailsPage"))
+        .global($globalResponse, errorKey: ErrorKey(type: [], id: "AlertDetailsPage"))
         .onAppear { updateAlert() }
         .onChange(of: nearbyVM.alerts) { _ in updateAlert() }
         .onReceive(timer) { input in now = input }

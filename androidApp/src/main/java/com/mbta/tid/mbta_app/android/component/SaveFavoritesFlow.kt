@@ -49,7 +49,6 @@ import com.mbta.tid.mbta_app.model.RouteStopDirection
 import com.mbta.tid.mbta_app.model.RouteType
 import com.mbta.tid.mbta_app.model.Stop
 import com.mbta.tid.mbta_app.repositories.ErrorKey
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockSettingsRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.usecases.EditFavoritesContext
@@ -81,7 +80,7 @@ fun SaveFavoritesFlow(
         return
     }
 
-    val global = getGlobalData(ErrorKey(KeyType.Permanent, "SaveFavoritesFlow"))
+    val global = getGlobalData(ErrorKey(setOf(), "SaveFavoritesFlow"))
     val isUnFavoriting =
         directions.any { it.id == selectedDirection } &&
             isFavorite(RouteStopDirection(lineOrRoute.id, stop.id, selectedDirection))

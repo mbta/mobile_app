@@ -8,7 +8,6 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
-import com.mbta.tid.mbta_app.repositories.KeyType
 import com.mbta.tid.mbta_app.repositories.MockErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.MockGlobalRepository
 import kotlinx.coroutines.channels.Channel
@@ -45,7 +44,7 @@ class GetGlobalDataTest {
 
         var actualData: GlobalResponse? = null
         composeTestRule.setContent {
-            actualData = getGlobalData(ErrorKey(KeyType.Permanent, "errorKey"), globalRepo)
+            actualData = getGlobalData(ErrorKey(setOf(), "errorKey"), globalRepo)
         }
         // Data should be set immediately from the repo, even before getGlobalData has completed
         composeTestRule.waitUntilDefaultTimeout { globalData == actualData }
@@ -63,7 +62,7 @@ class GetGlobalDataTest {
         val errorRepo = MockErrorBannerStateRepository()
 
         composeTestRule.setContent {
-            getGlobalData(ErrorKey(KeyType.Permanent, "errorKey"), globalRepo, errorRepo)
+            getGlobalData(ErrorKey(setOf(), "errorKey"), globalRepo, errorRepo)
         }
 
         composeTestRule.waitUntilDefaultTimeout {
