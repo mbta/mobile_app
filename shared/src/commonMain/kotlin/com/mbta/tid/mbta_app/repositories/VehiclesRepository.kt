@@ -20,7 +20,7 @@ public interface IVehiclesRepository {
     public fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     )
 
@@ -45,7 +45,7 @@ internal class VehiclesRepository(
     override fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
@@ -94,7 +94,7 @@ constructor(
     override fun connect(
         routeId: LineOrRoute.Id,
         directionId: Int,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehiclesStreamDataResponse>) -> Unit,
     ) {
         onConnect(routeId, directionId)

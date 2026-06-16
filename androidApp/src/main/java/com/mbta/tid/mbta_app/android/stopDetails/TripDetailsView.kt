@@ -34,6 +34,7 @@ import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.ExplainerType
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripHeaderSpec
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.ITripDetailsViewModel
@@ -56,7 +57,8 @@ fun TripDetailsView(
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
-    val globalResponse: GlobalResponse? = getGlobalData(errorKey = "TripDetailsView")
+    val globalResponse: GlobalResponse? =
+        getGlobalData(errorKey = ErrorKey(setOf(), "TripDetailsView"))
     val state by tripDetailsVM.models.collectAsState()
     val tripData: TripData? = state.tripData
     val stopList = state.stopList

@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopMessageResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.orEmpty
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IPredictionsRepository
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -25,13 +26,13 @@ internal fun subscribeToPredictions(
     stopIds: List<String>?,
     sheetRoute: SheetRoutes?,
     active: Boolean,
-    errorKey: String,
+    errorKey: ErrorKey,
     onAnyMessageReceived: () -> Unit = {},
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     predictionsRepository: IPredictionsRepository = koinInject(),
     checkPredictionsStaleInterval: Duration = 5.seconds,
 ): PredictionsStreamDataResponse? {
-    val errorKey = "$errorKey.subscribeToPredictions"
+    val errorKey = errorKey.withSuffix("subscribeToPredictions")
     val staleTimer by timer(checkPredictionsStaleInterval)
 
     var predictions: PredictionsByStopJoinResponse? by remember { mutableStateOf(null) }

@@ -25,6 +25,7 @@ import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.MapFriendlyRouteResponse
 import com.mbta.tid.mbta_app.model.response.StopMapResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import com.mbta.tid.mbta_app.repositories.IRailRouteShapeRepository
@@ -738,7 +739,7 @@ public class MapViewModel(
 
     private fun fetchRailRouteShapes(onSuccess: (MapFriendlyRouteResponse) -> Unit) {
         CoroutineScope(iOCoroutineDispatcher).launch {
-            val errorKey = "MapViewModel.fetchRailRouteShapes"
+            val errorKey = ErrorKey(setOf(), "MapViewModel.fetchRailRouteShapes")
             fetchApi(
                 errorBannerRepo = errorBannerRepository,
                 errorKey = errorKey,

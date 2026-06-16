@@ -32,6 +32,7 @@ import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.Route
 import com.mbta.tid.mbta_app.model.TripDetailsPageFilter
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.routes.SheetRoutes
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
@@ -53,7 +54,7 @@ fun TripDetailsPage(
     tripDetailsVM: ITripDetailsViewModel = koinInject(),
 ) {
     val now by timer(updateInterval = 5.seconds)
-    val global = getGlobalData("TripDetailsPage")
+    val global = getGlobalData(ErrorKey(setOf(), "TripDetailsPage"))
 
     tripDetailsPageVM.koinScope = currentKoinScope()
     val tripDetailsPageState by tripDetailsPageVM.models.collectAsState()

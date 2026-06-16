@@ -45,6 +45,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RouteDetailsContext
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath
 import com.mbta.tid.mbta_app.model.routeDetailsPage.RoutePickerPath.Bus.routeType
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.utils.NavigationCallbacks
 import com.mbta.tid.mbta_app.viewModel.IErrorBannerViewModel
 import com.mbta.tid.mbta_app.viewModel.ISearchRoutesViewModel
@@ -63,7 +64,7 @@ fun RoutePickerView(
     errorBannerViewModel: IErrorBannerViewModel,
     searchRoutesViewModel: ISearchRoutesViewModel = koinInject(),
 ) {
-    val globalData = getGlobalData("RoutePickerView")
+    val globalData = getGlobalData(ErrorKey(setOf(), "RoutePickerView"))
     var searchInputState by rememberSaveable { mutableStateOf("") }
     var searchInputFocused by rememberSaveable { mutableStateOf(false) }
     val searchVMState by searchRoutesViewModel.models.collectAsState()

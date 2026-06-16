@@ -49,6 +49,7 @@ import com.mbta.tid.mbta_app.model.SubscriptionRequest
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.network.PhoenixSocket
 import com.mbta.tid.mbta_app.repositories.DefaultTab
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IAccessibilityStatusRepository
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISubscriptionsRepository
@@ -94,7 +95,7 @@ fun ContentView(
     }
 
     val alertData: AlertsStreamDataResponse? = subscribeToAlerts()
-    val globalResponse = getGlobalData("ContentView")
+    val globalResponse = getGlobalData(ErrorKey(setOf(), "ContentView"))
     val hideMaps = SettingsCache.get(Settings.HideMaps)
     val includeAccessibility = SettingsCache.get(Settings.StationAccessibility)
     val notificationsEnabled = SettingsCache.get(Settings.Notifications)
@@ -141,12 +142,13 @@ fun ContentView(
     }
 
     LaunchedEffect(null) {
+        val errorKey = ErrorKey(setOf(), "socket")
         socket.onError { error, response ->
             scope.launch {
-                errorBannerRepository.setDataError("socket", "$error $response") { socket.attach() }
+                errorBannerRepository.setDataError(errorKey, "$error $response") { socket.attach() }
             }
         }
-        socket.onAttach { scope.launch { errorBannerRepository.clearDataError("socket") } }
+        socket.onAttach { scope.launch { errorBannerRepository.clearDataError(errorKey) } }
     }
 
     LifecycleResumeEffect(null) {

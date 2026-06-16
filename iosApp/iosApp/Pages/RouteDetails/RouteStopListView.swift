@@ -155,7 +155,7 @@ struct RouteStopListView<RightSideContent: View>: View {
     private func loadRouteStops(routeId: Route.Id, directionId: Int32) {
         Task {
             await fetchApi(
-                errorKey: "RouteStopListView.loadRouteStops",
+                errorKey: ErrorKey(sheets: [], id: "RouteStopListView.loadRouteStops"),
                 getData: { try await routeStopsRepository.getRouteSegments(
                     routeId: routeId,
                     directionId: directionId

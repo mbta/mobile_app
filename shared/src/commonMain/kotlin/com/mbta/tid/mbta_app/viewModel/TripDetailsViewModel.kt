@@ -12,6 +12,7 @@ import com.mbta.tid.mbta_app.model.TripDetailsStopList
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TripData
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISentryRepository
 import com.mbta.tid.mbta_app.repositories.ITripPredictionsRepository
@@ -87,7 +88,7 @@ public class TripDetailsViewModel(
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
         var active: Boolean by remember { mutableStateOf(true) }
 
-        val errorKey = "TripDetailsViewModel"
+        val errorKey = ErrorKey(setOf(), "TripDetailsViewModel")
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val tripData =

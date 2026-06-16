@@ -2,6 +2,7 @@ package com.mbta.tid.mbta_app.android.util
 
 import android.util.Log
 import com.mbta.tid.mbta_app.model.response.ApiResult
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 
 /**
@@ -11,7 +12,7 @@ import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
  */
 suspend fun <T : Any> fetchApi(
     errorBannerRepo: IErrorBannerStateRepository,
-    errorKey: String,
+    errorKey: ErrorKey,
     getData: suspend () -> ApiResult<T>,
     onSuccess: suspend (T) -> Unit = {},
     onRefreshAfterError: () -> Unit,

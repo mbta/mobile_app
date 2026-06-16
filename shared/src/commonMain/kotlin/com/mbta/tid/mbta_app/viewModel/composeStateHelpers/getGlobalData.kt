@@ -5,6 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.IGlobalRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 import org.koin.compose.koinInject
 
 private fun fetchGlobalData(
-    errorKey: String,
+    errorKey: ErrorKey,
     errorBannerRepository: IErrorBannerStateRepository,
     globalRepository: IGlobalRepository,
     coroutineDispatcher: CoroutineDispatcher,
@@ -41,7 +42,7 @@ private fun fetchGlobalData(
 
 @Composable
 internal fun getGlobalData(
-    errorKey: String,
+    errorKey: ErrorKey,
     globalRepository: IGlobalRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
@@ -49,7 +50,7 @@ internal fun getGlobalData(
     val globalResponse: GlobalResponse? by globalRepository.state.collectAsState()
     LaunchedEffect(Unit) {
         fetchGlobalData(
-            "$errorKey.getGlobalData",
+            errorKey.withSuffix("getGlobalData"),
             errorBannerRepository,
             globalRepository,
             coroutineDispatcher,

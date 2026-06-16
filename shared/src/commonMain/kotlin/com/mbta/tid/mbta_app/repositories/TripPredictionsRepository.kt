@@ -16,7 +16,7 @@ import org.koin.core.component.KoinComponent
 public interface ITripPredictionsRepository {
     public fun connect(
         tripId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     )
 
@@ -50,7 +50,7 @@ internal class TripPredictionsRepository(
 
     override fun connect(
         tripId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
@@ -86,7 +86,7 @@ constructor(
 
     override fun connect(
         tripId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<PredictionsStreamDataResponse>) -> Unit,
     ) {
         onReceive(ApiResult.Ok(response))

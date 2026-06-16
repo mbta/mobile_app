@@ -471,7 +471,7 @@ final class HomeMapViewTests: XCTestCase {
 
         func connect(routeId _: LineOrRoute.Id,
                      directionId _: Int32,
-                     errorKey _: String,
+                     errorKey _: ErrorKey,
                      onReceive _: @escaping (ApiResult<VehiclesStreamDataResponse>) -> Void) {
             connectExp?.fulfill()
         }

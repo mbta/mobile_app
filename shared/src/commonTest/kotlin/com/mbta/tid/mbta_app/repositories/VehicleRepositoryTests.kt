@@ -39,7 +39,7 @@ class VehicleRepositoryTests {
         vehicleRepo.connect(
             vehicleId = "Test",
             onReceive = {},
-            errorKey = "testChannelClearedBeforeJoin",
+            errorKey = ErrorKey(setOf(), "testChannelClearedBeforeJoin"),
         )
         advanceUntilIdle()
         verify { channel.detach() }

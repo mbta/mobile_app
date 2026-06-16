@@ -13,7 +13,7 @@ import org.koin.core.component.KoinComponent
 public interface IVehicleRepository {
     public fun connect(
         vehicleId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     )
 
@@ -37,7 +37,7 @@ internal class VehicleRepository(
 
     override fun connect(
         vehicleId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     ) {
         channelOwner.connect(
@@ -68,7 +68,7 @@ constructor(
 ) : IVehicleRepository {
     override fun connect(
         vehicleId: String,
-        errorKey: String,
+        errorKey: ErrorKey,
         onReceive: (ApiResult<VehicleStreamDataResponse>) -> Unit,
     ) {
         outcome?.let { onReceive(it) }

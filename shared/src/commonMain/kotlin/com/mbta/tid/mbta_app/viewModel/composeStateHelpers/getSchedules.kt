@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.mbta.tid.mbta_app.model.response.ScheduleResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.IErrorBannerStateRepository
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
@@ -19,7 +20,7 @@ import org.koin.compose.koinInject
 
 private fun fetchSchedules(
     stopIds: List<String>,
-    errorKey: String,
+    errorKey: ErrorKey,
     errorBannerRepository: IErrorBannerStateRepository,
     schedulesRepository: ISchedulesRepository,
     coroutineDispatcher: CoroutineDispatcher,
@@ -48,12 +49,12 @@ private fun fetchSchedules(
 @Composable
 internal fun getSchedules(
     stopIds: List<String>?,
-    errorKey: String,
+    errorKey: ErrorKey,
     schedulesRepository: ISchedulesRepository = koinInject(),
     errorBannerRepository: IErrorBannerStateRepository = koinInject(),
     coroutineDispatcher: CoroutineDispatcher = Dispatchers.IO,
 ): ScheduleResponse? {
-    val errorKey = "$errorKey.getSchedules"
+    val errorKey = errorKey.withSuffix("getSchedules")
     var result: ScheduleResponse? by remember { mutableStateOf(null) }
 
     LaunchedEffect(stopIds) {

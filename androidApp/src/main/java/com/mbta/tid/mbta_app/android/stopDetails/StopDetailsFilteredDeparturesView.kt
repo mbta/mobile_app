@@ -60,6 +60,7 @@ import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.ApiResult
 import com.mbta.tid.mbta_app.model.response.NextScheduleResponse
 import com.mbta.tid.mbta_app.model.stopDetailsPage.TileData
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.ISchedulesRepository
 import com.mbta.tid.mbta_app.repositories.Settings
 import com.mbta.tid.mbta_app.routes.SheetRoutes
@@ -85,7 +86,7 @@ fun StopDetailsFilteredDeparturesView(
     viewModel: IStopDetailsViewModel = koinInject(),
     analytics: Analytics = koinInject(),
 ) {
-    val global = getGlobalData("StopDetailsFilteredDeparturesView")
+    val global = getGlobalData(ErrorKey(setOf(), "StopDetailsFilteredDeparturesView"))
     val leafFormat = remember(leaf, now, global) { leaf.format(now, global) }
     val tileData = leafFormat.tileData(selectedDirection.destination)
     val noPredictionsStatus = leafFormat.noPredictionsStatus()
