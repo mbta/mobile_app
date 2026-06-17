@@ -54,7 +54,7 @@ struct NearbyTransitView: View {
             }
         }
         .favorites($favorites)
-        .global($globalData, errorKey: ErrorKey(sheets: [], id: "NearbyTransitView"))
+        .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView"))
         .onAppear {
             loadEverything()
             didAppear?(self)
@@ -234,7 +234,7 @@ struct NearbyTransitView: View {
                 return
             }
             await fetchApi(
-                errorKey: ErrorKey(sheets: [], id: "NearbyTransitView.getSchedule"),
+                errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView.getSchedule"),
                 getData: { try await schedulesRepository.getSchedule(stopIds: stopIds) },
                 onSuccess: { scheduleResponse = $0 },
                 onRefreshAfterError: loadEverything
@@ -246,7 +246,7 @@ struct NearbyTransitView: View {
         guard let stopIds else { return }
         predictionsRepository.connect(
             stopIds: stopIds,
-            errorKey: ErrorKey(sheets: [], id: "NearbyTransitView.joinPredictions"),
+            errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView.joinPredictions"),
             onJoin: { outcome in
                 DispatchQueue.main.async {
                     switch onEnum(of: outcome) {

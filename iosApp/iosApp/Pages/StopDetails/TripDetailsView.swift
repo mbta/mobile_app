@@ -84,7 +84,7 @@ struct TripDetailsView: View {
     var body: some View {
         content
             .explainer($explainer)
-            .global($global, errorKey: ErrorKey(sheets: [], id: "TripDetailsView"))
+            .global($global, errorKey: .companion.fromSheetTypes(sheetTypes: [.tripDetails], id: "TripDetailsView"))
             .onAppear {
                 tripDetailsVMState = tripDetailsVM.models.value
             }

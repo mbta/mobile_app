@@ -193,7 +193,10 @@ struct StopDetailsFilteredDepartureDetails: View {
                 )
             }
         }
-        .global($global, errorKey: ErrorKey(sheets: [], id: "StopDetailsFilteredDepartureDetails"))
+        .global(
+            $global,
+            errorKey: .companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsFilteredDepartureDetails")
+        )
         .onAppear {
             handleViewportForStatus(noPredictionsStatus)
             loadNextScheduleForStatus(noPredictionsStatus)
