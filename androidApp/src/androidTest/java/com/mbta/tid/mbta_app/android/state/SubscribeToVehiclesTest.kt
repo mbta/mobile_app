@@ -20,6 +20,7 @@ import com.mbta.tid.mbta_app.model.StopDetailsFilter
 import com.mbta.tid.mbta_app.model.UpcomingTrip
 import com.mbta.tid.mbta_app.model.Vehicle
 import com.mbta.tid.mbta_app.model.response.VehiclesStreamDataResponse
+import com.mbta.tid.mbta_app.repositories.ErrorKey
 import com.mbta.tid.mbta_app.repositories.MockVehiclesRepository
 import com.mbta.tid.mbta_app.utils.EasternTimeInstant
 import com.mbta.tid.mbta_app.viewModel.MockRouteCardDataViewModel
@@ -53,7 +54,13 @@ class SubscribeToVehiclesTest {
 
         composeTestRule.setContent {
             var filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
+            vehicles =
+                subscribeToVehicles(
+                    filter,
+                    ErrorKey(setOf(), "error"),
+                    MockRouteCardDataViewModel(),
+                    vehiclesRepo,
+                )
         }
 
         composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(Route.Id("route_1"), 1) }
@@ -88,7 +95,13 @@ class SubscribeToVehiclesTest {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalLifecycleOwner provides lifecycleOwner) {
                 var filter by remember { stateFilter }
-                vehicles = subscribeToVehicles(filter, MockRouteCardDataViewModel(), vehiclesRepo)
+                vehicles =
+                    subscribeToVehicles(
+                        filter,
+                        ErrorKey(setOf(), "error"),
+                        MockRouteCardDataViewModel(),
+                        vehiclesRepo,
+                    )
             }
         }
 
@@ -182,7 +195,13 @@ class SubscribeToVehiclesTest {
 
         composeTestRule.setContent {
             val filter by remember { stateFilter }
-            vehicles = subscribeToVehicles(filter, routeCardDataVM, vehiclesRepo)
+            vehicles =
+                subscribeToVehicles(
+                    filter,
+                    ErrorKey(setOf(), "error"),
+                    routeCardDataVM,
+                    vehiclesRepo,
+                )
         }
 
         composeTestRule.waitUntilDefaultTimeout { connectProps == Pair(line.id, 0) }
