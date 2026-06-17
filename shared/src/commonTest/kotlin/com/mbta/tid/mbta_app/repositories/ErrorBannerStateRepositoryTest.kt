@@ -75,7 +75,6 @@ class ErrorBannerStateRepositoryTest {
             1,
             SheetRoutes.NearbyTransit,
         ) {}
-
         repo.setDataError(ErrorKey(setOf(), "global"), "") {}
 
         assertIs<ErrorBannerState.DataError>(repo.state.value)
@@ -98,6 +97,42 @@ class ErrorBannerStateRepositoryTest {
         repo.state.value?.action?.invoke()
 
         assertEquals(setOf("a", "b", "c"), actionsCalled)
+    }
+
+    @Test
+    fun `data error discarded if for different page`() = runTest {
+        val repo = ErrorBannerStateRepository()
+        val actionsCalled = mutableSetOf<String>()
+
+        repo.setSheetRoute(SheetRoutes.Favorites)
+
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.StopDetails::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(null, (repo.state.value))
+
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.Favorites::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+    }
+
+    @Test
+    fun `setSheetRoute clears errors for other route`() = runTest {
+        val repo = ErrorBannerStateRepository()
+        val actionsCalled = mutableSetOf<String>()
+
+        repo.setDataError(ErrorKey(setOf(SheetRoutes.Favorites::class), "a"), "") {
+            actionsCalled.add("a")
+        }
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+
+        repo.setSheetRoute(SheetRoutes.Favorites)
+        // because setSheetRoute wasn't called yet, we don't clear the existing error
+        assertEquals(setOf("a"), ((repo.state.value as ErrorBannerState.DataError).messages))
+
+        repo.setSheetRoute(SheetRoutes.NearbyTransit)
+        assertEquals(null, repo.state.value)
     }
 
     @Test

@@ -567,7 +567,6 @@ public class MapViewModel(
                 is LayerState.StopSelected -> {
                     viewportManager.stopCenter(layerState.stop)
                 }
-
                 is LayerState.TripSelected -> {
                     // there is no vehicle associated with the trip, so just center on the stop
                     // if there is one

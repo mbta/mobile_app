@@ -87,7 +87,6 @@ internal fun getTripData(
     vehicleRepository: IVehicleRepository = koinInject(),
 ): TripData? {
     val errorKey = errorKey.withSuffix("getTripData")
-
     var trip: Trip? by remember { mutableStateOf(null) }
     var tripSchedules: TripSchedulesResponse? by remember { mutableStateOf(null) }
     var tripPredictions: PredictionsStreamDataResponse? by remember { mutableStateOf(null) }

@@ -67,8 +67,9 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                 },
                 button = {
                     RefreshButton(label = stringResource(R.string.reload_data)) {
-                        errorState.action()
+                        val action = errorState.action
                         vm.clearState()
+                        action()
                     }
                 },
             )
@@ -106,8 +107,9 @@ fun ErrorBanner(vm: IErrorBannerViewModel, modifier: Modifier = Modifier) {
                     },
                     button = {
                         RefreshButton(label = stringResource(R.string.refresh_predictions)) {
-                            errorState.action()
+                            val action = errorState.action
                             vm.clearState()
+                            action()
                         }
                     },
                 )

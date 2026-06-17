@@ -102,8 +102,7 @@ public class StopDetailsViewModel(
         var awaitingPredictionsAfterBackground: Boolean by remember { mutableStateOf(false) }
 
         var active: Boolean by remember { mutableStateOf(true) }
-
-        val errorKey = ErrorKey(setOf(), "StopDetailsViewModel")
+        val errorKey = ErrorKey(setOf(SheetRoutes.StopDetails::class), "StopDetailsViewModel")
         val globalData = getGlobalData(errorKey, coroutineDispatcher = coroutineDispatcher)
 
         val stopIds =

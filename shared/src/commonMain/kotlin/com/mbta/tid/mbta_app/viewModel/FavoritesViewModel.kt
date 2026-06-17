@@ -143,8 +143,7 @@ public class FavoritesViewModel(
         var loadedLocation: Position? by remember { mutableStateOf(null) }
 
         var active: Boolean by remember { mutableStateOf(false) }
-
-        val errorKey = ErrorKey(setOf(), "FavoritesViewModel")
+        val errorKey = ErrorKey(setOf(SheetRoutes.Favorites::class), "FavoritesViewModel")
         val globalData = getGlobalData(errorKey)
         val stopIds =
             remember(favorites, globalData) {

@@ -76,7 +76,6 @@ internal class ErrorBannerViewModelTest : KoinTest {
 
         testViewModelFlow(viewModel).test {
             assertEquals(ErrorBannerViewModel.State(false, null), awaitItem())
-
             errorRepo.setDataError(ErrorKey(setOf(), "FakeError"), "FakeDetails", action)
             val state = awaitItem().errorState
             assertEquals(setOf("FakeError"), (state as ErrorBannerState.DataError).messages)

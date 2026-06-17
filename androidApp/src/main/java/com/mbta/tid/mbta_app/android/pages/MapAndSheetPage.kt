@@ -339,7 +339,12 @@ fun MapAndSheetPage(
                     is SheetRoutes.StopDetails -> currentNavEntry.stopFilter
                     is SheetRoutes.TripDetails -> currentNavEntry.filter.stopFilter
                     else -> null
-                }
+                },
+            errorKey =
+                ErrorKey(
+                    setOf(SheetRoutes.TripDetails::class, SheetRoutes.StopDetails::class),
+                    "VehiclesViewModel.subscribeToVehicles",
+                ),
         )
 
     LaunchedEffect(vehiclesData) { mapViewModel.vehiclesChanged(vehiclesData) }
@@ -661,7 +666,10 @@ fun MapAndSheetPage(
             analytics.track(AnalyticsScreen.TripDetails)
         }
 
-        val global = getGlobalData(ErrorKey(setOf(), "TripDetailsSheetContents"))
+        val global =
+            getGlobalData(
+                ErrorKey(setOf(SheetRoutes.TripDetails::class), "TripDetailsSheetContents")
+            )
         val lineOrRoute = global?.getLineOrRoute(navRoute.filter.routeId)
         val routeColor = lineOrRoute?.backgroundColor?.let { Color.fromHex(it) }
 
