@@ -31,6 +31,38 @@ internal sealed class NetworkStatus {
  * retried across all pages.
  */
 public data class ErrorKey(public val sheets: Set<KClass<out SheetRoutes>>, public val id: String) {
+
+    // Convenience constructor and enum for working around swift sealed class and class
+    // reflection interop issues https://skie.touchlab.co/features/sealed#limitations
+
+    public companion object {
+        public fun fromSheetTypes(sheetTypes: Set<SheetType>, id: String): ErrorKey {
+            return ErrorKey(sheets = sheetTypes.map { it.toSheetRoutesClass() }.toSet(), id)
+        }
+    }
+
+    public enum class SheetType {
+        StopDetails,
+        TripDetails,
+        RouteDetails,
+        EditFavorites,
+        Favorites,
+        NearbyTransit,
+        RoutePicker;
+
+        internal fun toSheetRoutesClass(): KClass<out SheetRoutes> {
+            return when (this) {
+                StopDetails -> SheetRoutes.StopDetails::class
+                TripDetails -> SheetRoutes.TripDetails::class
+                RouteDetails -> SheetRoutes.RouteDetails::class
+                EditFavorites -> SheetRoutes.EditFavorites::class
+                Favorites -> SheetRoutes.Favorites::class
+                NearbyTransit -> SheetRoutes.NearbyTransit::class
+                RoutePicker -> SheetRoutes.RouteDetails::class
+            }
+        }
+    }
+
     public fun withSuffix(suffix: String): ErrorKey {
         return this.copy(id = "$id.$suffix")
     }

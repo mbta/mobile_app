@@ -51,7 +51,7 @@ struct RouteDetailsView: View {
                 loadingBody()
             }
         }
-        .global($globalData, errorKey: ErrorKey(sheets: [], id: "RouteDetailsView"))
+        .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.editFavorites], id: "RouteDetailsView"))
         .onChange(of: globalData) { globalData in
             lineOrRoute = globalData?.getLineOrRoute(lineOrRouteId: selectionId)
         }

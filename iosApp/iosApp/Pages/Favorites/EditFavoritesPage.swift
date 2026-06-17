@@ -101,7 +101,10 @@ struct EditFavoritesPage: View {
                 toastVM.hideToast()
             }
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
-            .global($globalResponse, errorKey: ErrorKey(sheets: [], id: "AlertDetailsPage"))
+            .global(
+                $globalResponse,
+                errorKey: .companion.fromSheetTypes(sheetTypes: [.editFavorites], id: "AlertDetailsPage")
+            )
             .task {
                 for await model in viewModel.models {
                     favoritesVMState = model

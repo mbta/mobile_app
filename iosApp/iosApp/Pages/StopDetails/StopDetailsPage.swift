@@ -89,7 +89,10 @@ struct StopDetailsPage: View {
     var body: some View {
         stopDetails
             .favorites($favorites)
-            .global($global, errorKey: ErrorKey(sheets: [], id: "StopDetailsPage"))
+            .global(
+                $global,
+                errorKey: ErrorKey.companion.fromSheetTypes(sheetTypes: [.stopDetails], id: "StopDetailsPage")
+            )
             .manageVM(stopDetailsVM, $vmState, alerts: nearbyVM.alerts, filters: filters, now: now.toEasternInstant())
             .manageVM(routeCardDataVM, $routeCardDataState)
             .task {
