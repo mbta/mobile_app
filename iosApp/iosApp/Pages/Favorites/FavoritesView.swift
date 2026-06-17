@@ -83,7 +83,7 @@ struct FavoritesView: View {
                 showStopHeader: true
             )
         }
-        .global($globalData, errorKey: ErrorKey.companion.fromSheetTypes(sheetTypes: [.favorites], id: "FavoritesView"))
+        .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.favorites], id: "FavoritesView"))
         .onAppear {
             favoritesVM.setActive(active: true, wasSentToBackground: false)
             favoritesVM.setAlerts(alerts: nearbyVM.alerts)
