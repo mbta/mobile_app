@@ -24,6 +24,7 @@ import SwiftUI
 struct ProductionAppView: View {
     @ObserveInjection var inject
     @StateObject var locationDataManager: LocationDataManager
+    @StateObject var navigationManager: NavigationManager
     @StateObject var contentVM: ContentViewModel = .init()
     @StateObject var socketProvider: SocketProvider
     @StateObject var viewportProvider: ViewportProvider
@@ -52,6 +53,7 @@ struct ProductionAppView: View {
         Self.addSocketErrorHandling(socket: socket, errorBannerRepository: errorBannerRepository)
         // ignore updates less than 10m
         _locationDataManager = StateObject(wrappedValue: LocationDataManager(distanceFilter: 10))
+        _navigationManager = StateObject(wrappedValue: NavigationManager())
         _socketProvider = StateObject(wrappedValue: SocketProvider(socket: socket))
         _viewportProvider = StateObject(wrappedValue: ViewportProvider())
     }
@@ -61,6 +63,7 @@ struct ProductionAppView: View {
             ContentView(contentVM: contentVM)
                 .font(Typography.body)
                 .environmentObject(locationDataManager)
+                .environmentObject(navigationManager)
                 .environmentObject(socketProvider)
                 .environmentObject(viewportProvider)
         }

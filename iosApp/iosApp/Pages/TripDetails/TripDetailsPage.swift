@@ -12,11 +12,11 @@ import SwiftUI
 struct TripDetailsPage: View {
     @ObserveInjection var inject
     var filter: TripDetailsPageFilter
+    var alerts: AlertsStreamDataResponse?
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel = ViewModelDI().errorBanner
     var mapVM: IMapViewModel = ViewModelDI().map
-    var nearbyVM: NearbyViewModel
     var tripDetailsPageVM: ITripDetailsPageViewModel = ViewModelDI().tripDetailsPage
     var tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
 
@@ -28,6 +28,8 @@ struct TripDetailsPage: View {
     @State var tripDetailsPageState: TripDetailsPageViewModel.State?
     @State var tripDetailsState: TripDetailsViewModel.State?
 
+    @EnvironmentObject var navManager: NavigationManager
+
     var alertSummaries: [String: AlertSummary?] {
         tripDetailsPageState?.alertSummaries as? [String: AlertSummary?] ?? [:]
     }
@@ -38,7 +40,7 @@ struct TripDetailsPage: View {
 
     func onOpenAlertDetails(alert: Shared.Alert) {
         let routes: [Route]? = if let route { [route] } else { nil }
-        nearbyVM.pushNavEntry(.alertDetails(
+        navManager.pushNavEntry(.alertDetails(
             alertId: alert.id,
             line: nil,
             routes: routes,
@@ -74,17 +76,16 @@ struct TripDetailsPage: View {
                         routeAccents: routeAccents,
                         onOpenAlertDetails: onOpenAlertDetails,
                         errorBannerVM: errorBannerVM,
-                        nearbyVM: nearbyVM,
                         mapVM: mapVM,
                         tripDetailsVM: tripDetailsVM,
                     )
                 }
             }
         }
-        .manageVM(tripDetailsPageVM, $tripDetailsPageState, alerts: nearbyVM.alerts, filter: filter, now: now)
+        .manageVM(tripDetailsPageVM, $tripDetailsPageState, alerts: alerts, filter: filter, now: now)
         .manageVM(
             tripDetailsVM,
-            alerts: nearbyVM.alerts,
+            alerts: alerts,
             context: .tripDetails,
             filters: filter,
         )

@@ -15,25 +15,24 @@ import SwiftUI
 
 struct NearbyTransitPage: View {
     @ObserveInjection var inject
+    var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
-    @ObservedObject var viewportProvider: ViewportProvider
-
     let noNearbyStops: () -> NoNearbyStopsView
 
     @State var location: CLLocationCoordinate2D?
 
+    @EnvironmentObject var navManager: NavigationManager
+    @EnvironmentObject var viewportProvider: ViewportProvider
+
     let inspection = Inspection<Self>()
 
     init(
+        alerts: AlertsStreamDataResponse?,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
-        viewportProvider: ViewportProvider,
         noNearbyStops: @escaping () -> NoNearbyStopsView
     ) {
+        self.alerts = alerts
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
-        self.viewportProvider = viewportProvider
         self.noNearbyStops = noNearbyStops
     }
 
@@ -49,17 +48,18 @@ struct NearbyTransitPage: View {
                 ErrorBanner(errorBannerVM, padding: .init([.horizontal, .bottom], 16))
                 DebugView { EmptyView() }
                 NearbyTransitView(
+                    alerts: alerts,
                     location: $location,
                     setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },
-                    nearbyVM: nearbyVM,
-                    noNearbyStops: noNearbyStops
+                    noNearbyStops: noNearbyStops,
+                    viewportProvider: viewportProvider,
                 )
                 .onReceive(
                     viewportProvider.cameraStatePublisher
                         .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
 
                 ) { newCameraState in
-                    guard nearbyVM.isNearbyVisible() else { return }
+                    guard navManager.isNearbyVisible() else { return }
                     location = newCameraState.center
                 }
                 .onReceive(inspection.notice) { inspection.visit(self, $0) }
@@ -69,14 +69,12 @@ struct NearbyTransitPage: View {
                 if isManuallyCentering {
                     // The user is manually moving the map, clear the nearby state and
                     // reload it once the've stopped manipulating the map
-                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }
             .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
                 if isFollowingPuck {
                     // The user just recentered the map, clear the nearby state
-                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }

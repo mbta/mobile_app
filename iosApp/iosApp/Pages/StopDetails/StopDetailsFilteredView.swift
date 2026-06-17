@@ -17,6 +17,7 @@ struct StopDetailsFilteredView: View {
     var tripFilter: TripDetailsFilter?
 
     var routeData: StopDetailsViewModel.RouteData?
+    var alerts: AlertsStreamDataResponse?
     var favorites: Favorites
     var global: GlobalResponse?
     var now: Date
@@ -27,7 +28,6 @@ struct StopDetailsFilteredView: View {
     var navCallbacks: NavigationCallbacks
 
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
     var tripDetailsVM: ITripDetailsViewModel
@@ -37,6 +37,7 @@ struct StopDetailsFilteredView: View {
     @State var alertSummaries: [String: AlertSummary?] = [:]
 
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
+    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -48,6 +49,7 @@ struct StopDetailsFilteredView: View {
         stopFilter: StopDetailsFilter,
         tripFilter: TripDetailsFilter?,
         routeData: StopDetailsViewModel.RouteData?,
+        alerts: AlertsStreamDataResponse?,
         favorites: Favorites,
         global: GlobalResponse?,
         now: Date,
@@ -56,7 +58,6 @@ struct StopDetailsFilteredView: View {
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
-        nearbyVM: NearbyViewModel,
         mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
         favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
@@ -66,6 +67,7 @@ struct StopDetailsFilteredView: View {
         self.stopFilter = stopFilter
         self.tripFilter = tripFilter
         self.routeData = routeData
+        self.alerts = alerts
         self.favorites = favorites
         self.global = global
         self.now = now
@@ -74,7 +76,6 @@ struct StopDetailsFilteredView: View {
         self.setTripFilter = setTripFilter
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
         self.favoritesVM = favoritesVM
@@ -135,7 +136,7 @@ struct StopDetailsFilteredView: View {
         }
         .manageVM(
             tripDetailsVM,
-            alerts: nearbyVM.alerts,
+            alerts: alerts,
             context: .stopDetails,
             filters: tripPageFilter,
         )
@@ -217,10 +218,8 @@ struct StopDetailsFilteredView: View {
                 favorite: isFavorite,
                 now: now.toEasternInstant(),
                 errorBannerVM: errorBannerVM,
-                nearbyVM: nearbyVM,
                 mapVM: mapVM,
                 stopDetailsVM: stopDetailsVM,
-                viewportProvider: .init()
             )
         } else {
             loadingDepartures()
@@ -263,10 +262,8 @@ struct StopDetailsFilteredView: View {
             favorite: isFavorite,
             now: now.toEasternInstant(),
             errorBannerVM: errorBannerVM,
-            nearbyVM: nearbyVM,
             mapVM: mapVM,
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
         ).loadingPlaceholder()
     }
 
@@ -295,7 +292,7 @@ struct StopDetailsFilteredView: View {
                         )
                     },
                     onClose: { inSaveFavoritesFlow = false },
-                    pushNavEntry: { nearbyVM.pushNavEntry($0) },
+                    pushNavEntry: { navManager.pushNavEntry($0) },
                 )
             }
 

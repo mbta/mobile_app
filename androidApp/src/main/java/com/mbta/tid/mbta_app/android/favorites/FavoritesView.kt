@@ -88,8 +88,10 @@ fun FavoritesView(
     }
 
     LaunchedEffect(state.loadedLocation) {
-        state.loadedLocation?.let { setLastLocation(it) }
-        setIsTargeting(false)
+        state.loadedLocation?.let {
+            setLastLocation(it)
+            setIsTargeting(false)
+        }
     }
 
     LaunchedEffect(state.favorites, notificationsEnabled) {

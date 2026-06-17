@@ -127,11 +127,11 @@ struct WorldCupBlurb: View {
         favorite: false,
         now: .now(),
         errorBannerVM: MockErrorBannerViewModel(),
-        nearbyVM: .init(),
         mapVM: MockMapViewModel(),
         stopDetailsVM: MockStopDetailsViewModel(),
-        viewportProvider: .init()
+        schedulesRepository: MockScheduleRepository()
     )
     .padding(16)
     .withFixedSettings([:])
+    .environmentObject(NavigationManager())
 }

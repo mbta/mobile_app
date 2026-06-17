@@ -12,7 +12,6 @@ import SwiftUI
 struct SearchOverlay: View {
     @ObserveInjection var inject
     @ObservedObject var searchObserver: TextFieldObserver
-    @ObservedObject var nearbyVM: NearbyViewModel
     @State var searchVM: SearchViewModel
 
     let globalRepository: IGlobalRepository
@@ -20,13 +19,11 @@ struct SearchOverlay: View {
 
     init(
         searchObserver: TextFieldObserver,
-        nearbyVM: NearbyViewModel,
         searchVM: SearchViewModel = ViewModelDI().search,
         globalRepository: IGlobalRepository = RepositoryDI().global,
         searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults
     ) {
         self.searchObserver = searchObserver
-        self.nearbyVM = nearbyVM
         self.searchVM = searchVM
         self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
@@ -39,7 +36,6 @@ struct SearchOverlay: View {
                 ZStack(alignment: .top) {
                     SearchResultsContainer(
                         query: searchObserver.searchText,
-                        nearbyVM: nearbyVM,
                         searchVM: searchVM
                     )
                     Divider()

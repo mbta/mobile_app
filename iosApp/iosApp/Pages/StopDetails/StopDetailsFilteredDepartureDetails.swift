@@ -29,13 +29,12 @@ struct StopDetailsFilteredDepartureDetails: View {
     @State var nextScheduleResponse: NextScheduleResponse?
 
     var errorBannerVM: IErrorBannerViewModel
-    @ObservedObject var nearbyVM: NearbyViewModel
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
     var schedulesRepository: ISchedulesRepository
 
+    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var viewportProvider: ViewportProvider
-
     @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
@@ -101,11 +100,15 @@ struct StopDetailsFilteredDepartureDetails: View {
         tripFilter: TripDetailsFilter?,
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         setTripFilter: @escaping (TripDetailsFilter?) -> Void,
-        leaf: RouteCardData.Leaf, alertSummaries: [String: AlertSummary?],
-        selectedDirection: Direction, favorite: Bool, now: EasternTimeInstant,
-        errorBannerVM: IErrorBannerViewModel, nearbyVM: NearbyViewModel, mapVM: IMapViewModel,
-        stopDetailsVM: IStopDetailsViewModel, schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
-        viewportProvider _: ViewportProvider
+        leaf: RouteCardData.Leaf,
+        alertSummaries: [String: AlertSummary?],
+        selectedDirection: Direction,
+        favorite: Bool,
+        now: EasternTimeInstant,
+        errorBannerVM: IErrorBannerViewModel,
+        mapVM: IMapViewModel,
+        stopDetailsVM: IStopDetailsViewModel,
+        schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -118,7 +121,6 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.favorite = favorite
         self.now = now
         self.errorBannerVM = errorBannerVM
-        self.nearbyVM = nearbyVM
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
         self.schedulesRepository = schedulesRepository
@@ -188,7 +190,6 @@ struct StopDetailsFilteredDepartureDetails: View {
                     routeAccents: routeAccents,
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
                     errorBannerVM: errorBannerVM,
-                    nearbyVM: nearbyVM,
                     mapVM: mapVM,
                 )
             }
@@ -260,7 +261,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     DepartureTile(
                         data: tileData,
                         onTap: {
-                            nearbyVM.navigationStack.lastTripDetailsFilter = .init(
+                            navManager.navigationStack.lastTripDetailsFilter = .init(
                                 tripId: tileData.upcoming.trip.id,
                                 vehicleId: tileData.upcoming.prediction?.vehicleId,
                                 stopSequence: tileData.upcoming.stopSequence,
@@ -334,7 +335,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         case let .line(line): Array(line.routes)
         case let .route(route): [route.route]
         }
-        nearbyVM.pushNavEntry(.alertDetails(
+        navManager.pushNavEntry(.alertDetails(
             alertId: alertId,
             line: spec == .elevator ? nil : line,
             routes: spec == .elevator ? nil : routes,

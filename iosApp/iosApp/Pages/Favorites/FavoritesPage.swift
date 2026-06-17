@@ -12,23 +12,26 @@ import SwiftUI
 
 struct FavoritesPage: View {
     @ObserveInjection var inject
+    var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: FavoritesViewModel
-    var nearbyVM: NearbyViewModel
     var toastVM: IToastViewModel = ViewModelDI().toast
     @ObservedObject var viewportProvider: ViewportProvider
 
     @State var location: CLLocationCoordinate2D?
 
+    @EnvironmentObject var navManager: NavigationManager
+
     var body: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
             FavoritesView(
+                alerts: alerts,
                 errorBannerVM: errorBannerVM,
                 favoritesVM: favoritesVM,
-                nearbyVM: nearbyVM,
                 toastVM: toastVM,
-                location: $location
+                viewportProvider: viewportProvider,
+                location: $location,
             )
             .toolbarBackground(.visible, for: .tabBar)
             .onReceive(
@@ -36,21 +39,19 @@ struct FavoritesPage: View {
                     .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
 
             ) { newCameraState in
-                guard nearbyVM.isFavoritesVisible() else { return }
+                guard navManager.isFavoritesVisible() else { return }
                 location = newCameraState.center
             }
             .onChange(of: viewportProvider.isManuallyCentering) { isManuallyCentering in
                 if isManuallyCentering {
                     // The user is manually moving the map, clear the nearby state and
                     // reload it once the've stopped manipulating the map
-                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }
             .onChange(of: viewportProvider.isFollowingPuck) { isFollowingPuck in
                 if isFollowingPuck {
                     // The user just recentered the map, clear the nearby state
-                    nearbyVM.clearNearbyData()
                     location = nil
                 }
             }
