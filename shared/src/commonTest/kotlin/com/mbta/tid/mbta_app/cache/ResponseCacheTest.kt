@@ -32,10 +32,11 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.Serializable
 import okio.fakefilesystem.FakeFileSystem
@@ -597,22 +598,23 @@ class ResponseCacheTest {
         assertEquals(ApiResult.Ok(globalData), cache.getOrFetch { fail() })
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun `runs post-processing`() = runTest {
         val cache = ResponseCache.create<List<Int>>(cacheKey = "cache")
-        val stateTest = launch {
-            cache.state.test {
-                assertEquals(null, awaitItem())
-                assertEquals(listOf(0, 1), awaitItem())
-            }
-        }
         val httpClient = HttpClient(MockEngine { respondOk("[0]") })
         startKoin { modules(module { single { mockJsonPersistence() } }) }
-        val actualData =
-            cache.getOrFetch(postprocess = { it + (it.max() + 1) }) {
-                httpClient.get("http://example.com")
-            }
-        assertEquals(listOf(0, 1), actualData.dataOrThrow())
-        stateTest.join()
+
+        cache.state.test {
+            assertEquals(null, awaitItem())
+            val actualData =
+                cache.getOrFetch(postprocess = { it + (it.max() + 1) }) {
+                    httpClient.get("http://example.com")
+                }
+            advanceUntilIdle()
+            assertEquals(listOf(0, 1), actualData.dataOrThrow())
+            assertEquals(listOf(0, 1), awaitItem())
+            ensureAllEventsConsumed()
+        }
     }
 }
