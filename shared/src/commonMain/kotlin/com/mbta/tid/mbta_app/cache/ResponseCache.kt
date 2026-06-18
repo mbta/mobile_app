@@ -62,14 +62,14 @@ internal class ResponseCache<T : Any>(
 
     private val lock = Mutex()
 
-    private suspend fun getPossiblyStaleData(postprocess: (T) -> T): Response<T>? {
-        return this.data ?: readData(postprocess)
+    private suspend fun getPossiblyStaleData(): Response<T>? {
+        return this.data ?: readData()
     }
 
-    private suspend fun getData(postprocess: (T) -> T): Response<T>? {
-        val data = getPossiblyStaleData(postprocess)
+    private suspend fun getData(): Response<T>? {
+        val data = getPossiblyStaleData()
         if (data != null) {
-            flow.value = postprocess(data.body)
+            flow.value = data.body
         }
         return if (data != null && data.metadata.fetchTime.elapsedNow() < maxAge) {
             data
@@ -91,7 +91,7 @@ internal class ResponseCache<T : Any>(
         this.writeData(nextData.metadata, responseBody)
     }
 
-    private suspend fun readData(postprocess: (T) -> T): Response<T>? {
+    private suspend fun readData(): Response<T>? {
         val diskMetadata: ResponseMetadata =
             jsonPersistence.read(SystemPaths.Category.Cache, CACHE_SUBDIRECTORY, cacheMetadataKey)
                 ?: return null
@@ -99,9 +99,12 @@ internal class ResponseCache<T : Any>(
             return null
         }
         val diskData =
-            jsonPersistence
-                .read(SystemPaths.Category.Cache, CACHE_SUBDIRECTORY, cacheKey, serializer)
-                ?.let(postprocess) ?: return null
+            jsonPersistence.read(
+                SystemPaths.Category.Cache,
+                CACHE_SUBDIRECTORY,
+                cacheKey,
+                serializer,
+            ) ?: return null
         this.data = Response(diskMetadata, diskData)
         return this.data
     }
@@ -130,7 +133,7 @@ internal class ResponseCache<T : Any>(
         fetch: suspend (String?) -> HttpResponse,
     ): ApiResult<T> {
         lock.withLock {
-            val cachedData = this.getData(postprocess)
+            val cachedData = this.getData()
             if (cachedData != null) {
                 return ApiResult.Ok(cachedData.body)
             }
@@ -149,7 +152,7 @@ internal class ResponseCache<T : Any>(
                     HttpStatusCode.OK -> {
                         this.putData(httpResponse, postprocess)
                         ApiResult.Ok(
-                            this.getData(postprocess)?.body
+                            this.getData()?.body
                                 ?: throw RuntimeException("Failed to set cached data")
                         )
                     }
