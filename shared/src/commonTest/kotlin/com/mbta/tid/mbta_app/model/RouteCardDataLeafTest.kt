@@ -13,6 +13,7 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
 import kotlinx.datetime.atTime
 
 class RouteCardDataLeafTest {
@@ -493,38 +494,39 @@ class RouteCardDataLeafTest {
     }
 
     @Test
-    fun `formats as subway early morning with subway early morning`() = parametricTest {
-        val now = EasternTimeInstant.now()
-        val serviceStart = now + 10.minutes
+    fun `formats as subway early morning when after 3 30 and subway service hasn't started`() =
+        parametricTest {
+            val now = EasternTimeInstant(2026, Month.JUNE, 18, 3, 31)
+            val serviceStart = now + 10.minutes
 
-        val objects = ObjectCollectionBuilder()
-        val route = objects.route { type = anyOf(RouteType.HEAVY_RAIL, RouteType.LIGHT_RAIL) }
+            val objects = ObjectCollectionBuilder()
+            val route = objects.route { type = anyOf(RouteType.HEAVY_RAIL, RouteType.LIGHT_RAIL) }
 
-        assertEquals(
-            LeafFormat.Single(
-                route = null,
-                headsign = null,
-                UpcomingFormat.NoTrips(
-                    UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(serviceStart)
+            assertEquals(
+                LeafFormat.Single(
+                    route = null,
+                    headsign = null,
+                    UpcomingFormat.NoTrips(
+                        UpcomingFormat.NoTripsFormat.SubwayEarlyMorning(serviceStart)
+                    ),
                 ),
-            ),
-            RouteCardData.Leaf(
-                    LineOrRoute.Route(route),
-                    objects.stop(),
-                    0,
-                    emptyList(),
-                    emptySet(),
-                    emptyList(),
-                    emptyList(),
-                    true,
-                    true,
-                    serviceStart,
-                    emptyList(),
-                    anyEnumValue(),
-                )
-                .format(now, GlobalResponse(objects)),
-        )
-    }
+                RouteCardData.Leaf(
+                        LineOrRoute.Route(route),
+                        objects.stop(),
+                        0,
+                        emptyList(),
+                        emptySet(),
+                        emptyList(),
+                        emptyList(),
+                        true,
+                        true,
+                        serviceStart,
+                        emptyList(),
+                        anyEnumValue(),
+                    )
+                    .format(now, GlobalResponse(objects)),
+            )
+        }
 
     @Test
     fun `formats as none with subway schedules but no predictions and no alert`() = parametricTest {
