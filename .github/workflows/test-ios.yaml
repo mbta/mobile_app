@@ -16,12 +16,12 @@ on:
       GOOGLE_APP_ID_IOS:
         required: true
 
-permissions: {}
-
 jobs:
   test-ios:
     name: Test for iOS
     runs-on: macos-15-xlarge
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         if: ${{ !inputs.skip-everything }}
