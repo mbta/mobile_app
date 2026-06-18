@@ -130,7 +130,7 @@ public data class RouteCardData(
         private val subwayServiceStartTime: EasternTimeInstant?,
         private val alertsDownstream: List<Alert>,
         internal val context: Context,
-    ) {
+    ) : Comparable<Leaf> {
 
         /** Convenience constructor for testing to avoid having to set hasSchedulesTodayByPattern */
         public constructor(
@@ -164,7 +164,11 @@ public data class RouteCardData(
             context,
         )
 
-        internal val id: Int = directionId
+        override fun compareTo(other: Leaf): Int {
+            val thisPattern = this.routePatterns.firstOrNull()
+            val otherPattern = other.routePatterns.firstOrNull()
+            return nullsLast<RoutePattern>().compare(thisPattern, otherPattern)
+        }
 
         public val routeStopDirection: RouteStopDirection =
             RouteStopDirection(lineOrRoute.id, stop.id, directionId)

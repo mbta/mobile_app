@@ -30,6 +30,34 @@ final class FavoritesViewTests: XCTestCase {
             prediction.departureTime = now.plus(minutes: 5)
         })
         let globalData = GlobalResponse(objects: objects)
+        let realtimeLeaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [routePattern],
+            stopIds: [stop.id],
+            upcomingTrips: [trip],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .favorites
+        )
+        let staticLeaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [routePattern],
+            stopIds: [stop.id],
+            upcomingTrips: [],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: false,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .favorites
+        )
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
@@ -40,47 +68,23 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [.init(
-                        lineOrRoute: .route(route),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [routePattern],
-                        stopIds: [stop.id],
-                        upcomingTrips: [trip],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: true,
-                        subwayServiceStartTime: nil,
-                        alertsDownstream: [],
-                        context: .favorites
-                    )],
+                    data: [realtimeLeaf],
                     globalData: globalData
                 )],
                 at: now
             )],
+            stopCardData: [.init(stop: stop, data: [realtimeLeaf])],
             staticRouteCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [.init(
-                        lineOrRoute: .route(route),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [routePattern],
-                        stopIds: [stop.id],
-                        upcomingTrips: [],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: false,
-                        subwayServiceStartTime: nil,
-                        alertsDownstream: [],
-                        context: .favorites
-                    )],
+                    data: [staticLeaf],
                     globalData: globalData
                 )],
                 at: now
             )],
+            staticStopCardData: [.init(stop: stop, data: [staticLeaf])],
             loadedLocation: nil,
         ))
 
@@ -119,6 +123,34 @@ final class FavoritesViewTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
+        let realtimeLeaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [routePattern],
+            stopIds: [stop.id],
+            upcomingTrips: [trip],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: true,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .favorites
+        )
+        let staticLeaf = RouteCardData.Leaf(
+            lineOrRoute: .route(route),
+            stop: stop,
+            directionId: 0,
+            routePatterns: [routePattern],
+            stopIds: [stop.id],
+            upcomingTrips: [],
+            alertsHere: [],
+            allDataLoaded: true,
+            hasSchedulesToday: false,
+            subwayServiceStartTime: nil,
+            alertsDownstream: [],
+            context: .favorites
+        )
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [.init(route: route.id, stop: stop.id, direction: 0): .init()],
@@ -129,47 +161,23 @@ final class FavoritesViewTests: XCTestCase {
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [.init(
-                        lineOrRoute: .route(route),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [routePattern],
-                        stopIds: [stop.id],
-                        upcomingTrips: [trip],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: true,
-                        subwayServiceStartTime: nil,
-                        alertsDownstream: [],
-                        context: .favorites
-                    )],
+                    data: [realtimeLeaf],
                     globalData: globalData
                 )],
                 at: now
             )],
+            stopCardData: [.init(stop: stop, data: [realtimeLeaf])],
             staticRouteCardData: [.init(
                 lineOrRoute: .route(route),
                 stopData: [.init(
                     route: route,
                     stop: stop,
-                    data: [.init(
-                        lineOrRoute: .route(route),
-                        stop: stop,
-                        directionId: 0,
-                        routePatterns: [routePattern],
-                        stopIds: [stop.id],
-                        upcomingTrips: [],
-                        alertsHere: [],
-                        allDataLoaded: true,
-                        hasSchedulesToday: false,
-                        subwayServiceStartTime: nil,
-                        alertsDownstream: [],
-                        context: .favorites
-                    )],
+                    data: [staticLeaf],
                     globalData: globalData
                 )],
                 at: now
             )],
+            staticStopCardData: [.init(stop: stop, data: [staticLeaf])],
             loadedLocation: nil
         ))
 
@@ -197,7 +205,9 @@ final class FavoritesViewTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
+            stopCardData: [],
             staticRouteCardData: [],
+            staticStopCardData: [],
             loadedLocation: nil,
         ))
         let sut = FavoritesView(
@@ -374,7 +384,9 @@ final class FavoritesViewTests: XCTestCase {
                 shouldShowFirstTimeToast: true,
                 shouldShowNotificationsHint: false,
                 routeCardData: [],
+                stopCardData: [],
                 staticRouteCardData: [],
+                staticStopCardData: [],
                 loadedLocation: nil
             )
         )
@@ -411,7 +423,9 @@ final class FavoritesViewTests: XCTestCase {
                 shouldShowFirstTimeToast: false,
                 shouldShowNotificationsHint: true,
                 routeCardData: [],
+                stopCardData: [],
                 staticRouteCardData: [],
+                staticStopCardData: [],
                 loadedLocation: nil
             )
         )
@@ -446,7 +460,9 @@ final class FavoritesViewTests: XCTestCase {
                 shouldShowFirstTimeToast: false,
                 shouldShowNotificationsHint: true,
                 routeCardData: [],
+                stopCardData: [],
                 staticRouteCardData: [],
+                staticStopCardData: [],
                 loadedLocation: nil
             )
         )
