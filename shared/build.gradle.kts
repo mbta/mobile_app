@@ -4,6 +4,7 @@ import com.diffplug.spotless.Lint
 import com.mbta.tid.mbta_app.gradle.CachedExecTask
 import com.mbta.tid.mbta_app.gradle.CycloneDxBomTransformTask
 import com.mbta.tid.mbta_app.gradle.DependencyCodegenTask
+import com.mbta.tid.mbta_app.gradle.EnvReader
 import com.mbta.tid.mbta_app.gradle.GithubLicenseResponse
 import de.undercouch.gradle.tasks.download.Download
 import java.io.Serializable
@@ -70,6 +71,8 @@ kotlin {
             export(libs.sentry.kmp)
         }
 
+        xcodeConfigurationToNativeBuildType["LocalDebug"] = NativeBuildType.DEBUG
+        xcodeConfigurationToNativeBuildType["LocalRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["DevOrangeDebug"] = NativeBuildType.DEBUG
         xcodeConfigurationToNativeBuildType["DevOrangeRelease"] = NativeBuildType.RELEASE
         xcodeConfigurationToNativeBuildType["StagingDebug"] = NativeBuildType.DEBUG
@@ -181,6 +184,33 @@ spotless {
                 }
             },
         )
+    }
+}
+
+run {
+    val env = EnvReader()
+
+    val localBackendOriginAndroid = env["LOCAL_BACKEND_ORIGIN_ANDROID"] ?: "http://10.0.2.2:4000"
+    val buildFolderAndroid =
+        layout.buildDirectory.dir("generated/localBackendOrigin/androidMain").get()
+    buildFolderAndroid.asFile.mkdirs()
+    buildFolderAndroid.file("AppVariant.android.kt").asFile.bufferedWriter().use {
+        it.appendLine("package com.mbta.tid.mbta_app")
+        it.appendLine()
+        it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginAndroid\"")
+    }
+    kotlin.sourceSets.getByName("androidMain") { kotlin.srcDirs(buildFolderAndroid) }
+
+    if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+        val localBackendOriginIos = env["LOCAL_BACKEND_ORIGIN_IOS"] ?: "http://127.0.0.1:4000"
+        val buildFolderIos = layout.buildDirectory.dir("generated/localBackendOrigin/iosMain").get()
+        buildFolderIos.asFile.mkdirs()
+        buildFolderIos.file("AppVariant.ios.kt").asFile.bufferedWriter().use {
+            it.appendLine("package com.mbta.tid.mbta_app")
+            it.appendLine()
+            it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginIos\"")
+        }
+        kotlin.sourceSets.getByName("iosMain") { kotlin.srcDirs(buildFolderIos) }
     }
 }
 
