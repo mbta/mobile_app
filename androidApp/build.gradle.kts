@@ -272,7 +272,7 @@ run {
         logger.warn("FIREBASE_KEY or GOOGLE_APP_ID_ANDROID not provided, skipping Firebase setup")
     }
 
-    val localBackendOrigin = env["LOCAL_BACKEND_ORIGIN"] ?: "http://127.0.0.1:4000"
+    val localBackendOrigin = env["LOCAL_BACKEND_ORIGIN_ANDROID"] ?: "http://10.0.2.2:4000"
     val localBackendOriginUrl = URL(localBackendOrigin)
     val networkSecurityConfigContent =
         """

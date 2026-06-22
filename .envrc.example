@@ -15,4 +15,5 @@ export SENTRY_DSN_ANDROID=
 export SENTRY_ENVIRONMENT=debug
 
 # Local Backend - only used if running the Local app
-export LOCAL_BACKEND_ORIGIN=http://127.0.0.1:4000
+export LOCAL_BACKEND_ORIGIN_ANDROID=http://10.0.2.2:4000
+export LOCAL_BACKEND_ORIGIN_IOS=http://127.0.0.1:4000

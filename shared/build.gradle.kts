@@ -190,15 +190,28 @@ spotless {
 run {
     val env = EnvReader()
 
-    val localBackendOrigin = env["LOCAL_BACKEND_ORIGIN"] ?: "http://127.0.0.1:4000"
-    val buildFolder = layout.buildDirectory.dir("generated/localBackendOrigin").get()
-    buildFolder.asFile.mkdirs()
-    buildFolder.file("localBackendOrigin.kt").asFile.bufferedWriter().use {
+    val localBackendOriginAndroid = env["LOCAL_BACKEND_ORIGIN_ANDROID"] ?: "http://10.0.2.2:4000"
+    val buildFolderAndroid =
+        layout.buildDirectory.dir("generated/localBackendOrigin/androidMain").get()
+    buildFolderAndroid.asFile.mkdirs()
+    buildFolderAndroid.file("AppVariant.android.kt").asFile.bufferedWriter().use {
         it.appendLine("package com.mbta.tid.mbta_app")
         it.appendLine()
-        it.appendLine("internal val localBackendOrigin = \"$localBackendOrigin\"")
+        it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginAndroid\"")
     }
-    kotlin.sourceSets.commonMain.configure { kotlin.srcDirs(buildFolder) }
+    kotlin.sourceSets.getByName("androidMain") { kotlin.srcDirs(buildFolderAndroid) }
+
+    if (DefaultNativePlatform.getCurrentOperatingSystem().isMacOsX) {
+        val localBackendOriginIos = env["LOCAL_BACKEND_ORIGIN_IOS"] ?: "http://127.0.0.1:4000"
+        val buildFolderIos = layout.buildDirectory.dir("generated/localBackendOrigin/iosMain").get()
+        buildFolderIos.asFile.mkdirs()
+        buildFolderIos.file("AppVariant.ios.kt").asFile.bufferedWriter().use {
+            it.appendLine("package com.mbta.tid.mbta_app")
+            it.appendLine()
+            it.appendLine("internal actual val localBackendOrigin = \"$localBackendOriginIos\"")
+        }
+        kotlin.sourceSets.getByName("iosMain") { kotlin.srcDirs(buildFolderIos) }
+    }
 }
 
 tasks.register("bom") { dependsOn("bomCodegenAndroid", "bomCodegenIos") }

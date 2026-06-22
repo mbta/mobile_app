@@ -1,5 +1,7 @@
 package com.mbta.tid.mbta_app
 
+internal expect val localBackendOrigin: String
+
 public enum class AppVariant(internal val backendRoot: String, mapEnvironment: MapEnvironment) {
     Local(localBackendOrigin, MapEnvironment.Staging),
     DevOrange("https://mobile-app-backend-dev-orange.mbtace.com", MapEnvironment.Staging),
