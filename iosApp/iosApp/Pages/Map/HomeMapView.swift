@@ -19,11 +19,11 @@ struct HomeMapView: View {
     @ObservedObject var contentVM: ContentViewModel
     var mapVM: IMapViewModel
     var routeCardDataVM: IRouteCardDataViewModel
-    @ObservedObject var viewportProvider: ViewportProvider
     var tripDetailsVM: ITripDetailsViewModel
+    @ObservedObject var navManager: NavigationManager
+    @ObservedObject var viewportProvider: ViewportProvider
 
     @Environment(\.colorScheme) var colorScheme
-    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var settingsCache: SettingsCache
 
     var errorBannerRepository: IErrorBannerStateRepository
@@ -60,25 +60,27 @@ struct HomeMapView: View {
         contentVM: ContentViewModel,
         mapVM: IMapViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
-        viewportProvider: ViewportProvider,
         errorBannerRepository: IErrorBannerStateRepository = RepositoryDI().errorBanner,
         vehiclesData: [Vehicle]? = nil,
         vehiclesRepository: IVehiclesRepository = RepositoryDI().vehicles,
-        locationDataManager: LocationDataManager,
         sheetHeight: Binding<CGFloat>,
         globalMapData _: GlobalMapData? = nil,
         selectedVehicle: Binding<Vehicle?>,
-        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
+        tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
+        locationDataManager: LocationDataManager,
+        navManager: NavigationManager,
+        viewportProvider: ViewportProvider,
     ) {
         self.alerts = alerts
         self.contentVM = contentVM
         self.mapVM = mapVM
         self.routeCardDataVM = routeCardDataVM
-        self.viewportProvider = viewportProvider
         self.errorBannerRepository = errorBannerRepository
         self.vehiclesData = vehiclesData
         self.vehiclesRepository = vehiclesRepository
         self.tripDetailsVM = tripDetailsVM
+        self.navManager = navManager
+        self.viewportProvider = viewportProvider
         _locationDataManager = StateObject(wrappedValue: locationDataManager)
         _sheetHeight = sheetHeight
         _selectedVehicle = selectedVehicle

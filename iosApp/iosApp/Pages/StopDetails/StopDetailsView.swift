@@ -32,6 +32,8 @@ struct StopDetailsView: View {
     var mapVM: IMapViewModel
     var stopDetailsVM: IStopDetailsViewModel
 
+    @ObservedObject var navManager: NavigationManager
+
     let inspection = Inspection<Self>()
 
     var body: some View {
@@ -52,6 +54,7 @@ struct StopDetailsView: View {
                 errorBannerVM: errorBannerVM,
                 mapVM: mapVM,
                 stopDetailsVM: stopDetailsVM,
+                navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()
@@ -65,6 +68,7 @@ struct StopDetailsView: View {
                 setStopFilter: setStopFilter,
                 navCallbacks: navCallbacks,
                 errorBannerVM: errorBannerVM,
+                navManager: navManager,
             )
             .onReceive(inspection.notice) { inspection.visit(self, $0) }
             .enableInjection()

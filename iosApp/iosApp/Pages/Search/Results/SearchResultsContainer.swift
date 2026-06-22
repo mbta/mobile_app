@@ -15,9 +15,10 @@ struct SearchResultsContainer: View {
     @ObserveInjection var inject
     let query: String
 
-    @EnvironmentObject var navManager: NavigationManager
     @State var searchVM: ISearchViewModel
     @State var searchVMState: SearchViewModel.State = SearchViewModel.StateLoading.shared
+
+    @ObservedObject var navManager: NavigationManager
 
     var didAppear: ((Self) -> Void)?
     var didChange: ((Self) -> Void)?
@@ -25,11 +26,13 @@ struct SearchResultsContainer: View {
     init(
         query: String,
         searchVM: ISearchViewModel,
+        navManager: NavigationManager,
         didAppear: ((Self) -> Void)? = nil,
         didChange: ((Self) -> Void)? = nil
     ) {
         self.query = query
         self.searchVM = searchVM
+        self.navManager = navManager
         self.didAppear = didAppear
         self.didChange = didChange
     }

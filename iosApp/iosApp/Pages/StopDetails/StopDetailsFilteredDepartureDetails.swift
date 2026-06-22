@@ -33,7 +33,8 @@ struct StopDetailsFilteredDepartureDetails: View {
     var stopDetailsVM: IStopDetailsViewModel
     var schedulesRepository: ISchedulesRepository
 
-    @EnvironmentObject var navManager: NavigationManager
+    @ObservedObject var navManager: NavigationManager
+
     @EnvironmentObject var viewportProvider: ViewportProvider
     @EnvironmentObject var settingsCache: SettingsCache
 
@@ -109,6 +110,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         mapVM: IMapViewModel,
         stopDetailsVM: IStopDetailsViewModel,
         schedulesRepository: ISchedulesRepository = RepositoryDI().schedules,
+        navManager: NavigationManager,
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -124,6 +126,7 @@ struct StopDetailsFilteredDepartureDetails: View {
         self.mapVM = mapVM
         self.stopDetailsVM = stopDetailsVM
         self.schedulesRepository = schedulesRepository
+        self.navManager = navManager
     }
 
     var body: some View {
@@ -191,6 +194,7 @@ struct StopDetailsFilteredDepartureDetails: View {
                     onOpenAlertDetails: { alert in getAlertDetailsHandler(alert.id, spec: .downstream) },
                     errorBannerVM: errorBannerVM,
                     mapVM: mapVM,
+                    navManager: navManager,
                 )
             }
         }

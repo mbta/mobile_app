@@ -16,22 +16,22 @@ struct FavoritesPage: View {
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: FavoritesViewModel
     var toastVM: IToastViewModel = ViewModelDI().toast
+    @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
     @State var location: CLLocationCoordinate2D?
-
-    @EnvironmentObject var navManager: NavigationManager
 
     var body: some View {
         ZStack {
             Color.sheetBackground.ignoresSafeArea(.all)
             FavoritesView(
+                location: $location,
                 alerts: alerts,
                 errorBannerVM: errorBannerVM,
                 favoritesVM: favoritesVM,
                 toastVM: toastVM,
+                navManager: navManager,
                 viewportProvider: viewportProvider,
-                location: $location,
             )
             .toolbarBackground(.visible, for: .tabBar)
             .onReceive(

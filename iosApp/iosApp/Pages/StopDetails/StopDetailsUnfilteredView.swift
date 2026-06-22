@@ -25,7 +25,8 @@ struct StopDetailsUnfilteredView: View {
     let navCallbacks: NavigationCallbacks
     var errorBannerVM: IErrorBannerViewModel
 
-    @EnvironmentObject var navManager: NavigationManager
+    @ObservedObject var navManager: NavigationManager
+
     @EnvironmentObject var settingsCache: SettingsCache
     var stationAccessibility: Bool { settingsCache.get(.stationAccessibility) }
 
@@ -41,6 +42,7 @@ struct StopDetailsUnfilteredView: View {
         setStopFilter: @escaping (StopDetailsFilter?) -> Void,
         navCallbacks: NavigationCallbacks,
         errorBannerVM: IErrorBannerViewModel,
+        navManager: NavigationManager,
     ) {
         self.stopId = stopId
         self.routeData = routeData
@@ -50,6 +52,7 @@ struct StopDetailsUnfilteredView: View {
         self.setStopFilter = setStopFilter
         self.navCallbacks = navCallbacks
         self.errorBannerVM = errorBannerVM
+        self.navManager = navManager
     }
 
     var stop: Stop? {

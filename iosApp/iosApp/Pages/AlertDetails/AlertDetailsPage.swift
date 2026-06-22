@@ -16,7 +16,8 @@ struct AlertDetailsPage: View {
     var line: Line?
     var routes: [Route]?
     var stop: Stop?
-    var navManager: NavigationManager
+
+    @ObservedObject var navManager: NavigationManager
 
     @State private var alert: Shared.Alert?
     @State var globalResponse: GlobalResponse?

@@ -37,9 +37,9 @@ struct StopDetailsPage: View {
     var mapVM: IMapViewModel
     var routeCardDataVM: IRouteCardDataViewModel
     var stopDetailsVM: IStopDetailsViewModel
+    @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
-    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var settingsCache: SettingsCache
 
     let inspection = Inspection<Self>()
@@ -56,7 +56,8 @@ struct StopDetailsPage: View {
         mapVM: IMapViewModel,
         routeCardDataVM: IRouteCardDataViewModel,
         stopDetailsVM: IStopDetailsViewModel,
-        viewportProvider: ViewportProvider
+        navManager: NavigationManager,
+        viewportProvider: ViewportProvider,
     ) {
         self.filters = filters
         self.navCallbacks = navCallbacks
@@ -65,6 +66,7 @@ struct StopDetailsPage: View {
         self.mapVM = mapVM
         self.routeCardDataVM = routeCardDataVM
         self.stopDetailsVM = stopDetailsVM
+        self.navManager = navManager
         self.viewportProvider = viewportProvider
     }
 
@@ -84,6 +86,7 @@ struct StopDetailsPage: View {
             errorBannerVM: errorBannerVM,
             mapVM: mapVM,
             stopDetailsVM: stopDetailsVM,
+            navManager: navManager,
         )
     }
 

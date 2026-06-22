@@ -10,9 +10,10 @@ struct ContentView: View {
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.accessibilityVoiceOverEnabled) var voiceOver
 
+    @StateObject var navManager = NavigationManager()
     @StateObject var searchObserver = TextFieldObserver()
     @EnvironmentObject var locationDataManager: LocationDataManager
-    @EnvironmentObject var navManager: NavigationManager
+
     @EnvironmentObject var socketProvider: SocketProvider
     @EnvironmentObject var viewportProvider: ViewportProvider
 
@@ -25,6 +26,7 @@ struct ContentView: View {
         (UIScreen.current?.bounds.height ?? 0) * PresentationDetent.mediumDetentFraction
     @State var errorBannerVM = ViewModelDI().errorBanner
     @State var favoritesVM = ViewModelDI().favorites
+    @State var nearbyVM = ViewModelDI().nearby
     @State var routeCardDataVM = ViewModelDI().routeCardData
     @State var stopDetailsVM = ViewModelDI().stopDetails
     @State var toastVM = ViewModelDI().toast
@@ -193,7 +195,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack {
                         if navManager.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver)
+                            SearchOverlay(searchObserver: searchObserver, navManager: navManager)
                                 .padding(.top, 12)
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -212,7 +214,7 @@ struct ContentView: View {
                     searchHeaderBackground
                     VStack(alignment: .center, spacing: 20) {
                         if navManager.navigationStack.lastSafe().isEntrypoint {
-                            SearchOverlay(searchObserver: searchObserver)
+                            SearchOverlay(searchObserver: searchObserver, navManager: navManager)
 
                             if !searchObserver.isSearching {
                                 LocationAuthButton(showingAlert: $showingLocationPermissionAlert)
@@ -345,7 +347,8 @@ struct ContentView: View {
                             mapVM: mapVM,
                             routeCardDataVM: routeCardDataVM,
                             stopDetailsVM: stopDetailsVM,
-                            viewportProvider: viewportProvider
+                            navManager: navManager,
+                            viewportProvider: viewportProvider,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -363,6 +366,7 @@ struct ContentView: View {
                             filter: filter,
                             alerts: alerts,
                             navCallbacks: navCallbacks,
+                            navManager: navManager,
                         )
                         .toolbar(.hidden, for: .tabBar)
                     }
@@ -481,6 +485,7 @@ struct ContentView: View {
                     alerts: alerts,
                     errorBannerVM: errorBannerVM,
                     favoritesVM: favoritesVM,
+                    navManager: navManager,
                     viewportProvider: viewportProvider
                 )
                 .transition(transition)
@@ -495,6 +500,8 @@ struct ContentView: View {
         NearbyTransitPage(
             alerts: alerts,
             errorBannerVM: errorBannerVM,
+            nearbyVM: nearbyVM,
+            navManager: navManager,
             noNearbyStops: { NoNearbyStopsView(
                 onOpenSearch: { searchObserver.isFocused = true },
                 onPanToDefaultCenter: {
@@ -512,10 +519,11 @@ struct ContentView: View {
             contentVM: contentVM,
             mapVM: mapVM,
             routeCardDataVM: routeCardDataVM,
-            viewportProvider: viewportProvider,
-            locationDataManager: locationDataManager,
             sheetHeight: $sheetHeight,
-            selectedVehicle: $selectedVehicle
+            selectedVehicle: $selectedVehicle,
+            locationDataManager: locationDataManager,
+            navManager: navManager,
+            viewportProvider: viewportProvider,
         ).accessibilityHidden(searchObserver.isSearching)
     }
 
@@ -602,7 +610,7 @@ struct ContentView: View {
                     line: line,
                     routes: routes,
                     stop: stop,
-                    navManager: navManager
+                    navManager: navManager,
                 )
 
             case let .more(category):

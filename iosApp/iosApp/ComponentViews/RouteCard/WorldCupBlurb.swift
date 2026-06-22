@@ -129,9 +129,9 @@ struct WorldCupBlurb: View {
         errorBannerVM: MockErrorBannerViewModel(),
         mapVM: MockMapViewModel(),
         stopDetailsVM: MockStopDetailsViewModel(),
-        schedulesRepository: MockScheduleRepository()
+        schedulesRepository: MockScheduleRepository(),
+        navManager: NavigationManager()
     )
     .padding(16)
     .withFixedSettings([:])
-    .environmentObject(NavigationManager())
 }

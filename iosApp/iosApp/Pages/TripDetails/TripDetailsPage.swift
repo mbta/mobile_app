@@ -20,6 +20,8 @@ struct TripDetailsPage: View {
     var tripDetailsPageVM: ITripDetailsPageViewModel = ViewModelDI().tripDetailsPage
     var tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails
 
+    @ObservedObject var navManager: NavigationManager
+
     let analytics = AnalyticsProvider.shared
     let inspection = Inspection<Self>()
 
@@ -27,8 +29,6 @@ struct TripDetailsPage: View {
     @State var now = Date.now.toEasternInstant()
     @State var tripDetailsPageState: TripDetailsPageViewModel.State?
     @State var tripDetailsState: TripDetailsViewModel.State?
-
-    @EnvironmentObject var navManager: NavigationManager
 
     var alertSummaries: [String: AlertSummary?] {
         tripDetailsPageState?.alertSummaries as? [String: AlertSummary?] ?? [:]
@@ -78,6 +78,7 @@ struct TripDetailsPage: View {
                         errorBannerVM: errorBannerVM,
                         mapVM: mapVM,
                         tripDetailsVM: tripDetailsVM,
+                        navManager: navManager,
                     )
                 }
             }

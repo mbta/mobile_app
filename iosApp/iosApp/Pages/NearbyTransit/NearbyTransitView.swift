@@ -20,17 +20,16 @@ struct NearbyTransitView: View {
     @Binding var location: CLLocationCoordinate2D?
     let setIsReturningFromBackground: (Bool) -> Void
     let noNearbyStops: () -> NoNearbyStopsView
+    var nearbyVM: INearbyViewModel
+    @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
 
     var analytics: Analytics = AnalyticsProvider.shared
-    var nearbyVM: Shared.NearbyViewModel = ViewModelDI().nearby
 
     @State var favorites: Favorites = LoadedFavorites.last
     @State var globalData: GlobalResponse?
     @State var now = EasternTimeInstant.now()
     @State var nearbyTransitState: Shared.NearbyViewModel.State?
-
-    @EnvironmentObject var navManager: NavigationManager
 
     private let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
 

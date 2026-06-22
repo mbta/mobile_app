@@ -32,12 +32,13 @@ struct StopDetailsFilteredView: View {
     var stopDetailsVM: IStopDetailsViewModel
     var tripDetailsVM: ITripDetailsViewModel
     var favoritesVM: IFavoritesViewModel
+    @ObservedObject var navManager: NavigationManager
 
     @State var inSaveFavoritesFlow = false
     @State var alertSummaries: [String: AlertSummary?] = [:]
 
     @ObservedObject var fcmTokenContainer = FcmTokenContainer.shared
-    @EnvironmentObject var navManager: NavigationManager
+
     @EnvironmentObject var settingsCache: SettingsCache
 
     var analytics: Analytics = AnalyticsProvider.shared
@@ -62,6 +63,7 @@ struct StopDetailsFilteredView: View {
         stopDetailsVM: IStopDetailsViewModel,
         favoritesVM: IFavoritesViewModel = ViewModelDI().favorites,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
+        navManager: NavigationManager,
     ) {
         self.stopId = stopId
         self.stopFilter = stopFilter
@@ -80,6 +82,7 @@ struct StopDetailsFilteredView: View {
         self.stopDetailsVM = stopDetailsVM
         self.favoritesVM = favoritesVM
         self.tripDetailsVM = tripDetailsVM
+        self.navManager = navManager
     }
 
     var isFavorite: Bool { if let routeStopDirection { favorites.isFavorite(routeStopDirection) } else { false }}
@@ -220,6 +223,7 @@ struct StopDetailsFilteredView: View {
                 errorBannerVM: errorBannerVM,
                 mapVM: mapVM,
                 stopDetailsVM: stopDetailsVM,
+                navManager: navManager,
             )
         } else {
             loadingDepartures()
@@ -264,6 +268,7 @@ struct StopDetailsFilteredView: View {
             errorBannerVM: errorBannerVM,
             mapVM: mapVM,
             stopDetailsVM: stopDetailsVM,
+            navManager: navManager,
         ).loadingPlaceholder()
     }
 

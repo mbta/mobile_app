@@ -13,6 +13,7 @@ struct SearchOverlay: View {
     @ObserveInjection var inject
     @ObservedObject var searchObserver: TextFieldObserver
     @State var searchVM: SearchViewModel
+    @ObservedObject var navManager: NavigationManager
 
     let globalRepository: IGlobalRepository
     let searchResultsRepository: ISearchResultRepository
@@ -21,12 +22,14 @@ struct SearchOverlay: View {
         searchObserver: TextFieldObserver,
         searchVM: SearchViewModel = ViewModelDI().search,
         globalRepository: IGlobalRepository = RepositoryDI().global,
-        searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults
+        searchResultsRepository: ISearchResultRepository = RepositoryDI().searchResults,
+        navManager: NavigationManager,
     ) {
         self.searchObserver = searchObserver
         self.searchVM = searchVM
         self.globalRepository = globalRepository
         self.searchResultsRepository = searchResultsRepository
+        self.navManager = navManager
     }
 
     var body: some View {
@@ -36,7 +39,8 @@ struct SearchOverlay: View {
                 ZStack(alignment: .top) {
                     SearchResultsContainer(
                         query: searchObserver.searchText,
-                        searchVM: searchVM
+                        searchVM: searchVM,
+                        navManager: navManager,
                     )
                     Divider()
                         .frame(height: 2)

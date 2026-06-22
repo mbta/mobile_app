@@ -12,15 +12,15 @@ import SwiftUI
 
 struct FavoritesView: View {
     @ObserveInjection var inject
+    @Binding var location: CLLocationCoordinate2D?
     var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
     var favoritesVM: IFavoritesViewModel
     @State var favoritesVMState: FavoritesViewModel.State = .init()
     var toastVM: IToastViewModel
+    @ObservedObject var navManager: NavigationManager
     @ObservedObject var viewportProvider: ViewportProvider
-    @Binding var location: CLLocationCoordinate2D?
 
-    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var settingsCache: SettingsCache
     var notificationsEnabled: Bool { settingsCache.get(.notifications) }
 

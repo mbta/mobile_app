@@ -26,11 +26,11 @@ struct TripDetailsView: View {
     var mapVM: IMapViewModel
     var tripDetailsVM: ITripDetailsViewModel
 
+    @ObservedObject var navManager: NavigationManager
+
     @State var explainer: Explainer?
     @State var global: GlobalResponse?
     @State var tripDetailsVMState: TripDetailsViewModel.State?
-
-    @EnvironmentObject var navManager: NavigationManager
 
     let analytics: Analytics
     var didLoadData: ((Self) -> Void)?
@@ -46,7 +46,8 @@ struct TripDetailsView: View {
         errorBannerVM: IErrorBannerViewModel,
         mapVM: IMapViewModel,
         tripDetailsVM: ITripDetailsViewModel = ViewModelDI().tripDetails,
-        analytics: Analytics = AnalyticsProvider.shared
+        navManager: NavigationManager,
+        analytics: Analytics = AnalyticsProvider.shared,
     ) {
         self.tripFilter = tripFilter
         self.alertSummaries = alertSummaries
@@ -57,6 +58,7 @@ struct TripDetailsView: View {
         self.errorBannerVM = errorBannerVM
         self.mapVM = mapVM
         self.tripDetailsVM = tripDetailsVM
+        self.navManager = navManager
         self.analytics = analytics
     }
 

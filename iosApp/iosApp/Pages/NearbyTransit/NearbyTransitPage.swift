@@ -17,11 +17,12 @@ struct NearbyTransitPage: View {
     @ObserveInjection var inject
     var alerts: AlertsStreamDataResponse?
     var errorBannerVM: IErrorBannerViewModel
+    var nearbyVM: INearbyViewModel
+    @ObservedObject var navManager: NavigationManager
     let noNearbyStops: () -> NoNearbyStopsView
 
     @State var location: CLLocationCoordinate2D?
 
-    @EnvironmentObject var navManager: NavigationManager
     @EnvironmentObject var viewportProvider: ViewportProvider
 
     let inspection = Inspection<Self>()
@@ -29,10 +30,14 @@ struct NearbyTransitPage: View {
     init(
         alerts: AlertsStreamDataResponse?,
         errorBannerVM: IErrorBannerViewModel,
-        noNearbyStops: @escaping () -> NoNearbyStopsView
+        nearbyVM: INearbyViewModel,
+        navManager: NavigationManager,
+        noNearbyStops: @escaping () -> NoNearbyStopsView,
     ) {
         self.alerts = alerts
         self.errorBannerVM = errorBannerVM
+        self.nearbyVM = nearbyVM
+        self.navManager = navManager
         self.noNearbyStops = noNearbyStops
     }
 
@@ -52,6 +57,8 @@ struct NearbyTransitPage: View {
                     location: $location,
                     setIsReturningFromBackground: { errorBannerVM.setIsLoadingWhenPredictionsStale(isLoading: $0) },
                     noNearbyStops: noNearbyStops,
+                    nearbyVM: nearbyVM,
+                    navManager: navManager,
                     viewportProvider: viewportProvider,
                 )
                 .onReceive(
