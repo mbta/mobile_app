@@ -50,13 +50,16 @@ struct NearbyTransitView: View {
         .global($globalData, errorKey: .companion.fromSheetTypes(sheetTypes: [.nearbyTransit], id: "NearbyTransitView"))
         .onAppear {
             nearbyVM.setActive(active: true, wasSentToBackground: false)
+            nearbyVM.setAlerts(alerts: alerts)
+            nearbyVM.setLocation(location: location?.positionKt)
+            nearbyVM.setNow(now: now)
             didAppear?(self)
         }
         .task { for await state in nearbyVM.models {
             nearbyTransitState = state
         } }
-        .onChange(of: location) { newLocation in nearbyVM.setLocation(location: newLocation?.positionKt) }
         .onChange(of: alerts) { alerts in nearbyVM.setAlerts(alerts: alerts) }
+        .onChange(of: location) { newLocation in nearbyVM.setLocation(location: newLocation?.positionKt) }
         .onChange(of: now) { now in nearbyVM.setNow(now: now) }
         .onChange(of: nearbyTransitState?
             .loadedStopIds) { [oldValue = nearbyTransitState?.loadedStopIds] newNearbyStops in

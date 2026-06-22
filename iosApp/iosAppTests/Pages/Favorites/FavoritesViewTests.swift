@@ -85,11 +85,13 @@ final class FavoritesViewTests: XCTestCase {
         ))
 
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 1) { view in
             XCTAssertNotNil(try view.find(text: "Some Route"))
@@ -173,13 +175,15 @@ final class FavoritesViewTests: XCTestCase {
             loadedLocation: nil
         ))
 
-        let nearbyVM: iosApp.NearbyViewModel = .init()
+        let navManager = NavigationManager()
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: nearbyVM,
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: navManager,
+            viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
             try view.find(button: "Edit").tap()
@@ -187,7 +191,7 @@ final class FavoritesViewTests: XCTestCase {
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [exp], timeout: 2)
 
-        XCTAssertEqual(nearbyVM.navigationStack, [.editFavorites])
+        XCTAssertEqual(navManager.navigationStack, [.editFavorites])
     }
 
     @MainActor func testShowsEmpty() {
@@ -201,11 +205,13 @@ final class FavoritesViewTests: XCTestCase {
             loadedLocation: nil,
         ))
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
             XCTAssertNotNil(try view.find(text: "No stops added"))
@@ -218,11 +224,13 @@ final class FavoritesViewTests: XCTestCase {
     @MainActor func testShowsLoading() {
         let favoritesVM = MockFavoritesViewModel()
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         let exp = sut.inspection.inspect(after: 0.2) { view in
             XCTAssertEqual(5, view.findAll(LoadingRouteCard.self).count)
@@ -236,11 +244,13 @@ final class FavoritesViewTests: XCTestCase {
         let favoritesVM = MockFavoritesViewModel()
         favoritesVM.onReloadFavorites = { exp.fulfill() }
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         ).withFixedSettings([:])
         try sut.inspect().view(FavoritesView.self).find(ViewType.VStack.self).callOnAppear()
         wait(for: [exp], timeout: 1)
@@ -262,11 +272,13 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         ).withFixedSettings([:])
 
         try sut.inspect().findAndCallOnChange(newValue: ScenePhase.inactive)
@@ -289,19 +301,17 @@ final class FavoritesViewTests: XCTestCase {
                 setAlertExp.fulfill()
             }
         }
-        let nearbyVM = NearbyViewModel()
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: alertsResponse,
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: nearbyVM,
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
-        let appearExp = sut.inspection.inspect(after: 0.2) { _ in
-            nearbyVM.alerts = alertsResponse
-        }
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        wait(for: [appearExp, setAlertExp], timeout: 1)
+        wait(for: [setAlertExp], timeout: 1)
     }
 
     @MainActor func testSetsLocation() {
@@ -321,11 +331,13 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
+            location: locationBinding,
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: locationBinding
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [setFirstExp], timeout: 1)
@@ -349,11 +361,13 @@ final class FavoritesViewTests: XCTestCase {
             }
         }
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
         wait(for: [setFirstExp], timeout: 1)
@@ -386,11 +400,13 @@ final class FavoritesViewTests: XCTestCase {
         toastVM.onHideToast = { hideToast.fulfill() }
 
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: toastVM,
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
 
         sut.inspection.inspect(after: 1) { view in
@@ -419,11 +435,13 @@ final class FavoritesViewTests: XCTestCase {
         favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
 
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
 
         sut.inspection.inspect(after: 1) { view in
@@ -454,11 +472,13 @@ final class FavoritesViewTests: XCTestCase {
         favoritesVM.onDismissNotificationsHint = { dismissHint.fulfill() }
 
         let sut = FavoritesView(
+            location: .constant(.init(latitude: 0, longitude: 0)),
+            alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
             favoritesVM: favoritesVM,
-            nearbyVM: .init(),
             toastVM: MockToastViewModel(),
-            location: .constant(.init(latitude: 0, longitude: 0))
+            navManager: .init(),
+            viewportProvider: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.notifications: true]))

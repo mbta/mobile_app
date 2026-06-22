@@ -126,10 +126,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "A"))
@@ -196,10 +195,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         )
 
         let departuresExp = sut.inspection.inspect(after: 0.5) { view in
@@ -256,10 +254,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(TripDetailsView.self))
@@ -314,10 +311,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Trip cancelled"))
         XCTAssertNotNil(try sut.inspect()
@@ -392,10 +388,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
         XCTAssertNotNil(try sut.inspect().find(text: "Cancellation"))
@@ -424,10 +419,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
 
         XCTAssertThrowsError(try sut.inspect().find(TripDetailsView.self))
@@ -486,10 +480,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: stopDetailsVM,
-            viewportProvider: .init()
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
@@ -525,7 +518,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
+        let navManager = NavigationManager()
 
         let sut = StopDetailsFilteredDepartureDetails(
             stopId: stop.id,
@@ -539,10 +532,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: navManager,
         )
 
         let alertCardExp = sut.inspection.inspect(after: 0.5) { view in
@@ -551,7 +543,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertNotNil(try view.find(text: alert.header!))
             try sut.inspect().find(button: "View details").tap()
             XCTAssertEqual(
-                nearbyVM.navigationStack.last,
+                navManager.navigationStack.last,
                 .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
             )
         }
@@ -578,7 +570,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let nearbyVM = NearbyViewModel()
+        let navManager = NavigationManager()
 
         let leaf = makeLeaf(
             route: route,
@@ -600,10 +592,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: navManager,
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -616,7 +607,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             XCTAssertThrowsError(try view.find(text: alert.header!))
             try view.find(AlertCard.self).find(ViewType.Button.self).tap()
             XCTAssertEqual(
-                nearbyVM.navigationStack.last,
+                navManager.navigationStack.last,
                 .alertDetails(alertId: alert.id, line: nil, routes: [route], stop: stop)
             )
         }
@@ -649,7 +640,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             prediction.departureTime = now.plus(seconds: 15)
         })
 
-        let nearbyVM = NearbyViewModel()
+        let navManager = NavigationManager()
 
         let leaf = makeLeaf(
             route: route,
@@ -672,10 +663,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: navManager,
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(DepartureTile.self))
@@ -684,7 +674,7 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
         XCTAssertNotNil(try sut.inspect().find(text: XCTUnwrap(alert.header)))
         try sut.inspect().find(AlertCard.self).find(ViewType.Button.self).tap()
         XCTAssertEqual(
-            nearbyVM.navigationStack.last,
+            navManager.navigationStack.last,
             .alertDetails(alertId: alert.id, line: nil, routes: nil, stop: stop)
         )
     }
@@ -715,10 +705,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([.stationAccessibility: true])
 
         XCTAssertNotNil(try sut.inspect().find(text: "This stop is not accessible"))
@@ -766,10 +755,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         )
 
         let departureTileExp = sut.inspection.inspect { view in
@@ -864,10 +852,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 1) { view in
@@ -913,11 +900,10 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
             schedulesRepository: schedulesRepo,
-            viewportProvider: .init()
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -987,10 +973,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNil(try? sut.inspect().find(text: "Good morning!"))
     }
@@ -1043,10 +1028,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: now,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Good morning!"))
     }
@@ -1081,10 +1065,9 @@ final class StopDetailsFilteredDepartureDetailsTests: XCTestCase {
             favorite: false,
             now: .now(),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
-            viewportProvider: .init()
+            navManager: .init(),
         ).environmentObject(ViewportProvider()).withFixedSettings([:])
         XCTAssertNotNil(try sut.inspect().find(text: "Service from South Station to today’s World Cup match"))
         XCTAssertNotNil(try sut.inspect().find(text: "Boston Stadium Train ticket required"))

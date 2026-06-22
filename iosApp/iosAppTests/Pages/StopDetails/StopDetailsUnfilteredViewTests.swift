@@ -119,8 +119,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )!
 
-        let nearbyVM = NearbyViewModel()
-
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
@@ -133,7 +131,7 @@ import XCTest
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -159,8 +157,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )!
 
-        let nearbyVM = NearbyViewModel()
-
         let sut = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(inaccessibleStop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
@@ -173,7 +169,7 @@ import XCTest
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(after: 0.5) { view in
@@ -210,8 +206,6 @@ import XCTest
             context: .stopDetailsUnfiltered
         )!
 
-        let nearbyVM = NearbyViewModel()
-
         let unfilteredView = try StopDetailsUnfilteredView(
             stopId: XCTUnwrap(stop?.id),
             routeData: StopDetailsViewModel.RouteDataUnfiltered(
@@ -224,7 +218,7 @@ import XCTest
             setStopFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: errorBannerViewModel,
-            nearbyVM: nearbyVM
+            navManager: .init(),
         )
 
         let sut = unfilteredView.withFixedSettings([.stationAccessibility: true])

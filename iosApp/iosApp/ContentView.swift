@@ -45,8 +45,8 @@ struct ContentView: View {
     let inspection = Inspection<Self>()
 
     @State var selectedDetent: PresentationDetent = .medium
-    @State private var alerts: AlertsStreamDataResponse? = nil
-    @State private var selectedTab: SelectedTab? = nil
+    @State private var alerts: AlertsStreamDataResponse?
+    @State private var selectedTab: SelectedTab?
     @State private var showingLocationPermissionAlert = false
     @State private var tabBarVisibility = Visibility.hidden
     @State private var selectedVehicle: Vehicle?

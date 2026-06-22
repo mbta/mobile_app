@@ -43,6 +43,7 @@ public interface INearbyViewModel {
     public fun setNow(now: EasternTimeInstant)
 }
 
+@OptIn(ExperimentalObjCRefinement::class)
 public class NearbyViewModel(
     private val nearbyRepository: INearbyRepository,
     private val sentryRepository: ISentryRepository,

@@ -89,9 +89,6 @@ final class AlertDetailsPageTests: XCTestCase {
             )
         }
 
-        let nearbyVM: iosApp.NearbyViewModel = .init()
-        nearbyVM.alerts = .init(alerts: [alert.id: alert])
-
         let globalDataLoaded = PassthroughSubject<Void, Never>()
         let mockRepos = MockRepositories()
         mockRepos.global = MockGlobalRepository(response: .init(objects: objects), onGet: { globalDataLoaded.send() })
@@ -99,9 +96,10 @@ final class AlertDetailsPageTests: XCTestCase {
 
         let sut = AlertDetailsPage(
             alertId: alert.id,
+            alerts: .init(alerts: [alert.id: alert]),
             line: nil,
             routes: [route],
-            nearbyVM: nearbyVM
+            navManager: .init(),
         )
 
         let exp = sut.inspection.inspect(onReceive: globalDataLoaded, after: 1) { view in

@@ -53,6 +53,7 @@ final class StopDetailsViewTests: XCTestCase {
                     ),
                 ]
             ),
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -61,9 +62,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -97,6 +98,7 @@ final class StopDetailsViewTests: XCTestCase {
                     at: EasternTimeInstant.now()
                 )]
             ),
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -105,9 +107,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -155,6 +157,7 @@ final class StopDetailsViewTests: XCTestCase {
                     at: EasternTimeInstant.now()
                 )]
             ),
+            alerts: .init(alerts: [alert.id: alert]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -163,9 +166,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -223,6 +226,7 @@ final class StopDetailsViewTests: XCTestCase {
                 filteredWith: filters,
                 stopData: stopData
             ),
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -231,9 +235,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: .init(),
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.environmentObject(ViewportProvider()).withFixedSettings([:]))
@@ -244,14 +248,13 @@ final class StopDetailsViewTests: XCTestCase {
         let objects = ObjectCollectionBuilder()
         let stop = objects.stop { _ in }
 
-        let nearbyVM: iosApp.NearbyViewModel = .init()
-
         let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
 
         var closeCalled = false
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -260,9 +263,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .init(onBack: nil, onClose: { closeCalled = true }, backButtonPresentation: .floating),
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -276,15 +279,18 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: iosApp.NearbyViewModel = .init(
-            navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
-        )
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil
+        )])
 
         let filters = StopDetailsPageFilters(stopId: stop.id, stopFilter: nil, tripFilter: nil)
 
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -293,9 +299,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
@@ -308,7 +314,7 @@ final class StopDetailsViewTests: XCTestCase {
             stop.id = "FAKE_STOP_ID"
         }
 
-        let nearbyVM: iosApp.NearbyViewModel = .init(
+        let navManager = NavigationManager(
             navigationStack: [.stopDetails(stopId: stop.id, stopFilter: nil, tripFilter: nil)]
         )
 
@@ -317,6 +323,7 @@ final class StopDetailsViewTests: XCTestCase {
         let sut = StopDetailsView(
             filters: filters,
             routeData: nil,
+            alerts: .init(alerts: [:]),
             favorites: .init(routeStopDirection: [:]),
             global: .init(objects: objects),
             now: Date.now,
@@ -325,9 +332,9 @@ final class StopDetailsViewTests: XCTestCase {
             setTripFilter: { _ in },
             navCallbacks: .companion.empty,
             errorBannerVM: MockErrorBannerViewModel(),
-            nearbyVM: nearbyVM,
             mapVM: MockMapViewModel(),
             stopDetailsVM: MockStopDetailsViewModel(),
+            navManager: .init(),
         )
 
         ViewHosting.host(view: sut.withFixedSettings([.devDebugMode: true]))
