@@ -58,6 +58,8 @@ public class NearbyViewModel(
 
     public sealed interface Event {
         public data class SetActive(val active: Boolean, val wasSentToBackground: Boolean) : Event
+
+        public data class SetLocation(val location: Position?) : Event
     }
 
     public data class State(
@@ -99,6 +101,11 @@ public class NearbyViewModel(
 
         EventSink(eventHandlingTimeout = 2.seconds, sentryRepository = sentryRepository) { event ->
             when (event) {
+                is Event.SetLocation -> {
+                    if (!(event.location?.let { loadedLocation?.isRoughlyEqualTo(it) } ?: false)) {
+                        location = event.location
+                    }
+                }
                 is Event.SetActive -> {
                     active = event.active
                     if (event.wasSentToBackground) {
@@ -170,10 +177,7 @@ public class NearbyViewModel(
         this.alerts = alerts
     }
 
-    override fun setLocation(location: Position?) {
-        if (location?.let { models.value.loadedLocation?.isRoughlyEqualTo(it) } ?: false) return
-        this.location = location
-    }
+    override fun setLocation(location: Position?): Unit = fireEvent(Event.SetLocation(location))
 
     override fun setNow(now: EasternTimeInstant) {
         this.now = now

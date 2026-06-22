@@ -41,8 +41,10 @@ final class NearbyTransitPageTests: XCTestCase {
         let locationChangeExpectation = expectation(description: "getNearbyNotCalled")
         let mockNearbyVM = MockNearbyViewModel(initialState: .init())
         mockNearbyVM.onSetLocation = { location in
-            XCTAssertEqual(location?.coordinate, newCameraState.center)
-            locationChangeExpectation.fulfill()
+            if let location {
+                XCTAssertEqual(location.coordinate, newCameraState.center)
+                locationChangeExpectation.fulfill()
+            }
         }
         let viewportProvider = ViewportProvider(viewport: .followPuck(zoom: ViewportProvider.Defaults.zoom))
         let sut = NearbyTransitPage(

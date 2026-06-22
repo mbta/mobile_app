@@ -189,7 +189,11 @@ final class StopDetailsPageTests: XCTestCase {
 
         loadKoinMocks(objects: objects)
 
-        let navManager = NavigationManager()
+        let navManager = NavigationManager(navigationStack: [.stopDetails(
+            stopId: stop.id,
+            stopFilter: nil,
+            tripFilter: nil
+        )])
 
         let viewportProvider: ViewportProvider = .init(viewport: .followPuck(zoom: 1))
         let updatedFilter = StopDetailsFilter(
@@ -198,18 +202,9 @@ final class StopDetailsPageTests: XCTestCase {
             autoFilter: true
         )
         let stopDetailsVM = MockStopDetailsViewModel()
-        stopDetailsVM.filterUpdates.tryEmit(value: .init(
-            stopId: stop.id,
-            stopFilter: updatedFilter,
-            tripFilter: nil
-        ))
 
         let sut = StopDetailsPage(
-            filters: .init(
-                stopId: stop.id,
-                stopFilter: nil,
-                tripFilter: nil
-            ),
+            filters: .init(stopId: stop.id, stopFilter: nil, tripFilter: nil),
             navCallbacks: .companion.empty,
             alerts: .init(alerts: [:]),
             errorBannerVM: MockErrorBannerViewModel(),
@@ -221,6 +216,12 @@ final class StopDetailsPageTests: XCTestCase {
         )
         ViewHosting.host(view: sut.withFixedSettings([:]))
 
+        stopDetailsVM.filterUpdates.tryEmit(value: .init(
+            stopId: stop.id,
+            stopFilter: updatedFilter,
+            tripFilter: nil
+        ))
+
         sut.inspection.inspect(after: 1) { _ in
             XCTAssertEqual(
                 navManager.navigationStack.lastStopDetailsFilter,
@@ -230,7 +231,7 @@ final class StopDetailsPageTests: XCTestCase {
     }
 
     @MainActor
-    func testAppliesTripFilterAutomatically() async throws {
+    func testAppliesTripFilterAutomatically() {
         let objects = ObjectCollectionBuilder()
 
         let route = objects.route()
@@ -294,11 +295,12 @@ final class StopDetailsPageTests: XCTestCase {
         )
 
         ViewHosting.host(view: sut.withFixedSettings([:]))
-        try await Task.sleep(for: .seconds(1))
 
-        XCTAssertEqual(
-            navManager.navigationStack.lastTripDetailsFilter,
-            updatedTripFilter
-        )
+        sut.inspection.inspect(after: 1) { _ in
+            XCTAssertEqual(
+                navManager.navigationStack.lastTripDetailsFilter,
+                updatedTripFilter
+            )
+        }
     }
 }
