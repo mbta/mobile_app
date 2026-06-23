@@ -11,6 +11,7 @@ import com.mbta.tid.mbta_app.model.LineOrRoute
 import com.mbta.tid.mbta_app.model.ObjectCollectionBuilder
 import com.mbta.tid.mbta_app.model.RouteCardData
 import com.mbta.tid.mbta_app.model.RouteStopDirection
+import com.mbta.tid.mbta_app.model.StopCardData
 import com.mbta.tid.mbta_app.model.response.AlertsStreamDataResponse
 import com.mbta.tid.mbta_app.model.response.GlobalResponse
 import com.mbta.tid.mbta_app.model.response.PredictionsByStopJoinResponse
@@ -63,18 +64,19 @@ internal class FavoritesViewModelTest : KoinTest {
     val objects = ObjectCollectionBuilder()
     val stop1 =
         objects.stop {
+            id = "stop1"
             latitude = 0.0
             longitude = 0.0
         }
     val stop2 =
         objects.stop {
-            id = "stop1"
+            id = "stop2"
             latitude = 1.0
             longitude = 1.0
         }
     val stop3 =
         objects.stop {
-            id = "stop2"
+            id = "stop3"
             latitude = -0.5
             longitude = -0.5
         }
@@ -173,7 +175,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = null,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -183,7 +187,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -193,7 +199,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = emptyMap(),
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = emptyList(),
+                    staticStopCardData = emptyList(),
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -354,7 +362,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = null,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -364,7 +374,9 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favorites.routeStopDirection,
                     routeCardData = null,
+                    stopCardData = null,
                     staticRouteCardData = null,
+                    staticStopCardData = null,
                     loadedLocation = null,
                 ),
                 awaitItem(),
@@ -378,7 +390,15 @@ internal class FavoritesViewModelTest : KoinTest {
                         false,
                         false,
                         expectedRealtimeData,
+                        StopCardData.fromRouteCardData(
+                            expectedRealtimeData,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                         expectedStaticData,
+                        StopCardData.fromRouteCardData(
+                            expectedStaticData,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                         stop1.position,
                     )
             }
@@ -472,7 +492,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
@@ -486,7 +512,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItem(),
@@ -496,7 +528,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesAfter.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataAfter,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataAfter,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItem(),
@@ -568,7 +606,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {
@@ -882,7 +926,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop3.position,
+                        ),
                     loadedLocation = stop3.position,
                 ),
                 awaitItemSatisfying {
@@ -1109,7 +1159,13 @@ internal class FavoritesViewModelTest : KoinTest {
                     awaitingPredictionsAfterBackground = false,
                     favorites = favoritesBefore.routeStopDirection,
                     routeCardData = emptyList(),
+                    stopCardData = emptyList(),
                     staticRouteCardData = expectedStaticDataBefore,
+                    staticStopCardData =
+                        StopCardData.fromRouteCardData(
+                            expectedStaticDataBefore,
+                            sortByDistanceFrom = stop1.position,
+                        ),
                     loadedLocation = stop1.position,
                 ),
                 awaitItemSatisfying {

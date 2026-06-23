@@ -49,6 +49,8 @@ class FavoritesViewTest {
                         false,
                         emptyList(),
                         emptyList(),
+                        emptyList(),
+                        emptyList(),
                         null,
                     )
             )
@@ -100,6 +102,8 @@ class FavoritesViewTest {
                         true,
                         emptyList(),
                         emptyList(),
+                        emptyList(),
+                        emptyList(),
                         null,
                     )
             )
@@ -147,6 +151,8 @@ class FavoritesViewTest {
                         emptyMap(),
                         false,
                         true,
+                        emptyList(),
+                        emptyList(),
                         emptyList(),
                         emptyList(),
                         null,
