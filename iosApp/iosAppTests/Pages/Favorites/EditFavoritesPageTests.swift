@@ -21,7 +21,9 @@ final class EditFavoritesPageTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
+            stopCardData: [],
             staticRouteCardData: [],
+            staticStopCardData: [],
             loadedLocation: nil,
         ))
 
@@ -54,7 +56,9 @@ final class EditFavoritesPageTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
+            stopCardData: [],
             staticRouteCardData: [],
+            staticStopCardData: [],
             loadedLocation: nil,
         ))
 
@@ -108,7 +112,9 @@ final class EditFavoritesPageTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
+            stopCardData: [],
             staticRouteCardData: [],
+            staticStopCardData: [],
             loadedLocation: nil,
         ))
 
@@ -156,6 +162,42 @@ final class EditFavoritesPageTests: XCTestCase {
 
         let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
 
+        let staticRouteCardData: [RouteCardData] = [
+            .init(lineOrRoute: .route(route15),
+                  stopData: [.init(route: route15,
+                                   stop: stop15,
+                                   data: [.init(lineOrRoute: .route(route15),
+                                                stop: stop15,
+                                                directionId: 0,
+                                                routePatterns: [],
+                                                stopIds: [],
+                                                upcomingTrips: [],
+                                                alertsHere: [],
+                                                allDataLoaded: true,
+                                                hasSchedulesToday: true,
+                                                subwayServiceStartTime: nil,
+                                                alertsDownstream: [],
+                                                context: .favorites)],
+                                   globalData: globalData)],
+                  at: EasternTimeInstant.now()),
+            .init(lineOrRoute: .route(route67),
+                  stopData: [.init(route: route67,
+                                   stop: stop67,
+                                   data: [.init(lineOrRoute: .route(route67),
+                                                stop: stop67,
+                                                directionId: 0,
+                                                routePatterns: [],
+                                                stopIds: [],
+                                                upcomingTrips: [],
+                                                alertsHere: [],
+                                                allDataLoaded: true,
+                                                hasSchedulesToday: true,
+                                                subwayServiceStartTime: nil,
+                                                alertsDownstream: [],
+                                                context: .favorites)],
+                                   globalData: globalData)],
+                  at: EasternTimeInstant.now()),
+        ]
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [
@@ -165,42 +207,12 @@ final class EditFavoritesPageTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
-            staticRouteCardData: [
-                .init(lineOrRoute: .route(route15),
-                      stopData: [.init(route: route15,
-                                       stop: stop15,
-                                       data: [.init(lineOrRoute: .route(route15),
-                                                    stop: stop15,
-                                                    directionId: 0,
-                                                    routePatterns: [],
-                                                    stopIds: [],
-                                                    upcomingTrips: [],
-                                                    alertsHere: [],
-                                                    allDataLoaded: true,
-                                                    hasSchedulesToday: true,
-                                                    subwayServiceStartTime: nil,
-                                                    alertsDownstream: [],
-                                                    context: .favorites)],
-                                       globalData: globalData)],
-                      at: EasternTimeInstant.now()),
-                .init(lineOrRoute: .route(route67),
-                      stopData: [.init(route: route67,
-                                       stop: stop67,
-                                       data: [.init(lineOrRoute: .route(route67),
-                                                    stop: stop67,
-                                                    directionId: 0,
-                                                    routePatterns: [],
-                                                    stopIds: [],
-                                                    upcomingTrips: [],
-                                                    alertsHere: [],
-                                                    allDataLoaded: true,
-                                                    hasSchedulesToday: true,
-                                                    subwayServiceStartTime: nil,
-                                                    alertsDownstream: [],
-                                                    context: .favorites)],
-                                       globalData: globalData)],
-                      at: EasternTimeInstant.now()),
-            ],
+            stopCardData: [],
+            staticRouteCardData: staticRouteCardData,
+            staticStopCardData: StopCardData.companion.fromRouteCardData(
+                routeCardData: staticRouteCardData,
+                sortByDistanceFrom: nil
+            ),
             loadedLocation: nil,
         ))
 
@@ -238,6 +250,25 @@ final class EditFavoritesPageTests: XCTestCase {
         let updateFavoritesExp = XCTestExpectation(description: "Update favorites called for route 15 only")
         let undoFavoritesExp = XCTestExpectation(description: "Favorite update undone")
 
+        let staticRouteCardData: [RouteCardData] = [
+            .init(lineOrRoute: .route(route15),
+                  stopData: [.init(route: route15,
+                                   stop: stop15,
+                                   data: [.init(lineOrRoute: .route(route15),
+                                                stop: stop15,
+                                                directionId: 0,
+                                                routePatterns: [],
+                                                stopIds: [],
+                                                upcomingTrips: [],
+                                                alertsHere: [],
+                                                allDataLoaded: true,
+                                                hasSchedulesToday: true,
+                                                subwayServiceStartTime: nil,
+                                                alertsDownstream: [],
+                                                context: .favorites)],
+                                   globalData: globalData)],
+                  at: EasternTimeInstant.now()),
+        ]
         let favoritesVM = MockFavoritesViewModel(initialState: .init(
             awaitingPredictionsAfterBackground: false,
             favorites: [
@@ -246,25 +277,12 @@ final class EditFavoritesPageTests: XCTestCase {
             shouldShowFirstTimeToast: false,
             shouldShowNotificationsHint: false,
             routeCardData: [],
-            staticRouteCardData: [
-                .init(lineOrRoute: .route(route15),
-                      stopData: [.init(route: route15,
-                                       stop: stop15,
-                                       data: [.init(lineOrRoute: .route(route15),
-                                                    stop: stop15,
-                                                    directionId: 0,
-                                                    routePatterns: [],
-                                                    stopIds: [],
-                                                    upcomingTrips: [],
-                                                    alertsHere: [],
-                                                    allDataLoaded: true,
-                                                    hasSchedulesToday: true,
-                                                    subwayServiceStartTime: nil,
-                                                    alertsDownstream: [],
-                                                    context: .favorites)],
-                                       globalData: globalData)],
-                      at: EasternTimeInstant.now()),
-            ],
+            stopCardData: [],
+            staticRouteCardData: staticRouteCardData,
+            staticStopCardData: StopCardData.companion.fromRouteCardData(
+                routeCardData: staticRouteCardData,
+                sortByDistanceFrom: nil
+            ),
             loadedLocation: nil,
         ))
 
